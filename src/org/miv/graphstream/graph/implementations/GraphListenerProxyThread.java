@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.miv.graphstream.algorithm.Algorithms;
+//import org.miv.graphstream.algorithm.Algorithms;
 import org.miv.graphstream.graph.AbstractElement;
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.EdgeFactory;
@@ -787,7 +787,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 		public Edge addEdge( String id, String from, String to, boolean directed ) throws SingletonException, NotFoundException { return null; }
 		public void addGraphListener( GraphListener listener ) {}
 		public Node addNode( String id ) throws SingletonException { return null; }
-		public Algorithms algorithm() { return null; }
+//		public Algorithms algorithm() { return null; }
 		public void clear() {}
 		public void clearListeners() {}
 		public GraphViewerRemote display() { return null; }

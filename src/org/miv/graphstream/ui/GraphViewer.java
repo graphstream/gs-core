@@ -15,10 +15,10 @@
  */
 package org.miv.graphstream.ui;
 
-import org.miv.graphstream.algorithm.layout2.Layout;
-import org.miv.graphstream.algorithm.layout2.LayoutListener;
-import org.miv.graphstream.algorithm.layout2.LayoutListenerProxy;
-import org.miv.graphstream.algorithm.layout2.LayoutRunner;
+import org.miv.graphstream.ui.layout.Layout;
+import org.miv.graphstream.ui.layout.LayoutListener;
+import org.miv.graphstream.ui.layout.LayoutListenerProxy;
+import org.miv.graphstream.ui.layout.LayoutRunner;
 import org.miv.graphstream.graph.Graph;
 import org.miv.graphstream.ui.graphicGraph.stylesheet.Style;
 

@@ -14,7 +14,7 @@
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-package org.miv.graphstream.algorithm.layout2;
+package org.miv.graphstream.ui.layout;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -133,7 +133,7 @@ public class LayoutRunner extends Thread implements MBoxListener
 	public static Layout newDefaultLayout()
 	{
 //		return new org.miv.graphstream.algorithm.layout2.elasticbox.ElasticBox();
-		return new org.miv.graphstream.algorithm.layout2.springbox.SpringBox();
+		return new org.miv.graphstream.ui.layout.springbox.SpringBox();
 	}
 
 	/**

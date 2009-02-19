@@ -16,7 +16,7 @@
 
 package org.miv.graphstream.ui.swing;
 
-import book.InterpolatedFloat;
+import org.miv.util.InterpolatedFloat;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;

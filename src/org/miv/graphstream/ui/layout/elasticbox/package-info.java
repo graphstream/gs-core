@@ -23,4 +23,4 @@
  * @author Antoine Dutot
  * @author Yoann Pigné
  */
-package org.miv.graphstream.algorithm.layout2.elasticbox;
+package org.miv.graphstream.ui.layout.elasticbox;

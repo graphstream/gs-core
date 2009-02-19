@@ -17,11 +17,11 @@ package org.miv.graphstream.ui;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.miv.graphstream.algorithm.layout2.Layout;
-import org.miv.graphstream.algorithm.layout2.LayoutListener;
-import org.miv.graphstream.algorithm.layout2.LayoutListenerProxy;
-import org.miv.graphstream.algorithm.layout2.LayoutRunner;
-import org.miv.graphstream.algorithm.layout2.LayoutRunner.LayoutRemote;
+import org.miv.graphstream.ui.layout.Layout;
+import org.miv.graphstream.ui.layout.LayoutListener;
+import org.miv.graphstream.ui.layout.LayoutListenerProxy;
+import org.miv.graphstream.ui.layout.LayoutRunner;
+import org.miv.graphstream.ui.layout.LayoutRunner.LayoutRemote;
 import org.miv.graphstream.graph.Graph;
 import org.miv.graphstream.graph.GraphListenerProxy;
 import org.miv.graphstream.graph.implementations.GraphListenerProxyCopy;

@@ -14,7 +14,7 @@
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-package org.miv.graphstream.algorithm.layout2.elasticbox;
+package org.miv.graphstream.ui.layout.elasticbox;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -27,8 +27,8 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Random;
 
-import org.miv.graphstream.algorithm.layout2.Layout;
-import org.miv.graphstream.algorithm.layout2.LayoutListener;
+import org.miv.graphstream.ui.layout.Layout;
+import org.miv.graphstream.ui.layout.LayoutListener;
 import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.graph.Graph;
 import org.miv.pherd.Particle;

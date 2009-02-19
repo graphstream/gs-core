@@ -15,7 +15,7 @@
  */
 package org.miv.graphstream.ui;
 
-import org.miv.graphstream.algorithm.layout.LayoutListenerProxy;
+import org.miv.graphstream.ui.layout.LayoutListenerProxy;
 
 
 /**

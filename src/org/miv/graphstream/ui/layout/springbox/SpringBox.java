@@ -13,12 +13,12 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-package org.miv.graphstream.algorithm.layout2.springbox;
+package org.miv.graphstream.ui.layout.springbox;
 
 import java.io.*;
 import java.util.*;
 
-import org.miv.graphstream.algorithm.layout2.*;
+import org.miv.graphstream.ui.layout.*;
 import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.graph.Graph;
 import org.miv.util.*;

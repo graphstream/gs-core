@@ -33,7 +33,7 @@ import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import org.miv.graphstream.algorithm.Algorithms;
+//import org.miv.graphstream.algorithm.Algorithms;
 import org.miv.graphstream.graph.AbstractElement;
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.EdgeFactory;
@@ -145,8 +145,8 @@ public class DefaultGraph
 	
 	/**
 	 * Set of common algorithms.
-	 */
 	protected Algorithms algos;
+	 */
 	
 	/**
 	 *  Helpful class that dynamically instantiate nodes according to a given class name.
@@ -1134,6 +1134,7 @@ protected void printPosition( String msg ){
 		return coef;
 	}
 	
+	/*
 	public Algorithms algorithm()
 	{
 		if( algos == null )
@@ -1141,6 +1142,7 @@ protected void printPosition( String msg ){
 		
 		return algos;
 	}
+	*/
 	
 	/* (non-Javadoc)
 	 * @see org.miv.graphstream.graph.GraphInterface#toString()

@@ -14,7 +14,7 @@
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-package org.miv.graphstream.algorithm.layout2.springboxLeRetour;
+package org.miv.graphstream.ui.layout.springboxLeRetour;
 
 /**
  * Represent the history of energy values for a layout algorithm. 

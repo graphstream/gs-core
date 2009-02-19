@@ -14,7 +14,7 @@ import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.miv.graphstream.algorithm.Algorithms;
+//import org.miv.graphstream.algorithm.Algorithms;
 import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.EdgeFactory;
@@ -38,7 +38,7 @@ public class ConcurrentGraph
 	implements Graph
 {
 
-	protected Algorithms algos;
+//	protected Algorithms algos;
 	
 	protected ConcurrentHashMap<String,Node> nodes;
 	protected ConcurrentHashMap<String,Edge> edges;
@@ -232,13 +232,12 @@ public class ConcurrentGraph
 		
 		return createNode(id);
 	}
-
-	/* @Override */
+/*
 	public Algorithms algorithm()
 	{
 		return algos;
 	}
-
+*/
 	/* @Override */
 	public void clear()
 	{

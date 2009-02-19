@@ -39,7 +39,7 @@ import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.svggen.SVGGraphics2DIOException;
 
-import org.miv.graphstream.algorithm.layout2.LayoutListenerProxy;
+import org.miv.graphstream.ui.layout.LayoutListenerProxy;
 import org.miv.graphstream.ui.GraphViewer;
 import org.miv.graphstream.ui.graphicGraph.*;
 import org.miv.graphstream.ui.graphicGraph.stylesheet.Style;

@@ -29,7 +29,7 @@ import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import org.miv.graphstream.algorithm.Algorithms;
+//import org.miv.graphstream.algorithm.Algorithms;
 import org.miv.graphstream.graph.AbstractElement;
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.EdgeFactory;
@@ -69,10 +69,7 @@ public class AdjacencyListGraph
 	extends AbstractElement 
 	implements Graph
 {
-	/**
-	 * Set of common algorithms.
-	 */
-	protected Algorithms algos;
+//	protected Algorithms algos;
 	
 	public class EdgeIterator 
 		implements 
@@ -1143,7 +1140,7 @@ public class AdjacencyListGraph
         
         return null;
 	}
-	
+/*	
 	public Algorithms algorithm()
 	{
 		if( algos == null )
@@ -1151,7 +1148,7 @@ public class AdjacencyListGraph
 		
 		return algos;
 	}
-
+*/
 //-------------------------Events Management------------------------
 	
 	/**

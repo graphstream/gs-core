@@ -22,7 +22,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.regex.*;
 
-import org.miv.graphstream.algorithm.Algorithms;
+//import org.miv.graphstream.algorithm.Algorithms;
 import org.miv.graphstream.graph.AbstractElement;
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.EdgeFactory;
@@ -1370,12 +1370,12 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
     {
 		throw new RuntimeException( "not implemented !" );
     }
-
+/*
 	public Algorithms algorithm()
     {
 		throw new RuntimeException( "not implemented !" );
     }
-
+*/
 	public void clearListeners()
     {
     }

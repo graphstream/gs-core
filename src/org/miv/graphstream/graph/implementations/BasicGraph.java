@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.miv.graphstream.algorithm.Algorithms;
+//import org.miv.graphstream.algorithm.Algorithms;
 import org.miv.graphstream.graph.AbstractElement;
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.EdgeFactory;
@@ -63,12 +63,12 @@ public class BasicGraph extends AbstractElement implements Graph
 	}
 	
 // Access
-
+/*
 	public Algorithms algorithm()
     {
 	    return null;
     }
-
+*/
 	public boolean isAutoCreationEnabled()
     {
 	    return false;

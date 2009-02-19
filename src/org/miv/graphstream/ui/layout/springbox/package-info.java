@@ -36,4 +36,4 @@
  * @author Antoine Dutot
  * @author Yoann Pigné
  */
-package org.miv.graphstream.algorithm.layout2.springbox;
+package org.miv.graphstream.ui.layout.springbox;

@@ -22,8 +22,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
-import org.miv.graphstream.algorithm.layout2.Layout;
-import org.miv.graphstream.algorithm.layout2.LayoutRunner;
+import org.miv.graphstream.ui.layout.Layout;
+import org.miv.graphstream.ui.layout.LayoutRunner;
 import org.miv.graphstream.graph.Graph;
 import org.miv.graphstream.ui.GraphViewerBase;
 import org.miv.graphstream.ui.graphicGraph.GraphicGraph;

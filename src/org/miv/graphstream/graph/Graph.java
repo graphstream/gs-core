@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.miv.graphstream.algorithm.Algorithms;
+//import org.miv.graphstream.algorithm.Algorithms;
 import org.miv.graphstream.io.GraphParseException;
 import org.miv.graphstream.io.GraphReader;
 import org.miv.graphstream.io.GraphWriter;
@@ -389,8 +389,8 @@ public interface Graph extends Element
 	 * optimise algorithms for their internal representation).
 	 * @return An instance of a class allowing to perform several common
 	 *         algorithms on this graph.
-	 */
 	public Algorithms algorithm();
+	 */
 	
 	/**
 	 * Override the Object.toString() method.

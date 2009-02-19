@@ -14,7 +14,7 @@
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-package org.miv.graphstream.algorithm.layout2;
+package org.miv.graphstream.ui.layout;
 
 import java.util.Iterator;
 import java.util.Map;

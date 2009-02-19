@@ -25,7 +25,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
 
-import org.miv.graphstream.algorithm.layout2.LayoutRunner.LayoutRemote;
+import org.miv.graphstream.ui.layout.LayoutRunner.LayoutRemote;
 import org.miv.graphstream.ui.swing.SwingGraphViewer;
 
 /**

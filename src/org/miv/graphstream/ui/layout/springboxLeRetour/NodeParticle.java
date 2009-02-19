@@ -14,7 +14,7 @@
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-package org.miv.graphstream.algorithm.layout2.springboxLeRetour;
+package org.miv.graphstream.ui.layout.springboxLeRetour;
 
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
 
-import org.miv.graphstream.algorithm.layout2.LayoutListener;
+import org.miv.graphstream.ui.layout.LayoutListener;
 import org.miv.pherd.Particle;
 import org.miv.pherd.ntree.BarycenterCellData;
 import org.miv.pherd.ntree.Cell;

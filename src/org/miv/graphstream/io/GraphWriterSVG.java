@@ -29,7 +29,7 @@ import java.util.Map;
 import org.miv.graphstream.ui.graphicGraph.stylesheet.Rule;
 import org.miv.graphstream.ui.graphicGraph.stylesheet.StyleSheet;
 
-import book.geom.Point3;
+import org.miv.util.geom.Point3;
 
 /**
  * Transforms a graph into a SVG description.
