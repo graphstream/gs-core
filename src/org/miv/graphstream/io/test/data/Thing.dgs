@@ -1,0 +1,11 @@
+DGS002
+Thing 0 0
+nodes pos:vector label:string uid:number
+st 0
+an A [0] String_Without_Quotes 5
+an 1 [] "String with quote" 10
+an 123 [0 1 2 3] A 40.43030
+st 1
+ae "A1" "A" "1"
+ae "1123" "1" "123"
+ae "123A" "123" "A"

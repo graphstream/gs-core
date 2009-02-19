@@ -1,0 +1,6 @@
+DGS003
+env 0 0
+an "g_3,3" label="g_3,3" x=48 y=48
+an "g_3,2" label="g_3,2" x=32 y=48
+an "g_2,0" label="g_2,0" x=0 y=32
+an "g_3,1" label="g_3,1" x=16 y=48

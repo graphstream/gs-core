@@ -1,0 +1,12 @@
+DGS002
+Triangle 2 6
+nodes pos:vector label:string uid:number
+edges weight:number
+st 1
+an A [0 0 0] "A!" 0
+an B [1 0 0] "B!" 1
+an C [0.5 1 0] "C!" 2
+st 2
+ae AB A B 3
+ae BC B C 2
+ae CA C A 5
