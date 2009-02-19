@@ -1,0 +1,167 @@
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+package org.miv.graphstream.graph.implementations;
+
+import org.miv.graphstream.graph.AbstractElement;
+import org.miv.graphstream.graph.Edge;
+import org.miv.graphstream.graph.Node;
+
+/**
+  * <p>
+ * A light edge class intended to allow the construction of big graphs
+ * (millions of elements).
+ * </p>
+ * <p>
+ * The main purpose here is to minimize memory consumption even if the
+ * management of such a graph implies more CPU consuming. See the
+ * <code>complexity</code> tags on each method so as to figure out the impact
+ * on the CPU.
+ * </p>
+ * 
+ * @author Antoine Dutot
+ * @author Yoann Pigné
+ * 
+ * @since July 12 2007
+ * 
+ */
+public class AdjacencyListEdge extends AbstractElement implements Edge
+{
+
+	AdjacencyListNode n0;
+
+	AdjacencyListNode n1;
+
+	boolean directed = false;
+	
+
+	/**
+	 * @param id
+	 */
+	protected AdjacencyListEdge( String id )
+	{
+		super( id );
+	}
+
+	protected AdjacencyListEdge()
+	{
+		super("");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.miv.graphstream.graph.EdgeInterface#getNode0()
+	 */
+	public Node getNode0()
+	{
+		return n0;
+	}
+
+	public void setNode0(AdjacencyListNode n)
+	{
+		n0 =n; 
+	}
+	/*
+	 * (non-Javadoc)
+	 * @see org.miv.graphstream.graph.EdgeInterface#getNode1()
+	 */
+	public Node getNode1()
+	{
+		return n1;
+	}
+
+	public void setNode1(AdjacencyListNode n)
+	{
+		n1 =n; 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.miv.graphstream.graph.EdgeInterface#getOpposite(org.miv.graphstream.graph.NodeInterface)
+	 */
+	public Node getOpposite( Node node )
+	{
+		if( node == n0 )
+			return n1;
+		else if( node == n1 )
+			return n0;
+		else
+			return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.miv.graphstream.graph.EdgeInterface#getSourceNode()
+	 */
+	public Node getSourceNode()
+	{
+		return n0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.miv.graphstream.graph.EdgeInterface#getTargetNode()
+	 */
+	public Node getTargetNode()
+	{
+		return n1;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.miv.graphstream.graph.EdgeInterface#isDirected()
+	 */
+	public boolean isDirected()
+	{
+		return directed;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.miv.graphstream.graph.EdgeInterface#setDirected(boolean)
+	 */
+	public void setDirected( boolean on )
+	{
+		this.directed = on;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.miv.graphstream.graph.EdgeInterface#switchDirection()
+	 */
+	public void switchDirection()
+	{
+		( (AdjacencyListGraph) n0.graph ).beforeEdgeRemoveEvent( this );
+		
+		AdjacencyListNode n = n0;
+		n0 = n1;
+		n1 = n;
+		( (AdjacencyListGraph) n0.graph ).afterEdgeAddEvent( this );
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see org.miv.graphstream.graph.Element#attributeChanged(java.lang.String, java.lang.Object, java.lang.Object)
+	 */
+	@Override
+	protected void attributeChanged( String attribute, Object oldValue, Object newValue )
+	{
+		if( n0 != null )
+			( (AdjacencyListGraph) n0.getGraph() ).attributeChangedEvent( this, attribute, oldValue, newValue );
+
+	}
+
+}
