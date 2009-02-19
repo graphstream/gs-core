@@ -1,0 +1,38 @@
+GraphStream
+===========
+
+Welcome to GraphStream, and thank you for your download, we hope you will find it
+useful and practical.
+
+We are always interested by suggestions on how to make the library more developer
+friendly, see the CONTRIBUTORS file for contacts.
+
+Installing GraphStream
+----------------------
+
+The releases comes with a pre-packaged jar file named graphstream.jar that
+contains the GraphStream classes as well as many of its dependencies. To start
+using GraphStream, simply put it in your class path.
+
+Authors
+-------
+
+This crap is made by :
+
+Yoann Pigné <yoann.pigne@univ-lehavre.fr> 
+Antoine Dutot <antoine.dutot@univ-lehavre.fr>
+Guilhelm Savin <guilhelm.savin@gmail.com>
+Julien Baudry <julien.baudry@univ-lehavre.fr>
+Frédéric Guinand <frederic.guinand@univ-lehavre.fr>
+
+You can join all or one of these for questions, remarks and flames. Additionally
+if you want to join the development team, you are welcome.
+
+Copyright
+---------
+
+GraphStream is distributed under the GPL v2, but incorporates other libraries
+for specific functionalities.
+
+- Batik for SVG output.
+- JSch for ssh access.
