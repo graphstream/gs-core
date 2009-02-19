@@ -64,7 +64,7 @@ public class ConcurrentEdge
 	
 // --- AbstractConcurrentElement --- //
 	
-	/* @Override */
+	@Override
 	protected void attributeChanged(String attribute, Object oldValue,
 			Object newValue)
 	{

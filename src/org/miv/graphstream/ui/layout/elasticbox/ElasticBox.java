@@ -93,7 +93,7 @@ import org.miv.util.geom.Vector3;
  * <p>
  * This layout is NOT thread safe. You cannot put it in a thread an expect it
  * to listen at a graph without problems. To avoid these problems, you can use
- * the {@link org.miv.graphstream.algorithm.layout2.LayoutRunner} to avoid these
+ * the {@link org.miv.graphstream.ui.layout.LayoutRunner} to avoid these
  * problems.
  * </p>
  * 

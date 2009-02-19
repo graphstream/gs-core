@@ -184,7 +184,7 @@ public class ConcurrentGraph
 	
 // --- AbstractConcurrentElement implementation --- //
 	
-	/* @Override */
+	@Override
 	protected void attributeChanged(String attribute, Object oldValue,
 			Object newValue)
 	{

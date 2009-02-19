@@ -1001,7 +1001,6 @@ protected void printPosition( String msg ){
 	 * of the cell. For example cell 0 counts how many nodes have zero edges,
 	 * cell 5 counts how many nodes have five edges. The last index indicates
 	 * the maximum degree.
-	 * @deprecated See {@link org.miv.graphstream.algorithm.Algorithms}
 	 */
 	@Deprecated
 	public int[] getDegreeDistribution()
@@ -1033,7 +1032,6 @@ protected void printPosition( String msg ){
 	/**
 	 * Return a list of nodes sorted by degree, the larger first.
 	 * @return The degree map.
-	 * @deprecated See {@link org.miv.graphstream.algorithm.Algorithms}
 	 */
 	@Deprecated
 	public ArrayList<Node> getDegreeMap()
@@ -1056,7 +1054,6 @@ protected void printPosition( String msg ){
 	 * Clustering coefficient for each node of the graph.
 	 * @return An array whose size correspond to the number of nodes, where each
 	 * element is the clustering coefficient of a node.
-	 * @deprecated See {@link org.miv.graphstream.algorithm.Algorithms}
 	 */
 	@Deprecated
 	public double[] getClusteringCoefficients()
@@ -1085,7 +1082,6 @@ protected void printPosition( String msg ){
 	 * Clustering coefficient for one node of the graph.
 	 * @param node The node to compute the clustering coefficient for.
 	 * @return The clustering coefficient for this node.
-	 * @deprecated See {@link org.miv.graphstream.algorithm.Algorithms}
 	 */
 	@Deprecated
 	public double getClusteringCoefficient( Node node )

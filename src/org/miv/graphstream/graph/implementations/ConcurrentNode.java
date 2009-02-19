@@ -88,6 +88,7 @@ public class ConcurrentNode
 // --- AbstractConcurrentElement implementation --- //
 	
 	/* @see org.miv.graphstream.graph.Element */
+	@Override
 	protected void attributeChanged(String attribute, Object oldValue,
 			Object newValue)
 	{

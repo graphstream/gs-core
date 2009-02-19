@@ -31,8 +31,4 @@ if you want to join the development team, you are welcome.
 Copyright
 ---------
 
-GraphStream is distributed under the GPL v2, but incorporates other libraries
-for specific functionalities.
-
-- Batik for SVG output.
-- JSch for ssh access.
+GraphStream is distributed under the GPL v2.

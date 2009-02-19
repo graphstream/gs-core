@@ -1,3 +1,11 @@
+Reorganisation
+==============
+	- Change the GraphReaderListener to take attributes into account.
+	- Remove the old elasticBox package in ui.layout.
+	- Add a ToolBox.
+	- Where to put ShowGraph ?
+
+
 GraphStream Roadmap
 ===================
 

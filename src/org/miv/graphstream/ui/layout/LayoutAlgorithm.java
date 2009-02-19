@@ -33,7 +33,7 @@ import org.miv.graphstream.graph.Node;
  * implementation. It also listen at the layout and modifies the graph accordingly by adding
  * "xyz" attributes on each node moved by the layout.
  * 
- * By default the {@link org.miv.graphstream.algorithm.layout2.Layout} class is low-level and more
+ * By default the {@link org.miv.graphstream.ui.layout.Layout} class is low-level and more
  * difficult to use because you must declare
  * nodes and edges using special methods. Also you must implement a layout listener to receive node
  * move events.
