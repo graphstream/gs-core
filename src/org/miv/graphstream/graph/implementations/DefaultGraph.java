@@ -34,7 +34,6 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 //import org.miv.graphstream.algorithm.Algorithms;
-import org.miv.graphstream.graph.AbstractElement;
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.EdgeFactory;
 import org.miv.graphstream.graph.Element;
@@ -57,7 +56,7 @@ import org.miv.util.SingletonException;
  * DefaultGraph.
  * 
  * <p>
- * A graph is a set of graph {@link org.miv.graphstream.graph.AbstractElement}s. Graph
+ * A graph is a set of graph {@link org.miv.graphstream.graph.implementations.AbstractElement}s. Graph
  * elements can be nodes (descendants of {@link org.miv.graphstream.graph.Node}),
  * edges (descendants of {@link org.miv.graphstream.graph.Edge}).
  * </p>
@@ -90,7 +89,7 @@ import org.miv.util.SingletonException;
  * @see org.miv.graphstream.graph.GraphListener
  * @see org.miv.graphstream.graph.implementations.DefaultNode
  * @see org.miv.graphstream.graph.implementations.DefaultEdge
- * @see org.miv.graphstream.graph.AbstractElement
+ * @see org.miv.graphstream.graph.implementations.AbstractElement
  * @author Antoine Dutot
  * @author Yoann Pigné
  * @since 09 Sept. 2002

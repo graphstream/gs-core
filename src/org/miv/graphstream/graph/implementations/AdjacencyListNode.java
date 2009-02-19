@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.miv.graphstream.graph.AbstractElement;
 import org.miv.graphstream.graph.BreadthFirstIterator;
 import org.miv.graphstream.graph.DepthFirstIterator;
 import org.miv.graphstream.graph.Edge;

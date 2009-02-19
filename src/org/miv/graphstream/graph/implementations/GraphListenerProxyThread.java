@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 
 //import org.miv.graphstream.algorithm.Algorithms;
-import org.miv.graphstream.graph.AbstractElement;
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.EdgeFactory;
 import org.miv.graphstream.graph.Element;

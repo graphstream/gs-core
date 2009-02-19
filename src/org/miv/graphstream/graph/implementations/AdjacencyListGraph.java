@@ -30,7 +30,6 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 //import org.miv.graphstream.algorithm.Algorithms;
-import org.miv.graphstream.graph.AbstractElement;
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.EdgeFactory;
 import org.miv.graphstream.graph.Element;

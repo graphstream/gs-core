@@ -16,7 +16,6 @@
 
 package org.miv.graphstream.graph.implementations;
 
-import org.miv.graphstream.graph.AbstractElement;
 import org.miv.graphstream.graph.BreadthFirstIterator;
 import org.miv.graphstream.graph.DepthFirstIterator;
 import org.miv.graphstream.graph.Edge;

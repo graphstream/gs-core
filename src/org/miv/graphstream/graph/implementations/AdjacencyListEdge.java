@@ -15,7 +15,6 @@
  */
 package org.miv.graphstream.graph.implementations;
 
-import org.miv.graphstream.graph.AbstractElement;
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.Node;
 

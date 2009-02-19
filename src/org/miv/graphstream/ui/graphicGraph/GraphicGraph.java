@@ -23,7 +23,6 @@ import java.util.*;
 import java.util.regex.*;
 
 //import org.miv.graphstream.algorithm.Algorithms;
-import org.miv.graphstream.graph.AbstractElement;
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.EdgeFactory;
 import org.miv.graphstream.graph.Element;
@@ -31,6 +30,7 @@ import org.miv.graphstream.graph.Graph;
 import org.miv.graphstream.graph.GraphListener;
 import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.graph.NodeFactory;
+import org.miv.graphstream.graph.implementations.AbstractElement;
 import org.miv.graphstream.io.GraphParseException;
 import org.miv.graphstream.io.GraphReader;
 import org.miv.graphstream.io.GraphWriter;

@@ -16,7 +16,7 @@
 
 package org.miv.graphstream.ui.graphicGraph;
 
-import org.miv.graphstream.graph.AbstractElement;
+import org.miv.graphstream.graph.implementations.AbstractElement;
 import org.miv.graphstream.ui.graphicGraph.stylesheet.Rule;
 import org.miv.graphstream.ui.graphicGraph.stylesheet.Selector;
 import org.miv.graphstream.ui.graphicGraph.stylesheet.Style;
