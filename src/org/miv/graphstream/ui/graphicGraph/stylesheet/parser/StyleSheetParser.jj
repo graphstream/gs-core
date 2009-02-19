@@ -1,0 +1,565 @@
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+options { JDK_VERSION = "1.5"; STATIC = false; }
+
+PARSER_BEGIN(StyleSheetParser)
+package org.miv.graphstream.ui.graphicGraph.stylesheet.parser;
+
+import org.miv.graphstream.ui.graphicGraph.stylesheet.*;
+import org.miv.graphstream.ui.graphicGraph.GraphicGraph;
+import java.awt.Color;
+import java.io.InputStream;
+import java.io.Reader;
+
+public class StyleSheetParser {
+	/**
+	 * The style sheet.
+	 */
+	protected StyleSheet stylesheet;
+	
+	public StyleSheetParser( StyleSheet stylesheet, InputStream stream )
+	{
+		this( stream );
+		this.stylesheet = stylesheet;
+	}
+	
+	public StyleSheetParser( StyleSheet stylesheet, Reader stream )
+	{
+		this( stream );
+		this.stylesheet = stylesheet;
+	}
+	
+	public static class Number
+	{
+		public float value;
+		public Style.Units units = Style.Units.PX;
+		public Number( float value, Style.Units units ) { this.value=value; this.units = units; }
+	}
+}
+PARSER_END(StyleSheetParser)
+
+/*
+ * The lexer.
+ */
+
+SKIP :
+{
+ 	" "
+|	"\r"
+|	"\t"
+|	"\n"
+}
+
+TOKEN: { < #EOL          : (("\r")|("\n"))> }
+TOKEN: { < #DIGIT        : ["0"-"9"] > }
+TOKEN: { < #HEXDIGIT     : (["0"-"9","a"-"f","A"-"F"])> }
+TOKEN: { < #UNITS        : (("gu")|("px")|("%"))> }
+TOKEN: { < DOT           : "." > }
+TOKEN: { < LBRACE        : "{" > }
+TOKEN: { < RBRACE        : "}" > }
+TOKEN: { < LPAREN        : "(" > }
+TOKEN: { < RPAREN        : ")" > }
+TOKEN: { < SHARP         : "#" > }
+TOKEN: { < COLON         : ":" > }
+TOKEN: { < SEMICOLON     : ";" > }
+TOKEN: { < COMA          : "," > }
+TOKEN: { < RGBA          : "rgba("(<DIGIT>){1,3}","(<DIGIT>){1,3}","(<DIGIT>){1,3}","(<DIGIT>){1,3}")" > }
+TOKEN: { < RGB           : "rgb("(<DIGIT>){1,3}","(<DIGIT>){1,3}","(<DIGIT>){1,3}")" > }
+TOKEN: { < HTMLCOLOR     : ( "#" (((<HEXDIGIT>){3})|((<HEXDIGIT>){4})|((<HEXDIGIT>){6})|((<HEXDIGIT>){8})|((<HEXDIGIT>){9})|((<HEXDIGIT>){12})|((<HEXDIGIT>){16})) ) > }
+TOKEN: { < REAL          : ( "-" | "+" )? ( <DIGIT> )+ ( "." (<DIGIT>)+ )? (<UNITS>)? > } 
+TOKEN: { < STRING        : (("\"" (~["\""])* "\"")|("'" (~["'"])* "'")) > }
+TOKEN: { < URL           : "url" > }
+
+TOKEN: { < GRAPH         : "graph" > }
+TOKEN: { < EDGE          : "edge" > }
+TOKEN: { < NODE          : "node" > }
+TOKEN: { < SPRITE        : "sprite" > }
+
+TOKEN: { < ARROWIMGURL   : "arrow-image" > }
+TOKEN: { < ARROWLENGTH   : "arrow-length" > }
+TOKEN: { < ARROWSHAPE    : "arrow-shape" > }
+TOKEN: { < ARROWWIDTH    : "arrow-width" > }
+TOKEN: { < BGCOLOR       : "background-color" > }
+TOKEN: { < BORDERCOLOR   : "border-color" > } 	 
+TOKEN: { < BORDERSTYLE   : "border-style" > }
+TOKEN: { < BORDERWIDTH   : "border-width" > }
+TOKEN: { < COLOR         : "color" > }
+TOKEN: { < NODESHAPE     : "node-shape" > }
+TOKEN: { < EDGESHAPE     : "edge-shape" > }
+TOKEN: { < EDGESTYLE     : "edge-style" > }
+TOKEN: { < HEIGHT        : "height" > }
+TOKEN: { < IMAGEMODE     : "image-mode" > }
+TOKEN: { < IMAGEOFFSET   : "image-offset" > }
+TOKEN: { < PADDING       : "padding" > }
+TOKEN: { < SHADOWSTYLE   : "shadow-style" > }
+TOKEN: { < SHADOWWIDTH   : "shadow-width" > }
+TOKEN: { < SHADOWOFFSET  : "shadow-offset" > }
+TOKEN: { < SHADOWCOLOR   : "shadow-color" > }
+TOKEN: { < SPRITESHAPE   : "sprite-shape" > }
+TOKEN: { < SPRITEORIENT  : "sprite-orientation" > }
+TOKEN: { < TEXTALIGN     : "text-align" > }
+TOKEN: { < TEXTCOLOR     : "text-color" > }
+TOKEN: { < TEXTMODE      : "text-mode" > }
+TOKEN: { < TEXTSTYLE     : "text-style" > }
+TOKEN: { < TEXTFONT      : "text-font" > }
+TOKEN: { < TEXTSIZE      : "text-size" > }
+TOKEN: { < TEXTOFFSET    : "text-offset" > }
+TOKEN: { < WIDTH         : "width" > }
+TOKEN: { < ZINDEX        : "z-index" > }
+
+TOKEN: { < ALONG         : "along" > }
+TOKEN: { < ANGLE         : "angle" > }
+TOKEN: { < ARROW         : "arrow" > }
+TOKEN: { < ASIDE         : "aside" > }
+TOKEN: { < BOLD          : "bold" > }
+TOKEN: { < BOLD_ITALIC   : "bold-italic" > }
+TOKEN: { < CENTER        : "center" > }
+TOKEN: { < CIRCLE        : "circle" > }
+TOKEN: { < CLICKED       : "clicked" > }
+TOKEN: { < CROSS         : "cross" > }
+TOKEN: { < CUBICCURVE    : "cubic-curve" > }
+TOKEN: { < DASHES        : "dashes" > }
+TOKEN: { < DIAMANT       : "diamant" > }
+TOKEN: { < DOTS          : "dots" > }
+TOKEN: { < FLOW          : "flow" > }
+TOKEN: { < FROM          : "from" > }
+TOKEN: { < HIDDEN        : "hidden" > }
+TOKEN: { < TRUNCATED     : "truncated"> }
+TOKEN: { < IMAGE         : "image" > }
+TOKEN: { < IMAGES        : "images" > }
+TOKEN: { < ITALIC        : "italic" > }
+TOKEN: { < LEFT          : "left" > }
+TOKEN: { < LINE          : "line" > }
+TOKEN: { < NONE          : "none" > }
+TOKEN: { < NORMAL        : "normal" > }
+TOKEN: { < ORIGIN        : "origin" > }
+TOKEN: { < PLAIN         : "plain" > }
+TOKEN: { < RIGHT         : "right" > }
+TOKEN: { < SELECTED      : "selected" > }
+TOKEN: { < SIMPLE        : "simple" > }
+TOKEN: { < SQUARE        : "square" > }
+TOKEN: { < TEXTBOX       : "text-box" > }
+TOKEN: { < TEXTELLIPSE   : "text-ellipse" > }
+TOKEN: { < TRIANGLE      : "triangle" > }
+TOKEN: { < TILED         : "tiled" > }
+TOKEN: { < PIE_CHART     : "pie-chart" > }
+TOKEN: { < TO            : "to" > }
+
+TOKEN: { < IDENTIFIER    : (["a"-"z","A"-"Z"])(["a"-"z","A"-"Z","0"-"9","_"])* > }
+TOKEN: { < COMMENT       : ("/*"(~["*"])* "*/" ) | ( "//"((~["\r","\n"])*)<EOL> ) > }
+
+
+/*
+ * The parser.
+ */
+
+void start():
+{
+	Rule r;
+}
+{
+	( r=rule() { stylesheet.addRule( r ); }
+	| <COMMENT>
+	)* <EOF>
+}
+
+Rule rule():
+{
+	Selector select;
+	Style    style;
+	Rule     rule;
+}
+{
+	select=select()
+	{
+		rule  = new Rule( select );
+		style = new Style();
+		rule.setStyle( style );
+	}
+	<LBRACE> ( styles( style ) ) <RBRACE>
+	{ return rule; }
+}
+
+void styles( Style style ):
+{}
+{
+	( style(style) )*
+}
+
+Selector select():
+{
+	Token    t;
+	Selector select;
+}
+{
+	( ( <GRAPH>  { select=new Selector( Selector.Type.GRAPH ); } )
+	| ( <NODE>   { select=new Selector( Selector.Type.NODE ); } )
+	| ( <EDGE>   { select=new Selector( Selector.Type.EDGE ); } )
+	| ( <SPRITE> { select=new Selector( Selector.Type.SPRITE ); } )
+	)
+	( ( <SHARP> ( ( t=<IDENTIFIER> { select.setId( t.image ); } )
+				| ( t=<STRING>     { select.setId( t.image.substring( 1, t.image.length()-1 ) ); } )
+				)
+	  )
+	| ( <DOT>   ( ( t=<IDENTIFIER> { select.setClass( t.image ); } )
+				| ( t=<STRING>     { select.setClass( t.image.substring( 1, t.image.length()-1 ) ); } )
+				)
+	  )
+	)?
+	( <COLON> ( (   <CLICKED>    { select.setPseudoClass( "clicked"  ); } )  
+	          | (   <SELECTED>   { select.setPseudoClass( "selected" ); } )
+	          | ( t=<STRING>     { select.setPseudoClass( t.image.substring( 1, t.image.length()-1 ) ); } )
+	          | ( t=<IDENTIFIER> { select.setPseudoClass( t.image    ); } )
+	          )
+	)?
+	{ return select; }
+}
+
+void style( Style style ):
+{
+	Color               color;
+	String              url;
+	Style.ArrowShape    arrow;
+	Style.NodeShape     nshap;
+	Style.EdgeShape     eshap;
+	Style.EdgeStyle     estyl;
+	Style.SpriteShape   sshap;
+	Style.SpriteOrientation sori;
+	Number              nb1, nb2;
+	Style.TextAlignment txtal;
+	Style.TextStyle     txtst;
+	Style.TextMode      txtmd;
+	Style.ImageMode     imm;
+	Style.ShadowStyle   shsty;
+}
+{
+	( ( <COMMENT> )
+	| ( <COLOR>        <COLON> colors( style )             <SEMICOLON> )
+	| ( <BGCOLOR>      <COLON> bgColors( style )           <SEMICOLON> )
+	| ( <WIDTH>        <COLON> nb1   = real()              <SEMICOLON> { style.setWidth( nb1.value, nb1.units ); } )
+	| ( <HEIGHT>       <COLON> nb1   = real()              <SEMICOLON> { style.setHeight( nb1.value, nb1.units ); } )
+	| ( <NODESHAPE>    <COLON> nshap = nodeShape()         <SEMICOLON> { style.setNodeShape( nshap ); } )
+	| ( <EDGESHAPE>    <COLON> eshap = edgeShape( style )  <SEMICOLON> { style.setEdgeShape( eshap ); } )
+	| ( <EDGESTYLE>    <COLON> estyl = edgeStyle()         <SEMICOLON> { style.setEdgeStyle( estyl );  } )
+	| ( <SPRITESHAPE>  <COLON> sshap = spriteShape()       <SEMICOLON> { style.setSpriteShape( sshap ); } )
+	| ( <SPRITEORIENT> <COLON> sori  = spriteOrient()      <SEMICOLON> { style.setSpriteOrientation( sori ); } )
+	| ( <ARROWSHAPE>   <COLON> arrow = arrowShape()        <SEMICOLON> { style.setArrowShape( arrow ); } )
+	| ( <ARROWLENGTH>  <COLON> nb1   = real()              <SEMICOLON> { style.setArrowLength( nb1.value, nb1.units ); } )
+	| ( <ARROWWIDTH>   <COLON> nb1   = real()              <SEMICOLON> { style.setArrowWidth( nb1.value, nb1.units ); } )
+	| ( <ARROWIMGURL>  <COLON> url   = url()               <SEMICOLON> { style.setArrowImageUrl( url ); } )
+	| ( <BORDERCOLOR>  <COLON> color = color()             <SEMICOLON> { style.setBorderColor( color ); } )
+	| ( <BORDERWIDTH>  <COLON> nb1   = real()              <SEMICOLON> { style.setBorderWidth( nb1.value, nb1.units ); } )
+	| ( <IMAGE>        <COLON> url   = url()               <SEMICOLON> { style.setImageUrl( url ); } )
+	| ( <IMAGEMODE>    <COLON> imm   = imageMode()         <SEMICOLON> { style.setImageMode( imm );  } )
+	| ( <IMAGEOFFSET>  <COLON> nb1   = real() nb2 = real() <SEMICOLON> { style.setImageOffset( nb1.value, nb2.value, nb1.units ); } )
+	| ( <PADDING>      <COLON> nb1   = real()              <SEMICOLON> { style.setPadding( nb1.value, nb1.units );  } )
+	| ( <SHADOWSTYLE>  <COLON> shsty = shadowStyle()       <SEMICOLON> { style.setShadowStyle( shsty ); } )
+	| ( <SHADOWOFFSET> <COLON> nb1   = real() nb2 = real() <SEMICOLON> { style.setShadowOffset( nb1.value, nb2.value, nb1.units ); } )
+	| ( <SHADOWCOLOR>  <COLON> shadowColors( style )       <SEMICOLON> )
+	| ( <SHADOWWIDTH>  <COLON> nb1   = real()              <SEMICOLON> { style.setShadowWidth( nb1.value, nb1.units ); } )
+	| ( <TEXTALIGN>    <COLON> txtal = textAlign()         <SEMICOLON> { style.setTextAlignment( txtal ); } )
+	| ( <TEXTMODE>     <COLON> txtmd = textMode()          <SEMICOLON> { style.setTextMode( txtmd ); } )
+	| ( <TEXTCOLOR>    <COLON> color = color()             <SEMICOLON> { style.setTextColor( color ); } )
+	| ( <TEXTSTYLE>    <COLON> txtst = textStyle()         <SEMICOLON> { style.setTextStyle( txtst ); } )
+	| ( <TEXTFONT>     <COLON> url   = font()              <SEMICOLON> { style.setTextFont( url ); } )
+	| ( <TEXTSIZE>     <COLON> nb1   = integer()           <SEMICOLON> { style.setTextSize( (int)nb1.value ); } )
+	| ( <TEXTOFFSET>   <COLON> nb1   = real() nb2 = real() <SEMICOLON> { style.setTextOffset( nb1.value, nb2.value, nb1.units ); } )
+	| ( <ZINDEX>       <COLON> nb1   = integer()           <SEMICOLON> { style.setZIndex( (int)nb1.value ); } )
+	)
+}
+
+void colors( Style style ):
+{
+	Color color;
+	style.unsetColor();
+}
+{
+	( color = color() { style.addColor( color ); } )+
+}
+
+void bgColors( Style style ):
+{
+	Color color;
+	style.unsetBgColor();
+}
+{
+	( color = color() { style.addBackgroundColor( color ); } )+
+} 
+
+void shadowColors( Style style ):
+{
+	Color color;
+	style.unsetShadowColor();
+}
+{
+	( color = color() { style.addShadowColor( color ); } )+
+} 
+
+Number integer():
+{
+	Token       t;
+	Style.Units units = Style.Units.PX;
+	Number      n     = null;
+}
+{
+	t = <REAL>
+	{
+		String nb = t.image.toLowerCase();
+		
+		if( nb.endsWith( "px" ) )
+		{
+			units = Style.Units.PX;
+			nb    = nb.substring( 0, nb.length()-2 );
+		}
+		else if( nb.endsWith( "gu" ) )
+		{
+			units = Style.Units.GU;
+			nb    = nb.substring( 0, nb.length()-2 ); 
+		}
+		else if( nb.endsWith( "%" ) )
+		{
+			units = Style.Units.PERCENTS;
+			nb    = nb.substring( 0, nb.length()-1 );
+		} 
+
+		try { n = new Number( Float.parseFloat( nb ), units ); }
+		catch( NumberFormatException e ) { generateParseException(); }
+		return n;
+	}
+}
+
+Number real():
+{
+	Token       t;
+	Style.Units units = Style.Units.PX;
+	Number      n     = null;
+}
+{
+	t = <REAL> 
+	{
+		String nb = t.image.toLowerCase();
+		
+		if( nb.endsWith( "px" ) )
+		{
+			units = Style.Units.PX;
+			nb    = nb.substring( 0, nb.length()-2 );
+		}
+		else if( nb.endsWith( "gu" ) )
+		{
+			units = Style.Units.GU;
+			nb    = nb.substring( 0, nb.length()-2 ); 
+		}
+		else if( nb.endsWith( "%" ) )
+		{
+			units = Style.Units.PERCENTS;
+			nb    = nb.substring( 0, nb.length()-1 );
+		} 
+	
+		try{ n = new Number( Float.parseFloat( nb ), units ); }
+		catch( NumberFormatException e ) { generateParseException(); }
+		return n;
+	}
+}
+
+
+Color color():
+{
+	Token  t;
+	String s;
+}
+{
+	( ( t=<RGB>        { s = t.image; } )
+	| ( t=<RGBA>       { s = t.image; } )
+	| ( t=<HTMLCOLOR>  { s = t.image; } )
+	| ( t=<IDENTIFIER> { s = t.image; } )
+	| ( t=<STRING>     { s = t.image.substring( 1, t.image.length()-1 ); } )
+	)
+	{
+		Color color = GraphicGraph.convertColor( s );
+		if( color == null ) color = Color.BLACK; 
+		return color;
+	}
+}
+
+Style.ArrowShape arrowShape():
+{
+	Style.ArrowShape s;
+}
+{
+	( ( <NONE>    { s = Style.ArrowShape.NONE;    } )
+	| ( <SIMPLE>  { s = Style.ArrowShape.SIMPLE;  } )
+	| ( <DIAMANT> { s = Style.ArrowShape.DIAMANT; } )
+	| ( <CIRCLE>  { s = Style.ArrowShape.CIRCLE;  } )
+	| ( <IMAGE>   { s = Style.ArrowShape.IMAGE;   } )
+	)
+	{ return s; }
+}
+
+Style.SpriteShape spriteShape():
+{
+	Style.SpriteShape s;
+}
+{
+	( ( <CIRCLE>      { s = Style.SpriteShape.CIRCLE;       } )
+	| ( <IMAGE>       { s = Style.SpriteShape.IMAGE;        } )
+	| ( <IMAGES>      { s = Style.SpriteShape.IMAGES;       } )
+	| ( <ARROW>       { s = Style.SpriteShape.ARROW;        } )
+	| ( <FLOW>        { s = Style.SpriteShape.FLOW;         } )
+	| ( <PIE_CHART>   { s = Style.SpriteShape.PIE_CHART;    } )
+	| ( <TEXTBOX>     { s = Style.SpriteShape.TEXT_BOX;     } )
+	| ( <TEXTELLIPSE> { s = Style.SpriteShape.TEXT_ELLIPSE; } )
+	)
+	{ return s; }
+}
+
+Style.SpriteOrientation spriteOrient():
+{
+	Style.SpriteOrientation s;
+}
+{
+	( ( <NONE>   { s = Style.SpriteOrientation.NONE;   } )
+	| ( <TO>     { s = Style.SpriteOrientation.TO;     } )
+	| ( <FROM>   { s = Style.SpriteOrientation.FROM;   } )
+	| ( <ORIGIN> { s = Style.SpriteOrientation.ORIGIN; } )
+	)
+	{ return s; }
+}
+
+String url():
+{
+	Token t;
+}
+{
+	<URL> <LPAREN> t=<STRING> <RPAREN>
+	{ return t.image.substring( 1, t.image.length()-1 ); }
+}
+
+String font():
+{
+	Token  t;
+	String s;
+}
+{
+	( ( t=<IDENTIFIER> { s = t.image; } )
+	| ( t=<STRING>     { s = t.image.substring( 1, t.image.length()-1 ); } )
+	)
+	{ return s; }
+}
+
+Style.NodeShape nodeShape():
+{
+	Style.NodeShape s;
+}
+{
+	( ( <SQUARE>      { s = Style.NodeShape.SQUARE;       } )
+	| ( <CIRCLE>      { s = Style.NodeShape.CIRCLE;       } )
+	| ( <TRIANGLE>    { s = Style.NodeShape.TRIANGLE;     } )
+	| ( <CROSS>       { s = Style.NodeShape.CROSS;        } )
+	| ( <TEXTBOX>     { s = Style.NodeShape.TEXT_BOX;     } )
+	| ( <TEXTELLIPSE> { s = Style.NodeShape.TEXT_ELLIPSE; } )
+	| ( <IMAGE>       { s = Style.NodeShape.IMAGE;        } )
+	)
+	{ return s; }
+}
+
+Style.EdgeShape edgeShape( Style style ):
+{
+	Style.EdgeShape s;
+	Number nb1, nb2, nb3;
+}
+{
+	( ( <LINE>       { s = Style.EdgeShape.LINE;        } )
+	| ( <ANGLE>      { s = Style.EdgeShape.ANGLE;       } )
+	| ( <CUBICCURVE> { s = Style.EdgeShape.CUBIC_CURVE; } )
+	| ( <LPAREN> { s = Style.EdgeShape.POINTS; } nb1 = real() <COMA> nb2 = real() <COMA> nb3 = real()  <RPAREN> { style.removeEdgePoints(); style.addEdgePoint( nb1.value, nb2.value, nb3.value ); } 
+				 ( <COMA> <LPAREN>  nb1 = real() <COMA> nb2 = real() <COMA> nb3 = real() <RPAREN>  { style.addEdgePoint(  nb1.value, nb2.value, nb3.value ); } )*  )
+	)
+	{ return s; }
+}
+
+Style.EdgeStyle edgeStyle():
+{
+	Style.EdgeStyle s;
+}
+{
+	( ( <PLAIN>      { s = Style.EdgeStyle.PLAIN;  } )
+	| ( <DOTS>       { s = Style.EdgeStyle.DOTS;   } )
+	| ( <DASHES>     { s = Style.EdgeStyle.DASHES; } )
+	)
+	{ return s; }
+}
+
+Style.ImageMode imageMode():
+{
+	Style.ImageMode m;
+}
+{
+	( ( <SIMPLE> { m = Style.ImageMode.SIMPLE; } )
+	| ( <TILED>  { m = Style.ImageMode.TILED;  } )
+	)
+	{ return m; }
+}
+
+Style.TextAlignment textAlign():
+{
+	Style.TextAlignment t;
+}
+{
+	( ( <LEFT>   { t = Style.TextAlignment.LEFT;   } )
+	| ( <RIGHT>  { t = Style.TextAlignment.RIGHT;  } )
+	| ( <CENTER> { t = Style.TextAlignment.CENTER; } )
+	| ( <ASIDE>  { t = Style.TextAlignment.ASIDE;  } ) 
+	| ( <ALONG>  { t = Style.TextAlignment.ALONG;  } ) 
+	)
+	{ return t; }
+}
+
+Style.TextStyle textStyle():
+{
+	Style.TextStyle t;
+}
+{
+	( ( <NORMAL>      { t = Style.TextStyle.NORMAL;      } )
+	| ( <BOLD>        { t = Style.TextStyle.BOLD;        } )
+	| ( <ITALIC>      { t = Style.TextStyle.ITALIC;      } )
+	| ( <BOLD_ITALIC> { t = Style.TextStyle.BOLD_ITALIC; } )
+	)
+	{ return t; }
+}
+
+Style.TextMode textMode():
+{
+	Style.TextMode m;
+}
+{
+	( ( <NORMAL>    { m = Style.TextMode.NORMAL;    } )
+	| ( <HIDDEN>    { m = Style.TextMode.HIDDEN;    } )
+	| ( <TRUNCATED> { m = Style.TextMode.TRUNCATED; } )
+	)
+	{ return m; }
+}
+
+Style.ShadowStyle shadowStyle():
+{
+	Style.ShadowStyle s;
+}
+{
+	( ( <NONE>       { s = Style.ShadowStyle.NONE; } )
+	| ( <SIMPLE>     { s = Style.ShadowStyle.SIMPLE; } )
+	)
+	{ return s; }
+}
