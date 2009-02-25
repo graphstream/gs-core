@@ -465,7 +465,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 		}
 	}
 
-// MBoxListener -- receive redirected events and re-send then to listeners.
+// MBoxListener -- receive redirected events and re-send them to listeners.
 	
 	public void processMessage( String from, Object[] data )
     {
@@ -714,15 +714,9 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 		String nid;
 		public DummyNode( String id ) { super( id ); }
 		
-		public String getId()
-		{
-			return nid;
-		}
-		
-		public void setId( String id )
-		{
-			nid = id;
-		}
+		@Override
+		public String getId() { return nid; }
+		public void setId( String id ) { nid = id; }
 		
 		@Override
         protected void attributeChanged( String attribute, Object oldValue, Object newValue ) {}

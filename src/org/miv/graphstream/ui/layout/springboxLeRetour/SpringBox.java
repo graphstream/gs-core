@@ -267,7 +267,7 @@ public class SpringBox implements Layout, ParticleBoxListener
 		if( time > energies.getBufferSize() )
 			return energies.getStabilization();
 		
-		return 0;
+		return 1;
 	}
 	
 	public int getSteps()

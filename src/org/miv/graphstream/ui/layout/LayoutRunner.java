@@ -212,22 +212,22 @@ public class LayoutRunner extends Thread implements MBoxListener
 					if( stable <= 0f )
 					{
 						sleep( 500 );
-	//					System.err.printf( "Layout STABLE%n" );
+						System.err.printf( "Layout STABLE %f%n", stable );
 					}
-					else if( stable <= 0.08f )
+					else if( stable <= 0.001f )
 					{
 						sleep( 160 );		// 6 Hz
-	//					System.err.printf( "Layout ALMOST-STABLE %f%n", stable );
+						System.err.printf( "Layout ALMOST-STABLE %f%n", stable );
 					}
-					else if( stable <= 0.1f )
+					else if( stable <= 0.01f )
 					{
 						sleep( 80 );		// 12 Hz
-	//					System.err.printf( "Layout ALMOST-STABLE %f%n", stable );					
+						System.err.printf( "Layout ALMOST-STABLE %f%n", stable );					
 					}
 					else
 					{
 						sleep( pauseMs );
-	//					System.err.printf( "Layout %f%n", stable );
+						System.err.printf( "Layout %f%n", stable );
 					}
 				}
 			}

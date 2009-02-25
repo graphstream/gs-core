@@ -89,7 +89,7 @@ public interface GraphListener
 	/**
 	 * <p>
 	 * Since dynamic graphs are based on discrete event modifications, the notion of step is defined
-	 * to simulate elapsed time between events. So a step is a event that occure in the graph, it
+	 * to simulate elapsed time between events. So a step is a event that occurs in the graph, it
 	 * does not modify it but it gives a kind of timestamp that allow the tracking of the progress
 	 * of the graph over the time.
 	 * </p>
@@ -105,5 +105,4 @@ public interface GraphListener
 	 *            over the time.
 	 */
 	public void  stepBegins(Graph graph, double time);
-
 }

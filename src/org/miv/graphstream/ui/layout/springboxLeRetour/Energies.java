@@ -90,7 +90,7 @@ public class Energies
 		if( diff < 0 )
 			diff = 0;
 			
-		return 1 - ( diff / max );
+		return ( diff / max );
 	}
 	
 	/**

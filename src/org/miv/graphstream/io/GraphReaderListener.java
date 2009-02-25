@@ -20,11 +20,6 @@ import java.util.*;
 /**
  * Dynamic graph reader listener.
  *
- * <p>This interface has been deprecated by the {@link GraphReaderListenerExtended},
- * which allows to the ability to add or remove individual attributes. This
- * interface only allows to add attributes, but has no clear way to remove
- * them.</p>
- *
  * <p>A graph can be either static or dynamic. A static graph does not change
  * over time, whereas a dynamic one can vary. Each method of this interface
  * represents a variation in a graph. Such events are the apparition,
@@ -51,38 +46,18 @@ import java.util.*;
  * @author Yoann Pigné
  * @since 20040911
  */
-@Deprecated
 public interface GraphReaderListener
 {
 // Commands
-
-	/**
-	 * A graph attribute has been read.
-	 * @param attributes A set of pairs (name,attribute) where the name identifies the attributes or
-	 *  null if none.
-	 * @throws GraphParseException If something you expect from the read event did not occurred.
-	 */
-	void graphChanged( Map<String,Object> attributes )
-		throws GraphParseException;
 	
 	/**
-	 * A node has been read. The node is identified by a string.
+	 * A node has been added.
 	 * @param id The node unique identifier.
 	 * @param attributes A set of pairs (name,attribute) where the name identifies the attributes or
 	 *  null if none.
 	 * @throws GraphParseException If something you expect from the read event did not occurred.
 	 */
 	void nodeAdded( String id, Map<String,Object> attributes )
-		throws GraphParseException;
-
-	/**
-	 * Any of the attributes of the node changed. 
-	 * @param id The node unique identifier.
-	 * @param attributes A set of pairs (name,attribute) where the name identifies the attributes or
-	 *  null if none.
-	 * @throws GraphParseException If something you expect from the read event did not occurred.
-	 */
-	void nodeChanged( String id, Map<String,Object> attributes )
 		throws GraphParseException;
 	
 	/**
@@ -106,22 +81,25 @@ public interface GraphReaderListener
 		throws GraphParseException;
 	
 	/**
-	 * Any of the attributes changed.
-	 * @param id The edge unique identifier.
-	 * @param attributes A set of pairs (name,attribute) where the name identifies the attributes or null if none.
-	 * @throws GraphParseException If something you expect from the read event did not occurred.
-	 */
-	void edgeChanged( String id, Map<String,Object> attributes )
-		throws GraphParseException;
-	
-	/**
 	 * An edge disappeared.
 	 * @param id The edge unique identifier.
 	 * @throws GraphParseException If something you expect from the read event did not occurred.
 	 */
 	void edgeRemoved( String id )
 		throws GraphParseException;
-
+/*	
+	void graphAttributeAdded( String attribute, Object value ) throws GraphParseException;
+	
+	void graphAttributeRemoved( String attribute ) throws GraphParseException;
+	
+	void nodeAttributeAdded( String nodeId, String attribute, Object value ) throws GraphParseException;
+	
+	void nodeAttributeRemoved( String nodeId, String attribute ) throws GraphParseException;
+	
+	void edgeAttributeAdded( String edgeId, String attribute, Object value ) throws GraphParseException;
+	
+	void edgeAttributeRemoved( String edgeId, String attribute ) throws GraphParseException;
+*/
 	/**
 	 * A new step (group of events) begins.
 	 * @param time
@@ -136,5 +114,38 @@ public interface GraphReaderListener
 	 * @throws GraphParseException If something you expect from the read event did not occurred.
 	 */
 	void unknownEventDetected( String unknown )
+		throws GraphParseException;
+
+// Depreciated
+	
+	/**
+	 * A graph attribute has been read.
+	 * @param attributes A set of pairs (name,attribute) where the name identifies the attributes or
+	 *  null if none.
+	 * @throws GraphParseException If something you expect from the read event did not occurred.
+	 */
+	@Deprecated
+	void graphChanged( Map<String,Object> attributes )
+		throws GraphParseException;
+
+	/**
+	 * Any of the attributes of the node changed. 
+	 * @param id The node unique identifier.
+	 * @param attributes A set of pairs (name,attribute) where the name identifies the attributes or
+	 *  null if none.
+	 * @throws GraphParseException If something you expect from the read event did not occurred.
+	 */
+	@Deprecated
+	void nodeChanged( String id, Map<String,Object> attributes )
+		throws GraphParseException;
+	
+	/**
+	 * Any of the attributes changed.
+	 * @param id The edge unique identifier.
+	 * @param attributes A set of pairs (name,attribute) where the name identifies the attributes or null if none.
+	 * @throws GraphParseException If something you expect from the read event did not occurred.
+	 */
+	@Deprecated
+	void edgeChanged( String id, Map<String,Object> attributes )
 		throws GraphParseException;
 }

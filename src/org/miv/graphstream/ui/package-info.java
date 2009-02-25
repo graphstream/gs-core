@@ -38,9 +38,9 @@
  *
  * <p>
  * The {@link org.miv.graphstream.ui.GraphViewer} class defines the services proposed
- * by a graph viewer. A graph viewer is a graphical component that render a graph to
+ * by a graph viewer. A graph viewer is a graphical component that renders a graph to
  * visualise it. The graph viewer is made to run in a separate thread so that the viewer
- * can draw the graph in parallel with you code that create and modify the graph.
+ * can draw the graph in parallel with your code (which creates and modifies the graph).
  * Lets call your code running in the main thread the "user thread" and the graph viewer
  * thread the "viewer thread".
  * </p>
@@ -49,7 +49,7 @@
  * A default base (incomplete abstract class) implementation is given by the
  * {@link org.miv.graphstream.ui.GraphViewerBase} class. This implementations creates a
  * graphic graph in the viewer thread that copies your graph and provides graphic attributes
- * like positions and style. Lets call the graph in the user thread the "user graph" and the
+ * like positions and CSS style. Lets call the graph in the user thread the "user graph" and the
  * graph in the "viewer thread" the "graphic graph". The graphic graph is created automatically
  * and listen at the graph so
  * that an exact copy is maintained. This graphic graph is able to read style sheets
