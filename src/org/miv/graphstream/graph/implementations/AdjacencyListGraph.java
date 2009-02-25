@@ -251,8 +251,20 @@ public class AdjacencyListGraph
 		setStrictChecking( strictChecking );
 		setAutoCreate( autoCreate );
 		
-		nodeFactory = new AdjacencyListNodeFactory();
-		edgeFactory = new AdjacencyListEdgeFactory();
+		nodeFactory = new NodeFactory()
+		{
+			public Node newInstance( String id, Graph graph )
+			{
+				return new AdjacencyListNode(graph,id);
+			}
+		};
+		edgeFactory = new EdgeFactory()
+		{
+			public Edge newInstance( String id, Node src, Node trg )
+			{
+				return new AdjacencyListEdge(id,src,trg);
+			}
+		};
 	}
 
 	

@@ -46,8 +46,8 @@ public class ConcurrentGraph
 	protected ConcurrentLinkedQueue<GraphEvent> eventQueue;
 	protected boolean processEvent = false;
 	
-	protected NodeFactory nodeFactory = new ConcurrentNodeFactory();
-	protected EdgeFactory edgeFactory = new ConcurrentEdgeFactory();
+	protected NodeFactory nodeFactory;
+	protected EdgeFactory edgeFactory;
 	
 	protected boolean strictChecking;
 	protected boolean autoCreate;
@@ -78,6 +78,20 @@ public class ConcurrentGraph
 		
 		nodes = new ConcurrentHashMap<String,Node>();
 		edges = new ConcurrentHashMap<String,Edge>();
+		nodeFactory = new NodeFactory()
+		{
+			public Node newInstance( String id, Graph graph )
+			{
+				return new ConcurrentNode(graph,id);
+			}
+		};
+		edgeFactory = new EdgeFactory()
+		{
+			public Edge newInstance( String id, Node src, Node trg )
+			{
+				return new ConcurrentEdge(id,src,trg);
+			}
+		};
 		
 		eventQueue = new ConcurrentLinkedQueue<GraphEvent>();
 		

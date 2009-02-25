@@ -214,8 +214,20 @@ public class DefaultGraph
 		setAutoCreate( autoCreate );
 		
 		// Factories that dynamicaly create nodes and edges.
-		nodeFactory = new DefaultNodeFactory();
-		edgeFactory = new DefaultEdgeFactory();
+		nodeFactory = new NodeFactory()
+		{
+			public Node newInstance( String id, Graph graph )
+			{
+				return new SingleNode(graph,id);
+			}
+		};
+		edgeFactory = new EdgeFactory()
+		{
+			public Edge newInstance( String id, Node src, Node trg )
+			{
+				return new SingleEdge(id,src,trg);
+			}
+		};
 		
 	}
 
