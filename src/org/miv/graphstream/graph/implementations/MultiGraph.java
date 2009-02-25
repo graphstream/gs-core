@@ -16,6 +16,12 @@
 
 package org.miv.graphstream.graph.implementations;
 
+import org.miv.graphstream.graph.Edge;
+import org.miv.graphstream.graph.EdgeFactory;
+import org.miv.graphstream.graph.Graph;
+import org.miv.graphstream.graph.Node;
+import org.miv.graphstream.graph.NodeFactory;
+
 /**
  * A graph implementation that supports multiple edges between two nodes.
  * 
@@ -80,8 +86,20 @@ public class MultiGraph extends DefaultGraph
 	{
 		super( id, strictChecking, autoCreate );
 		
-		nodeFactory = new DefaultNodeFactory( "org.miv.graphstream.graph.implementations.MultiNode" );
-		edgeFactory = new DefaultEdgeFactory( "org.miv.graphstream.graph.implementations.MultiEdge" );
+		nodeFactory = new NodeFactory()
+		{
+			public Node newInstance( String id, Graph graph )
+			{
+				return new MultiNode(graph,id);
+			}
+		};
+		edgeFactory = new EdgeFactory()
+		{
+			public Edge newInstance( String id, Node src, Node dst )
+			{
+				return new MultiEdge(id,src,dst);
+			}
+		};
 		
 		addAttribute( "ui.multigraph" );	// XXX a trick, this allows to inform the viewer
 											// That multi-edges will be drawn. When drawing

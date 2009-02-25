@@ -16,6 +16,7 @@
 
 package org.miv.graphstream.graph.implementations;
 
+import org.miv.graphstream.graph.Node;
 import org.miv.util.SingletonException;
 
 /**
@@ -28,6 +29,11 @@ public class MultiEdge extends DefaultEdge
 {
 // Constructors
 
+	protected MultiEdge( String id, Node src, Node dst )
+	{
+		this(id,src,dst,false);
+	}
+	
 	/**
 	 * New edge between a source node and target node. If the directed argument
 	 * is true the edge is directed from the source to the target. The edge
@@ -42,15 +48,9 @@ public class MultiEdge extends DefaultEdge
 	 *         this edge or if an edge with the same id already exists.
 	 */
 	protected
-	MultiEdge( String tag, DefaultNode source, DefaultNode target, boolean directed )
+	MultiEdge( String tag, Node source, Node target, boolean directed )
 		throws IllegalStateException, SingletonException
 	{
 		super( tag, source, target, directed );
-	}
-
-	protected
-	MultiEdge()
-	{
-		super();
 	}
 }

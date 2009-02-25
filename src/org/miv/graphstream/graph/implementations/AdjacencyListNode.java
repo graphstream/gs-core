@@ -38,15 +38,14 @@ import org.miv.graphstream.graph.Node;
  * </p>
  * 
  * @author Antoine Dutot
- * @author Yoann Pigné
+ * @author Yoann Pignï¿½
  * 
  * @since July 12 2007
   * 
  */
-public class AdjacencyListNode extends AbstractElement implements Node
+public class AdjacencyListNode
+	extends AbstractElement implements Node
 {
-
-	
 	private class EnteringEdgeIterator implements Iterator<Edge>
 	{
 		public AdjacencyListNode n;
@@ -186,7 +185,7 @@ public class AdjacencyListNode extends AbstractElement implements Node
 	}
 
 	/**
-	 * @author Yoann Pigné
+	 * @author Yoann Pignï¿½
 	 * 
 	 */
 	public class EdgeIterator implements Iterator<Edge>
@@ -241,11 +240,7 @@ public class AdjacencyListNode extends AbstractElement implements Node
 		this.graph = graph;
 		edges = new ArrayList<Edge>();
 	}
-
-	public AdjacencyListNode()
-	{
-		this(null,"");
-	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.miv.graphstream.graph.NodeInterface#getBreadthFirstIterator()
@@ -395,15 +390,6 @@ public class AdjacencyListNode extends AbstractElement implements Node
 	public Graph getGraph()
 	{
 		return graph;
-	}
-	
-
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.Node#setGraph(org.miv.graphstream.graph.Graph)
-	 */
-	public void setGraph( Graph graph )
-	{
-		this.graph = graph; 
 	}
 
 	/*

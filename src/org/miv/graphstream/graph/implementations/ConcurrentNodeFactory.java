@@ -15,22 +15,19 @@
  */
 package org.miv.graphstream.graph.implementations;
 
+import org.miv.graphstream.graph.Graph;
 import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.graph.NodeFactory;
 
 public class ConcurrentNodeFactory
 	implements NodeFactory
 {
-
-	/* @Override */
-	public Node newInstance()
-	{
-		return new ConcurrentNode();
-	}
-
-	/* @Override */
-	public void setNodeClass(String nodeClass)
+	public ConcurrentNodeFactory()
 	{
 	}
 
+	public Node newInstance( String id, Graph graph )
+	{
+		return new ConcurrentNode( graph, id );
+	}
 }

@@ -23,6 +23,7 @@ import java.util.Iterator;
 
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.Element;
+import org.miv.graphstream.graph.Graph;
 import org.miv.graphstream.graph.Node;
 import org.miv.util.SingletonException;
 
@@ -57,20 +58,13 @@ public class MultiNode extends DefaultNode
 	protected int outDegree = 0;
 	
 // Constructors
-
-	/**
-	 * New unconnected,unnamed node. Useful for reflexive instantiation.
-	 */
-	public MultiNode()
-	{
-	}
 	
 	/**
 	 * New unconnected node.
 	 * @param graph The graph containing the node.
 	 * @param id Tag of the node.
 	 */
-	public MultiNode( MultiGraph graph, String id )
+	public MultiNode( Graph graph, String id )
 	{
 		super( graph, id );
 	}
@@ -166,23 +160,22 @@ public class MultiNode extends DefaultNode
 
 		// Register the edge.
 
-		ArrayList<Edge> toward = to.get( id );
+		ArrayList<Edge> toward = to.get( getId() );
 		
 		if( toward != null )
 		{
 			// There exist yet an edge from the target to this node.
 
-			MultiEdge e = (MultiEdge) G.edgeFactory.newInstance();
-			
-			e.setId( tag );
-			e.bind( this, target, directed );
+			MultiEdge e = (MultiEdge) G.edgeFactory.newInstance(tag,this,target);
+			//e.bind( this, target, directed );
+			e.setDirected(directed);
 			return e;
 		}
 		else
 		{
-			MultiEdge e = (MultiEdge) G.edgeFactory.newInstance();
-			e.setId( tag );
-			e.bind( this, target, directed );
+			MultiEdge e = (MultiEdge) G.edgeFactory.newInstance(tag,this,target);
+			//e.bind( this, target, directed );
+			e.setDirected(directed);
 			return e;
 		}
 	}

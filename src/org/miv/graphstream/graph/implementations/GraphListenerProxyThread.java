@@ -82,7 +82,7 @@ import org.miv.util.SingletonException;
  * 
  * @see org.miv.graphstream.graph.GraphListener
  * @author Antoine Dutot
- * @author Yoann Pigné
+ * @author Yoann Pignï¿½
  * @since 20061208
  */
 public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListener
@@ -646,7 +646,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 	 * The post() method handles variable argument list, which simplify the creation of messages.
 	 * 
 	 * @author Antoine Dutot
-	 * @author Yoann Pigné
+	 * @author Yoann Pignï¿½
 	 * @since 20061208
 	 */
 	public static enum InputProtocol
@@ -711,7 +711,18 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 
 	public static class DummyNode extends AbstractElement implements Node
 	{
+		String nid;
 		public DummyNode( String id ) { super( id ); }
+		
+		public String getId()
+		{
+			return nid;
+		}
+		
+		public void setId( String id )
+		{
+			nid = id;
+		}
 		
 		@Override
         protected void attributeChanged( String attribute, Object oldValue, Object newValue ) {}
@@ -755,8 +766,8 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 		 */
 		public boolean directed = false;
 		
-		public static DummyNode FROM = new DummyNode( "" );
-		public static DummyNode TO = new DummyNode( "" );
+		public DummyNode FROM = new DummyNode( "" );
+		public DummyNode TO = new DummyNode( "" );
 		
 		public DummyEdge( String id, String from, String to, boolean dir ) { super( id ); this.from = from; this.to = to; directed = dir; }
 		
@@ -792,6 +803,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 		public GraphViewerRemote display() { return null; }
 		public GraphViewerRemote display( boolean autoLayout ) { return null; }
 		public EdgeFactory edgeFactory() { return null; }
+		public void setEdgeFactory( EdgeFactory ef ) {}
 		public Edge getEdge( String id ) { return null; }
 		public int getEdgeCount() { return 0; }
 		public Iterator<? extends Edge> getEdgeIterator() { return null; }
@@ -805,6 +817,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 		public boolean isAutoCreationEnabled() { return false; }
 		public boolean isStrictCheckingEnabled() { return false; }
 		public NodeFactory nodeFactory() { return null; }
+		public void setNodeFactory( NodeFactory nf ) {}
 		public void read( String filename ) throws IOException, GraphParseException, NotFoundException {}
 		public void read( GraphReader reader, String filename ) throws IOException, GraphParseException {}
 		public int readPositionFile( String posFileName ) throws IOException { return 0; }

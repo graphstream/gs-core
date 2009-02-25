@@ -44,7 +44,7 @@ import org.miv.util.SingletonException;
  * </p>
  * 
  * @author Antoine Dutot
- * @author Yoann Pigné
+ * @author Yoann Pignï¿½
  * @since July 12 2007
  */
 public interface Graph extends Element
@@ -109,9 +109,21 @@ public interface Graph extends Element
 	NodeFactory nodeFactory();
 	
 	/**
+	 * Set the node factory used to create nodes.
+	 * @param nf the new NodeFactory
+	 */
+	void setNodeFactory( NodeFactory nf );
+	
+	/**
 	 *  Helpful class that dynamically instantiates edges according to a given class name.
 	 */
 	EdgeFactory edgeFactory();
+	
+	/**
+	 * Set the edge factory used to create edges.
+	 * @param ef the new EdgeFactory
+	 */
+	void setEdgeFactory( EdgeFactory ef );
 	
 	/**
 	 * Empties the graph completely by removing any references to nodes or edges.

@@ -818,7 +818,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 				}
 				catch( IOException e )
 				{
-					System.err.printf( "Error while parsing style sheet for graph '%s' :", id );
+					System.err.printf( "Error while parsing style sheet for graph '%s' :", getId() );
 					if( ((String)newValue).startsWith( "url" ) )
 						System.err.printf( "    %s%n", ((String)newValue) );
 					System.err.printf( "    %s%n", e.getMessage() );
@@ -1394,6 +1394,10 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
     {
 		return null;
     }
+	
+	public void setEdgeFactory( EdgeFactory ef )
+	{
+	}
 
 	public int getEdgeCount()
     {
@@ -1444,6 +1448,10 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
     {
 	    return null;
     }
+	
+	public void setNodeFactory( NodeFactory nf )
+	{
+	}
 
 	public void read( String filename ) throws IOException, GraphParseException, NotFoundException
     {

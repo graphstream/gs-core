@@ -35,7 +35,7 @@ import org.miv.util.set.*;
  * @see org.miv.graphstream.graph.Node
  * @see org.miv.graphstream.graph.Edge
  * @author Antoine Dutot
- * @author Yoann Pigné
+ * @author Yoann Pignï¿½
  * @since 20040910
  */
 public abstract class AbstractElement implements Element
@@ -45,7 +45,7 @@ public abstract class AbstractElement implements Element
 	/**
 	 * Tag of this element.
 	 */
-	protected String id;
+	private String id;
 
 	/**
 	 * Attributes map. This map is created only when needed. It contains pairs
@@ -77,13 +77,13 @@ public abstract class AbstractElement implements Element
 	{
 		return id;
 	}
-
+/*
 	public void setId(String id)
 	{
 		if( this.id != null )
 			this.id = id;
 	}
-
+*/
 	public Object getAttribute( String key )
 	{
 		if( attributes != null )

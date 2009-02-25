@@ -17,20 +17,18 @@ package org.miv.graphstream.graph.implementations;
 
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.EdgeFactory;
+import org.miv.graphstream.graph.Node;
 
 public class ConcurrentEdgeFactory
 	implements EdgeFactory
 {
-
-	/* @Override */
-	public Edge newInstance()
-	{
-		return new ConcurrentEdge();
-	}
-
-	/* @Override */
-	public void setEdgeClass(String edgeClass)
+	public ConcurrentEdgeFactory()
 	{
 	}
 
+	/* @Override */
+	public Edge newInstance( String id, Node src, Node dst )
+	{
+		return new ConcurrentEdge(id,src,dst);
+	}
 }

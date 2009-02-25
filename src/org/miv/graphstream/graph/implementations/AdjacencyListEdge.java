@@ -31,12 +31,13 @@ import org.miv.graphstream.graph.Node;
  * </p>
  * 
  * @author Antoine Dutot
- * @author Yoann Pigné
+ * @author Yoann Pignï¿½
  * 
  * @since July 12 2007
  * 
  */
-public class AdjacencyListEdge extends AbstractElement implements Edge
+public class AdjacencyListEdge
+	extends AbstractElement implements Edge
 {
 
 	AdjacencyListNode n0;
@@ -49,14 +50,17 @@ public class AdjacencyListEdge extends AbstractElement implements Edge
 	/**
 	 * @param id
 	 */
-	protected AdjacencyListEdge( String id )
+	protected AdjacencyListEdge( String id, Node src, Node dst )
 	{
 		super( id );
-	}
-
-	protected AdjacencyListEdge()
-	{
-		super("");
+		
+		if( ( src != null && ! ( src instanceof AdjacencyListNode ) ) ||
+			( dst != null && ! ( dst instanceof AdjacencyListNode ) ) )
+			throw new ClassCastException( "AdjacencyListEdge needs an " +
+					"extended class AdjacencyListNode" );
+		
+		this.n0 = (AdjacencyListNode) src;
+		this.n1 = (AdjacencyListNode) dst;
 	}
 
 	/*
@@ -67,11 +71,7 @@ public class AdjacencyListEdge extends AbstractElement implements Edge
 	{
 		return n0;
 	}
-
-	public void setNode0(AdjacencyListNode n)
-	{
-		n0 =n; 
-	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.miv.graphstream.graph.EdgeInterface#getNode1()
@@ -79,11 +79,6 @@ public class AdjacencyListEdge extends AbstractElement implements Edge
 	public Node getNode1()
 	{
 		return n1;
-	}
-
-	public void setNode1(AdjacencyListNode n)
-	{
-		n1 =n; 
 	}
 
 	/*
@@ -142,12 +137,12 @@ public class AdjacencyListEdge extends AbstractElement implements Edge
 	 */
 	public void switchDirection()
 	{
-		( (AdjacencyListGraph) n0.graph ).beforeEdgeRemoveEvent( this );
+		( (AdjacencyListGraph) n0.getGraph() ).beforeEdgeRemoveEvent( this );
 		
 		AdjacencyListNode n = n0;
 		n0 = n1;
 		n1 = n;
-		( (AdjacencyListGraph) n0.graph ).afterEdgeAddEvent( this );
+		( (AdjacencyListGraph) n0.getGraph() ).afterEdgeAddEvent( this );
 	}
 
 

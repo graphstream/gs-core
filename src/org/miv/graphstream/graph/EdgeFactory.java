@@ -19,7 +19,7 @@ package org.miv.graphstream.graph;
  * An interface aimed at dynamicaly creating edge objects based on a class name.
  * 
  * @author Antoine Dutot
- * @author Yoann Pigné
+ * @author Yoann Pignï¿½
  * @since september 2007
  */
 public interface EdgeFactory
@@ -28,12 +28,12 @@ public interface EdgeFactory
 	 * Create a new instance of edge.
 	 * @return The newly created edge.
 	 */
-	public Edge newInstance();
+	public Edge newInstance( String id, Node src, Node dst );
 
 	/**
 	 * Modifies the name of the class to be used to create new edges.
 	 * @param edgeClass The full qualified name of the class.
 	 */
-	public void setEdgeClass( String edgeClass );
+	//public void setEdgeClass( String edgeClass );
 	
 }

@@ -16,6 +16,7 @@
 
 package org.miv.graphstream.graph.implementations;
 
+import org.miv.graphstream.graph.Node;
 import org.miv.util.SingletonException;
 
 /**
@@ -24,10 +25,15 @@ import org.miv.util.SingletonException;
  * 
  * @author Antoine Dutot
  */
-public class SingleEdge extends DefaultEdge
+public class SingleEdge
+	extends DefaultEdge
 {
 // Constructors
 
+	protected SingleEdge( String id, Node src, Node trg )
+	{
+		super(id,src,trg);
+	}
 	/**
 	 * New edge between a source node and target node. If the directed argument
 	 * is true the edge is directed from the source to the target. The edge
@@ -41,13 +47,9 @@ public class SingleEdge extends DefaultEdge
 	 * @throws SingletonException If the source or the target already reference
 	 *         this edge or if an edge with the same id already exists.
 	 */
-	protected SingleEdge( String tag, DefaultNode source, DefaultNode target, boolean directed )
+	protected SingleEdge( String tag, Node source, Node target, boolean directed )
 		throws IllegalStateException, SingletonException
 	{
 		super( tag, source, target, directed );
-	}
-
-	protected SingleEdge()
-	{
 	}
 }

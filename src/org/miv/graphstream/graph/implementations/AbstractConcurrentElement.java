@@ -335,11 +335,11 @@ public abstract class AbstractConcurrentElement
 		addAttribute( attribute, values );
 	}
 
-	/* @Override */
+	/* @Override *//*
 	public void setId(String id)
 	{
 		this.id = id;
-	}
+	}*/
 	
 // --- //
 	

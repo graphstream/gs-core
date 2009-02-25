@@ -44,7 +44,7 @@ import java.util.Map;
  * </p>
  * 
  * @author Antoine Dutot
- * @author Yoann Pigné
+ * @author Yoann Pignï¿½
  * 
  * @since July 12 2007
   *
@@ -61,7 +61,7 @@ public interface Element
 	 * Set the unique identifier of this element. This can be done only once.
 	 * @param id The identifier value. 
 	 */
-	public void setId(String id);
+	//public void setId(String id);
 	
 	/**
 	 * Get the attribute object bound to the given key. The returned value maybe

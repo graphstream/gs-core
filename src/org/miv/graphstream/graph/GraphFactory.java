@@ -17,7 +17,7 @@ package org.miv.graphstream.graph;
  * An interface aimed at dynamically creating graph objects based on a class name.
  *
  * @author Antoine Dutot
- * @author Yoann Pigné
+ * @author Yoann Pignï¿½
  * @since september 2007
  */
 public class GraphFactory
@@ -44,8 +44,10 @@ public class GraphFactory
 			else {
 				completeGraphClass = graphClass ;
 			}
-			Graph res = (Graph) Class.forName( completeGraphClass ).newInstance();
-			res.setId( id );
+			//Graph res = (Graph) Class.forName( completeGraphClass ).newInstance();
+			//res.setId( id );
+			Class<?> clazz = Class.forName( completeGraphClass );
+			Graph res = (Graph) clazz.getConstructor(String.class).newInstance(id);
 			return res;
 		}
 		catch( InstantiationException e )
@@ -61,6 +63,16 @@ public class GraphFactory
 		catch( IllegalAccessException e )
 		{
 			System.out.println( "GraphFactory newInstance IllegalAccessException : "
+			        + e.getMessage() );
+		}
+		catch( NoSuchMethodException e )
+		{
+			System.out.println( "GraphFactory newInstance NoSuchMethodException : "
+			        + e.getMessage() );
+		}
+		catch( java.lang.reflect.InvocationTargetException e )
+		{
+			System.out.println( "GraphFactory newInstance InvocationTargetException : "
 			        + e.getMessage() );
 		}
 

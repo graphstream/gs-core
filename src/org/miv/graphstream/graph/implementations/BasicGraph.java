@@ -87,11 +87,19 @@ public class BasicGraph extends AbstractElement implements Graph
     {
 	    return null;
     }
+	
+	public void setNodeFactory( NodeFactory nf )
+	{
+	}
 
 	public EdgeFactory edgeFactory()
     {
 	    return null;
     }
+	
+	public void setEdgeFactory( EdgeFactory ef )
+	{
+	}
 
 	public Node getNode( String id )
     {
@@ -369,10 +377,6 @@ public class BasicNode extends AbstractElement implements Node
 	public boolean isDistributed()
     {
 	    return false;
-    }
-
-	public void setGraph( Graph graph )
-    {
     }
 
 	public void setGraphName( String newHost )

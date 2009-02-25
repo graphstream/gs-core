@@ -42,7 +42,7 @@ import java.util.*;
  * </p>
  *
  * @author Antoine Dutot
- * @author Yoann Pigné
+ * @author Yoann Pignï¿½
  * @since 20020709
  */
 public abstract class DefaultNode extends AbstractElement implements Node
@@ -67,32 +67,16 @@ public abstract class DefaultNode extends AbstractElement implements Node
 	protected ArrayList<Edge> edges = new ArrayList<Edge>();
 
 // Constructors
-
-	/**
-	 * New unconnected,unnamed node. Useful for reflexive instantiation.
-	 * 
-	 */
-	public DefaultNode()
-	{
-		super("");
-	}
 	
 	/**
 	 * New unconnected node.
 	 * @param graph The graph containing the node.
 	 * @param id Tag of the node.
 	 */
-	public DefaultNode( DefaultGraph graph, String id )
+	public DefaultNode( Graph graph, String id )
 	{
 		super( id );
-		G = graph;
-	}
-
-// Modifiers
-
-	public void setGraph( Graph graph )
-	{
-		this.G = (DefaultGraph) graph;
+		G = (DefaultGraph) graph;
 	}
 
 	
@@ -223,7 +207,7 @@ public abstract class DefaultNode extends AbstractElement implements Node
 	@Override
 	public String toString()
 	{
-		return String.format( "[node %s (%d edges)]", id, edges.size() );
+		return String.format( "[node %s (%d edges)]", getId(), edges.size() );
 	}
 
 // Nested classes

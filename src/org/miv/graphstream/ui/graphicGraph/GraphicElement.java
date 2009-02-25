@@ -31,7 +31,7 @@ import org.miv.graphstream.ui.graphicGraph.stylesheet.Style;
  * </p>
  * 
  * @author Antoine Dutot
- * @author Yoann Pigné
+ * @author Yoann Pignï¿½
  */
 public abstract class GraphicElement extends AbstractElement
 {
@@ -272,11 +272,11 @@ public abstract class GraphicElement extends AbstractElement
 			{
 				try
 				{
-					mygraph.styleSheet.parseStyleFromString( new Selector( getSelectorType(), id, null ), (String)newValue );
+					mygraph.styleSheet.parseStyleFromString( new Selector( getSelectorType(), getId(), null ), (String)newValue );
 				}
 				catch( java.io.IOException e )
 				{
-					System.err.printf( "Error while parsing style for %S '%s' :", getSelectorType(), id );
+					System.err.printf( "Error while parsing style for %S '%s' :", getSelectorType(), getId() );
 					System.err.printf( "    %s%n", e.getMessage() );
 					// TODO handle this differently ?!!.
 				}

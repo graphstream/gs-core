@@ -46,22 +46,21 @@ public class ConcurrentNode
 	ConcurrentLinkedQueue<Edge> leavingEdges;
 	ConcurrentLinkedQueue<Edge> enteringEdges;
 	
-	public ConcurrentNode()
-	{
-		this( null, "" );
-	}
-	
 	public ConcurrentNode( Graph graph, String id )
 	{
 		super( id );
 		
-		setGraph( graph );
+		if( graph != null && ! ( graph instanceof ConcurrentGraph ) )
+			throw new ClassCastException( "ConcurrentNode needs an " +
+					"extended class of ConcurrentGraph" );
+		
+		this.graph = graph;
 		
 		leavingEdges	= new ConcurrentLinkedQueue<Edge>();
 		enteringEdges	= new ConcurrentLinkedQueue<Edge>();
 	}
 	
-	protected void registerEdge( Edge e )
+	void registerEdge( Edge e )
 	{
 		if( e.getSourceNode() == this )
 		{
@@ -73,7 +72,7 @@ public class ConcurrentNode
 		}
 	}
 	
-	protected void unregisterEdge( Edge e )
+	void unregisterEdge( Edge e )
 	{
 		if( e.getSourceNode() == this )
 		{
@@ -260,17 +259,6 @@ public class ConcurrentNode
 	public boolean isDistributed()
 	{
 		return false;
-	}
-
-	/* @see org.miv.graphstream.graph.Node */
-	public void setGraph(Graph graph)
-	{
-		this.graph = graph;
-		
-		if( graph != null && ! ( graph instanceof ConcurrentGraph ) )
-		{
-			System.err.printf( "[W] use a ConcurrentGraph for full performances\n" );
-		}
 	}
 
 	/* @see org.miv.graphstream.graph.Node */

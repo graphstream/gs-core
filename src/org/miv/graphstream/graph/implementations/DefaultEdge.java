@@ -23,7 +23,7 @@ import org.miv.util.*;
  * Connection between two nodes.
  *
  * @author Antoine Dutot
- * @author Yoann Pigné
+ * @author Yoann Pignï¿½
  * @since 20020709
  */
 public abstract class DefaultEdge extends AbstractElement implements Edge
@@ -47,6 +47,10 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 
 // Constructors
 
+	protected DefaultEdge( String tag, Node source, Node target )
+	{
+		this(tag,source,target,false);
+	}
 	/**
 	 * New edge between a source node and target node. If the directed argument
 	 * is true the edge is directed from the source to the target. The edge
@@ -60,16 +64,26 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 	 * @throws SingletonException If the source or the target already reference
 	 *         this edge or if an edge with the same id already exists.
 	 */
-	protected DefaultEdge( String tag, DefaultNode source, DefaultNode target, boolean directed )
+	protected DefaultEdge( String tag, Node source, Node target, boolean directed )
 		throws IllegalStateException, SingletonException
 	{
 		super( tag );
-		bind( source, target, directed );
-	}
+		
+		if( ( source != null && ! ( source instanceof DefaultNode ) ) ||
+			( target != null && ! ( target instanceof DefaultNode ) ) )
+			throw new ClassCastException( "DefaultEdge needs an " +
+					"extended class of DefaultNode" );
+		
+		// Store information.
 
-	protected DefaultEdge()
-	{
-		super( "" );
+		this.directed = directed;
+		src           = (DefaultNode) source;
+		trg           = (DefaultNode) target;
+
+		// Register in the nodes.
+
+		src.registerEdge( this );
+		trg.registerEdge( this );
 	}
 	
 // Getters
@@ -113,7 +127,7 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 	@Override
 	public String toString()
 	{
-		return String.format( "[edge %s (%s -> %s)]", id, src, trg );
+		return String.format( "[edge %s (%s -> %s)]", getId(), src, trg );
 	}
 
 // Commands
@@ -166,6 +180,7 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 	 * @throws SingletonException if source or target already register an edge
 	 * with the same name.
 	 */
+	@Deprecated
 	protected void bind( DefaultNode source, DefaultNode target, boolean directed )
 		throws IllegalStateException, SingletonException
 	{
@@ -200,20 +215,19 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 		if( src != null || trg != null )
 		{
 			if( ( src != null && trg == null ) || ( trg != null && src == null ) )
-				throw new IllegalStateException( "inconsistency, edge `" + this.id + "' is half bound" );
+				throw new IllegalStateException( "inconsistency, edge `" + getId() + "' is half bound" );
 
 			src.unregisterEdge( this );
 			trg.unregisterEdge( this );
 		}
 		else if( src == null && trg == null )
 		{
-			throw new IllegalStateException( "inconsistency, edge '" + this.id + "' is not bound" );
+			throw new IllegalStateException( "inconsistency, edge '" + getId() + "' is not bound" );
 		}
 		
 		g = (DefaultGraph) src.getGraph();
 		g.beforeEdgeRemoveEvent( this );
 
-		id = null;
 		src = null;
 		trg = null;
 	}

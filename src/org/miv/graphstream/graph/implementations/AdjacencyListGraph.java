@@ -263,6 +263,14 @@ public class AdjacencyListGraph
 	{
 		return edgeFactory;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.miv.graphstream.graph.Graph#edgeFactory()
+	 */
+	public void setEdgeFactory( EdgeFactory ef )
+	{
+		this.edgeFactory = ef;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.miv.graphstream.graph.Graph#nodeFactory()
@@ -270,6 +278,14 @@ public class AdjacencyListGraph
 	public NodeFactory nodeFactory()
 	{
 		return nodeFactory;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.miv.graphstream.graph.Graph#edgeFactory()
+	 */
+	public void setNodeFactory( NodeFactory nf )
+	{
+		this.nodeFactory = nf;
 	}
 
 	/*
@@ -345,13 +361,9 @@ public class AdjacencyListGraph
 				}
 				else
 				{
-//					edge = new AdjacencyListEdge( this, tag );
-					edge = edgeFactory.newInstance();
-					edge.setId( tag );
-					
-					( (AdjacencyListEdge) edge ).setNode0( (AdjacencyListNode) src );
-					( (AdjacencyListEdge) edge ).setNode1( (AdjacencyListNode) trg );
+					edge = edgeFactory.newInstance(tag,src,trg);
 					edge.setDirected( directed );
+					
 					edges.put( tag,edge );
 					((AdjacencyListNode)src).edges.add( edge );
 					((AdjacencyListNode)trg).edges.add( edge );
@@ -412,10 +424,7 @@ public class AdjacencyListGraph
 		}
 		else
 		{
-//			node = new AdjacencyListNode( this, tag );
-			node = nodeFactory.newInstance();
-			node.setId( tag );
-			node.setGraph( this );
+			node = nodeFactory.newInstance(tag,this);
 			
 			nodes.put(tag, node );
 			afterNodeAddEvent( (AdjacencyListNode) node);

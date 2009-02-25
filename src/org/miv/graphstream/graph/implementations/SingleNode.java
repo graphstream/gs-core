@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.miv.graphstream.graph.Edge;
+import org.miv.graphstream.graph.Graph;
 import org.miv.graphstream.graph.Node;
 import org.miv.util.SingletonException;
 
@@ -30,7 +31,8 @@ import org.miv.util.SingletonException;
  * 
  * @author Antoine Dutot
  */
-public class SingleNode extends DefaultNode
+public class SingleNode
+	extends DefaultNode
 {
 // Attributes
 
@@ -49,21 +51,13 @@ public class SingleNode extends DefaultNode
 	protected HashMap<String,Edge> from = new HashMap<String,Edge>();
 
 // Constructors
-
-	/**
-	 * New unconnected,unnamed node. Useful for reflexive instantiation.
-	 * 
-	 */
-	public SingleNode()
-	{
-	}
 	
 	/**
 	 * New unconnected node.
 	 * @param graph The graph containing the node.
 	 * @param id Tag of the node.
 	 */
-	public SingleNode( DefaultGraph graph, String id )
+	public SingleNode( Graph graph, String id )
 	{
 		super( graph, id );
 	}
@@ -163,7 +157,7 @@ public class SingleNode extends DefaultNode
 
 		// Register the edge.
 
-		Edge edge = target.getEdgeToward( id );
+		Edge edge = target.getEdgeToward( getId() );
 		
 		if( edge != null )
 		{
@@ -177,9 +171,8 @@ public class SingleNode extends DefaultNode
 		}
 		else
 		{
-			DefaultEdge e = (DefaultEdge) G.edgeFactory.newInstance();
-			e.setId( tag );
-			e.bind( this, target, directed );
+			DefaultEdge e = (DefaultEdge) G.edgeFactory.newInstance(tag,this,target);
+			e.setDirected(directed);
 //			return new CheckedEdge( tag, this, target, directed );
 			return e;
 		}

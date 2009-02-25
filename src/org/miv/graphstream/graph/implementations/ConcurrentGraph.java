@@ -90,22 +90,8 @@ public class ConcurrentGraph
 		if( edges.containsKey(id) && strictChecking )
 			throw new SingletonException( String.format( "edge \"%s\" already exists", id ) );
 		
-		Edge e = edgeFactory.newInstance();
-		e.setId(id);
-		
-		if( e instanceof ConcurrentEdge )
-		{
-			ConcurrentEdge ce = (ConcurrentEdge) e;
-
-			ce.setDirected(directed);
-			ce.setSourceNode(source);
-			ce.setTargetNode(target);
-		}
-		
-		if( source instanceof ConcurrentNode )
-			((ConcurrentNode) source).registerEdge(e);
-		if( target instanceof ConcurrentNode )
-			((ConcurrentNode) target).registerEdge(e);
+		Edge e = edgeFactory.newInstance(id,source,target);
+		e.setDirected(directed);
 		
 		edges.put( id, e );
 		edgeAddedEvent( e );
@@ -115,9 +101,7 @@ public class ConcurrentGraph
 	
 	protected Node createNode( String id )
 	{
-		Node n = nodeFactory.newInstance();
-		n.setId(id);
-		n.setGraph(this);
+		Node n = nodeFactory.newInstance(id,this);
 		
 		nodes.put( id, n );
 		nodeAddedEvent(n);
@@ -300,6 +284,11 @@ public class ConcurrentGraph
 	{
 		return edgeFactory;
 	}
+	
+	public void setEdgeFactory( EdgeFactory ef )
+	{
+		this.edgeFactory = ef;
+	}
 
 	/* @Override */
 	public Edge getEdge(String id)
@@ -371,6 +360,11 @@ public class ConcurrentGraph
 	public NodeFactory nodeFactory()
 	{
 		return nodeFactory;
+	}
+	
+	public void setNodeFactory( NodeFactory nf )
+	{
+		this.nodeFactory = nf;
 	}
 
 	/* @Override */

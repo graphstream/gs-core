@@ -34,32 +34,25 @@ public class ConcurrentEdge
 	extends AbstractConcurrentElement 
 	implements Edge
 {
-	Node source;
-	Node target;
+	ConcurrentNode source;
+	ConcurrentNode target;
 	
 	boolean directed = false;
 	
-	protected ConcurrentEdge( String id )
+	protected ConcurrentEdge( String id, Node src, Node dst )
 	{
 		super( id );
 		
-		source = null;
-		target = null;
-	}
-	
-	protected ConcurrentEdge()
-	{
-		this( "" );
-	}
-	
-	protected void setSourceNode( Node source )
-	{
-		this.source = source;
-	}
-	
-	protected void setTargetNode( Node target )
-	{
-		this.target = target;
+		if( ( src != null && ! ( src instanceof ConcurrentNode ) ) ||
+			( dst != null && ! ( dst instanceof ConcurrentNode ) ) )
+			throw new ClassCastException( "ConcurrentEdge needs an " +
+				"extended class ConcurrentNode" );
+		
+		source = (ConcurrentNode) src;
+		target = (ConcurrentNode) dst;
+
+		source.registerEdge(this);
+		target.registerEdge(this);
 	}
 	
 // --- AbstractConcurrentElement --- //
@@ -126,7 +119,7 @@ public class ConcurrentEdge
 		if( source != null && source.getGraph() instanceof ConcurrentGraph )
 			( (ConcurrentGraph) source.getGraph() ).edgeRemovedEvent( this );
 		
-		Node tmp = source;
+		ConcurrentNode tmp = source;
 		
 		source = target;
 		target = tmp;

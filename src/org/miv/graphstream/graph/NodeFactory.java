@@ -19,7 +19,7 @@ package org.miv.graphstream.graph;
  * An interface aimed at dynamicaly creating node objects based on a class name.
  * 
  * @author Antoine Dutot
- * @author Yoann Pigné
+ * @author Yoann Pignï¿½
  * @since september 2007
  */
 public interface NodeFactory
@@ -28,11 +28,11 @@ public interface NodeFactory
 	 * Create a new instance of node.
 	 * @return The newly created edge.
 	 */
-	public Node newInstance();
+	public Node newInstance( String id, Graph graph );
 
 	/**
 	 * Modifies the name of the class to be used to create new nodes.
 	 * @param nodeClass The full qualified name of the class.
 	 */
-	public void setNodeClass(String nodeClass);
+	//public void setNodeClass(String nodeClass);
 }

@@ -91,7 +91,7 @@ import org.miv.util.SingletonException;
  * @see org.miv.graphstream.graph.implementations.DefaultEdge
  * @see org.miv.graphstream.graph.implementations.AbstractElement
  * @author Antoine Dutot
- * @author Yoann Pigné
+ * @author Yoann Pignï¿½
  * @since 09 Sept. 2002
  */
 public class DefaultGraph
@@ -297,10 +297,20 @@ public class DefaultGraph
 	{
 		return edgeFactory;
 	}
+	
+	public void setEdgeFactory( EdgeFactory ef )
+	{
+		this.edgeFactory = ef;
+	}
 
 	public NodeFactory nodeFactory()
 	{
 		return nodeFactory;
+	}
+	
+	public void setNodeFactory( NodeFactory nf )
+	{
+		this.nodeFactory = nf;
 	}
 
 // Commands
@@ -359,9 +369,7 @@ public class DefaultGraph
 	addNode_( String tag )
 		throws SingletonException
 	{
-		DefaultNode node = (DefaultNode) nodeFactory.newInstance();
-		node.setId(tag);
-		node.setGraph(this);
+		DefaultNode node = (DefaultNode) nodeFactory.newInstance(tag,this);
 		
 		DefaultNode old = (DefaultNode) nodes.put( tag, node );
 
@@ -1245,7 +1253,7 @@ protected void printPosition( String msg ){
 	/**
 	 * Interface that provide general purpose classification for evens involved
 	 * in graph modifications
-	 * @author Yoann Pigné
+	 * @author Yoann Pignï¿½
 	 * 
 	 */
 	interface GraphEvent

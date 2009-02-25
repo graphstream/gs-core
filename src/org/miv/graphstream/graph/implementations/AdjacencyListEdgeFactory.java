@@ -17,101 +17,29 @@ package org.miv.graphstream.graph.implementations;
 
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.EdgeFactory;
+import org.miv.graphstream.graph.Node;
 
 /**
 * A class aimed at dynamicaly creating edge objects based on a class name. 
 * All created object must extend the {@link AdjacencyListEdge} class.
 * 
 * @author Antoine Dutot
-* @author Yoann Pigné
+* @author Yoann Pignï¿½
 * @since september 2007
 */
 public class AdjacencyListEdgeFactory implements EdgeFactory
 {
-	Class<?> edgeClass;
-
-	Class<?> baseEdgeclass;
-
-	AdjacencyListEdgeFactory()
+	public AdjacencyListEdgeFactory()
 	{
-		this( org.miv.util.Environment.getGlobalEnvironment().getParameter( "edgeClass" ) );
 	}
-
-	AdjacencyListEdgeFactory( org.miv.util.Environment environment )
-	{
-		this( environment.getParameter( "edgeClass" ) );
-	}
-
-	AdjacencyListEdgeFactory( String cnfs )
-	{
-		try
-		{
-			baseEdgeclass = Class.forName( "org.miv.graphstream.graph.implementations.AdjacencyListEdge" );
-		}
-		catch( ClassNotFoundException e )
-		{
-			e.printStackTrace();
-		}
-
-		setEdgeClass( cnfs );
-	}
-
-	/**
-	 * Modifies the name of the class to be used to create new edges.
-	 * @param cnfs full qualified name of the class.
-	 */
-	@SuppressWarnings("unchecked")
-	public void setEdgeClass( String cnfs )
-	{
-		try
-		{
-			if( cnfs != null && !cnfs.equals( "" ) )
-			{
-				Class cl = Class.forName( cnfs );
-				if( baseEdgeclass.isAssignableFrom( cl ) )
-				{
-					edgeClass = cl;
-				}
-				else
-				{
-					System.err.printf( "Not able to use \"%s\" to create edges. "
-							+ "You must use a class that extends \"AdjacencyListEdge\" (paramter: \"edgeClass\")%n", cnfs );
-				}
-			}
-			if( edgeClass == null )
-				edgeClass = baseEdgeclass;
-
-		}
-		catch( ClassNotFoundException e )
-		{
-			System.err.printf( "Unable to use \"%s\" to create edges. Not Found in the classpath. %n", cnfs );
-			if( edgeClass == null )
-				edgeClass = baseEdgeclass;
-		}
-
-	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.miv.graphstream.graph.EdgeFactory#newInstance()
 	 */
-	public Edge newInstance()
+	public Edge newInstance( String id, Node src, Node dst )
 	{
-		Edge n = null;
-		try
-		{
-			n = (Edge) edgeClass.newInstance();
-		}
-		catch( InstantiationException e )
-		{
-			System.err.printf( "Unable to instantiate class\"%s\". It probably contains no void constructor? %n%n", edgeClass.getName() );
-			System.exit( -1 );
-		}
-		catch( IllegalAccessException e )
-		{
-			System.err.printf( "Unable to instantiate class\"%s\". Is it publically accessible? %n%n", edgeClass.getName() );
-		}
-		return n;
+		return new AdjacencyListEdge(id,src,dst);
 	}
 
 }

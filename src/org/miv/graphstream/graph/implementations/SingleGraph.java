@@ -16,6 +16,12 @@
 
 package org.miv.graphstream.graph.implementations;
 
+import org.miv.graphstream.graph.Edge;
+import org.miv.graphstream.graph.EdgeFactory;
+import org.miv.graphstream.graph.Graph;
+import org.miv.graphstream.graph.Node;
+import org.miv.graphstream.graph.NodeFactory;
+
 /**
  * A graph implementation that supports only one edge between two nodes.
  * 
@@ -81,7 +87,19 @@ public class SingleGraph extends DefaultGraph
 	{
 		super( id, strictChecking, autoCreate );
 		
-		nodeFactory = new DefaultNodeFactory( "org.miv.graphstream.graph.implementations.SingleNode" );
-		edgeFactory = new DefaultEdgeFactory( "org.miv.graphstream.graph.implementations.SingleEdge" );
+		nodeFactory = new NodeFactory()
+		{
+			public Node newInstance( String id, Graph graph )
+			{
+				return new SingleNode(graph,id);
+			}
+		};
+		edgeFactory = new EdgeFactory()
+		{
+			public Edge newInstance( String id, Node src, Node dst )
+			{
+				return new SingleEdge(id,src,dst);
+			}
+		};
 	}
 }
