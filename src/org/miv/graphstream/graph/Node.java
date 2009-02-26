@@ -43,14 +43,6 @@ public interface Node
 	 */
 	public Graph 
 	getGraph();
-
-	/**
-	 * Some element may need to be assigned a perent graph depending on there implementation. 
-	 * @param graph that holds this node.
-	 *//*
-	public void
-	setGraph(Graph graph);
-	*/
 	
 	/**
 	 * Total number of relations with other nodes or this node.
