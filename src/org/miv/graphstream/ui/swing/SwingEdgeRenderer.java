@@ -1,17 +1,24 @@
 /*
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of GraphStream.
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * GraphStream is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place - Suite 330, Boston, MA 02111-1307, USA.
+ * GraphStream is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright 2006 - 2009
+ * 	Julien Baudry
+ * 	Antoine Dutot
+ * 	Yoann PignÃ©
+ * 	Guilhelm Savin
  */
 
 package org.miv.graphstream.ui.swing;
@@ -34,8 +41,6 @@ import org.miv.util.geom.Point3;
  *
  * TODO: draw images aside labels if they are specified ?
  *
- * @author Yoann Pigné
- * @author Antoine Dutot
  * @since 20061226
  */
 public class SwingEdgeRenderer
@@ -618,9 +623,9 @@ public class SwingEdgeRenderer
 		
 		// The idea is to look at the angle between a vector at noon and the edge vector.
 		// Then four zones are delimited around the nodes, called quarters north, east, south
-		// and west. Each quarter is 90° (45° around each axis). A very simple dot product
-		// give us the angle. The constant 0.707107 is cos(45°) degree (and -0.707107 is
-		// cos(135°). They delimit the quarter east. We look at the sign of vx to know if we
+		// and west. Each quarter is 90ï¿½ (45ï¿½ around each axis). A very simple dot product
+		// give us the angle. The constant 0.707107 is cos(45ï¿½) degree (and -0.707107 is
+		// cos(135ï¿½). They delimit the quarter east. We look at the sign of vx to know if we
 		// are at east or at west. Then we compare to 0.707107 to know in which quarter we are.
 		
 		float angle  = vy / d;	// Our dot product between [vx,vy] and [0,1], simplifies to this.

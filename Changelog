@@ -1,3 +1,15 @@
+February 26 2009, gsavin:
+	* Update all licence preambles of the gs-core package.
+	* Remove all @author tags from sources.
+
+February 23 2009, gsavin:
+	* Remove setId() method from Element. id becomes a final value set at
+	object creation.
+	* Remove setGraph() method from Node. graph becomes a final value set at
+	object creation
+	* Remove setNode[01]() from *Edge.. n0 and n1 become final values set at
+	object creation.
+
 January 8 2008:
 	* Correct some bugs in the display(boolean) method of AdjacencyListGraph.
 	* Add a thread-safe graph : ConcurrentGraph
