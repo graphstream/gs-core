@@ -202,18 +202,6 @@ public class ConcurrentNode
 	}
 
 	/* @see org.miv.graphstream.graph.Node */
-	public String getGraphName()
-	{
-		return graph == null ? "" : graph.getId();
-	}
-
-	/* @see org.miv.graphstream.graph.Node */
-	public String getHost()
-	{
-		return "";
-	}
-
-	/* @see org.miv.graphstream.graph.Node */
 	public int getInDegree()
 	{
 		return enteringEdges.size();
@@ -255,22 +243,6 @@ public class ConcurrentNode
 		return getEdgeToward(id) != null;
 	}
 
-	/* @see org.miv.graphstream.graph.Node */
-	public boolean isDistributed()
-	{
-		return false;
-	}
-
-	/* @see org.miv.graphstream.graph.Node */
-	public void setGraphName(String newHost)
-	{
-	}
-
-	/* @see org.miv.graphstream.graph.Node */
-	public void setHost(String newHost)
-	{
-	}
-	
 // --- //
 
 	class FullEdgeIterator implements Iterator<Edge>

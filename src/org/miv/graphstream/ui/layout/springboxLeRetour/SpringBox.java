@@ -118,7 +118,7 @@ public class SpringBox implements Layout, ParticleBoxListener
 	/**
 	 * The Barnes/Hut theta threshold to know if we use a pole or not.
 	 */
-	protected float theta = 1f;
+	protected float theta = .7f;
 	
 	/**
 	 * The quality level.

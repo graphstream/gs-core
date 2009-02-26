@@ -236,31 +236,4 @@ public interface Node
 	 */
 	public String 
 	toString();
-
-// Distributed part
-
-	/**
-	 * @return A boolean
-	 */
-	public boolean isDistributed();
-	
-	/**
-	 * @return A String
-	 */
-	public String getHost();
-	
-	/**
-	 * Set the host name
-	 */
-	public void setHost( String newHost );
-	
-	/**
-	 * @return The Graph Name
-	 */
-	public String getGraphName();
-	
-	/**
-	 * Set the name of the graph
-	 */
-	public void setGraphName( String newHost );
 }

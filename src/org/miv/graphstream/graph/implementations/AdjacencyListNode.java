@@ -515,34 +515,4 @@ public class AdjacencyListNode
 		if( graph != null )
 			( (AdjacencyListGraph) graph ).attributeChangedEvent( this, attribute, oldValue, newValue );	
 	}
-	
-	
-	/**
-	 * Distributed part
-	 */
-	
-	public boolean isDistributed() {
-		return true ;
-	}
-		
-	public String getHost() {
-		return "" ;
-
-	}
-		
-
-	public void setHost( String newHost ) {
-
-	}
-		
-
-	public String getGraphName() {
-		return "" ;
-
-	}
-		
-
-	public void setGraphName( String newHost ) {
-
-	}
 }

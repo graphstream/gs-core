@@ -279,24 +279,4 @@ static class ElementIterator<T extends Element> implements Iterator<T>
 		throw new UnsupportedOperationException( "this iterator does not allow removing" );
 	}
 }
-
-// Distributed part
-
-	public boolean isDistributed() {
-		return false;
-	}
-		
-	public String getHost() {
-		return "";
-	}
-		
-	public void setHost( String newHost ) {
-	}
-	
-	public String getGraphName() {
-		return G.getId();	
-	}
-	
-	public void setGraphName( String newHost ) {
-	}
 }
