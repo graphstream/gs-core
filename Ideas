@@ -1,3 +1,13 @@
+package algorithm:
+	
+	[gsavin,27/02/2009]
+	? Clarify the Algorithm structure
+		- delete setGraph( Graph )
+		+ add an init method : init( Graph graph, Object ... params )
+		- in algorithm's implementations : just an empty constructor
+		
+		Opinion ?
+
 package graph :
 	
 	? Clarify the Graph.setAutoCreate() et Graph.setStrictChecking() ... not very clear.
