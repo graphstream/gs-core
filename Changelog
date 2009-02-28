@@ -1,3 +1,7 @@
+February 27 2009, gsavin:
+	* Refactoring of org.miv.graphstream.algorithm.generator.IncompleteGridGenerator.
+	This class a now a Generator, but can still generate DGS in the same way that before.
+
 February 26 2009, gsavin:
 	* Update all licence preambles of the gs-core package.
 	* Remove all @author tags from sources.
