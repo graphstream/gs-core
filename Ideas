@@ -1,3 +1,7 @@
+GraphStream BrainTwisting:
+	- Fix a dead-line to the 1.0 release
+	- Speak about web stuff
+
 package algorithm:
 	
 	[gsavin,27/02/2009]
