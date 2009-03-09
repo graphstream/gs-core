@@ -1,0 +1,411 @@
+/*
+ * This file is part of GraphStream.
+ * 
+ * GraphStream is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * GraphStream is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright 2006 - 2009
+ * 	Julien Baudry
+ * 	Antoine Dutot
+ * 	Yoann Pigné
+ * 	Guilhelm Savin
+ */
+
+options { JDK_VERSION = "1.5"; STATIC = false; }
+
+PARSER_BEGIN(GraphReaderTLPParser)
+
+package org.miv.graphstream.io.tlp;
+
+import org.miv.graphstream.io.GraphReaderListenerExtended;
+
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.Reader;
+
+import java.util.Collection;
+
+public class GraphReaderTLPParser
+{
+	Collection<GraphReaderListenerExtended> listeners;
+	
+	public GraphReaderTLPParser(Collection<GraphReaderListenerExtended> ls)
+	{
+		listeners = ls;
+	}
+	
+	public void read( String inPath )
+	{
+		try
+		{
+			ReInit( new FileInputStream(inPath) );
+			start();
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void read( InputStream in )
+	{
+		ReInit(in);
+		try
+		{
+			start();
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void read( Reader in )
+	{
+		ReInit(in);
+		try
+		{
+			start();
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void begin( String inPath )
+	{
+		try
+		{
+			ReInit( new FileInputStream(inPath) );
+			start();
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void begin( InputStream in )
+	{
+		ReInit(in);
+		try
+		{
+			start();
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void begin( Reader in )
+	{
+		ReInit(in);
+		try
+		{
+			start();
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void init( InputStream in )
+	{
+		if( jj_input_stream == null )
+		{
+			try
+			{
+				jj_input_stream = new SimpleCharStream(in, null, 1, 1);
+			} 
+			catch(java.io.UnsupportedEncodingException e)
+			{
+				throw new RuntimeException(e);
+			}
+			
+    		token_source = new GraphReaderTLPParserTokenManager(jj_input_stream);
+    		token = new Token();
+    		
+    		jj_ntk = -1;
+    		jj_gen = 0;
+    		
+    		for (int i = 0; i < 10; i++) jj_la1[i] = -1;
+    	}
+    	else
+    	{
+    		ReInit(in);
+    	}
+	}
+	
+	public void init( Reader in )
+	{
+		if( jj_input_stream == null )
+		{
+			jj_input_stream = new SimpleCharStream(in, 1, 1);
+			
+    		token_source = new GraphReaderTLPParserTokenManager(jj_input_stream);
+    		token = new Token();
+    		
+    		jj_ntk = -1;
+    		jj_gen = 0;
+    		
+    		for (int i = 0; i < 10; i++) jj_la1[i] = -1;
+    	}
+    	else
+    	{
+    		ReInit(in);
+    	}
+	}
+	
+	protected void addNode( String id )
+	{
+		//System.err.printf( "add node \"%s\"\n", id );
+		for( GraphReaderListenerExtended l : listeners )
+		{
+			try
+			{
+				l.nodeAdded(id,null);
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	protected void addEdge( String id, String src, String trg )
+	{
+		//System.err.printf( "add edge \"%s\" \"%s\" \"%s\"\n", id, src, trg );
+		for( GraphReaderListenerExtended l : listeners )
+		{
+			try
+			{
+				l.edgeAdded(id,src,trg,false,null);
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	protected void addNodeAttribute( String id, String key, Object value )
+	{
+		//System.err.printf( "add node %s attribute %s=%s\n", id, key, value );
+		for( GraphReaderListenerExtended l : listeners )
+		{
+			try
+			{
+				l.nodeChanged(id,key,value,false);
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	protected void addEdgeAttribute( String id, String key, Object value )
+	{
+		//System.err.printf( "add edge %s attribute %s=%s\n", id, key, value );
+		for( GraphReaderListenerExtended l : listeners )
+		{
+			try
+			{
+				l.edgeChanged(id,key,value,false);
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	protected Object unserialize( String type, String value )
+	{
+		if( type.equals("string") )
+			return value;
+		else if( type.equals("bool") )
+			return new Boolean(value);
+		else if( type.equals("color") )
+		{
+			if( value.startsWith("(") )
+				value = value.substring(1);
+			if( value.endsWith(")") )
+				value = value.substring(0,value.length()-1);
+			
+			String [] comps = value.split(",");
+			
+			if( comps.length == 3 )
+				return new java.awt.Color( Integer.parseInt(comps[0]),Integer.parseInt(comps[1]),Integer.parseInt(comps[2]) );
+			else if( comps.length == 4 )
+				return new java.awt.Color( Integer.parseInt(comps[0]),Integer.parseInt(comps[1]),Integer.parseInt(comps[2]),Integer.parseInt(comps[3]) );
+		}
+		else if( type.equals("double") )
+			return new Double(value);
+		else if( type.equals("int") )
+			return new Integer(value);
+		else if( type.equals("layout") )
+		{
+		
+		}
+		else if( type.equals("size") )
+		{
+		
+		}	
+		
+		return value;
+	}
+	
+	protected String unquote( String str )
+	{
+		if( str.startsWith("\"") && str.endsWith("\"") )
+			return str.substring(1,str.length()-1);
+		
+		return str;
+	}
+}
+
+PARSER_END(GraphReaderTLPParser)
+
+/*
+ * The lexer.
+ */
+
+SKIP :
+{
+ 	" "
+|	"\r"
+|	"\t"
+|	"\n"
+}
+
+TOKEN: { < #EOL         : (("\r")|("\n"))> }
+TOKEN: { < COMMENT		: (";"((~["\r","\n"])*)<EOL>) > }
+TOKEN: { < LPAREN        : "(" > }
+TOKEN: { < RPAREN        : ")" > }
+
+/*
+ * Tulip tags
+ */
+TOKEN: { < TLP			: "tlp" > }
+TOKEN: { < DATE			: "date" > }
+TOKEN: { < AUTHOR		: "author" > }
+TOKEN: { < COMMENTS		: "comments" > }
+TOKEN: { < NODES		: "nodes" > }
+TOKEN: { < NODE			: "node" > }
+TOKEN: { < EDGES		: "edges" > }
+TOKEN: { < EDGE			: "edge" > }
+TOKEN: { < CLUSTER		: "cluster" > }
+TOKEN: { < PROPERTY		: "property" > }
+TOKEN: { < DEF			: "default" > }
+
+/*
+ * Property types
+ */
+TOKEN: { < PTYPES		: (("bool")|("color")|("double")|("layout")|("int")|("size")|("string")) > }
+
+
+TOKEN: { < ID			: (["0"-"9"])+ > }
+TOKEN: { < STRING        : (("\"" (~["\""])* "\"")|("'" (~["'"])* "'")) > }
+ 
+void start():
+{
+	Token t;
+}
+{
+	( <LPAREN> <TLP> t = <STRING>{ System.err.printf( "Tulip file format version %s\n", t.image ); tlpEntry(); } <RPAREN> ) <EOF>
+}
+
+void tlpEntry():
+{
+	Token t;
+}
+{
+	( ( <LPAREN>	( ( <NODES>		{ nodeEntries(); } )
+					| ( <EDGE>		{ edgeEntry(); } )
+					| ( <CLUSTER>	{ clusterEntry(""); } )
+					| ( <PROPERTY>	{ propertyEntry(); } ) ) <RPAREN> )
+	  | ( <COMMENT>	{} ) )*
+}
+
+void nodeEntries():
+{
+	Token t;
+}
+{
+	( t = <ID> { addNode(t.image); } )* 
+}
+
+void edgeEntry():
+{
+	Token id, src, trg;
+}
+{
+	( id = <ID> src = <ID> trg = <ID> { addEdge(id.image,src.image,trg.image); } )
+}
+
+void propertyEntry():
+{
+	Token id, type, name, nodeDef, edgeDef;
+}
+{
+	( id = <ID> type = <PTYPES> name = <STRING> 
+		<LPAREN> <DEF> nodeDef = <STRING> edgeDef = <STRING> <RPAREN> { propertyContent( type.image, unquote(name.image) ); } )
+}
+
+void propertyContent( String type, String key ):
+{
+	Token id, value;
+}
+{
+	( <LPAREN> (  ( <NODE> id = <ID> value = <STRING> { addNodeAttribute(id.image,key,unserialize(type,unquote(value.image))); } )
+	           |  ( <EDGE> id = <ID> value = <STRING> { addEdgeAttribute(id.image,key,unserialize(type,unquote(value.image))); } ) ) <RPAREN> )*
+}
+
+void clusterEntry(String parent):
+{
+	Token id, name;
+}
+{
+	( id = <ID> name = <STRING> { clusterContent(parent + id.image); } )
+}
+
+void clusterContent(String parent):
+{
+	Token id, name;
+}
+{
+	( <LPAREN> ( ( <NODES> { nodesInCluster(parent); } )
+			   | ( <EDGES> { edgesInCluster(parent); } )
+			   | ( <CLUSTER> { clusterEntry(parent+":"); } ) ) <RPAREN> )*
+}
+
+void nodesInCluster(String cluster):
+{
+	Token id;
+}
+{
+	( id = <ID> { addNodeAttribute( id.image, "cluster", cluster ); } )+
+}
+
+void edgesInCluster(String cluster):
+{
+	Token id;
+}
+{
+	( id = <ID> { addEdgeAttribute( id.image, "cluster", cluster ); } )+
+}
+

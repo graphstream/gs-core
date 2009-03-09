@@ -213,6 +213,16 @@ public class GraphReaderFactory
 			return gr;
 		}
 		
+		if( flc.endsWith( ".tlp" ) )
+		{
+			GraphReader gr = new GraphReaderTLP();
+			
+			if( graph != null )
+				gr.addGraphReaderListener( new GraphReaderListenerHelper( graph ) );
+			
+			return gr;
+		}
+		
 		throw new NotFoundException( "cannot find a suitable reader for file '" + fileName + "': unknown file content or extension" );
 	}
 }
