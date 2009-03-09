@@ -1,3 +1,6 @@
+March 09 2009, gsavin
+	* Add a reader for Tulip file format.
+
 February 27 2009, gsavin:
 	* Refactoring of org.miv.graphstream.algorithm.generator.IncompleteGridGenerator.
 	This class a now a Generator, but can still generate DGS in the same way that before.
