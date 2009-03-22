@@ -66,7 +66,25 @@ public class ConcurrentEdge
 			Object newValue)
 	{
 		if( source != null && source.getGraph() instanceof ConcurrentGraph )
-			( (ConcurrentGraph) source.getGraph() ).attributeChangedEvent( this, attribute, oldValue, newValue );
+		{
+			((ConcurrentGraph) source.getGraph()).edgeAttributeChangedEvent( this, attribute, oldValue, newValue );
+		}
+	}
+	
+	protected void attributeAdded( String attribute, Object value )
+	{
+		if( source != null && source.getGraph() instanceof ConcurrentGraph )
+		{
+			((ConcurrentGraph) source.getGraph()).edgeAttributeAddedEvent( this, attribute, value );
+		}
+	}
+	
+	protected void attributeRemoved( String attribute )
+	{
+		if( source != null && source.getGraph() instanceof ConcurrentGraph )
+		{
+			((ConcurrentGraph) source.getGraph()).edgeAttributeRemovedEvent( this, attribute );
+		}
 	}
 	
 // --- //

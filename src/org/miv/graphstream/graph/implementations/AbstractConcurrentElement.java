@@ -160,6 +160,17 @@ public abstract class AbstractConcurrentElement
 		return attributes.keySet().iterator();
 	}
 
+	public Iterable<String> getAttributeKeySet()
+	{
+		return new Iterable<String>()
+		{
+			public Iterator<String> iterator()
+			{
+				return attributes.keySet().iterator();
+			}
+		};
+	}
+
 	/* @Override */
 	public Map<String, Object> getAttributeMap()
 	{
@@ -358,5 +369,7 @@ public abstract class AbstractConcurrentElement
 	 *        about to be removed.
 	 */
 	protected abstract void attributeChanged( String attribute, Object oldValue, Object newValue );
+	protected abstract void attributeAdded( String attribute, Object value );
+	protected abstract void attributeRemoved( String attribute );
 
 }

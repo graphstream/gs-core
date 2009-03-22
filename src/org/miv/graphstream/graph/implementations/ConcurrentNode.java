@@ -97,7 +97,23 @@ public class ConcurrentNode
 	{
 		if( graph != null && graph instanceof ConcurrentGraph )
 		{
-			((ConcurrentGraph) graph).attributeChangedEvent( this, attribute, oldValue, newValue );
+			((ConcurrentGraph) graph).nodeAttributeChangedEvent( this, attribute, oldValue, newValue );
+		}
+	}
+	
+	protected void attributeAdded( String attribute, Object value )
+	{
+		if( graph != null && graph instanceof ConcurrentGraph )
+		{
+			((ConcurrentGraph) graph).nodeAttributeAddedEvent( this, attribute, value );
+		}
+	}
+	
+	protected void attributeRemoved( String attribute )
+	{
+		if( graph != null && graph instanceof ConcurrentGraph )
+		{
+			((ConcurrentGraph) graph).nodeAttributeRemovedEvent( this, attribute );
 		}
 	}
 

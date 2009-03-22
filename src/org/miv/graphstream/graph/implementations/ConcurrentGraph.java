@@ -26,7 +26,6 @@ package org.miv.graphstream.graph.implementations;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.InputMismatchException;
 import java.util.Iterator;
@@ -38,11 +37,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 //import org.miv.graphstream.algorithm.Algorithms;
-import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.EdgeFactory;
 import org.miv.graphstream.graph.Graph;
 import org.miv.graphstream.graph.GraphListener;
+import org.miv.graphstream.graph.GraphAttributesListener;
+import org.miv.graphstream.graph.GraphElementsListener;
 import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.graph.NodeFactory;
 import org.miv.graphstream.io.GraphParseException;
@@ -75,7 +75,8 @@ public class ConcurrentGraph
 	protected boolean strictChecking;
 	protected boolean autoCreate;
 	
-	protected ConcurrentLinkedQueue<GraphListener> listeners;
+	protected ConcurrentLinkedQueue<GraphAttributesListener> alisteners;
+	protected ConcurrentLinkedQueue<GraphElementsListener> elisteners;
 	
 	public ConcurrentGraph()
 	{
@@ -118,7 +119,8 @@ public class ConcurrentGraph
 		
 		eventQueue = new ConcurrentLinkedQueue<GraphEvent>();
 		
-		listeners = new ConcurrentLinkedQueue<GraphListener>();
+		alisteners = new ConcurrentLinkedQueue<GraphAttributesListener>();
+		elisteners = new ConcurrentLinkedQueue<GraphElementsListener>();
 	}
 	
 	protected Edge createEdge( String id, Node source, Node target, boolean directed )
@@ -206,10 +208,20 @@ public class ConcurrentGraph
 // --- AbstractConcurrentElement implementation --- //
 	
 	@Override
-	protected void attributeChanged(String attribute, Object oldValue,
-			Object newValue)
+	protected void attributeChanged( String attribute, Object oldValue,
+			Object newValue )
 	{
-		attributeChangedEvent( this, attribute, oldValue, newValue );
+		
+	}
+	
+	protected void attributeAdded( String attribute, Object value )
+	{
+		
+	}
+	
+	protected void attributeRemoved( String attribute )
+	{
+		
 	}
 	
 // --- //
@@ -238,7 +250,18 @@ public class ConcurrentGraph
 
 	public void addGraphListener(GraphListener listener)
 	{
-		listeners.add(listener);
+		addGraphAttributesListener(listener);
+		addGraphElementsListener(listener);
+	}
+	
+	public void addGraphAttributesListener( GraphAttributesListener listener )
+	{
+		alisteners.add(listener);
+	}
+	
+	public void addGraphElementsListener( GraphElementsListener listener )
+	{
+		elisteners.add(listener);
 	}
 
 	public Node addNode(String id)
@@ -252,13 +275,14 @@ public class ConcurrentGraph
 
 	public void clear()
 	{
-		graphClearEvent();
+		//graphClearEvent();
 		for( Node n : nodes.values() ) removeNode(n);
 	}
 
 	public void clearListeners()
 	{
-		listeners.clear();
+		alisteners.clear();
+		elisteners.clear();
 	}
 
 	public GraphViewerRemote display()
@@ -335,6 +359,16 @@ public class ConcurrentGraph
 	}
 
 	public List<GraphListener> getGraphListeners()
+	{
+		throw new UnsupportedOperationException( "Method not implemented." );
+	}
+
+	public List<GraphAttributesListener> getGraphAttributesListeners()
+	{
+		throw new UnsupportedOperationException( "Method not implemented." );
+	}
+
+	public List<GraphElementsListener> getGraphElementsListeners()
 	{
 		throw new UnsupportedOperationException( "Method not implemented." );
 	}
@@ -494,7 +528,18 @@ public class ConcurrentGraph
 
 	public void removeGraphListener(GraphListener listener)
 	{
-		listeners.remove(listener);
+		removeGraphAttributesListener(listener);
+		removeGraphElementsListener(listener);
+	}
+
+	public void removeGraphAttributesListener(GraphAttributesListener listener)
+	{
+		alisteners.remove(listener);
+	}
+
+	public void removeGraphElementsListener(GraphElementsListener listener)
+	{
+		elisteners.remove(listener);
 	}
 
 	public Node removeNode(String id)
@@ -520,7 +565,7 @@ public class ConcurrentGraph
 
 	public void stepBegins(double time)
 	{
-		for(GraphListener l : listeners)
+		for(GraphElementsListener l : elisteners)
 			l.stepBegins( getId(), time );
 	}
 
@@ -539,10 +584,59 @@ public class ConcurrentGraph
 	}
 	
 // --- //
-
+/*
 	protected void attributeChangedEvent( Element elt, String key, Object oldValue, Object newValue )
 	{
 		GraphEvent ev = new AttributeChangedEvent(elt,key,oldValue,newValue);
+		processEvent(ev);
+	}
+	*/
+	
+	protected void nodeAddedEvent( Node n )
+	{
+		GraphEvent ev = new AfterNodeAddEvent(n);
+		processEvent(ev);
+	}
+	
+	protected void nodeAttributeAddedEvent( Node n, String key, Object value )
+	{
+		GraphEvent ev = new NodeAttributeAddedEvent(n.getId(),key,value);
+		processEvent(ev);
+	}
+	
+	protected void nodeAttributeChangedEvent( Node n, String key, Object oldValue, Object newValue )
+	{
+		GraphEvent ev = new NodeAttributeChangedEvent(n.getId(),key,oldValue,newValue);
+		processEvent(ev);
+	}
+	
+	protected void nodeAttributeRemovedEvent( Node n, String key )
+	{
+		GraphEvent ev = new NodeAttributeRemovedEvent(n.getId(),key);
+		processEvent(ev);
+	}
+	
+	protected void nodeRemovedEvent( Node n )
+	{
+		GraphEvent ev = new BeforeNodeRemoveEvent(n);
+		processEvent(ev);
+	}
+	
+	protected void edgeAttributeAddedEvent( Edge e, String key, Object value )
+	{
+		GraphEvent ev = new EdgeAttributeAddedEvent(e.getId(),key,value);
+		processEvent(ev);
+	}
+	
+	protected void edgeAttributeChangedEvent( Edge e, String key, Object oldValue, Object newValue )
+	{
+		GraphEvent ev = new EdgeAttributeChangedEvent(e.getId(),key,oldValue,newValue);
+		processEvent(ev);
+	}
+	
+	protected void edgeAttributeRemovedEvent( Edge e, String key )
+	{
+		GraphEvent ev = new EdgeAttributeRemovedEvent(e.getId(),key);
 		processEvent(ev);
 	}
 	
@@ -557,25 +651,13 @@ public class ConcurrentGraph
 		GraphEvent ev = new AfterEdgeAddEvent(e);
 		processEvent(ev);
 	}
-	
-	protected void nodeRemovedEvent( Node n )
-	{
-		GraphEvent ev = new BeforeNodeRemoveEvent(n);
-		processEvent(ev);
-	}
-	
-	protected void nodeAddedEvent( Node n )
-	{
-		GraphEvent ev = new AfterNodeAddEvent(n);
-		processEvent(ev);
-	}
-	
+	/*
 	protected void graphClearEvent()
 	{
 		GraphEvent ev = new BeforeGraphClearEvent();
 		processEvent(ev);
 	}
-	
+	*/
 	protected void processEvent( GraphEvent ... add )
 	{
 		if( ! processEvent )
@@ -621,8 +703,8 @@ public class ConcurrentGraph
 		
 		public void fire()
 		{
-			for( GraphListener l : listeners )
-				l.afterEdgeAdd(ConcurrentGraph.this, edge);
+			for( GraphElementsListener l : elisteners )
+				l.edgeAdded(getId(),edge.getId(),edge.getSourceNode().getId(),edge.getTargetNode().getId(),edge.isDirected());
 		}
 	}
 
@@ -638,8 +720,8 @@ public class ConcurrentGraph
 		
 		public void fire()
 		{
-			for( GraphListener l : listeners )
-				l.beforeEdgeRemove(ConcurrentGraph.this, edge);
+			for( GraphElementsListener l : elisteners )
+				l.edgeRemoved(ConcurrentGraph.this.getId(), edge.getId());
 		}
 	}
 
@@ -655,8 +737,8 @@ public class ConcurrentGraph
 		
 		public void fire()
 		{
-			for( GraphListener l : listeners )
-				l.afterNodeAdd(ConcurrentGraph.this, node);
+			for( GraphElementsListener l : elisteners )
+				l.nodeAdded(ConcurrentGraph.this.getId(), node.getId());
 		}
 	}
 
@@ -672,11 +754,11 @@ public class ConcurrentGraph
 		
 		public void fire()
 		{
-			for( GraphListener l : listeners )
-				l.beforeNodeRemove(ConcurrentGraph.this, node);
+			for( GraphElementsListener l : elisteners )
+				l.nodeRemoved(ConcurrentGraph.this.getId(), node.getId());
 		}
 	}
-
+	/*
 	class BeforeGraphClearEvent 
 		implements GraphEvent
 	{
@@ -686,7 +768,7 @@ public class ConcurrentGraph
 				l.beforeGraphClear(ConcurrentGraph.this);
 		}
 	}
-
+	*//*
 	class AttributeChangedEvent 
 		implements GraphEvent
 	{
@@ -707,8 +789,200 @@ public class ConcurrentGraph
 		
 		public void fire()
 		{
-			for( GraphListener l : listeners )
-				l.attributeChanged(element, attribute, oldValue, newValue);
+			for( GraphAttributesListener l : alisteners )
+			{
+				//l.attributeChanged(element, attribute, oldValue, newValue);
+				
+			}
+		}
+	}
+	*/
+	class NodeAttributeAddedEvent
+		implements GraphEvent
+	{
+		String id;
+		String key;
+		
+		Object value;
+		
+		public NodeAttributeAddedEvent( String id, String key, Object value )
+		{
+			this.id = id;
+			this.key = key;
+			this.value = value;
+		}
+		
+		public void fire()
+		{
+			for( GraphAttributesListener l : alisteners )
+				l.nodeAttributeAdded(ConcurrentGraph.this.getId(), id, key, value);
+		}
+	}
+	
+	class NodeAttributeRemovedEvent
+		implements GraphEvent
+	{
+		String id;
+		String key;
+		
+		public NodeAttributeRemovedEvent( String id, String key )
+		{
+			this.id = id;
+			this.key = key;
+		}
+		
+		public void fire()
+		{
+			for( GraphAttributesListener l : alisteners )
+				l.nodeAttributeRemoved(ConcurrentGraph.this.getId(), id, key);
+		}
+	}
+	
+	class NodeAttributeChangedEvent
+		implements GraphEvent
+	{
+		String id;
+		String key;
+		
+		Object oldValue;
+		Object newValue;
+		
+		public NodeAttributeChangedEvent( String id, String key, Object oldValue, Object newValue )
+		{
+			this.id = id;
+			this.key = key;
+			this.oldValue = oldValue;
+			this.newValue = newValue;
+		}
+		
+		public void fire()
+		{
+			for( GraphAttributesListener l : alisteners )
+				l.nodeAttributeChanged(ConcurrentGraph.this.getId(), id, key, oldValue, newValue);
+		}
+	}
+	
+	class EdgeAttributeAddedEvent
+		implements GraphEvent
+	{
+		String id;
+		String key;
+		
+		Object value;
+		
+		public EdgeAttributeAddedEvent( String id, String key, Object value )
+		{
+			this.id = id;
+			this.key = key;
+			this.value = value;
+		}
+		
+		public void fire()
+		{
+			for( GraphAttributesListener l : alisteners )
+				l.edgeAttributeAdded(ConcurrentGraph.this.getId(), id, key, value);
+		}
+	}
+	
+	class EdgeAttributeRemovedEvent
+		implements GraphEvent
+	{
+		String id;
+		String key;
+		
+		public EdgeAttributeRemovedEvent( String id, String key )
+		{
+			this.id = id;
+			this.key = key;
+		}
+		
+		public void fire()
+		{
+			for( GraphAttributesListener l : alisteners )
+				l.edgeAttributeRemoved(ConcurrentGraph.this.getId(), id, key);
+		}
+	}
+	
+	class EdgeAttributeChangedEvent
+		implements GraphEvent
+	{
+		String id;
+		String key;
+		
+		Object oldValue;
+		Object newValue;
+		
+		public EdgeAttributeChangedEvent( String id, String key, Object oldValue, Object newValue )
+		{
+			this.id = id;
+			this.key = key;
+			this.oldValue = oldValue;
+			this.newValue = newValue;
+		}
+		
+		public void fire()
+		{
+			for( GraphAttributesListener l : alisteners )
+				l.edgeAttributeChanged(ConcurrentGraph.this.getId(), id, key, oldValue, newValue);
+		}
+	}
+	
+	class GraphAttributeAddedEvent
+		implements GraphEvent
+	{
+		String key;
+		
+		Object value;
+		
+		public GraphAttributeAddedEvent( String key, Object value )
+		{
+			this.key = key;
+			this.value = value;
+		}
+		
+		public void fire()
+		{
+			for( GraphAttributesListener l : alisteners )
+				l.graphAttributeAdded(ConcurrentGraph.this.getId(), key, value);
+		}
+	}
+	
+	class GraphAttributeRemovedEvent
+		implements GraphEvent
+	{
+		String key;
+		
+		public GraphAttributeRemovedEvent( String key )
+		{
+			this.key = key;
+		}
+		
+		public void fire()
+		{
+			for( GraphAttributesListener l : alisteners )
+				l.graphAttributeRemoved(ConcurrentGraph.this.getId(), key);
+		}
+	}
+	
+	class GraphAttributeChangedEvent
+		implements GraphEvent
+	{
+		String key;
+		
+		Object oldValue;
+		Object newValue;
+		
+		public GraphAttributeChangedEvent( String key, Object oldValue, Object newValue )
+		{
+			this.key = key;
+			this.oldValue = oldValue;
+			this.newValue = newValue;
+		}
+		
+		public void fire()
+		{
+			for( GraphAttributesListener l : alisteners )
+				l.graphAttributeChanged(ConcurrentGraph.this.getId(), key, oldValue, newValue);
 		}
 	}
 }
