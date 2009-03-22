@@ -275,7 +275,7 @@ public class ConcurrentGraph
 
 	public void clear()
 	{
-		//graphClearEvent();
+		graphClearedEvent();
 		for( Node n : nodes.values() ) removeNode(n);
 	}
 
@@ -651,13 +651,13 @@ public class ConcurrentGraph
 		GraphEvent ev = new AfterEdgeAddEvent(e);
 		processEvent(ev);
 	}
-	/*
-	protected void graphClearEvent()
+	
+	protected void graphClearedEvent()
 	{
-		GraphEvent ev = new BeforeGraphClearEvent();
+		GraphEvent ev = new GraphClearedEvent();
 		processEvent(ev);
 	}
-	*/
+	
 	protected void processEvent( GraphEvent ... add )
 	{
 		if( ! processEvent )
@@ -758,17 +758,17 @@ public class ConcurrentGraph
 				l.nodeRemoved(ConcurrentGraph.this.getId(), node.getId());
 		}
 	}
-	/*
-	class BeforeGraphClearEvent 
+	
+	class GraphClearedEvent 
 		implements GraphEvent
 	{
 		public void fire()
 		{
-			for( GraphListener l : listeners )
-				l.beforeGraphClear(ConcurrentGraph.this);
+			for( GraphElementsListener l : elisteners )
+				l.graphCleared(ConcurrentGraph.this.getId());
 		}
 	}
-	*//*
+	/*
 	class AttributeChangedEvent 
 		implements GraphEvent
 	{
