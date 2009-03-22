@@ -1,3 +1,14 @@
+March 22 2009, antoinedutot
+	* Finally commited the new GraphListener mechanism. There are three interfaces:
+		- GraphElementsListener (for listening at elements changes (node, edges, steps).
+		- GraphAttributesListener (for listenering at attributes changes).
+		- GraphListener that inherit the two above.
+	* The graph interface now respect these listeners.
+	* Also un-deprecated the Graph.getNodeSet() Graph.getEdgeSet(), Node.getEdgeSet(), Element.getAttributeKeySet(), etc.
+	  so that they return an Iterable instead of a set. This allows to use the for-each statement
+	  and do not allow to modify the returned sets. 
+	
+
 March 09 2009, gsavin
 	* Add a reader for Tulip file format.
 
