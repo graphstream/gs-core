@@ -398,11 +398,8 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 */
 	public void clear()
 	{
-		for( Node n: nodes.values() )
-			beforeNodeRemoveEvent( (AdjacencyListNode)n );
-		
-		for( Edge e: edges.values() )
-			beforeEdgeRemoveEvent( (AdjacencyListEdge)e );
+		for( GraphElementsListener listener: eltsListeners )
+			listener.graphCleared( getId() );
 
 		nodes.clear();
 		edges.clear();

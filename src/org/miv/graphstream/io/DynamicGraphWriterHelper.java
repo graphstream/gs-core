@@ -212,9 +212,14 @@ public class DynamicGraphWriterHelper implements GraphListener
     		lastError = e;
     	}
     }
+	
+	public void graphCleared( String graphId )
+	{
+		// No clear events in DGS !!
+		// TODO 
+		System.err.printf( "Cannot send CLEAR event to a file." );
+	}
     
-    protected HashMap<String,Object> attributes = new HashMap<String,Object>();
-
     public void graphAttributeAdded( String graphId, String attribute, Object value )
     {
 		try

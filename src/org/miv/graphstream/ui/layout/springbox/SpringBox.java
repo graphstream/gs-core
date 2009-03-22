@@ -2532,6 +2532,11 @@ public class SpringBox implements Layout
     {
 		removeNode( nodeId );
     }
+	
+	public void graphCleared( String graphId )
+	{
+		clear();
+	}
 
 	public void stepBegins( String graphId, double time )
     {

@@ -64,6 +64,13 @@ public interface GraphElementsListener
 	public void edgeRemoved( String graphId, String edgeId );
 	
 	/**
+	 * The whole graph was cleared. All the nodes, edges and attributes of the
+	 * graph are removed.
+	 * @param graphId The graph cleared.
+	 */
+	public void graphCleared( String graphId );
+	
+	/**
 	 * <p>
 	 * Since dynamic graphs are based on discrete event modifications, the notion of step is defined
 	 * to simulate elapsed time between events. So a step is a event that occurs in the graph, it

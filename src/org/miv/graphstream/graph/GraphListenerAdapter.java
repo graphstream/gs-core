@@ -65,6 +65,10 @@ public class GraphListenerAdapter implements GraphListener
     {
     }
 
+	public void graphCleared( String graphId )
+	{
+	}
+	
 	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
     {
     }

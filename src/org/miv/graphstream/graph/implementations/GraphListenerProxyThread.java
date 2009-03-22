@@ -493,6 +493,21 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 		        .getMessage() );
 		}
     }
+	
+	public void graphCleared( String graphId )
+	{
+		if( maybeUnregister() ) return;
+
+		try
+		{
+			events.post( from, "clear", graphId );
+		}
+		catch( CannotPostException e )
+		{
+			System.err.printf( "GraphRendererRunner: cannot post message to listeners: %s%n", e
+			        .getMessage() );
+		}		
+	}
 
 	public void stepBegins( String graphId, double time )
     {
@@ -796,6 +811,22 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 
 					for( GraphListener listener: listeners )
 						listener.edgeRemoved( gid, id );
+				}
+			}
+			else if( data[0].equals( "clear" ) )
+			{
+				if( data.length >= 2 && data[1] instanceof String )
+				{
+					String gid  = (String) data[1];
+					
+					if (outputGraph != null)
+					{
+						outputGraph.clear();
+						gid = outputGraph.getId();
+					}
+	
+					for (GraphListener listener : listeners)
+						listener.graphCleared( gid );
 				}
 			}
 			else if( data[0].equals( "step" ) )

@@ -185,6 +185,11 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
     {
 		outGraph.removeEdge( edgeId );
     }
+	
+	public void graphCleared( String graphId )
+	{
+		outGraph.clear();
+	}
 
 	public void stepBegins( String graphId, double time )
 	{

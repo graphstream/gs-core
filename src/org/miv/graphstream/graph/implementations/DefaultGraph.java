@@ -330,11 +330,8 @@ public class DefaultGraph extends AbstractElement implements Graph
 	 */
 	public void clear()
 	{
-		for( Node n: nodes.values() )
-			beforeNodeRemoveEvent( n );
-		
-		for( Edge e: edges.values() )
-			beforeEdgeRemoveEvent( e );
+		for( GraphElementsListener listener: eltsListeners )
+			listener.graphCleared( getId() );
 		
 		nodes.clear();
 		edges.clear();

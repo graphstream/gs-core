@@ -261,6 +261,13 @@ public class GraphRecorder implements GraphListener
 			e.printStackTrace();
 		}
 	}
+	
+	public void graphCleared( String graphId )
+	{
+		// No clear events in DGS !!
+		// TODO 
+		System.err.printf( "Cannot send CLEAR event to a file." );
+	}
 
 	public void stepBegins( String graphId, double time )
 	{
