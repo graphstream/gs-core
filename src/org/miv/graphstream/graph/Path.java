@@ -34,7 +34,7 @@ import java.util.*;
  * <p>
  * A path is a class that stores ordered lists of nodes and links that are
  * adjacent. Such a path may be manipulated with nodes and/or edges added or
- * removed. This class is designed to a dynamic structure that is, to add edges
+ * removed. This class is designed as a dynamic structure that is, to add edges
  * during the construction of the path. Only edges need to be added, the nodes
  * list is maintained automatically.
  * </p>
@@ -43,6 +43,7 @@ import java.util.*;
  * The two lists (one for nodes, one for edges) may be acceded at any moment in
  * constant time.
  * </p>
+ *
  * <p>
  * The constraint of this class is that it needs to know the first node of the
  * path (the root). This root can be set with the {@link #setRoot(Node)} method or by
@@ -414,5 +415,4 @@ public class Path
 	{
 		return nodePath.toString();
 	}
-
 }

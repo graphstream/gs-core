@@ -27,24 +27,20 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.InputMismatchException;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-//import org.miv.graphstream.algorithm.Algorithms;
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.EdgeFactory;
 import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.graph.Graph;
+import org.miv.graphstream.graph.GraphAttributesListener;
+import org.miv.graphstream.graph.GraphElementsListener;
 import org.miv.graphstream.graph.GraphListener;
 import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.graph.NodeFactory;
@@ -63,7 +59,7 @@ import org.miv.util.SingletonException;
  * DefaultGraph.
  * 
  * <p>
- * A graph is a set of graph {@link org.miv.graphstream.graph.implementations.AbstractElement}s. Graph
+ * A graph is a set of graph {@link org.miv.graphstream.graph.Element}s. Graph
  * elements can be nodes (descendants of {@link org.miv.graphstream.graph.Node}),
  * edges (descendants of {@link org.miv.graphstream.graph.Edge}).
  * </p>
@@ -94,16 +90,14 @@ import org.miv.util.SingletonException;
  * </p>
  * 
  * @see org.miv.graphstream.graph.GraphListener
+ * @see org.miv.graphstream.graph.GraphAttributesListener
+ * @see org.miv.graphstream.graph.GraphElementsListener
  * @see org.miv.graphstream.graph.implementations.DefaultNode
  * @see org.miv.graphstream.graph.implementations.DefaultEdge
  * @see org.miv.graphstream.graph.implementations.AbstractElement
- * @since 09 Sept. 2002
  */
-public class DefaultGraph
-	extends	AbstractElement 
-	implements Graph
+public class DefaultGraph extends AbstractElement implements Graph
 {
-
 	/**
 	 * Set of nodes indexed by their id.
 	 */
@@ -115,9 +109,14 @@ public class DefaultGraph
 	protected HashMap<String,Edge> edges = new HashMap<String,Edge>();
 
 	/**
-	 * Set of graph listeners.
+	 * Set of graph attributes listeners.
 	 */
-	protected ArrayList<GraphListener> listeners = new ArrayList<GraphListener>();
+	protected ArrayList<GraphAttributesListener> attrListeners = new ArrayList<GraphAttributesListener>();
+	
+	/**
+	 * Set of graph elements listeners.
+	 */
+	protected ArrayList<GraphElementsListener> eltsListeners = new ArrayList<GraphElementsListener>();
 
 	/**
 	 * Verify name space conflicts, removal of non-existing elements, use of
@@ -139,18 +138,13 @@ public class DefaultGraph
 	/**
 	 * A boolean that indicates whether or not an GraphListener event is being sent during another one. 
 	 */
-	protected boolean eventProcessing=false;
+	protected boolean eventProcessing = false;
 	
 	/**
 	 * List of listeners to remove if the {@link #removeGraphListener(GraphListener)} is called
 	 * inside from the listener. This can happen !! We create this list on demand.
 	 */
-	protected ArrayList<GraphListener> listenersToRemove;
-	
-	/**
-	 * Set of common algorithms.
-	protected Algorithms algos;
-	 */
+	protected ArrayList<Object> listenersToRemove;
 	
 	/**
 	 *  Helpful class that dynamically instantiate nodes according to a given class name.
@@ -218,7 +212,8 @@ public class DefaultGraph
 		setStrictChecking( strictChecking );
 		setAutoCreate( autoCreate );
 		
-		// Factories that dynamicaly create nodes and edges.
+		// Factories that dynamically create nodes and edges.
+
 		nodeFactory = new NodeFactory()
 		{
 			public Node newInstance( String id, Graph graph )
@@ -226,6 +221,7 @@ public class DefaultGraph
 				return new SingleNode(graph,id);
 			}
 		};
+
 		edgeFactory = new EdgeFactory()
 		{
 			public Edge newInstance( String id, Node src, Node trg )
@@ -241,8 +237,7 @@ public class DefaultGraph
 	/**
 	 * @complexity O(1).
 	 */
-	public Node
-	getNode( String id )
+	public Node getNode( String id )
 	{
 		return nodes.get( id );
 	}
@@ -250,8 +245,7 @@ public class DefaultGraph
 	/**
 	 * @complexity O(1)
 	 */
-	public Edge
-	getEdge( String id )
+	public Edge getEdge( String id )
 	{
 		return edges.get( id );
 	}
@@ -259,8 +253,7 @@ public class DefaultGraph
 	/**
 	 * @complexity O(1)
 	 */
-	public int
-	getNodeCount()
+	public int getNodeCount()
 	{
 		return nodes.size();
 	}
@@ -268,8 +261,7 @@ public class DefaultGraph
 	/**
 	 * @complexity O(1)
 	 */
-	public int
-	getEdgeCount()
+	public int getEdgeCount()
 	{
 		return edges.size();
 	}
@@ -277,8 +269,12 @@ public class DefaultGraph
 	/**
 	 * @complexity O(1)
 	 */
-	public Iterator<Node> 
-	getNodeIterator()
+	public Iterator<Node> getNodeIterator()
+	{
+		return new ElementIterator<Node>( this, nodes, true );
+	}
+	
+	public Iterator<Node> iterator()
 	{
 		return new ElementIterator<Node>( this, nodes, true );
 	}
@@ -286,8 +282,7 @@ public class DefaultGraph
 	/**
 	 * @complexity O(1)
 	 */
-	public Iterator<Edge>
-	getEdgeIterator()
+	public Iterator<Edge> getEdgeIterator()
 	{
 		return new ElementIterator<Edge>( this, edges, false );
 	}
@@ -295,8 +290,7 @@ public class DefaultGraph
 	/**
 	 * @complexity O(1)
 	 */
-	public final Collection<Node>
-	getNodeSet()
+	public Iterable<Node> getNodeSet()
 	{
 		return nodes.values();
 	}
@@ -304,8 +298,7 @@ public class DefaultGraph
 	/**
 	 * @complexity O(1)
 	 */
-	public Collection<Edge>
-	getEdgeSet()
+	public Iterable<Edge> getEdgeSet()
 	{
 		return edges.values();
 	}
@@ -335,10 +328,14 @@ public class DefaultGraph
 	/**
 	 * @complexity O(1)
 	 */
-	public void
-	clear()
+	public void clear()
 	{
-		beforeClearEvent();
+		for( Node n: nodes.values() )
+			beforeNodeRemoveEvent( n );
+		
+		for( Edge e: edges.values() )
+			beforeEdgeRemoveEvent( e );
+		
 		nodes.clear();
 		edges.clear();
 		clearAttributes();
@@ -347,27 +344,30 @@ public class DefaultGraph
 	/**
 	 * @complexity O(1)
 	 */
-	public void
-	clearListeners()
+	public void clearListeners()
 	{
-		listeners.clear();
+		eltsListeners.clear();
+		attrListeners.clear();
 	}
 	
-	public boolean
-	isStrictCheckingEnabled()
+	public boolean isStrictCheckingEnabled()
 	{
 		return strictChecking;
 	}
 	
-	public boolean
-	isAutoCreationEnabled()
+	public boolean isAutoCreationEnabled()
 	{
 		return autoCreate;
 	}
 
-	public List<GraphListener> getGraphListeners()
+	public Iterable<GraphAttributesListener> getGraphAttributesListeners()
 	{
-		return listeners;
+		return attrListeners;
+	}
+	
+	public Iterable<GraphElementsListener> getGraphElementsListeners()
+	{
+		return eltsListeners;
 	}
 
 // Commands -- Nodes
@@ -382,13 +382,10 @@ public class DefaultGraph
 		autoCreate = on;
 	}
 	
-	protected Node
-	addNode_( String tag )
-		throws SingletonException
+	protected Node addNode_( String tag ) throws SingletonException
 	{
 		DefaultNode node = (DefaultNode) nodeFactory.newInstance(tag,this);
-		
-		DefaultNode old = (DefaultNode) nodes.put( tag, node );
+		DefaultNode old  = (DefaultNode) nodes.put( tag, node );
 
 		if( old != null  )
 		{
@@ -416,16 +413,12 @@ public class DefaultGraph
 	/**
 	 * @complexity O(1)
 	 */
-	public Node
-	addNode( String id )
-		throws SingletonException
+	public Node addNode( String id ) throws SingletonException
 	{
 		return addNode_( id ) ; 
 	}
 	
-	protected Node
-	removeNode_( String tag, boolean fromNodeIterator )
-		throws NotFoundException
+	protected Node removeNode_( String tag, boolean fromNodeIterator ) throws NotFoundException
 	{
 		// The fromNodeIterator flag allows to know if this remove node call was
 		// made from inside a node iterator or not. If from a node iterator,
@@ -454,15 +447,12 @@ public class DefaultGraph
 	/**
 	 * @complexity O(1)
 	 */
-	public Node
-	removeNode( String id )
-		throws NotFoundException
+	public Node removeNode( String id ) throws NotFoundException
 	{
 		return removeNode_( id, false );
 	}
 
-	protected Edge
-	addEdge_( String tag, String from, String to, boolean directed )
+	protected Edge addEdge_( String tag, String from, String to, boolean directed )
 		throws SingletonException, NotFoundException
 	{
 		Node src;
@@ -513,8 +503,7 @@ public class DefaultGraph
 	/**
 	 * @complexity O(1)
 	 */
-	public Edge
-	addEdge( String id, String node1, String node2 )
+	public Edge addEdge( String id, String node1, String node2 )
 		throws SingletonException, NotFoundException
 	{
 		return addEdge( id, node1, node2, false );
@@ -523,8 +512,7 @@ public class DefaultGraph
 	/**
 	 * @complexity O(1)
 	 */
-	public Edge
-	addEdge( String id, String from, String to, boolean directed )
+	public Edge addEdge( String id, String from, String to, boolean directed )
 		throws SingletonException, NotFoundException
 	{
 		Edge edge = addEdge_( id, from, to, directed );
@@ -535,6 +523,8 @@ public class DefaultGraph
 		// in undirected edge. Therefore, sometimes the id is not the same as the
 		// edge.getId(). Nevertheless only one edge exists and so no event must
 		// be generated.
+		// TODO: this strange behaviour should disappear ! Adding BA should cause
+		// an error. Use changeOrientation instead.
 		if( edge.getId().equals( id ) )
 			afterEdgeAddEvent( edge );
 		return edge;
@@ -543,8 +533,7 @@ public class DefaultGraph
 	/**
 	 * @complexity O(1)
 	 */
-	public Edge
-	removeEdge( String from, String to )
+	public Edge removeEdge( String from, String to )
 		throws NotFoundException
 	{
 		try
@@ -578,8 +567,7 @@ public class DefaultGraph
 				// We cannot execute the edge remove event here since edges, at
 				// the contrary of other elements can disappear automatically
 				// when the nodes that is linked by them disappear.
-
-			//	beforeEdgeRemoveEvent( edge );
+				//		beforeEdgeRemoveEvent( edge );
 
 				edges.remove( ( (AbstractElement) edge ).getId() );
 				((DefaultEdge)edge).unbind();
@@ -640,54 +628,120 @@ public class DefaultGraph
 
 	public void stepBegins(double time)
 	{
-		for (GraphListener l : listeners)
-			l.stepBegins(this, time);
+		for( GraphElementsListener l : eltsListeners )
+			l.stepBegins( getId(), time );
 	}
-	
 	
 // Events
 
 	/**
 	 * @complexity 0(1)
 	 */
-	public void
-	addGraphListener( GraphListener listener )
+	public void addGraphListener( GraphListener listener )
 	{
-		listeners.add( listener );
+		attrListeners.add( listener );
+		eltsListeners.add( listener );
+	}
+	
+	public void addGraphAttributesListener( GraphAttributesListener listener )
+	{
+		attrListeners.add( listener );
+	}
+	
+	public void addGraphElementsListener( GraphElementsListener listener )
+	{
+		eltsListeners.add( listener );
 	}
 
-	/**
-	 * @complexity O(n) with n the numbers of listeners. 
-	 */
 	public void removeGraphListener( GraphListener listener )
 	{
 		if( eventProcessing )
 		{
 			// We cannot remove the listener while processing events !!!
-
-			if( listenersToRemove == null )
-				listenersToRemove = new ArrayList<GraphListener>();
-			
-			listenersToRemove.add( listener );
+			removeListenerLater( listener );
 		}
 		else
 		{
-			int index = listeners.lastIndexOf( listener );
+			int index = attrListeners.lastIndexOf( listener );
 
 			if( index >= 0 )
-				listeners.remove( index );
+				attrListeners.remove( index );
+			
+			index = eltsListeners.lastIndexOf( listener );
+			
+			if( index >= 0 )
+				eltsListeners.remove( index );
 		}
+	}
+	
+	public void removeGraphAttributesListener( GraphAttributesListener listener )
+	{
+		if( eventProcessing )
+		{
+			// We cannot remove the listener while processing events !!!
+			removeListenerLater( listener );
+		}
+		else
+		{
+			int index = attrListeners.lastIndexOf( listener );
+
+			if( index >= 0 )
+				attrListeners.remove( index );
+		}		
+	}
+	
+	public void removeGraphElementsListener( GraphElementsListener listener )
+	{
+		if( eventProcessing )
+		{
+			// We cannot remove the listener while processing events !!!
+			removeListenerLater( listener );
+		}
+		else
+		{
+			int index = eltsListeners.lastIndexOf( listener );
+
+			if( index >= 0 )
+				eltsListeners.remove( index );
+		}		
+	}
+	
+	protected void removeListenerLater( Object listener )
+	{
+		if( listenersToRemove == null )
+			listenersToRemove = new ArrayList<Object>();
+		
+		listenersToRemove.add( listener );	
 	}
 	
 	protected void checkListenersToRemove()
 	{
 		if( listenersToRemove != null && listenersToRemove.size() > 0 )
 		{
-			for( GraphListener listener: listenersToRemove )
-				removeGraphListener( listener );
+			for( Object listener: listenersToRemove )
+			{
+				if( listener instanceof GraphListener )
+					removeGraphListener( (GraphListener) listener );
+				else if( listener instanceof GraphAttributesListener )
+					removeGraphAttributesListener( (GraphAttributesListener) listener );
+				else if( listener instanceof GraphElementsListener )
+					removeGraphElementsListener( (GraphElementsListener) listener );
+			}
 
 			listenersToRemove.clear();
 			listenersToRemove = null;
+		}
+	}
+
+	/**
+	 * If in "event processing mode", ensure all pending events are processed.
+	 */
+	protected void manageEvents()
+	{
+		if( eventProcessing )
+		{
+			while( ! eventQueue.isEmpty() )
+				manageEvent( eventQueue.remove() );
 		}
 	}
 
@@ -696,16 +750,12 @@ public class DefaultGraph
 		if( ! eventProcessing )
 		{
 			eventProcessing = true;
+			manageEvents();
 
-			while( ! eventQueue.isEmpty() )
-				manageEvent( eventQueue.remove() );
+			for( GraphElementsListener l: eltsListeners )
+				l.nodeAdded( getId(), node.getId() );
 
-			for( GraphListener l: listeners )
-				l.afterNodeAdd( this, node );
-
-			while( ! eventQueue.isEmpty() )
-				manageEvent( eventQueue.remove() );
-
+			manageEvents();
 			eventProcessing = false;
 			checkListenersToRemove();
 		}
@@ -715,22 +765,17 @@ public class DefaultGraph
 		}
 	}
 
-	protected void
-	beforeNodeRemoveEvent( Node node )
+	protected void beforeNodeRemoveEvent( Node node )
 	{
 		if( ! eventProcessing )
 		{
 			eventProcessing = true;
+			manageEvents();
 
-			while( ! eventQueue.isEmpty() )
-				manageEvent( eventQueue.remove() );
+			for( GraphElementsListener l: eltsListeners )
+				l.nodeRemoved( getId(), node.getId() );
 
-			for( GraphListener l: listeners )
-				l.beforeNodeRemove( this, node );
-
-			while( ! eventQueue.isEmpty() )
-				manageEvent( eventQueue.remove() );
-
+			manageEvents();
 			eventProcessing = false;
 			checkListenersToRemove();
 		}
@@ -740,22 +785,17 @@ public class DefaultGraph
 		}
 	}
 
-	protected void
-	afterEdgeAddEvent( Edge edge )
+	protected void afterEdgeAddEvent( Edge edge )
 	{
 		if( ! eventProcessing )
 		{
 			eventProcessing = true;
+			manageEvents();
 
-			while( ! eventQueue.isEmpty() )
-				manageEvent( eventQueue.remove() );
+			for( GraphElementsListener l: eltsListeners )
+				l.edgeAdded( getId(), edge.getId(), edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
 
-			for( GraphListener l: listeners )
-				l.afterEdgeAdd( this, edge );
-
-			while( ! eventQueue.isEmpty() )
-				manageEvent( eventQueue.remove() );
-
+			manageEvents();
 			eventProcessing = false;
 			checkListenersToRemove();
 		}
@@ -765,31 +805,18 @@ public class DefaultGraph
 			eventQueue.add( new AfterEdgeAddEvent(edge) );
 		}
 	}
-/*
-protected void printPosition( String msg ){
-	System.err.printf( "%s (%s):%n", msg, Thread.currentThread().getName() );
-	StackTraceElement[] elts = Thread.currentThread().getStackTrace();
-	for( StackTraceElement elt: elts )
-		System.err.printf( "    %s.%s %d%n", elt.getClassName(), elt.getMethodName(), elt.getLineNumber() );
 
-}
-*/
-	protected void
-	beforeEdgeRemoveEvent( Edge edge )
+	protected void beforeEdgeRemoveEvent( Edge edge )
 	{
 		if( ! eventProcessing )
 		{
 			eventProcessing = true;
+			manageEvents();
 
-			while(!eventQueue.isEmpty())
-				manageEvent( eventQueue.remove() );
+			for( GraphElementsListener l: eltsListeners )
+				l.edgeRemoved( getId(), edge.getId() );
 
-			for( GraphListener l: listeners )
-				l.beforeEdgeRemove( this, edge );
-
-			while(!eventQueue.isEmpty())
-				manageEvent( eventQueue.remove() );
-
+			manageEvents();
 			eventProcessing = false;
 			checkListenersToRemove();
 		}
@@ -799,57 +826,83 @@ protected void printPosition( String msg ){
 		}
 	}
 
-	protected void
-	beforeClearEvent()
-	{
-		if( ! eventProcessing )
-		{
-			eventProcessing = true;
-
-			while( ! eventQueue.isEmpty() )
-				manageEvent( eventQueue.remove() );
-
-			for( GraphListener l: listeners )
-				l.beforeGraphClear( this );
-
-			while( ! eventQueue.isEmpty() )
-				manageEvent( eventQueue.remove() );
-
-			eventProcessing = false;
-			checkListenersToRemove();
-		}
-		else {
-			eventQueue.add( new BeforeGraphClearEvent() );
-		}
-	}
-
 	@Override
-	protected void
-	attributeChanged( String attribute, Object oldValue, Object newValue )
+	protected void attributeChanged( String attribute, Object oldValue, Object newValue )
 	{
 		attributeChangedEvent( this, attribute, oldValue, newValue );
 	}
 
-	protected void
-	attributeChangedEvent( Element element, String attribute, Object oldValue, Object newValue )
+	protected void attributeChangedEvent( Element element, String attribute, Object oldValue, Object newValue )
 	{
 		if( ! eventProcessing )
 		{
 			eventProcessing = true;
+			manageEvents();
 
-			while( ! eventQueue.isEmpty() )
-				manageEvent(eventQueue.remove());
+			// TODO add a better internal attribute event management
+			// handle null value more gracefully.
+			
+			if( oldValue == null )
+			{
+				if( element instanceof Node )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.nodeAttributeAdded( getId(), element.getId(), attribute, newValue );
+				}
+				else if( element instanceof Edge )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.edgeAttributeAdded( getId(), element.getId(), attribute, newValue );
+				}
+				else
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.graphAttributeAdded( getId(), attribute, newValue );					
+				}
+			}
+			else if( newValue == null )
+			{
+				if( element instanceof Node )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.nodeAttributeRemoved( getId(), element.getId(), attribute );
+				}
+				else if( element instanceof Edge )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.edgeAttributeRemoved( getId(), element.getId(), attribute );
+				}
+				else
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.graphAttributeRemoved( getId(), attribute );					
+				}								
+			}
+			else
+			{
+				if( element instanceof Node )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.nodeAttributeChanged( getId(), element.getId(), attribute, oldValue, newValue );
+				}
+				else if( element instanceof Edge )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.edgeAttributeChanged( getId(), element.getId(), attribute, oldValue, newValue );
+				}
+				else
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.graphAttributeChanged( getId(), attribute, oldValue, newValue );					
+				}				
+			}
 
-			for( GraphListener l: listeners )
-				l.attributeChanged( element, attribute, oldValue, newValue );
-
-			while( ! eventQueue.isEmpty() )
-				manageEvent(eventQueue.remove());
-
+			manageEvents();
 			eventProcessing = false;
 			checkListenersToRemove();
 		}
-		else {
+		else
+		{
 //			printPosition( "ChgEdge in EventProc" );
 			eventQueue.add( new AttributeChangedEvent( element, attribute, oldValue, newValue ) );
 		}
@@ -857,9 +910,6 @@ protected void printPosition( String msg ){
 
 // Commands -- Utility
 
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#read(java.lang.String)
-	 */
 	public void read( String filename )
 		throws IOException, GraphParseException, NotFoundException
 	{
@@ -869,9 +919,6 @@ protected void printPosition( String msg ){
 		reader.read( filename );
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#read(org.miv.graphstream.io.GraphReader, java.lang.String)
-	 */
 	public void read( GraphReader reader, String filename )
 		throws IOException, GraphParseException
 	{
@@ -880,9 +927,6 @@ protected void printPosition( String msg ){
 		reader.read( filename );
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#write(java.lang.String)
-	 */
 	public void write( String filename )
 		throws IOException
 	{
@@ -890,9 +934,6 @@ protected void printPosition( String msg ){
 		gwh.write( filename );
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#write(org.miv.graphstream.io.GraphWriter, java.lang.String)
-	 */
 	public void write( GraphWriter writer, String filename )
 		throws IOException
 	{
@@ -900,9 +941,6 @@ protected void printPosition( String msg ){
 		gwh.write( filename, writer );
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#readPositionFile(java.lang.String)
-	 */
 	public int readPositionFile( String posFileName )
 		throws IOException
 	{
@@ -965,17 +1003,11 @@ protected void printPosition( String msg ){
 		return ignored;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#display()
-	 */
 	public GraphViewerRemote display()
 	{
 		return display( true );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#display(boolean)
-	 */
 	public GraphViewerRemote display( boolean autoLayout )
 	{
 		String viewerClass = "org.miv.graphstream.ui.swing.SwingGraphViewer";
@@ -1017,156 +1049,6 @@ protected void printPosition( String msg ){
         return null;
 	}
 	
-// Algorithms
-		
-	/**
-	 * Compute the degree distribution of this graph. Each cell of the returned
-	 * array contains the number of nodes having degree n where n is the index
-	 * of the cell. For example cell 0 counts how many nodes have zero edges,
-	 * cell 5 counts how many nodes have five edges. The last index indicates
-	 * the maximum degree.
-	 */
-	@Deprecated
-	public int[] getDegreeDistribution()
-	{
-		int      max = 0;
-		int[]    dd;
-		int      d;
-
-		for( Node n: nodes.values() )
-		{
-			d = n.getDegree();
-
-			if( d > max )
-				max = d;
-		}
-
-		dd = new int[max+1];
-
-		for( Node n: nodes.values() )
-		{
-			d = n.getDegree();
-
-			dd[d] += 1;
-		}
-
-		return dd;
-	}
-	
-	/**
-	 * Return a list of nodes sorted by degree, the larger first.
-	 * @return The degree map.
-	 */
-	@Deprecated
-	public ArrayList<Node> getDegreeMap()
-	{
-		ArrayList<Node> map = new ArrayList<Node>();
-		
-		map.addAll(  (Collection<Node>) nodes.values() );
-	
-		Collections.sort( map, new Comparator<Node>() {
-			public int compare( Node a, Node b )
-			{
-				return b.getDegree() - a.getDegree();
-			}
-		});
-		
-		return map;
-	}
-
-	/**
-	 * Clustering coefficient for each node of the graph.
-	 * @return An array whose size correspond to the number of nodes, where each
-	 * element is the clustering coefficient of a node.
-	 */
-	@Deprecated
-	public double[] getClusteringCoefficients()
-	{
-		int n = getNodeCount();
-
-		if( n > 0 )
-		{
-			int j = 0;
-			double coefs[] = new double[n];
-
-			for( Node node: nodes.values() )
-			{
-				coefs[j++] = getClusteringCoefficient( node );
-			}
-
-			assert( j == n );
-
-			return coefs;
-		}
-		
-		return null;
-	}
-
-	/**
-	 * Clustering coefficient for one node of the graph.
-	 * @param node The node to compute the clustering coefficient for.
-	 * @return The clustering coefficient for this node.
-	 */
-	@Deprecated
-	public double getClusteringCoefficient( Node node )
-	{
-		double coef = 0.0;
-		int    n    = node.getDegree();
-
-		if( n > 1 )
-		{
-			// Collect the neighbor nodes.
-
-			DefaultNode          nodes[] = new DefaultNode[n];
-			HashSet<DefaultEdge> set     = new HashSet<DefaultEdge>();
-			int           i       = 0;
-
-			for( Edge e: node.getEdgeSet() )
-			{
-				nodes[i++] = (DefaultNode) e.getOpposite( node );
-			}
-
-			// Count the number of edges between these nodes.
-
-			for( i=0; i<n; ++i )	// For all neighbor nodes.
-			{
-				for( int j=0; j<n; ++j )	// For all other nodes of this clique.
-				{
-					if( j != i )
-					{
-						Edge e = nodes[j].getEdgeToward( nodes[i].getId() );
-
-						if( e != null )
-						{
-							if( ! set.contains( e ) )
-								set.add( (DefaultEdge)e );
-						}
-					}
-				}
-			}
-
-			double ne  = set.size();
-			double max = ( n * ( n - 1 ) ) / 2;
-
-			coef = ne / max;
-		}
-
-		return coef;
-	}
-	
-	/*
-	public Algorithms algorithm()
-	{
-		if( algos == null )
-			algos = new Algorithms( this );
-		
-		return algos;
-	}
-	*/
-	
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#toString()
-	 */
 	@Override
 	public String toString()
 	{
@@ -1174,11 +1056,10 @@ protected void printPosition( String msg ){
 				nodes.size(), edges.size() );
 	}
 
-
 	/**
 	 * An internal class that represent an iterator able to browse edge or node sets
 	 * and to remove correctly elements. This is tricky since removing a node or edge
-	 * does more than only altering the node or edge sets.
+	 * does more than only altering the node or edge sets (events for example).
 	 * @param <T> Can be an Edge or a Node.
 	 */
 	static class ElementIterator<T extends Element> implements Iterator<T>
@@ -1264,21 +1145,15 @@ protected void printPosition( String msg ){
 		}
 	}
 	
-	
-//-------------------------Events Management------------------------
-	
+// Events Management
+
 	/**
 	 * Interface that provide general purpose classification for evens involved
 	 * in graph modifications
-	 * @author Yoann Pign�
-	 * 
 	 */
-	interface GraphEvent
-	{
-	}
+	interface GraphEvent {}
 
-	class AfterEdgeAddEvent 
-		implements GraphEvent
+	class AfterEdgeAddEvent implements GraphEvent
 	{
 		Edge edge;
 
@@ -1288,8 +1163,7 @@ protected void printPosition( String msg ){
 		}
 	}
 
-	class BeforeEdgeRemoveEvent 
-		implements GraphEvent
+	class BeforeEdgeRemoveEvent implements GraphEvent
 	{
 		Edge edge;
 
@@ -1299,8 +1173,7 @@ protected void printPosition( String msg ){
 		}
 	}
 
-	class AfterNodeAddEvent 
-		implements GraphEvent
+	class AfterNodeAddEvent implements GraphEvent
 	{
 		Node node;
 
@@ -1310,8 +1183,7 @@ protected void printPosition( String msg ){
 		}
 	}
 
-	class BeforeNodeRemoveEvent 
-		implements GraphEvent
+	class BeforeNodeRemoveEvent implements GraphEvent
 	{
 		Node node;
 
@@ -1321,13 +1193,11 @@ protected void printPosition( String msg ){
 		}
 	}
 
-	class BeforeGraphClearEvent 
-		implements GraphEvent
+	class BeforeGraphClearEvent implements GraphEvent
 	{
 	}
 
-	class AttributeChangedEvent 
-		implements GraphEvent
+	class AttributeChangedEvent implements GraphEvent
 	{
 		Element element;
 
@@ -1355,37 +1225,89 @@ protected void printPosition( String msg ){
 	private void 
 	manageEvent( GraphEvent event )
 	{
-		if(event.getClass() == AttributeChangedEvent.class)
+		if( event.getClass() == AttributeChangedEvent.class )
 		{
-			for( GraphListener l: listeners )
-				l.attributeChanged( ( (AttributeChangedEvent) event ).element, ( (AttributeChangedEvent) event ).attribute,
-						( (AttributeChangedEvent) event ).oldValue, ( (AttributeChangedEvent) event ).newValue );
+			AttributeChangedEvent ev = (AttributeChangedEvent)event;
+			
+			if( ev.oldValue == null )
+			{
+				if( ev.element instanceof Node )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.nodeAttributeAdded( getId(), ev.element.getId(), ev.attribute, ev.newValue );
+				}
+				else if( ev.element instanceof Edge )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.edgeAttributeAdded( getId(), ev.element.getId(), ev.attribute, ev.newValue );					
+				}
+				else
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.graphAttributeAdded( getId(), ev.attribute, ev.newValue );										
+				}
+			}
+			else if( ev.newValue == null )
+			{
+				if( ev.element instanceof Node )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.nodeAttributeRemoved( getId(), ev.element.getId(), ev.attribute );
+				}
+				else if( ev.element instanceof Edge )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.edgeAttributeRemoved( getId(), ev.element.getId(), ev.attribute );					
+				}
+				else
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.graphAttributeRemoved( getId(), ev.attribute );										
+				}
+			}
+			else
+			{
+				if( ev.element instanceof Node )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.nodeAttributeChanged( getId(), ev.element.getId(), ev.attribute, ev.oldValue, ev.newValue );
+				}
+				else if( ev.element instanceof Edge )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.edgeAttributeChanged( getId(), ev.element.getId(), ev.attribute, ev.oldValue, ev.newValue );					
+				}
+				else
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.graphAttributeChanged( getId(), ev.attribute, ev.oldValue, ev.newValue );										
+				}				
+			}
 		}
+		
+		// Elements events
+		
 		else if( event.getClass() == AfterEdgeAddEvent.class )
 		{
-			for( GraphListener l: listeners )
-				l.afterEdgeAdd( this, ( (AfterEdgeAddEvent) event ).edge );
+			Edge e = ((AfterEdgeAddEvent)event).edge;
+			
+			for( GraphElementsListener l: eltsListeners )
+				l.edgeAdded( getId(), e.getId(), e.getNode0().getId(), e.getNode1().getId(), e.isDirected() );
 		}
 		else if( event.getClass() == AfterNodeAddEvent.class )
 		{
-			for( GraphListener l: listeners )
-				l.afterNodeAdd( this, ( (AfterNodeAddEvent) event ).node );
+			for( GraphElementsListener l: eltsListeners )
+				l.nodeAdded( getId(), ((AfterNodeAddEvent)event).node.getId() );
 		}
 		else if( event.getClass() == BeforeEdgeRemoveEvent.class )
 		{
-			for( GraphListener l: listeners )
-				l.beforeEdgeRemove( this, ( (BeforeEdgeRemoveEvent) event ).edge );
+			for( GraphElementsListener l: eltsListeners )
+				l.edgeRemoved( getId(), ((BeforeEdgeRemoveEvent)event).edge.getId() );
 		}
 		else if( event.getClass() == BeforeNodeRemoveEvent.class )
 		{
-			for( GraphListener l: listeners )
-				l.beforeNodeRemove( this, ( (BeforeNodeRemoveEvent) event ).node );
-		}
-		else if( event.getClass() == BeforeGraphClearEvent.class )
-		{
-			for( GraphListener l: listeners )
-				l.beforeGraphClear(this);
-
+			for( GraphElementsListener l: eltsListeners )
+				l.nodeRemoved( getId(), ((BeforeNodeRemoveEvent)event).node.getId() );
 		}
 	}
 }

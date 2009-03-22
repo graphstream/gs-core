@@ -272,6 +272,11 @@ public class GraphicNode extends GraphicElement implements Node
 	    
 	    return null;
     }
+	
+	public Iterator<Edge> iterator()
+	{
+	    return null;
+	}
 
 	public Collection<? extends Edge> getEdgeSet()
     {

@@ -26,7 +26,7 @@ package org.miv.graphstream.io;
 import java.io.*;
 import java.util.*;
 
-import org.miv.graphstream.graph.Attribute;
+import org.miv.graphstream.graph.CompoundAttribute;
 
 /**
  * Graph writer for the DGS format.
@@ -201,12 +201,12 @@ public class GraphWriterDGS implements GraphWriter
 				
 			return sb.toString();
 		}
-		else if( value instanceof HashMap<?,?> || value instanceof Attribute )
+		else if( value instanceof HashMap<?,?> || value instanceof CompoundAttribute )
 		{
 			HashMap<?,?> hash;
 			
-			if( value instanceof Attribute )
-			     hash = ((Attribute)value).toHashMap();
+			if( value instanceof CompoundAttribute )
+			     hash = ((CompoundAttribute)value).toHashMap();
 			else hash = (HashMap<?,?>) value;
 			
 			return hashToString( hash );

@@ -26,11 +26,8 @@ package org.miv.graphstream.io;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.miv.graphstream.graph.Edge;
-import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.graph.Graph;
 import org.miv.graphstream.graph.GraphListener;
-import org.miv.graphstream.graph.Node;
 
 /**
  * A graph writer helper that listens at a graph and writes back all modifications as events.
@@ -46,10 +43,6 @@ import org.miv.graphstream.graph.Node;
  * Be careful, this helper works only with output graph file formats that support dynamic
  * graphs (DGS supports all commands, or at least GML extended by GraphStream, but probably
  * not readable elsewhere).
- * </p>
- * 
- * <p>
- * TODO How to handle attributes correctly.
  * </p>
  */
 public class DynamicGraphWriterHelper implements GraphListener
@@ -92,6 +85,11 @@ public class DynamicGraphWriterHelper implements GraphListener
 	}
 	
 // Command
+    
+    public void flush()
+    {
+    	writer.flush();
+    }
 	
 	/**
 	 * Begin the graph output. The file format is automatically guessed from the file name
@@ -150,16 +148,12 @@ public class DynamicGraphWriterHelper implements GraphListener
 		}
 	}
 
-    public void afterEdgeAdd( Graph graph, Edge edge )
+    public void edgeAdded( String graphId, String edgeId, String nodeFromId, String nodeToId, boolean directed )
     {
     	try
     	{
     		if( writer != null )
-    			writer.addEdge( edge.getId(),
-    					edge.getNode0().getId(),
-    					edge.getNode1().getId(),
-    					edge.isDirected(),
-    					edge.getAttributeMap() );
+    			writer.addEdge( edgeId, nodeFromId, nodeToId, directed, null );
     	}
     	catch( IOException e )
     	{
@@ -167,12 +161,51 @@ public class DynamicGraphWriterHelper implements GraphListener
     	}
     }
 
-    public void afterNodeAdd( Graph graph, Node node )
+    public void nodeAdded( String graphId, String nodeId )
     {
     	try
     	{
     		if( writer != null )
-    			writer.addNode( node.getId(), node.getAttributeMap() );
+    			writer.addNode( nodeId, null );
+    	}
+    	catch( IOException e )
+    	{
+    		lastError = e;
+    	}
+    }
+
+    public void edgeRemoved( String graphId, String edgeId )
+    {
+    	try
+    	{
+    		if( writer != null )
+    			writer.delEdge( edgeId );
+    	}
+    	catch( IOException e )
+    	{
+    		lastError = e;
+    	}
+    }
+
+    public void nodeRemoved( String graphId, String nodeId )
+    {
+    	try
+    	{
+    		if( writer != null )
+    			writer.delNode( nodeId );
+    	}
+    	catch( IOException e )
+    	{
+    		lastError = e;
+    	}
+    }
+
+	public void stepBegins( String graphId, double time )
+	{
+		try
+    	{
+    		if( writer != null )
+    			writer.step( time );
     	}
     	catch( IOException e )
     	{
@@ -182,85 +215,111 @@ public class DynamicGraphWriterHelper implements GraphListener
     
     protected HashMap<String,Object> attributes = new HashMap<String,Object>();
 
-    public void attributeChanged( Element element, String attribute, Object oldValue,
-            Object newValue )
+    public void graphAttributeAdded( String graphId, String attribute, Object value )
     {
-    	try
-    	{
-    		if( element instanceof Node )
-    		{
-    			//attributes.clear();
-    			//attributes.put( attribute, newValue );
-    			//writer.changeNode( element.getId(), attributes );
-    			writer.changeNode( element.getId(), attribute, newValue, newValue==null );
-    		}
-    		else if( element instanceof Edge )
-    		{
-    			//attributes.clear();
-    			//attributes.put( attribute, newValue );
-    			//writer.changeEdge( element.getId(), attributes );
-    			writer.changeEdge( element.getId(), attribute, newValue, newValue==null );
-    		}
-    		else if( element instanceof Graph )
-    		{
-    			//attributes.clear();
-    			//attributes.put( attribute, newValue );
-    			//writer.changeGraph( attributes );
-    			writer.changeGraph( attribute, newValue, newValue==null );
-    		}
-    	}
-    	catch( IOException e )
-    	{
-    		lastError = e;
-    	}
-    }
-
-    public void beforeEdgeRemove( Graph graph, Edge edge )
-    {
-    	try
-    	{
-    		if( writer != null )
-    			writer.delEdge( edge.getId() );
-    	}
-    	catch( IOException e )
-    	{
-    		lastError = e;
-    	}
-    }
-
-    public void beforeGraphClear( Graph graph )
-    {
-    	// Ah ah!!!  not in DGS !!!!!
-    }
-
-    public void beforeNodeRemove( Graph graph, Node node )
-    {
-    	try
-    	{
-    		if( writer != null )
-    			writer.delNode( node.getId() );
-    	}
-    	catch( IOException e )
-    	{
-    		lastError = e;
-    	}
-    }
-    
-    public void flush()
-    {
-    	writer.flush();
-    }
-
-	public void stepBegins(Graph graph, double time)
-	{
 		try
-    	{
-    		if( writer != null )
-    			writer.step(time);
-    	}
-    	catch( IOException e )
-    	{
-    		lastError = e;
-    	}
+        {
+	        writer.changeGraph( attribute, value, false );
+        }
+        catch( IOException e )
+        {
+        	lastError = e;
+        }
+    }
+
+	public void graphAttributeChanged( String graphId, String attribute, Object oldValue, Object newValue )
+    {
+		try
+        {
+	        writer.changeGraph( attribute, newValue, false );
+        }
+        catch( IOException e )
+        {
+        	lastError = e;
+        }
+    }
+
+	public void graphAttributeRemoved( String graphId, String attribute )
+    {
+		try
+        {
+	        writer.changeGraph( attribute, null, true );
+        }
+        catch( IOException e )
+        {
+        	lastError = e;
+        }
+    }
+
+	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+    {
+		try
+        {
+	        writer.changeNode( nodeId, attribute, value, false );
+        }
+        catch( IOException e )
+        {
+        	lastError = e;
+        }
+    }
+
+	public void nodeAttributeChanged( String graphId, String nodeId, String attribute, Object oldValue, Object newValue )
+    {
+		try
+        {
+	        writer.changeNode( nodeId, attribute, newValue, false );
+        }
+        catch( IOException e )
+        {
+        	lastError = e;
+        }
+    }
+
+	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+    {
+		try
+        {
+	        writer.changeNode( nodeId, attribute, null, true );
+        }
+        catch( IOException e )
+        {
+        	lastError = e;
+        }
+    }
+
+	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+    {
+		try
+        {
+	        writer.changeEdge( edgeId, attribute, value, false );
+        }
+        catch( IOException e )
+        {
+        	lastError = e;
+        }
+    }
+
+	public void edgeAttributeChanged( String graphId, String edgeId, String attribute, Object oldValue, Object newValue )
+    {
+		try
+        {
+	        writer.changeEdge( edgeId, attribute, newValue, false );
+        }
+        catch( IOException e )
+        {
+        	lastError = e;
+        }
+    }
+
+	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+    {
+		try
+        {
+	        writer.changeEdge( edgeId, attribute, null, true );
+        }
+        catch( IOException e )
+        {
+        	lastError = e;
+        }
     }
 }

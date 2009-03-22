@@ -23,31 +23,17 @@
 
 package org.miv.graphstream.graph.implementations;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
-//import org.miv.graphstream.algorithm.Algorithms;
 import org.miv.graphstream.graph.Edge;
-import org.miv.graphstream.graph.EdgeFactory;
-import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.graph.Graph;
 import org.miv.graphstream.graph.GraphListener;
 import org.miv.graphstream.graph.GraphListenerProxy;
 import org.miv.graphstream.graph.Node;
-import org.miv.graphstream.graph.NodeFactory;
-import org.miv.graphstream.io.GraphParseException;
-import org.miv.graphstream.io.GraphReader;
-import org.miv.graphstream.io.GraphWriter;
-import org.miv.graphstream.ui.GraphViewerRemote;
 import org.miv.mbox.CannotPostException;
 import org.miv.mbox.MBox;
 import org.miv.mbox.MBoxListener;
 import org.miv.mbox.MBoxStandalone;
-import org.miv.util.NotFoundException;
-import org.miv.util.SingletonException;
 
 /**
  * Helper class that allows to listen at a graph across thread boundaries.
@@ -119,6 +105,9 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 	 */
 	protected Graph inputGraph;
 
+	/**
+	 * If true, as soon as an event is received, the listener on the input graph is removed.
+	 */
 	protected boolean unregisterWhenPossible = false;
 	
 // Constructors
@@ -147,7 +136,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 	}
 
 	/**
-	 * Like {@link #GraphListenerProxyThread(Graph)}, but additionally, redirect all events comming from
+	 * Like {@link #GraphListenerProxyThread(Graph)}, but additionally, redirect all events coming from
 	 * the input graph to an output graph.
 	 * 
 	 * The effect of the proxy is that the output graph will be the exact copy of the input graph.
@@ -253,75 +242,55 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 	{
 		try
 		{
+			String gid = inputGraph.getId();
+			
 			// Replay all attributes of the graph.
 
-			Iterator<String> k = inputGraph.getAttributeKeyIterator();
+			//Iterator<String> k = inputGraph.getAttributeKeyIterator();
 
-			if( k != null )
+			if( inputGraph.getAttributeKeySet() != null )
 			{
-				while( k.hasNext() )
+				for( String key : inputGraph.getAttributeKeySet() )
 				{
-					String key = k.next();
 					Object val = inputGraph.getAttribute( key );
-
-					events.post( from, InputProtocol.CHANGE_GRAPH.tag, key, val );
+	
+					events.post( from, "gaa", gid, key, val );
 				}
 			}
 
-			k = null;
-
 			// Replay all nodes and their attributes.
 
-			Iterator<? extends Node> nodes = inputGraph.getNodeIterator();
-
-			while( nodes.hasNext() )
-			// for( Node node: graph.getNodeSet() )
+			for( Node node: inputGraph )
 			{
-				Node node = nodes.next();
+				events.post( from, "an", gid, node.getId() );
 
-				events.post( from, InputProtocol.ADD_NODE.tag, node.getId() );
-
-				k = node.getAttributeKeyIterator();
-
-				if( k != null )
+				if( node.getAttributeKeySet() != null )
 				{
-					while( k.hasNext() )
+					for( String key: node.getAttributeKeySet() )
 					{
-						String key = k.next();
 						Object val = node.getAttribute( key );
 
-						events.post( from, InputProtocol.CHANGE_NODE.tag, node.getId(), key,
-						        val );
+						events.post( from, "naa", gid, node.getId(), key, val );
 					}
 				}
 			}
 
-			k = null;
-
 			// Replay all edges and their attributes.
 
-			Iterator<? extends Edge> edges = inputGraph.getEdgeIterator();
-			
-			while( edges.hasNext() )
-			//for( Edge edge : graph.getEdgeSet() )
+			for( Edge edge: inputGraph.getEdgeSet() )
 			{
-				Edge edge = edges.next();
-				
-				events.post( from, InputProtocol.ADD_EDGE.tag, edge.getId(), edge
-				        .getSourceNode().getId(), edge.getTargetNode().getId(), new Boolean(
-				        edge.isDirected() ) );
+				events.post( from, "ae", gid, edge.getId(),
+						edge.getSourceNode().getId(),
+						edge.getTargetNode().getId(),
+						new Boolean( edge.isDirected() ) );
 
-				k = edge.getAttributeKeyIterator();
-
-				if( k != null )
+				if( edge.getAttributeKeySet() != null )
 				{
-					while( k.hasNext() )
+					for( String key: edge.getAttributeKeySet() )
 					{
-						String key = k.next();
 						Object val = edge.getAttribute( key );
 
-						events.post( from, InputProtocol.CHANGE_EDGE.tag, edge.getId(), key,
-						        val );
+						events.post( from, "eaa", gid, edge.getId(), key, val );
 					}
 				}
 			}
@@ -335,139 +304,220 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 	
 // GraphListener -- Redirect events to the message box.
 
-	public void attributeChanged( Element element, String attribute, Object oldValue,
-	        Object newValue )
-	{
-		if( unregisterWhenPossible )
-		{
-			inputGraph.removeGraphListener( this );
-			//System.err.printf( "Proxy unregistered from graph !! (%s)%n", Thread.currentThread().getName() );
-			return;
-		}
+	public void graphAttributeAdded( String graphId, String attribute, Object value )
+    {
+		if( maybeUnregister() ) return;
 		
 		try
 		{
-			if( element instanceof Node )
-			{
-				events.post( from, InputProtocol.CHANGE_NODE.tag, element.getId(), attribute,
-				        newValue );
-			}
-			else if( element instanceof Edge )
-			{
-				events.post( from, InputProtocol.CHANGE_EDGE.tag, element.getId(), attribute,
-				        newValue );
-			}
-			else
-			{
-				events.post( from, InputProtocol.CHANGE_GRAPH.tag, attribute, newValue );
-			}
+			events.post( from, "gaa", graphId, attribute, value );
+		}
+		catch( CannotPostException e )
+		{
+			System.err.printf( "GraphRendererRunner: cannot post message to listeners: %s%n", e
+			        .getMessage() );			
+		}
+    }
+
+	public void graphAttributeChanged( String graphId, String attribute, Object oldValue, Object newValue )
+    {
+		if( maybeUnregister() ) return;
+		
+		try
+		{
+			events.post( from, "gac", graphId, attribute, oldValue, newValue );
+		}
+		catch( CannotPostException e )
+		{
+			System.err.printf( "GraphRendererRunner: cannot post message to listeners: %s%n", e
+			        .getMessage() );			
+		}
+    }
+
+	public void graphAttributeRemoved( String graphId, String attribute )
+    {
+		if( maybeUnregister() ) return;
+		
+		try
+		{
+			events.post( from, "gar", graphId, attribute );
+		}
+		catch( CannotPostException e )
+		{
+			System.err.printf( "GraphRendererRunner: cannot post message to listeners: %s%n", e
+			        .getMessage() );			
+		}
+    }
+
+	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId,
+            boolean directed )
+    {
+		if( maybeUnregister() ) return;
+
+		try
+		{
+			events.post( from, "ae", graphId, edgeId, fromNodeId, toNodeId, directed );
 		}
 		catch( CannotPostException e )
 		{
 			System.err.printf( "GraphRendererRunner: cannot post message to listeners: %s%n", e
 			        .getMessage() );
 		}
-	}
+    }
 
-	public void afterNodeAdd( Graph graph, Node node )
+	public void edgeRemoved( String graphId, String edgeId )
+    {
+		if( maybeUnregister() ) return;
+
+		try
+		{
+			events.post( from, "de", graphId, edgeId );
+		}
+		catch( CannotPostException e )
+		{
+			System.err.printf( "GraphRendererRunner: cannot post message to listeners: %s%n", e
+			        .getMessage() );
+		}
+    }
+
+	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+    {
+		if( maybeUnregister() ) return;
+		
+		try
+		{
+			events.post( from, "eaa", graphId, edgeId, attribute, value );
+		}
+		catch( CannotPostException e )
+		{
+		}
+    }
+
+	public void edgeAttributeChanged( String graphId, String edgeId, String attribute, Object oldValue, Object newValue )
+    {
+		if( maybeUnregister() ) return;
+		
+		try
+		{
+			events.post( from, "eac", graphId, edgeId, attribute, oldValue, newValue );
+		}
+		catch( CannotPostException e )
+		{
+		}
+    }
+
+	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+    {
+		if( maybeUnregister() ) return;
+		
+		try
+		{
+			events.post( from, "ear", graphId, edgeId, attribute );
+		}
+		catch( CannotPostException e )
+		{
+		}
+    }
+
+	public void nodeAdded( String graphId, String nodeId )
+    {
+		if( maybeUnregister() ) return;
+
+		try
+		{
+			events.post( from, "an", graphId, nodeId );
+		}
+		catch( CannotPostException e )
+		{
+			System.err.printf( "GraphRendererRunner: cannot post message to listeners: %s%n", e
+			        .getMessage() );
+		}
+    }
+
+	public void nodeRemoved( String graphId, String nodeId )
+    {
+		if( maybeUnregister() ) return;
+
+		try
+		{
+			events.post( from, "dn", graphId, nodeId );
+		}
+		catch( CannotPostException e )
+		{
+			System.err.printf( "GraphRendererRunner: cannot post message to listeners: %s%n", e
+			        .getMessage() );
+		}
+    }
+
+	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+    {
+		if( maybeUnregister() ) return;
+
+		try
+		{
+			events.post( from, "naa", graphId, nodeId, attribute, value );
+		}
+		catch( CannotPostException e )
+		{
+			System.err.printf( "GraphRendererRunner: cannot post message to listeners: %s%n", e
+		        .getMessage() );
+		}
+    }
+
+	public void nodeAttributeChanged( String graphId, String nodeId, String attribute, Object oldValue, Object newValue )
+    {
+		if( maybeUnregister() ) return;
+
+		try
+		{
+			events.post( from, "nac", graphId, nodeId, attribute, oldValue, newValue );
+		}
+		catch( CannotPostException e )
+		{
+			System.err.printf( "GraphRendererRunner: cannot post message to listeners: %s%n", e
+		        .getMessage() );
+		}
+    }
+
+	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+    {
+		if( maybeUnregister() ) return;
+
+		try
+		{
+			events.post( from, "nar", graphId, nodeId, attribute );
+		}
+		catch( CannotPostException e )
+		{
+			System.err.printf( "GraphRendererRunner: cannot post message to listeners: %s%n", e
+		        .getMessage() );
+		}
+    }
+
+	public void stepBegins( String graphId, double time )
+    {
+		if( maybeUnregister() ) return;
+
+		try
+		{
+			events.post( from, "step", graphId, time );
+		}
+		catch( CannotPostException e )
+		{
+			System.err.printf( "GraphRendererRunner: cannot post message to listeners: %s%n", e
+			        .getMessage() );
+		}
+    }
+
+	protected boolean maybeUnregister()
 	{
 		if( unregisterWhenPossible )
 		{
 			inputGraph.removeGraphListener( this );
-			//System.err.printf( "Proxy unregistered from graph !! (%s)%n", Thread.currentThread().getName() );
-			return;
+			return true;
 		}
-
-		try
-		{
-			events.post( from, InputProtocol.ADD_NODE.tag, node.getId() );
-		}
-		catch( CannotPostException e )
-		{
-			System.err.printf( "GraphRendererRunner: cannot post message to listeners: %s%n", e
-			        .getMessage() );
-		}
-	}
-
-	public void afterEdgeAdd( Graph graph, Edge edge )
-	{
-		if( unregisterWhenPossible )
-		{
-			inputGraph.removeGraphListener( this );
-			System.err.printf( "Proxy unregistered from graph !! (%s)%n", Thread.currentThread().getName() );
-			return;
-		}
-
-		try
-		{
-			events.post( from, InputProtocol.ADD_EDGE.tag, edge.getId(), edge.getSourceNode()
-			        .getId(), edge.getTargetNode().getId(), new Boolean( edge.isDirected() ) );
-		}
-		catch( CannotPostException e )
-		{
-			System.err.printf( "GraphRendererRunner: cannot post message to listeners: %s%n", e
-			        .getMessage() );
-		}
-	}
-
-	public void beforeNodeRemove( Graph graph, Node node )
-	{
-		if( unregisterWhenPossible )
-		{
-			inputGraph.removeGraphListener( this );
-			//System.err.printf( "Proxy unregistered from graph !! (%s)%n", Thread.currentThread().getName() );
-			return;
-		}
-
-		try
-		{
-			events.post( from, InputProtocol.DEL_NODE.tag, node.getId() );
-		}
-		catch( CannotPostException e )
-		{
-			System.err.printf( "GraphRendererRunner: cannot post message to listeners: %s%n", e
-			        .getMessage() );
-		}
-	}
-
-	public void beforeEdgeRemove( Graph graph, Edge edge )
-	{
-		if( unregisterWhenPossible )
-		{
-			inputGraph.removeGraphListener( this );
-			//System.err.printf( "Proxy unregistered from graph !! (%s)%n", Thread.currentThread().getName() );
-			return;
-		}
-
-		try
-		{
-			events.post( from, InputProtocol.DEL_EDGE.tag, edge.getId() );
-		}
-		catch( CannotPostException e )
-		{
-			System.err.printf( "GraphRendererRunner: cannot post message to listeners: %s%n", e
-			        .getMessage() );
-		}
-	}
-
-	public void beforeGraphClear( Graph graph )
-	{
-		if( unregisterWhenPossible )
-		{
-			inputGraph.removeGraphListener( this );
-			//System.err.printf( "Proxy unregistered from graph !! (%s)%n", Thread.currentThread().getName() );
-			return;
-		}
-
-		try
-		{
-			events.post( from, InputProtocol.CLEAR_GRAPH.tag );
-		}
-		catch( CannotPostException e )
-		{
-			System.err.printf( "GraphRendererRunner: cannot post message to listeners: %s%n", e
-			        .getMessage() );
-		}
+		
+		return false;
 	}
 
 // MBoxListener -- receive redirected events and re-send them to listeners.
@@ -476,143 +526,294 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
     {
 		if( data.length > 0 )
 		{
-			if( data[0].equals( InputProtocol.CHANGE_GRAPH.tag ) )
-			{
-				if( data.length >= 3 && data[1] instanceof String )
-				{
-					if( outputGraph != null )
-						outputGraph.changeAttribute( (String)data[1], data[2] );
-					
-					Graph graph = outputGraph != null ? outputGraph : new DummyGraph( "" );
-					
-					for( GraphListener listener: listeners )
-						listener.attributeChanged( graph, (String) data[1], null, data[2] );
-				}
-			}
-			else if( data[0].equals( InputProtocol.CHANGE_NODE.tag ) )
+			if( data[0].equals( "gaa" ) )
 			{
 				if( data.length >= 4 && data[1] instanceof String && data[2] instanceof String )
 				{
-					String id   = (String) data[1];
+					String gid  = (String) data[1];
+					String attr = (String) data[2];
+					
+					if( outputGraph != null )
+					{
+						outputGraph.addAttribute( attr, data[3] );
+						gid = outputGraph.getId();
+					}
+					
+					for( GraphListener listener: listeners )
+						listener.graphAttributeAdded( gid, attr, data[3] );
+				}
+			}
+			else if( data[0].equals( "gac" ) )
+			{
+				if( data.length >= 5 && data[1] instanceof String && data[2] instanceof String )
+				{
+					String gid  = (String) data[1];
+					String attr = (String) data[2];
+					
+					if( outputGraph != null )
+					{
+						outputGraph.changeAttribute( attr, data[3] );
+						gid = outputGraph.getId();
+					}
+					
+					for( GraphListener listener: listeners )
+						listener.graphAttributeChanged( gid, attr, data[3], data[4] );
+				}
+			}
+			else if( data[0].equals( "gar" ) )
+			{
+				if( data.length >= 3 && data[1] instanceof String && data[2] instanceof String )
+				{
+					String gid  = (String) data[1];
+					String attr = (String) data[2];
+					
+					if( outputGraph != null )
+					{
+						outputGraph.removeAttribute( attr );
+						gid = outputGraph.getId();
+					}
+					
+					for( GraphListener listener: listeners )
+						listener.graphAttributeRemoved( gid, attr );
+				}				
+			}
+			else if( data[0].equals( "naa" ) )
+			{
+				if( data.length >= 5 && data[1] instanceof String
+				&&  data[2] instanceof String
+				&&  data[3] instanceof String )
+				{
+					String gid  = (String) data[1];
+					String id   = (String) data[2];
+					String attr = (String) data[3];
 					Node   node = null;
 					
 					if( outputGraph != null )
 					{
 						node = outputGraph.getNode( id );
+						gid  = outputGraph.getId();
 						
 						if( node != null )
-							node.changeAttribute( (String)data[2], data[3] );
+							node.addAttribute( attr, data[4] );
 					}
 
-					Node n = node != null ? node : new DummyNode( id );
-					
 					for( GraphListener listener: listeners )
-						listener.attributeChanged( n, (String)data[2], null/*TODO*/, data[3] );
+						listener.nodeAttributeAdded( gid, id, attr, data[4] );
 				}
 			}
-			else if( data[0].equals( InputProtocol.CHANGE_EDGE.tag ) )
+			else if( data[0].equals( "nac" ) )
 			{
-				if( data.length >= 4 && data[1] instanceof String && data[2] instanceof String )
+				if( data.length >= 6 && data[1] instanceof String
+				&&  data[2] instanceof String
+				&&  data[3] instanceof String )
 				{
-					String id   = (String) data[1];
+					String gid  = (String) data[1];
+					String id   = (String) data[2];
+					String attr = (String) data[3];
+					Node   node = null;
+					
+					if( outputGraph != null )
+					{
+						node = outputGraph.getNode( id );
+						gid  = outputGraph.getId();
+						
+						if( node != null )
+							node.changeAttribute( attr, data[4] );
+					}
+
+					for( GraphListener listener: listeners )
+						listener.nodeAttributeChanged( gid, id, attr, data[4], data[5] );
+				}
+			}
+			else if( data[0].equals( "nar" ) )
+			{
+				if( data.length >= 4 && data[1] instanceof String
+				&&  data[2] instanceof String
+				&&  data[3] instanceof String )
+				{
+					String gid  = (String) data[1];
+					String id   = (String) data[2];
+					String attr = (String) data[3];
+					Node   node = null;
+					
+					if( outputGraph != null )
+					{
+						node = outputGraph.getNode( id );
+						gid  = outputGraph.getId();
+						
+						if( node != null )
+							node.removeAttribute( attr );
+					}
+
+					for( GraphListener listener: listeners )
+						listener.nodeAttributeRemoved( gid, id, attr );
+				}
+			}
+			else if( data[0].equals( "eaa" ) )
+			{
+				if( data.length >= 5 && data[1] instanceof String
+				&&  data[2] instanceof String
+				&&  data[3] instanceof String )
+				{
+					String gid  = (String) data[1];
+					String id   = (String) data[2];
+					String attr = (String) data[3];
 					Edge   edge = null;
 					
 					if( outputGraph != null )
 					{
 						edge = outputGraph.getEdge( id );
+						gid  = outputGraph.getId();
 						
 						if( edge != null )
-							edge.changeAttribute( (String) data[2], data[3] );
+							edge.addAttribute( attr, data[4] );
 					}
 
-					Edge e = edge != null ? edge : new DummyEdge( id, null, null, false );
-					
 					for( GraphListener listener: listeners )
-						listener.attributeChanged( e, (String)data[2], null/*TODO*/, data[3] );
+						listener.edgeAttributeAdded( gid, id, attr, data[4] );
 				}
 			}
-			else if( data[0].equals( InputProtocol.ADD_NODE.tag ) )
+			else if( data[0].equals( "eac" ) )
 			{
-				if( data.length >= 2 && data[1] instanceof String )
+				if( data.length >= 6 && data[1] instanceof String
+				&&  data[2] instanceof String
+				&&  data[3] instanceof String )
 				{
-					String id   = (String) data[1];
-					Node   node = null;
+					String gid  = (String) data[1];
+					String id   = (String) data[2];
+					String attr = (String) data[3];
+					Edge   edge = null;
+					
+					if( outputGraph != null )
+					{
+						edge = outputGraph.getEdge( id );
+						gid  = outputGraph.getId();
+						
+						if( edge != null )
+							edge.changeAttribute( attr, data[4] );
+					}
+
+					for( GraphListener listener: listeners )
+						listener.edgeAttributeChanged( gid, id, attr, data[4], data[5] );
+				}
+			}
+			else if( data[0].equals( "ear" ) )
+			{
+				if( data.length >= 4 && data[1] instanceof String
+				&&  data[2] instanceof String
+				&&  data[3] instanceof String )
+				{
+					String gid  = (String) data[1];
+					String id   = (String) data[2];
+					String attr = (String) data[3];
+					Edge   edge = null;
+					
+					if( outputGraph != null )
+					{
+						edge = outputGraph.getEdge( id );
+						gid  = outputGraph.getId();
+						
+						if( edge != null )
+							edge.removeAttribute( attr );
+					}
+
+					for( GraphListener listener: listeners )
+						listener.edgeAttributeRemoved( gid, id, attr );
+				}
+			}
+			else if( data[0].equals( "an" ) )
+			{
+				if( data.length >= 3 && data[1] instanceof String && data[2] instanceof String )
+				{
+					String gid  = (String) data[1];
+					String id   = (String) data[2];
 			
 					if( outputGraph != null )
-						node = outputGraph.addNode( id );
+					{
+						outputGraph.addNode( id );
 
-					Node n = node != null ? node : new DummyNode( id );
-					
+						gid = outputGraph.getId();
+					}
+
 					for( GraphListener listener: listeners )
-						listener.afterNodeAdd( outputGraph, n );
+						listener.nodeAdded( gid, id );
 				}
 			}
-			else if( data[0].equals( InputProtocol.ADD_EDGE.tag ) )
+			else if( data[0].equals( "ae" ) )
 			{
-				if( data.length >= 5 && data[1] instanceof String && data[2] instanceof String
-				        && data[3] instanceof String && data[4] instanceof Boolean )
+				if( data.length >= 5 && data[1] instanceof String
+						&& data[2] instanceof String && data[3] instanceof String
+				        && data[4] instanceof String && data[5] instanceof Boolean )
 				{
-					Edge    edge = null;
-					String  id   = (String) data[1];
-					String  froM = (String) data[2];
-					String  to   = (String) data[3];
-					boolean dir  = (Boolean) data[4];
+					String  gid  = (String)  data[1];
+					String  id   = (String)  data[2];
+					String  froM = (String)  data[3];
+					String  to   = (String)  data[4];
+					boolean dir  = (Boolean) data[5];
 					
 					if( outputGraph != null )
-						edge = outputGraph.addEdge( id, froM, to, dir );
+					{
+						outputGraph.addEdge( id, froM, to, dir );
 
-					Edge e = edge != null ? edge : new DummyEdge( id, froM, to, dir );
-					
+						gid = outputGraph.getId();
+					}
+
 					for( GraphListener listener: listeners )
-						listener.afterEdgeAdd( outputGraph, e );
+						listener.edgeAdded( gid, id, froM, to, dir );
 				}
 			}
-			else if( data[0].equals( InputProtocol.DEL_NODE.tag ) )
+			else if( data[0].equals( "dn" ) )
+			{
+				if( data.length >= 2 && data[1] instanceof String && data[2] instanceof String )
+				{
+					String gid  = (String) data[1];
+					String id   = (String) data[2];
+					
+					if( outputGraph != null )
+					{
+						outputGraph.removeNode( id );
+
+						gid = outputGraph.getId();
+					}
+
+					for( GraphListener listener: listeners )
+						listener.nodeRemoved( gid, id );
+				}
+			}
+			else if( data[0].equals( "de" ) )
 			{
 				if( data.length >= 2 && data[1] instanceof String )
 				{
-					Node   node = null;
-					String id   = (String) data[1];
+					String gid  = (String) data[1];
+					String id   = (String) data[2];
 					
 					if( outputGraph != null )
-						node = outputGraph.removeNode( id );
+					{
+						outputGraph.removeEdge( id );
 
-					Node n = node != null ? node : new DummyNode( id );
-					
+						gid = outputGraph.getId();
+					}
+
 					for( GraphListener listener: listeners )
-						listener.beforeNodeRemove( outputGraph, n );
+						listener.edgeRemoved( gid, id );
 				}
 			}
-			else if( data[0].equals( InputProtocol.DEL_EDGE.tag ) )
+			else if( data[0].equals( "step" ) )
 			{
-				if( data.length >= 2 && data[1] instanceof String )
+				if( data.length >= 3 && data[1] instanceof String && data[2] instanceof Number )
 				{
-					Edge   edge = null;
-					String id   = (String) data[1];
+					String gid  = (String) data[1];
+					double time = ((Number)data[2]).doubleValue();
 					
-					if( outputGraph != null )
-						edge = outputGraph.removeEdge( id );
-
-					Edge e = edge != null ? edge : new DummyEdge( id, null, null, false );
-					
-					for( GraphListener listener: listeners )
-						listener.beforeEdgeRemove( outputGraph, e );
+					if (outputGraph != null)
+					{
+						outputGraph.stepBegins( time );
+						gid = outputGraph.getId();
+					}
+	
+					for (GraphListener listener : listeners)
+						listener.stepBegins( gid, time );
 				}
-			}
-			else if( data[0].equals( InputProtocol.CLEAR_GRAPH.tag ) )
-			{
-				Graph graph = outputGraph != null ? outputGraph : new DummyGraph( "" );
-				
-				for( GraphListener listener: listeners )
-					listener.beforeGraphClear( graph );
-			}
-			else if( data[0].equals( InputProtocol.STEP_BEGINS.tag ) )
-			{
-				if (outputGraph != null)
-					outputGraph.stepBegins((Double) data[2]);
-
-				for (GraphListener listener : listeners)
-					listener.stepBegins((Graph) data[1], (Double) data[2]);
 			}
 			else
 			{
@@ -629,226 +830,4 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 */			}
 		}	    
     }
-    
-// Nested classes
-	
-	/**
-	 * Commands that can be sent through the event message box. Messages are array of objects. The
-	 * first element of the array is a string identifying the message. The other elements depend on
-	 * the message kind, and for all messages are given in order under the form "elementName:Type".
-	 * For example to send a node add event, you can use:
-	 * 
-	 * <pre>
-	 * mbox.post( &quot;fromMe&quot;, InputProtocol.ADD_NODE.tag, &quot;nodeId&quot; );
-	 * </pre>
-	 * 
-	 * or:
-	 * 
-	 * <pre>
-	 * mbox.post( &quot;fromMe&quot;, &quot;an&quot;, &quot;nodeId&quot; );
-	 * </pre>
-	 * 
-	 * The post() method handles variable argument list, which simplify the creation of messages.
-	 * 
-	 * @author Antoine Dutot
-	 * @author Yoann Pign�
-	 * @since 20061208
-	 */
-	public static enum InputProtocol
-	{
-		/**
-		 * Clear the whole graph. Format[0]: empty.
-		 */
-		CLEAR_GRAPH( "clear" ),
-		/**
-		 * Change the graph. Format[2]: attributeKey:String, value:Object.
-		 */
-		CHANGE_GRAPH( "cg" ),
-		/**
-		 * Change a node. Format[3]: nodeId:String, attributeKey:String, value:Object.
-		 */
-		CHANGE_NODE( "cn" ),
-		/**
-		 * Change an edge. Format[3]: edgeId:String, attributeKey:String, value:Object.
-		 */
-		CHANGE_EDGE( "ce" ),
-		/**
-		 * Add a node. Format[1]: nodeId:String.
-		 */
-		ADD_NODE( "an" ),
-		/**
-		 * Add an edge. Format[4]: edgeId:String, node0Id:String, node1Id:String, directed:Boolean
-		 */
-		ADD_EDGE( "ae" ),
-		/**
-		 * Remove a node. Format[1]: nodeId:String.
-		 */
-		DEL_NODE( "dn" ),
-		/**
-		 * Remove an edge. Format[1]: edgeId:String.
-		 */
-		DEL_EDGE( "de" ),
-		/**
-		 * One more step. Format[1]: step:double.
-		 */
-		STEP_BEGINS("st");
-		
-		/**
-		 * The message identifier.
-		 */
-		public String tag;
-
-		InputProtocol( String tag )
-		{
-			this.tag = tag;
-		}
-
-		/**
-		 * Get the message identifier.
-		 * 
-		 * @return The message identifier.
-		 */
-		public String getTag()
-		{
-			return tag;
-		}
-	}
-
-	public static class DummyNode extends AbstractElement implements Node
-	{
-		String nid;
-		public DummyNode( String id ) { super( id ); }
-		
-		@Override
-		public String getId() { return nid; }
-		public void setId( String id ) { nid = id; }
-		
-		@Override
-        protected void attributeChanged( String attribute, Object oldValue, Object newValue ) {}
-		public Iterator<? extends Node> getBreadthFirstIterator() { return null; }
-		public Iterator<? extends Node> getBreadthFirstIterator( boolean directed ) { return null; }
-		public int getDegree() { return 0; }
-		public Iterator<? extends Node> getDepthFirstIterator() { return null; }
-		public Iterator<? extends Node> getDepthFirstIterator( boolean directed ) { return null; }
-		public Edge getEdge( int i ) { return null; }
-		public Edge getEdgeFrom( String id ) { return null; }
-		public Iterator<? extends Edge> getEdgeIterator() { return null; }
-		public Collection<? extends Edge> getEdgeSet() { return null; }
-		public Edge getEdgeToward( String id ) { return null; }
-		public Iterator<? extends Edge> getEnteringEdgeIterator() { return null; }
-		public Collection<? extends Edge> getEnteringEdgeSet() { return null; }
-		public Graph getGraph() { return null; }
-		public String getGraphName() { return null; }
-		public String getHost() { return null; }
-		public int getInDegree() { return 0; }
-		public Iterator<? extends Edge> getLeavingEdgeIterator() { return null; }
-		public Collection<? extends Edge> getLeavingEdgeSet() { return null; }
-		public Iterator<? extends Node> getNeighborNodeIterator() { return null; }
-		public int getOutDegree() { return 0; }
-		public boolean hasEdgeFrom( String id ) { return false; }
-		public boolean hasEdgeToward( String id ) { return false; }
-		public boolean isDistributed() { return false; }
-		public void setGraph( Graph graph ) {}
-		public void setGraphName( String newHost ) {}
-		public void setHost( String newHost ) {}
-	}
-	
-	public static class DummyEdge extends AbstractElement implements Edge
-	{
-		/**
-		 * Edge end point.
-		 */
-		public String from, to;
-		
-		/**
-		 * Is the edge directed.
-		 */
-		public boolean directed = false;
-		
-		public DummyNode FROM = new DummyNode( "" );
-		public DummyNode TO = new DummyNode( "" );
-		
-		public DummyEdge( String id, String from, String to, boolean dir ) { super( id ); this.from = from; this.to = to; directed = dir; }
-		
-		@Override
-        protected void attributeChanged( String attribute, Object oldValue, Object newValue ) {}
-		public Node getNode0() { FROM.setId( from ); return FROM; }
-		public Node getNode1() { TO.setId( to ); return TO; }
-		public Node getOpposite( Node node ) { return null; }
-		public Node getSourceNode() { FROM.setId( from ); return FROM; }
-		public Node getTargetNode() { TO.setId( to ); return TO; }
-		public boolean isDirected() { return directed; }
-		public void setDirected( boolean on ) {}
-		public void switchDirection() {}
-		public String getNode0Id() { return from; }
-		public String getNode1Id() { return to; }
-		public String getSourceId() { return from; }
-		public String getTargetId() { return to; }
-	}
-	
-	public static class DummyGraph extends AbstractElement implements Graph
-	{
-		public DummyGraph( String id ) { super( id ); }
-		
-		@Override
-        protected void attributeChanged( String attribute, Object oldValue, Object newValue ) {}
-		public Edge addEdge( String id, String node1, String node2 ) throws SingletonException, NotFoundException { return null; }
-		public Edge addEdge( String id, String from, String to, boolean directed ) throws SingletonException, NotFoundException { return null; }
-		public void addGraphListener( GraphListener listener ) {}
-		public Node addNode( String id ) throws SingletonException { return null; }
-//		public Algorithms algorithm() { return null; }
-		public void clear() {}
-		public void clearListeners() {}
-		public GraphViewerRemote display() { return null; }
-		public GraphViewerRemote display( boolean autoLayout ) { return null; }
-		public EdgeFactory edgeFactory() { return null; }
-		public void setEdgeFactory( EdgeFactory ef ) {}
-		public Edge getEdge( String id ) { return null; }
-		public int getEdgeCount() { return 0; }
-		public Iterator<? extends Edge> getEdgeIterator() { return null; }
-		public Collection<? extends Edge> getEdgeSet() { return null; }
-		public List<GraphListener> getGraphListeners() { return null; }
-		public Node getNode( String id ) { return null; }
-		public int getNodeCount() { return 0; }
-		public Iterator<? extends Node> getNodeIterator() { return null; }
-		public Iterator<Node> iterator() { return null; }
-		public Collection<? extends Node> getNodeSet() { return null; }
-		public boolean isAutoCreationEnabled() { return false; }
-		public boolean isStrictCheckingEnabled() { return false; }
-		public NodeFactory nodeFactory() { return null; }
-		public void setNodeFactory( NodeFactory nf ) {}
-		public void read( String filename ) throws IOException, GraphParseException, NotFoundException {}
-		public void read( GraphReader reader, String filename ) throws IOException, GraphParseException {}
-		public int readPositionFile( String posFileName ) throws IOException { return 0; }
-		public Edge removeEdge( String from, String to ) throws NotFoundException { return null; }
-		public Edge removeEdge( String id ) throws NotFoundException { return null; }
-		public void removeGraphListener( GraphListener listener ) {}
-		public Node removeNode( String id ) throws NotFoundException { return null; }
-		public void setAutoCreate( boolean on ) {}
-		public void setStrictChecking( boolean on ) {}
-		public void write( String filename ) throws IOException {}
-		public void write( GraphWriter writer, String filename ) throws IOException {}
-		public void stepBegins(double time){}
-	}
-
-	public void stepBegins(Graph graph, double time)
-	{
-
-		if( unregisterWhenPossible )
-		{
-			inputGraph.removeGraphListener( this );
-			//System.err.printf( "Proxy unregistered from graph !! (%s)%n", Thread.currentThread().getName() );
-			return;
-		}
-
-		try
-		{
-			events.post( from, InputProtocol.STEP_BEGINS.tag, graph, time );
-		}
-		catch( CannotPostException e )
-		{
-			System.err.printf( "GraphRendererRunner: cannot post message to listeners: %s%n", e
-			        .getMessage() );
-		}
-	}
 }

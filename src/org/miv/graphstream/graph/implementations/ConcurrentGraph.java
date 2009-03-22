@@ -216,14 +216,12 @@ public class ConcurrentGraph
 	
 // --- Graph implementation --- //
 
-	/* @Override */
 	public Edge addEdge(String id, String node1, String node2)
 			throws SingletonException, NotFoundException
 	{
 		return addEdge( id, node1, node2, false );
 	}
 
-	/* @Override */
 	public Edge addEdge(String id, String from, String to, boolean directed)
 			throws SingletonException, NotFoundException
 	{
@@ -238,13 +236,11 @@ public class ConcurrentGraph
 		return createEdge( id, n0, n1, directed );
 	}
 
-	/* @Override */
 	public void addGraphListener(GraphListener listener)
 	{
 		listeners.add(listener);
 	}
 
-	/* @Override */
 	public Node addNode(String id)
 		throws SingletonException
 	{
@@ -253,32 +249,23 @@ public class ConcurrentGraph
 		
 		return createNode(id);
 	}
-/*
-	public Algorithms algorithm()
-	{
-		return algos;
-	}
-*/
-	/* @Override */
+
 	public void clear()
 	{
 		graphClearEvent();
 		for( Node n : nodes.values() ) removeNode(n);
 	}
 
-	/* @Override */
 	public void clearListeners()
 	{
 		listeners.clear();
 	}
 
-	/* @Override */
 	public GraphViewerRemote display()
 	{
 		return display(true);
 	}
 
-	/* @Override */
 	public GraphViewerRemote display(boolean autoLayout)
 	{
 		try
@@ -327,73 +314,66 @@ public class ConcurrentGraph
 		this.edgeFactory = ef;
 	}
 
-	/* @Override */
 	public Edge getEdge(String id)
 	{
 		return edges.get(id);
 	}
 
-	/* @Override */
 	public int getEdgeCount()
 	{
 		return edges.size();
 	}
 
-	/* @Override */
 	public Iterator<? extends Edge> getEdgeIterator()
 	{
 		return Collections.unmodifiableCollection(edges.values()).iterator();
 	}
 
-	/* @Override */
-	public Collection<? extends Edge> getEdgeSet()
+	public Iterable<Edge> getEdgeSet()
 	{
 		return Collections.unmodifiableCollection(edges.values());
 	}
 
-	/* @Override */
 	public List<GraphListener> getGraphListeners()
 	{
 		throw new UnsupportedOperationException( "Method not implemented." );
 	}
 
-	/* @Override */
 	public Node getNode(String id)
 	{
 		return nodes.get(id);
 	}
 
-	/* @Override */
 	public int getNodeCount()
 	{
 		return nodes.size();
 	}
 
-	/* @Override */
 	public Iterator<? extends Node> getNodeIterator()
 	{
 		return Collections.unmodifiableCollection(nodes.values()).iterator();
 	}
-
-	/* @Override */
-	public Collection<? extends Node> getNodeSet() {
-		// TODO Auto-generated method stub
-		return null;
+	
+	public Iterator<Node> iterator()
+	{
+		return Collections.unmodifiableCollection(nodes.values()).iterator();
 	}
 
-	/* @Override */
+	public Iterable<Node> getNodeSet()
+	{
+		return Collections.unmodifiableCollection(nodes.values());
+	}
+
 	public boolean isAutoCreationEnabled()
 	{
 		return autoCreate;
 	}
 
-	/* @Override */
 	public boolean isStrictCheckingEnabled()
 	{
 		return strictChecking;
 	}
 
-	/* @Override */
 	public NodeFactory nodeFactory()
 	{
 		return nodeFactory;
@@ -404,7 +384,6 @@ public class ConcurrentGraph
 		this.nodeFactory = nf;
 	}
 
-	/* @Override */
 	public void read(String filename) 
 		throws IOException, GraphParseException, NotFoundException
 	{
@@ -414,7 +393,6 @@ public class ConcurrentGraph
 		reader.read( filename );
 	}
 
-	/* @Override */
 	public void read(GraphReader reader, String filename) 
 		throws IOException, GraphParseException
 	{
@@ -423,7 +401,6 @@ public class ConcurrentGraph
 		reader.read( filename );
 	}
 
-	/* @Override */
 	public int readPositionFile(String posFileName)
 		throws IOException
 	{
@@ -486,7 +463,6 @@ public class ConcurrentGraph
 		return ignored;
 	}
 
-	/* @Override */
 	public Edge removeEdge(String from, String to)
 		throws NotFoundException
 	{
@@ -505,7 +481,6 @@ public class ConcurrentGraph
 		return e;
 	}
 
-	/* @Override */
 	public Edge removeEdge(String id)
 		throws NotFoundException
 	{
@@ -517,13 +492,11 @@ public class ConcurrentGraph
 		return e;
 	}
 
-	/* @Override */
 	public void removeGraphListener(GraphListener listener)
 	{
 		listeners.remove(listener);
 	}
 
-	/* @Override */
 	public Node removeNode(String id)
 		throws NotFoundException
 	{
@@ -535,26 +508,22 @@ public class ConcurrentGraph
 		return n;
 	}
 
-	/* @Override */
 	public void setAutoCreate(boolean on)
 	{
 		autoCreate = on;
 	}
 
-	/* @Override */
 	public void setStrictChecking(boolean on)
 	{
 		strictChecking = on;
 	}
 
-	/* @Override */
 	public void stepBegins(double time)
 	{
 		for(GraphListener l : listeners)
-			l.stepBegins( this, time );
+			l.stepBegins( getId(), time );
 	}
 
-	/* @Override */
 	public void write(String filename) 
 		throws IOException
 	{
@@ -562,7 +531,6 @@ public class ConcurrentGraph
 		gwh.write( filename );
 	}
 
-	/* @Override */
 	public void write(GraphWriter writer, String filename) 
 		throws IOException
 	{

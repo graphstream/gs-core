@@ -52,14 +52,14 @@ import java.util.*;
  */
 public abstract class DefaultNode extends AbstractElement implements Node
 {
-// Constants
+// Constant
 
 	/**
 	 * Property used to store labels.
 	 */
 	public static final String ATTRIBUTE_LABEL = "label";
 
-// Fields
+// Attribute
 
 	/**
 	 * Parent graph.
@@ -71,7 +71,7 @@ public abstract class DefaultNode extends AbstractElement implements Node
 	 */
 	protected ArrayList<Edge> edges = new ArrayList<Edge>();
 
-// Constructors
+// Construction
 	
 	/**
 	 * New unconnected node.
@@ -123,6 +123,11 @@ public abstract class DefaultNode extends AbstractElement implements Node
 		return new NeighborNodeIterator( this );
 	}
 	
+	public Iterator<Edge> iterator()
+	{
+		return getEdgeIterator();
+	}
+	
 	public Edge getEdge( int i )
 	{
 		return edges.get( i );
@@ -166,16 +171,16 @@ public abstract class DefaultNode extends AbstractElement implements Node
 
 // Access -- Not in Node interface
 
-	public Collection<Edge> getEdgeSet()
+	public Iterable<? extends Edge> getEdgeSet()
 	{
 		return edges;
 	}
 	
-	public abstract Collection<Edge> getLeavingEdgeSet();
+	public abstract Iterable<? extends Edge> getLeavingEdgeSet();
 
-	public abstract Collection<Edge> getEnteringEdgeSet();
+	public abstract Iterable<? extends Edge> getEnteringEdgeSet();
 
-// Commands
+// Command
 
 	/**
 	 * Add an edge between this node and the given target.
@@ -224,29 +229,25 @@ protected class NeighborNodeIterator
 
 	protected Node n;
 
-	protected
-	NeighborNodeIterator( Node node )
+	protected NeighborNodeIterator( Node node )
 	{
 		i = 0;
 		n = node;
 	}
 
-	public boolean
-	hasNext()
+	public boolean hasNext()
 	{
 		return( i < edges.size() );
 	}
 
-	public Node
-	next()
+	public Node next()
 		throws NoSuchElementException
 	{
 		Edge e = edges.get( i++ );
 		return e.getOpposite( n );
 	}
 
-	public void
-	remove()
+	public void remove()
 		throws UnsupportedOperationException, IllegalStateException
 	{
 		throw new UnsupportedOperationException( "this iterator does not allow removing" );

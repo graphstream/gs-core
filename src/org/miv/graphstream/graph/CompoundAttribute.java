@@ -26,9 +26,29 @@ package org.miv.graphstream.graph;
 import java.util.HashMap;
 
 /**
- * Definition of some class that can be used as attribute and can be transformed to a hash map.
+ * Definition of some compound value that can be used as attribute and can be transformed to
+ * a hash map.
+ * 
+ * <p>
+ * The purpose of this class is to allow to specify how some values are stored in the graph
+ * and can be exported to files (or others) when the graph is output. Most graph writers can
+ * only handle basic types for attributes (when they are able to store attributes in files).
+ * This interface may allow to store more complex attributes, made of several elements.
+ * The DGS writer is able to understand these kinds of attributes and store them in files.
+ * </p>
+ * 
+ * <p>
+ * The compound attribute is made of fields. Each fields has a name and a value. For these
+ * fields to be exported successfully, they must be transformable to a hash map where each
+ * element is indexed by its name (a String).
+ * </p>
+ * 
+ * <p>
+ * For the values to be exported successfully, they must either be basic types, or be
+ * themselves instances of CompountAttribute.
+ * </p>
  */
-public interface Attribute
+public interface CompoundAttribute
 {
 	/**
 	 * Transforms this object to a hash map where each field is stored as a pair (key,value)

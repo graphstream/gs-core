@@ -23,27 +23,19 @@
 
 package org.miv.graphstream.ui.layout;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.graph.Graph;
-import org.miv.graphstream.graph.GraphListener;
 import org.miv.graphstream.graph.Node;
 
 /**
  * The layout algorithm let you run a layout algorithm of your choice on a graph that is modified
  * with "xyz" attributes (or an attribute of your choice).
  * 
- * This is a simple class that listens at a graph and redirects these information to a layout
- * implementation. It also listen at the layout and modifies the graph accordingly by adding
+ * This is a simple class that listens at the layout and modifies the graph accordingly by adding
  * "xyz" attributes on each node moved by the layout.
- * 
- * By default the {@link org.miv.graphstream.ui.layout.Layout} class is low-level and more
- * difficult to use because you must declare
- * nodes and edges using special methods. Also you must implement a layout listener to receive node
- * move events.
  * 
  * The LayoutAlgorithm class aims at simplifying this by providing an automatic way to listen at
  * a graph (the graph may already contain nodes and edges before the algorithm is used) and to
@@ -58,7 +50,7 @@ import org.miv.graphstream.graph.Node;
  * you must call {@link #end()}. This operation is important so that the algorithm unregisters
  * the various listeners in the graph and layout implementation.
  */
-public class LayoutAlgorithm implements GraphListener, LayoutListener
+public class LayoutAlgorithm implements LayoutListener
 {
 // Attributes
 	
@@ -132,7 +124,7 @@ public class LayoutAlgorithm implements GraphListener, LayoutListener
 		this.graph  = graph;
 		this.layout = layout;
 		
-		graph.addGraphListener( this );
+		graph.addGraphListener( layout );
 		layout.addListener( this );
 		replayGraph();
 	}
@@ -178,7 +170,7 @@ public class LayoutAlgorithm implements GraphListener, LayoutListener
 	{
 		if( graph != null && layout != null )
 		{
-			graph.removeGraphListener( this );
+			graph.removeGraphListener( layout );
 			layout.removeListener( this );
 		
 			graph  = null;
@@ -186,43 +178,6 @@ public class LayoutAlgorithm implements GraphListener, LayoutListener
 		}
 	}
 	
-// Graph listener
-
-	public void afterEdgeAdd( Graph graph, Edge edge )
-    {
-	    layout.afterEdgeAdd( graph, edge );
-    }
-
-	public void afterNodeAdd( Graph graph, Node node )
-    {
-		layout.afterNodeAdd( graph, node );
-    }
-
-	public void attributeChanged( Element element, String attribute, Object oldValue,
-            Object newValue )
-    {
-		layout.attributeChanged( element, attribute, oldValue, newValue );
-    }
-
-	public void beforeEdgeRemove( Graph graph, Edge edge )
-    {
-		layout.beforeEdgeRemove( graph, edge );
-    }
-
-	public void beforeNodeRemove( Graph graph, Node node )
-    {
-	    layout.beforeNodeRemove( graph, node );	    
-    }
-
-	public void beforeGraphClear( Graph graph )
-    {
-		layout.clear();
-    }
-
-	public void stepBegins( Graph graph, double time )
-    {
-    }
-
 // Layout listener
 	
 	public void nodeInfos( String id, float dx, float dy, float dz )
@@ -258,35 +213,31 @@ public class LayoutAlgorithm implements GraphListener, LayoutListener
 	{
 		replayAttributesOf( graph );
 		
-		Iterator<?extends Node> nodes = graph.getNodeIterator();
-		
-		while( nodes.hasNext() )
+		for( Node node: graph )
 		{
-			Node node = nodes.next();
-			afterNodeAdd( graph, node );
+			layout.nodeAdded( graph.getId(), node.getId() );
 			replayAttributesOf( node );
 		}
-		
-		Iterator<?extends Edge> edges = graph.getEdgeIterator();
-		
-		while( edges.hasNext() )
+
+		for( Edge edge: graph.getEdgeSet() )
 		{
-			Edge edge = edges.next();
-			afterEdgeAdd( graph, edge );
+			layout.edgeAdded( graph.getId(), edge.getId(), edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
 			replayAttributesOf( edge );
 		}
 	}
 	
 	protected void replayAttributesOf( Element element )
 	{
-		Iterator<?extends String> keys = element.getAttributeKeyIterator();
-		
-		while( keys.hasNext() )
+		for( String key: element.getAttributeKeySet() )
 		{
-			String key   = keys.next();
 			Object value = element.getAttribute( key );
 			
-			attributeChanged( element, key, null, value );
+			if( element instanceof Graph )
+				layout.graphAttributeAdded( element.getId(), key, value );
+			else if( element instanceof Node )
+				layout.nodeAttributeAdded( graph.getId(), element.getId(), key, value );
+			else if( element instanceof Edge )
+				layout.edgeAttributeAdded( graph.getId(), element.getId(), key, value );
 		}
 	}
 }

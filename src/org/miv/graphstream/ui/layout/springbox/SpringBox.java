@@ -27,8 +27,6 @@ import java.io.*;
 import java.util.*;
 
 import org.miv.graphstream.ui.layout.*;
-import org.miv.graphstream.graph.Element;
-import org.miv.graphstream.graph.Graph;
 import org.miv.util.*;
 import org.miv.util.geom.*;
 import org.miv.util.set.*;
@@ -2484,14 +2482,15 @@ public class SpringBox implements Layout
 		moveMessages = send;
     }
 
-	public void afterEdgeAdd( Graph graph, org.miv.graphstream.graph.Edge edge )
+	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId,
+            boolean directed )
     {
-		addEdge( edge.getId(), edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
+		addEdge( edgeId, fromNodeId, toNodeId, directed );
     }
 
-	public void afterNodeAdd( Graph graph, org.miv.graphstream.graph.Node node )
+	public void nodeAdded( String graphId, String nodeId )
     {
-/*		Node n =*/ addNode( node.getId() );
+/*		Node n =*/ addNode( nodeId );
 /*		
 		// If nodes already have positions, use it.
 		
@@ -2524,27 +2523,53 @@ public class SpringBox implements Layout
 		}
  */   }
 
-	public void attributeChanged( Element element, String attribute, Object oldValue,
-            Object newValue )
+	public void edgeRemoved( String graphId, String edgeId )
+    {
+		removeEdge( edgeId );
+    }
+
+	public void nodeRemoved( String graphId, String nodeId )
+    {
+		removeNode( nodeId );
+    }
+
+	public void stepBegins( String graphId, double time )
     {
     }
 
-	public void beforeEdgeRemove( Graph graph, org.miv.graphstream.graph.Edge edge )
+	public void graphAttributeAdded( String graphId, String attribute, Object value )
     {
-		removeEdge( edge.getId() );
     }
 
-	public void beforeGraphClear( Graph graph )
+	public void graphAttributeChanged( String graphId, String attribute, Object oldValue, Object value )
     {
-		throw new RuntimeException( "Not yet implemented" );
     }
 
-	public void beforeNodeRemove( Graph graph, org.miv.graphstream.graph.Node node )
+	public void graphAttributeRemoved( String graphId, String attribute )
     {
-		removeNode( node.getId() );
     }
 
-	public void stepBegins( Graph graph, double time )
+	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+    {
+    }
+
+	public void nodeAttributeChanged( String graphId, String nodeId, String attribute, Object oldValue, Object value )
+    {
+    }
+
+	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+    {
+    }
+
+	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+    {
+    }
+
+	public void edgeAttributeChanged( String graphId, String edgeId, String attribute, Object oldValue, Object value )
+    {
+    }
+
+	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
     {
     }
 }

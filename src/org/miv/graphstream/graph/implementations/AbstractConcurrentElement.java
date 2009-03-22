@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.miv.graphstream.graph.Attribute;
+import org.miv.graphstream.graph.CompoundAttribute;
 import org.miv.graphstream.graph.Element;
 
 /**
@@ -207,8 +207,8 @@ public abstract class AbstractConcurrentElement
 		{
 			if( o instanceof HashMap<?,?> )
 				return ((HashMap<?,?>)o);
-			if( o instanceof Attribute )
-				return ((Attribute)o).toHashMap();
+			if( o instanceof CompoundAttribute )
+				return ((CompoundAttribute)o).toHashMap();
 		}
 		
 		return null;
@@ -287,7 +287,7 @@ public abstract class AbstractConcurrentElement
 	{
 		Object o = attributes.get( key );
 		
-		if( o != null && ( o instanceof HashMap || o instanceof Attribute ) )
+		if( o != null && ( o instanceof HashMap || o instanceof CompoundAttribute ) )
 			return  true;
 		
 		return false;

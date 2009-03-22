@@ -48,8 +48,7 @@ import org.miv.graphstream.graph.Node;
  * @since July 12 2007
   * 
  */
-public class AdjacencyListNode
-	extends AbstractElement implements Node
+public class AdjacencyListNode extends AbstractElement implements Node
 {
 	private class EnteringEdgeIterator implements Iterator<Edge>
 	{
@@ -61,7 +60,7 @@ public class AdjacencyListNode
 
 		public int nb = 0;
 
-		public EnteringEdgeIterator(AdjacencyListNode n)
+		public EnteringEdgeIterator( AdjacencyListNode n )
 		{
 			this.n = n;
 			
@@ -81,25 +80,16 @@ public class AdjacencyListNode
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.util.Iterator#hasNext()
-		 */
 		public boolean hasNext()
 		{
 			return( index < edges.size() && nb < nbEntering );
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.util.Iterator#next()
-		 */
 		public Edge next()
 		{
 			if( hasNext() )
 			{
-
-				while( edges.get( index ).isDirected() && edges.get( index ).getTargetNode() != n );
+				while( edges.get( index ).isDirected() && edges.get( index ).getTargetNode() != n )
 				{
 					index++;
 				}
@@ -109,16 +99,11 @@ public class AdjacencyListNode
 			return null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.util.Iterator#remove()
-		 */
 		public void remove()
 		{
 			throw new UnsupportedOperationException( "this iterator does not allow removing" );
 
 		}
-
 	}
 
 	public class LeavingEdgeIterator implements Iterator<Edge>
@@ -150,19 +135,11 @@ public class AdjacencyListNode
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.util.Iterator#hasNext()
-		 */
 		public boolean hasNext()
 		{
 			return( index < edges.size() && nb < nbLeaving );
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.util.Iterator#next()
-		 */
 		public Edge next()
 		{
 			if( hasNext() )
@@ -177,31 +154,17 @@ public class AdjacencyListNode
 			return null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.util.Iterator#remove()
-		 */
 		public void remove()
 		{
 			throw new UnsupportedOperationException( "this iterator does not allow removing" );
 
 		}
-
 	}
 
-	/**
-	 * @author Yoann Pign�
-	 * 
-	 */
 	public class EdgeIterator implements Iterator<Edge>
 	{
-
 		int index = 0;
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.util.Iterator#hasNext()
-		 */
 		public boolean hasNext()
 		{
 			if( index < edges.size() )
@@ -211,10 +174,6 @@ public class AdjacencyListNode
 			return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.util.Iterator#next()
-		 */
 		public Edge next()
 		{
 			if( hasNext() )
@@ -224,15 +183,61 @@ public class AdjacencyListNode
 			return null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.util.Iterator#remove()
-		 */
 		public void remove()
 		{
 			throw new UnsupportedOperationException( "this iterator does not allow removing" );
 		}
+	}
 
+	public class NeighborNodeIterator implements Iterator<Node>
+	{
+		int index = 0;
+		Node node;
+		
+		public NeighborNodeIterator( Node node )
+		{
+			this.node = node;
+		}
+
+		public boolean hasNext()
+		{
+			if( index < edges.size() )
+			{
+				return true;
+			}
+			return false;
+		}
+
+		public Node next()
+		{
+			if( hasNext() )
+			{
+				Edge edge = edges.get( index++ );
+				
+				return edge.getOpposite( node );
+			}
+			return null;
+		}
+
+		public void remove()
+		{
+			throw new UnsupportedOperationException( "this iterator does not allow removing" );
+		}
+	}
+	
+	public class EdgeIterable implements Iterable<Edge>
+	{
+		protected Iterator<Edge> iterator;
+		
+		public EdgeIterable( Iterator<Edge> iterator )
+		{
+			this.iterator = iterator;
+		}
+		
+		public Iterator<Edge> iterator()
+		{
+			return iterator;
+		}
 	}
 
 	ArrayList<Edge> edges;
@@ -246,64 +251,36 @@ public class AdjacencyListNode
 		edges = new ArrayList<Edge>();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.NodeInterface#getBreadthFirstIterator()
-	 */
 	public Iterator<Node> getBreadthFirstIterator()
 	{
 		return new BreadthFirstIterator( this );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.NodeInterface#getBreadthFirstIterator(boolean)
-	 */
 	public Iterator<Node> getBreadthFirstIterator( boolean directed )
 	{
 		return new BreadthFirstIterator( this, directed );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.NodeInterface#getDegree()
-	 */
 	public int getDegree()
 	{
 		return edges.size();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.NodeInterface#getDepthFirstIterator()
-	 */
 	public Iterator<Node> getDepthFirstIterator()
 	{
 		return new DepthFirstIterator( this );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.NodeInterface#getDepthFirstIterator(boolean)
-	 */
 	public Iterator<Node> getDepthFirstIterator( boolean directed )
 	{
 		return new DepthFirstIterator( this, directed );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.NodeInterface#getEdge(int)
-	 */
 	public Edge getEdge( int i )
 	{
 		return edges.get( i );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.NodeInterface#getEdgeFrom(java.lang.String)
-	 */
 	/**
 	 * @complexity 0(n+d) with d the degree of the node and n the number nodes
 	 *             in the graph.
@@ -328,28 +305,21 @@ public class AdjacencyListNode
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.NodeInterface#getEdgeIterator()
-	 */
 	public Iterator<Edge> getEdgeIterator()
 	{
 		return new EdgeIterator();
 	}
+	
+	public Iterator<Edge> iterator()
+	{
+		return getEdgeIterator();
+	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.NodeInterface#getEdgeSet()
-	 */
 	public Collection<Edge> getEdgeSet()
 	{
 		return edges;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.NodeInterface#getEdgeToward(java.lang.String)
-	 */
 	public Edge getEdgeToward( String id )
 	{
 		Node n = ( (AdjacencyListGraph) graph ).lookForNode( id );
@@ -370,84 +340,48 @@ public class AdjacencyListNode
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.NodeInterface#getEnteringEdgeIterator()
-	 */
 	public Iterator<Edge> getEnteringEdgeIterator()
 	{
 		return new EnteringEdgeIterator(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.NodeInterface#getEnteringEdgeSet()
-	 */
-	public Collection<Edge> getEnteringEdgeSet()
+	public Iterable<Edge> getEnteringEdgeSet()
 	{
-		throw new UnsupportedOperationException( "Method not implemented." );
+		return new EdgeIterable( getEnteringEdgeIterator() );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.NodeInterface#getGraph()
-	 */
 	public Graph getGraph()
 	{
 		return graph;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.NodeInterface#getInDegree()
-	 */
 	public int getInDegree()
 	{
 		EnteringEdgeIterator it = new EnteringEdgeIterator(this);
 		return it.nbEntering;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.NodeInterface#getLeavingEdgeIterator()
-	 */
 	public Iterator<Edge> getLeavingEdgeIterator()
 	{
 		return new LeavingEdgeIterator(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.NodeInterface#getLeavingEdgeSet()
-	 */
-	public Collection<Edge> getLeavingEdgeSet()
+	public Iterable<Edge> getLeavingEdgeSet()
 	{
-		throw new UnsupportedOperationException( "Method not implemented." );
+		return new EdgeIterable( getLeavingEdgeIterator() );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.NodeInterface#getNeighborNodeIterator()
-	 */
 	public Iterator<Node> getNeighborNodeIterator()
 	{
-		throw new UnsupportedOperationException( "Method not implemented." );
+		return new NeighborNodeIterator( this );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.NodeInterface#getOutDegree()
-	 */
 	public int getOutDegree()
 	{
 		LeavingEdgeIterator it = new LeavingEdgeIterator(this);
 		return it.nbLeaving;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.NodeInterface#hasEdgeFrom(java.lang.String)
-	 */
 	public boolean hasEdgeFrom( String id )
 	{
 		Node n = ( (AdjacencyListGraph) graph ).lookForNode( id );
@@ -474,10 +408,6 @@ public class AdjacencyListNode
 		return null;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.NodeInterface#hasEdgeToward(java.lang.String)
-	 */
 	public boolean hasEdgeToward( String id )
 	{
 		Node n = ( (AdjacencyListGraph) graph ).lookForNode( id );
@@ -510,10 +440,6 @@ public class AdjacencyListNode
 		return null;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.Element#attributeChanged(java.lang.String, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	protected void attributeChanged( String attribute, Object oldValue, Object newValue )
 	{

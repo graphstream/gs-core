@@ -29,11 +29,12 @@ import java.net.URL;
 import java.util.*;
 import java.util.regex.*;
 
-//import org.miv.graphstream.algorithm.Algorithms;
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.EdgeFactory;
 import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.graph.Graph;
+import org.miv.graphstream.graph.GraphAttributesListener;
+import org.miv.graphstream.graph.GraphElementsListener;
 import org.miv.graphstream.graph.GraphListener;
 import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.graph.NodeFactory;
@@ -242,7 +243,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 		public boolean isEmpty() { return( edges.isEmpty() && nodes.isEmpty() && sprites.isEmpty() ); }
 	}
 	
-// Constructors
+// Construction
 
 	/**
 	 * New empty graphic graph.
@@ -263,7 +264,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 		styleSheet.addListener( this );
 	}
 
-// Accessors
+// Access
 
 	/**
 	 * The set of nodes. Use the z-index instead of iterating on the node set
@@ -1374,12 +1375,17 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
     {
 		throw new RuntimeException( "not implemented !" );
     }
-/*
-	public Algorithms algorithm()
-    {
-		throw new RuntimeException( "not implemented !" );
-    }
-*/
+	
+	public void addGraphAttributesListener( GraphAttributesListener listener )
+	{
+		throw new RuntimeException( "not implemented !" );		
+	}
+	
+	public void addGraphElementsListener( GraphElementsListener listener )
+	{
+		throw new RuntimeException( "not implemented !" );		
+	}
+
 	public void clearListeners()
     {
     }
@@ -1413,12 +1419,17 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 	    return edges.values().iterator();
     }
 
-	public Collection<? extends Edge> getEdgeSet()
+	public Iterable<? extends Edge> getEdgeSet()
     {
 	    return edges.values();
     }
 
-	public List<GraphListener> getGraphListeners()
+	public Iterable<GraphAttributesListener> getGraphAttributesListeners()
+    {
+	    return null;
+    }
+	
+	public Iterable<GraphElementsListener> getGraphElementsListeners()
     {
 	    return null;
     }
@@ -1433,7 +1444,12 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 	    return nodes.values().iterator();
     }
 	
-	public Collection<? extends Node> getNodeSet()
+	public Iterator<Node> iterator()
+	{
+		return null;
+	}
+	
+	public Iterable<? extends Node> getNodeSet()
     {
 		return nodes.values();
     }
@@ -1475,6 +1491,15 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 	public void removeGraphListener( GraphListener listener )
     {
     }
+	
+	public void removeGraphAttributesListener( GraphAttributesListener listener )
+	{
+	}
+	
+	public void removeGraphElementsListener( GraphElementsListener listener )
+	{
+		
+	}
 
 	public void setAutoCreate( boolean on )
     {

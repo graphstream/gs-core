@@ -23,7 +23,6 @@
 
 package org.miv.graphstream.graph.implementations;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -36,10 +35,9 @@ import org.miv.util.SingletonException;
  * Full implementation of {@link org.miv.graphstream.graph.Node} that allows
  * only one edge between two nodes.
  */
-public class SingleNode
-	extends DefaultNode
+public class SingleNode extends DefaultNode
 {
-// Attributes
+// Attribute
 
 	/**
 	 * Map of leaving edges toward nodes. Each element of the map is a pair
@@ -55,7 +53,7 @@ public class SingleNode
 	 */
 	protected HashMap<String,Edge> from = new HashMap<String,Edge>();
 
-// Constructors
+// Constructor
 	
 	/**
 	 * New unconnected node.
@@ -120,18 +118,18 @@ public class SingleNode
 // Access -- Not in Node interface
 
 	@Override
-	public Collection<Edge> getLeavingEdgeSet()
+	public Iterable<Edge> getLeavingEdgeSet()
 	{
 		return to.values();
 	}
 
 	@Override
-	public Collection<Edge> getEnteringEdgeSet()
+	public Iterable<Edge> getEnteringEdgeSet()
 	{
 		return from.values();
 	}
 
-// Commands
+// Command
 
 	/**
 	 * Add an edge between this node and the given target.

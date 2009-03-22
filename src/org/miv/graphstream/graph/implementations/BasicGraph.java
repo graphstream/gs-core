@@ -27,12 +27,12 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 
-//import org.miv.graphstream.algorithm.Algorithms;
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.EdgeFactory;
 import org.miv.graphstream.graph.Graph;
+import org.miv.graphstream.graph.GraphAttributesListener;
+import org.miv.graphstream.graph.GraphElementsListener;
 import org.miv.graphstream.graph.GraphListener;
 import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.graph.NodeFactory;
@@ -45,6 +45,8 @@ import org.miv.util.SingletonException;
 
 /**
  * The most simple graph.
+ * 
+ * TODO not finished !!!
  */
 public class BasicGraph extends AbstractElement implements Graph
 {
@@ -67,12 +69,7 @@ public class BasicGraph extends AbstractElement implements Graph
 	}
 	
 // Access
-/*
-	public Algorithms algorithm()
-    {
-	    return null;
-    }
-*/
+
 	public boolean isAutoCreationEnabled()
     {
 	    return false;
@@ -83,10 +80,15 @@ public class BasicGraph extends AbstractElement implements Graph
 	    return false;
     }
 
-	public List<GraphListener> getGraphListeners()
+	public Iterable<GraphAttributesListener> getGraphAttributesListeners()
     {
 	    return null;
     }
+	
+	public Iterable<GraphElementsListener> getGraphElementsListeners()
+	{
+		return null;
+	}
 
 	public NodeFactory nodeFactory()
     {
@@ -120,8 +122,13 @@ public class BasicGraph extends AbstractElement implements Graph
     {
 	    return null;
     }
+	
+	public Iterator<Node> iterator()
+	{
+		return null;
+	}
 
-	public Collection<? extends Node> getNodeSet()
+	public Iterable<Node> getNodeSet()
     {
 	    return null;
     }
@@ -141,7 +148,7 @@ public class BasicGraph extends AbstractElement implements Graph
 	    return null;
     }
 
-	public Collection<? extends Edge> getEdgeSet()
+	public Iterable<Edge> getEdgeSet()
     {
 	    return null;
     }
@@ -155,6 +162,22 @@ public class BasicGraph extends AbstractElement implements Graph
 	public void removeGraphListener( GraphListener listener )
     {
     }
+	
+	public void addGraphAttributesListener( GraphAttributesListener listener )
+	{
+	}
+	
+	public void addGraphElementsListener( GraphElementsListener listener )
+	{
+	}
+	
+	public void removeGraphAttributesListener( GraphAttributesListener listener )
+	{
+	}
+	
+	public void removeGraphElementsListener( GraphElementsListener listener )
+	{
+	}
 
 // Node and edge commands
 
@@ -200,7 +223,6 @@ public class BasicGraph extends AbstractElement implements Graph
 	
 	public void stepBegins( double time )
 	{
-		
 	}
 	
 // Settings commands
@@ -308,6 +330,11 @@ public class BasicNode extends AbstractElement implements Node
     {
 	    return null;
     }
+	
+	public Iterator<Edge> iterator()
+	{
+		return null;
+	}
 
 	public Collection<? extends Edge> getEdgeSet()
     {

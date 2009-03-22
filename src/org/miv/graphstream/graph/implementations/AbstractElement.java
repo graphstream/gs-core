@@ -25,7 +25,7 @@ package org.miv.graphstream.graph.implementations;
 
 import java.util.*;
 
-import org.miv.graphstream.graph.Attribute;
+import org.miv.graphstream.graph.CompoundAttribute;
 import org.miv.graphstream.graph.Element;
 import org.miv.util.set.*;
 
@@ -210,8 +210,8 @@ public abstract class AbstractElement implements Element
 			{
 				if( o instanceof HashMap<?,?> )
 					return ((HashMap<?,?>)o);
-				if( o instanceof Attribute )
-					return ((Attribute)o).toHashMap();
+				if( o instanceof CompoundAttribute )
+					return ((CompoundAttribute)o).toHashMap();
 			}
 		}
 		
@@ -297,7 +297,7 @@ public abstract class AbstractElement implements Element
 		{
 			Object o = attributes.get( key );
 			
-			if( o != null && ( o instanceof HashMap || o instanceof Attribute ) )
+			if( o != null && ( o instanceof HashMap || o instanceof CompoundAttribute ) )
 				return  true;
 		}
 		
@@ -309,6 +309,14 @@ public abstract class AbstractElement implements Element
 		if( attributes != null )
 			return attributes.keySet().iterator();
 
+		return null;
+	}
+	
+	public Iterable<String> getAttributeKeySet()
+	{
+		if( attributes != null )
+			return attributes.keySet();
+		
 		return null;
 	}
 	

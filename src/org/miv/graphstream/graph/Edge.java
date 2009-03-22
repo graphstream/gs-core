@@ -37,12 +37,11 @@ package org.miv.graphstream.graph;
 public interface Edge extends Element
 {
 	/**
-	 * Is the edge directected?.
+	 * Is the edge directed ?.
 	 * @return True if the edge is directed.
 	 * @complexity O(1)
 	 */
-	public boolean 
-	isDirected();
+	public boolean isDirected();
 
 	/**
 	 * First node of the edge. This is equivalent to the {@link #getSourceNode()}
@@ -53,8 +52,7 @@ public interface Edge extends Element
 	 * @return The first node of the edge.
 	 * @complexity O(1)
 	 */
-	public Node 
-	getNode0();
+	public Node getNode0();
 
 	/**
 	 * Second node of the edge. This is equivalent to the {@link #getTargetNode()}
@@ -65,8 +63,7 @@ public interface Edge extends Element
 	 * @return The second node of the edge.
 	 * @complexity O(1)
 	 */
-	public Node 
-	getNode1();
+	public Node getNode1();
 
 	/**
 	 * Start node. When the edge is directed this is the source node, in this
@@ -78,8 +75,7 @@ public interface Edge extends Element
 	 * @return The origin node of the edge.
 	 * @complexity O(1)
 	 */
-	public Node 
-	getSourceNode();
+	public Node getSourceNode();
 
 	/**
 	 * End node. When the edge is directed this is the target node, in this
@@ -91,8 +87,7 @@ public interface Edge extends Element
 	 * @return The destination node of the edge.
 	 * @complexity O(1)
 	 */
-	public Node 
-	getTargetNode();
+	public Node getTargetNode();
 
 	/**
 	 * When knowing one node and one edge of this node, this method return the
@@ -102,8 +97,7 @@ public interface Edge extends Element
 	 * @return the opposite node of the given node.
 	 * @complexity O(1)
 	 */
-	public Node 
-	getOpposite( Node node );
+	public Node getOpposite( Node node );
 
 	/**
 	 * Direct or undirect the edge. You make this edge directed, it will be
@@ -113,8 +107,7 @@ public interface Edge extends Element
 	 * bidirectionnal.
 	 * @complexity O(1)
 	 */
-	public void 
-	setDirected( boolean on );
+	public void setDirected( boolean on );
 
 	/**
 	 * Swap the source and target nodes. This allows to redirect an edge.
@@ -122,6 +115,5 @@ public interface Edge extends Element
 	 * see the {@link #setDirected(boolean)} method.
 	 * @complexity O(1)
 	 */
-	public void 
-	switchDirection();	
+	public void switchDirection();	
 }

@@ -51,7 +51,7 @@
  * 
  * <p>
  * You can listen at each event occurring to a graph by implementing a {@link GraphListener} and
- * registering it in the graph. You can also subclass the {@link GraphListenerHelper} to implement
+ * registering it in the graph. You can also subclass the {@link GraphListenerAdapter} to implement
  * only the required methods. The {@link GraphListenerProxy} is a special kind of listeners that can
  * also register a set of {@link GraphListener}s. This class has several implementations that allow
  * to copy a graph in another, or to send graph events between threads for example.  

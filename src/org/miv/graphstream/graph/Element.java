@@ -62,12 +62,6 @@ public interface Element
 	public String getId();
 
 	/**
-	 * Set the unique identifier of this element. This can be done only once.
-	 * @param id The identifier value. 
-	 */
-	//public void setId(String id);
-	
-	/**
 	 * Get the attribute object bound to the given key. The returned value maybe
 	 * null to indicate the attribute does not exists or is not supported.
 	 * @param key Name of the attribute to search.
@@ -95,7 +89,7 @@ public interface Element
 	 *         attribute.
 	 */
 	public Object getAttribute( String key, Class<?> clazz );
-
+	
 	/**
 	 * Like {@link #getAttribute(String, Class)}, but returns the first existing
 	 * attribute in a list of keys, instead of only one key. The key list order
@@ -146,7 +140,7 @@ public interface Element
 	
 	/**
 	 * Get the hash bound to key. Hashes are special attributes whose value is a set of pairs
-	 * (name,object). Instances of object implementing the {@link Attribute} interface are
+	 * (name,object). Instances of object implementing the {@link CompoundAttribute} interface are
 	 * considered like hashes since they can be transformed to a hash. If an attribute with the
 	 * same name exists but is not a hash, null is returned. We cannot enforce the type of
 	 * the key. It is considered a string and you should use "Object.toString()" to get it.
@@ -209,7 +203,7 @@ public interface Element
 
 	/**
 	 * Does this element stores a hash value for the given key. A hash is a set of pairs
-	 * (key,value) or objects that implement the {@link Attribute} class.
+	 * (key,value) or objects that implement the {@link org.miv.graphstream.graph.CompoundAttribute} class.
 	 * @param key The name of the hash.
 	 * @return True if a value is present for this attribute and can contain a hash.
 	 */
@@ -222,10 +216,17 @@ public interface Element
 	public Iterator<String> getAttributeKeyIterator();
 
 	/**
+	 * An iterable view on the set of attributes keys usable with the for-each loop.
+	 * @return an iterable view on each attribute key, null if there are no attributes.
+	 */
+	public Iterable<String> getAttributeKeySet();
+	
+	/**
 	 * Return a constant view of the attribute set under the form of a map.
 	 * The map can be iterated on, browsed, but not modified.
 	 * @return The set of attributes.
 	 */
+	@Deprecated
 	public Map<String, Object> getAttributeMap();
 
 	/**

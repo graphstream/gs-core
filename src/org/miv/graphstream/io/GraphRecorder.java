@@ -24,7 +24,6 @@
 package org.miv.graphstream.io;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 
 import org.miv.graphstream.graph.*;
@@ -49,7 +48,7 @@ import org.miv.graphstream.graph.*;
  *
  * <p>
  * Due to the dynamic nature of this class, you will have to call
- * explicitely the {@link #end()} method to signal the end of the 
+ * Explicitly the {@link #end()} method to signal the end of the 
  * recording and properly close the open file. f you do not, the
  * file contents may not be completely flushed.
  * </p>
@@ -169,7 +168,7 @@ public class GraphRecorder implements GraphListener
 		}
 	}
 	
-// Accessors
+// Access
 	
 	/**
 	 * Check if an I/O error occured lately. If an error occured it is returned,
@@ -211,11 +210,11 @@ public class GraphRecorder implements GraphListener
 	
 // Commands -- Graph Listener
 	
-	public void afterEdgeAdd( Graph graph, Edge edge )
+	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId, boolean directed )
 	{
 		try
 		{
-			writer.addEdge( edge.getId(), edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected(), edge.getAttributeMap() );
+			writer.addEdge( edgeId, fromNodeId, toNodeId, directed, null );
 		}
 		catch( IOException e )
 		{			
@@ -224,11 +223,11 @@ public class GraphRecorder implements GraphListener
 		}
 	}
 
-	public void afterNodeAdd( Graph graph, Node node )
+	public void nodeAdded( String graphId, String nodeId )
 	{
 		try
 		{
-			writer.addNode( node.getId(), node.getAttributeMap() );
+			writer.addNode( nodeId, null );
 		}
 		catch( IOException e )
 		{
@@ -237,63 +236,11 @@ public class GraphRecorder implements GraphListener
 		}
 	}
 
-	protected HashMap<String,Object> attributes;
-	
-	public void attributeChanged( Element element, String attribute, Object oldValue, Object newValue )
-	{
-		if( newValue == null )
-		{
-			// TODO: Actually, due to a limiation of the GraphWriter/GraphReader interface
-			// it is not possible to delete attributes from an element.
-			
-			return;
-		}
-		
-		if( attributes == null )
-			attributes = new HashMap<String,Object>();
-		
-		attributes.clear();
-		attributes.put( attribute, newValue );
-		
-		if( element instanceof Node )
-		{
-			Node node = (Node) element;
-			
-			try
-			{
-				writer.changeNode( node.getId(), attributes );
-			}
-			catch( IOException e )
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		else if( element instanceof Edge )
-		{
-			Edge edge = (Edge) element;
-		
-			try
-			{
-				writer.changeEdge( edge.getId(), attributes );
-			}
-			catch( IOException e )
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		else
-		{
-			
-		}
-	}
-
-	public void beforeEdgeRemove( Graph graph, Edge edge )
+	public void edgeRemoved( String graphId, String edgeId )
 	{
 		try
 		{
-			writer.delEdge( edge.getId() );
+			writer.delEdge( edgeId );
 		}
 		catch( IOException e )
 		{
@@ -302,25 +249,11 @@ public class GraphRecorder implements GraphListener
 		}
 	}
 
-	public void beforeGraphClear( Graph graph )
+	public void nodeRemoved( String graphId, String nodeId )
 	{
 		try
 		{
-			Iterator<? extends Node> nodes = graph.getNodeIterator();
-			
-			while( nodes.hasNext() )
-				writer.delNode(  nodes.next().getId() );
-				
-			//for( Node node: graph.getNodeSet() )
-			//	writer.delNode( node.getId() );
-			
-			Iterator<? extends Edge> edges = graph.getEdgeIterator();
-			
-			while( edges.hasNext() )
-				writer.delEdge(  edges.next().getId() );
-			
-			//for( Edge edge: graph.getEdgeSet() )
-			//	writer.delEdge( edge.getId() );
+			writer.delNode( nodeId );
 		}
 		catch( IOException e )
 		{
@@ -329,11 +262,11 @@ public class GraphRecorder implements GraphListener
 		}
 	}
 
-	public void beforeNodeRemove( Graph graph, Node node )
+	public void stepBegins( String graphId, double time )
 	{
 		try
 		{
-			writer.delNode( node.getId() );
+			writer.step( time );
 		}
 		catch( IOException e )
 		{
@@ -342,16 +275,111 @@ public class GraphRecorder implements GraphListener
 		}
 	}
 
-	public void stepBegins(Graph graph, double time)
-	{
+	public void graphAttributeAdded( String graphId, String attribute, Object value )
+    {
 		try
-		{
-			writer.step(time);
-		}
-		catch( IOException e )
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+        {
+	        writer.changeGraph( attribute, value, false );
+        }
+        catch( IOException e )
+        {
+	        e.printStackTrace();
+        }
+    }
+
+	public void graphAttributeChanged( String graphId, String attribute, Object oldValue, Object newValue )
+    {
+		try
+        {
+	        writer.changeGraph( attribute, newValue, false );
+        }
+        catch( IOException e )
+        {
+	        e.printStackTrace();
+        }
+    }
+
+	public void graphAttributeRemoved( String graphId, String attribute )
+    {
+		try
+        {
+	        writer.changeGraph( attribute, null, true );
+        }
+        catch( IOException e )
+        {
+	        e.printStackTrace();
+        }
+    }
+
+	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+    {
+		try
+        {
+	        writer.changeNode( nodeId, attribute, value, false );
+        }
+        catch( IOException e )
+        {
+	        e.printStackTrace();
+        }
+    }
+
+	public void nodeAttributeChanged( String graphId, String nodeId, String attribute, Object oldValue, Object newValue )
+    {
+		try
+        {
+	        writer.changeNode( nodeId, attribute, newValue, false );
+        }
+        catch( IOException e )
+        {
+	        e.printStackTrace();
+        }
+    }
+
+	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+    {
+		try
+        {
+	        writer.changeNode( nodeId, attribute, null, true );
+        }
+        catch( IOException e )
+        {
+	        e.printStackTrace();
+        }
+    }
+
+	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+    {
+		try
+        {
+	        writer.changeEdge( edgeId, attribute, value, false );
+        }
+        catch( IOException e )
+        {
+	        e.printStackTrace();
+        }
+   }
+
+	public void edgeAttributeChanged( String graphId, String edgeId, String attribute, Object oldValue, Object newValue )
+    {
+		try
+        {
+	        writer.changeEdge( edgeId, attribute, newValue, false );
+        }
+        catch( IOException e )
+        {
+	        e.printStackTrace();
+        }
+    }
+
+	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+    {
+		try
+        {
+	        writer.changeEdge( edgeId, attribute, null, true );
+        }
+        catch( IOException e )
+        {
+	        e.printStackTrace();
+        }
+    }
 }

@@ -24,7 +24,6 @@
 package org.miv.graphstream.graph.implementations;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -48,7 +47,7 @@ public class MultiNode extends DefaultNode
 	 * following a leaving edge, and the value is a set of all leaving edges
 	 * toward this node.
 	 */
-	protected HashMap<String,ArrayList<Edge>> to = new HashMap<String,ArrayList<Edge>>();
+	protected MultiEdgeMap to = new MultiEdgeMap();
 
 	/**
 	 * Map of entering edges from nodes. Each element of the map is a pair
@@ -56,7 +55,7 @@ public class MultiNode extends DefaultNode
 	 * following an entering edge, and the value is a set of all entering edges
 	 * from this node.
 	 */
-	protected HashMap<String,ArrayList<Edge>> from = new HashMap<String,ArrayList<Edge>>();
+	protected MultiEdgeMap from = new MultiEdgeMap();
 	
 	protected int inDegree = 0;
 	
@@ -133,6 +132,18 @@ public class MultiNode extends DefaultNode
 	{
 		return new MultiElementIterator<Edge>( to );
 	}
+
+	@Override
+	public Iterable<? extends Edge> getEnteringEdgeSet()
+    {
+		return from;
+    }
+
+	@Override
+	public Iterable<? extends Edge> getLeavingEdgeSet()
+    {
+		return to;
+    }
 
 // Commands
 
@@ -360,24 +371,14 @@ public class MultiNode extends DefaultNode
 			throw new UnsupportedOperationException( "this iterator does not allow removing" );
 		}
 	}
-
-// Deprecated things.
 	
-	@Override
-	public Collection<Edge> getEdgeSet()
-    {
-	    throw new RuntimeException( "the MultiGraph do not support this deprecated method" );
-    }
+	protected class MultiEdgeMap extends HashMap<String,ArrayList<Edge>> implements Iterable<Edge>
+	{
+        private static final long serialVersionUID = 1L;
 
-	@Override
-	public Collection<Edge> getEnteringEdgeSet()
-    {
-	    throw new RuntimeException( "the MultiGraph do not support this deprecated method" );
-    }
-
-	@Override
-	public Collection<Edge> getLeavingEdgeSet()
-    {
-	    throw new RuntimeException( "the MultiGraph do not support this deprecated method" );
-    }
+		public Iterator<Edge> iterator()
+		{
+			return new MultiElementIterator<Edge>( this );
+		}
+	}
 }

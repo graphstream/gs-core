@@ -23,10 +23,7 @@
 
 package org.miv.graphstream.graph.implementations;
 
-import java.util.Iterator;
-
 import org.miv.graphstream.graph.Edge;
-import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.graph.Graph;
 import org.miv.graphstream.graph.GraphListener;
 import org.miv.graphstream.graph.GraphListenerProxy;
@@ -38,7 +35,7 @@ import org.miv.graphstream.graph.Node;
  */
 public class GraphListenerProxyCopy implements GraphListenerProxy
 {
-// Attributes
+// Attribute
 
 	/**
 	 * The graph we observe.
@@ -50,7 +47,7 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 	 */
 	protected Graph outGraph;
 	
-// Constructors
+// Construction
 
 	/**
 	 * New proxy that copies everything that happen in the input graph into the output graph.
@@ -62,6 +59,13 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 		this( input, output, true );
 	}
 	
+	/**
+	 * New proxy that copies everything that happen in the input graph into the output graph.
+	 * @param input The input graph.
+	 * @param output The output graph.
+	 * @param replayGraph If true, and if the input graph already contains elements and attributes
+	 *  they are first copied to the output graph.
+	 */
 	public GraphListenerProxyCopy( Graph input, Graph output, boolean replayGraph )
 	{
 		if( input == output )
@@ -76,20 +80,21 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 			replayTheGraph();
 	}
 	
+	/**
+	 * Copy everything from the input graph to the output graph.
+	 */
 	protected void replayTheGraph()
 	{
 		// Replay all attributes of the graph.
 
-		Iterator<String> k = inGraph.getAttributeKeyIterator();
+		Iterable<String> k = inGraph.getAttributeKeySet();
 
 		if( k != null )
 		{
-			while( k.hasNext() )
+			for( String key: k )
 			{
-				String key = k.next();
 				Object val = inGraph.getAttribute( key );
-
-				attributeChanged( inGraph, key, null, val );
+				graphAttributeAdded( inGraph.getId(), key, val );
 			}
 		}
 
@@ -97,24 +102,19 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 
 		// Replay all nodes and their attributes.
 
-		Iterator<? extends Node> nodes = inGraph.getNodeIterator();
 
-		while( nodes.hasNext() )
+		for( Node node: inGraph.getNodeSet() )
 		{
-			Node node = nodes.next();
+			nodeAdded( inGraph.getId(), node.getId() );
 
-			afterNodeAdd( inGraph, node );
-
-			k = node.getAttributeKeyIterator();
+			k = node.getAttributeKeySet();
 
 			if( k != null )
 			{
-				while( k.hasNext() )
+				for( String key: k )
 				{
-					String key = k.next();
 					Object val = node.getAttribute( key );
-
-					attributeChanged( node, key, null, val );
+					nodeAttributeAdded( inGraph.getId(), node.getId(), key, val );
 				}
 			}
 		}
@@ -123,25 +123,18 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 
 		// Replay all edges and their attributes.
 
-		Iterator<? extends Edge> edges = inGraph.getEdgeIterator();
-		
-		while( edges.hasNext() )
-		//for( Edge edge : graph.getEdgeSet() )
+		for( Edge edge : inGraph.getEdgeSet() )
 		{
-			Edge edge = edges.next();
-	
-			afterEdgeAdd( inGraph, edge );
+			edgeAdded( inGraph.getId(), edge.getId(), edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
 
-			k = edge.getAttributeKeyIterator();
+			k = edge.getAttributeKeySet();
 
 			if( k != null )
 			{
-				while( k.hasNext() )
+				for( String key: k )
 				{
-					String key = k.next();
 					Object val = edge.getAttribute( key );
-
-					attributeChanged( edge, key, null, val );
+					edgeAttributeAdded( inGraph.getId(), edge.getId(), key, val );
 				}
 			}
 		}
@@ -149,7 +142,7 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 	
 // Access
 	
-// Commands
+// Command
 	
 	public void addGraphListener( GraphListener listener )
     {
@@ -173,56 +166,91 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 
 // Commands -- GraphListener
 
-	public void beforeGraphClear( Graph graph )
+	public void nodeAdded( String graphId, String nodeId )
     {
-		outGraph.clear();
+		outGraph.addNode( nodeId );
     }
 
-	public void attributeChanged( Element element, String attribute, Object oldValue,
-            Object newValue )
+	public void edgeAdded( String graphId, String edgeId, String fromId, String toId, boolean directed )
     {
-		if( element instanceof Graph )
-		{
-			outGraph.setAttribute( attribute, newValue );
-		}
-		else if( element instanceof Node )
-		{
-			Node node = outGraph.getNode( element.getId() );
-			
-			if( node != null )
-				node.setAttribute( attribute, newValue );
-		}
-		else if( element instanceof Edge )
-		{
-			Edge edge = outGraph.getEdge( element.getId() );
-			
-			if( edge != null )
-				edge.setAttribute( attribute, newValue );			
-		}
+		outGraph.addEdge( edgeId, fromId, toId, directed );
     }
 
-	public void afterNodeAdd( Graph graph, Node node )
+	public void nodeRemoved( String graphId, String nodeId )
     {
-		outGraph.addNode( node.getId() );
+		outGraph.removeNode( nodeId );
     }
 
-	public void afterEdgeAdd( Graph graph, Edge edge )
+	public void edgeRemoved( String graphId, String edgeId )
     {
-		outGraph.addEdge( edge.getId(), edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
+		outGraph.removeEdge( edgeId );
     }
 
-	public void beforeNodeRemove( Graph graph, Node node )
-    {
-		outGraph.removeNode( node.getId() );
-    }
-
-	public void beforeEdgeRemove( Graph graph, Edge edge )
-    {
-		outGraph.removeEdge( edge.getId() );
-    }
-
-	public void stepBegins(Graph graph, double time)
+	public void stepBegins( String graphId, double time )
 	{
-		outGraph.stepBegins(time);
+		outGraph.stepBegins( time );
 	}
+
+	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+    {
+		Edge edge = outGraph.getEdge( edgeId );
+		
+		if( edge != null )
+			edge.setAttribute( attribute, value );			
+    }
+
+	public void edgeAttributeChanged( String graphId, String edgeId, String attribute, Object oldValue, Object newValue )
+    {
+		Edge edge = outGraph.getEdge( edgeId );
+		
+		if( edge != null )
+			edge.changeAttribute( attribute, newValue );			
+    }
+
+	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+    {
+		Edge edge = outGraph.getEdge( edgeId );
+		
+		if( edge != null )
+			edge.removeAttribute( attribute );			
+    }
+
+	public void graphAttributeAdded( String graphId, String attribute, Object value )
+    {
+		outGraph.setAttribute( attribute, value );
+    }
+
+	public void graphAttributeChanged( String graphId, String attribute, Object oldValue, Object newValue )
+    {
+		outGraph.changeAttribute( attribute, newValue );
+    }
+
+	public void graphAttributeRemoved( String graphId, String attribute )
+    {
+		outGraph.removeAttribute( attribute );
+    }
+
+	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+    {
+		Node node = outGraph.getNode( nodeId );
+			
+		if( node != null )
+			node.setAttribute( attribute, value );
+    }
+
+	public void nodeAttributeChanged( String graphId, String nodeId, String attribute, Object oldValue, Object newValue )
+    {
+		Node node = outGraph.getNode( nodeId );
+		
+		if( node != null )
+			node.changeAttribute( attribute, newValue );
+    }
+
+	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+    {
+		Node node = outGraph.getNode( nodeId );
+		
+		if( node != null )
+			node.removeAttribute( attribute );
+    }
 }

@@ -24,11 +24,8 @@
 package org.miv.graphstream.graph; 
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
-//import org.miv.graphstream.algorithm.Algorithms;
 import org.miv.graphstream.io.GraphParseException;
 import org.miv.graphstream.io.GraphReader;
 import org.miv.graphstream.io.GraphWriter;
@@ -49,10 +46,8 @@ import org.miv.util.SingletonException;
  * <p>
  * Implementing classes should indicate the complexity of their implementation for each method.
  * </p>
- * 
- * @since July 12 2007
  */
-public interface Graph extends Element
+public interface Graph extends Element, Iterable<Node>
 {
 	/**
 	 * Get a node by its identifier.
@@ -93,23 +88,24 @@ public interface Graph extends Element
 	public Iterator<? extends Edge> getEdgeIterator();
 
 	/**
-	 * Set of nodes.
-	 * @return A collection view of the set of nodes.
+	 * Set of nodes usable in a for-each instruction.
+	 * @return An "iterable" view of the set of nodes.
 	 * @see #getNodeIterator()
 	 */
-	@Deprecated
-	public Collection<? extends Node> getNodeSet();
+	public Iterable<? extends Node> getNodeSet();
 
 	/**
-	 * Set of edges.
-	 * @return A collection view of the set of edges.
+	 * Set of edges usable in a for-each instruction.
+	 * @return An "iterable" view of the set of edges.
 	 * @see #getEdgeIterator()
 	 */
-	@Deprecated
-	public Collection<? extends Edge> getEdgeSet();
+	public Iterable<? extends Edge> getEdgeSet();
 
 	/**
-	 *  Helpful class that dynamically instantiates nodes according to a given class name.
+	 * The factory used to create node instances.
+	 * The factory can be changed to refine the node class generated for this graph.
+	 * @see #setNodeFactory(NodeFactory)
+	 * @see #edgeFactory()
 	 */
 	NodeFactory nodeFactory();
 	
@@ -120,7 +116,10 @@ public interface Graph extends Element
 	void setNodeFactory( NodeFactory nf );
 	
 	/**
-	 *  Helpful class that dynamically instantiates edges according to a given class name.
+	 * The factory used to create edge instances.
+	 * The factory can be changed to refine the edge class generated for this graph.
+	 * @see #setEdgeFactory(EdgeFactory)
+	 * @see #nodeFactory()
 	 */
 	EdgeFactory edgeFactory();
 	
@@ -132,16 +131,14 @@ public interface Graph extends Element
 	
 	/**
 	 * Empties the graph completely by removing any references to nodes or edges.
-	 * Every attribute is also removed. However, listeners are kept. A {@link
-	 * org.miv.graphstream.graph.GraphListener#beforeGraphClear(Graph)} event is sent to them,
-	 * but no edge or node removing event is sent.
+	 * Every attribute is also removed. However, listeners are kept.
 	 * @see #clearListeners()
 	 */
 	public void clear();
 
 	/**
 	 * Remove any reference to listeners.
-	 * @see #clear
+	 * @see #clear()
 	 */
 	public void clearListeners();
 
@@ -206,7 +203,7 @@ public interface Graph extends Element
 	/**
 	 * Add an undirected edge between nodes. An event is sent toward the
 	 * listeners. If strict checking is enabled and at least one of the two
-	 * given nodes do not exist, a not found exception is raised. Else if the
+	 * given nodes do not exist, a "not found" exception is raised. Else if the
 	 * auto-creation feature is disabled, the error is silently ignored, and
 	 * null is returned. If the auto-creation feature is enabled (see
 	 * {@link #setAutoCreate(boolean)}) and one or two of the given nodes do not
@@ -293,35 +290,75 @@ public interface Graph extends Element
 	 *            A numerical value that may give a timestamp to track the evolution of the graph
 	 *            over the time.
 	 */
-	public void  stepBegins(double time);
+	public void stepBegins( double time );
 	
 	/**
-	 * Add a listener for events concerning this graph.
-	 * @param listener The new listener.
-	 * @throws UnsupportedOperationException If the graph does not handle
-	 * events at all.
+	 * Add a listener for all events concerning this graph.
+	 * @param listener The listener to register.
+	 * @see #addGraphAttributesListener(GraphAttributesListener)
+	 * @see #addGraphElementsListener(GraphElementsListener)
 	 */
 	public void addGraphListener( GraphListener listener );
 
 	/**
-	 * Remove the given listener from the list of object interested in events on
-	 * this graph. This methods fails silently if listener is not registered in
+	 * Remove the given listener from the list of object interested in all events on
+	 * this graph. This method fails silently if listener is not registered in
 	 * this graph.
 	 * @param listener The listener to remove.
+	 * @see #addGraphAttributesListener(GraphAttributesListener)
+	 * @see #addGraphElementsListener(GraphElementsListener)
 	 */
 	public void removeGraphListener( GraphListener listener );
 
 	/**
-	 * Returns the list of {@link GraphListener} objects registered to this graph.
-	 * @return the list of {@link GraphListener}.
+	 * Add a listener only on the attributes (variables stored on the graph, nodes and edges) of
+	 * the graph. 
+	 * @param listener The listener to register.
+	 * @see #addGraphElementsListener(GraphElementsListener)
 	 */
-	public List<GraphListener> getGraphListeners();
+	public void addGraphAttributesListener( GraphAttributesListener listener );
+	
+	/**
+	 * Add a listener only on the elements (nodes and edges) of the graph. 
+	 * @param listener The listener to register.
+	 * @see #addGraphAttributesListener(GraphAttributesListener)
+	 */
+	public void addGraphElementsListener( GraphElementsListener listener );
+	
+	/**
+	 * Remove the given listener from the list of objects interested in attributes events on this
+	 * graph. This method fails silently if listener is not registered in this graph.
+	 * @param listener The listener to remove.
+	 */
+	public void removeGraphAttributesListener( GraphAttributesListener listener);
+	
+	/**
+	 * Remove the given listener from the list of objects interested in elements events on this
+	 * graph. This method fails silently if listener is not registered in this graph.
+	 * @param listener The listener to remove.
+	 */
+	public void removeGraphElementsListener( GraphElementsListener listener );
+	
+	/**
+	 * Returns an "iterable" of {@link GraphAttributesListener} objects registered to this graph.
+	 * @return the set of {@link GraphAttributesListener} under the form of an iterable object.
+	 */
+	public Iterable<GraphAttributesListener> getGraphAttributesListeners();
+	
+	/**
+	 * Returns an "iterable" of {@link GraphElementsListener} objects registered to this graph.
+	 * @return the list of {@link GraphElementsListener} under the form of an iterable object.
+	 */
+	public Iterable<GraphElementsListener> getGraphElementsListeners();
 	
 	/**
 	 * Utility method to read a graph. This method tries to identify the graph
 	 * format by itself and instantiates the corresponding reader automatically.
 	 * If this process fails, a NotFoundException is raised.
 	 * @param filename The graph filename.
+	 * @throws NotFoundException If the file cannot be found or if the format is not recognised.
+	 * @throws GraphParseException If there is a parsing error while reading the file.
+	 * @throws IOException If an input output error occurs during the graph reading.
 	 * @see org.miv.graphstream.io.GraphReader
 	 */
 	public void read( String filename ) throws IOException, GraphParseException, NotFoundException;
@@ -330,6 +367,9 @@ public interface Graph extends Element
 	 * Utility method to read a graph using the given reader.
 	 * @param reader An appropriate reader for the filename.
 	 * @param filename The graph filename.
+	 * @throws NotFoundException If the file cannot be found or if the format is not recognised.
+	 * @throws GraphParseException If there is a parsing error while reading the file.
+	 * @throws IOException If an input/output error occurs during the graph reading.
 	 * @see org.miv.graphstream.io.GraphReader
 	 */
 	public void read( GraphReader reader, String filename ) throws IOException, GraphParseException;
@@ -337,6 +377,7 @@ public interface Graph extends Element
 	/**
 	 * Utility method to write a graph in DGS format to a file.
 	 * @param filename The file that will contain the saved graph.
+	 * @throws IOException If an input/output error occurs during the graph writing.
 	 * @see org.miv.graphstream.io.GraphWriter
 	 */
 	public void write( String filename ) throws IOException;
@@ -345,6 +386,7 @@ public interface Graph extends Element
 	 * Utility method to write a graph in the chosen format to a file.
 	 * @param writer The output format to use.
 	 * @param filename THe file that will contain the saved graph.
+	 * @throws IOException If an input/output error occurs during the graph writing.
 	 * @see org.miv.graphstream.io.GraphWriter
 	 */
 	public void write( GraphWriter writer, String filename ) throws IOException;
@@ -367,12 +409,13 @@ public interface Graph extends Element
 	 * @return The number of nodes that where not mapped to coordinates.
 	 * @throws IOException If an error occurred during the position file reading.
 	 */
+	// TODO : this is not the place for this !
 	public int readPositionFile( String posFileName ) throws IOException;
 
 	/**
 	 * Utility method that create a new graph viewer, and register the graph in
 	 * it. Notice that this method is a quick way to see a graph, and only this.
-	 * It can be used to prototype a program, but is very limited. This method
+	 * It can be used to prototype a program, but may be limited. This method
 	 * automatically launch a graph layout algorithm in its own thread to
 	 * compute best node positions.
 	 * @see org.miv.graphstream.ui.GraphViewerRemote
@@ -394,23 +437,4 @@ public interface Graph extends Element
 	 *         viewer often run in another thread).
 	 */
 	public GraphViewerRemote display( boolean autoLayout );
-
-	/**
-	 * Utility method that allows to call simple and often used algorithms on this graph. The list
-	 * of algorithms is given in the
-	 * {@link org.miv.graphstream.algorithm.Algorithms} class. The returned
-	 * object gives access an instance of a common set of algorithms dedicated
-	 * to this graph. This instance is of class
-	 * {@link org.miv.graphstream.algorithm.Algorithms} or one of its
-	 * descendants (specific Graph instances can refine the Algorithms class to
-	 * optimise algorithms for their internal representation).
-	 * @return An instance of a class allowing to perform several common
-	 *         algorithms on this graph.
-	public Algorithms algorithm();
-	 */
-	
-	/**
-	 * Override the Object.toString() method.
-	 */
-	public String toString();
 }

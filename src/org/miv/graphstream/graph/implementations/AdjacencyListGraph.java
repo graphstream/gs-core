@@ -27,21 +27,20 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-//import org.miv.graphstream.algorithm.Algorithms;
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.EdgeFactory;
 import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.graph.Graph;
+import org.miv.graphstream.graph.GraphAttributesListener;
+import org.miv.graphstream.graph.GraphElementsListener;
 import org.miv.graphstream.graph.GraphListener;
 import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.graph.NodeFactory;
@@ -61,26 +60,18 @@ import org.miv.util.SingletonException;
  * A light graph class intended to allow the construction of big graphs
  * (millions of elements).
  * </p>
+ * 
  * <p>
- * The main purpose here is to minimize memory consumption even if the
+ * The main purpose here is to minimise memory consumption even if the
  * management of such a graph implies more CPU consuming. See the
  * <code>complexity</code> tags on each method so as to figure out the impact
  * on the CPU.
  * </p>
- * 
- * @since July 12 2007
  */
-public class AdjacencyListGraph 
-	extends AbstractElement 
-	implements Graph
+public class AdjacencyListGraph extends AbstractElement implements Graph
 {
-//	protected Algorithms algos;
-	
-	public class EdgeIterator 
-		implements 
-			Iterator<Edge>
+	public class EdgeIterator implements Iterator<Edge>
 	{
-
 		Iterator<Edge> edgeIterator;
 		
 		public EdgeIterator()
@@ -88,72 +79,56 @@ public class AdjacencyListGraph
 			edgeIterator = edges.values().iterator();
 		}
 		
-		/*
-		 * (non-Javadoc)
-		 * @see java.util.Iterator#hasNext()
-		 */
 		public boolean hasNext()
 		{
 			return edgeIterator.hasNext();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.util.Iterator#next()
-		 */
 		public Edge next()
 		{
 			return edgeIterator.next();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.util.Iterator#remove()
-		 */
 		public void remove()
 		{
 			throw new UnsupportedOperationException( "this iterator does not allow removing" );
 		}
-
 	}
 
 	
-	public class NodeIterator 
-		implements 
-			Iterator<Node>
+	public class NodeIterator implements Iterator<Node>
 	{
-
 		Iterator<Node> nodeIterator;
 		
 		public NodeIterator()
 		{
 			nodeIterator = nodes.values().iterator();
 		}
+
 		public boolean hasNext()
 		{
 			return (nodeIterator.hasNext());
 		}
 
-		/* (non-Javadoc)
-		 * @see java.util.Iterator#next()
-		 */
 		public Node next()
 		{
 			return  nodeIterator.next();
 		}
 
-		/* (non-Javadoc)
-		 * @see java.util.Iterator#remove()
-		 */
 		public void remove()
 		{
 			throw new UnsupportedOperationException( "this iterator does not allow removing" );
 		}
-
 	}
 
+	/**
+	 * All the nodes.
+	 */
 	protected HashMap<String,Node> nodes = new HashMap<String, Node>();
 
+	/**
+	 * All the edges.
+	 */
 	protected HashMap<String,Edge> edges = new HashMap<String, Edge>();
 	
 	/**
@@ -164,16 +139,20 @@ public class AdjacencyListGraph
 	/**
 	 * A boolean that indicates whether or not an GraphListener event is being sent during another one. 
 	 */
-	protected boolean eventProcessing=false;
-
+	protected boolean eventProcessing = false;
 
 	/**
-	 * Set of graph listeners.
+	 * Set of graph attributes listeners.
 	 */
-	protected ArrayList<GraphListener> listeners = new ArrayList<GraphListener>();
+	protected ArrayList<GraphAttributesListener> attrListeners = new ArrayList<GraphAttributesListener>();
+	
+	/**
+	 * set of graph elements listeners.
+	 */
+	protected ArrayList<GraphElementsListener> eltsListeners = new ArrayList<GraphElementsListener>();
 
 	/**
-	 * Verify namespace conflicts, removal of non-existing elements, use of
+	 * Verify name space conflicts, removal of non-existing elements, use of
 	 * non-existing elements.
 	 */
 	protected boolean strictChecking = true;
@@ -186,12 +165,12 @@ public class AdjacencyListGraph
 
 	
 	/**
-	 *  Helpfull class that dynamicaly instantiate nodes according to a given class name.
+	 *  Help full class that dynamically instantiate nodes according to a given class name.
 	 */
 	protected NodeFactory nodeFactory;
 	
 	/**
-	 *  Helpfull class that dynamicaly instantiate edges according to a given class name.
+	 *  Help full class that dynamically instantiate edges according to a given class name.
 	 */
 	protected EdgeFactory edgeFactory;
 	
@@ -199,9 +178,8 @@ public class AdjacencyListGraph
 	 * List of listeners to remove if the {@link #removeGraphListener(GraphListener)} is called
 	 * inside from the listener. This can happen !! We create this list on demand.
 	 */
-	protected ArrayList<GraphListener> listenersToRemove;
+	protected ArrayList<Object> listenersToRemove;
 
-	
 // Constructors
 
 	/**
@@ -273,56 +251,32 @@ public class AdjacencyListGraph
 		};
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.Graph#edgeFactory()
-	 */
 	public EdgeFactory edgeFactory()
 	{
 		return edgeFactory;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.Graph#edgeFactory()
-	 */
 	public void setEdgeFactory( EdgeFactory ef )
 	{
 		this.edgeFactory = ef;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.Graph#nodeFactory()
-	 */
 	public NodeFactory nodeFactory()
 	{
 		return nodeFactory;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.Graph#edgeFactory()
-	 */
 	public void setNodeFactory( NodeFactory nf )
 	{
 		this.nodeFactory = nf;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#addEdge(java.lang.String,
-	 *      java.lang.String, java.lang.String)
-	 */
-	  
-	/**
-	 * @complexity O( log(m) ) with m be the number of edges in the graph.
-	 */
-	public Edge 
-	addEdge( String id, String node1, String node2 ) throws SingletonException, NotFoundException
+	public Edge addEdge( String id, String node1, String node2 ) throws SingletonException, NotFoundException
 	{
 		return addEdge( id, node1, node2, false );
 	}
 
-	protected Edge 
-	addEdge_( String tag, String from, String to, boolean directed ) throws SingletonException, NotFoundException
+	protected Edge addEdge_( String tag, String from, String to, boolean directed ) throws SingletonException, NotFoundException
 	{
 		Node src;
 		Node trg;
@@ -394,38 +348,26 @@ public class AdjacencyListGraph
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#addEdge(java.lang.String,
-	 *      java.lang.String, java.lang.String, boolean)
-	 */
 	/**
 	 * @complexity O(log(n)) with n be the number of edges in the graph.
 	 */
-	public Edge 
-	addEdge( String id, String from, String to, boolean directed ) throws SingletonException, NotFoundException
+	public Edge addEdge( String id, String from, String to, boolean directed ) throws SingletonException, NotFoundException
 	{
 		Edge e = addEdge_( id, from, to, directed );
 		return e;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#addNode(java.lang.String)
-	 */
 	/**
 	 * @complexity O(log(n)) with n be the number of nodes in the graph.
 	 */
-	public Node 
-	addNode( String id ) throws SingletonException
+	public Node addNode( String id ) throws SingletonException
 	{
 		Node n = addNode_( id );
 		
 		return n;
 	}
 
-	protected Node 
-	addNode_( String tag ) throws SingletonException
+	protected Node addNode_( String tag ) throws SingletonException
 	{
 		Node node;
 		Node old = lookForNode( tag );
@@ -451,180 +393,130 @@ public class AdjacencyListGraph
 		return node;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#clear()
-	 */
 	/**
 	 * @complexity O(1).
 	 */
-	
-	public void 
-	clear()
+	public void clear()
 	{
+		for( Node n: nodes.values() )
+			beforeNodeRemoveEvent( (AdjacencyListNode)n );
+		
+		for( Edge e: edges.values() )
+			beforeEdgeRemoveEvent( (AdjacencyListEdge)e );
+
+		nodes.clear();
+		edges.clear();
+		
+/* Generates a ConcurrentModificationException :
 		for( String n: nodes.keySet() )
 		{
 			removeNode( n );
 		}
-
+*/
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#clearListeners()
-	 */
 	/**
 	 * @complexity O(1).
 	 */
-	public void 
-	clearListeners()
+	public void clearListeners()
 	{
-		listeners.clear();
+		attrListeners.clear();
+		eltsListeners.clear();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#getEdge(java.lang.String)
-	 */
 	/**
 	 * @complexity O(log(n)) with n be the number of edges in the graph.
 	 */
-	public Edge 
-	getEdge( String id )
+	public Edge getEdge( String id )
 	{
 		return lookForEdge(id);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#getEdgeCount()
-	 */
 	/**
 	 * @complexity constant
 	 */
-	public int 
-	getEdgeCount()
+	public int getEdgeCount()
 	{
 		return edges.size();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#getEdgeIterator()
-	 */
 	/**
 	 * @complexity constant
 	 */
-	public Iterator<Edge> 
-	getEdgeIterator()
+	public Iterator<Edge> getEdgeIterator()
 	{
 		return new EdgeIterator();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#getEdgeSet()
-	 */
 	/**
 	 * @complexity Constant.
 	 */
-	public Collection<Edge> 
-	getEdgeSet()
+	public Iterable<Edge> getEdgeSet()
 	{
-		
 		return edges.values();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#getNode(java.lang.String)
-	 */
 	/**
 	 * @complexity O(log(n)) with n be the number of nodes in the graph.
 	 */
-	public Node 
-	getNode( String id )
+	public Node getNode( String id )
 	{
 		return lookForNode( id );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#getNodeCount()
-	 */
 	/**
 	 * @complexity Constant.
 	 */
-	public int 
-	getNodeCount()
+	public int getNodeCount()
 	{
 		return nodes.size();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#getNodeIterator()
-	 */
 	/**
 	 * @complexity Constant.
 	 */
-	public Iterator<Node> 
-	getNodeIterator()
+	public Iterator<Node> getNodeIterator()
+	{
+		return new NodeIterator();
+	}
+	
+	public Iterator<Node> iterator()
 	{
 		return new NodeIterator();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#getNodeSet()
-	 */
 	/**
 	 * @complexity Constant.
 	 */
-	public Collection<Node> 
-	getNodeSet()
+	public Iterable<Node> getNodeSet()
 	{
 		return nodes.values();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#isAutoCreationEnabled()
-	 */
-	public boolean 
-	isAutoCreationEnabled()
+	public boolean isAutoCreationEnabled()
 	{
 		return autoCreate;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#isStrictCheckingEnabled()
-	 */
-	public boolean 
-	isStrictCheckingEnabled()
+	public boolean isStrictCheckingEnabled()
 	{
 		return strictChecking;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.Graph#getGraphListeners()
-	 */
-	public List<GraphListener> getGraphListeners()
+	public Iterable<GraphAttributesListener> getGraphAttributesListeners()
 	{
-		return listeners;
+		return attrListeners;
+	}
+	
+	public Iterable<GraphElementsListener> getGraphElementsListeners()
+	{
+		return eltsListeners;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#removeEdge(java.lang.String,
-	 *      java.lang.String)
-	 */
 	/**
 	 * @complexity O( 2*log(n)+log(m) ) with n the number of nodes and m the number of edges in the graph.
 	 */
-	public Edge 
-	removeEdge( String from, String to ) throws NotFoundException
+	public Edge removeEdge( String from, String to ) throws NotFoundException
 	{
 		Node n0 = lookForNode( from );
 		Node n1 = lookForNode( to );
@@ -647,22 +539,17 @@ public class AdjacencyListGraph
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#removeEdge(java.lang.String)
-	 */
 	/**
 	 * @complexity O( 2*log(m) ) with  m the number of edges in the graph.
 	 */
-	public Edge 
-	removeEdge( String id ) throws NotFoundException
+	public Edge removeEdge( String id ) throws NotFoundException
 	{
 		Edge edge = lookForEdge( id );
 		if( edge != null )
 		{
 			removeEdge( edge );
 		}
-		return null;
+		return edge;
 	}
 
 	/**
@@ -670,8 +557,7 @@ public class AdjacencyListGraph
 	 * @param edge The reference of the edge to remove.
 	 * @complexity O( log(m) ) with  m the number of edges in the graph.
 	 */
-	public Edge 
-	removeEdge( Edge edge ) throws NotFoundException
+	public Edge removeEdge( Edge edge ) throws NotFoundException
 	{
 		beforeEdgeRemoveEvent( (AdjacencyListEdge) edge );
 		Node n0 = edge.getSourceNode();
@@ -680,18 +566,12 @@ public class AdjacencyListGraph
 		( (AdjacencyListNode) n1 ).edges.remove( edge );
 		edges.remove( edge.getId() );
 		return edge;
-
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#removeNode(java.lang.String)
-	 */
 	/**
 	 * @complexity 0( 2*log(n) ) with n the number of nodes in the graph.
 	 */
-	public Node 
-	removeNode( String id ) throws NotFoundException
+	public Node removeNode( String id ) throws NotFoundException
 	{
 		Node node = lookForNode( id );
 		if( node != null )
@@ -706,8 +586,7 @@ public class AdjacencyListGraph
 	 * @param node The reference of the node to be removed.
 	 * @complexity 0( log(n) ) with n the number of nodes in the graph.
 	 */
-	public Node 
-	removeNode( Node node ) throws NotFoundException
+	public Node removeNode( Node node ) throws NotFoundException
 	{
 		if( node != null )
 		{
@@ -726,8 +605,8 @@ public class AdjacencyListGraph
 
 	public void stepBegins(double time)
 	{
-		for (GraphListener l : listeners)
-			l.stepBegins(this, time);
+		for( GraphElementsListener l : eltsListeners )
+			l.stepBegins( getId(), time );
 	}
 	
 	/**
@@ -735,8 +614,7 @@ public class AdjacencyListGraph
 	 * connected to nodes still in the graph. This methods unbind all edges
 	 * connected to this node (this also deregister them from the graph).
 	 */
-	protected void 
-	disconnectEdges( Node node ) throws IllegalStateException
+	protected void disconnectEdges( Node node ) throws IllegalStateException
 	{
 		int n = node.getDegree();
 
@@ -745,28 +623,18 @@ public class AdjacencyListGraph
 
 		while( n > 0 )
 		{
-			Edge e = ( (AdjacencyListNode) node ).edges.get( 0 );
+			Edge e = ((AdjacencyListNode)node).edges.get( 0 );
 			removeEdge( e );
-			n = edges.size();
+			n = node.getDegree(); //edges.size(); ???
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#setAutoCreate(boolean)
-	 */
-	public void 
-	setAutoCreate( boolean on )
+	public void setAutoCreate( boolean on )
 	{
 		autoCreate = on;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#setStrictChecking(boolean)
-	 */
-	public void 
-	setStrictChecking( boolean on )
+	public void setStrictChecking( boolean on )
 	{
 		strictChecking = on;
 	}
@@ -776,17 +644,8 @@ public class AdjacencyListGraph
 	 * @param id The string identifier of the seek node.
 	 * @complexity 0( log(n) ), with n the number of nodes;
 	 */
-	protected Node 
-	lookForNode( String id )
+	protected Node lookForNode( String id )
 	{
-		// for( NodeInterface n: nodes )
-		// {
-		// if( ( (ElementInterface) n ).getId().equals( id ) )
-		// {
-		// return n;
-		// }
-		// }
-		// return null;
 		return nodes.get( id );
 	}
 
@@ -796,88 +655,134 @@ public class AdjacencyListGraph
 	 * @param id The string identifier of the seek edges.
 	 * @complexity 0( log(m) ), with m the number of edges;
 	 */
-	protected Edge 
-	lookForEdge( String id )
+	protected Edge lookForEdge( String id )
 	{
-		// for( EdgeInterface e: edges )
-		// {
-		// if( ( (ElementInterface) e ).getId().equals( id ) )
-		// {
-		// return e;
-		// }
-		// }
-		// return null;
 		return edges.get( id );
 	}
 
 	
-	// Events
+// Events
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#addGraphListener(org.miv.graphstream.graph.GraphListener)
-	 */
 	/**
 	 * @complexity 0( 1).
 	 */
-	public void 
-	addGraphListener( GraphListener listener )
+	public void addGraphListener( GraphListener listener )
 	{
-		listeners.add( listener );
+		attrListeners.add( listener );
+		eltsListeners.add( listener );
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#removeGraphListener(org.miv.graphstream.graph.GraphListener)
-	 */
-	/**
-	 * @complexity O(n) with n the numbers of listeners.
-	 */
-	public void 
-	removeGraphListener( GraphListener listener )
+	
+	public void addGraphAttributesListener( GraphAttributesListener listener )
+	{
+		attrListeners.add( listener );
+	}
+	
+	public void addGraphElementsListener( GraphElementsListener listener )
+	{
+		eltsListeners.add( listener );
+	}
+	
+	public void removeGraphListener( GraphListener listener )
 	{
 		if( eventProcessing )
 		{
 			// We cannot remove the listener while processing events !!!
-
-			if( listenersToRemove == null )
-				listenersToRemove = new ArrayList<GraphListener>();
-			
-			listenersToRemove.add( listener );
+			removeListenerLater( listener );
 		}
 		else
 		{
-			int index = listeners.lastIndexOf( listener );
+			int index = attrListeners.lastIndexOf( listener );
 
 			if( index >= 0 )
-				listeners.remove( index );
+				attrListeners.remove( index );
+			
+			index = eltsListeners.lastIndexOf( listener );
+			
+			if( index >= 0 )
+				eltsListeners.remove( index );
 		}
+	}
+	
+	public void removeGraphAttributesListener( GraphAttributesListener listener )
+	{
+		if( eventProcessing )
+		{
+			// We cannot remove the listener while processing events !!!
+			removeListenerLater( listener );
+		}
+		else
+		{
+			int index = attrListeners.lastIndexOf( listener );
+
+			if( index >= 0 )
+				attrListeners.remove( index );
+		}		
+	}
+	
+	public void removeGraphElementsListener( GraphElementsListener listener )
+	{
+		if( eventProcessing )
+		{
+			// We cannot remove the listener while processing events !!!
+			removeListenerLater( listener );
+		}
+		else
+		{
+			int index = eltsListeners.lastIndexOf( listener );
+
+			if( index >= 0 )
+				eltsListeners.remove( index );
+		}		
+	}
+
+	protected void removeListenerLater( Object listener )
+	{
+		if( listenersToRemove == null )
+			listenersToRemove = new ArrayList<Object>();
+		
+		listenersToRemove.add( listener );	
 	}
 	
 	protected void checkListenersToRemove()
 	{
 		if( listenersToRemove != null && listenersToRemove.size() > 0 )
 		{
-			for( GraphListener listener: listenersToRemove )
-				removeGraphListener( listener );
+			for( Object listener: listenersToRemove )
+			{
+				if( listener instanceof GraphListener )
+					removeGraphListener( (GraphListener) listener );
+				else if( listener instanceof GraphAttributesListener )
+					removeGraphAttributesListener( (GraphAttributesListener) listener );
+				else if( listener instanceof GraphElementsListener )
+					removeGraphElementsListener( (GraphElementsListener) listener );
+			}
 
 			listenersToRemove.clear();
 			listenersToRemove = null;
 		}
 	}
 
-	protected void
-	afterNodeAddEvent( AdjacencyListNode node )
+	/**
+	 * If in "event processing mode", ensure all pending events are processed.
+	 */
+	protected void manageEvents()
+	{
+		if( eventProcessing )
+		{
+			while( ! eventQueue.isEmpty() )
+				manageEvent( eventQueue.remove() );
+		}
+	}
+
+	protected void afterNodeAddEvent( AdjacencyListNode node )
 	{
 		if(!eventProcessing)
 		{
 			eventProcessing=true;
-			for( GraphListener l: listeners )
-				l.afterNodeAdd( this, node );
-			while(!eventQueue.isEmpty())
-			{
-				manageEvent(eventQueue.remove());
-			}
+			manageEvents();
+			for( GraphElementsListener l: eltsListeners )
+				l.nodeAdded( getId(), node.getId() );
+			manageEvents();
 			eventProcessing=false;
 			checkListenersToRemove();
 		}
@@ -887,18 +792,15 @@ public class AdjacencyListGraph
 		}
 	}
 
-	protected void
-	beforeNodeRemoveEvent( AdjacencyListNode node )
+	protected void beforeNodeRemoveEvent( AdjacencyListNode node )
 	{
 		if(!eventProcessing)
 		{
 			eventProcessing=true;
-			for( GraphListener l: listeners )
-				l.beforeNodeRemove( this, node );
-			while(!eventQueue.isEmpty())
-			{
-				manageEvent(eventQueue.remove());
-			}
+			manageEvents();
+			for( GraphElementsListener l: eltsListeners )
+				l.nodeRemoved( getId(), node.getId() );
+			manageEvents();
 			eventProcessing=false;
 			checkListenersToRemove();
 		}
@@ -908,18 +810,15 @@ public class AdjacencyListGraph
 		}
 	}
 
-	protected void
-	afterEdgeAddEvent( AdjacencyListEdge edge )
+	protected void afterEdgeAddEvent( AdjacencyListEdge edge )
 	{
 		if(!eventProcessing)
 		{
 			eventProcessing=true;
-			while(!eventQueue.isEmpty())
-			{
-				manageEvent(eventQueue.remove());
-			}
-			for( GraphListener l: listeners )
-				l.afterEdgeAdd( this, edge );
+			manageEvents();
+			for( GraphElementsListener l: eltsListeners )
+				l.edgeAdded( getId(), edge.getId(), edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
+			manageEvents();
 			eventProcessing=false;
 			checkListenersToRemove();
 		}
@@ -929,85 +828,105 @@ public class AdjacencyListGraph
 		}
 	}
 
-
-	protected void
-	beforeEdgeRemoveEvent( AdjacencyListEdge edge )
+	protected void beforeEdgeRemoveEvent( AdjacencyListEdge edge )
 	{
 		if(!eventProcessing)
 		{
 			eventProcessing=true;
-			while(!eventQueue.isEmpty())
-			{
-				manageEvent(eventQueue.remove());
-			}
-			for( GraphListener l: listeners )
-				l.beforeEdgeRemove( this, edge );
+			manageEvents();
+			for( GraphElementsListener l: eltsListeners )
+				l.edgeRemoved( getId(), edge.getId() );
+			manageEvents();
 			eventProcessing=false;
 			checkListenersToRemove();
 		}
-		else {
+		else
+		{
 			eventQueue.add( new BeforeEdgeRemoveEvent( edge ) );
 		}
 	}
 
-	protected void
-	beforeClearEvent()
-	{
-		if(!eventProcessing)
-		{
-			eventProcessing=true;
-			while(!eventQueue.isEmpty())
-			{
-				manageEvent(eventQueue.remove());
-			}
-			for( GraphListener l: listeners )
-				l.beforeGraphClear( this );
-			eventProcessing=false;
-			checkListenersToRemove();
-		}
-		else {
-			eventQueue.add( new BeforeGraphClearEvent() );
-		}
-	}
-
 	@Override
-	protected void
-	attributeChanged( String attribute, Object oldValue, Object newValue )
+	protected void attributeChanged( String attribute, Object oldValue, Object newValue )
 	{
 		attributeChangedEvent( this, attribute, oldValue, newValue );
 	}
 
-	protected void
-	attributeChangedEvent( Element element, String attribute, Object oldValue, Object newValue )
+	protected void attributeChangedEvent( Element element, String attribute, Object oldValue, Object newValue )
 	{
 		if(!eventProcessing)
 		{
 			eventProcessing=true;
-			while(!eventQueue.isEmpty())
+			manageEvents();
+	
+			if( oldValue == null )
 			{
-				manageEvent(eventQueue.remove());
+				if( element instanceof Node )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.nodeAttributeAdded( getId(), element.getId(), attribute, newValue );
+				}
+				else if( element instanceof Edge )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.edgeAttributeAdded( getId(), element.getId(), attribute, newValue );					
+				}
+				else
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.graphAttributeAdded( getId(), attribute, newValue );					
+				}
 			}
-			for( GraphListener l: listeners )
+			else if( newValue == null )
 			{
-				l.attributeChanged( element, attribute, oldValue, newValue );
-		//System.out.println("Listener "+l+"  --  "+element.getId()+" "+attribute+"="+newValue);
+				if( element instanceof Node )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.nodeAttributeRemoved( getId(), element.getId(), attribute );
+				}
+				else if( element instanceof Edge )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.edgeAttributeRemoved( getId(), element.getId(), attribute );					
+				}
+				else
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.graphAttributeRemoved( getId(), attribute );					
+				}								
 			}
+			else
+			{
+				if( element instanceof Node )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.nodeAttributeChanged( getId(), element.getId(), attribute, oldValue, newValue );
+				}
+				else if( element instanceof Edge )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.edgeAttributeChanged( getId(), element.getId(), attribute, oldValue, newValue );					
+				}
+				else
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.graphAttributeChanged( getId(), attribute, oldValue, newValue );					
+				}				
+			}
+	
+			manageEvents();
 			eventProcessing=false;
 			checkListenersToRemove();
 		}
-		else {
+		else
+		{
 			eventQueue.add( new AttributeChangedEvent( element, attribute, oldValue, newValue ) );
 		}
 	}
 
 // Commands -- Utility
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#read(java.lang.String)
-	 */
-	public void 
-	read( String filename ) throws IOException, GraphParseException, NotFoundException
+	public void read( String filename ) throws IOException, GraphParseException, NotFoundException
 	{
 		GraphReaderListenerHelper listener = new GraphReaderListenerHelper( this );
 		GraphReader reader = GraphReaderFactory.readerFor( filename );
@@ -1015,48 +934,26 @@ public class AdjacencyListGraph
 		reader.read( filename );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#read(org.miv.graphstream.io.GraphReader,
-	 *      java.lang.String)
-	 */
-	public void 
-	read( GraphReader reader, String filename ) throws IOException, GraphParseException
+	public void read( GraphReader reader, String filename ) throws IOException, GraphParseException
 	{
 		GraphReaderListenerHelper listener = new GraphReaderListenerHelper( this );
 		reader.addGraphReaderListener( listener );
 		reader.read( filename );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#write(java.lang.String)
-	 */
-	public void 
-	write( String filename ) throws IOException
+	public void write( String filename ) throws IOException
 	{
 		GraphWriterHelper gwh = new GraphWriterHelper( this );
 		gwh.write( filename );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#write(org.miv.graphstream.io.GraphWriter,
-	 *      java.lang.String)
-	 */
-	public void 
-	write( GraphWriter writer, String filename ) throws IOException
+	public void write( GraphWriter writer, String filename ) throws IOException
 	{
 		GraphWriterHelper gwh = new GraphWriterHelper( this );
 		gwh.write( filename, writer );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#readPositionFile(java.lang.String)
-	 */
-	public int 
-	readPositionFile( String posFileName ) throws IOException
+	public int readPositionFile( String posFileName ) throws IOException
 	{
 		if( posFileName == null )
 			throw new IOException( "no filename given" );
@@ -1117,19 +1014,11 @@ public class AdjacencyListGraph
 		return ignored;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#display()
-	 */
 	public GraphViewerRemote display()
 	{
 		return display( true );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.GraphInterface#display(boolean)
-	 */
 	public GraphViewerRemote display( boolean autoLayout )
 	{
 		try
@@ -1166,29 +1055,18 @@ public class AdjacencyListGraph
         
         return null;
 	}
-/*	
-	public Algorithms algorithm()
-	{
-		if( algos == null )
-			algos = new Algorithms( this );
-		
-		return algos;
-	}
-*/
-//-------------------------Events Management------------------------
+
+// Events Management
 	
 	/**
 	 * Interface that provide general purpose classification for evens involved
 	 * in graph modifications
-	 * @author Yoann Pign�
-	 * 
 	 */
 	interface GraphEvent
 	{
 	}
 
-	class AfterEdgeAddEvent 
-		implements GraphEvent
+	class AfterEdgeAddEvent  implements GraphEvent
 	{
 		AdjacencyListEdge edge;
 
@@ -1198,8 +1076,7 @@ public class AdjacencyListGraph
 		}
 	}
 
-	class BeforeEdgeRemoveEvent 
-		implements GraphEvent
+	class BeforeEdgeRemoveEvent implements GraphEvent
 	{
 		AdjacencyListEdge edge;
 
@@ -1209,8 +1086,7 @@ public class AdjacencyListGraph
 		}
 	}
 
-	class AfterNodeAddEvent 
-		implements GraphEvent
+	class AfterNodeAddEvent implements GraphEvent
 	{
 		AdjacencyListNode node;
 
@@ -1220,8 +1096,7 @@ public class AdjacencyListGraph
 		}
 	}
 
-	class BeforeNodeRemoveEvent 
-		implements GraphEvent
+	class BeforeNodeRemoveEvent implements GraphEvent
 	{
 		AdjacencyListNode node;
 
@@ -1231,13 +1106,11 @@ public class AdjacencyListGraph
 		}
 	}
 
-	class BeforeGraphClearEvent 
-		implements GraphEvent
+	class BeforeGraphClearEvent implements GraphEvent
 	{
 	}
 
-	class AttributeChangedEvent 
-		implements GraphEvent
+	class AttributeChangedEvent implements GraphEvent
 	{
 		Element element;
 
@@ -1262,40 +1135,91 @@ public class AdjacencyListGraph
 	 * invocation.
 	 * @param event
 	 */
-	private void 
-	manageEvent( GraphEvent event )
+	private void manageEvent( GraphEvent event )
 	{
-		if(event.getClass() == AttributeChangedEvent.class)
+		if( event.getClass() == AttributeChangedEvent.class )
 		{
-			for( GraphListener l: listeners )
-				l.attributeChanged( ( (AttributeChangedEvent) event ).element, ( (AttributeChangedEvent) event ).attribute,
-						( (AttributeChangedEvent) event ).oldValue, ( (AttributeChangedEvent) event ).newValue );
+			AttributeChangedEvent ev = (AttributeChangedEvent)event;
+			
+			if( ev.oldValue == null )
+			{
+				if( ev.element instanceof Node )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.nodeAttributeAdded( getId(), ev.element.getId(), ev.attribute, ev.newValue );
+				}
+				else if( ev.element instanceof Edge )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.edgeAttributeAdded( getId(), ev.element.getId(), ev.attribute, ev.newValue );					
+				}
+				else
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.graphAttributeAdded( getId(), ev.attribute, ev.newValue );										
+				}
+			}
+			else if( ev.newValue == null )
+			{
+				if( ev.element instanceof Node )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.nodeAttributeRemoved( getId(), ev.element.getId(), ev.attribute );
+				}
+				else if( ev.element instanceof Edge )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.edgeAttributeRemoved( getId(), ev.element.getId(), ev.attribute );					
+				}
+				else
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.graphAttributeRemoved( getId(), ev.attribute );										
+				}
+			}
+			else
+			{
+				if( ev.element instanceof Node )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.nodeAttributeChanged( getId(), ev.element.getId(), ev.attribute, ev.oldValue, ev.newValue );
+				}
+				else if( ev.element instanceof Edge )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.edgeAttributeChanged( getId(), ev.element.getId(), ev.attribute, ev.oldValue, ev.newValue );					
+				}
+				else
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.graphAttributeChanged( getId(), ev.attribute, ev.oldValue, ev.newValue );										
+				}				
+			}
 		}
+		
+		// Elements events
+		
 		else if( event.getClass() == AfterEdgeAddEvent.class )
 		{
-			for( GraphListener l: listeners )
-				l.afterEdgeAdd( this, ( (AfterEdgeAddEvent) event ).edge );
+			Edge e = ((AfterEdgeAddEvent)event).edge;
+			
+			for( GraphElementsListener l: eltsListeners )
+				l.edgeAdded( getId(), e.getId(), e.getNode0().getId(), e.getNode1().getId(), e.isDirected() );
 		}
 		else if( event.getClass() == AfterNodeAddEvent.class )
 		{
-			for( GraphListener l: listeners )
-				l.afterNodeAdd( this, ( (AfterNodeAddEvent) event ).node );
+			for( GraphElementsListener l: eltsListeners )
+				l.nodeAdded( getId(), ((AfterNodeAddEvent)event).node.getId() );
 		}
 		else if( event.getClass() == BeforeEdgeRemoveEvent.class )
 		{
-			for( GraphListener l: listeners )
-				l.beforeEdgeRemove( this, ( (BeforeEdgeRemoveEvent) event ).edge );
+			for( GraphElementsListener l: eltsListeners )
+				l.edgeRemoved( getId(), ((BeforeEdgeRemoveEvent)event).edge.getId() );
 		}
 		else if( event.getClass() == BeforeNodeRemoveEvent.class )
 		{
-			for( GraphListener l: listeners )
-				l.beforeNodeRemove( this, ( (BeforeNodeRemoveEvent) event ).node );
-		}
-		else if( event.getClass() == BeforeGraphClearEvent.class )
-		{
-			for( GraphListener l: listeners )
-				l.beforeGraphClear(this);
-
+			for( GraphElementsListener l: eltsListeners )
+				l.nodeRemoved( getId(), ((BeforeNodeRemoveEvent)event).node.getId() );
 		}
 	}
 }

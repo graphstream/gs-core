@@ -36,8 +36,6 @@ import java.util.Random;
 
 import org.miv.graphstream.ui.layout.Layout;
 import org.miv.graphstream.ui.layout.LayoutListener;
-import org.miv.graphstream.graph.Element;
-import org.miv.graphstream.graph.Graph;
 import org.miv.pherd.Particle;
 import org.miv.pherd.ParticleBox;
 import org.miv.pherd.ParticleBoxListener;
@@ -1332,54 +1330,38 @@ protected class Edge
 }
 
 // Graph listener
+	
+	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId, boolean directed )
+	{
+		addEdge( edgeId, fromNodeId, toNodeId, directed );
+	}
+	
+	public void nodeAdded( String graphId, String nodeId )
+	{
+		addNode( nodeId );
+	}
+	
+	public void edgeRemoved( String graphId, String edgeId )
+	{
+		removeEdge( edgeId );
+	}
+	
+	public void nodeRemoved( String graphId, String nodeId )
+	{
+		removeNode( nodeId );
+	}
+	
+	public void stepBegins( String graphId, double time )
+	{
+		// NOP !
+	}
 
-	public void afterEdgeAdd( Graph graph, org.miv.graphstream.graph.Edge edge )
-	{
-		addEdge(
-				edge.getId(),
-				edge.getNode0().getId(),
-				edge.getNode1().getId(),
-				edge.isDirected() );
-	}
-	
-	public void afterNodeAdd( Graph graph, org.miv.graphstream.graph.Node node )
-	{
-		addNode( node.getId() );
-	}
-	
-	public void beforeEdgeRemove( Graph graph, org.miv.graphstream.graph.Edge edge )
-	{
-		removeEdge( edge.getId() );
-	}
-	
-	public void beforeNodeRemove( Graph graph, org.miv.graphstream.graph.Node node )
-	{
-		removeNode( node.getId() );
-	}
-	
-	public void attributeChanged( Element element, String attribute, Object oldValue, Object newValue )
-	{
-		if( element instanceof org.miv.graphstream.graph.Graph )
-		{
-			graphAttributeChanged( attribute, newValue );
-		}
-		else if( element instanceof org.miv.graphstream.graph.Node )
-		{
-			nodeAttributeChanged( element.getId(), attribute, newValue );
-		}
-		else if( element instanceof org.miv.graphstream.graph.Edge )
-		{
-			edgeAttributeChanged( element.getId(), attribute, newValue );
-		}
-	}
-	
-	public void beforeGraphClear( Graph graph )
-	{
-		// TODO
-		throw new RuntimeException( "TODO implement graph clear in ElasticBox !!" );
-	}
-	
-	protected void graphAttributeChanged( String attribute, Object value )
+	public void graphAttributeAdded( String graphId, String attribute, Object value )
+    {
+		graphAttributeChanged( graphId, attribute, null, value );
+    }
+
+	public void graphAttributeChanged( String graphId, String attribute, Object oldValue, Object value )
 	{
 		if( attribute.equals( "layout.force" ) )
 		{
@@ -1443,8 +1425,17 @@ protected class Edge
 			System.err.printf( "layout.elasticBox.output-stats: %b%n", outputStats );
 		}
 	}
+
+	public void graphAttributeRemoved( String graphId, String attribute )
+    {
+    }
+
+	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+    {
+		nodeAttributeChanged( graphId, nodeId, attribute, null, value );
+    }
 	
-	protected void nodeAttributeChanged( String id, String attribute, Object value )
+	public void nodeAttributeChanged( String graphId, String id, String attribute, Object oldValue, Object value )
 	{
 		if( attribute.equals( "layout.weight" ) )
 		{
@@ -1454,8 +1445,17 @@ protected class Edge
 				setNodeWeight( id, 1 );
 		}
 	}
+
+	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+    {
+    }
+
+	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+    {
+		edgeAttributeChanged( graphId, edgeId, attribute, null, value );
+    }
 	
-	protected void edgeAttributeChanged( String id, String attribute, Object value )
+	public void edgeAttributeChanged( String graphId, String id, String attribute, Object oldValue, Object value )
 	{
 		if( attribute.equals( "layout.weight" ) )
 		{
@@ -1471,7 +1471,7 @@ protected class Edge
 		}
 	}
 
-	public void stepBegins(Graph graph, double time)
-	{
-	}
+	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+    {
+    }
 }

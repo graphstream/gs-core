@@ -167,6 +167,11 @@ public class ConcurrentNode
 	{
 		return new FullEdgeIterator();
 	}
+	
+	public Iterator<Edge> iterator()
+	{
+		return new FullEdgeIterator();
+	}
 
 	/* @see org.miv.graphstream.graph.Node */
 	public Collection<? extends Edge> getEdgeSet()

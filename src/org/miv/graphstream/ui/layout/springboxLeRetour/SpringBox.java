@@ -33,8 +33,6 @@ import java.util.Random;
 
 import org.miv.graphstream.ui.layout.Layout;
 import org.miv.graphstream.ui.layout.LayoutListener;
-import org.miv.graphstream.graph.Element;
-import org.miv.graphstream.graph.Graph;
 import org.miv.pherd.ParticleBox;
 import org.miv.pherd.ParticleBoxListener;
 import org.miv.pherd.ntree.Anchor;
@@ -580,65 +578,49 @@ public class SpringBox implements Layout, ParticleBoxListener
 	
 // Graph listener
 
-	public void afterEdgeAdd( Graph graph, org.miv.graphstream.graph.Edge edge )
+	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId, boolean directed )
 	{
-		addEdge(
-				edge.getId(),
-				edge.getNode0().getId(),
-				edge.getNode1().getId(),
-				edge.isDirected() );
+		addEdge( edgeId, fromNodeId, toNodeId, directed );
 	}
 	
-	public void afterNodeAdd( Graph graph, org.miv.graphstream.graph.Node node )
+	public void nodeAdded( String graphId, String nodeId )
 	{
-		addNode( node.getId() );
+		addNode( nodeId );
 	}
 	
-	public void beforeEdgeRemove( Graph graph, org.miv.graphstream.graph.Edge edge )
+	public void edgeRemoved( String graphId, String edgeId )
 	{
-		removeEdge( edge.getId() );
+		removeEdge( edgeId );
 	}
 	
-	public void beforeNodeRemove( Graph graph, org.miv.graphstream.graph.Node node )
+	public void nodeRemoved( String graphId, String nodeId )
 	{
-		removeNode( node.getId() );
+		removeNode( nodeId );
 	}
 	
-	public void attributeChanged( Element element, String attribute, Object oldValue, Object newValue )
+	public void stepBegins( String graphId, double time )
 	{
-		if( element instanceof org.miv.graphstream.graph.Graph )
-		{
-			graphAttributeChanged( attribute, newValue );
-		}
-		else if( element instanceof org.miv.graphstream.graph.Node )
-		{
-			nodeAttributeChanged( element.getId(), attribute, newValue );
-		}
-		else if( element instanceof org.miv.graphstream.graph.Edge )
-		{
-			edgeAttributeChanged( element.getId(), attribute, newValue );
-		}
+		// NOP !
 	}
-	
-	public void beforeGraphClear( Graph graph )
-	{
-		// TODO
-		throw new RuntimeException( "TODO implement graph clear in ElasticBox !!" );
-	}
-	
-	protected void graphAttributeChanged( String attribute, Object value )
-	{
+
+	public void graphAttributeAdded( String graphId, String attribute, Object value )
+    {
+		graphAttributeChanged( graphId, attribute, null, value );
+    }
+
+	public void graphAttributeChanged( String graphId, String attribute, Object oldValue, Object newValue )
+    {
 		if( attribute.equals( "layout.force" ) )
 		{
-			if( value instanceof Number )
-				setForce( ((Number)value).floatValue() );
-			System.err.printf( "layout.elasticBox.force: %f%n", ((Number)value).floatValue() );
+			if( newValue instanceof Number )
+				setForce( ((Number)newValue).floatValue() );
+			System.err.printf( "layout.elasticBox.force: %f%n", ((Number)newValue).floatValue() );
 		}
 		else if( attribute.equals( "layout.quality" ) )
 		{
-			if( value instanceof Number )
+			if( newValue instanceof Number )
 			{
-				int q = ((Number)value).intValue();
+				int q = ((Number)newValue).intValue();
 				
 				q = q > 4 ? 4 : q;
 				q = q < 0 ? 0 : q;
@@ -649,9 +631,9 @@ public class SpringBox implements Layout, ParticleBoxListener
 		}
 		else if( attribute.equals( "layout.exact-zone" ) )
 		{
-			if( value instanceof Number )
+			if( newValue instanceof Number )
 			{
-				float factor = ((Number)value).floatValue();
+				float factor = ((Number)newValue).floatValue();
 				
 				factor = factor > 1 ? 1 : factor;
 				factor = factor < 0 ? 0 : factor;
@@ -662,42 +644,60 @@ public class SpringBox implements Layout, ParticleBoxListener
 		}
 		else if( attribute.equals( "layout.output-stats" ) )
 		{
-			if( value == null )
+			if( newValue == null )
 			     outputStats = false;
 			else outputStats = true;
 			
 			System.err.printf( "layout.elasticBox.output-stats: %b%n", outputStats );
 		}
-	}
-	
-	protected void nodeAttributeChanged( String id, String attribute, Object value )
-	{
+    }
+
+	public void graphAttributeRemoved( String graphId, String attribute )
+    {
+    }
+
+	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+    {
+		nodeAttributeChanged( graphId, nodeId, attribute, null, value );
+    }
+
+	public void nodeAttributeChanged( String graphId, String nodeId, String attribute, Object oldValue, Object newValue )
+    {
 		if( attribute.equals( "layout.weight" ) )
 		{
-			if( value instanceof Number )
-				setNodeWeight( id, ((Number)value).floatValue() );
-			else if( value == null )
-				setNodeWeight( id, 1 );
+			if( newValue instanceof Number )
+				setNodeWeight( nodeId, ((Number)newValue).floatValue() );
+			else if( newValue == null )
+				setNodeWeight( nodeId, 1 );
 		}
-	}
-	
-	protected void edgeAttributeChanged( String id, String attribute, Object value )
-	{
+    }
+
+	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+    {
+    }
+
+	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+    {
+		edgeAttributeChanged( graphId, edgeId, attribute, null, value );
+    }
+
+	public void edgeAttributeChanged( String graphId, String edgeId, String attribute, Object oldValue, Object newValue )
+    {
 		if( attribute.equals( "layout.weight" ) )
 		{
-			if( value instanceof Number )
-				setEdgeWeight( id, ((Number)value).floatValue() );
-			else if( value == null )
-				setEdgeWeight( id, 1 );
+			if( newValue instanceof Number )
+				setEdgeWeight( edgeId, ((Number)newValue).floatValue() );
+			else if( newValue == null )
+				setEdgeWeight( edgeId, 1 );
 		}
 		else if( attribute.equals( "layout.ignored" ) )
 		{
-			if( value instanceof Boolean )
-				ignoreEdge( id, (Boolean)value );
+			if( newValue instanceof Boolean )
+				ignoreEdge( edgeId, (Boolean)newValue );
 		}
-	}
+    }
 
-	public void stepBegins(Graph graph, double time)
-	{
-	}
+	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+    {
+    }
 }
