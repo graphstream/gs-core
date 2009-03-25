@@ -32,7 +32,11 @@ public interface EdgeFactory
 {
 	/**
 	 * Create a new instance of edge.
+	 * @param id The new edge identifier.
+	 * @param src The source node.
+	 * @param dst The target node.
+	 * @param directed Is the edge directed (in the direction source toward target).
 	 * @return The newly created edge.
 	 */
-	public Edge newInstance( String id, Node src, Node dst );
+	public Edge newInstance( String id, Node src, Node dst, boolean directed );
 }

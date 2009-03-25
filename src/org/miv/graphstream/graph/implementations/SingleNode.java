@@ -174,8 +174,8 @@ public class SingleNode extends DefaultNode
 		}
 		else
 		{
-			DefaultEdge e = (DefaultEdge) G.edgeFactory.newInstance(tag,this,target);
-			e.setDirected(directed);
+			DefaultEdge e = (DefaultEdge) G.edgeFactory.newInstance(tag,this,target,directed);
+//			e.setDirected(directed);
 //			return new CheckedEdge( tag, this, target, directed );
 			return e;
 		}

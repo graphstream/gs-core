@@ -55,7 +55,7 @@ public class AdjacencyListEdge
 	/**
 	 * @param id
 	 */
-	protected AdjacencyListEdge( String id, Node src, Node dst )
+	protected AdjacencyListEdge( String id, Node src, Node dst, boolean directed )
 	{
 		super( id );
 		
@@ -66,6 +66,7 @@ public class AdjacencyListEdge
 		
 		this.n0 = (AdjacencyListNode) src;
 		this.n1 = (AdjacencyListNode) dst;
+		this.directed = directed;
 	}
 
 	/*
@@ -133,7 +134,9 @@ public class AdjacencyListEdge
 	 */
 	public void setDirected( boolean on )
 	{
+		( (AdjacencyListGraph) n0.getGraph() ).beforeEdgeRemoveEvent( this );
 		this.directed = on;
+		( (AdjacencyListGraph) n0.getGraph() ).afterEdgeAddEvent( this );
 	}
 
 	/*

@@ -36,7 +36,6 @@ import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-//import org.miv.graphstream.algorithm.Algorithms;
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.EdgeFactory;
 import org.miv.graphstream.graph.Graph;
@@ -61,8 +60,6 @@ public class ConcurrentGraph
 	implements Graph
 {
 
-//	protected Algorithms algos;
-	
 	protected ConcurrentHashMap<String,Node> nodes;
 	protected ConcurrentHashMap<String,Edge> edges;
 	
@@ -111,9 +108,9 @@ public class ConcurrentGraph
 		};
 		edgeFactory = new EdgeFactory()
 		{
-			public Edge newInstance( String id, Node src, Node trg )
+			public Edge newInstance( String id, Node src, Node trg, boolean directed )
 			{
-				return new ConcurrentEdge(id,src,trg);
+				return new ConcurrentEdge(id,src,trg,directed);
 			}
 		};
 		
@@ -129,8 +126,8 @@ public class ConcurrentGraph
 		if( edges.containsKey(id) && strictChecking )
 			throw new SingletonException( String.format( "edge \"%s\" already exists", id ) );
 		
-		Edge e = edgeFactory.newInstance(id,source,target);
-		e.setDirected(directed);
+		Edge e = edgeFactory.newInstance(id,source,target,directed);
+		//e.setDirected(directed);
 		
 		edges.put( id, e );
 		edgeAddedEvent( e );
@@ -213,12 +210,14 @@ public class ConcurrentGraph
 	{
 		
 	}
-	
+
+	@Override
 	protected void attributeAdded( String attribute, Object value )
 	{
 		
 	}
 	
+	@Override
 	protected void attributeRemoved( String attribute )
 	{
 		

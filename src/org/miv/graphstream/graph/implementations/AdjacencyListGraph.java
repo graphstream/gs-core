@@ -244,9 +244,9 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		};
 		edgeFactory = new EdgeFactory()
 		{
-			public Edge newInstance( String id, Node src, Node trg )
+			public Edge newInstance( String id, Node src, Node trg, boolean directed )
 			{
-				return new AdjacencyListEdge(id,src,trg);
+				return new AdjacencyListEdge(id,src,trg,directed);
 			}
 		};
 	}
@@ -333,8 +333,8 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 				}
 				else
 				{
-					edge = edgeFactory.newInstance(tag,src,trg);
-					edge.setDirected( directed );
+					edge = edgeFactory.newInstance(tag,src,trg,directed);
+					//edge.setDirected( directed );
 					
 					edges.put( tag,edge );
 					((AdjacencyListNode)src).edges.add( edge );

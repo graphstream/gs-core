@@ -101,6 +101,7 @@ public class ConcurrentNode
 		}
 	}
 	
+	@Override
 	protected void attributeAdded( String attribute, Object value )
 	{
 		if( graph != null && graph instanceof ConcurrentGraph )
@@ -109,6 +110,7 @@ public class ConcurrentNode
 		}
 	}
 	
+	@Override
 	protected void attributeRemoved( String attribute )
 	{
 		if( graph != null && graph instanceof ConcurrentGraph )

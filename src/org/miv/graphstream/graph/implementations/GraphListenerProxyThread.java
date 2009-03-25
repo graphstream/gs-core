@@ -539,6 +539,11 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 	
 	public void processMessage( String from, Object[] data )
     {
+/*		System.err.printf("Message from=%s", from );
+		for( Object o: data )
+			System.err.printf( " (%s=%s)", o.getClass().getName(), o );
+		System.err.printf( "%n" );
+*/		
 		if( data.length > 0 )
 		{
 			if( data[0].equals( "gaa" ) )
@@ -850,15 +855,15 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 			{
 				// Ignore, it can be read by another processor if the message box is shared.
 				
-/*				// What to do ?
-
-				if( data.length > 0 && data[0] instanceof String )
-					throw new RuntimeException( "GraphListenerProxy: uncaught message from "+
-					        from+" : "+data[0]+"["+ data.length+"]" );
-				else
-					throw new RuntimeException( "GraphListenerProxy: uncaught message from "+
-					        from+" : ["+data.length+"]" );
-*/			}
+				// What to do ?
+//
+//				if( data.length > 0 && data[0] instanceof String )
+//					throw new RuntimeException( "GraphListenerProxy: uncaught message from "+
+//					        from+" : "+data[0]+"["+ data.length+"]" );
+//				else
+//					throw new RuntimeException( "GraphListenerProxy: uncaught message from "+
+//					        from+" : ["+data.length+"]" );
+			}
 		}	    
     }
 }

@@ -101,9 +101,9 @@ public class SingleGraph extends DefaultGraph
 		};
 		edgeFactory = new EdgeFactory()
 		{
-			public Edge newInstance( String id, Node src, Node dst )
+			public Edge newInstance( String id, Node src, Node dst, boolean directed )
 			{
-				return new SingleEdge(id,src,dst);
+				return new SingleEdge(id,src,dst,directed);
 			}
 		};
 	}

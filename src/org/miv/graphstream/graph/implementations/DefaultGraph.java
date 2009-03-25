@@ -224,9 +224,9 @@ public class DefaultGraph extends AbstractElement implements Graph
 
 		edgeFactory = new EdgeFactory()
 		{
-			public Edge newInstance( String id, Node src, Node trg )
+			public Edge newInstance( String id, Node src, Node trg, boolean  directed )
 			{
-				return new SingleEdge(id,src,trg);
+				return new SingleEdge(id,src,trg, directed);
 			}
 		};
 		

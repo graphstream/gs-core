@@ -38,7 +38,7 @@ import java.util.HashMap;
  * and a style from the style sheet.
  * </p>
  * 
- * @see GraphicGraphs
+ * @see GraphicGraph
  */
 public class GraphicEdge extends GraphicElement implements Edge
 {

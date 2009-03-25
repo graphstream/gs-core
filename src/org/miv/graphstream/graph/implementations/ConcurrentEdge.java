@@ -43,7 +43,7 @@ public class ConcurrentEdge
 	
 	boolean directed = false;
 	
-	protected ConcurrentEdge( String id, Node src, Node dst )
+	protected ConcurrentEdge( String id, Node src, Node dst, boolean directed )
 	{
 		super( id );
 		
@@ -52,6 +52,8 @@ public class ConcurrentEdge
 			throw new ClassCastException( "ConcurrentEdge needs an " +
 				"extended class ConcurrentNode" );
 		
+		this.directed = directed;
+
 		source = (ConcurrentNode) src;
 		target = (ConcurrentNode) dst;
 
@@ -71,6 +73,7 @@ public class ConcurrentEdge
 		}
 	}
 	
+	@Override
 	protected void attributeAdded( String attribute, Object value )
 	{
 		if( source != null && source.getGraph() instanceof ConcurrentGraph )
@@ -79,6 +82,7 @@ public class ConcurrentEdge
 		}
 	}
 	
+	@Override
 	protected void attributeRemoved( String attribute )
 	{
 		if( source != null && source.getGraph() instanceof ConcurrentGraph )
@@ -132,7 +136,11 @@ public class ConcurrentEdge
 	/* @Override */
 	public void setDirected(boolean on)
 	{
+		if( source != null && source.getGraph() instanceof ConcurrentGraph )
+			( (ConcurrentGraph) source.getGraph() ).edgeRemovedEvent( this );
 		directed = on;
+		if( source != null && source.getGraph() instanceof ConcurrentGraph )
+			( (ConcurrentGraph) source.getGraph() ).edgeAddedEvent( this );
 	}
 
 	/* @Override */

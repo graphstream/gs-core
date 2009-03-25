@@ -182,16 +182,16 @@ public class MultiNode extends DefaultNode
 		{
 			// There exist yet an edge from the target to this node.
 
-			MultiEdge e = (MultiEdge) G.edgeFactory.newInstance(tag,this,target);
+			MultiEdge e = (MultiEdge) G.edgeFactory.newInstance(tag,this,target,directed);
 			//e.bind( this, target, directed );
-			e.setDirected(directed);
+			//e.setDirected(directed);
 			return e;
 		}
 		else
 		{
-			MultiEdge e = (MultiEdge) G.edgeFactory.newInstance(tag,this,target);
+			MultiEdge e = (MultiEdge) G.edgeFactory.newInstance(tag,this,target,directed);
 			//e.bind( this, target, directed );
-			e.setDirected(directed);
+			//e.setDirected(directed);
 			return e;
 		}
 	}

@@ -100,9 +100,9 @@ public class MultiGraph extends DefaultGraph
 		};
 		edgeFactory = new EdgeFactory()
 		{
-			public Edge newInstance( String id, Node src, Node dst )
+			public Edge newInstance( String id, Node src, Node dst, boolean directed )
 			{
-				return new MultiEdge(id,src,dst);
+				return new MultiEdge(id,src,dst,directed);
 			}
 		};
 		
