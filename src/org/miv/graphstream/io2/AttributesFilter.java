@@ -25,7 +25,7 @@ package org.miv.graphstream.io2;
 /**
  * Allows to filter the attribute event stream.
  */
-public interface AttributesFilter
+public interface AttributesFilter extends Filter
 {
 	/**
 	 * Set an attribute filter for graph, node and edge attributes. If the filter is null,
