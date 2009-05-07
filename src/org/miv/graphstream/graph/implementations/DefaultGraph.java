@@ -631,9 +631,6 @@ public class DefaultGraph extends AbstractElement implements Graph
 	
 // Events
 
-	/**
-	 * @complexity 0(1)
-	 */
 	public void addGraphListener( GraphListener listener )
 	{
 		attrListeners.add( listener );

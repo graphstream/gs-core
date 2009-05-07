@@ -24,11 +24,33 @@ package org.miv.graphstream.io2.file;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
+import java.net.URL;
 
 import org.miv.graphstream.io2.Input;
 
 /**
  * Source of graph events coming from a file.
+ * 
+ * <p>
+ * The file input interface is an input with specific methods that deals with files. File inputs
+ * are designed to handle graphs stored under the form of a textual or binary file either under
+ * the form of a file name or a Java input stream. If the file comes from an URL, convert the URL
+ * to an input stream.
+ * </p>
+ * 
+ * <p>
+ * The file package is designed under the idea that is provides graph inputs from files that
+ * store the graph under a given file format and encoding. The package provides decoders for
+ * all these formats.
+ * </p>
+ * 
+ * <p>
+ * Do not confuse the file package with the net package that can also read from URLs, but build
+ * graph not from encoded description of a graph, but from web services like Flickr or Amazon, or
+ * simply networks of web pages tied by web links. The graph construction task is entirely
+ * different.
+ * </p>
  */
 public interface FileInput extends Input
 {
@@ -41,31 +63,64 @@ public interface FileInput extends Input
 	
 	/**
 	 * Read the whole file in one big non-interruptible operation.
+	 * @param url The URL of the file to read.
+	 * @throws IOException If an I/O error occurs while reading.
+	 */
+	void readAll( URL url ) throws IOException;
+	
+	/**
+	 * Read the whole file in one big non-interruptible operation.
 	 * @param stream The input stream to use for reading.
 	 * @throws IOException If an I/O error occurs while reading.
 	 */
 	void readAll( InputStream stream ) throws IOException;
 	
 	/**
+	 * Read the whole file in one big non-interruptible operation.
+	 * @param reader The reader to use.
+	 * @throws IOException If an I/O error occurs while reading.
+	 */
+	void readAll( Reader reader ) throws IOException;
+	
+	/**
 	 * Begin reading the file stopping as soon as possible. Next graph events stored in the file
-	 * will be send by calling {@link #nextEvents()} or {@link #nextStep()}. Once begin()
-	 * as been called, you must finish the reading process using {@link #end()}. You cannot
+	 * will be sent by calling {@link #nextEvents()} or {@link #nextStep()}. Once begin()
+	 * has been called, you must finish the reading process using {@link #end()}. You cannot
 	 * call begin() twice without having called {@link #end()} in between.
 	 * @param fileName Name of the file to read.
 	 * @throws IOException If an I/O error occurs while reading.
 	 */
 	void begin( String fileName ) throws IOException;
 	
+	/**
+	 * Begin reading the file stopping as soon as possible. Next graph events stored in the file
+	 * will be sent by calling {@link #nextEvents()} or {@link #nextStep()}. Once begin()
+	 * has been called, you must finish the reading process using {@link #end()}. You cannot
+	 * call begin() twice without having called {@link #end()} in between.
+	 * @param url The URL of the file to read.
+	 * @throws IOException If an I/O error occurs while reading.
+	 */
+	void begin( URL url ) throws IOException;
 	
 	/**
 	 * Begin reading the file stopping as soon as possible. Next graph events stored in the file
-	 * will be send by calling {@link #nextEvents()} or {@link #nextStep()}. Once begin()
-	 * as been called, you must finish the reading process using {@link #end()}. You cannot
+	 * will be sent by calling {@link #nextEvents()} or {@link #nextStep()}. Once begin()
+	 * has been called, you must finish the reading process using {@link #end()}. You cannot
 	 * call begin() twice without having called {@link #end()} in between.
 	 * @param stream The input stream to use for reading.
 	 * @throws IOException If an I/O error occurs while reading.
 	 */
 	void begin( InputStream stream ) throws IOException;
+	
+	/**
+	 * Begin reading the file stopping as soon as possible. Next graph events stored in the file
+	 * will be sent by calling {@link #nextEvents()} or {@link #nextStep()}. Once begin()
+	 * has been called, you must finish the reading process using {@link #end()}. You cannot
+	 * call begin() twice without having called {@link #end()} in between.
+	 * @param reader The file reader to use.
+	 * @throws IOException If an I/O error occurs while reading.
+	 */
+	void begin( Reader reader ) throws IOException;
 	
 	/**
 	 * Try to process one graph event, or as few as possible, if more must be read at once.

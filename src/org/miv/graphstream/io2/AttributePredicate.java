@@ -23,21 +23,16 @@
 package org.miv.graphstream.io2;
 
 /**
- * Tell if an attribute must be filtered (removed from the stream of graph events).
- * 
- * <p>Attribute filters are used on objects that inherit the {@link Filter} or {@link Output}
- * interfaces. They allow to avoid some kinds of attributes to be passed in the stream of
- * events between various parts of the graph stream.</p>
+ * Tell if an attribute is recognised.
  */
-public interface AttributeFilter
+public interface AttributePredicate
 {
 	/**
-	 * Tell if an attribute must be filtered, that is, removed from a stream of graph events. The
-	 * filtering can be done on the name of the attribute, on its value or on both. Attribute
-	 * filters are used on objects that inherit the {@link Filter} or {@link Output} interfaces.
+	 * Tell if an attribute is recognised or not. The
+	 * predicate can work on the name of the attribute, on its value or on both.
 	 * @param attributeName The name of the attribute.
 	 * @param attributeValue The value of the attribute.
 	 * @return True if the attribute must be removed from the stream of graph events.
 	 */
-	boolean isFiltered( String attributeName, Object attributeValue );
+	boolean matches( String attributeName, Object attributeValue );
 }

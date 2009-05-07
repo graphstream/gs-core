@@ -31,7 +31,7 @@ import org.miv.graphstream.graph.GraphListener;
  * the graph events in another form: a file, a network stream, a visualisation, an algorithm,
  * a metric, etc.</p>
  * 
- * <p>The output can filter the stream of attribute events using {@link AttributeFilter}s.</p>
+ * <p>The output can filter the stream of attribute events using {@link AttributePredicate}s.</p>
  * 
  * @see Input
  * @see Filter

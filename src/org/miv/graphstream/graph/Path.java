@@ -155,7 +155,7 @@ public class Path
 	/**
 	 * Returns the size of the path. Identical to {@link #size()}.
 	 */
-	public int getLength()
+	public int getNodeCount()
 	{
 		return nodePath.size();
 	}
@@ -166,7 +166,7 @@ public class Path
 	 * @param characteristic The characteristic.
 	 * @return Sum of the characteristics.
 	 */
-	public Double getPathAttribute( String characteristic )
+	public Double getPathWeight( String characteristic )
 	{
 		double d = 0;
 		for( Edge l: edgePath )
