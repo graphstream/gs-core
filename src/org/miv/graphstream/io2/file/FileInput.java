@@ -51,6 +51,12 @@ import org.miv.graphstream.io2.Input;
  * simply networks of web pages tied by web links. The graph construction task is entirely
  * different.
  * </p>
+ * 
+ * <p>
+ * Although not all graph format handle dynamic graphs, all file inputs must provide both the
+ * readAll() and begin()/nextEvents()/end() methods. The later must read one graph modification
+ * at a time.
+ * </p>
  */
 public interface FileInput extends Input
 {

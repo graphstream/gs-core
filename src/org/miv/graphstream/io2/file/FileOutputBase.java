@@ -107,8 +107,9 @@ public abstract class FileOutputBase implements FileOutput
 			String nodeId = node.getId();
 			nodeAdded( graphId, nodeId );
 			
-			for( String key: node.getAttributeKeySet() )
-				nodeAttributeAdded( graphId, nodeId, key, node.getAttribute( key ) );
+			if( node.getAttributeCount() > 0 )
+				for( String key: node.getAttributeKeySet() )
+					nodeAttributeAdded( graphId, nodeId, key, node.getAttribute( key ) );
 		}
 		
 		for( Edge edge: graph.getEdgeSet() )
@@ -116,8 +117,9 @@ public abstract class FileOutputBase implements FileOutput
 			String edgeId = edge.getId();
 			edgeAdded( graphId, edgeId, edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
 			
-			for( String key: edge.getAttributeKeySet() )
-				nodeAttributeAdded( graphId, edgeId, key, edge.getAttribute( key ) );
+			if( edge.getAttributeCount() > 0 )
+				for( String key: edge.getAttributeKeySet() )
+					nodeAttributeAdded( graphId, edgeId, key, edge.getAttribute( key ) );
 		}
 	}
 	
