@@ -23,17 +23,11 @@
 
 package org.miv.graphstream.graph.implementations;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.InputMismatchException;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Locale;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
 
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.EdgeFactory;
@@ -45,11 +39,10 @@ import org.miv.graphstream.graph.GraphListener;
 import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.graph.NodeFactory;
 import org.miv.graphstream.io.GraphParseException;
-import org.miv.graphstream.io.GraphReader;
-import org.miv.graphstream.io.GraphReaderFactory;
-import org.miv.graphstream.io.GraphReaderListenerHelper;
-import org.miv.graphstream.io.GraphWriter;
-import org.miv.graphstream.io.GraphWriterHelper;
+import org.miv.graphstream.io2.file.FileInput;
+import org.miv.graphstream.io2.file.FileInputFactory;
+import org.miv.graphstream.io2.file.FileOutput;
+import org.miv.graphstream.io2.file.FileOutputFactory;
 import org.miv.graphstream.ui.GraphViewer;
 import org.miv.graphstream.ui.GraphViewerRemote;
 import org.miv.util.NotFoundException;
@@ -211,7 +204,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 *        automatically created when referenced when creating a edge, even
 	 *        if not yet inserted in the graph.
 	 * @see #AdjacencyListGraph(String, boolean, boolean)
-	 * @see #setStrictChecking(boolean)
+	 * @see #setStrict(boolean)
 	 * @see #setAutoCreate(boolean)
 	 */
 	public AdjacencyListGraph( boolean strictChecking, boolean autoCreate )
@@ -226,13 +219,13 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 * @param autoCreate If true (and strict checking is false), nodes are
 	 *        automatically created when referenced when creating a edge, even
 	 *        if not yet inserted in the graph.
-	 * @see #setStrictChecking(boolean)
+	 * @see #setStrict(boolean)
 	 * @see #setAutoCreate(boolean)
 	 */
 	public AdjacencyListGraph( String id, boolean strictChecking, boolean autoCreate )
 	{
 		super( id );
-		setStrictChecking( strictChecking );
+		setStrict( strictChecking );
 		setAutoCreate( autoCreate );
 		
 		nodeFactory = new NodeFactory()
@@ -448,7 +441,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity Constant.
 	 */
-	public Iterable<Edge> getEdgeSet()
+	public Iterable<Edge> edgeSet()
 	{
 		return edges.values();
 	}
@@ -485,7 +478,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity Constant.
 	 */
-	public Iterable<Node> getNodeSet()
+	public Iterable<Node> nodeSet()
 	{
 		return nodes.values();
 	}
@@ -495,7 +488,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		return autoCreate;
 	}
 
-	public boolean isStrictCheckingEnabled()
+	public boolean isStrict()
 	{
 		return strictChecking;
 	}
@@ -631,7 +624,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		autoCreate = on;
 	}
 
-	public void setStrictChecking( boolean on )
+	public void setStrict( boolean on )
 	{
 		strictChecking = on;
 	}
@@ -923,6 +916,31 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 
 // Commands -- Utility
 
+	public void read( FileInput input, String filename ) throws IOException, GraphParseException
+    {
+		input.readAll( filename );
+    }
+
+	public void read( String filename )
+		throws IOException, GraphParseException, NotFoundException
+	{
+		FileInput input = FileInputFactory.inputFor( filename );
+		input.addGraphListener( this );
+		read( input, filename );
+	}
+	
+	public void write( FileOutput output, String filename ) throws IOException
+    {
+		output.writeAll( this, filename );
+    }
+	
+	public void write( String filename )
+		throws IOException
+	{
+		FileOutput output = FileOutputFactory.outputFor( filename );
+		write( output, filename );
+	}	
+/*
 	public void read( String filename ) throws IOException, GraphParseException, NotFoundException
 	{
 		GraphReaderListenerHelper listener = new GraphReaderListenerHelper( this );
@@ -1010,7 +1028,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 
 		return ignored;
 	}
-
+*/
 	public GraphViewerRemote display()
 	{
 		return display( true );
@@ -1219,4 +1237,108 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 				l.nodeRemoved( getId(), ((BeforeNodeRemoveEvent)event).node.getId() );
 		}
 	}
+
+// Output
+
+	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId,
+            boolean directed )
+    {
+		addEdge( edgeId, fromNodeId, toNodeId, directed );
+    }
+
+	public void edgeRemoved( String graphId, String edgeId )
+    {
+		removeEdge( edgeId );
+    }
+
+	public void graphCleared()
+    {
+		clear();
+    }
+
+	public void nodeAdded( String graphId, String nodeId )
+    {
+		addNode( nodeId );
+    }
+
+	public void nodeRemoved( String graphId, String nodeId )
+    {
+		removeNode( nodeId );
+    }
+
+	public void stepBegins( String graphId, double time )
+    {
+		stepBegins( time );
+    }
+
+	public void graphCleared( String graphId )
+    {
+		clear();
+    }
+
+	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+    {
+		Edge edge = getEdge( edgeId );
+		
+		if( edge != null )
+			edge.addAttribute( attribute, value );
+    }
+
+	public void edgeAttributeChanged( String graphId, String edgeId, String attribute,
+            Object oldValue, Object newValue )
+    {
+		Edge edge = getEdge( edgeId );
+		
+		if( edge != null )
+			edge.changeAttribute( attribute, newValue );
+    }
+
+	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+    {
+		Edge edge = getEdge( edgeId );
+		
+		if( edge != null )
+			edge.removeAttribute( attribute );
+    }
+
+	public void graphAttributeAdded( String graphId, String attribute, Object value )
+    {
+		addAttribute( attribute, value );
+    }
+
+	public void graphAttributeChanged( String graphId, String attribute, Object oldValue,
+            Object newValue )
+    {
+		changeAttribute( attribute, newValue );
+    }
+
+	public void graphAttributeRemoved( String graphId, String attribute )
+    {
+		removeAttribute( attribute );
+    }
+
+	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+    {
+		Node node = getNode( nodeId );
+		
+		if( node != null )
+			node.addAttribute( attribute, value );
+    }
+
+	public void nodeAttributeChanged( String graphId, String nodeId, String attribute,
+            Object oldValue, Object newValue )
+    {
+		Node node = getNode( nodeId );
+		
+		if( node != null )
+			node.changeAttribute( attribute, newValue );
+    }
+
+	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+    {
+		Node node = getNode( nodeId );
+		
+		if( node != null )
+			node.removeAttribute( attribute );
+    }
 }

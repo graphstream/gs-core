@@ -219,7 +219,7 @@ public class LayoutAlgorithm implements LayoutListener
 			replayAttributesOf( node );
 		}
 
-		for( Edge edge: graph.getEdgeSet() )
+		for( Edge edge: graph.edgeSet() )
 		{
 			layout.edgeAdded( graph.getId(), edge.getId(), edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
 			replayAttributesOf( edge );

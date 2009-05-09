@@ -70,7 +70,7 @@ public class SingleGraph extends DefaultGraph
 	 *        automatically created when referenced when creating a edge, even
 	 *        if not yet inserted in the graph.
 	 * @see #SingleGraph(String, boolean, boolean)
-	 * @see #setStrictChecking(boolean)
+	 * @see #setStrict(boolean)
 	 * @see #setAutoCreate(boolean)
 	 */
 	public SingleGraph( boolean strictChecking, boolean autoCreate )
@@ -85,7 +85,7 @@ public class SingleGraph extends DefaultGraph
 	 * @param autoCreate If true (and strict checking is false), nodes are
 	 *        automatically created when referenced when creating a edge, even
 	 *        if not yet inserted in the graph.
-	 * @see #setStrictChecking(boolean)
+	 * @see #setStrict(boolean)
 	 * @see #setAutoCreate(boolean)
 	 */
 	public SingleGraph( String id, boolean strictChecking, boolean autoCreate )

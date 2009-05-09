@@ -103,7 +103,7 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 		// Replay all nodes and their attributes.
 
 
-		for( Node node: inGraph.getNodeSet() )
+		for( Node node: inGraph )
 		{
 			nodeAdded( inGraph.getId(), node.getId() );
 
@@ -123,7 +123,7 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 
 		// Replay all edges and their attributes.
 
-		for( Edge edge : inGraph.getEdgeSet() )
+		for( Edge edge : inGraph.edgeSet() )
 		{
 			edgeAdded( inGraph.getId(), edge.getId(), edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
 

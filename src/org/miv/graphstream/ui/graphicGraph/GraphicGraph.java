@@ -40,8 +40,8 @@ import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.graph.NodeFactory;
 import org.miv.graphstream.graph.implementations.AbstractElement;
 import org.miv.graphstream.io.GraphParseException;
-import org.miv.graphstream.io.GraphReader;
-import org.miv.graphstream.io.GraphWriter;
+import org.miv.graphstream.io2.file.FileInput;
+import org.miv.graphstream.io2.file.FileOutput;
 import org.miv.graphstream.ui.GraphViewerRemote;
 import org.miv.graphstream.ui.graphicGraph.stylesheet.Rule;
 import org.miv.graphstream.ui.graphicGraph.stylesheet.Style;
@@ -1419,7 +1419,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 	    return edges.values().iterator();
     }
 
-	public Iterable<? extends Edge> getEdgeSet()
+	public Iterable<? extends Edge> edgeSet()
     {
 	    return edges.values();
     }
@@ -1449,7 +1449,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 		return null;
 	}
 	
-	public Iterable<? extends Node> getNodeSet()
+	public Iterable<? extends Node> nodeSet()
     {
 		return nodes.values();
     }
@@ -1459,7 +1459,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 	    return false;
     }
 
-	public boolean isStrictCheckingEnabled()
+	public boolean isStrict()
     {
 	    return false;
     }
@@ -1478,7 +1478,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 		throw new RuntimeException( "not implemented !" );
     }
 
-	public void read( GraphReader reader, String filename ) throws IOException, GraphParseException
+	public void read( FileInput input, String filename ) throws IOException, GraphParseException
     {
 		throw new RuntimeException( "not implemented !" );
     }
@@ -1506,7 +1506,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 		throw new RuntimeException( "not implemented !" );
     }
 
-	public void setStrictChecking( boolean on )
+	public void setStrict( boolean on )
     {
 		throw new RuntimeException( "not implemented !" );
     }
@@ -1516,7 +1516,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 		throw new RuntimeException( "not implemented !" );
     }
 
-	public void write( GraphWriter writer, String filename ) throws IOException
+	public void write( FileOutput output, String filename ) throws IOException
     {
 		throw new RuntimeException( "not implemented !" );
     }
@@ -1525,4 +1525,108 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 	{
 		step = time;
 	}
+
+// Output
+
+	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId,
+            boolean directed )
+    {
+		addEdge( edgeId, fromNodeId, toNodeId, directed );
+    }
+
+	public void edgeRemoved( String graphId, String edgeId )
+    {
+		removeEdge( edgeId );
+    }
+
+	public void graphCleared()
+    {
+		clear();
+    }
+
+	public void nodeAdded( String graphId, String nodeId )
+    {
+		addNode( nodeId );
+    }
+
+	public void nodeRemoved( String graphId, String nodeId )
+    {
+		removeNode( nodeId );
+    }
+
+	public void stepBegins( String graphId, double time )
+    {
+		stepBegins( time );
+    }
+
+	public void graphCleared( String graphId )
+    {
+		clear();
+    }
+
+	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+    {
+		Edge edge = getEdge( edgeId );
+		
+		if( edge != null )
+			edge.addAttribute( attribute, value );
+    }
+
+	public void edgeAttributeChanged( String graphId, String edgeId, String attribute,
+            Object oldValue, Object newValue )
+    {
+		Edge edge = getEdge( edgeId );
+		
+		if( edge != null )
+			edge.changeAttribute( attribute, newValue );
+    }
+
+	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+    {
+		Edge edge = getEdge( edgeId );
+		
+		if( edge != null )
+			edge.removeAttribute( attribute );
+    }
+
+	public void graphAttributeAdded( String graphId, String attribute, Object value )
+    {
+		addAttribute( attribute, value );
+    }
+
+	public void graphAttributeChanged( String graphId, String attribute, Object oldValue,
+            Object newValue )
+    {
+		changeAttribute( attribute, newValue );
+    }
+
+	public void graphAttributeRemoved( String graphId, String attribute )
+    {
+		removeAttribute( attribute );
+    }
+
+	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+    {
+		Node node = getNode( nodeId );
+		
+		if( node != null )
+			node.addAttribute( attribute, value );
+    }
+
+	public void nodeAttributeChanged( String graphId, String nodeId, String attribute,
+            Object oldValue, Object newValue )
+    {
+		Node node = getNode( nodeId );
+		
+		if( node != null )
+			node.changeAttribute( attribute, newValue );
+    }
+
+	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+    {
+		Node node = getNode( nodeId );
+		
+		if( node != null )
+			node.removeAttribute( attribute );
+    }
 }

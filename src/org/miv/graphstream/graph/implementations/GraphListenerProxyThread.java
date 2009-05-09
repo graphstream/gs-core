@@ -277,7 +277,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 
 			// Replay all edges and their attributes.
 
-			for( Edge edge: inputGraph.getEdgeSet() )
+			for( Edge edge: inputGraph.edgeSet() )
 			{
 				events.post( from, "ae", gid, edge.getId(),
 						edge.getSourceNode().getId(),

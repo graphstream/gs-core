@@ -23,16 +23,10 @@
 
 package org.miv.graphstream.graph.implementations;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.InputMismatchException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -45,11 +39,10 @@ import org.miv.graphstream.graph.GraphElementsListener;
 import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.graph.NodeFactory;
 import org.miv.graphstream.io.GraphParseException;
-import org.miv.graphstream.io.GraphReader;
-import org.miv.graphstream.io.GraphReaderFactory;
-import org.miv.graphstream.io.GraphReaderListenerHelper;
-import org.miv.graphstream.io.GraphWriter;
-import org.miv.graphstream.io.GraphWriterHelper;
+import org.miv.graphstream.io2.file.FileInput;
+import org.miv.graphstream.io2.file.FileInputFactory;
+import org.miv.graphstream.io2.file.FileOutput;
+import org.miv.graphstream.io2.file.FileOutputFactory;
 import org.miv.graphstream.ui.GraphViewer;
 import org.miv.graphstream.ui.GraphViewerRemote;
 import org.miv.util.NotFoundException;
@@ -352,7 +345,7 @@ public class ConcurrentGraph
 		return Collections.unmodifiableCollection(edges.values()).iterator();
 	}
 
-	public Iterable<Edge> getEdgeSet()
+	public Iterable<Edge> edgeSet()
 	{
 		return Collections.unmodifiableCollection(edges.values());
 	}
@@ -392,7 +385,7 @@ public class ConcurrentGraph
 		return Collections.unmodifiableCollection(nodes.values()).iterator();
 	}
 
-	public Iterable<Node> getNodeSet()
+	public Iterable<Node> nodeSet()
 	{
 		return Collections.unmodifiableCollection(nodes.values());
 	}
@@ -402,7 +395,7 @@ public class ConcurrentGraph
 		return autoCreate;
 	}
 
-	public boolean isStrictCheckingEnabled()
+	public boolean isStrict()
 	{
 		return strictChecking;
 	}
@@ -416,7 +409,7 @@ public class ConcurrentGraph
 	{
 		this.nodeFactory = nf;
 	}
-
+/*
 	public void read(String filename) 
 		throws IOException, GraphParseException, NotFoundException
 	{
@@ -495,7 +488,7 @@ public class ConcurrentGraph
 
 		return ignored;
 	}
-
+*/
 	public Edge removeEdge(String from, String to)
 		throws NotFoundException
 	{
@@ -557,7 +550,7 @@ public class ConcurrentGraph
 		autoCreate = on;
 	}
 
-	public void setStrictChecking(boolean on)
+	public void setStrict(boolean on)
 	{
 		strictChecking = on;
 	}
@@ -567,7 +560,7 @@ public class ConcurrentGraph
 		for(GraphElementsListener l : elisteners)
 			l.stepBegins( getId(), time );
 	}
-
+/*
 	public void write(String filename) 
 		throws IOException
 	{
@@ -580,6 +573,32 @@ public class ConcurrentGraph
 	{
 		GraphWriterHelper gwh = new GraphWriterHelper( this );
 		gwh.write( filename, writer );
+	}
+*/
+
+	public void read( FileInput input, String filename ) throws IOException, GraphParseException
+    {
+		input.readAll( filename );
+    }
+
+	public void read( String filename )
+		throws IOException, GraphParseException, NotFoundException
+	{
+		FileInput input = FileInputFactory.inputFor( filename );
+		input.addGraphListener( this );
+		read( input, filename );
+	}
+
+	public void write( FileOutput output, String filename ) throws IOException
+    {
+		output.writeAll( this, filename );
+    }
+	
+	public void write( String filename )
+		throws IOException
+	{
+		FileOutput output = FileOutputFactory.outputFor( filename );
+		write( output, filename );
 	}
 	
 // --- //
@@ -984,4 +1003,108 @@ public class ConcurrentGraph
 				l.graphAttributeChanged(ConcurrentGraph.this.getId(), key, oldValue, newValue);
 		}
 	}
+
+// Output
+
+	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId,
+            boolean directed )
+    {
+		addEdge( edgeId, fromNodeId, toNodeId, directed );
+    }
+
+	public void edgeRemoved( String graphId, String edgeId )
+    {
+		removeEdge( edgeId );
+    }
+
+	public void graphCleared()
+    {
+		clear();
+    }
+
+	public void nodeAdded( String graphId, String nodeId )
+    {
+		addNode( nodeId );
+    }
+
+	public void nodeRemoved( String graphId, String nodeId )
+    {
+		removeNode( nodeId );
+    }
+
+	public void stepBegins( String graphId, double time )
+    {
+		stepBegins( time );
+    }
+
+	public void graphCleared( String graphId )
+    {
+		clear();
+    }
+
+	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+    {
+		Edge edge = getEdge( edgeId );
+		
+		if( edge != null )
+			edge.addAttribute( attribute, value );
+    }
+
+	public void edgeAttributeChanged( String graphId, String edgeId, String attribute,
+            Object oldValue, Object newValue )
+    {
+		Edge edge = getEdge( edgeId );
+		
+		if( edge != null )
+			edge.changeAttribute( attribute, newValue );
+    }
+
+	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+    {
+		Edge edge = getEdge( edgeId );
+		
+		if( edge != null )
+			edge.removeAttribute( attribute );
+    }
+
+	public void graphAttributeAdded( String graphId, String attribute, Object value )
+    {
+		addAttribute( attribute, value );
+    }
+
+	public void graphAttributeChanged( String graphId, String attribute, Object oldValue,
+            Object newValue )
+    {
+		changeAttribute( attribute, newValue );
+    }
+
+	public void graphAttributeRemoved( String graphId, String attribute )
+    {
+		removeAttribute( attribute );
+    }
+
+	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+    {
+		Node node = getNode( nodeId );
+		
+		if( node != null )
+			node.addAttribute( attribute, value );
+    }
+
+	public void nodeAttributeChanged( String graphId, String nodeId, String attribute,
+            Object oldValue, Object newValue )
+    {
+		Node node = getNode( nodeId );
+		
+		if( node != null )
+			node.changeAttribute( attribute, newValue );
+    }
+
+	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+    {
+		Node node = getNode( nodeId );
+		
+		if( node != null )
+			node.removeAttribute( attribute );
+    }
 }

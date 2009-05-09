@@ -1,18 +1,17 @@
 /*
- * This file is part of GraphStream.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
  * 
- * GraphStream is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * 
- * GraphStream is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place - Suite 330, Boston, MA 02111-1307, USA.
  * 
  * Copyright 2006 - 2009
  * 	Julien Baudry
@@ -21,14 +20,15 @@
  * 	Guilhelm Savin
  */
 
-package org.miv.graphstream.graph; 
+package org.miv.graphstream.graph;
 
 import java.io.IOException;
 import java.util.Iterator;
 
 import org.miv.graphstream.io.GraphParseException;
-import org.miv.graphstream.io.GraphReader;
-import org.miv.graphstream.io.GraphWriter;
+import org.miv.graphstream.io2.Filter;
+import org.miv.graphstream.io2.file.FileInput;
+import org.miv.graphstream.io2.file.FileOutput;
 import org.miv.graphstream.ui.GraphViewerRemote;
 import org.miv.util.NotFoundException;
 import org.miv.util.SingletonException;
@@ -37,18 +37,27 @@ import org.miv.util.SingletonException;
  * An Interface that advises general purpose methods for handling graphs.
  * 
  * <p>
- * This interface is the main interface of GraphStream. It defines the services
+ * This interface is one of the main interfaces of GraphStream. It defines the services
  * provided by a graph structure. Graphs implementations must at least implement
  * this interface (but are free to provide more services). 
  * </p>
- * 
- * <h3>Important</h3>
+ *
  * <p>
- * Implementing classes should indicate the complexity of their implementation for each method.
+ * With {@link org.miv.graphstream.io2.Input}, {@link org.miv.graphstream.io2.Output}
+ * and {@link org.miv.graphstream.graph.GraphListener}, this interface is one of the
+ * most important. A graph is a {@link org.miv.graphstream.io2.Filter} that buffers
+ * the graph events an present the graph structure as it is actually.
+ * </p> 
+ * 
+ * <p>
+ * In other words, it allows to browse the graph structure, to explore it, to
+ * modify it, and to implement algorithms on it.
  * </p>
  */
-public interface Graph extends Element, Iterable<Node>
+public interface Graph extends Element, Filter, Iterable<Node>
 {
+// Access	
+
 	/**
 	 * Get a node by its identifier.
 	 * @param id Identifier of the node to find.
@@ -82,7 +91,7 @@ public interface Graph extends Element, Iterable<Node>
 	public Iterator<? extends Node> getNodeIterator();
 
 	/**
-	 * Iterator on the set of edges, in random order..
+	 * Iterator on the set of edges, in random order.
 	 * @return The iterator.
 	 */
 	public Iterator<? extends Edge> getEdgeIterator();
@@ -92,14 +101,14 @@ public interface Graph extends Element, Iterable<Node>
 	 * @return An "iterable" view of the set of nodes.
 	 * @see #getNodeIterator()
 	 */
-	public Iterable<? extends Node> getNodeSet();
+	public Iterable<? extends Node> nodeSet();
 
 	/**
 	 * Set of edges usable in a for-each instruction.
 	 * @return An "iterable" view of the set of edges.
 	 * @see #getEdgeIterator()
 	 */
-	public Iterable<? extends Edge> getEdgeSet();
+	public Iterable<? extends Edge> edgeSet();
 
 	/**
 	 * The factory used to create node instances.
@@ -110,37 +119,12 @@ public interface Graph extends Element, Iterable<Node>
 	NodeFactory nodeFactory();
 	
 	/**
-	 * Set the node factory used to create nodes.
-	 * @param nf the new NodeFactory
-	 */
-	void setNodeFactory( NodeFactory nf );
-	
-	/**
 	 * The factory used to create edge instances.
 	 * The factory can be changed to refine the edge class generated for this graph.
 	 * @see #setEdgeFactory(EdgeFactory)
 	 * @see #nodeFactory()
 	 */
 	EdgeFactory edgeFactory();
-	
-	/**
-	 * Set the edge factory used to create edges.
-	 * @param ef the new EdgeFactory
-	 */
-	void setEdgeFactory( EdgeFactory ef );
-	
-	/**
-	 * Empties the graph completely by removing any references to nodes or edges.
-	 * Every attribute is also removed. However, listeners are kept.
-	 * @see #clearListeners()
-	 */
-	public void clear();
-
-	/**
-	 * Remove any reference to listeners.
-	 * @see #clear()
-	 */
-	public void clearListeners();
 
 	/**
 	 * Is strict checking enabled?. If strict checking is enabled the graph
@@ -150,7 +134,7 @@ public interface Graph extends Element, Iterable<Node>
 	 * are free to respect strict checking or not.
 	 * @return True if enabled.
 	 */
-	public boolean isStrictCheckingEnabled();
+	public boolean isStrict();
 
 	/**
 	 * Is the automatic creation of missing elements enabled?. If enabled, when
@@ -160,12 +144,32 @@ public interface Graph extends Element, Iterable<Node>
 	 */
 	public boolean isAutoCreationEnabled();
 
+// Command
+	
+	/**
+	 * Set the node factory used to create nodes.
+	 * @param nf the new NodeFactory
+	 */
+	void setNodeFactory( NodeFactory nf );
+	
+	/**
+	 * Set the edge factory used to create edges.
+	 * @param ef the new EdgeFactory
+	 */
+	void setEdgeFactory( EdgeFactory ef );
+
+	/**
+	 * Remove any reference to listeners.
+	 * @see #clear()
+	 */
+	public void clearListeners();
+
 	/**
 	 * Enable or disable strict checking.
-	 * @see #isStrictCheckingEnabled()
+	 * @see #isStrict()
 	 * @param on True or false.
 	 */
-	public void setStrictChecking( boolean on );
+	public void setStrict( boolean on );
 
 	/**
 	 * Enable or disable the automatic creation of missing elements.
@@ -173,6 +177,15 @@ public interface Graph extends Element, Iterable<Node>
 	 * @param on True or false.
 	 */
 	public void setAutoCreate( boolean on );
+
+// Output
+	
+	/**
+	 * Empties the graph completely by removing any references to nodes or edges.
+	 * Every attribute is also removed. However, listeners are kept.
+	 * @see #clearListeners()
+	 */
+	public void clear();
 
 	/**
 	 * Add a node in the graph. This acts as a factory, creating the node
@@ -277,8 +290,8 @@ public interface Graph extends Element, Iterable<Node>
 	/**
 	 * <p>
 	 * Since dynamic graphs are based on discrete event modifications, the notion of step is defined
-	 * to simulate elapsed time between events. So a step is a event that occure in the graph, it
-	 * does not modify it but it gives a kind of timestamp that allow the tracking of the progress
+	 * to simulate elapsed time between events. So a step is a event that occurs in the graph, it
+	 * does not modify it but it gives a kind of timestamp that allows the tracking of the progress
 	 * of the graph over the time.
 	 * </p>
 	 * <p>
@@ -291,6 +304,8 @@ public interface Graph extends Element, Iterable<Node>
 	 *            over the time.
 	 */
 	public void stepBegins( double time );
+
+// Input
 	
 	/**
 	 * Add a listener for all events concerning this graph.
@@ -351,11 +366,13 @@ public interface Graph extends Element, Iterable<Node>
 	 */
 	public Iterable<GraphElementsListener> getGraphElementsListeners();
 	
+// Utility shortcuts
+	
 	/**
 	 * Utility method to read a graph. This method tries to identify the graph
 	 * format by itself and instantiates the corresponding reader automatically.
 	 * If this process fails, a NotFoundException is raised.
-	 * @param filename The graph filename.
+	 * @param filename The graph filename (or URL).
 	 * @throws NotFoundException If the file cannot be found or if the format is not recognised.
 	 * @throws GraphParseException If there is a parsing error while reading the file.
 	 * @throws IOException If an input output error occurs during the graph reading.
@@ -365,18 +382,18 @@ public interface Graph extends Element, Iterable<Node>
 
 	/**
 	 * Utility method to read a graph using the given reader.
-	 * @param reader An appropriate reader for the filename.
-	 * @param filename The graph filename.
+	 * @param input An appropriate reader for the filename.
+	 * @param filename The graph filename (or URL).
 	 * @throws NotFoundException If the file cannot be found or if the format is not recognised.
 	 * @throws GraphParseException If there is a parsing error while reading the file.
 	 * @throws IOException If an input/output error occurs during the graph reading.
 	 * @see org.miv.graphstream.io.GraphReader
 	 */
-	public void read( GraphReader reader, String filename ) throws IOException, GraphParseException;
+	public void read( FileInput input, String filename ) throws IOException, GraphParseException;
 
 	/**
 	 * Utility method to write a graph in DGS format to a file.
-	 * @param filename The file that will contain the saved graph.
+	 * @param filename The file that will contain the saved graph (or URL).
 	 * @throws IOException If an input/output error occurs during the graph writing.
 	 * @see org.miv.graphstream.io.GraphWriter
 	 */
@@ -384,33 +401,12 @@ public interface Graph extends Element, Iterable<Node>
 
 	/**
 	 * Utility method to write a graph in the chosen format to a file.
-	 * @param writer The output format to use.
-	 * @param filename THe file that will contain the saved graph.
+	 * @param filename The file that will contain the saved graph (or URL).
+	 * @param output The output format to use.
 	 * @throws IOException If an input/output error occurs during the graph writing.
 	 * @see org.miv.graphstream.io.GraphWriter
 	 */
-	public void write( GraphWriter writer, String filename ) throws IOException;
-
-	/**
-	 * Utility method to read a map of node identifiers to 3D coordinates and
-	 * store it in the graph. This method read a "position" file and put
-	 * "x", "y" and "z" attributes on nodes of the graph according on what is
-	 * read. The position file associates a node identifier with coordinates. It
-	 * is possible that the given file do not map each node of the current graph.
-	 * In this case, the number of non-mapped node is returned.
-	 * The format for the position file is:
-	 * <ul>
-	 * 		<li>each line contains informations for one unique node;</li>
-	 * 		<li>a line begins by the node identifier followed by ":";</li>
-	 * 		<li>the ":" are followed by three numbers separated by spaces;</li>
-	 * 		<li>no other information is accepted on a line.</li>
-	 * </ul>
-	 * @param posFileName Name of the position file.
-	 * @return The number of nodes that where not mapped to coordinates.
-	 * @throws IOException If an error occurred during the position file reading.
-	 */
-	// TODO : this is not the place for this !
-	public int readPositionFile( String posFileName ) throws IOException;
+	public void write( FileOutput output, String filename ) throws IOException;
 
 	/**
 	 * Utility method that create a new graph viewer, and register the graph in

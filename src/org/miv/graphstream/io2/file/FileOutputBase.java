@@ -112,7 +112,7 @@ public abstract class FileOutputBase implements FileOutput
 					nodeAttributeAdded( graphId, nodeId, key, node.getAttribute( key ) );
 		}
 		
-		for( Edge edge: graph.getEdgeSet() )
+		for( Edge edge: graph.edgeSet() )
 		{
 			String edgeId = edge.getId();
 			edgeAdded( graphId, edgeId, edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );

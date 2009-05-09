@@ -86,7 +86,7 @@ public class GraphReaderListenerHelper implements GraphReaderListenerExtended
 		
 		if( edge == null )
 		{
-			if( graph.isStrictCheckingEnabled() )
+			if( graph.isStrict() )
 				throw new GraphParseException( "cannot change edge '"+id+"' that does not yet exist" );
 		}
 		
@@ -154,7 +154,7 @@ public class GraphReaderListenerHelper implements GraphReaderListenerExtended
 		
 		if( node == null )
 		{
-			if( graph.isStrictCheckingEnabled() )
+			if( graph.isStrict() )
 				throw new GraphParseException( "cannot change node '"+id+"' that does not yet exist" );
 			if( graph.isAutoCreationEnabled() )
 				node = graph.addNode( id );
