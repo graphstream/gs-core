@@ -50,6 +50,12 @@ public class RMIInput
 		elementsListeners	= new ConcurrentLinkedQueue<GraphElementsListener>();
 	}
 	
+	public RMIInput( String name )
+		throws RemoteException
+	{
+		super(); bind(name);
+	}
+	
 	public void bind( String name )
 	{
 		try

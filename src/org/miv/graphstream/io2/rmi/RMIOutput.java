@@ -45,6 +45,12 @@ public class RMIOutput
 		inputs = new ConcurrentHashMap<String,RMIAdapterIn>();
 	}
 	
+	public RMIOutput( String name )
+		throws RemoteException
+	{
+		super(); bind(name);
+	}
+	
 	public void bind( String name )
 	{
 		try
