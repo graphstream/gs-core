@@ -35,6 +35,36 @@ import org.miv.mbox.MBoxStandalone;
 
 /**
  * Filter that allows to pass graph events between two threads without explicit synchronisation.
+ * 
+ * <p>
+ * This filter allows to register it as an output for some source of events in a source thread
+ * (hereafter called the input thread) and to register listening outputs in a destination
+ * thread (hereafter called the output thread).
+ * </p>
+ * 
+ * <pre>
+ *                       |
+ *   Input ----> ThreadProxyFilter ----> Outputs
+ *  Thread 1             |              Thread 2
+ *                       |
+ * </pre>
+ * 
+ * <p>
+ * In other words, this class allows to listen in a (output) thread graph events that are produced
+ * in another (input) thread without any explicit synchronisation on the source of events.
+ * </p>
+ * 
+ * <p>
+ * The only restriction is that the output thread must regularly call the {@link #checkEvents()}
+ * method to dispatch events coming from the source to all outputs registered.
+ * </p>
+ * 
+ * <p>
+ * You can register any kind of input as source of event, but if the input is a graph, then
+ * you can choose to "replay" all the content of the graph so that at the other end of the filter,
+ * all outputs receive the complete content of the graph. This is the default behavior if this
+ * filter is constructed with a graph as input.
+ * </p>
  */
 public class ThreadProxyFilter extends InputBase implements Filter, MBoxListener
 {
@@ -135,6 +165,27 @@ public class ThreadProxyFilter extends InputBase implements Filter, MBoxListener
 		input.addGraphListener( this );		
 		((MBoxStandalone)this.events).addListener( this );
 	}
+	
+// Command
+
+	/**
+	 * Ask the proxy to unregister from the event input source (stop receive events) as soon as
+	 * possible (when the next event will occur in the graph).
+	 */
+	public void unregisterFromGraph()
+	{
+		unregisterWhenPossible = true;
+	}
+	
+	/**
+	 * This method must be called regularly in the output thread to check if the input source sent
+	 * events. If some event occurred, the listeners will be called.
+	 */
+	public void checkEvents()
+	{
+		((MBoxStandalone)events).processMessages();
+	}
+
 	
 // Command
 	
