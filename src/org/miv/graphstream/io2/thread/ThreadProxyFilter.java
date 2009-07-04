@@ -51,11 +51,6 @@ public class ThreadProxyFilter extends InputBase implements Filter, MBoxListener
 	protected MBox events;
 	
 	/**
-	 * The graph to maintain according to the received events.
-	 */
-	protected Graph outputGraph;
-	
-	/**
 	 * Used only to remove the listener. We ensure this is done in the Input thread.
 	 */
 	protected Input input;
@@ -78,33 +73,17 @@ public class ThreadProxyFilter extends InputBase implements Filter, MBoxListener
 	}
 	
 	/**
-	 * Like {@link #ThreadProxyFilter(Input)}, but additionally, redirect all events coming from
-	 * the input to an output graph.
-	 * 
-	 * The effect of the proxy is that the output graph will be the exact copy of the input.
-	 * By default.
-	 * @param input The source of events we listen at.
-	 * @param outputGraph The graph that will become a copy of the input graph.
-	 */
-	public ThreadProxyFilter( Input input, Graph outputGraph )
-	{
-		this( input, outputGraph, new MBoxStandalone() );
-	}
-	
-	/**
-	 * Like {@link #ThreadProxyFilter(Input,Graph)}, but allow to share the
+	 * Like {@link #ThreadProxyFilter(Input)}, but allow to share the
 	 * message box with another message processor. This can be needed to share the same message
 	 * stack, when message order is important.
 	 * @param input The source of events we listen at.
-	 * @param outputGraph The graph that will become a copy of the input.
 	 * @param sharedMBox The message box used to send and receive graph messages across the thread
 	 *        boundary.
 	 */
-	public ThreadProxyFilter( Input input, Graph outputGraph, MBox sharedMBox )
+	public ThreadProxyFilter( Input input, MBox sharedMBox )
 	{
 		this.events      = sharedMBox;
 		this.from        = "<in>";
-		this.outputGraph = outputGraph;
 		this.input       = input;
 
 		input.addGraphListener( this );		
@@ -131,52 +110,23 @@ public class ThreadProxyFilter extends InputBase implements Filter, MBoxListener
 	 */
 	public ThreadProxyFilter( Graph inputGraph, boolean replayGraph )
 	{
-		this( inputGraph, null, replayGraph );
+		this( inputGraph, replayGraph, new MBoxStandalone() );
 	}
 
 	/**
-	 * Like {@link #ThreadProxyFilter(Graph)}, but additionally, redirect all events coming from
-	 * the input graph to an output graph.
-	 * 
-	 * The effect of the proxy is that the output graph will be the exact copy of the input graph.
-	 * By default, if the input graph already contains some elements, they are "replayed". This
-	 * means that events are sent to mimic the fact they just appeared.
-	 * @param inputGraph The graph we listen at.
-	 * @param outputGraph The graph that will become a copy of the input graph.
-	 */
-	public ThreadProxyFilter( Graph inputGraph, Graph outputGraph )
-	{
-		this( inputGraph, outputGraph, true );
-	}
-	
-	/**
-	 * Like {@link #ThreadProxyFilter(Graph, Graph)}, but allow to avoid replaying the graph.
-	 * @param inputGraph The graph we listen at.
-	 * @param outputGraph The graph that will become a copy of the input graph.
-	 * @param replayGraph If false, and if the input graph already contains element they are not
-	 *        replayed.
-	 */
-	public ThreadProxyFilter( Graph inputGraph, Graph outputGraph, boolean replayGraph )
-	{
-		this( inputGraph, outputGraph, replayGraph, new MBoxStandalone() );
-	}
-	
-	/**
-	 * Like {@link #ThreadProxyFilter(Graph, Graph,boolean)}, but allow to share the
+	 * Like {@link #ThreadProxyFilter(Graph,boolean)}, but allow to share the
 	 * message box with another message processor. This can be needed to share the same message
 	 * stack, when message order is important.
 	 * @param inputGraph The graph we listen at.
-	 * @param outputGraph The graph that will become a copy of the input graph.
 	 * @param replayGraph If false, and if the input graph already contains element they are not
 	 *        replayed.
 	 * @param sharedMBox The message box used to send and receive graph messages across the thread
 	 *        boundary.
 	 */
-	public ThreadProxyFilter( Graph inputGraph, Graph outputGraph, boolean replayGraph, MBox sharedMBox )
+	public ThreadProxyFilter( Graph inputGraph, boolean replayGraph, MBox sharedMBox )
 	{
 		this.events      = sharedMBox;
 		this.from        = inputGraph.getId();
-		this.outputGraph = outputGraph;
 		this.input       = inputGraph;
 
 		if( replayGraph )
@@ -478,9 +428,6 @@ public class ThreadProxyFilter extends InputBase implements Filter, MBoxListener
 			String nodeId  = (String) data[2];
 			
 			sendNodeAdded( graphId, nodeId );
-			
-			if( outputGraph != null )
-				outputGraph.nodeAdded( graphId, nodeId );
 		}
 		else if( data[0].equals( GraphEvents.DEL_NODE ) )
 		{
@@ -488,9 +435,6 @@ public class ThreadProxyFilter extends InputBase implements Filter, MBoxListener
 			String nodeId  = (String) data[2];
 			
 			sendNodeRemoved( graphId, nodeId );
-			
-			if( outputGraph != null )
-				outputGraph.nodeRemoved( graphId, nodeId );			
 		}
 		else if( data[0].equals( GraphEvents.ADD_EDGE ) )
 		{
@@ -501,9 +445,6 @@ public class ThreadProxyFilter extends InputBase implements Filter, MBoxListener
 			boolean directed = (Boolean) data[5];
 			
 			sendEdgeAdded( graphId, edgeId, fromId, toId, directed );
-			
-			if( outputGraph != null )
-				outputGraph.edgeAdded( graphId, edgeId, fromId, toId, directed );
 		}
 		else if( data[0].equals( GraphEvents.DEL_EDGE ) )
 		{
@@ -511,9 +452,6 @@ public class ThreadProxyFilter extends InputBase implements Filter, MBoxListener
 			String edgeId  = (String) data[2];
 			
 			sendEdgeRemoved( graphId, edgeId );
-			
-			if( outputGraph != null )
-				outputGraph.edgeRemoved( graphId, edgeId );
 		}
 		else if( data[0].equals( GraphEvents.STEP ) )
 		{
@@ -521,21 +459,45 @@ public class ThreadProxyFilter extends InputBase implements Filter, MBoxListener
 			double time    = (Double) data[2];
 			
 			sendStepBegins( graphId, time );
+		}
+		else if( data[0].equals( GraphEvents.ADD_GRAPH_ATTR ) )
+		{
 			
-			if( outputGraph != null )
-				outputGraph.stepBegins( graphId, time ); 
+		}
+		else if( data[0].equals( GraphEvents.CHG_GRAPH_ATTR ) )
+		{
+			
+		}
+		else if( data[0].equals( GraphEvents.DEL_GRAPH_ATTR ) )
+		{
+			
 		}
 		else if( data[0].equals( GraphEvents.ADD_EDGE_ATTR ) )
 		{
+			String graphId   = (String) data[1];
+			String edgeId    = (String) data[2];
+			String attribute = (String) data[3];
+			Object value     = data[4];
 			
+			sendEdgeAttributeAdded( graphId, edgeId, attribute, value );
 		}
 		else if( data[0].equals( GraphEvents.CHG_EDGE_ATTR ) )
 		{
+			String graphId   = (String) data[1];
+			String edgeId    = (String) data[2];
+			String attribute = (String) data[3];
+			Object oldValue  = data[4];
+			Object newValue  = data[5];
 			
+			sendEdgeAttributeChanged( graphId, edgeId, attribute, oldValue, newValue );
 		}
 		else if( data[0].equals( GraphEvents.DEL_EDGE_ATTR ) )
 		{
+			String graphId   = (String) data[1];
+			String edgeId    = (String) data[2];
+			String attribute = (String) data[3];
 			
+			sendEdgeAttributeRemoved( graphId, edgeId, attribute );			
 		}
 		else if( data[0].equals( GraphEvents.ADD_NODE_ATTR ) )
 		{
@@ -554,9 +516,6 @@ public class ThreadProxyFilter extends InputBase implements Filter, MBoxListener
 			String graphId = (String) data[1];
 			
 			sendGraphCleared( graphId );
-			
-			if( outputGraph != null )
-				outputGraph.clear();
 		}
     }
 }
