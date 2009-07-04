@@ -23,7 +23,7 @@
 
 package org.miv.graphstream.ui.layout;
 
-import org.miv.graphstream.graph.GraphListener;
+import org.miv.graphstream.io2.Output;
 import org.miv.util.geom.*;
 
 /**
@@ -80,7 +80,7 @@ import org.miv.util.geom.*;
  * 
  * @since 20050706
  */
-public interface Layout extends GraphListener
+public interface Layout extends Output
 {
 // Access
 

@@ -1,0 +1,291 @@
+Here is a description of the CSS language used by GraphStream. Where possible, this language is
+kept coherent with the uses of the HTML CSS, but naturally, this is not always possible.
+
+The selectors
+=============
+
+There are four main selectors :
+
+	graph
+		To add style to the whole graph.
+	node
+		To add style to node elements.
+	edge
+		To add style to edge elements.
+	sprite
+		To add style to sprite elements.
+	
+The selectors can then be augmented by elements identifiers, classes names and events. 
+Here is the syntax for elements identifiers :
+
+	node#A
+
+Here is the syntax for classes :
+
+	node.myClassName 
+
+Here is the syntax for events :
+
+	node:selected
+
+	node#A:selected
+
+	node.myClassName:selected
+
+The selectors tell to what elements the style applies. The combination of identifiers, classes
+and events allows to select specific elements, and event specific elements at a given condition
+during time.
+
+The style properties
+====================
+
+Given a selector the style is described by a set of style properties, given between curly braces
+and separated by semicolons.
+
+Here is an example of style definition :
+
+node.foo:selected { fill-color: red; }
+
+Some considerations on the meaning of styles
+============================================
+
+One could think that the node style inherits the graph style for example. However this is not
+the case. The graph style applies to the background of the graph, however it can also
+allow to define a general style.
+
+The common properties
+=====================
+
+These properties apply to all elements, they are inspired by (but not the same as) SVG CSS
+properties :
+
+z-index:
+	<number[int]>
+
+	The Z-index allows to put elements in layers, giving a drawing order. This allows to know
+	above or under which other elements an element is to be drawn.
+
+fill:
+	none
+	plain
+	dyn-plain(ui.color)
+	gradient-radial
+	gradient-horizontal
+	gradient-vertical
+	image-tiled
+	image-adjusted
+	image-zoomed
+
+	The fill is the main color, gradient, or image pattern that fills the surface of the element
+	(graph, node, sprite, or edge background).
+
+fill-color:
+	<color(1,n)>
+
+	If the fill mode is plain or gradient, this defines the color or colors to use. For gradients,
+	you must give at least two colors.
+
+fill-image:
+	<url>
+	
+	If the fill mode is an image, this specifies the image to use.
+
+stroke:
+	none
+	plain
+	dashes
+	dots
+
+	Specifies how to draw the border or contour of the element. Graphs can also have a stroke. In
+	this case this defines a box around all the elements.
+
+stroke-color:
+	<color(1,n)>
+	
+	Color of the stroke.
+
+stroke-width:
+	number
+	
+	Width of the stroke.
+	
+shadow:
+	none
+	plain
+	gradient-radial
+	gradient-shape
+	gradient-horizontal
+	gradient-vertical
+
+	Shadows are always drawn at the lowest z-level possible. They have the same shape as the element
+	they pertain to. Using the "shadow-width" property it is possible to make the shadow larger
+	than the element. The shadow can be plain, or a gradient.
+
+shadow-color:
+	<color(1)>
+	
+	Color or colors of the shadow. If the shadow mode is a gradient, two colors at least are
+	needed. It is not necessary to specify alpha for shadows as they always are drawn at he lowest
+	z-level.
+
+shadow-width:
+	<number[px,gu,%]>
+
+	Width of the shadow. This is given in pixels, graph units or percents added to the size of
+	the element.
+
+padding:
+	<number(1)>
+
+	Space added between the contour of the element and its content (text, image or other). 
+
+text-mode:
+	normal
+	truncated
+	hidden
+	at-zoom
+	under-zoom
+	over-zoom
+	zoom-range
+	zooms
+	
+	The text mode impacts on how the text is rendered. More modes are available for specific
+	elements.
+	
+text-visibility:
+	<number(1,n)>
+
+	Specify the range of visibility of the text if the text mode is one of the "zoom" modes.
+
+text-color:
+	<color>
+	
+	Color of the text.
+
+text-style:
+	simple
+	italic
+	bold
+	bold-italic
+	
+	Style of the text.
+
+text-font:
+	<string>
+	
+	Font of the text.
+
+text-size:
+	<number[pt]>
+	
+	Size of the font in points only.
+
+?text-offset:
+?	<number(1,3)[px,gu,%]>
+
+visibility-mode:
+	normal
+	hidden
+	at-zoom
+	under-zoom
+	over-zoom
+	zoom-range
+	zooms
+
+	Visibility of the element. The zooms values allows to show the element only at specified zoom
+	levels.
+
+visibility:
+	<number(1,n)>
+
+	The values for the "zoom" modes of the "visibility-mode" property.
+
+Properties common to nodes, edges and sprites
+=============================================
+
+size-mode:
+	normal
+	dyn-size(ui.size)
+
+size:
+	<number(3)[px,gu,%]>
+	
+shape-points:
+	<number(1,n)[%]>
+	
+text-alignment:
+	center
+	left
+	right
+	at-left
+	at-right
+	under
+	above
+
+Properties common to nodes and sprites
+======================================
+
+shape:
+	circle
+	box
+	diamond
+	polygon
+	text-box
+	text-paragraph
+	text-circle
+	text-diamond
+	jcomponent
+
+jcomponent:
+	<object>
+
+Properties for nodes
+====================
+
+Properties for sprites
+======================
+
+shape:
+	pie-chart
+	flow
+	arrow
+	images
+
+sprite-orientation:
+	none
+	from, node0
+	to, node1
+	origin
+
+Properties for edges
+====================
+
+shape:
+	line
+	angle
+	cubic-curve
+	polyline
+	blob
+	
+text-alignment:
+	along	
+
+arrow-shape:
+	none
+	arrow
+	circle
+	diamond
+	image
+
+arrow-image:
+	<url>
+	
+arrow-size:
+	<number(1,3)[px,gu,%]>
+
+Properties for graphs
+=====================
+
+!outside-color:
+	<color>
+	

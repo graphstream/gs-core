@@ -29,67 +29,23 @@ package org.miv.graphstream.io2;
  */
 public class OutputAdapter implements Output
 {
-	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
-	{
-	}
-
+	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value ) {}
 	public void edgeAttributeChanged( String graphId, String edgeId, String attribute,
-	        Object oldValue, Object newValue )
-	{
-	}
-
-	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
-	{
-	}
-
-	public void graphAttributeAdded( String graphId, String attribute, Object value )
-	{
-	}
-
+	        Object oldValue, Object newValue ) {}
+	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute ) {}
+	public void graphAttributeAdded( String graphId, String attribute, Object value ) {}
 	public void graphAttributeChanged( String graphId, String attribute, Object oldValue,
-	        Object newValue )
-	{
-	}
-
-	public void graphAttributeRemoved( String graphId, String attribute )
-	{
-	}
-
-	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
-	{
-	}
-
+	        Object newValue ) {}
+	public void graphAttributeRemoved( String graphId, String attribute ) {}
+	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value ) {}
 	public void nodeAttributeChanged( String graphId, String nodeId, String attribute,
-	        Object oldValue, Object newValue )
-	{
-	}
-
-	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
-	{
-	}
-
+	        Object oldValue, Object newValue ) {}
+	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute ) {}
 	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId,
-	        boolean directed )
-	{
-	}
-
-	public void edgeRemoved( String graphId, String edgeId )
-	{
-	}
-
-	public void graphCleared( String graphId )
-	{
-	}
-
-	public void nodeAdded( String graphId, String nodeId )
-	{
-	}
-
-	public void nodeRemoved( String graphId, String nodeId )
-	{
-	}
-
-	public void stepBegins( String graphId, double time )
-	{
-	}
+	        boolean directed ){}
+	public void edgeRemoved( String graphId, String edgeId ) {}
+	public void graphCleared( String graphId ) {}
+	public void nodeAdded( String graphId, String nodeId ) {}
+	public void nodeRemoved( String graphId, String nodeId ) {}
+	public void stepBegins( String graphId, double time ) {}
 }

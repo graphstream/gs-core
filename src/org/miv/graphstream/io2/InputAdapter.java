@@ -26,38 +26,18 @@ import org.miv.graphstream.graph.GraphAttributesListener;
 import org.miv.graphstream.graph.GraphElementsListener;
 import org.miv.graphstream.graph.GraphListener;
 
+/**
+ * Adapter for the input interface.
+ * 
+ * <p>All methods are empty.</p>
+ */
 public class InputAdapter
 	implements Input
 {
-
-	public void addGraphAttributesListener(GraphAttributesListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void addGraphElementsListener(GraphElementsListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void addGraphListener(GraphListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void removeGraphAttributesListener(GraphAttributesListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void removeGraphElementsListener(GraphElementsListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void removeGraphListener(GraphListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
+	public void addGraphAttributesListener(GraphAttributesListener listener) {}
+	public void addGraphElementsListener(GraphElementsListener listener) {}
+	public void addGraphListener(GraphListener listener) {}
+	public void removeGraphAttributesListener(GraphAttributesListener listener) {}
+	public void removeGraphElementsListener(GraphElementsListener listener) {}
+	public void removeGraphListener(GraphListener listener) {}
 }

@@ -26,122 +26,44 @@ import org.miv.graphstream.graph.GraphAttributesListener;
 import org.miv.graphstream.graph.GraphElementsListener;
 import org.miv.graphstream.graph.GraphListener;
 
+/**
+ * Adapter for the filter interface.
+ * 
+ * <p>
+ * All methods are empty.
+ * </p>
+ */
 public class FilterAdapter
 	implements Filter
 {
-
-	public void addGraphAttributesListener(GraphAttributesListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void addGraphElementsListener(GraphElementsListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void addGraphListener(GraphListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void removeGraphAttributesListener(GraphAttributesListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void removeGraphElementsListener(GraphElementsListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void removeGraphListener(GraphListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
+	public void addGraphAttributesListener(GraphAttributesListener listener) {}
+	public void addGraphElementsListener(GraphElementsListener listener) {}
+	public void addGraphListener(GraphListener listener) {}
+	public void removeGraphAttributesListener(GraphAttributesListener listener) {}
+	public void removeGraphElementsListener(GraphElementsListener listener) {}
+	public void removeGraphListener(GraphListener listener) {}
 	public void edgeAttributeAdded(String graphId, String edgeId,
-			String attribute, Object value) {
-		// TODO Auto-generated method stub
-
-	}
-
+			String attribute, Object value) {}
 	public void edgeAttributeChanged(String graphId, String edgeId,
-			String attribute, Object oldValue, Object newValue) {
-		// TODO Auto-generated method stub
-
-	}
-
+			String attribute, Object oldValue, Object newValue) {}
 	public void edgeAttributeRemoved(String graphId, String edgeId,
-			String attribute) {
-		// TODO Auto-generated method stub
-
-	}
-
+			String attribute) {}
 	public void graphAttributeAdded(String graphId, String attribute,
-			Object value) {
-		// TODO Auto-generated method stub
-
-	}
-
+			Object value) {}
 	public void graphAttributeChanged(String graphId, String attribute,
-			Object oldValue, Object newValue) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void graphAttributeRemoved(String graphId, String attribute) {
-		// TODO Auto-generated method stub
-
-	}
-
+			Object oldValue, Object newValue) {}
+	public void graphAttributeRemoved(String graphId, String attribute) {}
 	public void nodeAttributeAdded(String graphId, String nodeId,
-			String attribute, Object value) {
-		// TODO Auto-generated method stub
-
-	}
-
+			String attribute, Object value) {}
 	public void nodeAttributeChanged(String graphId, String nodeId,
-			String attribute, Object oldValue, Object newValue) {
-		// TODO Auto-generated method stub
-
-	}
-
+			String attribute, Object oldValue, Object newValue) {}
 	public void nodeAttributeRemoved(String graphId, String nodeId,
-			String attribute) {
-		// TODO Auto-generated method stub
-
-	}
-
+			String attribute) {}
 	public void edgeAdded(String graphId, String edgeId, String fromNodeId,
-			String toNodeId, boolean directed) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void edgeRemoved(String graphId, String edgeId) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void graphCleared(String graphId) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void nodeAdded(String graphId, String nodeId) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void nodeRemoved(String graphId, String nodeId) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void stepBegins(String graphId, double time) {
-		// TODO Auto-generated method stub
-
-	}
-
+			String toNodeId, boolean directed) {}
+	public void edgeRemoved(String graphId, String edgeId) {}
+	public void graphCleared(String graphId) {}
+	public void nodeAdded(String graphId, String nodeId) {}
+	public void nodeRemoved(String graphId, String nodeId) {}
+	public void stepBegins(String graphId, double time) {}
 }
