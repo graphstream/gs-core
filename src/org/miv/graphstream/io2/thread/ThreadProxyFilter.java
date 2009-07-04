@@ -462,15 +462,27 @@ public class ThreadProxyFilter extends InputBase implements Filter, MBoxListener
 		}
 		else if( data[0].equals( GraphEvents.ADD_GRAPH_ATTR ) )
 		{
+			String graphId   = (String) data[1];
+			String attribute = (String) data[2];
+			Object value     = data[3];
 			
+			sendGraphAttributeAdded( graphId, attribute, value );
 		}
 		else if( data[0].equals( GraphEvents.CHG_GRAPH_ATTR ) )
 		{
+			String graphId   = (String) data[1];
+			String attribute = (String) data[2];
+			Object oldValue  = data[3];
+			Object newValue  = data[4];
 			
+			sendGraphAttributeChanged( graphId, attribute, oldValue, newValue );			
 		}
 		else if( data[0].equals( GraphEvents.DEL_GRAPH_ATTR ) )
 		{
+			String graphId   = (String) data[1];
+			String attribute = (String) data[2];
 			
+			sendGraphAttributeRemoved( graphId, attribute );						
 		}
 		else if( data[0].equals( GraphEvents.ADD_EDGE_ATTR ) )
 		{
@@ -501,15 +513,30 @@ public class ThreadProxyFilter extends InputBase implements Filter, MBoxListener
 		}
 		else if( data[0].equals( GraphEvents.ADD_NODE_ATTR ) )
 		{
+			String graphId   = (String) data[1];
+			String nodeId    = (String) data[2];
+			String attribute = (String) data[3];
+			Object value     = data[4];
 			
+			sendNodeAttributeAdded( graphId, nodeId, attribute, value );			
 		}
 		else if( data[0].equals( GraphEvents.CHG_NODE_ATTR ) )
 		{
+			String graphId   = (String) data[1];
+			String nodeId    = (String) data[2];
+			String attribute = (String) data[3];
+			Object oldValue  = data[4];
+			Object newValue  = data[5];
 			
+			sendNodeAttributeChanged( graphId, nodeId, attribute, oldValue, newValue );			
 		}
 		else if( data[0].equals( GraphEvents.DEL_NODE_ATTR ) )
 		{
+			String graphId   = (String) data[1];
+			String nodeId    = (String) data[2];
+			String attribute = (String) data[3];
 			
+			sendNodeAttributeRemoved( graphId, nodeId, attribute );						
 		}
 		else if( data[0].equals( GraphEvents.CLEARED ) )
 		{
