@@ -65,16 +65,18 @@ z-index:
 	The Z-index allows to put elements in layers, giving a drawing order. This allows to know
 	above or under which other elements an element is to be drawn.
 
-fill:
+fill-mode:
 	none
 	plain
 	dyn-plain(ui.color)
 	gradient-radial
 	gradient-horizontal
 	gradient-vertical
+	gradient-diagonal1
+	gradient-diagonal2
 	image-tiled
-	image-adjusted
-	image-zoomed
+	image-scaled
+	image-scaled-ratio
 
 	The fill is the main color, gradient, or image pattern that fills the surface of the element
 	(graph, node, sprite, or edge background).
@@ -90,7 +92,7 @@ fill-image:
 	
 	If the fill mode is an image, this specifies the image to use.
 
-stroke:
+stroke-mode:
 	none
 	plain
 	dashes
@@ -109,11 +111,10 @@ stroke-width:
 	
 	Width of the stroke.
 	
-shadow:
+shadow-mode:
 	none
 	plain
 	gradient-radial
-	gradient-shape
 	gradient-horizontal
 	gradient-vertical
 
@@ -134,6 +135,11 @@ shadow-width:
 	Width of the shadow. This is given in pixels, graph units or percents added to the size of
 	the element.
 
+shadow-offset:
+	<number(2)[px,gu,%]>
+	
+	Offset of the shadow shape according to the element shape.
+
 padding:
 	<number(1)>
 
@@ -143,6 +149,8 @@ text-mode:
 	normal
 	truncated
 	hidden
+	
+text-visibility-mode:
 	at-zoom
 	under-zoom
 	over-zoom
@@ -163,7 +171,7 @@ text-color:
 	Color of the text.
 
 text-style:
-	simple
+	normal
 	italic
 	bold
 	bold-italic
@@ -213,7 +221,7 @@ size:
 shape-points:
 	<number(1,n)[%]>
 	
-text-alignment:
+text-align:
 	center
 	left
 	right
@@ -221,6 +229,7 @@ text-alignment:
 	at-right
 	under
 	above
+	justify
 
 Properties common to nodes and sprites
 ======================================
@@ -255,7 +264,7 @@ sprite-orientation:
 	none
 	from, node0
 	to, node1
-	origin
+	projection
 
 Properties for edges
 ====================
@@ -268,7 +277,7 @@ shape:
 	blob
 	
 text-alignment:
-	along	
+	along
 
 arrow-shape:
 	none
@@ -286,6 +295,8 @@ arrow-size:
 Properties for graphs
 =====================
 
-!outside-color:
+canvas-color:
 	<color>
+	
+	Color of all the viewer area that is not covered by the graph.
 	

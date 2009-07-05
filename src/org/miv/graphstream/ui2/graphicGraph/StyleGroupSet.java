@@ -147,6 +147,11 @@ public class StyleGroupSet implements StyleSheetListener
 		return groups.values().iterator();
 	}
 	
+	public Iterable<? extends StyleGroup> groups()
+	{
+		return groups.values();
+	}
+	
 	/**
 	 * Iterator on the Z index.
 	 * @return The z index iterator.

@@ -25,9 +25,6 @@ import java.util.HashSet;
  * A rule is made of a selector and values. The selector identifies the element(s) this rule applies
  * to, and the values are styles to apply to the matched elements.
  * </p>
- * 
- * @author Antoine Dutot
- * @author Yoann Pigné
  */
 public class Rule
 {

@@ -63,105 +63,164 @@ SKIP :
 |	"\t"
 |	"\n"
 }
+//
+// Base tokens.
+//
+TOKEN: { < #EOL              : (("\r")|("\n"))> }
+TOKEN: { < #DIGIT            : ["0"-"9"] > }
+TOKEN: { < #HEXDIGIT         : (["0"-"9","a"-"f","A"-"F"])> }
+TOKEN: { < #UNITS            : (("gu")|("px")|("%"))> }
+TOKEN: { < DOT               : "." > }
+TOKEN: { < LBRACE            : "{" > }
+TOKEN: { < RBRACE            : "}" > }
+TOKEN: { < LPAREN            : "(" > }
+TOKEN: { < RPAREN            : ")" > }
+TOKEN: { < SHARP             : "#" > }
+TOKEN: { < COLON             : ":" > }
+TOKEN: { < SEMICOLON         : ";" > }
+TOKEN: { < COMA              : "," > }
+TOKEN: { < RGBA              : "rgba("(<DIGIT>){1,3}","(<DIGIT>){1,3}","(<DIGIT>){1,3}","(<DIGIT>){1,3}")" > }
+TOKEN: { < RGB               : "rgb("(<DIGIT>){1,3}","(<DIGIT>){1,3}","(<DIGIT>){1,3}")" > }
+TOKEN: { < HTMLCOLOR         : ( "#" (((<HEXDIGIT>){3})|((<HEXDIGIT>){4})|((<HEXDIGIT>){6})|((<HEXDIGIT>){8})|((<HEXDIGIT>){9})|((<HEXDIGIT>){12})|((<HEXDIGIT>){16})) ) > }
+TOKEN: { < REAL              : ( "-" | "+" )? ( <DIGIT> )+ ( "." (<DIGIT>)+ )? (<UNITS>)? > } 
+TOKEN: { < STRING            : (("\"" (~["\""])* "\"")|("'" (~["'"])* "'")) > }
+TOKEN: { < URL               : "url" > }
+//
+// Selectors.
+//
+TOKEN: { < GRAPH             : "graph" > }
+TOKEN: { < EDGE              : "edge" > }
+TOKEN: { < NODE              : "node" > }
+TOKEN: { < SPRITE            : "sprite" > }
+//
+// General properties.
+//
+TOKEN: { < FILLMODE          : "fill-mode" > }
+TOKEN: { < FILLCOLOR         : "fill-color" > }
+TOKEN: { < FILLIMAGE         : "fill-image" > }TOKEN: { < STROKEMODE        : "stroke-mode" > }
+TOKEN: { < STROKECOLOR       : "stroke-color" > } 	 
+TOKEN: { < STROKEWIDTH       : "stroke-width" > }
 
-TOKEN: { < #EOL          : (("\r")|("\n"))> }
-TOKEN: { < #DIGIT        : ["0"-"9"] > }
-TOKEN: { < #HEXDIGIT     : (["0"-"9","a"-"f","A"-"F"])> }
-TOKEN: { < #UNITS        : (("gu")|("px")|("%"))> }
-TOKEN: { < DOT           : "." > }
-TOKEN: { < LBRACE        : "{" > }
-TOKEN: { < RBRACE        : "}" > }
-TOKEN: { < LPAREN        : "(" > }
-TOKEN: { < RPAREN        : ")" > }
-TOKEN: { < SHARP         : "#" > }
-TOKEN: { < COLON         : ":" > }
-TOKEN: { < SEMICOLON     : ";" > }
-TOKEN: { < COMA          : "," > }
-TOKEN: { < RGBA          : "rgba("(<DIGIT>){1,3}","(<DIGIT>){1,3}","(<DIGIT>){1,3}","(<DIGIT>){1,3}")" > }
-TOKEN: { < RGB           : "rgb("(<DIGIT>){1,3}","(<DIGIT>){1,3}","(<DIGIT>){1,3}")" > }
-TOKEN: { < HTMLCOLOR     : ( "#" (((<HEXDIGIT>){3})|((<HEXDIGIT>){4})|((<HEXDIGIT>){6})|((<HEXDIGIT>){8})|((<HEXDIGIT>){9})|((<HEXDIGIT>){12})|((<HEXDIGIT>){16})) ) > }
-TOKEN: { < REAL          : ( "-" | "+" )? ( <DIGIT> )+ ( "." (<DIGIT>)+ )? (<UNITS>)? > } 
-TOKEN: { < STRING        : (("\"" (~["\""])* "\"")|("'" (~["'"])* "'")) > }
-TOKEN: { < URL           : "url" > }
+TOKEN: { < SHADOWMODE        : "shadow-mode" > }
+TOKEN: { < SHADOWCOLOR       : "shadow-color" > }
+TOKEN: { < SHADOWWIDTH       : "shadow-width" > }
+TOKEN: { < SHADOWOFFSET      : "shadow-offset" > }
 
-TOKEN: { < GRAPH         : "graph" > }
-TOKEN: { < EDGE          : "edge" > }
-TOKEN: { < NODE          : "node" > }
-TOKEN: { < SPRITE        : "sprite" > }
+TOKEN: { < TEXTMODE          : "text-mode" > }
+TOKEN: { < TEXTCOLOR         : "text-color" > }
+TOKEN: { < TEXTSTYLE         : "text-style" > }
+TOKEN: { < TEXTFONT          : "text-font" > }
+TOKEN: { < TEXTSIZE          : "text-size" > }
+TOKEN: { < TEXTVISIBILITYMODE: "text-visibility" > }
+TOKEN: 
 
-TOKEN: { < ARROWIMGURL   : "arrow-image" > }
-TOKEN: { < ARROWLENGTH   : "arrow-length" > }
-TOKEN: { < ARROWSHAPE    : "arrow-shape" > }
-TOKEN: { < ARROWWIDTH    : "arrow-width" > }
-TOKEN: { < BGCOLOR       : "background-color" > }
-TOKEN: { < BORDERCOLOR   : "border-color" > } 	 
-TOKEN: { < BORDERSTYLE   : "border-style" > }
-TOKEN: { < BORDERWIDTH   : "border-width" > }
-TOKEN: { < COLOR         : "color" > }
-TOKEN: { < FILL          : "fill" > }
-TOKEN: { < NODESHAPE     : "node-shape" > }
-TOKEN: { < EDGESHAPE     : "edge-shape" > }
-TOKEN: { < EDGESTYLE     : "edge-style" > }
-TOKEN: { < HEIGHT        : "height" > }
-TOKEN: { < IMAGEMODE     : "image-mode" > }
-TOKEN: { < IMAGEOFFSET   : "image-offset" > }
-TOKEN: { < PADDING       : "padding" > }
-TOKEN: { < SHADOWSTYLE   : "shadow-style" > }
-TOKEN: { < SHADOWWIDTH   : "shadow-width" > }
-TOKEN: { < SHADOWOFFSET  : "shadow-offset" > }
-TOKEN: { < SHADOWCOLOR   : "shadow-color" > }
-TOKEN: { < SPRITESHAPE   : "sprite-shape" > }
-TOKEN: { < SPRITEORIENT  : "sprite-orientation" > }
-TOKEN: { < TEXTALIGN     : "text-align" > }
-TOKEN: { < TEXTCOLOR     : "text-color" > }
-TOKEN: { < TEXTMODE      : "text-mode" > }
-TOKEN: { < TEXTSTYLE     : "text-style" > }
-TOKEN: { < TEXTFONT      : "text-font" > }
-TOKEN: { < TEXTSIZE      : "text-size" > }
-TOKEN: { < TEXTOFFSET    : "text-offset" > }
-TOKEN: { < WIDTH         : "width" > }
-TOKEN: { < ZINDEX        : "z-index" > }
+TOKEN: { < PADDING           : "padding" > }
 
-TOKEN: { < ALONG         : "along" > }
-TOKEN: { < ANGLE         : "angle" > }
-TOKEN: { < ARROW         : "arrow" > }
-TOKEN: { < ASIDE         : "aside" > }
-TOKEN: { < BOLD          : "bold" > }
-TOKEN: { < BOLD_ITALIC   : "bold-italic" > }
-TOKEN: { < CENTER        : "center" > }
-TOKEN: { < CIRCLE        : "circle" > }
-TOKEN: { < CLICKED       : "clicked" > }
-TOKEN: { < CROSS         : "cross" > }
-TOKEN: { < CUBICCURVE    : "cubic-curve" > }
-TOKEN: { < DASHES        : "dashes" > }
-TOKEN: { < DIAMOND       : "diamond" > }
-TOKEN: { < DOTS          : "dots" > }
-TOKEN: { < FLOW          : "flow" > }
-TOKEN: { < FROM          : "from" > }
-TOKEN: { < GRADIENT      : "gradient" > }
-TOKEN: { < HIDDEN        : "hidden" > }
-TOKEN: { < TRUNCATED     : "truncated"> }
-TOKEN: { < IMAGE         : "image" > }
-TOKEN: { < IMAGES        : "images" > }
-TOKEN: { < ITALIC        : "italic" > }
-TOKEN: { < LEFT          : "left" > }
-TOKEN: { < LINE          : "line" > }
-TOKEN: { < NONE          : "none" > }
-TOKEN: { < NORMAL        : "normal" > }
-TOKEN: { < ORIGIN        : "origin" > }
-TOKEN: { < PLAIN         : "plain" > }
-TOKEN: { < DYN_INTERP    : "dyn-interpolation" > }
-TOKEN: { < RIGHT         : "right" > }
-TOKEN: { < SELECTED      : "selected" > }
-TOKEN: { < SIMPLE        : "simple" > }
-TOKEN: { < SQUARE        : "square" > }
-TOKEN: { < TEXTBOX       : "text-box" > }
-TOKEN: { < TEXTELLIPSE   : "text-ellipse" > }
-TOKEN: { < TRIANGLE      : "triangle" > }
-TOKEN: { < TILED         : "tiled" > }
-TOKEN: { < PIE_CHART     : "pie-chart" > }
-TOKEN: { < TO            : "to" > }
+TOKEN: { < ZINDEX            : "z-index" > }
+TOKEN: { < VISIBILITYMODE    : "visibility-mode" > }
+TOKEN: { < VISIBILITY        : "visibility" > }
+//
+// Properties common to nodes, edges and sprites.
+//
+TOKEN: { < SHAPE             : "shape" > }
+TOKEN: { < SIZE              : "size" > }
+TOKEN: { < SIZEMODE          : "size-mode" > }
+TOKEN: { < SHAPEPOINTS       : "shape-points" > }
+TOKEN: { < TEXT-ALIGNMENT    : "text-align" > }
+TOKEN: { < JCOMPONENT        : "jcomponent" > }
+//
+// Properties for edges only.
+//
+TOKEN: { < ARROWIMGURL       : "arrow-image" > }
+TOKEN: { < ARROWSIZE         : "arrow-size" > }
+TOKEN: { < ARROWSHAPE        : "arrow-shape" > }
+//
+// Properties for sprites only.
+//
+TOKEN: { < SPRITEORIENT      : "sprite-orientation" > }
+//
+// Properties for graphs only.
+//
+TOKEN: { < CANVASCOLOR       : "canvas-color" > }
+//
+// Property values.
+//
+TOKEN: { < PLAIN             : "plain" > }
+TOKEN: { < DYNPLAIN          : "dyn-plain" > }
+TOKEN: { < DYNSIZE           : "dyn-size" > }
 
+TOKEN: { < DASHES            : "dashes" > }
+TOKEN: { < DOTS              : "dots" > }
+
+TOKEN: { < GRADIENTDIAGONAL1 : "gradient-diagonal1" > }
+TOKEN: { < GRADIENTDIAGONAL2 : "gradient-diagonal2" > }
+TOKEN: { < GRADIENHORIZONTAL : "gradient-horizontal" > }
+TOKEN: { < GRADIENTRADIAL    : "gradient-radial" > }
+TOKEN: { < GRADIENTVERTICAL  : "gradient-vertical" > }
+
+TOKEN: { < HIDDEN            : "hidden" > }
+
+TOKEN: { < IMAGETILED        : "image-tiled" > }
+TOKEN: { < IMAGESCALED       : "image-scaled" > }
+TOKEN: { < IMAGESCALEDRATIO  : "image-scaled-ratio" > }
+
+TOKEN: { < NONE              : "none" > }
+TOKEN: { < NORMAL            : "normal" > }
+TOKEN: { < TRUNCATED         : "truncated"> }
+TOKEN: { < ZOOMRANGE         : "zoom-range" > }
+TOKEN: { < ATZOOM            : "at-zoom" >  }
+TOKEN: { < UNDERZOOM         : "under-zoom" > }
+TOKEN: { < OVERZOOM          : "over-zoom" > }
+TOKEN: { < ZOOMS             : "zooms" > }
+
+TOKEN: { < BOLD              : "bold" > }
+TOKEN: { < BOLD_ITALIC       : "bold-italic" > }
+TOKEN: { < ITALIC            : "italic" > }
+
+TOKEN: { < ALONG             : "along" > }
+TOKEN: { < ATLEFT            : "atleft" > }
+TOKEN: { < ATRIGHT           : "atright" > }
+TOKEN: { < CENTER            : "center" > }
+TOKEN: { < LEFT              : "left" > }
+TOKEN: { < RIGHT             : "right" > }
+TOKEN: { < UNDER             : "under" > }
+TOKEN: { < ABOVE             : "above" > }
+TOKEN: { < JUSTIFY           : "justify" > }
+
+TOKEN: { < CIRCLE            : "circle" > }
+TOKEN: { < TRIANGLE          : "triangle" > }
+TOKEN: { < TEXTBOX           : "text-box" > }
+TOKEN: { < TEXTELLIPSE       : "text-ellipse" > }
+TOKEN: { < SQUARE            : "square" > }
+TOKEN: { < DIAMOND           : "diamond" > }
+TOKEN: { < POLYGON           : "polygon" > }
+TOKEN: { < CROSS             : "cross" > }
+
+TOKEN: { < LINE              : "line" > }
+TOKEN: { < POLYLINE          : "polyline" > } 
+TOKEN: { < ANGLE             : "angle" > }
+TOKEN: { < CUBICCURVE        : "cubic-curve" > }
+TOKEN: { < BLOB              : "blob" > }
+
+TOKEN: { < ARROW             : "arrow" > }
+TOKEN: { < FLOW              : "flow" > }
+TOKEN: { < PIECHART          : "pie-chart" > }
+TOKEN: { < IMAGE             : "image" > }
+TOKEN: { < IMAGES            : "images" > }
+
+TOKEN: { < FROM              : "from" > }
+TOKEN: { < NODE0             : "node0" > }
+TOKEN: { < TO                : "to" > }
+TOKEN: { < NODE1             : "node1" > }
+TOKEN: { < PROJECTION        : "projection" > }
+
+
+TOKEN: { < CLICKED           : "clicked" > }
+TOKEN: { < SELECTED          : "selected" > }
+
+//
+// More base tokens that must appear at the end for precedence reasons.
+//
 TOKEN: { < IDENTIFIER    : (["a"-"z","A"-"Z"])(["a"-"z","A"-"Z","0"-"9","_"])* > }
 TOKEN: { < COMMENT       : ("/*"(~["*"])* "*/" ) | ( "//"((~["\r","\n"])*)<EOL> ) > }
 

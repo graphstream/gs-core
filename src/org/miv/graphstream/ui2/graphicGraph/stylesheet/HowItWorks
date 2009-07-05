@@ -258,7 +258,7 @@ know the final value of a style property for an element using the style group. H
 examples for the graph and style sheet used as example above.
 
 The style sheet, as far as it is concerned only yields the list of rules that apply to an element.
-Therefore, several rules can apply. The style groups, as we have seen it contain this list of rules
+Therefore, several rules can apply. The style groups, as we have seen it, contain this list of rules
 as well as all the elements to which they apply.
 
 When the value of a style property is queried, the style group therefore must explore the style

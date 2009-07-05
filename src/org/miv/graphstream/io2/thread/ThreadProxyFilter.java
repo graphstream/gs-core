@@ -208,8 +208,9 @@ public class ThreadProxyFilter extends InputBase implements Filter, MBoxListener
 			
 			// Replay all graph attributes.
 			
-			for( String key: graph.getAttributeKeySet() )
-				events.post( from, GraphEvents.ADD_GRAPH_ATTR, graphId, key, graph.getAttribute( key ) );
+			if( graph.getAttributeKeySet() != null )
+				for( String key: graph.getAttributeKeySet() )
+					events.post( from, GraphEvents.ADD_GRAPH_ATTR, graphId, key, graph.getAttribute( key ) );
 			
 			// Replay all nodes and their attributes.
 
@@ -217,8 +218,9 @@ public class ThreadProxyFilter extends InputBase implements Filter, MBoxListener
 			{
 				events.post( from, GraphEvents.ADD_NODE, graphId, node.getId() );
 
-				for( String key: node.getAttributeKeySet() )
-					events.post( from, GraphEvents.ADD_NODE_ATTR, graphId, node.getId(), key,
+				if( node.getAttributeKeySet() != null )
+					for( String key: node.getAttributeKeySet() )
+						events.post( from, GraphEvents.ADD_NODE_ATTR, graphId, node.getId(), key,
 							node.getAttribute( key ) );
 			}
 
@@ -230,8 +232,9 @@ public class ThreadProxyFilter extends InputBase implements Filter, MBoxListener
 						edge.getSourceNode().getId(),
 						edge.getTargetNode().getId(), edge.isDirected() );
 
-				for( String key: edge.getAttributeKeySet() )
-					events.post( from, GraphEvents.ADD_EDGE_ATTR, graphId, edge.getId(), key,
+				if( edge.getAttributeKeySet() != null )
+					for( String key: edge.getAttributeKeySet() )
+						events.post( from, GraphEvents.ADD_EDGE_ATTR, graphId, edge.getId(), key,
 						       edge.getAttribute( key ) );
 			}
 		}
@@ -594,6 +597,10 @@ public class ThreadProxyFilter extends InputBase implements Filter, MBoxListener
 			String graphId = (String) data[1];
 			
 			sendGraphCleared( graphId );
+		}
+		else
+		{
+			System.err.printf( "ThreadProxyFilter : Unknown message %s !!%n", data[0] );
 		}
     }
 }
