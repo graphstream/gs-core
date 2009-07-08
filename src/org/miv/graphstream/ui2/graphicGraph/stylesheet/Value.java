@@ -24,9 +24,6 @@ package org.miv.graphstream.ui2.graphicGraph.stylesheet;
  * As a style sheet may express values in several different units. This class purpose is to
  * pack the value and the units it is expressed in into a single object.
  * </p>
- * 
- * @author Antoine Dutot
- * @author Yoann Pigné
  */
 public class Value extends Number
 {
@@ -90,6 +87,11 @@ public class Value extends Number
     {
 	    return Math.round( value );
     }
+
+	public long convert( Style.Units to, GraphMetrics metrics )
+	{
+		
+	}
 	
 	@Override
 	public String toString()

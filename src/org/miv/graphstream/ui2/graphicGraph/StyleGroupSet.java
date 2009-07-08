@@ -147,6 +147,10 @@ public class StyleGroupSet implements StyleSheetListener
 		return groups.values().iterator();
 	}
 	
+	/**
+	 * Iterable set of groups elements, in no particular order.
+	 * @return An iterable on the set of groups.
+	 */
 	public Iterable<? extends StyleGroup> groups()
 	{
 		return groups.values();
@@ -162,12 +166,31 @@ public class StyleGroupSet implements StyleSheetListener
 	}
 	
 	/**
+	 * Iterable set of "subsets of groups" sorted by Z level. Each subset of groups is at the
+	 * same Z level.
+	 * @return The z levels.
+	 */
+	public Iterable<HashSet<StyleGroup>> zIndex()
+	{
+		return zIndex;
+	}
+	
+	/**
 	 * Iterator on the style groups that cast a shadow.
 	 * @return The shadow groups iterator.
 	 */
 	public Iterator<StyleGroup> getShadowIterator()
 	{
 		return shadow.getIterator();
+	}
+	
+	/**
+	 * Iterable set of groups that cast shadow.
+	 * @return All the groups that cast a shadow.
+	 */
+	public Iterable<StyleGroup> shadows()
+	{
+		return shadow;
 	}
 	
 	/**
@@ -864,7 +887,7 @@ public class EventSet
  * 
  * @author Antoine Dutot
  */
-public class ZIndex
+public class ZIndex implements Iterable<HashSet<StyleGroup>>
 {
 	/**
 	 * Ordered set of groups.
@@ -895,6 +918,11 @@ public class ZIndex
 	protected Iterator<HashSet<StyleGroup>> getIterator()
 	{
 		return new ZIndexIterator();
+	}
+
+	public Iterator<HashSet<StyleGroup>> iterator()
+	{
+		return getIterator();
 	}
 	
 	/**
@@ -1055,7 +1083,7 @@ public class ZIndex
  * 
  * @author Antoine Dutot
  */
-public class ShadowSet
+public class ShadowSet implements Iterable<StyleGroup>
 {
 	/**
 	 * The set of groups casting shadow.
@@ -1069,6 +1097,11 @@ public class ShadowSet
 	protected Iterator<StyleGroup> getIterator()
 	{
 		return shadowSet.iterator();
+	}
+
+	public Iterator<StyleGroup> iterator()
+	{
+		return getIterator();
 	}
 	
 	/**

@@ -26,11 +26,13 @@ import java.util.regex.Pattern;
 
 /**
  * The various constants and static constant conversion methods used for styling.
- * 
- * @author Antoine Dutot
  */
 public class StyleConstants
 {
+// Constants
+	
+	public static enum 
+	
 // Constants
 	
 	/**
