@@ -49,10 +49,7 @@
  * 
  * <p>
  * The {@link org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleSheetListener} allows to listen
- * at events occuring in the style sheet.
+ * at events occurring in the style sheet.
  * </p>
- * 
- * @author Antoine Dutot
- * @author Yoann Pigné
  */
 package org.miv.graphstream.ui2.graphicGraph.stylesheet;

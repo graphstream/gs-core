@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.miv.util.geom.Point3;
+import javax.swing.JComponent;
 
 /**
  * A style is a whole set of settings for a graphic element.
@@ -31,9 +31,6 @@ import org.miv.util.geom.Point3;
  * This means that the value is to be taken from the parent. The getters are able to resolve
  * this process by themselves and therefore must be used instead of a direct access to fields.
  * </p>
- * 
- * @author Antoine Dutot
- * @author Yoann Pigné
  */
 public class Style extends StyleConstants
 {	
@@ -62,7 +59,7 @@ public class Style extends StyleConstants
 	 */
 	public Style()
 	{
-		values = new HashMap<String,Object>();
+		this( null );
 	}
 	
 	/**
@@ -93,9 +90,18 @@ public class Style extends StyleConstants
 	 * This code is the same for all "getX" methods so we explain it once here.
 	 * This is the implementation of style inheritance.
 	 *
-	 *  If this style has no value, its parent value is searched via this same
-	 *  method. This way, until the root style
-	 * and we look at the entire parent style hierarchy, recursively until root.
+	 * First if some event is actually occurring, the alternative styles are
+	 * searched first. If these events have unset values for the property,
+	 * their parent are then searched.
+	 * 
+	 * If the value for the property is not found in the alternative styles,
+	 * alternative styles parents, or if there is no event occurring actually,
+	 * this style is checked.
+	 * 
+	 * If its value is unset, the parents of this style are checked.
+	 * 
+	 * Classes are not checked here, they are processed in the
+	 * {@link org.miv.graphstream.ui2.graphicGraph.StyleGroup} class.
 	 * 
 	 * @param property The style property the value is searched for.
 	 */
@@ -173,383 +179,377 @@ public class Style extends StyleConstants
 		return( values.get( field ) != null );
 	}
 	
+// Individual style properties.
+
 	/**
-	 * The colour of foreground elements.
-     * @return A colour.
-     */
-    public Color getColor()
+	 * How to fill the content of an element.
+	 */
+	public FillMode getFillMode()
+	{
+		return (FillMode) getValue( "fill-mode" );
+	}
+	
+	/**
+	 * Which color(s) to use for fill modes that use it.
+	 */
+    public Colors getFillColors()
+	{
+		return (Colors) getValue( "fill-color" );
+	}
+    
+    public int getFillColorCount()
     {
-    	ArrayList<Color> colors = getPalette();
+    	Colors colors = (Colors)getValue( "fill-color" );
     	
-    	if( colors != null && colors.size() > 0 )
-    		return colors.get( 0 );
+    	if( colors != null )
+    		return colors.size();
     	
-    	return null;
+    	return 0;
     }
     
-    /**
-     * The background colour.
-     * @return A colour.
-     */
-    public Color getBackgroundColor()
+    public Color getFillColor( int i )
     {
-    	ArrayList<Color> colors = getBackgroundPalette();
+    	Colors colors = (Colors)getValue( "fill-color" );
     	
-    	if( colors != null && colors.size() > 0 )
-    		return colors.get( 0 );
+    	if( colors != null )
+    		return colors.get( i );
     	
-    	return null;
+    	return null;    	
+    }
+	
+	/**
+	 * Which image to use when filling the element contents with it.
+	 */
+	public String getFillImage()
+	{
+		return (String) getValue( "fill-image" );
+	}
+
+	/**
+	 * How to draw the element contour.
+	 */
+	public StrokeMode getStrokeMode()
+	{
+		return (StrokeMode) getValue( "stroke-mode" );
+	}
+
+	/**
+	 * How to color the element contour.
+	 */
+    public Colors getStrokeColor()
+	{
+		return (Colors) getValue( "stroke-color" );
+	}
+    
+    public int getStrokeColorCount()
+    {
+    	Colors colors = (Colors)getValue( "stroke-color" );
+    	
+    	if( colors != null )
+    		return colors.size();
+    	
+    	return 0;
     }
     
-    /**
-     * The palette of colours for gradients and multi-colour elements.
-     * The first element of the palette is the foreground colour.
-     * @see #getColor()
-     * @return An array of colours.
-     */
-    @SuppressWarnings("unchecked")
-    public ArrayList<Color> getPalette()
+    public Color getStrokeColor( int i )
     {
-    	return (ArrayList<Color>) getValue( "colors" );
-    }
-    
-    /**
-     * The palette of background colours for gradients and multi-colour elements.
-     * The first element of the background palette is the default background colour.
-     * @return An array of colours.
-     */
-    @SuppressWarnings("unchecked")
-    public ArrayList<Color> getBackgroundPalette()
-    {
-    	return (ArrayList<Color>) getValue( "bgColors" );
-    }
-    
-    /**
-     * The mode used to fill the element contents. 
-     * @return A fill mode.
-     */
-    public FillMode getFillMode()
-    {
-    	return (FillMode) getValue( "fill" );
+    	Colors colors = (Colors)getValue( "stroke-color" );
+    	
+    	if( colors != null )
+    		return colors.get( i );
+    	
+    	return null;    	
     }
 
 	/**
-	 * The width or diameter or overall size of the element.
-     * @return A width in rendering units.
-     */
-    public Value getWidth()
-    {
-    	return (Value) getValue( "width" );
-    }
-
-    /**
-     * The height of length of the element.
-     * @return A height in rendering units.
-     */
-    public Value getHeight()
-    {
-    	return (Value) getValue( "height" );
-    }
-
-    /**
-     * The rendering layer this element pertains. 0 is the default layer.
-     * @return A layer.
-     */
-    public int getZIndex()
-    {
-    	return (Integer) getValue( "z_index" );
-    }
+	 * Width of the element contour.
+	 */
+	public Value getStrokeWidth()
+	{
+		return (Value) getValue( "stroke-width" );
+	}
 
 	/**
-	 * The node shape.
-     * @return A node shape.
-     */
-    public NodeShape getNodeShape()
-    {
-    	return (NodeShape) getValue( "nodeShape" );
-    }
+	 * How to draw the shadow of the element.
+	 */
+	public ShadowMode getShadowMode()
+	{
+		return (ShadowMode) getValue( "shadow-mode" );
+	}
 
 	/**
-	 * The edge shape.
-     * @return A edge shape.
-     */
-    public EdgeShape getEdgeShape()
+	 * Color(s) of the element shadow.
+	 */
+    public Colors getShadowColor()
+	{
+		return (Colors) getValue( "shadow-color" );
+	}
+    
+    public int getShadowColorCount()
     {
-    	return (EdgeShape) getValue( "edgeShape" );
+    	Colors colors = (Colors)getValue( "shadow-color" );
+    	
+    	if( colors != null )
+    		return colors.size();
+    	
+    	return 0;
     }
     
-    /**
-     * The edge style.
-     * @return A edge style.
-     */
-    public EdgeStyle getEdgeStyle()
+    public Color getShadowColor( int i )
     {
-    	return (EdgeStyle) getValue( "edgeStyle" );
-    }
-    
-    /**
-     * The edge point list.
-     * @return An array of points.
-     */
-    @SuppressWarnings("unchecked")
-    public ArrayList<Point3> getEdgePoints()
-    {
-    	return (ArrayList<Point3>) getValue( "edgePoints" );
+    	Colors colors = (Colors)getValue( "shadow-color" );
+    	
+    	if( colors != null )
+    		return colors.get( i );
+    	
+    	return null;    	
     }
 
 	/**
-	 * The image URL.
-     * @return An URL.
-     */
-    public String getImageUrl()
+	 * Width of the element shadow.
+	 */
+	public Value getShadowWidth()
+	{
+		return (Value) getValue( "shadow-width" );
+	}
+
+	/**
+	 * Offset of the element shadow centre according to the element centre. 
+	 */
+	public Values getShadowOffset()
+	{
+		return (Values) getValue( "shadow-offset" );
+	}
+	
+	/**
+	 * Additional space to add inside the element between its contour and its contents.
+	 */
+	public Values getPadding()
+	{
+		return (Values) getValue( "padding" );
+	}
+
+	/**
+	 * How to draw the text of the element.
+	 */
+	public TextMode getTextMode()
+	{
+		return (TextMode) getValue( "text-mode" );
+	}
+
+	/**
+	 * How and when to show the text of the element. 
+	 */
+	public TextVisibilityMode getTextVisibilityMode()
+	{
+		return (TextVisibilityMode) getValue( "text-visibility-mode" );
+	}
+
+	/**
+	 * Visibility values if the text visibility changes.
+	 */
+	public Values getTextVisiblity()
+	{
+		return (Values) getValue( "text-visibility" );
+	}
+
+	/**
+	 * The text color(s).
+	 */
+    public Colors getTextColor()
+	{
+		return (Colors) getValue( "text-color" );
+	}
+    
+    public int getTextColorCount()
     {
-    	return (String) getValue( "imageUrl" );
+    	Colors colors = (Colors)getValue( "text-color" );
+    	
+    	if( colors != null )
+    		return colors.size();
+    	
+    	return 0;
     }
     
-    /**
-     * The image modeField.
-     * @return An image modeField.
-     */
-    public ImageMode getImageMode()
+    public Color getTextColor( int i )
     {
-    	return (ImageMode) getValue( "imageMode" );
-    }
-    
-    /**
-     * The image offset in X.
-     * @return An offset in X.
-     */
-    public Value getImageOffsetX()
-    {
-    	return (Value) getValue( "imageOffsetX" );
-    }
-    
-    /**
-     * The image offset in Y.
-     * @return An offset in Y.
-     */
-    public Value getImageOffsetY()
-    {
-    	return (Value) getValue( "imageOffsetY" );
-    }
-    
-    /**
-     * The sprite shape.
-     * @return a sprite shape.
-     */
-    public SpriteShape getSpriteShape()
-    {
-    	return (SpriteShape) getValue( "spriteShape" );
-    }
-    
-    /**
-     * The sprite orientation.
-     * @return A sprite orientation.
-     */
-    public SpriteOrientation getSpriteOrientation()
-    {
-    	return (SpriteOrientation) getValue( "spriteOrientation" );
+    	Colors colors = (Colors)getValue( "text-color" );
+    	
+    	if( colors != null )
+    		return colors.get( i );
+    	
+    	return null;    	
     }
 
 	/**
-	 * The arrow shape.
-     * @return An arrow shape.
-     */
-    public ArrowShape getArrowShape()
-    {
-    	return (ArrowShape) getValue( "arrowShape" );
-    }
-
+	 * The text font style variation.
+	 */
+	public TextStyle getTextStyle()
+	{
+		return (TextStyle) getValue( "text-style" );
+	}
+	
 	/**
-	 * The arrow image URL.
-     * @return An URL. 
-     */
-    public String getArrowImageUrl()
-    {
-    	return (String) getValue( "arrowImageUrl" );
-    }
-    
-    /**
-     * The arrow length.
-     * @return A length.
-     */
-    public Value getArrowLength()
-    {
-    	return (Value) getValue( "arrowLength" );
-    }
-    
-    /**
-     * The arrow width.
-     * @return A width.
-     */
-    public Value getArrowWidth()
-    {
-    	return (Value) getValue( "arrowWidth" );
-    }
-    
-	/**
-	 * The width.
-     * @return The border width.
-     */
-    public Value getBorderWidth()
-    {
-    	return (Value) getValue( "borderWidth" );
-    }
-    
-	/**
-	 * The border colour.
-     * @return A colour.
-     */
-    public Color getBorderColor()
-    {
-    	return (Color) getValue( "borderColor" );
-    }
-    
-    /**
-     * The padding.
-     * @return The padding length.
-     */
-    public Value getPadding()
-    {
-    	return (Value) getValue( "padding" );
-    }
-
-	/**
-	 * The text foreground colour.
-     * @return A colour.
-     */
-    public Color getTextColor()
-    {
-    	return (Color) getValue( "textColor" );
-    }
+	 * The text font.
+	 */
+	public String getTextFont()
+	{
+		return (String) getValue( "text-font" );
+	}
 
 	/**
 	 * The text size in points.
-     * @return A text size.
-     */
-    public float getTextSize()
-    {
-    	return (Float) getValue( "textSize" );
-    }
+	 */
+	public Value getTextSize()
+	{
+		return (Value) getValue( "text-size" );
+	}
 
 	/**
-	 * The name of the text font.
-     * @return A font name.
-     */
-    public String getTextFont()
-    {
-    	return (String) getValue( "textFont" );
-    }
+	 * How to draw the icon around the text (or instead of the text).
+	 */
+	public IconMode getIconMode()
+	{
+		return (IconMode) getValue( "icon-mode" );
+	}
+	
+	/**
+	 * The icon image to use.
+	 */
+	public String getIcon()
+	{
+		return (String) getValue( "icon" );
+	}
+	
+	/**
+	 * How and when to show the element.
+	 */
+	public VisibilityMode getVisibilityMode()
+	{
+		return (VisibilityMode) getValue( "visibility-mode" );
+	}
+	
+	/**
+	 * The element visibility if it is variable.
+	 */
+	public Values getVisibility()
+	{
+		return (Values) getValue( "visibility" );
+	}
 
 	/**
-	 * The offset along X from the attach point for the text base
-	 * point.
-     * @return An offset along X.
-     */
-    public Value getTextOffsetX()
-    {
-    	return (Value) getValue( "textOffsetX" );
-    }
+	 * How to size the element.
+	 */
+	public SizeMode getSizeMode()
+	{
+		return (SizeMode) getValue( "size-mode" );
+	}
 
 	/**
-	 * The offset along Y from the attach point for the text base
-	 * point.
-     * @return An offset along Y.
-     */
-    public Value getTextOffsetY()
-    {
-    	return (Value) getValue( "textOffsetY" );
-    }
-    
-	/**
-	 * The text style.
-     * @return A text style.
-     */
-    public TextStyle getTextStyle()
-    {
-    	return (TextStyle) getValue( "textStyle" );
-    }
+	 * The element dimensions.
+	 */
+	public Values getSize()
+	{
+		return (Values) getValue( "size" );
+	}
 
 	/**
-	 * The text alingment.
-     * @return A Text alignment
-     */
-    public TextAlignment getTextAlignment()
-    {
-    	return (TextAlignment) getValue( "textAlignment" );
-    }
+	 * The element polygonal shape.
+	 */
+	public Values getShapePoints()
+	{
+		return (Values) getValue( "shape-points" );
+	}
+	
+	/**
+	 * How to align the text according to the element centre.
+	 */
+	public TextAlignment getTextAlignment()
+	{
+		return (TextAlignment) getValue( "text-alignment" );
+	}
 
-    /**
-     * The text mode.
-     * @return A text mode.
-     */
-    public TextMode getTextMode()
-    {
-    	return (TextMode) getValue( "textMode" );
-    }
-    
-// Shadows
+	/**
+	 * The element shape.
+	 */
+	public Shape getShape()
+	{
+		return (Shape) getValue( "shape" );
+	}
 
-    /**
-     * The shadow style.
-     * @return a shadow style value.
-     */
-    public ShadowStyle getShadowStyle()
-    {
-    	return (ShadowStyle) getValue( "shadowStyle" );
-    }
+	/**
+	 * The element JComponent if available.
+	 */
+	public JComponent getJComponent()
+	{
+		return (JComponent) getValue( "jcomponent" );
+	}
+	
+	/**
+	 * How to orient a sprite according to its attachement.
+	 */
+	public SpriteOrientation getSpriteOrientation()
+	{
+		return (SpriteOrientation) getValue( "sprite-orientation" );
+	}
+
+	/**
+	 * The shape of edges arrows.
+	 */
+	public ArrowShape getArrowShape()
+	{
+		return (ArrowShape) getValue( "arrow-shape" );
+	}
+
+	/**
+	 * Image to use for the arrow. 
+	 */
+	public String getArrowImage()
+	{
+		return (String) getValue( "arrow-image" );
+	}
+	
+	/**
+	 * Edge arrow dimensions.
+	 */
+	public Values getArrowSize()
+	{
+		return (Values) getValue( "arrow-size" );
+	}
+
+	/**
+	 * Colour of all non-graph, non-edge, non-node, non-sprite things.
+	 */
+    public Colors getCanvasColor()
+	{
+		return (Colors) getValue( "canvas-color" );
+	}
     
-    /**
-     * The shadow width.
-     * @return The shadow width.
-     */
-    public Value getShadowWidth()
+    public int getCanvasColorCount()
     {
-    	return (Value) getValue( "shadowWidth" );
-    }
-    
-    /**
-     * The shadow offset along X.
-     * @return The shadow x offset.
-     */
-    public Value getShadowOffsetX()
-    {
-    	return (Value) getValue( "shadowOffsetX" );
-    }
-    
-    /**
-     * The shadow offset along Y.
-     * @return The shadow Y offset.
-     */
-    public Value getShadowOffsetY()
-    {
-    	return (Value) getValue( "shadowOffsetY" );
-    }
-    
-    /**
-     * The shadow set of colours.  
-     * @return A set of colours.
-     */
-    @SuppressWarnings("unchecked")
-    public ArrayList<Color> getShadowPalette()
-    {
-    	return (ArrayList<Color>) getValue( "shadowPalette" );
-    }
-    
-    /**
-     * The main shadow colour.
-     * @return The main shadow colour.
-     */
-    public Color getShadowColor()
-    {
-    	ArrayList<Color> colors = getShadowPalette();
+    	Colors colors = (Colors)getValue( "canvas-color" );
     	
-    	if( colors != null && colors.size() > 0 )
-    		return colors.get( 0 );
+    	if( colors != null )
+    		return colors.size();
     	
-    	return null;
+    	return 0;
     }
-
+    
+    public Color getCanvasColor( int i )
+    {
+    	Colors colors = (Colors)getValue( "canvas-color" );
+    	
+    	if( colors != null )
+    		return colors.get( i );
+    	
+    	return null;    	
+    }
+	
+	public Integer getZIndex()
+	{
+		return (Integer) getValue( "z-index" );
+	}
+	
 // Commands
 
     /**
@@ -557,56 +557,65 @@ public class Style extends StyleConstants
      */
     public void setDefaults()
     {
-    	ArrayList<Color> colors   = new ArrayList<Color>();
-    	ArrayList<Color> bgColors = new ArrayList<Color>();
-    	ArrayList<Color> shadows  = new ArrayList<Color>();
+    	Colors fillColor     = new Colors();
+    	Colors strokeColor   = new Colors();
+    	Colors shadowColor   = new Colors();
+    	Colors textColor     = new Colors();
+    	Colors canvasColor   = new Colors();
     	
-    	colors.add( Color.BLACK );
-    	bgColors.add( Color.WHITE );
-    	shadows.add( new Color( 0.7f, 0.7f, 0.7f ) );
+    	fillColor.add(   Color.BLACK );
+    	strokeColor.add( Color.BLACK );
+    	shadowColor.add( Color.GRAY  );
+    	textColor.add(   Color.BLACK );
+    	canvasColor.add( Color.WHITE );
     	
-    	values.put( "colors"            , colors );
-    	values.put( "bgColors"          , bgColors );
-    	values.put( "fill"              , FillMode.PLAIN );
-    	values.put( "width"             , new Value( 12, Units.PX ) );
-    	values.put( "height"            , new Value( 12, Units.PX ) );
-    	values.put( "z_index"           , new Integer( 0 ) );
+    	values.put( "z-index"             , new Integer( 0 ) );
+    	
+    	values.put( "fill-mode"           , FillMode.PLAIN );
+    	values.put( "fill-color"          , fillColor );
+    	values.put( "fill-image"          , null );
+    	
+    	values.put( "stroke-mode"         , StrokeMode.NONE );
+    	values.put( "stroke-color"        , strokeColor );
+    	values.put( "stroke-width"        , new Value( Units.PX, 1 ) );
 
-    	values.put( "nodeShape"         , NodeShape.CIRCLE );
-    	values.put( "edgeShape"         , EdgeShape.LINE );
-    	values.put( "edgePoints"        , null );
-    	values.put( "edgeStyle"         , EdgeStyle.PLAIN );
-    	values.put( "spriteShape"       , SpriteShape.CIRCLE );
-    	values.put( "spriteOrientation" , SpriteOrientation.NONE );
-    	
-    	values.put( "borderWidth"       , new Value( 0, Units.PX ) );
-    	values.put( "borderColor"       , Color.BLACK );
-    	values.put( "padding"           , new Value( 0, Units.PX ) );
-    	 
-    	values.put( "imageUrl"          , null );
-    	values.put( "imageOffsetX"      , new Value( 2, Units.PX ) );
-    	values.put( "imageOffsetY"      , new Value( 2, Units.PX ) );
-    	values.put( "imageMode"         , ImageMode.SIMPLE );
-    	
-    	values.put( "arrowShape"        , ArrowShape.SIMPLE );
-    	values.put( "arrowLength"       , new Value( 16, Units.PX ) );
-    	values.put( "arrowWidth"        , new Value( 4, Units.PX ) );
-    	values.put( "arrowImageUrl"     , null );
-    	
-    	values.put( "textColor"         , Color.GRAY );
-    	values.put( "textSize"          , new Float( 11 ) );
-    	values.put( "textFont"          , "sans-serif" );
-    	values.put( "textOffsetX"       , new Value( 0, Units.PX ) );
-    	values.put( "textOffsetY"       , new Value( 0, Units.PX ) );
-    	values.put( "textStyle"         , TextStyle.NORMAL );
-    	values.put( "textAlignment"     , TextAlignment.CENTER );
-    	values.put( "textMode"          , TextMode.TRUNCATED );
+    	values.put( "shadow-mode"         , ShadowMode.NONE );
+    	values.put( "shadow-color"        , shadowColor );
+    	values.put( "shadow-width"        , new Value( Units.PX, 3 ) );
+    	values.put( "shadow-offset"       , new Values( Units.PX, 3, 3 ) );
 
-    	values.put( "shadowStyle"       , ShadowStyle.NONE );
-    	values.put( "shadowWidth"       , new Value( 0, Units.PX ) );
-    	values.put( "shadowOffsetX"     , new Value( 0, Units.PX ) );
-    	values.put( "shadowOffsetY"     , new Value( 0, Units.PX ) );
-    	values.put( "shadowPalette"     , shadows );
+    	values.put( "padding"             , new Values( Units.PX, 0, 0, 0 ) );
+    	
+    	values.put( "text-mode"           , TextMode.NORMAL );
+    	values.put( "text-visibility-mode", TextVisibilityMode.NORMAL );
+    	values.put( "text-visibility"     , null );
+    	values.put( "text-color"          , textColor );
+    	values.put( "text-style"          , TextStyle.NORMAL );
+    	values.put( "text-font"           , "sans" );
+    	values.put( "text-size"           , new Value( Units.PX, 10 ) );
+    	values.put( "text-alignment"      , TextAlignment.CENTER );
+    	
+    	values.put( "icon-mode"           , IconMode.NONE );
+    	values.put( "icon"                , null );
+    	
+    	values.put( "visibility-mode"     , VisibilityMode.NORMAL );
+    	values.put( "visibility"          , null );
+    	
+    	values.put( "size-mode"           , SizeMode.NORMAL );
+    	values.put( "size"                , new Values( Units.PX, 10, 10, 10 ) );
+    	
+    	values.put( "shape"               , Shape.CIRCLE );
+    	values.put( "shape-points"        , null );
+    	values.put( "jcomponent"          , null );
+    	
+    	values.put( "sprite-orientation"  , SpriteOrientation.NONE );
+    	
+    	values.put( "arrow-shape"         , ArrowShape.ARROW );
+    	values.put( "arrow-size"          , new Values( Units.PX, 8, 4 ) );
+    	values.put( "arrow-image"         , null );
+    	
+    	values.put( "canvas-color"        , canvasColor );
+    	
     }
     
     /**
@@ -615,57 +624,60 @@ public class Style extends StyleConstants
      * copied.
      * @param other Another style.
      */
-    @SuppressWarnings("unchecked")
     public void augment( Style other )
     {
-    	if( other != this )
-    	{
-    		if( other.hasValue( "colors"        ) ) setValue( "colors",        new ArrayList<Color>( (ArrayList<Color>) other.getValue( "colors" ) ) );
-    	    if( other.hasValue( "bgColors"      ) ) setValue( "bgColors",      new ArrayList<Color>( (ArrayList<Color>) other.getValue( "bgColors" ) ) );
-    	    if( other.hasValue( "shadowPalette" ) ) setValue( "shadowPalette", new ArrayList<Color>( (ArrayList<Color>) other.getValue( "shadowPalette" ) ) );
+    	throw new RuntimeException( "TODO !!!" );
 
-    	    augmentField( "fill",    other );
-    		augmentField( "width",   other );
-    		augmentField( "height",  other );
-    		augmentField( "z_index", other );
-    		
-    	    augmentField( "nodeShape", other );
-    	    augmentField( "edgeShape", other );
-    	    augmentField( "edgeStyle", other );
-    	    
-    		if( other.hasValue( "edgePoints" ) ) setValue( "edgePoints", new ArrayList<Point3>( (ArrayList<Point3>) other.getValue( "edgePoints" ) ) );
-    		
-    		augmentField( "spriteShape",       other );
-    		augmentField( "spriteOrientation", other );
-    		
-    		augmentField( "borderWidth", other );
-    		augmentField( "borderColor", other );
-    		augmentField( "padding",     other );
-    		
-    		augmentField( "arrowShape",    other );
-    		augmentField( "arrowLength",   other );
-    		augmentField( "arrowWidth",    other );
-    		augmentField( "arrowImageUrl", other );
-    		
-    		augmentField( "imageUrl",     other );
-    		augmentField( "imageMode",    other );
-    		augmentField( "imageOffsetX", other );
-    		augmentField( "imageOffsetY", other );
-    		
-    		augmentField( "textColor",     other );
-    		augmentField( "textSize",      other );
-    		augmentField( "textFont",      other );
-    		augmentField( "textOffsetX",   other );
-    		augmentField( "textOffsetY",   other );
-    		augmentField( "textStyle",     other );
-    		augmentField( "textAlignment", other );
-    		augmentField( "textMode",      other );
-    		
-    		augmentField( "shadowStyle", other );
-    		augmentField( "shadowWidth", other );
-    		augmentField( "shadowOffsetX", other );
-    		augmentField( "shadowOffsetY", other );
-    	}
+//    	if( other != this )
+//    	{
+//    	/*
+//    		if( other.hasValue( "colors"        ) ) setValue( "colors",        new ArrayList<Color>( (ArrayList<Color>) other.getValue( "colors" ) ) );
+//    	    if( other.hasValue( "bgColors"      ) ) setValue( "bgColors",      new ArrayList<Color>( (ArrayList<Color>) other.getValue( "bgColors" ) ) );
+//    	    if( other.hasValue( "shadowPalette" ) ) setValue( "shadowPalette", new ArrayList<Color>( (ArrayList<Color>) other.getValue( "shadowPalette" ) ) );
+//
+//    	    augmentField( "fill",    other );
+//    		augmentField( "width",   other );
+//    		augmentField( "height",  other );
+//    		augmentField( "z_index", other );
+//    		
+//    	    augmentField( "nodeShape", other );
+//    	    augmentField( "edgeShape", other );
+//    	    augmentField( "edgeStyle", other );
+//    	    
+//    		if( other.hasValue( "edgePoints" ) ) setValue( "edgePoints", new ArrayList<Point3>( (ArrayList<Point3>) other.getValue( "edgePoints" ) ) );
+//    		
+//    		augmentField( "spriteShape",       other );
+//    		augmentField( "spriteOrientation", other );
+//    		
+//    		augmentField( "borderWidth", other );
+//    		augmentField( "borderColor", other );
+//    		augmentField( "padding",     other );
+//    		
+//    		augmentField( "arrowShape",    other );
+//    		augmentField( "arrowLength",   other );
+//    		augmentField( "arrowWidth",    other );
+//    		augmentField( "arrowImageUrl", other );
+//    		
+//    		augmentField( "imageUrl",     other );
+//    		augmentField( "imageMode",    other );
+//    		augmentField( "imageOffsetX", other );
+//    		augmentField( "imageOffsetY", other );
+//    		
+//    		augmentField( "textColor",     other );
+//    		augmentField( "textSize",      other );
+//    		augmentField( "textFont",      other );
+//    		augmentField( "textOffsetX",   other );
+//    		augmentField( "textOffsetY",   other );
+//    		augmentField( "textStyle",     other );
+//    		augmentField( "textAlignment", other );
+//    		augmentField( "textMode",      other );
+//    		
+//    		augmentField( "shadowStyle", other );
+//    		augmentField( "shadowWidth", other );
+//    		augmentField( "shadowOffsetX", other );
+//    		augmentField( "shadowOffsetY", other );
+//    		*/
+//    	}
     }
     
     protected void augmentField( String field, Style other )
@@ -675,13 +687,8 @@ public class Style extends StyleConstants
     	if( value != null )
     	{
     		if( value instanceof Value )
-    		{
-    			setValue( field, new Value( (Value)value ) );
-    		}
-    		else
-    		{
-    			setValue( field, value );
-    		}
+    		     setValue( field, new Value( (Value)value ) );
+    		else setValue( field, value );
     	}
     }
     
@@ -709,473 +716,9 @@ public class Style extends StyleConstants
     
 // Commands -- Setters
     
-    protected void setValue( String field, Object value )
+    public void setValue( String field, Object value )
     {
     	values.put( field, value );
-    }
-    
-	/**
-	 * Set of change the foreground colour.
-     * @param color An AWT colour.
-     */
-    @SuppressWarnings("unchecked")
-    public void setColor( Color color )
-    {
-    	ArrayList<Color> colors = (ArrayList<Color>) values.get( "colors" );
-    	
-    	if( colors == null )
-    	{
-    		colors = new ArrayList<Color>();
-    		colors.add( color );
-    		setValue( "colors", colors );
-    	}
-    	else
-    	{
-    		colors.set( 0, color );
-    	}
-    }
-    
-    /**
-     * Set or change the background colour.
-     * @param color An AWT colour.
-     */
-    @SuppressWarnings("unchecked")
-    public void setBackgroundColor( Color color )
-    {
-    	ArrayList<Color> colors = (ArrayList<Color>) values.get( "bgColors" );
-    	
-    	if( colors == null )
-    	{
-    		colors = new ArrayList<Color>();
-    		colors.add( color );
-    		setValue( "bgColors", colors );
-    	}
-    	else
-    	{
-    		colors.set( 0, color );
-    	}
-    }
-    
-    /**
-     * Add a colour in the colour palette. If no foreground colour was set with
-     * {@link #setColor(Color)}, the first colour added with this method will be the foreground
-     * colour. It is will be changed each time {@link #setColor(Color)} is called. 
-     * @param color The colour to add.
-     */
-    @SuppressWarnings("unchecked")
-    public void addColor( Color color )
-    {
-    	ArrayList<Color> colors = (ArrayList<Color>) values.get( "colors" );
-    	
-    	if( colors == null )
-    	{
-    		colors = new ArrayList<Color>();
-    		setValue( "colors", colors );
-    	}
-    	
-    	colors.add( color );
-    }
-    
-    /**
-     * Add a colour in the background colour palette. If no background colour was set with
-     * {@link #setBackgroundColor(Color)}, the first colour added with this method will be the
-     * background colour. It is will be changed each time {@link #setBackgroundColor(Color)} is
-     * called. 
-     * @param color The colour to add.
-     */
-    @SuppressWarnings("unchecked")
-    public void addBackgroundColor( Color color )
-    {
-    	ArrayList<Color> colors = (ArrayList<Color>) values.get( "bgColors" );
-    	
-    	if( colors == null )
-    	{
-    		colors = new ArrayList<Color>();
-    		setValue( "bgColors", colors );
-    	}
-    	
-    	colors.add( color );
-    }
-    
-    /**
-     * Remove the colour palette.
-     */
-    public void unsetColor()
-    {
-    	values.remove( "colors" );
-    }
-    
-    public void unsetBgColor()
-    {
-    	values.remove( "bgColors" );
-    }
-
-    public void setFillMode( FillMode mode )
-    {
-    	setValue( "fill", mode );
-    }
-    
-	/**
-	 * Set of change the element width (diameter or overall size).
-     * @param width The new width.
-     * @param units The units.
-     */
-    public void setWidth( float width, Units units )
-    {
-    	setValue( "width", new Value( width, units ) );
-    }
-
-    /**
-     * Remove the width setting.
-     */
-    public void unsetWidth()
-    {
-    	values.remove( "width" );
-    }
-    
-    /**
-     * Set or change the element height (or length).
-     * @param height The new height.
-     * @param units The units.
-     */
-    public void setHeight( float height, Units units )
-    {
-    	setValue( "height", new Value( height, units ) );
-    }
-    
-    /**
-     * Set or change the z-index.
-     * @param z_index The new z-index.
-     */
-    public void setZIndex( int z_index )
-    {
-    	setValue( "z_index", z_index );
-    }
-
-	/**
-	 * Set of change the node shape.
-     * @param nodeShape A node shape.
-     */
-    public void setNodeShape( NodeShape nodeShape )
-    {
-    	setValue( "nodeShape", nodeShape );
-    }
-
-	/**
-	 * Set of change the edge shape.
-     * @param edgeShape A edge shape.
-     */
-    public void setEdgeShape( EdgeShape edgeShape )
-    {
-    	setValue( "edgeShape", edgeShape );
-    }
-    
-    /**
-     * Set or change the edge style.
-     * @param edgeStyle A edge style.
-     */
-    public void setEdgeStyle( EdgeStyle edgeStyle )
-    {
-    	setValue( "edgeStyle", edgeStyle );
-    }
-    
-    /**
-     * Remove the edge style setting.
-     */
-    public void unsetEdgeStyle()
-    {
-    	values.remove( "edgeStyle" );
-    }
-    
-    /**
-     * Erase the edge point list.
-     */
-    public void removeEdgePoints()
-    {
-    	values.remove( "edgePoints" );
-    }
-    
-    /**
-     * Add a new edge point at (x,y,z).
-     * @param x The abscissa.
-     * @param y The ordinate.
-     * @param z The depth.
-     */
-    @SuppressWarnings("unchecked")
-    public void addEdgePoint( float x, float y, float z )
-    {
-    	ArrayList<Point3> edgePoints = (ArrayList<Point3>) values.get( "edgePoints" );
-    	
-    	if( edgePoints == null )
-    	{
-    		edgePoints = new ArrayList<Point3>();
-    		setValue( "edgePoints", edgePoints );
-    	}
-    	
-    	edgePoints.add( new Point3( x, y, z ) );
-    }
-    
-    /**
-     * Set or change the sprite shape.
-     * @param spriteShape A sprite shape.
-     */
-    public void setSpriteShape( SpriteShape spriteShape )
-    {
-    	setValue( "spriteShape", spriteShape );
-    }
-    
-    /**
-     * Set or change the sprite orientation.
-     * @param spriteOrientation A sprite orientation.
-     */
-    public void setSpriteOrientation( SpriteOrientation spriteOrientation )
-    {
-    	setValue( "spriteOrientation", spriteOrientation );
-    }
-
-	/**
-	 * Set of change the border width.
-     * @param borderWidth A width.
-     * @param units Units.
-     */
-    public void setBorderWidth( float borderWidth, Units units )
-    {
-    	setValue( "borderWidth", new Value( borderWidth, units ) );
-    }
-
-	/**
-	 * Set or change the border colour.
-     * @param borderColor An AWT colour.
-     */
-    public void setBorderColor( Color borderColor )
-    {
-    	setValue( "borderColor", borderColor );
-    }
-
-	/**
-	 * Set or change the text foreground colour.
-     * @param textColor An AWT colour.
-     */
-    public void setTextColor( Color textColor )
-    {
-    	setValue( "textColor", textColor );
-    }
-    
-    /**
-     * Set or change the padding.
-     * @param padding The padding length.
-     * @param units Units.
-     */
-    public void setPadding( float padding, Units units )
-    {
-    	setValue( "padding", new Value( padding, units ) );
-    }
-
-	/**
-	 * Set or change the text size in points. 
-     * @param textSize A point size.
-     */
-    public void setTextSize( float textSize )
-    {
-    	setValue( "textSize", new Float( textSize ) );
-    }
-
-	/**
-	 * Set or change the text font name.
-     * @param textFont A font name.
-     */
-    public void setTextFont( String textFont )
-    {
-    	setValue( "textFont", textFont );
-    }
-
-	/**
-	 * Set or change the text offset along X and Y from the attach point.
-	 * @param x A length.
-	 * @param y A length.
-     * @param units Units.
-     */
-    public void setTextOffset( float x, float y, Units units )
-    {
-    	setValue( "textOffsetX", new Value( x, units ) );
-    	setValue( "textOffsetY", new Value( y, units ) );
-    }
-
-	/**
-	 * Set or change the text style.
-     * @param textStyle A text style.
-     */
-    public void setTextStyle( TextStyle textStyle )
-    {
-    	setValue( "textStyle", textStyle );
-    }
-    
-    /**
-     * Set or change the text mode.
-     * @param textMode A text mode.
-     */
-    public void setTextMode( TextMode textMode )
-    {
-    	setValue( "textMode", textMode );
-    }
-
-	/**
-	 * Set or change the image URL.
-     * @param nodeImageUrl An URL.
-     */
-    public void setImageUrl( String nodeImageUrl )
-    {
-    	setValue( "imageUrl", nodeImageUrl );
-    }
-
-	/**
-	 * Set or change the arrow image URL.
-     * @param arrowImageUrl An URL.
-     */
-    public void setArrowImageUrl( String arrowImageUrl )
-    {
-    	setValue( "arrowImageUrl", arrowImageUrl );
-    }
-    
-    /**
-     * Set or change the image offset in X and Y.
-     * @param x The new offset in X.
-     * @param y The new offset in Y.
-     * @param units Units.
-     */
-    public void setImageOffset( float x, float y, Units units )
-    {
-    	setValue( "imageOffsetX", new Value( x, units ) );
-    	setValue( "imageOffsetY", new Value( y, units ) );
-    }
-    
-    /**
-     * Set or change the image modeField.
-     * @param mode The new image modeField.
-     */
-    public void setImageMode( ImageMode mode )
-    {
-    	setValue( "imageMode", mode );
-    }
-    
-    /**
-     * Set or change the arrow length.
-     * @param arrowLength The new length.
-     * @param units Units.
-     */
-    public void setArrowLength( float arrowLength, Units units )
-    {
-    	setValue( "arrowLength", new Value( arrowLength, units ) );
-    }
-    
-    /**
-     * Set or change the arrow width.
-     * @param arrowWidth The new width.
-     * @param units Units.
-     */
-    public void setArrowWidth( float arrowWidth, Units units )
-    {
-    	setValue( "arrowWidth", new Value( arrowWidth, units ) );
-    }
-
-	/**
-	 * Set or change the text alignment.
-     * @param textAlignment A text alignment.
-     */
-    public void setTextAlignment( TextAlignment textAlignment )
-    {
-    	setValue( "textAlignment", textAlignment );
-    }
-
-	/**
-	 * Set or change the arrow shape.
-     * @param arrowShape an arrow shape.
-     */
-    public void setArrowShape( ArrowShape arrowShape )
-    {
-    	setValue( "arrowShape", arrowShape );
-    }
-
-// Shadows
-    
-    /**
-     * Set or change the shadow style.
-     * @param shadowStyle a shadow style.
-     */
-    public void setShadowStyle( ShadowStyle shadowStyle )
-    {
-    	setValue( "shadowStyle", shadowStyle );
-    }
-    
-    /**
-     * Set the shadow width.
-     * @param value The width.
-     * @param units The units.
-     */
-    public void setShadowWidth( float value, Units units )
-    {
-    	setValue( "shadowWidth", new Value( value, units ) );
-    }
-    
-	/**
-	 * Set of change the shadow foreground colour.
-     * @param color An AWT colour.
-     */
-    @SuppressWarnings("unchecked")
-    public void setShadowColor( Color color )
-    {
-    	ArrayList<Color> colors = (ArrayList<Color>) values.get( "shadowPalette" );
-    	
-    	if( colors == null )
-    	{
-    		colors = new ArrayList<Color>();
-    		colors.add( color );
-    		setValue( "shadowPalette", colors );
-    	}
-    	else
-    	{
-    		colors.set( 0, color );
-    	}
-    }
-    
-    /**
-     * Add a colour in the shadow colour palette. If no foreground colour was set with
-     * {@link #setShadowColor(Color)}, the first colour added with this method will be the foreground
-     * shadow colour. It is will be changed each time {@link #setShadowColor(Color)} is called. 
-     * @param color The colour to add.
-     */
-    @SuppressWarnings("unchecked")
-    public void addShadowColor( Color color )
-    {
-    	ArrayList<Color> colors = (ArrayList<Color>) values.get( "shadowPalette" );
-    	
-    	if( colors == null )
-    	{
-    		colors = new ArrayList<Color>();
-    		setValue( "shadowPalette", colors );
-    	}
-    	
-    	colors.add( color );
-    }
-    
-    /**
-     * Remove the shadow colour palette.
-     */
-    public void unsetShadowColor()
-    {
-    	values.remove( "shadowPalette" );
-    }
-    
-    /**
-     * Set or change the shadow offset in X and Y.
-     * @param x The new offset in X.
-     * @param y The new offset in Y.
-     * @param units Units.
-     */
-    public void setShadowOffset( float x, float y, Units units )
-    {
-    	setValue( "shadowOffsetX", new Value( x, units ) );
-    	setValue( "shadowOffsetY", new Value( y, units ) );    	
     }
 
 // Utility

@@ -312,11 +312,15 @@ public class StyleSheet
 		edgeRules.defaultRule   = new Rule( new Selector( Selector.Type.EDGE ),   defaultRule );
 		spriteRules.defaultRule = new Rule( new Selector( Selector.Type.SPRITE ), defaultRule );
 	
-		edgeRules.defaultRule.getStyle().setWidth( 1, Style.Units.PX );
-		edgeRules.defaultRule.getStyle().setZIndex( 1 );
-		nodeRules.defaultRule.getStyle().setZIndex( 2 );
-		spriteRules.defaultRule.getStyle().setZIndex( 3 );
-		graphRules.defaultRule.getStyle().setColor( Color.WHITE );
+		edgeRules.defaultRule.getStyle().setValue( "size", new Values( Style.Units.PX, 1 ) );
+		edgeRules.defaultRule.getStyle().setValue( "z-index", new Integer( 1 ) );
+		nodeRules.defaultRule.getStyle().setValue( "z-index", new Integer( 2 ) );
+		spriteRules.defaultRule.getStyle().setValue( "z-index", new Integer( 3 ) );
+		
+		Colors colors = new Colors();
+		colors.add( Color.WHITE );
+		
+		graphRules.defaultRule.getStyle().setValue( "fill-color", colors );
 	}
 	
 	/**

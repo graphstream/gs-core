@@ -111,8 +111,11 @@ TOKEN: { < TEXTCOLOR         : "text-color" > }
 TOKEN: { < TEXTSTYLE         : "text-style" > }
 TOKEN: { < TEXTFONT          : "text-font" > }
 TOKEN: { < TEXTSIZE          : "text-size" > }
-TOKEN: { < TEXTVISIBILITYMODE: "text-visibility" > }
-TOKEN: 
+TOKEN: { < TEXTVISIBILITYMODE: "text-visibility-mode" > }
+TOKEN: { < TEXTVISIBILITY    : "text-visibility" > }
+
+TOKEN: { < ICONMODE          : "icon-mode" > }
+TOKEN: { < ICON              : "icon" > }
 
 TOKEN: { < PADDING           : "padding" > }
 
@@ -126,7 +129,7 @@ TOKEN: { < SHAPE             : "shape" > }
 TOKEN: { < SIZE              : "size" > }
 TOKEN: { < SIZEMODE          : "size-mode" > }
 TOKEN: { < SHAPEPOINTS       : "shape-points" > }
-TOKEN: { < TEXT-ALIGNMENT    : "text-align" > }
+TOKEN: { < TEXTALIGNMENT     : "text-alignment" > }
 TOKEN: { < JCOMPONENT        : "jcomponent" > }
 //
 // Properties for edges only.
@@ -154,7 +157,7 @@ TOKEN: { < DOTS              : "dots" > }
 
 TOKEN: { < GRADIENTDIAGONAL1 : "gradient-diagonal1" > }
 TOKEN: { < GRADIENTDIAGONAL2 : "gradient-diagonal2" > }
-TOKEN: { < GRADIENHORIZONTAL : "gradient-horizontal" > }
+TOKEN: { < GRADIENTHORIZONTAL: "gradient-horizontal" > }
 TOKEN: { < GRADIENTRADIAL    : "gradient-radial" > }
 TOKEN: { < GRADIENTVERTICAL  : "gradient-vertical" > }
 
@@ -191,10 +194,12 @@ TOKEN: { < CIRCLE            : "circle" > }
 TOKEN: { < TRIANGLE          : "triangle" > }
 TOKEN: { < TEXTBOX           : "text-box" > }
 TOKEN: { < TEXTELLIPSE       : "text-ellipse" > }
-TOKEN: { < SQUARE            : "square" > }
+TOKEN: { < TEXTDIAMOND       : "text-diamond" > }
+TOKEN: { < TEXTPARAGRAPH     : "text-paragraph" > }
+TOKEN: { < BOX               : "box" > }
+TOKEN: { < CROSS             : "cross" > }
 TOKEN: { < DIAMOND           : "diamond" > }
 TOKEN: { < POLYGON           : "polygon" > }
-TOKEN: { < CROSS             : "cross" > }
 
 TOKEN: { < LINE              : "line" > }
 TOKEN: { < POLYLINE          : "polyline" > } 
@@ -213,7 +218,6 @@ TOKEN: { < NODE0             : "node0" > }
 TOKEN: { < TO                : "to" > }
 TOKEN: { < NODE1             : "node1" > }
 TOKEN: { < PROJECTION        : "projection" > }
-
 
 TOKEN: { < CLICKED           : "clicked" > }
 TOKEN: { < SELECTED          : "selected" > }
@@ -293,124 +297,68 @@ Selector select():
 
 void style( Style style ):
 {
-	Color               color;
-	String              url;
-	Style.ArrowShape    arrow;
-	Style.NodeShape     nshap;
-	Style.EdgeShape     eshap;
-	Style.EdgeStyle     estyl;
-	Style.SpriteShape   sshap;
-	Style.SpriteOrientation sori;
-	Number              nb1, nb2;
-	Style.TextAlignment txtal;
-	Style.TextStyle     txtst;
-	Style.TextMode      txtmd;
-	Style.ImageMode     imm;
-	Style.ShadowStyle   shsty;
-	Style.FillMode      fill;
+	Color                    color;
+	Colors                   colors;
+	String                   url;
+	Value                    value;
+	Values                   values;
+	Style.FillMode           fillMode;
+	Style.StrokeMode         strokeMode;
+	Style.ShadowMode         shadowMode;
+	Style.TextMode           textMode;
+	Style.TextVisibilityMode textVisMode;
+	Style.TextStyle          textStyle;
+	Style.TextAlignment      textAlignment;
+	Style.IconMode           iconMode;
+	Style.VisibilityMode     visMode;
+	Style.SizeMode           sizeMode;
+	Style.Shape              shape;
+	Style.SpriteOrientation  spriteOrient;
+	Style.ArrowShape         arrowShape;
 }
 {
 	( ( <COMMENT> )
-	| ( <COLOR>        <COLON> colors( style )             <SEMICOLON> )
-	| ( <BGCOLOR>      <COLON> bgColors( style )           <SEMICOLON> )
-	| ( <FILL>         <COLON> fill  = fill()              <SEMICOLON> { style.setFillMode( fill ); } )
-	| ( <WIDTH>        <COLON> nb1   = real()              <SEMICOLON> { style.setWidth( nb1.value, nb1.units ); } )
-	| ( <HEIGHT>       <COLON> nb1   = real()              <SEMICOLON> { style.setHeight( nb1.value, nb1.units ); } )
-	| ( <NODESHAPE>    <COLON> nshap = nodeShape()         <SEMICOLON> { style.setNodeShape( nshap ); } )
-	| ( <EDGESHAPE>    <COLON> eshap = edgeShape( style )  <SEMICOLON> { style.setEdgeShape( eshap ); } )
-	| ( <EDGESTYLE>    <COLON> estyl = edgeStyle()         <SEMICOLON> { style.setEdgeStyle( estyl );  } )
-	| ( <SPRITESHAPE>  <COLON> sshap = spriteShape()       <SEMICOLON> { style.setSpriteShape( sshap ); } )
-	| ( <SPRITEORIENT> <COLON> sori  = spriteOrient()      <SEMICOLON> { style.setSpriteOrientation( sori ); } )
-	| ( <ARROWSHAPE>   <COLON> arrow = arrowShape()        <SEMICOLON> { style.setArrowShape( arrow ); } )
-	| ( <ARROWLENGTH>  <COLON> nb1   = real()              <SEMICOLON> { style.setArrowLength( nb1.value, nb1.units ); } )
-	| ( <ARROWWIDTH>   <COLON> nb1   = real()              <SEMICOLON> { style.setArrowWidth( nb1.value, nb1.units ); } )
-	| ( <ARROWIMGURL>  <COLON> url   = url()               <SEMICOLON> { style.setArrowImageUrl( url ); } )
-	| ( <BORDERCOLOR>  <COLON> color = color()             <SEMICOLON> { style.setBorderColor( color ); } )
-	| ( <BORDERWIDTH>  <COLON> nb1   = real()              <SEMICOLON> { style.setBorderWidth( nb1.value, nb1.units ); } )
-	| ( <IMAGE>        <COLON> url   = url()               <SEMICOLON> { style.setImageUrl( url ); } )
-	| ( <IMAGEMODE>    <COLON> imm   = imageMode()         <SEMICOLON> { style.setImageMode( imm );  } )
-	| ( <IMAGEOFFSET>  <COLON> nb1   = real() nb2 = real() <SEMICOLON> { style.setImageOffset( nb1.value, nb2.value, nb1.units ); } )
-	| ( <PADDING>      <COLON> nb1   = real()              <SEMICOLON> { style.setPadding( nb1.value, nb1.units );  } )
-	| ( <SHADOWSTYLE>  <COLON> shsty = shadowStyle()       <SEMICOLON> { style.setShadowStyle( shsty ); } )
-	| ( <SHADOWOFFSET> <COLON> nb1   = real() nb2 = real() <SEMICOLON> { style.setShadowOffset( nb1.value, nb2.value, nb1.units ); } )
-	| ( <SHADOWCOLOR>  <COLON> shadowColors( style )       <SEMICOLON> )
-	| ( <SHADOWWIDTH>  <COLON> nb1   = real()              <SEMICOLON> { style.setShadowWidth( nb1.value, nb1.units ); } )
-	| ( <TEXTALIGN>    <COLON> txtal = textAlign()         <SEMICOLON> { style.setTextAlignment( txtal ); } )
-	| ( <TEXTMODE>     <COLON> txtmd = textMode()          <SEMICOLON> { style.setTextMode( txtmd ); } )
-	| ( <TEXTCOLOR>    <COLON> color = color()             <SEMICOLON> { style.setTextColor( color ); } )
-	| ( <TEXTSTYLE>    <COLON> txtst = textStyle()         <SEMICOLON> { style.setTextStyle( txtst ); } )
-	| ( <TEXTFONT>     <COLON> url   = font()              <SEMICOLON> { style.setTextFont( url ); } )
-	| ( <TEXTSIZE>     <COLON> nb1   = integer()           <SEMICOLON> { style.setTextSize( (int)nb1.value ); } )
-	| ( <TEXTOFFSET>   <COLON> nb1   = real() nb2 = real() <SEMICOLON> { style.setTextOffset( nb1.value, nb2.value, nb1.units ); } )
-	| ( <ZINDEX>       <COLON> nb1   = integer()           <SEMICOLON> { style.setZIndex( (int)nb1.value ); } )
+	| ( <ZINDEX>             <COLON> value         = value()             <SEMICOLON> { style.setValue( "z-index", new Integer( (int)value.value )  ); } )
+	| ( <FILLMODE>           <COLON> fillMode      = fillMode()          <SEMICOLON> { style.setValue( "fill-mode",            fillMode       ); } )
+	| ( <FILLCOLOR>          <COLON> colors        = colors()            <SEMICOLON> { style.setValue( "fill-color",           colors         ); } )
+	| ( <FILLIMAGE>          <COLON> url           = url()               <SEMICOLON> { style.setValue( "fill-image",           url            ); } )
+	| ( <STROKEMODE>         <COLON> strokeMode    = strokeMode()        <SEMICOLON> { style.setValue( "stroke-mode",          strokeMode     ); } )
+	| ( <STROKECOLOR>        <COLON> colors        = colors()            <SEMICOLON> { style.setValue( "stroke-color",         colors         ); } )
+	| ( <STROKEWIDTH>        <COLON> value         = value()             <SEMICOLON> { style.setValue( "stroke-width",         value          ); } )
+	| ( <SHADOWMODE>         <COLON> shadowMode    = shadowMode()        <SEMICOLON> { style.setValue( "shadow-mode",          shadowMode     ); } )
+	| ( <SHADOWCOLOR>        <COLON> colors        = colors()            <SEMICOLON> { style.setValue( "shadow-color",         colors         ); } )
+	| ( <SHADOWWIDTH>        <COLON> value         = value()             <SEMICOLON> { style.setValue( "shadow-width",         value          ); } )
+	| ( <SHADOWOFFSET>       <COLON> values        = values()            <SEMICOLON> { style.setValue( "shadow-offset",        values         ); } )
+	| ( <PADDING>            <COLON> values        = values()            <SEMICOLON> { style.setValue( "padding",              values         ); } )
+	| ( <TEXTMODE>           <COLON> textMode      = textMode()          <SEMICOLON> { style.setValue( "text-mode",            textMode       ); } )
+	| ( <TEXTVISIBILITYMODE> <COLON> textVisMode   = textVisMode()       <SEMICOLON> { style.setValue( "text-visibility-mode", textVisMode    ); } )
+	| ( <TEXTVISIBILITY>     <COLON> values        = values()            <SEMICOLON> { style.setValue( "text-visibility",      values         ); } )
+	| ( <TEXTCOLOR>          <COLON> colors        = colors()            <SEMICOLON> { style.setValue( "text-color",           colors         ); } )
+	| ( <TEXTSTYLE>          <COLON> textStyle     = textStyle()         <SEMICOLON> { style.setValue( "text-style",           textStyle      ); } )
+	| ( <TEXTFONT>           <COLON> url           = font()              <SEMICOLON> { style.setValue( "text-font",            url            ); } )
+	| ( <TEXTSIZE>           <COLON> value         = value()             <SEMICOLON> { style.setValue( "text-size",            value          ); } )
+	| ( <TEXTALIGNMENT>      <COLON> textAlignment = textAlign()         <SEMICOLON> { style.setValue( "text-alignment",       textAlignment  ); } )
+	| ( <ICONMODE>           <COLON> iconMode      = iconMode()          <SEMICOLON> { style.setValue( "icon-mode",            iconMode       ); } )
+	| ( <ICON>               <COLON> url           = url()               <SEMICOLON> { style.setValue( "icon",                 url            ); } )
+	| ( <VISIBILITYMODE>     <COLON> visMode       = visMode()           <SEMICOLON> { style.setValue( "visibility-mode",      visMode        ); } )
+	| ( <VISIBILITY>         <COLON> values        = values()            <SEMICOLON> { style.setValue( "visibility",           values         ); } )
+	| ( <SIZEMODE>           <COLON> sizeMode      = sizeMode()          <SEMICOLON> { style.setValue( "size-mode",            sizeMode       ); } )
+	| ( <SIZE>               <COLON> values        = values()            <SEMICOLON> { style.setValue( "size",                 values         ); } )
+	| ( <SHAPEPOINTS>        <COLON> values        = values()            <SEMICOLON> { style.setValue( "shape-points",         values         ); } )
+	| ( <SHAPE>              <COLON> shape         = shape()             <SEMICOLON> { style.setValue( "shape",                shape          ); } )
+	| ( <SPRITEORIENT>       <COLON> spriteOrient  = spriteOrient()      <SEMICOLON> { style.setValue( "sprite-orientation",   spriteOrient   ); } )
+	| ( <ARROWSHAPE>         <COLON> arrowShape    = arrowShape()        <SEMICOLON> { style.setValue( "arrow-shape",          arrowShape     ); } )
+	| ( <ARROWIMGURL>        <COLON> url           = url()               <SEMICOLON> { style.setValue( "arrow-image",          url            ); } )
+	| ( <ARROWSIZE>          <COLON> values        = values()            <SEMICOLON> { style.setValue( "arrow-size",           values         ); } )	
+	| ( <CANVASCOLOR>        <COLON> colors        = colors()            <SEMICOLON> { style.setValue( "canvas-color",         colors         ); } )
 	)
 }
 
-void colors( Style style ):
-{
-	Color color;
-	style.unsetColor();
-}
-{
-	( color = color() { style.addColor( color ); } )+
-}
-
-void bgColors( Style style ):
-{
-	Color color;
-	style.unsetBgColor();
-}
-{
-	( color = color() { style.addBackgroundColor( color ); } )+
-} 
-
-void shadowColors( Style style ):
-{
-	Color color;
-	style.unsetShadowColor();
-}
-{
-	( color = color() { style.addShadowColor( color ); } )+
-} 
-
-Number integer():
+Value value():
 {
 	Token       t;
 	Style.Units units = Style.Units.PX;
-	Number      n     = null;
-}
-{
-	t = <REAL>
-	{
-		String nb = t.image.toLowerCase();
-		
-		if( nb.endsWith( "px" ) )
-		{
-			units = Style.Units.PX;
-			nb    = nb.substring( 0, nb.length()-2 );
-		}
-		else if( nb.endsWith( "gu" ) )
-		{
-			units = Style.Units.GU;
-			nb    = nb.substring( 0, nb.length()-2 ); 
-		}
-		else if( nb.endsWith( "%" ) )
-		{
-			units = Style.Units.PERCENTS;
-			nb    = nb.substring( 0, nb.length()-1 );
-		} 
-
-		try { n = new Number( Float.parseFloat( nb ), units ); }
-		catch( NumberFormatException e ) { generateParseException(); }
-		return n;
-	}
-}
-
-Number real():
-{
-	Token       t;
-	Style.Units units = Style.Units.PX;
-	Number      n     = null;
+	Value       value = null;
 }
 {
 	t = <REAL> 
@@ -433,86 +381,21 @@ Number real():
 			nb    = nb.substring( 0, nb.length()-1 );
 		} 
 	
-		try{ n = new Number( Float.parseFloat( nb ), units ); }
+		try{ value = new Value( units, Float.parseFloat( nb ) ); }
 		catch( NumberFormatException e ) { generateParseException(); }
-		return n;
+		return value;
 	}
 }
 
-Style.FillMode fill():
+Values values():
 {
-	Style.FillMode m;
+	Values values;
+	Value  value;
 }
 {
-	( ( <NONE>       { m = Style.FillMode.NONE;             } )
-	| ( <PLAIN>      { m = Style.FillMode.PLAIN;            } )
-	| ( <GRADIENT>   { m = Style.FillMode.GRADIENT;         } )
-	| ( <DYN_INTERP> { m = Style.FillMode.DYN_INTERPOLATED; } )
-	)
-	{ return m; }	
-}
-
-Color color():
-{
-	Token  t;
-	String s;
-}
-{
-	( ( t=<RGB>        { s = t.image; } )
-	| ( t=<RGBA>       { s = t.image; } )
-	| ( t=<HTMLCOLOR>  { s = t.image; } )
-	| ( t=<IDENTIFIER> { s = t.image; } )
-	| ( t=<STRING>     { s = t.image.substring( 1, t.image.length()-1 ); } )
-	)
-	{
-		Color color = Style.convertColor( s );
-		if( color == null ) color = Color.BLACK; 
-		return color;
-	}
-}
-
-Style.ArrowShape arrowShape():
-{
-	Style.ArrowShape s;
-}
-{
-	( ( <NONE>    { s = Style.ArrowShape.NONE;    } )
-	| ( <SIMPLE>  { s = Style.ArrowShape.SIMPLE;  } )
-	| ( <DIAMOND> { s = Style.ArrowShape.DIAMOND; } )
-	| ( <CIRCLE>  { s = Style.ArrowShape.CIRCLE;  } )
-	| ( <IMAGE>   { s = Style.ArrowShape.IMAGE;   } )
-	)
-	{ return s; }
-}
-
-Style.SpriteShape spriteShape():
-{
-	Style.SpriteShape s;
-}
-{
-	( ( <CIRCLE>      { s = Style.SpriteShape.CIRCLE;       } )
-	| ( <IMAGE>       { s = Style.SpriteShape.IMAGE;        } )
-	| ( <IMAGES>      { s = Style.SpriteShape.IMAGES;       } )
-	| ( <ARROW>       { s = Style.SpriteShape.ARROW;        } )
-	| ( <FLOW>        { s = Style.SpriteShape.FLOW;         } )
-	| ( <PIE_CHART>   { s = Style.SpriteShape.PIE_CHART;    } )
-	| ( <TEXTBOX>     { s = Style.SpriteShape.TEXT_BOX;     } )
-	| ( <TEXTELLIPSE> { s = Style.SpriteShape.TEXT_ELLIPSE; } )
-	)
-	{ return s; }
-}
-
-Style.SpriteOrientation spriteOrient():
-{
-	Style.SpriteOrientation s;
-}
-{
-	( ( <NONE>   { s = Style.SpriteOrientation.NONE;   } )
-	| ( <TO>     { s = Style.SpriteOrientation.TO;     } )
-	| ( <FROM>   { s = Style.SpriteOrientation.FROM;   } )
-	| ( <ORIGIN> { s = Style.SpriteOrientation.ORIGIN; } )
-	)
-	{ return s; }
+	         value = value() { values = new Values( value.units, value.value ); }
+	( <COMA> value = value() { values.addValues( value.value ); } )*
+	{ return values; }
 }
 
 String url():
@@ -536,72 +419,109 @@ String font():
 	{ return s; }
 }
 
-Style.NodeShape nodeShape():
+Color color():
 {
-	Style.NodeShape s;
+	Token  t;
+	String s;
 }
 {
-	( ( <SQUARE>      { s = Style.NodeShape.SQUARE;       } )
-	| ( <CIRCLE>      { s = Style.NodeShape.CIRCLE;       } )
-	| ( <TRIANGLE>    { s = Style.NodeShape.TRIANGLE;     } )
-	| ( <CROSS>       { s = Style.NodeShape.CROSS;        } )
-	| ( <TEXTBOX>     { s = Style.NodeShape.TEXT_BOX;     } )
-	| ( <TEXTELLIPSE> { s = Style.NodeShape.TEXT_ELLIPSE; } )
-	| ( <IMAGE>       { s = Style.NodeShape.IMAGE;        } )
+	( ( t=<RGB>        { s = t.image; } )
+	| ( t=<RGBA>       { s = t.image; } )
+	| ( t=<HTMLCOLOR>  { s = t.image; } )
+	| ( t=<IDENTIFIER> { s = t.image; } )
+	| ( t=<STRING>     { s = t.image.substring( 1, t.image.length()-1 ); } )
 	)
-	{ return s; }
+	{
+		Color color = Style.convertColor( s );
+		if( color == null ) color = Color.BLACK; 
+		return color;
+	}
 }
 
-Style.EdgeShape edgeShape( Style style ):
+Colors colors():
 {
-	Style.EdgeShape s;
-	Number nb1, nb2, nb3;
+	Colors colors = new Colors();
+	Color  color;
 }
 {
-	( ( <LINE>       { s = Style.EdgeShape.LINE;        } )
-	| ( <ANGLE>      { s = Style.EdgeShape.ANGLE;       } )
-	| ( <CUBICCURVE> { s = Style.EdgeShape.CUBIC_CURVE; } )
-	| ( <LPAREN> { s = Style.EdgeShape.POINTS; } nb1 = real() <COMA> nb2 = real() <COMA> nb3 = real()  <RPAREN> { style.removeEdgePoints(); style.addEdgePoint( nb1.value, nb2.value, nb3.value ); } 
-				 ( <COMA> <LPAREN>  nb1 = real() <COMA> nb2 = real() <COMA> nb3 = real() <RPAREN>  { style.addEdgePoint(  nb1.value, nb2.value, nb3.value ); } )*  )
-	)
-	{ return s; }
+	         color = color() { colors.add( color ); }
+	( <COMA> color = color() { colors.add( color ); } )*
+	{ return colors; }
 }
 
-Style.EdgeStyle edgeStyle():
+Style.FillMode fillMode():
 {
-	Style.EdgeStyle s;
+	Style.FillMode m;
 }
 {
-	( ( <PLAIN>      { s = Style.EdgeStyle.PLAIN;  } )
-	| ( <DOTS>       { s = Style.EdgeStyle.DOTS;   } )
-	| ( <DASHES>     { s = Style.EdgeStyle.DASHES; } )
+	( ( <NONE>               { m = Style.FillMode.NONE;                } )
+	| ( <PLAIN>              { m = Style.FillMode.PLAIN;               } )
+	| ( <DYNPLAIN>           { m = Style.FillMode.DYN_PLAIN;           } )
+	| ( <GRADIENTRADIAL>     { m = Style.FillMode.GRADIENT_RADIAL;     } )
+	| ( <GRADIENTVERTICAL>   { m = Style.FillMode.GRADIENT_VERTICAL;   } )
+	| ( <GRADIENTHORIZONTAL> { m = Style.FillMode.GRADIENT_HORIZONTAL; } )
+	| ( <GRADIENTDIAGONAL1>  { m = Style.FillMode.GRADIENT_DIAGONAL1;  } )
+	| ( <GRADIENTDIAGONAL2>  { m = Style.FillMode.GRADIENT_DIAGONAL2;  } )
 	)
-	{ return s; }
+	{ return m; }	
 }
 
-Style.ImageMode imageMode():
+Style.StrokeMode strokeMode():
 {
-	Style.ImageMode m;
+	Style.StrokeMode m;
 }
 {
-	( ( <SIMPLE> { m = Style.ImageMode.SIMPLE; } )
-	| ( <TILED>  { m = Style.ImageMode.TILED;  } )
+	( ( <NONE>               { m = Style.StrokeMode.NONE;              } )
+	| ( <PLAIN>              { m = Style.StrokeMode.PLAIN;             } )
+	| ( <DASHES>             { m = Style.StrokeMode.DASHES;            } )
+	| ( <DOTS>               { m = Style.StrokeMode.DOTS;              } )
 	)
 	{ return m; }
 }
 
-Style.TextAlignment textAlign():
+
+Style.ShadowMode shadowMode():
 {
-	Style.TextAlignment t;
+	Style.ShadowMode s;
 }
 {
-	( ( <LEFT>   { t = Style.TextAlignment.LEFT;   } )
-	| ( <RIGHT>  { t = Style.TextAlignment.RIGHT;  } )
-	| ( <CENTER> { t = Style.TextAlignment.CENTER; } )
-	| ( <ASIDE>  { t = Style.TextAlignment.ASIDE;  } ) 
-	| ( <ALONG>  { t = Style.TextAlignment.ALONG;  } ) 
+	( ( <NONE>                { s = Style.ShadowMode.NONE;                } )
+	| ( <PLAIN>               { s = Style.ShadowMode.PLAIN;               } )
+	| ( <GRADIENTRADIAL>      { s = Style.ShadowMode.GRADIENT_RADIAL;     } )
+	| ( <GRADIENTHORIZONTAL>  { s = Style.ShadowMode.GRADIENT_HORIZONTAL; } )
+	| ( <GRADIENTVERTICAL>    { s = Style.ShadowMode.GRADIENT_VERTICAL;   } )
+	| ( <GRADIENTDIAGONAL1>   { s = Style.ShadowMode.GRADIENT_DIAGONAL1;  } )
+	| ( <GRADIENTDIAGONAL2>   { s = Style.ShadowMode.GRADIENT_DIAGONAL2;  } )
 	)
-	{ return t; }
+	{ return s; }
+}
+
+Style.TextMode textMode():
+{
+	Style.TextMode m;
+}
+{
+	( ( <NORMAL>    { m = Style.TextMode.NORMAL;    } )
+	| ( <HIDDEN>    { m = Style.TextMode.HIDDEN;    } )
+	| ( <TRUNCATED> { m = Style.TextMode.TRUNCATED; } )
+	)
+	{ return m; }
+}
+
+Style.TextVisibilityMode textVisMode():
+{
+	Style.TextVisibilityMode m;
+}
+{
+	( ( <NORMAL>    { m = Style.TextVisibilityMode.NORMAL;     } )
+	| ( <HIDDEN>    { m = Style.TextVisibilityMode.HIDDEN;     } )
+	| ( <ATZOOM>    { m = Style.TextVisibilityMode.AT_ZOOM;    } )
+	| ( <UNDERZOOM> { m = Style.TextVisibilityMode.UNDER_ZOOM; } )
+	| ( <OVERZOOM>  { m = Style.TextVisibilityMode.OVER_ZOOM;  } )
+	| ( <ZOOMRANGE> { m = Style.TextVisibilityMode.ZOOM_RANGE; } )
+	| ( <ZOOMS>     { m = Style.TextVisibilityMode.ZOOMS;      } )
+	)
+	{ return m; }
 }
 
 Style.TextStyle textStyle():
@@ -617,26 +537,120 @@ Style.TextStyle textStyle():
 	{ return t; }
 }
 
-Style.TextMode textMode():
+Style.SizeMode sizeMode():
 {
-	Style.TextMode m;
+	Style.SizeMode m;
 }
 {
-	( ( <NORMAL>    { m = Style.TextMode.NORMAL;    } )
-	| ( <HIDDEN>    { m = Style.TextMode.HIDDEN;    } )
-	| ( <TRUNCATED> { m = Style.TextMode.TRUNCATED; } )
+	( ( <NORMAL>  { m = Style.SizeMode.NORMAL;   } )
+	| ( <DYNSIZE> { m = Style.SizeMode.DYN_SIZE; } )
 	)
 	{ return m; }
 }
 
-Style.ShadowStyle shadowStyle():
+Style.TextAlignment textAlign():
 {
-	Style.ShadowStyle s;
+	Style.TextAlignment t;
 }
 {
-	( ( <NONE>      { s = Style.ShadowStyle.NONE;     } )
-	| ( <PLAIN>     { s = Style.ShadowStyle.PLAIN;    } )
-	| ( <GRADIENT>  { s = Style.ShadowStyle.GRADIENT; } )
+	( ( <CENTER>   { t = Style.TextAlignment.CENTER;    } )
+	| ( <LEFT>     { t = Style.TextAlignment.LEFT;      } )
+	| ( <RIGHT>    { t = Style.TextAlignment.RIGHT;     } )
+	| ( <ATLEFT>   { t = Style.TextAlignment.AT_LEFT;   } )
+	| ( <ATRIGHT>  { t = Style.TextAlignment.AT_RIGHT;  } )
+	| ( <UNDER>    { t = Style.TextAlignment.UNDER;     } ) 
+	| ( <ABOVE>    { t = Style.TextAlignment.ABOVE;     } ) 
+	| ( <JUSTIFY>  { t = Style.TextAlignment.JUSTIFY;   } ) 
+	| ( <ALONG>    { t = Style.TextAlignment.ALONG;     } ) 
+	)
+	{ return t; }
+}
+
+Style.IconMode iconMode():
+{
+	Style.IconMode i;
+}
+{
+	( ( <NONE>    { i = Style.IconMode.NONE;     } )
+	| ( <ATLEFT>  { i = Style.IconMode.AT_LEFT;  } )
+	| ( <ATRIGHT> { i = Style.IconMode.AT_RIGHT; } )
+	| ( <ABOVE>   { i = Style.IconMode.ABOVE;    } )
+	| ( <UNDER>   { i = Style.IconMode.UNDER;    } )
+	)
+	{ return i; }
+}
+
+Style.VisibilityMode visMode():
+{
+	Style.VisibilityMode m;
+}
+{
+	( ( <NORMAL>    { m = Style.VisibilityMode.NORMAL; } )
+	| ( <HIDDEN>    { m = Style.VisibilityMode.HIDDEN; } )
+	| ( <ATZOOM>    { m = Style.VisibilityMode.AT_ZOOM; } )
+	| ( <UNDERZOOM> { m = Style.VisibilityMode.UNDER_ZOOM; } )
+	| ( <OVERZOOM>  { m = Style.VisibilityMode.OVER_ZOOM; } )
+	| ( <ZOOMRANGE> { m = Style.VisibilityMode.ZOOM_RANGE; } )
+	| ( <ZOOMS>     { m = Style.VisibilityMode.ZOOMS; } )
+	)
+	{ return m; }
+}
+
+Style.Shape shape():
+{
+	Style.Shape s;
+}
+{
+	( ( <CIRCLE>        { s = Style.Shape.CIRCLE;         } )
+	| ( <BOX>           { s = Style.Shape.BOX;            } )
+	| ( <TRIANGLE>      { s = Style.Shape.TRIANGLE;       } )
+	| ( <CROSS>         { s = Style.Shape.CROSS;          } )
+	| ( <DIAMOND>       { s = Style.Shape.DIAMOND;        } )
+	| ( <POLYGON>       { s = Style.Shape.POLYGON;        } )
+	| ( <TEXTBOX>       { s = Style.Shape.TEXT_BOX;       } )
+	| ( <TEXTELLIPSE>   { s = Style.Shape.TEXT_ELLIPSE;   } )
+	| ( <TEXTDIAMOND>   { s = Style.Shape.TEXT_DIAMOND;   } )
+	| ( <TEXTPARAGRAPH> { s = Style.Shape.TEXT_PARAGRAPH; } )
+	| ( <JCOMPONENT>    { s = Style.Shape.JCOMPONENT;     } )
+
+	| ( <PIECHART>      { s = Style.Shape.PIE_CHART;      } )
+	| ( <FLOW>          { s = Style.Shape.FLOW;           } )
+	| ( <ARROW>         { s = Style.Shape.ARROW;          } )
+
+	| ( <LINE>          { s = Style.Shape.LINE;           } )
+	| ( <ANGLE>         { s = Style.Shape.ANGLE;          } )
+	| ( <CUBICCURVE>    { s = Style.Shape.CUBIC_CURVE;    } )
+	| ( <POLYLINE>      { s = Style.Shape.POLYLINE;       } )
+	| ( <BLOB>          { s = Style.Shape.BLOB;           } )
+	)
+	{ return s; }
+}
+
+Style.ArrowShape arrowShape():
+{
+	Style.ArrowShape s;
+}
+{
+	( ( <NONE>    { s = Style.ArrowShape.NONE;    } )
+	| ( <ARROW>   { s = Style.ArrowShape.ARROW;   } )
+	| ( <CIRCLE>  { s = Style.ArrowShape.CIRCLE;  } )
+	| ( <DIAMOND> { s = Style.ArrowShape.DIAMOND; } )
+	| ( <IMAGE>   { s = Style.ArrowShape.IMAGE;   } )
+	)
+	{ return s; }
+}
+
+Style.SpriteOrientation spriteOrient():
+{
+	Style.SpriteOrientation s;
+}
+{
+	( ( <NONE>       { s = Style.SpriteOrientation.NONE;       } )
+	| ( <TO>         { s = Style.SpriteOrientation.TO;         } )
+	| ( <FROM>       { s = Style.SpriteOrientation.FROM;       } )
+	| ( <NODE0>      { s = Style.SpriteOrientation.NODE0;      } )
+	| ( <NODE1>      { s = Style.SpriteOrientation.NODE1;      } )
+	| ( <PROJECTION> { s = Style.SpriteOrientation.PROJECTION; } )
 	)
 	{ return s; }
 }

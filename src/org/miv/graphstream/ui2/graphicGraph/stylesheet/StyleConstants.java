@@ -30,76 +30,123 @@ import java.util.regex.Pattern;
 public class StyleConstants
 {
 // Constants
-	
-	public static enum 
-	
-// Constants
-	
-	/**
-	 * Text styles.
-	 */
-	public static enum TextStyle { NORMAL, BOLD, ITALIC, BOLD_ITALIC };
-	
-	/**
-	 * Text alignments.
-	 */
-	public static enum TextAlignment { LEFT, RIGHT, CENTER, ASIDE, ALONG };
 
 	/**
-	 * Text modes.
+	 * The available units for numerical values.
 	 */
-	public static enum TextMode { NORMAL, TRUNCATED, HIDDEN };
+	public static enum Units { PX, GU, PERCENTS };
 	
 	/**
-	 * Arrow shapes.
+	 * How to fill the contents of the element.
 	 */
-	public static enum ArrowShape { NONE, SIMPLE, DIAMOND, CIRCLE, IMAGE };
+	public static enum FillMode {
+		NONE, PLAIN, DYN_PLAIN,
+		GRADIENT_RADIAL, GRADIENT_HORIZONTAL,
+		GRADIENT_VERTICAL,
+		GRADIENT_DIAGONAL1,
+		GRADIENT_DIAGONAL2,
+		IMAGE_TILED, IMAGE_SCALED,
+		IMAGE_SCALED_RATIO };
+	
+	/**
+	 * How to draw the contour of the element.
+	 */
+	public static enum StrokeMode {
+		NONE, PLAIN, DASHES, DOTS
+	}
 
 	/**
-	 * Node shapes.
+	 * How to draw the shadow of the element.
 	 */
-	public static enum NodeShape { SQUARE, CIRCLE, TRIANGLE, CROSS, IMAGE, TEXT_BOX, TEXT_ELLIPSE };
+	public static enum ShadowMode {
+		NONE, PLAIN, GRADIENT_RADIAL,
+		GRADIENT_HORIZONTAL,
+		GRADIENT_VERTICAL,
+		GRADIENT_DIAGONAL1,
+		GRADIENT_DIAGONAL2
+	}
+
+	/**
+	 * How to show an element.
+	 */
+	public static enum VisibilityMode {
+		NORMAL, HIDDEN, AT_ZOOM, UNDER_ZOOM, OVER_ZOOM,
+		ZOOM_RANGE, ZOOMS		
+	}
+
+	/**
+	 * How to draw the text of an element.
+	 */
+	public static enum TextMode {
+		NORMAL, TRUNCATED, HIDDEN
+	}
+
+	/**
+	 * How to show the text of an element.
+	 */
+	public static enum TextVisibilityMode {
+		NORMAL, HIDDEN, AT_ZOOM, UNDER_ZOOM, OVER_ZOOM,
+		ZOOM_RANGE, ZOOMS
+	}
 	
 	/**
-	 * Edge shapes. 
+	 * Variant of the font. 
 	 */
-	public static enum EdgeShape { LINE, ANGLE, CUBIC_CURVE, POINTS };
+	public static enum TextStyle {
+		NORMAL, ITALIC, BOLD, BOLD_ITALIC
+	}
 	
 	/**
-	 * Edge styles.
+	 * Where to place the icon around the text (or instead of the text).
 	 */
-	public static enum EdgeStyle { PLAIN, DOTS, DASHES };
+	public static enum IconMode {
+		NONE, AT_LEFT, AT_RIGHT, UNDER, ABOVE
+	}
 	
 	/**
-	 * Sprites shapes.
+	 * How to set the size of the element.
 	 */
-	public static enum SpriteShape { CIRCLE, IMAGE, IMAGES, ARROW, FLOW, PIE_CHART, TEXT_BOX, TEXT_ELLIPSE };
+	public static enum SizeMode {
+		NORMAL, DYN_SIZE
+	}
+
+	/**
+	 * How to align words around their attach point.
+	 */
+	public static enum TextAlignment {
+		CENTER, LEFT, RIGHT,
+		AT_LEFT, AT_RIGHT,
+		UNDER, ABOVE, JUSTIFY,
+		
+		ALONG
+	}
+
+	/**
+	 * Possible shapes for elements.
+	 */
+	public static enum Shape {
+		CIRCLE, BOX, DIAMOND, POLYGON, TRIANGLE, CROSS,
+		TEXT_BOX, TEXT_PARAGRAPH, TEXT_CIRCLE, TEXT_DIAMOND,
+		TEXT_ELLIPSE, JCOMPONENT,
+		
+		PIE_CHART, FLOW, ARROW, IMAGES,
+		
+		LINE, ANGLE, CUBIC_CURVE, POLYLINE, BLOB
+	}
+
+	/**
+	 * Orientation of a sprite toward its attachment point.
+	 */
+	public static enum SpriteOrientation {
+		NONE, FROM, NODE0, TO, NODE1, PROJECTION
+	}
 	
 	/**
-	 * Sprite orientation. 
+	 * Possible shapes for arrows on edges.
 	 */
-	public static enum SpriteOrientation { NONE, TO, FROM, ORIGIN };
-	
-	/**
-	 * Is the image drawn at its position and size only, or tiled around ?. 
-	 */
-	public static enum ImageMode { SIMPLE, TILED };
-	
-	/**
-	 * The shadow style.
-	 */
-	public static enum ShadowStyle { NONE, PLAIN, GRADIENT };
-	
-	/**
-	 * The fill mode. 
-	 */
-	public static enum FillMode { NONE, PLAIN, GRADIENT, DYN_INTERPOLATED };
-	
-	/**
-	 * Unit systems.
-	 * GU means Graph Units, and PX means Pixels. Percents are percents of the graph view size. 
-	 */
-	public static enum Units { GU, PX, PERCENTS };
+	public static enum ArrowShape {
+		NONE, ARROW, CIRCLE, DIAMOND, IMAGE
+	}
 	
 // Static
 
@@ -377,14 +424,13 @@ public class StyleConstants
 		return -1;
 	}
 
-	/**
+	/*
 	 * Try to convert an arbitrary value to a EdgeStyle. If the value is a
 	 * descendant of CharSequence, it is used and parsed to see if it maps to
 	 * one of the possible values.
 	 * @param value The value to convert.
 	 * @return The converted edge style or null if the value does not identifies
 	 *         an edge style.
-	 */
 	public static EdgeStyle convertEdgeStyle( Object value )
 	{
 		if( value instanceof CharSequence )
@@ -407,4 +453,5 @@ public class StyleConstants
 
 		return null;
 	}
+	 */
 }

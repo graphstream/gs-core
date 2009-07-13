@@ -45,10 +45,10 @@ public class Value extends Number
 	
 	/**
 	 * New value.
-	 * @param value The value.
 	 * @param units The value units.
+	 * @param value The value.
 	 */
-	public Value( float value, Style.Units units )
+	public Value( Style.Units units, float value )
 	{
 		this.value = value;
 		this.units = units;
@@ -88,11 +88,6 @@ public class Value extends Number
 	    return Math.round( value );
     }
 
-	public long convert( Style.Units to, GraphMetrics metrics )
-	{
-		
-	}
-	
 	@Override
 	public String toString()
 	{

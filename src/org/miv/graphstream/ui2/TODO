@@ -1,18 +1,4 @@
 Pour la version 0.5.0:
-
-	- Ajout et suppression d'attributs avec IO
-		- Ajouter l'interface GraphReaderListenerExtended.
-		- Ajouter des m�thodes de prise en charge des ajout suppression d'attributs individuels
-			dans les writers.
-		- dans DGS les signes + et - devant les noms d'attributs permettent le retrait et l'ajout :
-			cn "A" +truc:valeur -machin
-			La syntaxe + est redondante, le + est optionnel.
-		- Les tables de hachage en plus des tablaux dans les attributs. syntaxe possible :
-			cn "A" uneTable:[truc:chose;machin:bidule,a:b,c,d;]
-		- Ajouter dans IO la possibilit� pour des objets plac�s en attributs de s'exporter sous forme
-		  de table de hachage (interface GraphAttribute avec une m�thode toHashTable():String).
-	
-	
 	- Tests JUnit du package Graph
 	
 	- Un document de "concepts" repris du tutorial.

@@ -29,7 +29,7 @@ import org.miv.graphstream.ui2.graphicGraph.stylesheet.Rule;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Selector;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleSheet;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleSheetListener;
-import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleConstants.ShadowStyle;
+import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleConstants.ShadowMode;
 
 /**
  * A set of style groups.
@@ -1110,7 +1110,7 @@ public class ShadowSet implements Iterable<StyleGroup>
 	 */
 	protected void groupAdded( StyleGroup group )
 	{
-		if( group.getShadowStyle() != ShadowStyle.NONE )
+		if( group.getShadowMode() != ShadowMode.NONE )
 			shadowSet.add( group );
 	}
 
@@ -1120,7 +1120,7 @@ public class ShadowSet implements Iterable<StyleGroup>
 	 */
 	protected void groupChanged( StyleGroup group )
 	{
-		if( group.getShadowStyle() == ShadowStyle.NONE )
+		if( group.getShadowMode() == ShadowMode.NONE )
 		     shadowSet.remove( group );
 		else shadowSet.add( group );
 	}
