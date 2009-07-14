@@ -30,8 +30,6 @@ import java.util.HashMap;
  * </p>
  * 
  * @see GraphicGraph
- * @author Yoann Pigné
- * @author Antoine Dutot
  */
 public class GraphicEdge extends GraphicElement implements Edge
 {
@@ -182,7 +180,7 @@ public class GraphicEdge extends GraphicElement implements Edge
 	}
 	
 	@Override
-	public boolean contains( float x, float y )
+	public boolean contains( float x, float y, float z )
 	{
 		return false;
 	}
@@ -235,8 +233,6 @@ public class GraphicEdge extends GraphicElement implements Edge
 	@Override
 	public void removed()
 	{
-		super.removed();
-		
 		if( group != null )
 		{
 			group.decrement( this );
@@ -307,74 +303,75 @@ public class GraphicEdge extends GraphicElement implements Edge
 	
 // Nested classes
 	
+/**
+ * An edge group contains the set of edges between two given nodes. This allows to quickly
+ * know how many 'multi' edges there is between two nodes in a multigraph and to associate
+ * invariant indices to edges (the {@link GraphicEdge#multi} attribute)
+ * inside the multi-representation. 
+ */
+public class EdgeGroup
+{
 	/**
-	 * An edge group contains the set of edges between two given nodes. This allows to know
-	 * faster the number of multiple edges between two nodes for multigaphs.
-	 * 
-	 * @author Antoine Dutot
+	 * The set of multiple edges.
 	 */
-	public class EdgeGroup
+	public ArrayList<GraphicEdge> edges;
+
+	/**
+	 * Create a new edge group, starting with two edges.
+	 * @param first The initial edge.
+	 * @param second The second edge.
+	 */
+	public EdgeGroup( GraphicEdge first, GraphicEdge second )
 	{
-		/**
-		 * The set of multiple edges.
-		 */
-		public ArrayList<GraphicEdge> edges;
-
-		/**
-		 * Create a new edge group, starting with two edges.
-		 * @param first The initial edge.
-		 * @param second The second edge.
-		 */
-		public EdgeGroup( GraphicEdge first, GraphicEdge second )
-		{
-			edges = new ArrayList<GraphicEdge>();
-			first.group  = this;
-			second.group = this;
-			edges.add( first );
-			edges.add( second );
-			first.multi  = 0;
-			second.multi = 1;
-		}
-		
-		/**
-		 * I-th edge of the group.
-		 * @param i The edge index.
-		 * @return The i-th edge.
-		 */
-		public GraphicEdge getEdge( int i )
-		{
-			return edges.get( i );
-		}
-		
-		/**
-		 * Number of edges in this group.
-		 * @return The edge count.
-		 */
-		public int getCount()
-		{
-			return edges.size();
-		}
-
-		/**
-		 * Add an edge in the group.
-		 * @param edge The edge to add.
-		 */
-		public void increment( GraphicEdge edge )
-		{
-			edge.multi = getCount();
-			edges.add( edge );
-		}
-		
-		/**
-		 * Remove an edge from the group.
-		 * @param edge The edge to remove.
-		 */
-		public void decrement( GraphicEdge edge )
-		{
-			edges.remove( edges.indexOf( edge ) );
-			
-			for( int i=0; i<edges.size(); i++ )
-				edges.get(i).multi = i;
-		}
+		edges = new ArrayList<GraphicEdge>();
+		first.group  = this;
+		second.group = this;
+		edges.add( first );
+		edges.add( second );
+		first.multi  = 0;
+		second.multi = 1;
 	}
+	
+	/**
+	 * I-th edge of the group.
+	 * @param i The edge index.
+	 * @return The i-th edge.
+	 */
+	public GraphicEdge getEdge( int i )
+	{
+		return edges.get( i );
+	}
+	
+	/**
+	 * Number of edges in this group.
+	 * @return The edge count.
+	 */
+	public int getCount()
+	{
+		return edges.size();
+	}
+
+	/**
+	 * Add an edge in the group.
+	 * @param edge The edge to add.
+	 */
+	public void increment( GraphicEdge edge )
+	{
+		edge.multi = getCount();
+		edges.add( edge );
+	}
+	
+	/**
+	 * Remove an edge from the group.
+	 * @param edge The edge to remove.
+	 */
+	public void decrement( GraphicEdge edge )
+	{
+		edges.remove( edges.indexOf( edge ) );
+		
+		for( int i=0; i<edges.size(); i++ )
+			edges.get(i).multi = i;
+	}
+}
+
 }

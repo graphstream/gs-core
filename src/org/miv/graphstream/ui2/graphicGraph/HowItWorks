@@ -1,0 +1,213 @@
+How the graphic graph works
+***************************
+
+This document describes the way the graphicGraph package is done. It does not describe the way
+the styles and style sheet is implemented, this is documented in another file inside the
+"stylesheet" subpackage.
+
+This is a technical document that explains how the graphic graph package works so that you
+can use it when designing viewers or other graphic outputs with GraphStream.
+
+The graphicGraph package defines a Graph implementation whose purpose is to provide a graph
+representation that helps in rendering graphs on screen or on other medias. It is composed
+of a set of classes that allow to store a graph with graphic attributes. These classes
+are :
+	* GraphicGraph			A graph made of graphic nodes, edges and sprites plus styles.
+	* GraphicElement		A base class for graphic nodes, edges and sprites.
+		* GraphicNode		A node representation.
+		* GraphicEdge		An edge representation.
+		* GraphicSprite		A new entity called sprite that can be rendered anywhere on the graph.
+	* StyleGroup			A group of graphic graph elements sharing the same graphic style.
+	* StyleGroupSet			All the style groups as well as all the graphic nodes, edges and sprites.
+	* StyleGroupListener	A listener on the style group set to know when a style changes.
+	
+Basically, a graphic graph can be seen as the sum of three elements :
+	* A style sheet (StyleSheet) that defines graphic styles.
+	* A set of style groups (StyleGroupSet) that define which graph elements maps to which styles.
+	* A connectivity that allows to know which node it tied to which other one.
+
+The graphic graph, graphs and threads
+=====================================
+
+The purpose of the graphic graph is twofold :
+	* To represent a graph with style and sprites.
+	* To be the copy of another graph, to avoid accesses from a viewer in the Swing thread to
+	  a graph that should then be completely synchronised.
+
+The first item is self-explanatory : the graphic graph role is to help in drawing a graph by
+providing style with style sheets and helpers to position an retrieve graph elements in space.
+
+The second item deserves a more complete explanation.
+
+Most of the time, drawing in Java is done through the Swing thread. Drawing in the Swing
+thread means that the main thread that is created when any Java application starts is not
+used. If it is used, one must ensure a good synchronisation between the main thread an
+the Swing thread.
+
+In GraphStream, most of the work is often done in the main thread. When one wants to display
+a graph, the Swing thread is used. Then several scenarios could occur :
+	* You want to design a graphic application with buttons, menus etc. and one or more
+	  graph graphical representations. In this case, the whole application can be done
+	  inside the Swing thread and the main thread can be left alone.
+	* You want to run one or more algorithms on the graph in the main thread and use
+	  the display capabilities to monitor them. In this case the application is spit in two
+	  threads, the main thread that runs the algorithms on a graph implementation, and
+	  the Swing thread that displays the graph.
+	* In any of the case above, you want the computation (an algorithm, a simulation) on the
+	  graph to occur in a dedicated thread that will not be interrupted by display or user
+	  events (buttons, clics, etc.).
+	  
+In all cases excepted the first, you have two threads, with one containing a standard graph
+implementation, and another doing the display of this graph. Lets call them the main thread
+and the Swing thread respectively.
+
+We have chosen to duplicate the standard graph into what we call a graphic graph so that
+the standard graph can be edited freely in the main thread, and the graphic graph can be
+consulted freely in the Swing thread. Between the two a ThreadProxyFilter is used
+to send events from the main graph to the graphic graph, passing the thread frontier. The
+proxy acts as a mail box. When an event occurs in the main graph, the event is sent in the
+mail box. When the Swing thread has time to do it, it consults its mail box to update its
+graph representation. Only the mail box has to be synchronised for this to work.
+
+But why duplicate the graph ? We could merely synchronise the graph in the main thread to
+render it in the Swing thread. This would be a bad idea. The reason is that the display
+accesses the graph constantly. In some real-time renderers, the display refreshes at 24 frames
+per second (or more !). This means it accesses the graph 24 times per second. If we were using
+synchronisation, we would be locking the main graph 24 times per second, leaving a few moments
+only to the main thread to read and update the graph, which is also its main purpose. In
+other words, the benefits of having two threads would be null, we would sequentialise things
+with no thread working in parallel since their critical section, the shared section, the graph,
+would be locked every time.
+
+Instead we have chosen to consume a little more memory (you will see that the graphic graph
+tries to minimise its memory consumption), by storing a copy of the main graph as a graphic
+graph, an use the thread proxy mechanism to copy the main graph to the Swing graph. The mail
+box principle is a very thing layer between the two threads will little overhead. In addition
+it can be exchanged to a network proxy mechanism, allowing to put the graph computation on
+one machine and the display on a distant machine, which is an overly cool concept.   
+
+How the graphic Graph works
+===========================
+
+As you can see, there is no direct storage for nodes, edges and sprites as this can be
+retrieved easily from the StyleGroupSet. The only information really stored directly inside
+the graphic graph is the connectivity information, that is which node is linked to which other
+nodes by edges.
+
+TODO graph as a filter.
+
+TODO graph special features :
+	* locating a node by its position
+	* idem for sprites
+	* ?
+
+How does the style sheet and styles communicate with the graphic elements
+=========================================================================
+
+The binding between styles and elements is done by events.
+
+When an element is added to the graphic graph, its style is automatically checked from the style
+sheet. The way a style binds to an element is complicated and depends on rules defined in the
+style sheet. The StyleGroupSet handles this complex process automatically.
+
+As some elements may have the same style, they are put in the same style groups.
+
+When a style change the style groups are automatically update, some elements may change of group
+in the process. Once again, the style group set handles all this process automatically.
+
+How the sprites work
+====================
+
+Sprites are little graphical elements that can be added in a display of a graph to represent
+data stored in the graph. Sprites can be attached to nodes or edges or float freely in the
+graph representation area. Several sprites can be attached to one node, to one edge or to the
+graph. Sprites can have a style, in the very same way nodes, edges and graph can have one.
+
+Sprites can move along edges, rotate around nodes or move freely in the graph display. They
+can change in appearance at any time. Therefore not only are they able to represent data, but they
+also can represent data dynamics.
+
+Sprites are not part of an usual graph definition. In the graphic graph implementation however,
+sprites are elements of the graph as are nodes or edges. How you view sprites is different when
+you are a user of the Graph interface or if you try to understand how the graphic graph works.
+
+Lets see the sprites as seen from the user perspective.
+
+	For the user
+	------------
+
+	For the user of the Graph class (not the graphic graph!) there are no sprites. It would make no
+	sense to define sprites
+	when they have no meaning in graph theory. Therefore another package in the "ui" branch, named
+	"spriteManager", provides a handler for sprites. A sprite manager is associated to a
+	given graph.
+	
+	The sprite manager allows to associate sprites to graphs, nodes and edges. It allows to move
+	them, attach them to (or detach them from) graph elements, change their style, or their
+	contents, etc. The sprite manager contains "Sprite" objects that you can manipulate with
+	appropriate methods.
+
+Now lets see how the sprites are handled really.
+
+	For the GraphStream developer
+	-----------------------------
+
+	In fact, in the Graph, the sprites are handled by attributes. Each time a sprite is created
+	by the SpriteManager, special attributes are updated automatically in the corresponding
+	graph. Each time a sprite is changed, the attributes are updated.
+	
+	When the sprite manager is first associated to a graph, it browses it to know if there already
+	are some sprites in it and updates itself accordingly to provide corresponding Sprite instances.
+	If the graph is read from a file format that supports attributes, the sprites are therefore
+	restored transparently. This works the same if a graph is written on disk.
+	
+	This mechanism also works with the rest of the input output system. As sprites are in fact
+	attributes, they
+	are sent via the input output mechanism to all listeners. This is the mechanism used by the
+	graphic graph to know how many sprites there is in the graph and their properties.
+	
+	As seen above, the graphic graph is a copy of the main graph. However in the graphic graph,
+	sprites are real elements of the graph. They are created and updated automatically when
+	attributes change. Indeed, in the graphic graph, the elements are :
+		* GraphicNode
+		* GraphicEdge
+		* GraphicSprite
+	These three elements are descendant of GraphicElement which in turns implement AbstractElement,
+	and Element, the basis for all parts of a graph in GraphStream.
+	
+	Sprites as attributes of the graph
+	----------------------------------
+	
+	As in regular graphs the sprites are stored as attributes, and as a sprite is described by
+	several properties. Therefore we have to possibilities to describe a sprite :
+		* Represent a sprite as an object stored as one attribute in the graph.
+		* Represent a sprite as several attributes, each attribute representing a property of
+		  the sprite.
+	
+	This may seem unnatural, but we have chosen the second possibility. The idea here is that
+	anyway, there is a Sprite object that hide the complexity and the using several attributes
+	to represent one sprite brings several advantages :
+		* The attributes will contain base type values, therefore it will be easy to to write
+		  them on disk. It would have been tricky to store objects.
+		* When one attribute changes in a sprite, the whole sprite would have to be transmitted
+		  through the I/O system. Here only the changed attribute is sent. 
+	
+	Here is the syntax used for attributes that describe a sprite. The attributes are put
+	on nodes if the sprite is attached to a node, on edges if attached to an edge, or on
+	graphs if not attached.
+	
+		To specify that a sprite with identifier "S1" exists as well as its position :
+			
+			Attribute			Value(s)
+			"ui.sprite.S1"		"0.5", "0", "0"
+			
+		To add an attribute "foo" with value "bar" to a sprite "S1" :
+		
+			Attribute			Value(s)
+			"ui.sprite.S1.foo"	"bar"
+			
+		To remove the attribute "foo" of sprite "S1" simply remove the attribute "ui.sprite.S1.foo".
+		
+	That's all !
+			
+	

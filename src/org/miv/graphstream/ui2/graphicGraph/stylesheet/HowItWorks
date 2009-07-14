@@ -355,7 +355,8 @@ Proposition
 ===========
 
 Instead of storing the graph as a usual graph structure, we can store it as a set of style groups,
-as defined above.
+as defined above plus the connectivity between nodes. This is what is done in the graphic graph
+package.
 
 Drawing the elements
 ====================

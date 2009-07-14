@@ -141,7 +141,7 @@ public class GraphicSprite extends GraphicElement
 	}
 	
 	@Override
-	public boolean contains( float x, float y )
+	public boolean contains( float x, float y, float z )
 	{
 		return( x > boundsX && y > boundsY && x < ( boundsX + boundsW ) && y < ( boundsY + boundsH ) );
 	}
@@ -266,5 +266,11 @@ public class GraphicSprite extends GraphicElement
     protected void attributeChanged( String attribute, Object oldValue, Object newValue )
     {
 		super.attributeChanged( attribute, oldValue, newValue );
+    }
+
+	@Override
+    protected void removed()
+    {
+		// NOP
     }
 }

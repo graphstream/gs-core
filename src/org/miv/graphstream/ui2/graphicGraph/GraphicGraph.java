@@ -19,17 +19,21 @@ package org.miv.graphstream.ui2.graphicGraph;
 import java.io.IOException;
 import java.util.*;
 
-import org.miv.graphstream.algorithm.Algorithms;
-import org.miv.graphstream.graph.AbstractElement;
+import org.miv.graphstream.graph.implementations.AbstractElement;
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.EdgeFactory;
+import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.graph.Graph;
+import org.miv.graphstream.graph.GraphAttributesListener;
+import org.miv.graphstream.graph.GraphElementsListener;
 import org.miv.graphstream.graph.GraphListener;
 import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.graph.NodeFactory;
 import org.miv.graphstream.io.GraphParseException;
 import org.miv.graphstream.io.GraphReader;
 import org.miv.graphstream.io.GraphWriter;
+import org.miv.graphstream.io2.file.FileInput;
+import org.miv.graphstream.io2.file.FileOutput;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Style;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleSheet;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleConstants.Units;
@@ -55,18 +59,16 @@ import org.miv.util.SingletonException;
  * 
  * <pre>url(name)</pre>
  * 
- * @author Yoann Pigné
- * @author Antoine Dutot
+ * <p>
+ * Note that the graphic graph does not completely duplicate a graph, it only store things that
+ * are useful for drawing it. Although it implements "Graph", some methods are not implemented
+ * and will throw a runtime exception. These methods are mostly utility methods like write(),
+ * read(), and naturally display().
+ * </p>
  */
-public class GraphicGraph extends AbstractElement implements Graph
+public class GraphicGraph extends AbstractElement implements Graph, StyleGroupListener
 {
 // Attribute
-
-	/**
-	 * The way nodes are connected one with another. The map is sorted by node. For each node an
-	 * array of edges lists the connectivity.
-	 */
-	protected HashMap<GraphicNode, ArrayList<GraphicEdge>> connectivity;
 
 	/**
 	 * The style.
@@ -77,6 +79,22 @@ public class GraphicGraph extends AbstractElement implements Graph
 	 * The style groups (styles and groups of graph elements).
 	 */
 	protected StyleGroupSet styleGroups;
+
+	/**
+	 * The way nodes are connected one with another. The map is sorted by node. For each node an
+	 * array of edges lists the connectivity.
+	 */
+	protected HashMap<GraphicNode, ArrayList<GraphicEdge>> connectivity;
+
+	/**
+	 * The style of this graph.
+	 */
+	public StyleGroup style;
+	
+	/**
+	 * Set to true each time the graph was modified and a redraw is needed.
+	 */
+	public boolean graphChanged;
 	
 	/**
 	 * Allow to know if this graph is or not a multigraph. It is possible do
@@ -86,29 +104,16 @@ public class GraphicGraph extends AbstractElement implements Graph
 	protected boolean isMultigraph = false;
 	
 	/**
-	 * Set to true each time the graph was modified.
-	 */
-	public boolean graphChanged;
-	
-	/**
-	 * The style of this graph.
-	 */
-	public StyleGroup style;
-	
-	/**
 	 * Memorise the step events.
 	 */
 	public double step = 0;
 	
-	/**
-	 * Set of common algorithms.
-	 */
-	protected Algorithms algos;
-
 // Construction
 
 	/**
 	 * New empty graphic graph.
+	 * 
+	 * A default style sheet is created, it then can be "cascaded" with other style sheets.
 	 */
 	public GraphicGraph()
 	{
@@ -117,7 +122,8 @@ public class GraphicGraph extends AbstractElement implements Graph
 		styleSheet   = new StyleSheet();
 		styleGroups  = new StyleGroupSet( styleSheet );
 		connectivity = new HashMap<GraphicNode, ArrayList<GraphicEdge>>();
-		
+
+		styleGroups.addListener( this );
 		styleGroups.addElement( this );	// Add style to this graph.
 		
 		style = styleGroups.getStyleFor( this );
@@ -126,15 +132,8 @@ public class GraphicGraph extends AbstractElement implements Graph
 // Access
 
 	/**
-	 * The links between nodes.
-	 */
-	public Collection<GraphicEdge> getConnectivity( GraphicNode node )
-	{
-		return connectivity.get( node );
-	}
-
-	/**
-	 * The style sheet.
+	 * The style sheet. This style sheet is the result of the "cascade" or accumulation of styles
+	 * added via attributes of the graph.
 	 * @return A style sheet.
 	 */
 	public StyleSheet getStyleSheet()
@@ -152,7 +151,7 @@ public class GraphicGraph extends AbstractElement implements Graph
 	}
 	
 	/**
-	 * Set set of style groups.
+	 * The complete set of style groups.
 	 * @return The style groups.
 	 */
 	public StyleGroupSet getStyleGroups()
@@ -176,17 +175,16 @@ public class GraphicGraph extends AbstractElement implements Graph
 	 * graph is in 3D the z coordinate is ignored.
 	 * @param x The X coordinate.
 	 * @param y The Y coordinate.
+	 * @param z The Z coordinate.
 	 * @return The first node that match the coordinates, or null if no node match the coordinates.
 	 */
-	public GraphicNode findNode( float x, float y )
+	public GraphicNode findNode( float x, float y, float z )
 	{
-		Iterator<? extends Node> nodes = styleGroups.getNodeIterator();
-	
-		while( nodes.hasNext() )
+		for( Node n: styleGroups.nodes() )
 		{
-			GraphicNode node = (GraphicNode) nodes.next();
+			GraphicNode node = (GraphicNode) n;
 			
-			if( node.contains( x, y ) )
+			if( node.contains( x, y, z ) )
 				return node;
 		}
 		
@@ -201,15 +199,11 @@ public class GraphicGraph extends AbstractElement implements Graph
 	 * @param y The Y coordinate.
 	 * @return The first sprite that match the coordinates, or null if no sprite match the coordinates.
 	 */
-	public GraphicSprite findSprite( float x, float y )
+	public GraphicSprite findSprite( float x, float y, float z )
 	{
-		Iterator<? extends GraphicSprite> sprites = styleGroups.getSpriteIterator();
-		
-		while( sprites.hasNext() )
+		for( GraphicSprite sprite: styleGroups.sprites() )
 		{
-			GraphicSprite sprite = sprites.next();
-			
-			if( sprite.contains( x, y ) )
+			if( sprite.contains( x, y, z ) )
 				return sprite;
 		}
 		
@@ -222,22 +216,23 @@ public class GraphicGraph extends AbstractElement implements Graph
 	 * 2D (as the screen is 2D) and if the graph is in 3D, the z coordinate is ignored.  
 	 * @param x The X coordinate.
 	 * @param y The Y coordinate.
+	 * @param z The Z coordinate.
 	 * @return The first node or sprite that match the coordinate, or null if no node or sprite
 	 *    match these coordinates.
 	 */
-	public GraphicElement findNodeOrSprite( float x, float y )
+	public GraphicElement findNodeOrSprite( float x, float y, float z )
 	{
-		GraphicElement e = findNode( x, y );
+		GraphicElement e = findNode( x, y, z );
 		
 		if( e == null )
-			e = findSprite( x, y );
+			e = findSprite( x, y, z );
 		
 		return e;
 	}
 	
 // Command
 
-	public GraphicEdge addEdge( String id, String from, String to, boolean directed, HashMap<String, Object> attributes )
+	protected GraphicEdge addEdge( String id, String from, String to, boolean directed, HashMap<String, Object> attributes )
 	{
 		GraphicNode n1 = (GraphicNode) styleGroups.getNode( from );
 		GraphicNode n2 = (GraphicNode) styleGroups.getNode( to );
@@ -246,7 +241,7 @@ public class GraphicGraph extends AbstractElement implements Graph
 
 		if( n1 == null || n2 == null )
 			throw new RuntimeException(
-					"org.miv.graphstream.ui.bufferedData.BufferedGraph.addEdge() : ERROR : on of the nodes does not exist" );
+					"org.miv.graphstream.ui.graphicGraph.GraphicGraph.addEdge() : ERROR : one of the nodes does not exist" );
 
 		GraphicEdge edge = new GraphicEdge( id, n1, n2, directed, attributes );
 		
@@ -278,7 +273,7 @@ public class GraphicGraph extends AbstractElement implements Graph
 		return edge;
 	}
 
-	public GraphicNode addNode( String id, float x, float y, float z, HashMap<String, Object> attributes )
+	protected GraphicNode addNode( String id, float x, float y, float z, HashMap<String, Object> attributes )
 	{
 		GraphicNode n = new GraphicNode( this, id, x, y, z, attributes );
 
@@ -289,7 +284,7 @@ public class GraphicGraph extends AbstractElement implements Graph
 		return n;
 	}
 
-	public void changeEdge( String id, String attribute, Object value )
+	protected void changeEdge( String id, String attribute, Object value )
 	{
 		GraphicEdge edge = (GraphicEdge) styleGroups.getEdge( id );
 		
@@ -301,7 +296,7 @@ public class GraphicGraph extends AbstractElement implements Graph
 		}
 	}
 
-	public void changeNode( String id, String attribute, Object value )
+	protected void changeNode( String id, String attribute, Object value )
 	{
 		GraphicNode node = (GraphicNode) styleGroups.getNode( id );
 		
@@ -313,7 +308,7 @@ public class GraphicGraph extends AbstractElement implements Graph
 		}
 	}
 
-	public void moveNode( String id, float x, float y, float z )
+	protected void moveNode( String id, float x, float y, float z )
 	{
 		GraphicNode node = (GraphicNode) styleGroups.getNode( id );
 		
@@ -401,7 +396,7 @@ public class GraphicGraph extends AbstractElement implements Graph
 		return node;
 	}
 	
-	public GraphicSprite addSprite( String id )
+	protected GraphicSprite addSprite( String id )
 	{
 		GraphicSprite s = new GraphicSprite( id, this );
 
@@ -412,7 +407,7 @@ public class GraphicGraph extends AbstractElement implements Graph
 		return s;
 	}
 
-	public GraphicSprite removeSprite( String id )
+	protected GraphicSprite removeSprite( String id )
 	{
 		GraphicSprite sprite = (GraphicSprite) styleGroups.getSprite( id );
 		
@@ -427,7 +422,7 @@ public class GraphicGraph extends AbstractElement implements Graph
 		return sprite;
 	}
 
-	public void attachSpriteToNode( String id, String nodeId )
+	protected void attachSpriteToNode( String id, String nodeId )
 	{
 		GraphicSprite sprite = styleGroups.getSprite( id );
 		GraphicNode   node   = (GraphicNode) styleGroups.getNode( nodeId );
@@ -436,7 +431,7 @@ public class GraphicGraph extends AbstractElement implements Graph
 			sprite.attachToNode( node );
 	}
 
-	public void attachSpriteToEdge( String id, String edgeId )
+	protected void attachSpriteToEdge( String id, String edgeId )
 	{
 		GraphicSprite sprite = styleGroups.getSprite( id );
 		GraphicEdge   edge   = (GraphicEdge) styleGroups.getEdge( edgeId );
@@ -445,42 +440,42 @@ public class GraphicGraph extends AbstractElement implements Graph
 			sprite.attachToEdge( edge );
 	}
 
-	public void detachSprite( String id )
+	protected void detachSprite( String id )
 	{
 		GraphicSprite sprite = styleGroups.getSprite( id );
 		
 		sprite.detach();
 	}
 
-	public void positionSprite( String id, float percent )
+	protected void positionSprite( String id, float percent )
 	{
 		GraphicSprite sprite = styleGroups.getSprite( id );
 		
 		sprite.setPosition( percent );
 	}
 
-	public void positionSprite( String id, float x, float y, float z, Style.Units units )
+	protected void positionSprite( String id, float x, float y, float z, Style.Units units )
 	{
 		GraphicSprite sprite = styleGroups.getSprite( id );
 		
 		sprite.setPosition( x, y, z, units );
 	}
 
-	public void positionSprite( String id, float x, float y, float z )
+	protected void positionSprite( String id, float x, float y, float z )
 	{
 		GraphicSprite sprite = styleGroups.getSprite( id );
 		
 		sprite.setPosition( x, y, z, Units.GU );
 	}
 	
-	public void addSpriteAttribute( String id, String attribute, Object value )
+	protected void addSpriteAttribute( String id, String attribute, Object value )
 	{
 		GraphicSprite sprite = styleGroups.getSprite( id );
 		
 		sprite.addAttribute( attribute, value );
 	}
 
-	public void removeSpriteAttribute( String id, String attribute )
+	protected void removeSpriteAttribute( String id, String attribute )
 	{
 		GraphicSprite sprite = styleGroups.getSprite( id );
 
@@ -516,7 +511,7 @@ public class GraphicGraph extends AbstractElement implements Graph
 				}
 				catch( IOException e )
 				{
-					System.err.printf( "Error while parsing style sheet for graph '%s' : %n", id );
+					System.err.printf( "Error while parsing style sheet for graph '%s' : %n", getId() );
 					if( ((String)newValue).startsWith( "url" ) )
 						System.err.printf( "    %s%n", ((String)newValue) );
 					System.err.printf( "    %s%n", e.getMessage() );
@@ -619,7 +614,73 @@ public class GraphicGraph extends AbstractElement implements Graph
 		}
 	}
 
+// Style group listener interface
+	
+	public void elementStyleChanged( Element element, StyleGroup style )
+    {
+		if( element instanceof GraphicElement )
+		{
+			GraphicElement ge = (GraphicElement) element;
+			ge.style          = style;
+			graphChanged      = true;
+		}
+    }
+
 // Graph interface
+
+	public Iterable<? extends Edge> edgeSet()
+    {
+		return styleGroups.edges();
+    }
+
+	public Iterable<? extends Node> nodeSet()
+    {
+	    return styleGroups.nodes();
+    }
+
+	@SuppressWarnings( "unchecked" )
+    public Iterator<Node> iterator()
+    {
+	    return (Iterator<Node>) styleGroups.nodes();
+    }
+	
+	public void addGraphListener( GraphListener listener )
+    {
+		throw new RuntimeException( "not implemented !" );
+    }
+
+	public void addGraphAttributesListener( GraphAttributesListener listener )
+    {
+		throw new RuntimeException( "not implemented !" );
+    }
+
+	public void addGraphElementsListener( GraphElementsListener listener )
+    {
+		throw new RuntimeException( "not implemented !" );
+    }
+
+	public Iterable<GraphAttributesListener> getGraphAttributesListeners()
+    {
+		throw new RuntimeException( "not implemented !" );
+    }
+
+	public Iterable<GraphElementsListener> getGraphElementsListeners()
+    {
+		throw new RuntimeException( "not implemented !" );
+    }
+
+	public void removeGraphAttributesListener( GraphAttributesListener listener )
+    {
+    }
+
+	public void removeGraphElementsListener( GraphElementsListener listener )
+    {
+    }
+
+	public void clearListeners()
+    {
+		throw new RuntimeException( "not implemented !" );
+    }
 	
 	public Edge addEdge( String id, String from, String to ) throws SingletonException,
             NotFoundException
@@ -636,23 +697,6 @@ public class GraphicGraph extends AbstractElement implements Graph
 	public Node addNode( String id ) throws SingletonException
     {
 		return addNode( id, 0, 0, 0, null );
-    }
-
-	public void addGraphListener( GraphListener listener )
-    {
-		throw new RuntimeException( "not implemented !" );
-    }
-
-	public Algorithms algorithm()
-    {
-		if( algos == null )
-			algos = new Algorithms( this );
-		
-		return algos;
-    }
-
-	public void clearListeners()
-    {
     }
 
 	public org.miv.graphstream.ui.GraphViewerRemote display()
@@ -680,9 +724,9 @@ public class GraphicGraph extends AbstractElement implements Graph
 	    return styleGroups.getEdgeIterator();
     }
 
-	public Collection<? extends Edge> getEdgeSet()
+	public Iterable<? extends Edge> getEdgeSet()
     {
-		throw new RuntimeException( "getEdgeSet() Not implemented in this " );
+		return styleGroups.edges();
     }
 
 	public List<GraphListener> getGraphListeners()
@@ -710,9 +754,9 @@ public class GraphicGraph extends AbstractElement implements Graph
 		return styleGroups.getSpriteIterator();
 	}
 	
-	public Collection<? extends Node> getNodeSet()
+	public Iterable<? extends Node> getNodeSet()
     {
-		throw new RuntimeException( "getNodeSet() Not implemented in this " );
+		return styleGroups.nodes();
     }
 
 	public boolean isAutoCreationEnabled()
@@ -730,21 +774,6 @@ public class GraphicGraph extends AbstractElement implements Graph
 	    return null;
     }
 
-	public void read( String filename ) throws IOException, GraphParseException, NotFoundException
-    {
-		throw new RuntimeException( "not implemented !" );
-    }
-
-	public void read( GraphReader reader, String filename ) throws IOException, GraphParseException
-    {
-		throw new RuntimeException( "not implemented !" );
-    }
-
-	public int readPositionFile( String posFileName ) throws IOException
-    {
-		throw new RuntimeException( "not implemented !" );
-    }
-
 	public void removeGraphListener( GraphListener listener )
     {
     }
@@ -758,19 +787,116 @@ public class GraphicGraph extends AbstractElement implements Graph
     {
 		throw new RuntimeException( "not implemented !" );
     }
+	
+	public boolean isStrict()
+    {
+	    return false;
+    }
+
+	public void setStrict( boolean on )
+    {
+		throw new RuntimeException( "not implemented !" );
+    }
+
+	public void setEdgeFactory( EdgeFactory ef )
+    {
+		throw new RuntimeException( "you cannot change the edge factory for graphic graphs !" );	    
+    }
+
+	public void setNodeFactory( NodeFactory nf )
+    {
+		throw new RuntimeException( "you cannot change the node factory for graphic graphs !" );	    
+    }
+
+	public void read( String filename ) throws IOException, GraphParseException, NotFoundException
+    {
+		throw new RuntimeException( "not implemented !" );
+    }
+
+	public void read( FileInput input, String filename ) throws IOException, GraphParseException
+    {
+		throw new RuntimeException( "not implemented !" );
+    }
+
+	public void write( FileOutput output, String filename ) throws IOException
+    {
+		throw new RuntimeException( "not implemented !" );
+    }
 
 	public void write( String filename ) throws IOException
     {
 		throw new RuntimeException( "not implemented !" );
     }
 
-	public void write( GraphWriter writer, String filename ) throws IOException
+// Output interface
+	
+	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
     {
-		throw new RuntimeException( "not implemented !" );
+    }
+
+	public void edgeAttributeChanged( String graphId, String edgeId, String attribute,
+            Object oldValue, Object newValue )
+    {
+    }
+
+	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+    {
+    }
+
+	public void graphAttributeAdded( String graphId, String attribute, Object value )
+    {
+    }
+
+	public void graphAttributeChanged( String graphId, String attribute, Object oldValue,
+            Object newValue )
+    {
+    }
+
+	public void graphAttributeRemoved( String graphId, String attribute )
+    {
+    }
+
+	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+    {
+    }
+
+	public void nodeAttributeChanged( String graphId, String nodeId, String attribute,
+            Object oldValue, Object newValue )
+    {
+    }
+
+	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+    {
+    }
+
+	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId,
+            boolean directed )
+    {
+    }
+
+	public void edgeRemoved( String graphId, String edgeId )
+    {
+    }
+
+	public void graphCleared( String graphId )
+    {
+    }
+
+	public void nodeAdded( String graphId, String nodeId )
+    {
+    }
+
+	public void nodeRemoved( String graphId, String nodeId )
+    {
+    }
+
+	public void stepBegins( String graphId, double time )
+    {
+		step = time;
     }
 
 	public void stepBegins( double time )
-	{
+    {
 		step = time;
-	}
+    }
 }

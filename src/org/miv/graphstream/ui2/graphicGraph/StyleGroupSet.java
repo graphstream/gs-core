@@ -77,6 +77,24 @@ public class StyleGroupSet implements StyleSheetListener
 	protected HashMap<String,String> byGraphIdGroups = new HashMap<String,String>();
 	
 	/**
+	 * Virtual set of nodes. This set provides fake methods to make it appears as a set of nodes
+	 * whereas it only maps on the node style groups.
+	 */
+	protected NodeSet nodeSet = new NodeSet();
+
+	/**
+	 * Virtual set of edges. This set provides fake methods to make it appears as a set of edges
+	 * whereas it only maps on the edge style groups.
+	 */
+	protected EdgeSet edgeSet = new EdgeSet();
+
+	/**
+	 * Virtual set of sprites. This set provides fake methods to make it appears as a set of sprites
+	 * whereas it only maps on the sprite style groups.
+	 */
+	protected SpriteSet spriteSet = new SpriteSet();
+	
+	/**
 	 * The set of events actually occurring.
 	 */
 	protected EventSet eventSet = new EventSet();
@@ -329,6 +347,15 @@ public class StyleGroupSet implements StyleSheetListener
 	}
 	
 	/**
+	 * Iterable set of nodes.
+	 * @return The set of all nodes.
+	 */
+	public Iterable<? extends Node> nodes()
+	{
+		return nodeSet; 
+	}
+	
+	/**
 	 * Iterator on the set of edges.
 	 * @return An iterator on all edge elements contained in style groups.
 	 */
@@ -338,12 +365,30 @@ public class StyleGroupSet implements StyleSheetListener
 	}
 	
 	/**
+	 * Iterable set of edges.
+	 * @return The set of all edges.
+	 */
+	public Iterable<? extends Edge> edges()
+	{
+		return edgeSet; 
+	}
+	
+	/**
 	 * Iterator on the set of sprite.
 	 * @return An iterator on all sprite elements contained in style groups.
 	 */
 	public Iterator<? extends GraphicSprite> getSpriteIterator()
 	{
 		return new ElementIterator<GraphicSprite>( bySpriteIdGroups );
+	}
+	
+	/**
+	 * Iterable set of sprites.
+	 * @return The set of all sprites.
+	 */
+	public Iterable<? extends GraphicSprite> sprites()
+	{
+		return spriteSet; 
 	}
 	
 	/**
@@ -1181,4 +1226,32 @@ protected class ElementIterator<E extends Element> implements Iterator<E>
 		throw new RuntimeException( "remove not implemented in this iterator" );
     }
 }
+
+/**
+ * Dummy set of nodes.
+ */
+protected class NodeSet implements Iterable<Node>
+{
+	@SuppressWarnings( "unchecked" )
+    public Iterator<Node> iterator() { return (Iterator<Node>) getNodeIterator(); }
+}
+
+/**
+ * Dummy set of edges.
+ */
+protected class EdgeSet implements Iterable<Edge>
+{
+	@SuppressWarnings( "unchecked" )
+    public Iterator<Edge> iterator() { return (Iterator<Edge>) getEdgeIterator(); }
+}
+
+/**
+ * Dummy set of sprites.
+ */
+protected class SpriteSet implements Iterable<GraphicSprite>
+{
+	@SuppressWarnings( "unchecked" )
+    public Iterator<GraphicSprite> iterator() { return (Iterator<GraphicSprite>) getSpriteIterator(); }
+}
+
 }

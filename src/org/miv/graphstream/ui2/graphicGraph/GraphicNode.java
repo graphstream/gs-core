@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import static org.miv.graphstream.ui2.graphicGraph.GraphPosLengthUtils.*;
+
 /**
  * Graphical node.
  * 
@@ -31,8 +33,6 @@ import java.util.Iterator;
  * </p>
  * 
  * @see GraphicGraph
- * @author Yoann Pigné
- * @author Antoine Dutot
  */
 public class GraphicNode extends GraphicElement implements Node 
 {
@@ -74,7 +74,7 @@ public class GraphicNode extends GraphicElement implements Node
     }
 	
 	@Override
-	public boolean contains( float x, float y )
+	public boolean contains( float x, float y, float z )
 	{
 		return( x > boundsX && y > boundsY && x < ( boundsX + boundsW ) && y < ( boundsY + boundsH ) );
 	}
@@ -128,28 +128,11 @@ public class GraphicNode extends GraphicElement implements Node
 		}
 		else if( attribute.equals( "xy" ) || attribute.equals( "xyz" ) )
 		{
-			float pos[] = mygraph.algorithm().getNodePosition( this );
+			float pos[] = nodePosition( this );
 			
 			x = pos[0];
 			y = pos[1];
 			z = pos[2];
-/*
- 			if( newValue instanceof Object[] )
-			{
-				Object numbers[] = (Object[])newValue;
-				
-				if( numbers.length > 1 )
-				{
-					x = numberAttribute( numbers[0] );
-					y = numberAttribute( numbers[1] );
-		
-					if( numbers.length > 2 )
-						z = numberAttribute( numbers[2] );
-					
-					mygraph.graphChanged = true;
-				}
-			}
-*/
 		}
 	}
 
@@ -183,17 +166,17 @@ public class GraphicNode extends GraphicElement implements Node
 	@Override
 	public void setBounds( float x, float y, float w, float h )
 	{
-		// We cannot consider the X/Y here, since this will trigger a redraw that will recompute
-		// the graph overall width and height therefore move this sprite x /y, etc, etc..
-/*		mygraph.graphChanged = (
-				   ((int)(w*1000)) != ((int)(boundsW*1000))
-				|| ((int)(h*1000)) != ((int)(boundsH*1000)) );
-	
-*/		boundsX = x;
+		boundsX = x;
 		boundsY = y;
 		boundsW = w;
 		boundsH = h;
 	}
+
+	@Override
+    protected void removed()
+    {
+		// NOP
+    }
 
 // Node interface.
 	
@@ -262,6 +245,12 @@ public class GraphicNode extends GraphicElement implements Node
 	    	return edges.iterator();
 	    
 	    return null;
+    }
+
+	@SuppressWarnings( "unchecked" )
+    public Iterator<Edge> iterator()
+    {
+		return (Iterator<Edge>) getEdgeIterator();
     }
 
 	public Collection<? extends Edge> getEdgeSet()

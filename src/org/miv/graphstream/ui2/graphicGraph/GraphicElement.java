@@ -16,7 +16,7 @@
 
 package org.miv.graphstream.ui2.graphicGraph;
 
-import org.miv.graphstream.graph.AbstractElement;
+import org.miv.graphstream.graph.implementations.AbstractElement;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Selector;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleConstants;
 
@@ -28,13 +28,10 @@ import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleConstants;
  * includes the common behaviour (the style handling, has well as the classes, the Z-index or
  * the common attributes like "label" for example).
  * </p>
- * 
- * @author Antoine Dutot
- * @author Yoann Pigné
  */
 public abstract class GraphicElement extends AbstractElement
 {
-// Attributes
+// Attribute
 	
 	/**
 	 * Graph containing this element.
@@ -54,9 +51,9 @@ public abstract class GraphicElement extends AbstractElement
 	/**
 	 * The element state.
 	 */
-	public String state = null;
+	//public String state = null;
 	
-// Constructors
+// Construction
 	
 	/**
 	 * New element.
@@ -75,8 +72,8 @@ public abstract class GraphicElement extends AbstractElement
 	protected abstract Selector.Type getSelectorType();
 	
 	/**
-	 * This graphic element style group.
-	 * @return The style group corresponding to this node.
+	 * Style group. An style group may reference several elements.
+	 * @return The style group corresponding to this element.
 	 */
 	public StyleGroup getStyle()
 	{
@@ -84,7 +81,7 @@ public abstract class GraphicElement extends AbstractElement
 	}
 	
 	/**
-	 * The graphic element label or null if not set.
+	 * Label or null if not set.
 	 * @return A string or null.
 	 */
 	public String getLabel()
@@ -93,19 +90,19 @@ public abstract class GraphicElement extends AbstractElement
 	}
 
 	/**
-	 * Position in X of the element. For edges this is the X of the "from" node.
+	 * Abscissa of the element. For edges this is the X of the "from" node.
 	 */
 	public abstract float getX();
 
 
 	/**
-	 * Position in Y of the element. For edges this is the Y of the "from" node.
+	 * Ordinate of the element. For edges this is the Y of the "from" node.
 	 */
 	public abstract float getY();
 	
 
 	/**
-	 * Position in Z of the element. For edges this is the Z of the "from" node.
+	 * Depth of the element. For edges this is the Z of the "from" node.
 	 */
 	public abstract float getZ();
 
@@ -113,9 +110,10 @@ public abstract class GraphicElement extends AbstractElement
 	 * Does the graphical representation on screen (2D thus) contains the point (x,y).
 	 * @param x The X coordinate in graph units.
 	 * @param y The Y coordinate in graph units.
+	 * @param z The Z coordinate in graph units.
 	 * @return True if the point is in the graphical representation of the element.
 	 */
-	public abstract boolean contains( float x, float y );
+	public abstract boolean contains( float x, float y, float z );
 	
 // Commands
 
@@ -130,36 +128,10 @@ public abstract class GraphicElement extends AbstractElement
 	 */
 	public abstract void setBounds( float x, float y, float w, float h );
 
-	protected void checkStyleEvents()
-	{
-		if( hasAttribute( "ui.clicked" ) )
-		{
-			attributeChanged( "ui.clicked", null, true );
-		}
-		if( hasAttribute( "ui.selected" ) )
-		{
-			attributeChanged( "ui.selected", null, true );
-		}
-		if( hasAttribute( "ui.state" ) )
-		{
-			attributeChanged( "ui.state", null, getAttribute( "ui.state" ) );
-		}
-		if( hasAttribute( "ui.color" ) )
-		{
-			attributeChanged( "ui.color", null, getAttribute( "ui.color" ) );
-		}
-		if( hasAttribute( "ui.width" ) )
-		{
-			attributeChanged( "ui.width", null, getAttribute( "ui.width" ) );
-		}
-	}
-	
 	/**
 	 * The graphic element was removed from the graphic graph, clean up.
 	 */
-	protected void removed()
-	{
-	}
+	protected abstract void removed();
 	
 	/**
 	 * Try to force move the element. For edge, this may move the two attached nodes.
@@ -181,7 +153,7 @@ public abstract class GraphicElement extends AbstractElement
 			mygraph.styleGroups.addElement( this );
 			mygraph.graphChanged = true;
 		}
-		else if( attribute.equals( "label" ) )
+		else if( attribute.equals( "label" ) || attribute.equals( "ui.label" ) )
 		{
 			label = StyleConstants.convertLabel( newValue );
 			mygraph.graphChanged = true;
@@ -195,12 +167,12 @@ public abstract class GraphicElement extends AbstractElement
 				try
 				{
 					mygraph.styleSheet.parseStyleFromString(
-							new Selector( getSelectorType(), id, null ),
+							new Selector( getSelectorType(), getId(), null ),
 							(String)newValue );
 				}
 				catch( java.io.IOException e )
 				{
-					System.err.printf( "Error while parsing style for %S '%s' :", getSelectorType(), id );
+					System.err.printf( "Error while parsing style for %S '%s' :", getSelectorType(), getId() );
 					System.err.printf( "    %s%n", e.getMessage() );
 					System.err.printf( "    The style was ignored" );
 				}
@@ -220,7 +192,7 @@ public abstract class GraphicElement extends AbstractElement
 		{
 			mygraph.graphChanged = true;
 		}
-		else if( attribute.equals( "ui.state" ) )
+/*		else if( attribute.equals( "ui.state" ) )
 		{
 			if( newValue == null )
 			{
@@ -231,5 +203,5 @@ public abstract class GraphicElement extends AbstractElement
 				state = (String) newValue;
 			}
 		}
-    }
+*/   }
 }
