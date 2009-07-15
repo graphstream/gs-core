@@ -626,58 +626,54 @@ public class Style extends StyleConstants
      */
     public void augment( Style other )
     {
-    	throw new RuntimeException( "TODO !!!" );
+    	if( other != this )
+    	{
+        	augmentField( "z-index",              other );
+        	augmentField( "fill-mode",            other );
+        	augmentField( "fill-color",           other );
+        	augmentField( "fill-image",           other );
+        	
+        	augmentField( "stroke-mode",          other );
+        	augmentField( "stroke-color",         other );
+        	augmentField( "stroke-width",         other );
 
-//    	if( other != this )
-//    	{
-//    	/*
-//    		if( other.hasValue( "colors"        ) ) setValue( "colors",        new ArrayList<Color>( (ArrayList<Color>) other.getValue( "colors" ) ) );
-//    	    if( other.hasValue( "bgColors"      ) ) setValue( "bgColors",      new ArrayList<Color>( (ArrayList<Color>) other.getValue( "bgColors" ) ) );
-//    	    if( other.hasValue( "shadowPalette" ) ) setValue( "shadowPalette", new ArrayList<Color>( (ArrayList<Color>) other.getValue( "shadowPalette" ) ) );
-//
-//    	    augmentField( "fill",    other );
-//    		augmentField( "width",   other );
-//    		augmentField( "height",  other );
-//    		augmentField( "z_index", other );
-//    		
-//    	    augmentField( "nodeShape", other );
-//    	    augmentField( "edgeShape", other );
-//    	    augmentField( "edgeStyle", other );
-//    	    
-//    		if( other.hasValue( "edgePoints" ) ) setValue( "edgePoints", new ArrayList<Point3>( (ArrayList<Point3>) other.getValue( "edgePoints" ) ) );
-//    		
-//    		augmentField( "spriteShape",       other );
-//    		augmentField( "spriteOrientation", other );
-//    		
-//    		augmentField( "borderWidth", other );
-//    		augmentField( "borderColor", other );
-//    		augmentField( "padding",     other );
-//    		
-//    		augmentField( "arrowShape",    other );
-//    		augmentField( "arrowLength",   other );
-//    		augmentField( "arrowWidth",    other );
-//    		augmentField( "arrowImageUrl", other );
-//    		
-//    		augmentField( "imageUrl",     other );
-//    		augmentField( "imageMode",    other );
-//    		augmentField( "imageOffsetX", other );
-//    		augmentField( "imageOffsetY", other );
-//    		
-//    		augmentField( "textColor",     other );
-//    		augmentField( "textSize",      other );
-//    		augmentField( "textFont",      other );
-//    		augmentField( "textOffsetX",   other );
-//    		augmentField( "textOffsetY",   other );
-//    		augmentField( "textStyle",     other );
-//    		augmentField( "textAlignment", other );
-//    		augmentField( "textMode",      other );
-//    		
-//    		augmentField( "shadowStyle", other );
-//    		augmentField( "shadowWidth", other );
-//    		augmentField( "shadowOffsetX", other );
-//    		augmentField( "shadowOffsetY", other );
-//    		*/
-//    	}
+        	augmentField( "shadow-mode",          other );
+        	augmentField( "shadow-color",         other );
+        	augmentField( "shadow-width",         other );
+        	augmentField( "shadow-offset",        other );
+
+        	augmentField( "padding",              other );
+
+        	augmentField( "text-mode",            other );
+        	augmentField( "text-visibility-mode", other );
+        	augmentField( "text-visibility",      other );
+        	augmentField( "text-color",           other );
+        	augmentField( "text-style",           other );
+        	augmentField( "text-font",            other );
+        	augmentField( "text-size",            other );
+        	augmentField( "text-alignment",       other );
+
+        	augmentField( "icon-mode",            other );
+        	augmentField( "icon",                 other );
+        	
+        	augmentField( "visibility-mode",      other );
+        	augmentField( "visibility",           other );
+
+        	augmentField( "size-mode",            other );
+        	augmentField( "size",                 other );
+
+        	augmentField( "shape",                other );
+        	augmentField( "shape-points",         other );
+        	augmentField( "jcomponent",           other );
+
+        	augmentField( "sprite-orientation",   other );
+        	
+        	augmentField( "arrow-shape",          other );
+        	augmentField( "arrow-size",           other );
+        	augmentField( "arrow-image",          other );
+
+        	augmentField( "canvas-color",         other );
+    	}
     }
     
     protected void augmentField( String field, Style other )
@@ -688,6 +684,10 @@ public class Style extends StyleConstants
     	{
     		if( value instanceof Value )
     		     setValue( field, new Value( (Value)value ) );
+    		else if( value instanceof Values )
+    		     setValue( field, new Values( (Values)value ) );
+    		else if( value instanceof Colors )
+    		     setValue( field, new Colors( (Colors)value ) );
     		else setValue( field, value );
     	}
     }

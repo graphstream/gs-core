@@ -26,11 +26,24 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 /**
- * Ordered set of colors.
+ * Ordered set of colours.
  */
 public class Colors extends ArrayList<Color>
 {
+	/**
+	 * New empty colour set.
+	 */
 	public Colors()
 	{
+	}
+	
+	/**
+	 * New copy of the other colour set.
+	 * @param others The other colour set to copy.
+	 */
+	public Colors( Colors others )
+	{
+		for( Color color: others )
+			add( color );
 	}
 }

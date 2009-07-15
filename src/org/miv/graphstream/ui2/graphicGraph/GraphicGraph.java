@@ -50,7 +50,7 @@ import org.miv.util.SingletonException;
  * </p>
  * 
  * <p>
- * The style sheet is updated on the graph using an attribute correspondingly named "stylesheet".
+ * The style sheet is uploaded on the graph using an attribute correspondingly named "stylesheet".
  * It can be a string that contains the whole style sheet, or an URL of the form :
  * </p>
  * 
@@ -60,7 +60,8 @@ import org.miv.util.SingletonException;
  * Note that the graphic graph does not completely duplicate a graph, it only store things that
  * are useful for drawing it. Although it implements "Graph", some methods are not implemented
  * and will throw a runtime exception. These methods are mostly utility methods like write(),
- * read(), and naturally display().
+ * read(), and naturally display(). At this time, the GraphicGraph is not a filter, it is only
+ * an Output (i.e. you cannot register listeners in it).
  * </p>
  */
 public class GraphicGraph extends AbstractElement implements Graph, StyleGroupListener
@@ -216,8 +217,6 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	{
 		GraphicNode n1 = (GraphicNode) styleGroups.getNode( from );
 		GraphicNode n2 = (GraphicNode) styleGroups.getNode( to );
-
-		// TODO: A better test + raise of an exception
 
 		if( n1 == null || n2 == null )
 			throw new RuntimeException(
@@ -803,62 +802,94 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	
 	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
     {
+		Edge edge = getEdge( edgeId );
+
+		if( edge != null )
+			edge.addAttribute( attribute, value );
     }
 
 	public void edgeAttributeChanged( String graphId, String edgeId, String attribute,
             Object oldValue, Object newValue )
     {
+		Edge edge = getEdge( edgeId );
+
+		if( edge != null )
+			edge.changeAttribute( attribute, newValue );
     }
 
 	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
     {
+		Edge edge = getEdge( edgeId );
+
+		if( edge != null )
+			edge.removeAttribute( attribute );
     }
 
 	public void graphAttributeAdded( String graphId, String attribute, Object value )
     {
+		addAttribute( attribute, value );
     }
 
 	public void graphAttributeChanged( String graphId, String attribute, Object oldValue,
             Object newValue )
     {
+		changeAttribute( attribute, newValue );
     }
 
 	public void graphAttributeRemoved( String graphId, String attribute )
     {
+		removeAttribute( attribute );
     }
 
 	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
     {
+		Node node = getNode( nodeId );
+		
+		if( node != null )
+			node.addAttribute( attribute, value );
     }
 
 	public void nodeAttributeChanged( String graphId, String nodeId, String attribute,
             Object oldValue, Object newValue )
     {
+		Node node = getNode( nodeId );
+		
+		if( node != null )
+			node.changeAttribute( attribute, newValue );
     }
 
 	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
     {
+		Node node = getNode( nodeId );
+		
+		if( node != null )
+			node.removeAttribute( attribute );
     }
 
 	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId,
             boolean directed )
     {
+		addEdge( edgeId, fromNodeId, toNodeId, directed );
     }
 
 	public void edgeRemoved( String graphId, String edgeId )
     {
+		removeEdge( edgeId );
     }
 
 	public void graphCleared( String graphId )
     {
+		clear();
     }
 
 	public void nodeAdded( String graphId, String nodeId )
     {
+		addNode( nodeId );
     }
 
 	public void nodeRemoved( String graphId, String nodeId )
     {
+		removeNode( nodeId );
     }
 
 	public void stepBegins( String graphId, double time )
