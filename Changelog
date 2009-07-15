@@ -1,3 +1,23 @@
+July 15 2009, antoinedutot
+	* Added the io2 package that will provide the new I/O mechanism that is everywhere in GS.
+	* The io2 package will become io when ready.
+	* Changed Graph so that it is a Filter from the I/O package.
+	* Added the ui2 package that will provide an almost complete rewrite of the graphstream
+	  viewing capabilities with :
+	  	* A graphic graph that respect the new I/O mechanism.
+	  	* A new style sheet language that is more orthogonal. 
+	  	* A new style group mechanism that should improve a lot drawing by grouping elements with
+	  	  the same style to draw them at once in bulk operations.
+	  	* A new and hopefully simpler "sprite" mechanism that should avoid using the GraphViewerRemote.
+	  	* A simpler architecture for threads.
+	  	* Some technical documentation for developers of the UI package !! (with a justification
+	  	  of the choices made :-)) (see the HowItWorks files).
+	
+	* Added a (subtle!) change to the AbstractElement : when an attribute value is changed, if
+	  the old value and the new values are the same, the "attributeChanged" event is not issued.
+	  This will improve efficiency, and will avoid recursion problems when two graphs are
+	  synchronised via the I/O mechanism.
+
 March 22 2009, antoinedutot
 	* Finally commited the new GraphListener mechanism. There are three interfaces:
 		- GraphElementsListener (for listening at elements changes (node, edges, steps).

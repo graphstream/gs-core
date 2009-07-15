@@ -271,7 +271,7 @@ public abstract class AbstractElement implements Element
 		{
 			Object o = attributes.get( key );
 			
-			if( o != null && o instanceof ArrayList )
+			if( o != null && o instanceof ArrayList<?> )
 				return  true;
 		}
 		
@@ -297,7 +297,7 @@ public abstract class AbstractElement implements Element
 		{
 			Object o = attributes.get( key );
 			
-			if( o != null && ( o instanceof HashMap || o instanceof CompoundAttribute ) )
+			if( o != null && ( o instanceof HashMap<?,?> || o instanceof CompoundAttribute ) )
 				return  true;
 		}
 		
@@ -379,8 +379,13 @@ public abstract class AbstractElement implements Element
 		
 		if( old_value != null )
 		{
-			attributeChanged( attribute, old_value, value );
-			attributes.put( attribute, value );
+			if( old_value != value )
+			{
+				if( ! old_value.equals( value ) )
+					attributeChanged( attribute, old_value, value );
+
+				attributes.put( attribute, value );
+			}
 		}
 		else
 		{

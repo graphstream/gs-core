@@ -29,9 +29,6 @@ import org.miv.graphstream.graph.GraphElementsListener;
 import org.miv.graphstream.graph.GraphListener;
 import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.graph.NodeFactory;
-import org.miv.graphstream.io.GraphParseException;
-import org.miv.graphstream.io.GraphReader;
-import org.miv.graphstream.io.GraphWriter;
 import org.miv.graphstream.io2.file.FileInput;
 import org.miv.graphstream.io2.file.FileOutput;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Style;
@@ -97,13 +94,6 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	public boolean graphChanged;
 	
 	/**
-	 * Allow to know if this graph is or not a multigraph. It is possible do
-	 * draw and handle faster non-multigraphs. Multigraphs declare themselves
-	 * by putting a "multigraph" attribute on the graph. TODO: this is awful.
-	 */
-	protected boolean isMultigraph = false;
-	
-	/**
 	 * Memorise the step events.
 	 */
 	public double step = 0;
@@ -159,16 +149,6 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		return styleGroups;
 	}
 	
-	/**
-	 * Return true if this represents a multi-graph, that is a graph
-	 * that can have several edges between two nodes..
-	 * @return True if this is a multi-graph.
-	 */
-	public boolean isMultiGraph()
-	{
-		return isMultigraph;
-	}
-		
 	/**
 	 * Find the first node that is at the given coordinates. If there are several such nodes,
 	 * only one is selected. The coordinates are given in 2D (as the screen is 2D) and if the
@@ -264,11 +244,9 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 
 		l1.add( edge );
 		l2.add( edge );
+		edge.countSameEdges( l1 );
 		
 		graphChanged = true;
-
-		if( isMultigraph )
-			edge.countSameEdges( l1 );
 		
 		return edge;
 	}
@@ -525,12 +503,6 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 				graphChanged = true;
 			}
 		}
-		else if( attribute.equals( "ui.multigraph" ) )
-		{
-			if( newValue == null )
-			     isMultigraph = false;
-			else isMultigraph = true;
-		}
 	}
 	
 	/**
@@ -677,9 +649,13 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
     {
     }
 
+	public List<GraphListener> getGraphListeners()
+    {
+	    return null;
+    }
+
 	public void clearListeners()
     {
-		throw new RuntimeException( "not implemented !" );
     }
 	
 	public Edge addEdge( String id, String from, String to ) throws SingletonException,
@@ -727,11 +703,6 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	public Iterable<? extends Edge> getEdgeSet()
     {
 		return styleGroups.edges();
-    }
-
-	public List<GraphListener> getGraphListeners()
-    {
-	    return null;
     }
 
 	public int getNodeCount()
@@ -808,12 +779,12 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		throw new RuntimeException( "you cannot change the node factory for graphic graphs !" );	    
     }
 
-	public void read( String filename ) throws IOException, GraphParseException, NotFoundException
+	public void read( String filename ) throws IOException
     {
 		throw new RuntimeException( "not implemented !" );
     }
 
-	public void read( FileInput input, String filename ) throws IOException, GraphParseException
+	public void read( FileInput input, String filename ) throws IOException
     {
 		throw new RuntimeException( "not implemented !" );
     }

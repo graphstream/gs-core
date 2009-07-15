@@ -298,7 +298,7 @@ public abstract class AbstractConcurrentElement
 	{
 		Object o = attributes.get( key );
 		
-		if( o != null && ( o instanceof HashMap || o instanceof CompoundAttribute ) )
+		if( o != null && ( o instanceof HashMap<?,?> || o instanceof CompoundAttribute ) )
 			return  true;
 		
 		return false;
@@ -331,7 +331,7 @@ public abstract class AbstractConcurrentElement
 	{
 		Object o = attributes.get( key );
 		
-		if( o != null && o instanceof ArrayList )
+		if( o != null && o instanceof ArrayList<?> )
 			return  true;
 		
 		return false;
