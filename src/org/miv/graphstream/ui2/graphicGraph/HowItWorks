@@ -192,22 +192,46 @@ Now lets see how the sprites are handled really.
 		* When one attribute changes in a sprite, the whole sprite would have to be transmitted
 		  through the I/O system. Here only the changed attribute is sent. 
 	
-	Here is the syntax used for attributes that describe a sprite. The attributes are put
-	on nodes if the sprite is attached to a node, on edges if attached to an edge, or on
-	graphs if not attached.
+	Here is the syntax used for attributes that describe a sprite. The attributes are always
+	put in the graph since sprites can be attached to nodes, edges or not be attached and this
+	can change dynamically.
 	
-		To specify that a sprite with identifier "S1" exists as well as its position :
+		To specify that a sprite with identifier "S1" exists as well as its position,
+		add the following attribute to the graph :
 			
 			Attribute			Value(s)
 			"ui.sprite.S1"		"0.5", "0", "0"
 			
-		To add an attribute "foo" with value "bar" to a sprite "S1" :
+		To specify that a sprite "S1" is attached to node "N1", add the following attribute
+		to the "N1" node :
+			
+			Attribute
+			"ui.sprite.S1"
+			
+		To detach it simply remove the attribute from node "N1". Do the same to attach to edges.
+		This interface allows to attach the sprite to several edges or nodes which is dangerous,
+		however this should be managed by the SpriteManager that will ensure the sprite is never
+		attached to more than one element.
+			
+		To add an attribute "foo" with value "bar" to a sprite "S1", add the following attribute
+		to the graph :
 		
 			Attribute			Value(s)
 			"ui.sprite.S1.foo"	"bar"
 			
-		To remove the attribute "foo" of sprite "S1" simply remove the attribute "ui.sprite.S1.foo".
+		To remove the attribute "foo" of sprite "S1" simply remove the following attribute from
+		the graph :
+		
+			Attribute
+			"ui.sprite.S1.foo"
+		
+		To remove the sprite "S1", simply remove the following attribute from the graph :
+		
+			Attribute
+			"ui.sprite.S1"
+			
+		You should also remove the various attributes starting with "ui.sprite.S1.***" but why not
+		keeping them if the sprite reappears ? This seems dangerous however since such attributes
+		could proliferate.
 		
 	That's all !
-			
-	

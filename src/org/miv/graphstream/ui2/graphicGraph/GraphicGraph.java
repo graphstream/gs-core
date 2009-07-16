@@ -372,92 +372,6 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		
 		return node;
 	}
-	
-	protected GraphicSprite addSprite( String id )
-	{
-		GraphicSprite s = new GraphicSprite( id, this );
-
-		styleGroups.addElement( s );
-		
-		graphChanged = true;
-		
-		return s;
-	}
-
-	protected GraphicSprite removeSprite( String id )
-	{
-		GraphicSprite sprite = (GraphicSprite) styleGroups.getSprite( id );
-		
-		if( sprite != null )
-		{
-		    styleGroups.removeElement( sprite );
-		    sprite.removed();
-			
-		    graphChanged = true;
-		}
-		
-		return sprite;
-	}
-
-	protected void attachSpriteToNode( String id, String nodeId )
-	{
-		GraphicSprite sprite = styleGroups.getSprite( id );
-		GraphicNode   node   = (GraphicNode) styleGroups.getNode( nodeId );
-		
-		if( sprite != null && node != null )
-			sprite.attachToNode( node );
-	}
-
-	protected void attachSpriteToEdge( String id, String edgeId )
-	{
-		GraphicSprite sprite = styleGroups.getSprite( id );
-		GraphicEdge   edge   = (GraphicEdge) styleGroups.getEdge( edgeId );
-		
-		if( sprite != null && edge != null )
-			sprite.attachToEdge( edge );
-	}
-
-	protected void detachSprite( String id )
-	{
-		GraphicSprite sprite = styleGroups.getSprite( id );
-		
-		sprite.detach();
-	}
-
-	protected void positionSprite( String id, float percent )
-	{
-		GraphicSprite sprite = styleGroups.getSprite( id );
-		
-		sprite.setPosition( percent );
-	}
-
-	protected void positionSprite( String id, float x, float y, float z, Style.Units units )
-	{
-		GraphicSprite sprite = styleGroups.getSprite( id );
-		
-		sprite.setPosition( x, y, z, units );
-	}
-
-	protected void positionSprite( String id, float x, float y, float z )
-	{
-		GraphicSprite sprite = styleGroups.getSprite( id );
-		
-		sprite.setPosition( x, y, z, Units.GU );
-	}
-	
-	protected void addSpriteAttribute( String id, String attribute, Object value )
-	{
-		GraphicSprite sprite = styleGroups.getSprite( id );
-		
-		sprite.addAttribute( attribute, value );
-	}
-
-	protected void removeSpriteAttribute( String id, String attribute )
-	{
-		GraphicSprite sprite = styleGroups.getSprite( id );
-
-		sprite.removeAttribute( attribute );
-	}
 
 	public GraphicNode getNode( String id )
 	{
@@ -477,6 +391,9 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	@Override
 	protected void attributeChanged( String attribute, Object oldValue, Object newValue )
 	{
+		// One of the most important method. Most of the communicaiton comes from
+		// attributes.
+		
 		if( attribute.equals( "ui.stylesheet" ) || attribute.equals( "stylesheet" ) )
 		{
 			if( newValue instanceof String )
@@ -502,57 +419,15 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 				graphChanged = true;
 			}
 		}
-	}
-	
-	/**
-	 * Load a style sheet from an attribute.
-	 * @param styleSheetValue The style sheet name of content.
-	 * @throws IOException If the loading or parsing of the style sheet failed.
-	 */
-	protected void loadStyleSheet( String styleSheetValue )
-		throws IOException
-	{
-		if( styleSheetValue.startsWith( "url" ) )
+		else if( attribute.startsWith( "ui.sprite." ) )
 		{
-			// Extract the part between '(' and ')'.
+			// Defers the sprite handling to the sprite API.
 			
-			int beg = styleSheetValue.indexOf( '(' );
-			int end = styleSheetValue.lastIndexOf( ')' );
-			
-			if( beg >= 0 && end > beg )
-				styleSheetValue = styleSheetValue.substring( beg+1, end );
-			
-			styleSheetValue = styleSheetValue.trim();
-			
-			// Remove the quotes (') or (").
-			
-			if( styleSheetValue.startsWith( "'" ) )
-			{
-				beg = 0;
-				end = styleSheetValue.lastIndexOf( '\'' );
-				
-				if( beg >= 0 && end > beg )
-					styleSheetValue = styleSheetValue.substring( beg+1, end );
-			}
-			
-			styleSheetValue = styleSheetValue.trim();
-			
-			if( styleSheetValue.startsWith( "\"" ) )
-			{
-				beg = 0;
-				end = styleSheetValue.lastIndexOf( '"' );
-				
-				if( beg >= 0 && end > beg )
-					styleSheetValue = styleSheetValue.substring( beg+1, end );			
-			}
-			
-			// That's it.
-
-			styleSheet.parseFromURL( styleSheetValue );
-		}
-		else // Parse from string, the value is considered to be the style sheet contents.
-		{
-			styleSheet.parseFromString( styleSheetValue );
+			if( oldValue == null )
+			     spriteAttribute( SpriteEvent.ADD, null, attribute, newValue );
+			else if( newValue == null )
+			     spriteAttribute( SpriteEvent.CHANGE, null, attribute, null );
+			else spriteAttribute( SpriteEvent.REMOVE, null, attribute, newValue );
 		}
 	}
 
@@ -901,4 +776,231 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
     {
 		step = time;
     }
+	
+// Sprite interface
+
+	protected static enum SpriteEvent { ADD, CHANGE, REMOVE };
+	
+	protected void spriteAttribute( SpriteEvent event, Element element, String attribute, Object value )
+	{
+		String spriteId = attribute.substring( 10 );		// Remove the "ui.sprite." prefix.
+		int    pos      = spriteId.lastIndexOf( '.' );		// Look if there is something after the sprite id.
+		String attr     = null;
+		
+		if( pos > 0 )
+		{
+			attr     = spriteId.substring( pos + 1 );		// Cut the sprite id.
+			spriteId = spriteId.substring( 0, pos ); 		// Cut the sprite attribute name.
+		}
+		
+		if( attr == null )
+		{
+			addOrChangeSprite( event, element, spriteId, value );
+		}
+		else
+		{
+			if( event == SpriteEvent.ADD )
+			{
+				GraphicSprite sprite = styleGroups.getSprite( spriteId );
+				
+				if( sprite != null )
+					sprite.addAttribute( attr, value );
+			}
+			else if( event == SpriteEvent.CHANGE )
+			{
+				GraphicSprite sprite = styleGroups.getSprite( spriteId );
+				
+				if( sprite != null )
+					sprite.changeAttribute( attr, value );				
+			}
+			else if( event == SpriteEvent.REMOVE )
+			{
+				GraphicSprite sprite = styleGroups.getSprite( spriteId );
+				
+				if( sprite != null )
+					sprite.removeAttribute( attr );
+			}			
+		}
+	}
+	
+	
+	protected void addOrChangeSprite( SpriteEvent event, Element element, String spriteId, Object value )
+	{
+		if( event == SpriteEvent.ADD || event == SpriteEvent.CHANGE )
+		{
+			GraphicSprite sprite = styleGroups.getSprite( spriteId );
+			
+			if( sprite == null ) 
+				sprite = addSprite( spriteId );
+
+			if( element != null )
+			{
+				if( element instanceof GraphicNode )
+					sprite.attachToNode( (GraphicNode)element );
+				else if( element instanceof GraphicEdge )
+					sprite.attachToEdge( (GraphicEdge)element );
+			}
+			
+			if( value != null )
+				positionSprite( sprite, value );
+		}
+		else if( event == SpriteEvent.REMOVE )
+		{
+			if( element == null )
+			{
+				removeSprite( spriteId, element );
+			}
+			else
+			{
+				GraphicSprite sprite = styleGroups.getSprite( spriteId );
+				
+				sprite.detach();
+			}
+		}
+	}
+	
+	protected GraphicSprite addSprite( String id )
+	{
+		GraphicSprite s = new GraphicSprite( id, this );
+
+		styleGroups.addElement( s );
+		
+		graphChanged = true;
+		
+		return s;
+	}
+	
+	protected GraphicSprite removeSprite( String id, Element element )
+	{
+		GraphicSprite sprite = (GraphicSprite) styleGroups.getSprite( id );
+		
+		if( sprite != null )
+		{
+			sprite.detach();
+		    styleGroups.removeElement( sprite );
+		    sprite.removed();
+			
+		    graphChanged = true;
+		}
+		
+		return sprite;
+	}
+	
+	protected void positionSprite( GraphicSprite sprite, Object value )
+	{
+		if( value instanceof Object[] )
+		{
+			Object[] values = (Object[]) value;
+			
+			if( values.length == 4 )
+			{
+				if( values[0] instanceof Number && values[1] instanceof Number
+				 && values[2] instanceof Number && values[3] instanceof Style.Units )
+				{
+					sprite.setPosition(
+							((Number)values[0]).floatValue(),
+							((Number)values[1]).floatValue(),
+							((Number)values[2]).floatValue(),
+							(Style.Units)values[3] );					
+				}
+				else
+				{
+					System.err.printf( "GraphicGraph : cannot parse values[4] for sprite position.%n" );
+				}
+			}
+			else if( values.length == 3 )
+			{
+				if( values[0] instanceof Number && values[1] instanceof Number
+				 && values[2] instanceof Number )
+				{
+					sprite.setPosition(
+						((Number)values[0]).floatValue(),
+						((Number)values[1]).floatValue(),
+						((Number)values[2]).floatValue(),
+						Units.GU );
+				}
+				else
+				{
+					System.err.printf( "GraphicGraph : cannot parse values[3] for sprite position.%n" );
+				}
+			}
+			else if( values.length == 1 )
+			{
+				if( values[0] instanceof Number )
+				{
+					sprite.setPosition( ((Number)value).floatValue() );					
+				}
+				else
+				{
+					System.err.printf( "GraphicGraph : sprite position percent is not a number.%n" );
+				}
+			}
+			else
+			{
+				System.err.printf( "GraphicGraph : cannot transform value '%s' (length=%d) into a position%n", values, values.length );
+			}
+		}
+		else if( value instanceof Number )
+		{
+			sprite.setPosition( ((Number)value).floatValue() );
+		}
+		else
+		{
+			System.err.printf( "GraphicGraph : cannot place sprite with posiiton '%s'%n", value );
+		}
+	}
+
+// Stylesheet API
+	
+	/**
+	 * Load a style sheet from an attribute.
+	 * @param styleSheetValue The style sheet name of content.
+	 * @throws IOException If the loading or parsing of the style sheet failed.
+	 */
+	protected void loadStyleSheet( String styleSheetValue )
+		throws IOException
+	{
+		if( styleSheetValue.startsWith( "url" ) )
+		{
+			// Extract the part between '(' and ')'.
+			
+			int beg = styleSheetValue.indexOf( '(' );
+			int end = styleSheetValue.lastIndexOf( ')' );
+			
+			if( beg >= 0 && end > beg )
+				styleSheetValue = styleSheetValue.substring( beg+1, end );
+			
+			styleSheetValue = styleSheetValue.trim();
+			
+			// Remove the quotes (') or (").
+			
+			if( styleSheetValue.startsWith( "'" ) )
+			{
+				beg = 0;
+				end = styleSheetValue.lastIndexOf( '\'' );
+				
+				if( beg >= 0 && end > beg )
+					styleSheetValue = styleSheetValue.substring( beg+1, end );
+			}
+			
+			styleSheetValue = styleSheetValue.trim();
+			
+			if( styleSheetValue.startsWith( "\"" ) )
+			{
+				beg = 0;
+				end = styleSheetValue.lastIndexOf( '"' );
+				
+				if( beg >= 0 && end > beg )
+					styleSheetValue = styleSheetValue.substring( beg+1, end );			
+			}
+			
+			// That's it.
+
+			styleSheet.parseFromURL( styleSheetValue );
+		}
+		else // Parse from string, the value is considered to be the style sheet contents.
+		{
+			styleSheet.parseFromString( styleSheetValue );
+		}
+	}
 }

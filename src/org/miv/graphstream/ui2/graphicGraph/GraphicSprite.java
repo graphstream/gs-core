@@ -22,8 +22,6 @@ import org.miv.graphstream.ui2.graphicGraph.stylesheet.Style;
 
 /**
  * A small gentle sprite.
- * 
- * @author Antoine Dutot
  */
 public class GraphicSprite extends GraphicElement
 {
@@ -54,8 +52,6 @@ public class GraphicSprite extends GraphicElement
 	 * shape. THis is in graph units.
 	 */
 	public float boundsX, boundsY, boundsZ, boundsW, boundsH, boundsD;
-	
-	public boolean valid = true;
 	
 // Constructors
 	
@@ -160,12 +156,6 @@ public class GraphicSprite extends GraphicElement
 	@Override
 	public void setBounds( float x, float y, float w, float h )
 	{
-		// We cannot consider the X/Y here, since this will trigger a redraw that will recompute
-		// the graph overall width and height therefore move this sprite x /y, etc, etc..
-/*		mygraph.graphChanged = (
-				((int)(w*1000)) != ((int)(boundsW*1000))
-				|| ((int)(h*1000)) != ((int)(boundsH*1000)) );
-*/	
 		boundsX = x;
 		boundsY = y;
 		boundsW = w;

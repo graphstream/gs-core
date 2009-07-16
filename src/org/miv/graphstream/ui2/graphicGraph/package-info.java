@@ -25,10 +25,11 @@
  * 
  * <p>
  * The graphic graph contains a style sheet whose styling principle is copied from
- * the way CSS is used for HTML pages. This style sheet defines styles (set of
+ * the way CSS is used for HTML pages or SVG drawings. This style sheet defines styles (set of
  * style properties and values for these properties) and rules to define to which
  * graph elements the style applies. A rule may allow to apply a style to several
- * graph elements. See the {@link org.miv.graphstream.ui2.graphicGraph.stylesheet}
+ * graph elements at once, to all nodes, to elements having a given class, or identifier,
+ * etc. See the {@link org.miv.graphstream.ui2.graphicGraph.stylesheet}
  * package for more informations.
  * </p>
  * 
@@ -51,7 +52,7 @@
  * but provides less methods (some methods are not implemented). This is indeed
  * because they are not really useful in the rendering context. For example it is
  * not possible to use the read() and write() utility methods. In the same way,
- * naturally, the display() method is not implemented since this graph servers the purpose
+ * naturally, the display() method is not implemented since this graph purpose is
  * to be used inside the implementation of a display for the graph.
  * </p>
  * 
@@ -97,8 +98,5 @@
  * handling of sprites, and the methods is provides to access the style group set and
  * the z index and shadow map.
  * </p>
- * 
- * @author Antoine Dutot
- * @author Yoann Pigné
  */
 package org.miv.graphstream.ui2.graphicGraph;
