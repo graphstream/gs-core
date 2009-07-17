@@ -141,11 +141,30 @@ public class Values implements Iterable<Float>
 	}
 	
 	/**
+	 * Change the i-th value.
+	 * @param i The value index.
+	 * @param value The value to put.
+	 */
+	public void setValue( int i, float value )
+	{
+		values.set( i, value );
+	}
+	
+	/**
 	 * Remove the i-th value.
 	 * @param i The index at which the value is to be removed.
 	 */
 	public void removeValue( int i )
 	{
 		values.remove( i );
+	}
+	
+	/**
+	 * Change the values units.
+	 * @param units The units.
+	 */
+	public void setUnits( Style.Units units )
+	{
+		this.units = units;
 	}
 }

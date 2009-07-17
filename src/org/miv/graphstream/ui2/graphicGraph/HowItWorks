@@ -94,12 +94,12 @@ retrieved easily from the StyleGroupSet. The only information really stored dire
 the graphic graph is the connectivity information, that is which node is linked to which other
 nodes by edges.
 
-TODO graph as a filter.
-
-TODO graph special features :
-	* locating a node by its position
-	* idem for sprites
-	* ?
+	Graph as a filter
+	-----------------
+	
+	Actually, the GraphicGraph is only an output, not a filter. This will be done later
+	so that the GraphicGraph can server as a filter that can pass back events occuring
+	inside it.
 
 How does the style sheet and styles communicate with the graphic elements
 =========================================================================

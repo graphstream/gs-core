@@ -23,12 +23,31 @@
 package org.miv.graphstream.ui2.spriteManager;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.miv.graphstream.graph.Graph;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Style;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Values;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleConstants.Units;
 
+/**
+ * Set of sprites associated with a graph.
+ * 
+ * <p>
+ * The sprite manager acts as a set of sprite elements that are associated with a graph. There can
+ * be only one sprite manager per graph. The sprite manager only role is to allow to create,
+ * destroy and enumerate sprites of a graph.
+ * </p>
+ * 
+ * <p>
+ * See the {@link Sprite} class for an explanation of what are sprites and how to use them. 
+ * </p>
+ * 
+ * <p>
+ * In case you need to refine the Sprite class, you can change the {@link SpriteFactory} of this
+ * manager so that it creates specific instances of sprites instead of the default ones.
+ * </p>
+ */
 public class SpriteManager
 {
 // Attribute
@@ -42,6 +61,11 @@ public class SpriteManager
 	 * The set of sprites.
 	 */
 	protected HashMap<String,Sprite> sprites;
+	
+	/**
+	 * Factory to create new sprites.
+	 */
+	protected SpriteFactory factory = new SpriteFactory();
 	
 // Construction
 	
@@ -96,8 +120,53 @@ public class SpriteManager
 		return sprites.get( identifier );
 	}
 	
+	/**
+	 * Iterable set of sprites in no particular order.
+	 * @return The set of sprites.
+	 */
+	public Iterable<? extends Sprite> sprites()
+	{
+		return sprites.values();
+	}
+	
+	/**
+	 * Iterator on the set of sprites.
+	 * @return An iterator on sprites.
+	 */
+	public Iterator<? extends Sprite> spriteIterator()
+	{
+		return sprites.values().iterator();
+	}
+	
+	/**
+	 * The current sprite factory.
+	 * @return A Sprite factory.
+	 */
+	public SpriteFactory getSpriteFactory()
+	{
+		return factory;
+	}
+	
 // Command
 
+	/**
+	 * Specify the sprite factory to use. This allows to use specific sprite classes (descendants
+	 * of Sprite).
+	 * @param factory The new factory to use.
+	 */
+	public void setSpriteFactory( SpriteFactory factory )
+	{
+		this.factory = factory;
+	}
+	
+	/**
+	 * Reset the sprite factory to defaults.
+	 */
+	public void resetSpriteFactory()
+	{
+		factory = new SpriteFactory();
+	}
+	
 	/**
 	 * Add a sprite with the given identifier. If the sprite already exists, nothing is done.
 	 * @param identifier The identifier of the new sprite to add.
@@ -109,7 +178,7 @@ public class SpriteManager
 		
 		if( sprite == null )
 		{
-			sprite = new Sprite( identifier, this );
+			sprite = factory.newSprite( identifier, this ); //new Sprite( identifier, this );
 			sprites.put( identifier, sprite );
 		}
 		

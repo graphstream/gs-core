@@ -784,7 +784,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	protected void spriteAttribute( SpriteEvent event, Element element, String attribute, Object value )
 	{
 		String spriteId = attribute.substring( 10 );		// Remove the "ui.sprite." prefix.
-		int    pos      = spriteId.lastIndexOf( '.' );		// Look if there is something after the sprite id.
+		int    pos      = spriteId.indexOf( '.' );			// Look if there is something after the sprite id.
 		String attr     = null;
 		
 		if( pos > 0 )
