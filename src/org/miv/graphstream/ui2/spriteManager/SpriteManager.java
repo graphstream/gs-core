@@ -48,7 +48,7 @@ import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleConstants.Units;
  * manager so that it creates specific instances of sprites instead of the default ones.
  * </p>
  */
-public class SpriteManager
+public class SpriteManager implements Iterable<Sprite>
 {
 // Attribute
 	
@@ -60,7 +60,7 @@ public class SpriteManager
 	/**
 	 * The set of sprites.
 	 */
-	protected HashMap<String,Sprite> sprites;
+	protected HashMap<String,Sprite> sprites = new HashMap<String,Sprite>();
 	
 	/**
 	 * Factory to create new sprites.
@@ -88,7 +88,7 @@ public class SpriteManager
 	{
 		Object o = graph.getAttribute( "ui.SpriteManager" );
 		
-		if( o != this )
+		if( o != null && o != this )
 			throw new RuntimeException( "Only one sprite manager is allowed at a time one a graph." );
 	}
 	
@@ -109,6 +109,24 @@ public class SpriteManager
 	}
 
 // Access
+	
+	/**
+	 * Number of sprites in the manager.
+	 * @return The sprite count.
+	 */
+	public int getSpriteCount()
+	{
+		return sprites.size();
+	}
+	
+	/**
+	 * True if the manager contains a sprite corresponding to the given identifier.
+	 * @param identifier The sprite identifier to search for.
+	 */
+	public boolean hasSprite( String identifier )
+	{
+		return( sprites.get( identifier ) != null );
+	}
 	
 	/**
 	 * Sprite corresponding to the given identifier or null if no sprite is associated with the
@@ -134,6 +152,15 @@ public class SpriteManager
 	 * @return An iterator on sprites.
 	 */
 	public Iterator<? extends Sprite> spriteIterator()
+	{
+		return sprites.values().iterator();
+	}
+	
+	/**
+	 * Iterator on the set of sprites.
+	 * @return An iterator on sprites.
+	 */
+	public Iterator<Sprite> iterator()
 	{
 		return sprites.values().iterator();
 	}

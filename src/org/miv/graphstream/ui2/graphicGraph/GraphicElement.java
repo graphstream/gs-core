@@ -179,6 +179,10 @@ public abstract class GraphicElement extends AbstractElement
 
 				mygraph.graphChanged = true;
 			}
+			else
+			{
+				System.err.printf( "ERROR !!%n" );
+			}
 		}
 		else if( attribute.equals( "ui.hide" ) )
 		{

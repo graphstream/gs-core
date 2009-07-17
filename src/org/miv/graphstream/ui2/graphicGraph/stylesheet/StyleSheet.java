@@ -321,6 +321,17 @@ public class StyleSheet
 		colors.add( Color.WHITE );
 		
 		graphRules.defaultRule.getStyle().setValue( "fill-color", colors );
+		
+		for( StyleSheetListener listener: listeners )
+			listener.styleAdded( defaultRule, defaultRule );
+		for( StyleSheetListener listener: listeners )
+			listener.styleAdded( graphRules.defaultRule, graphRules.defaultRule );
+		for( StyleSheetListener listener: listeners )
+			listener.styleAdded( nodeRules.defaultRule, nodeRules.defaultRule );
+		for( StyleSheetListener listener: listeners )
+			listener.styleAdded( edgeRules.defaultRule, edgeRules.defaultRule );
+		for( StyleSheetListener listener: listeners )
+			listener.styleAdded( spriteRules.defaultRule, spriteRules.defaultRule );
 	}
 	
 	/**
@@ -356,6 +367,9 @@ public class StyleSheet
 		edgeRules.clear();
 		spriteRules.clear();
 		initRules();
+		
+		for( StyleSheetListener listener: listeners )
+			listener.styleSheetCleared();
 	}
 	
 	/**

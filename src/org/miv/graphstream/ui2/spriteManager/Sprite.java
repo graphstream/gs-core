@@ -126,6 +126,9 @@ public class Sprite implements Element
 		
 		String start = String.format( "%s.", completeId );
 
+		if( attached() )
+			detach();
+		
 		for( String key: manager.graph.getAttributeKeySet() )
 		{
 			if( key.startsWith( start ) )
@@ -142,6 +145,15 @@ public class Sprite implements Element
 	public Element getAttachment()
 	{
 		return attachment;
+	}
+	
+	/**
+	 * True if attached to an edge or node.
+	 * @return False if not attached.
+	 */
+	public boolean attached()
+	{
+		return( attachment != null );
 	}
 	
 // Command

@@ -77,22 +77,28 @@ public class StyleGroupSet implements StyleSheetListener
 	protected HashMap<String,String> byGraphIdGroups = new HashMap<String,String>();
 	
 	/**
-	 * Virtual set of nodes. This set provides fake methods to make it appears as a set of nodes
+	 * Virtual set of nodes. This set provides fake methods to make it appear as a set of nodes
 	 * whereas it only maps on the node style groups.
 	 */
 	protected NodeSet nodeSet = new NodeSet();
 
 	/**
-	 * Virtual set of edges. This set provides fake methods to make it appears as a set of edges
+	 * Virtual set of edges. This set provides fake methods to make it appear as a set of edges
 	 * whereas it only maps on the edge style groups.
 	 */
 	protected EdgeSet edgeSet = new EdgeSet();
 
 	/**
-	 * Virtual set of sprites. This set provides fake methods to make it appears as a set of sprites
+	 * Virtual set of sprites. This set provides fake methods to make it appear as a set of sprites
 	 * whereas it only maps on the sprite style groups.
 	 */
 	protected SpriteSet spriteSet = new SpriteSet();
+	
+	/**
+	 * Virtual set of graphs. This set provides fake methods to make it appear as a set of graphs
+	 * whereas it only maps on the graph style groups.
+	 */
+	protected GraphSet graphSet = new GraphSet();
 	
 	/**
 	 * The set of events actually occurring.
@@ -347,12 +353,30 @@ public class StyleGroupSet implements StyleSheetListener
 	}
 	
 	/**
+	 * Iterator on the set of graphs.
+	 * @return An iterator on all graph elements contained in style groups.
+	 */
+	public Iterator<? extends Graph> getGraphIterator()
+	{
+		return new ElementIterator<Graph>( byGraphIdGroups );
+	}
+	
+	/**
 	 * Iterable set of nodes.
 	 * @return The set of all nodes.
 	 */
 	public Iterable<? extends Node> nodes()
 	{
 		return nodeSet; 
+	}
+	
+	/**
+	 * Iterable set of graphs.
+	 * @return The set of all graphs.
+	 */
+	public Iterable<? extends Graph> graphs()
+	{
+		return graphSet;
 	}
 	
 	/**
@@ -584,7 +608,7 @@ public class StyleGroupSet implements StyleSheetListener
 		StyleGroup      group = groups.get( gid );
 		
 		if( group == null )
-		     addGroup( gid, rules, element );
+		     group = addGroup( gid, rules, element );
 		else group.addElement( element );
 		
 		addElementToReverseSearch( element, gid );
@@ -726,6 +750,31 @@ public class StyleGroupSet implements StyleSheetListener
 		     checkForNewStyle( newRule ); // no need to check Z and shadow, done when adding/changing group.
 		else checkZIndexAndShadow( oldRule, newRule );
     }
+	
+	public void styleSheetCleared()
+	{
+		ArrayList<Element> elements = new ArrayList<Element>();
+
+		for( Element element: graphs() )
+			elements.add( element );
+			
+		for( Element element: nodes() )
+			elements.add( element );
+		
+		for( Element element: edges() )
+			elements.add( element );
+		
+		for( Element element: sprites() )
+			elements.add( element );
+		
+		clear();
+
+		for( Element element: elements )
+			removeElement( element );
+		
+		for( Element element: elements )
+			addElement( element );
+	}
 	
 	/**
 	 * Check each group that may have changed, for example to rebuild the Z index and the shadow
@@ -949,6 +998,11 @@ public class ZIndex implements Iterable<HashSet<StyleGroup>>
 	 */
 	public ZIndex()
 	{
+		initZIndex();
+	}
+	
+	protected void initZIndex()
+	{
 		zIndex.ensureCapacity( 256 );
 		
 		for( int i=0; i<256; i++ )
@@ -1039,6 +1093,7 @@ public class ZIndex implements Iterable<HashSet<StyleGroup>>
 	{
 		zIndex.clear();
 		reverseZIndex.clear();
+		initZIndex();
 	}
 
 	/**
@@ -1252,6 +1307,12 @@ protected class SpriteSet implements Iterable<GraphicSprite>
 {
 	@SuppressWarnings( "unchecked" )
     public Iterator<GraphicSprite> iterator() { return (Iterator<GraphicSprite>) getSpriteIterator(); }
+}
+
+protected class GraphSet implements Iterable<GraphicGraph>
+{
+	@SuppressWarnings( "unchecked" )
+	public Iterator<GraphicGraph> iterator() { return (Iterator<GraphicGraph>) getGraphIterator(); }
 }
 
 }

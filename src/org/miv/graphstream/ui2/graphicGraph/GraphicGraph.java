@@ -225,6 +225,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		GraphicEdge edge = new GraphicEdge( id, n1, n2, directed, attributes );
 		
 		styleGroups.addElement( edge );
+		//edge.style = styleGroups.getStyleFor( edge );
 		
 		ArrayList<GraphicEdge> l1 = connectivity.get( n1 );
 		ArrayList<GraphicEdge> l2 = connectivity.get( n2 );
@@ -255,6 +256,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		GraphicNode n = new GraphicNode( this, id, x, y, z, attributes );
 
 		styleGroups.addElement( n );
+		//n.style = styleGroups.getStyleFor( n );
 		
 		graphChanged = true;
 		
@@ -356,11 +358,14 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		{
 		    if(connectivity.get(node) != null)
 		    {
-		    	for( GraphicEdge edge: connectivity.get( node ) )
-		    	{
-		    		GraphicNode node2 = edge.otherNode( node );
-		    		connectivity.get( node2 ).remove( edge );
-		    	}
+		    	// We must do a copy of the connectivity set for the node
+		    	// since we will be modifying the connectivity as we process
+		    	// edges.
+		    	ArrayList<GraphicEdge> l = new ArrayList<GraphicEdge>( connectivity.get( node ) );
+		    	
+		    	for( GraphicEdge edge: l )
+		    		removeEdge( edge.getId() );
+
 		    	connectivity.remove( node );
 		    }
 		    
@@ -426,8 +431,8 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 			if( oldValue == null )
 			     spriteAttribute( SpriteEvent.ADD, null, attribute, newValue );
 			else if( newValue == null )
-			     spriteAttribute( SpriteEvent.CHANGE, null, attribute, null );
-			else spriteAttribute( SpriteEvent.REMOVE, null, attribute, newValue );
+			     spriteAttribute( SpriteEvent.REMOVE, null, attribute, null );
+			else spriteAttribute( SpriteEvent.CHANGE, null, attribute, newValue );
 		}
 	}
 
@@ -469,6 +474,16 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 			GraphicElement ge = (GraphicElement) element;
 			ge.style          = style;
 			graphChanged      = true;
+		}
+		else if( element instanceof GraphicGraph )
+		{
+			GraphicGraph gg = (GraphicGraph) element;
+			gg.style        = style;
+			graphChanged    = true;
+		}
+		else
+		{
+			throw new RuntimeException( "WTF ?" );
 		}
     }
 
@@ -574,11 +589,6 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	    return styleGroups.getEdgeIterator();
     }
 
-	public Iterable<? extends Edge> getEdgeSet()
-    {
-		return styleGroups.edges();
-    }
-
 	public int getNodeCount()
     {
 	    return styleGroups.getNodeCount();
@@ -599,10 +609,10 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		return styleGroups.getSpriteIterator();
 	}
 	
-	public Iterable<? extends Node> getNodeSet()
-    {
-		return styleGroups.nodes();
-    }
+	public Iterable<? extends GraphicSprite> spriteSet()
+	{
+		return styleGroups.sprites();
+	}
 
 	public boolean isAutoCreationEnabled()
     {
@@ -854,7 +864,8 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 			{
 				GraphicSprite sprite = styleGroups.getSprite( spriteId );
 				
-				sprite.detach();
+				if( sprite != null )
+					sprite.detach();
 			}
 		}
 	}
@@ -864,6 +875,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		GraphicSprite s = new GraphicSprite( id, this );
 
 		styleGroups.addElement( s );
+		//s.style = styleGroups.getStyleFor( s );
 		
 		graphChanged = true;
 		

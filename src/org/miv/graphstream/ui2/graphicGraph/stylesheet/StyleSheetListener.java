@@ -18,9 +18,6 @@ package org.miv.graphstream.ui2.graphicGraph.stylesheet;
 
 /**
  * Listener for style events.
- * 
- * @author Antoine Dutot
- * @author Yoann Pigné
  */
 public interface StyleSheetListener
 {
@@ -33,4 +30,9 @@ public interface StyleSheetListener
 	 * @param newRule The style that was added to the style sheet.
 	 */
 	void styleAdded( Rule oldRule, Rule newRule );
+	
+	/**
+	 * The complete style sheet was cleared.
+	 */
+	void styleSheetCleared();
 }
