@@ -184,14 +184,12 @@ public class StyleConstants
 	{
 		// Prepare some pattern matchers.
 
-		sharpColor = Pattern
-				.compile( "#(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})((\\p{XDigit}\\p{XDigit})?)" );
-		hexaColor = Pattern
-				.compile( "0[xX](\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})((\\p{XDigit}\\p{XDigit})?)" );
-		cssColor = Pattern.compile( "rgb\\s*\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)" );
-		cssColorA = Pattern.compile( "rgba\\s*\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)" );
-		awtColor = Pattern.compile( "java.awt.Color\\[r=([0-9]+),g=([0-9]+),b=([0-9]+)\\]" );
-		colorMap = new HashMap<String, Color>();
+		sharpColor = Pattern.compile( "#(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})((\\p{XDigit}\\p{XDigit})?)" );
+		hexaColor  = Pattern.compile( "0[xX](\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})((\\p{XDigit}\\p{XDigit})?)" );
+		cssColor   = Pattern.compile( "rgb\\s*\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)" );
+		cssColorA  = Pattern.compile( "rgba\\s*\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)" );
+		awtColor   = Pattern.compile( "java.awt.Color\\[r=([0-9]+),g=([0-9]+),b=([0-9]+)\\]" );
+		colorMap   = new HashMap<String, Color>();
 
 		// Load all the X11 predefined colour names and their RGB definition
 		// from a file stored in the graphstream.jar. This allows the DOT

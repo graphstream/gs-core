@@ -97,9 +97,29 @@ nodes by edges.
 	Graph as a filter
 	-----------------
 	
-	Actually, the GraphicGraph is only an output, not a filter. This will be done later
-	so that the GraphicGraph can server as a filter that can pass back events occuring
-	inside it.
+	The graphic graph and all its graphic elements (including sprites) store attributes like
+	any other graph element in GraphStream. However it stores only a subset of such attributes.
+	Basically, it stores only :
+		* all attributes starting with "ui.*",
+		* attributes "x", "y", "z", "xy", "xyz",
+		* attribute "label",
+		* attribute "stylesheet".
+	
+	Some of these attributes are directly converted to object attributes (variables of an instance)
+	of the graphic graph elements. All styles are parsed automatically and update the style sheet.
+
+	The graphic graph, as all graphs in GraphStream is a "Filter", that is something that can
+	serve as output or input. Most of the time the graphic graph is an output, a copy of another
+	graph that is used to do the real work on the graph. The graphic graph copies it for the
+	purpose of displaying the main graph.
+	
+	But the graphic graph can also be an input, that is something that sends events. You can
+	put elements or attributes listeners on it (or graph listeners if you are interested in
+	both attributes and elements). However due to the attribute filtering feature, most
+	attributes will not pass through the graphic graph.
+	
+	TODO ensure that no event is produced if a node or edge already exists or is already deleted
+	to avoid recursivity.	
 
 How does the style sheet and styles communicate with the graphic elements
 =========================================================================

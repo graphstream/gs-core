@@ -128,12 +128,17 @@ public class Sprite implements Element
 
 		if( attached() )
 			detach();
+	
+		ArrayList<String> keys = new ArrayList<String>();
 		
 		for( String key: manager.graph.getAttributeKeySet() )
 		{
 			if( key.startsWith( start ) )
-				manager.graph.removeAttribute( key );
+				keys.add( key );
 		}
+			
+		for( String key: keys )
+			manager.graph.removeAttribute( key );
 	}
 	
 // Access

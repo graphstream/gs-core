@@ -16,6 +16,10 @@
 
 package org.miv.graphstream.ui2.graphicGraph;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.miv.graphstream.graph.GraphAttributesListener;
 import org.miv.graphstream.graph.implementations.AbstractElement;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Selector;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleConstants;
@@ -24,9 +28,28 @@ import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleConstants;
  * Super class of all graphic node, edge, and sprite elements.
  * 
  * <p>
- * This class defines the common features of all graphic elements in the graphic graph. This
- * includes the common behaviour (the style handling, has well as the classes, the Z-index or
- * the common attributes like "label" for example).
+ * Each graphic element references a style, a graphic graph and has a label.
+ * </p>
+ * 
+ * <p>
+ * The element also defines the basic behaviour to reload the style when needed, defines abstract
+ * methods to set and get the position and bounds in spaces of the element, and to do appropriate
+ * actions when specific predefined attributes change (most of them starting with the prefix
+ * "ui."). 
+ * </p>
+ * 
+ * <p>
+ * The graphic element has the ability to store attributes like any other graph element, however
+ * the attributes stored by the graphic element are restricted. There is a filter on the attribute
+ * adding methods that let pass only :
+ * <ul>
+ * 		<li>All attributes starting with "ui.".</li>
+ * 		<li>The "x", "y", "z", "xy" and "xyz" attributes.</li>
+ * 		<li>The "stylesheet" attribute.</li>
+ * 		<li>The "label" attribute.</li>
+ * </ul>
+ * All other attributes are filtered and not stored. The result is that if the graphic graph is
+ * used as an input (a source of graph events) some attributes will not pass through the filter.
  * </p>
  */
 public abstract class GraphicElement extends AbstractElement
@@ -207,5 +230,23 @@ public abstract class GraphicElement extends AbstractElement
 				state = (String) newValue;
 			}
 		}
-*/   }
+*/
+    }
+
+// Overriding of standard attribute changing to filter them.
+	
+	protected static Pattern acceptedAttribute;
+	
+	static {
+		acceptedAttribute = Pattern.compile( "(ui\\..*)|x|y|z|xy|xyz|label|stylesheet" );
+	}
+	
+	@Override
+	public void addAttribute( String attribute, Object ... values )
+	{
+		Matcher matcher = acceptedAttribute.matcher( attribute );
+		
+		if( matcher.matches() )
+			super.addAttribute( attribute, values );
+	}
 }

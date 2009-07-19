@@ -134,6 +134,22 @@ public class GraphicNode extends GraphicElement implements Node
 			y = pos[1];
 			z = pos[2];
 		}
+		
+		if( oldValue == null )		// ADD
+		{
+			for( GraphAttributesListener listener: mygraph.attrListeners )
+				listener.nodeAttributeAdded( mygraph.getId(), getId(), attribute, newValue );
+		}
+		else if( newValue == null )	// REMOVE
+		{
+			for( GraphAttributesListener listener: mygraph.attrListeners )
+				listener.nodeAttributeRemoved( mygraph.getId(), getId(), attribute );			
+		}
+		else						// CHANGE
+		{
+			for( GraphAttributesListener listener: mygraph.attrListeners )
+				listener.nodeAttributeChanged( mygraph.getId(), getId(), attribute, oldValue, newValue );						
+		}
 	}
 
 	/**

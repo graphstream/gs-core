@@ -69,7 +69,19 @@ public class Values implements Iterable<Float>
 	public Values( Values other )
 	{
 		this.values = new ArrayList<Float>( other.values );
-		this.units = other.units;
+		this.units  = other.units;
+	}
+	
+	/**
+	 * New set of one value.
+	 * @param value The value to copy with its units.
+	 */
+	public Values( Value value )
+	{
+		this.values = new ArrayList<Float>();
+		this.units  = value.units;
+		
+		values.add( value.value );
 	}
 
 	/**

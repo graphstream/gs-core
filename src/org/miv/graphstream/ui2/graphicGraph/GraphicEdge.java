@@ -199,6 +199,23 @@ public class GraphicEdge extends GraphicElement implements Edge
 	protected void attributeChanged( String attribute, Object oldValue, Object newValue )
 	{
 		super.attributeChanged( attribute, oldValue, newValue );
+		
+		
+		if( oldValue == null )		// ADD
+		{
+			for( GraphAttributesListener listener: mygraph.attrListeners )
+				listener.edgeAttributeAdded( mygraph.getId(), getId(), attribute, newValue );
+		}
+		else if( newValue == null )	// REMOVE
+		{
+			for( GraphAttributesListener listener: mygraph.attrListeners )
+				listener.edgeAttributeRemoved( mygraph.getId(), getId(), attribute );			
+		}
+		else						// CHANGE
+		{
+			for( GraphAttributesListener listener: mygraph.attrListeners )
+				listener.edgeAttributeChanged( mygraph.getId(), getId(), attribute, oldValue, newValue );						
+		}
 	}
 	
 	/**

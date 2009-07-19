@@ -16,9 +16,11 @@ package org.miv.graphstream.ui2.graphicGraph;
 
 import java.util.Iterator;
 
+import org.miv.graphstream.graph.GraphAttributesListener;
 import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Selector;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Style;
+import org.miv.graphstream.ui2.graphicGraph.stylesheet.Values;
 
 /**
  * A small gentle sprite.
@@ -76,6 +78,11 @@ public class GraphicSprite extends GraphicElement
 			y = node.y;
 			z = node.z;
 		}
+		
+		String myPrefix = String.format( "ui.sprite.%s", id );
+		
+		if( mygraph.getAttribute( myPrefix ) == null )
+			mygraph.addAttribute( myPrefix, x, y, z );
 	}
 	
 // Access
@@ -170,6 +177,12 @@ public class GraphicSprite extends GraphicElement
 	{
 		this.edge = null;
 		this.node = node;
+		
+		String prefix = String.format( "ui.sprite.%s", getId() );
+		
+		if( this.node.getAttribute( prefix ) == null )
+			this.node.addAttribute( prefix );
+		
 		mygraph.graphChanged = true;
 	}
 	
@@ -181,6 +194,12 @@ public class GraphicSprite extends GraphicElement
 	{
 		this.node = null;
 		this.edge = edge;
+		
+		String prefix = String.format( "ui.sprite.%s", getId() );
+		
+		if( this.edge.getAttribute( prefix ) == null )
+			this.edge.addAttribute( prefix );
+		
 		mygraph.graphChanged = true;
 	}
 	
@@ -189,6 +208,13 @@ public class GraphicSprite extends GraphicElement
 	 */
 	public void detach()
 	{
+		String prefix = String.format( "ui.sprite.%s", getId() );
+		
+		if( this.node != null )
+			this.node.removeAttribute( prefix );
+		else if( this.edge != null )
+			this.edge.removeAttribute( prefix );
+		
 		this.edge = null;
 		this.node = null;
 		mygraph.graphChanged = true;
@@ -242,6 +268,19 @@ public class GraphicSprite extends GraphicElement
 		mygraph.graphChanged = true;
 	}
 	
+	public void setPosition( Values values )
+	{
+		float x = 0;
+		float y = 0;
+		float z = 0;
+		
+		if( values.getValueCount() > 0 ) x = values.getValue( 0 ); 
+		if( values.getValueCount() > 1 ) x = values.getValue( 1 ); 
+		if( values.getValueCount() > 2 ) x = values.getValue( 2 ); 
+		
+		setPosition( x, y, z, values.units );
+	}
+	
 	protected float checkAngle( double angle )
 	{
 		if( angle > Math.PI*2 )
@@ -256,11 +295,38 @@ public class GraphicSprite extends GraphicElement
     protected void attributeChanged( String attribute, Object oldValue, Object newValue )
     {
 		super.attributeChanged( attribute, oldValue, newValue );
+
+		String completeAttr = String.format( "ui.sprite.%s.%s", getId(), attribute );
+		
+		if( oldValue == null )		// ADD
+		{
+			Object o = mygraph.getAttribute( completeAttr );
+			
+			if( o == null || ( ! o.equals( newValue ) ) )
+			{
+				for( GraphAttributesListener listener: mygraph.attrListeners )
+					listener.graphAttributeAdded( mygraph.getId(), completeAttr, newValue );
+			}
+		}
+		else if( newValue == null )	// REMOVE
+		{
+			for( GraphAttributesListener listener: mygraph.attrListeners )
+				listener.graphAttributeRemoved( mygraph.getId(), completeAttr );			
+		}
+		else						// CHANGE
+		{
+			Object o = mygraph.getAttribute( completeAttr );
+
+			if( o == null || ( ! o.equals( newValue ) ) )
+			{
+				for( GraphAttributesListener listener: mygraph.attrListeners )
+					listener.graphAttributeChanged( mygraph.getId(), completeAttr, oldValue, newValue );
+			}
+		}
     }
 
 	@Override
     protected void removed()
     {
-		// NOP
     }
 }

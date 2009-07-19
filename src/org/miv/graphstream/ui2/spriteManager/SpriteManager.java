@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.miv.graphstream.graph.Graph;
+import org.miv.graphstream.graph.GraphAttributesListener;
+import org.miv.graphstream.ui2.graphicGraph.stylesheet.Value;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Style;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Values;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleConstants.Units;
@@ -48,7 +50,7 @@ import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleConstants.Units;
  * manager so that it creates specific instances of sprites instead of the default ones.
  * </p>
  */
-public class SpriteManager implements Iterable<Sprite>
+public class SpriteManager implements Iterable<Sprite>, GraphAttributesListener
 {
 // Attribute
 	
@@ -66,30 +68,37 @@ public class SpriteManager implements Iterable<Sprite>
 	 * Factory to create new sprites.
 	 */
 	protected SpriteFactory factory = new SpriteFactory();
+
+// Attributes
+	
+	/**
+	 * this acts as a lock when we are adding a sprite since we are also listener of the
+	 * graph, and when we receive an "add" event, we automatically create a sprite. We can
+	 * want to avoid listening at ourself.
+	 */
+	boolean adding = false;
+
+	/**
+	 * this acts as a lock when we are removing a sprite since we are also listener of the
+	 * graph, and when we receive an "remove" event, we automatically remove the sprite. We can
+	 * want to avoid listening at ourself.
+	 */
+	boolean removing = false;
 	
 // Construction
 	
 	/**
 	 * Create a new manager for sprite and bind it to the given graph. If the graph already contains
 	 * attributes describing sprites, the manager is automatically filled with the existing
-	 * sprites. Only one manager can be bound to a graph at a time.
+	 * sprites.
 	 * @param graph The graph to associate with this manager;
 	 */
 	public SpriteManager( Graph graph )
 	{
 		this.graph    = graph;
 		
-		lookForAnotherManager();
-		graph.addAttribute( "ui.SpriteMagager", this );
 		lookForExistingSprites();
-	}
-	
-	protected void lookForAnotherManager()
-	{
-		Object o = graph.getAttribute( "ui.SpriteManager" );
-		
-		if( o != null && o != this )
-			throw new RuntimeException( "Only one sprite manager is allowed at a time one a graph." );
+		graph.addGraphAttributesListener( this );
 	}
 	
 	protected void lookForExistingSprites()
@@ -177,6 +186,19 @@ public class SpriteManager implements Iterable<Sprite>
 // Command
 
 	/**
+	 * Detach this manager from its graph. This manager will no more be usable to create or remove
+	 * sprites. However sprites not yet removed are still present as attributes in the graph and
+	 * binding another sprite manager to this graph will retrieve all sprites. 
+	 */
+	public void detach()
+	{
+		graph.removeGraphAttributesListener( this );
+		sprites.clear();
+		
+		graph = null;
+	}
+	
+	/**
 	 * Specify the sprite factory to use. This allows to use specific sprite classes (descendants
 	 * of Sprite).
 	 * @param factory The new factory to use.
@@ -205,8 +227,10 @@ public class SpriteManager implements Iterable<Sprite>
 		
 		if( sprite == null )
 		{
+			adding = true;
 			sprite = factory.newSprite( identifier, this ); //new Sprite( identifier, this );
 			sprites.put( identifier, sprite );
+			adding = false;
 		}
 		
 		return sprite;
@@ -222,8 +246,10 @@ public class SpriteManager implements Iterable<Sprite>
 		
 		if( sprite != null )
 		{
-			sprite.removed();
+			removing = true;
 			sprites.remove( identifier );
+			sprite.removed();
+			removing = false;
 		}		
 	}
 	
@@ -287,11 +313,99 @@ public class SpriteManager implements Iterable<Sprite>
 		{
 			return new Values( Units.GU, ((Number)value).floatValue() );
 		}
+		else if( value instanceof Value )
+		{
+			return new Values( (Value)value );
+		}
+		else if( value instanceof Values )
+		{
+			return new Values( (Values)value );
+		}
 		else
 		{
-			System.err.printf( "GraphicGraph : cannot place sprite with posiiton '%s'%n", value );
+			System.err.printf( "GraphicGraph : cannot place sprite with posiiton '%s' (instance of %s)%n", value,
+					value.getClass().getName() );
 		}
 		
 		return null;
 	}
+
+// GraphAttributesListener
+	
+	public void graphAttributeAdded( String graphId, String attribute, Object value )
+    {
+		if( adding )
+			return;		// We want to avoid listening at ourselves.
+		
+		if( attribute.startsWith( "ui.sprite." ) )
+		{
+			String spriteId = attribute.substring( 10 );
+
+			if( spriteId.indexOf( '.' ) < 0 )
+			{
+				if( getSprite( spriteId ) == null )
+				{
+					// A sprite has been created by another entity.
+					// Synchronise this manager.
+		
+					addSprite( spriteId );
+				}
+			}
+		}
+    }
+
+	public void graphAttributeChanged( String graphId, String attribute, Object oldValue,
+            Object newValue )
+    {
+    }
+
+	public void graphAttributeRemoved( String graphId, String attribute )
+    {
+		if( removing )
+			return;		// We want to avoid listening at ourselves.
+		
+		if( attribute.startsWith( "ui.sprite." ) )
+		{
+			String spriteId = attribute.substring( 10 );
+
+			if( spriteId.indexOf( '.' ) < 0 )
+			{
+				if( getSprite( spriteId ) != null )
+				{
+					// A sprite has been removed by another entity.
+					// Synchronise this manager.
+					
+					removeSprite( spriteId );
+				}
+			}
+		}
+    }
+
+// Unused.
+	
+	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+    {
+    }
+
+	public void edgeAttributeChanged( String graphId, String edgeId, String attribute,
+            Object oldValue, Object newValue )
+    {
+    }
+
+	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+    {
+    }
+
+	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+    {
+    }
+
+	public void nodeAttributeChanged( String graphId, String nodeId, String attribute,
+            Object oldValue, Object newValue )
+    {
+    }
+
+	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+    {
+    }
 }
