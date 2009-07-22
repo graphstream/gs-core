@@ -102,18 +102,44 @@ public class Sprite implements Element
 	 */
 	protected Sprite( String id, SpriteManager manager )
 	{
+		this( id, manager, null );
+	}
+
+	/**
+	 * New sprite with a given identifier.
+	 * 
+	 * You cannot build sprites yourself, they are created by the sprite manager.
+	 */
+	protected Sprite( String id, SpriteManager manager, Values position )
+	{
 		this.id         = id;
 		this.completeId = String.format( "ui.sprite.%s", id );
 		this.manager    = manager;
 
 		if( ! manager.graph.hasAttribute( completeId ) )
 		{
-			manager.graph.addAttribute( completeId, 0, 0, 0, Style.Units.GU );
-			position = new Values( Style.Units.GU, 0f, 0f, 0f );
+			if( position != null )
+			{
+				manager.graph.addAttribute( completeId, position );
+				this.position = position;
+			}
+			else
+			{
+				this.position = new Values( Style.Units.GU, 0f, 0f, 0f );
+				manager.graph.addAttribute( completeId, this.position );
+			}
 		}
 		else
 		{
-			position = SpriteManager.getPositionValue( manager.graph.getAttribute( completeId ) );
+			if( position != null )
+			{
+				manager.graph.setAttribute( completeId, position );
+				this.position = position;
+			}
+			else
+			{
+				this.position = SpriteManager.getPositionValue( manager.graph.getAttribute( completeId ) );
+			}
 		}
 	}
 	
@@ -159,6 +185,47 @@ public class Sprite implements Element
 	public boolean attached()
 	{
 		return( attachment != null );
+	}
+	
+	/**
+	 * X position.
+	 * @return The position in abscissa.
+	 */
+	public float getX()
+	{
+		if( position.values.size() > 0 )
+			return position.values.get( 0 );
+		
+		return 0;
+	}
+	
+	/**
+	 * Y position.
+	 * @return The position in ordinate.
+	 */
+	public float getY()
+	{
+		if( position.values.size() > 1 )
+			return position.values.get( 1 );
+		
+		return 0;		
+	}
+	
+	/**
+	 * Z position.
+	 * @return The position in depth.
+	 */
+	public float getZ()
+	{
+		if( position.values.size() > 2 )
+			return position.values.get( 2 );
+		
+		return 0;
+	}
+	
+	public Style.Units getUnits()
+	{
+		return position.units;
 	}
 	
 // Command
@@ -211,25 +278,42 @@ public class Sprite implements Element
 	
 	public void setPosition( float percent )
 	{
-		position.setValue( 0, percent );
-		manager.graph.setAttribute( completeId, position );
+		setPosition( position.units, percent, 0, 0 );
 	}
 	
 	public void setPosition( float x, float y, float z )
 	{
-		position.setValue( 0, x );
-		position.setValue( 1, y );
-		position.setValue( 2, z );
-		manager.graph.setAttribute( completeId, position );
+		setPosition( position.units, x, y, z );
 	}
 	
 	public void setPosition( Style.Units units, float x, float y, float z )
 	{
-		position.setValue( 0, x );
-		position.setValue( 1, y );
-		position.setValue( 2, z );
-		position.setUnits( units );
-		manager.graph.setAttribute( completeId, position );
+		boolean changed = false;
+	
+		if( position.getValue( 0 ) != x     ) { changed = true; position.setValue( 0 , x ); }
+		if( position.getValue( 1 ) != y     ) { changed = true; position.setValue( 1 , y ); }
+		if( position.getValue( 2 ) != z     ) { changed = true; position.setValue( 2 , z ); }
+		if( position.units         != units ) { changed = true; position.setUnits( units ); }
+		
+		if( changed )
+			manager.graph.setAttribute( completeId, position );
+	}
+	
+	protected void setPosition( Values values )
+	{
+		int n = values.values.size();
+		
+		if( n > 2 )
+		{
+			setPosition( values.units,
+				values.getValue( 0 ),
+				values.getValue( 1 ),
+				values.getValue( 2 ) );
+		}
+		else if( n > 0 )
+		{
+			setPosition( values.getValue( 0 ) );
+		}
 	}
 	
 // Access (Element)

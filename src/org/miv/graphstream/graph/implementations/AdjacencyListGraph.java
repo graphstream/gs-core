@@ -837,19 +837,19 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	}
 
 	@Override
-	protected void attributeChanged( String attribute, Object oldValue, Object newValue )
+	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
-		attributeChangedEvent( this, attribute, oldValue, newValue );
+		attributeChangedEvent( this, attribute, event, oldValue, newValue );
 	}
 
-	protected void attributeChangedEvent( Element element, String attribute, Object oldValue, Object newValue )
+	protected void attributeChangedEvent( Element element, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
 		if(!eventProcessing)
 		{
 			eventProcessing=true;
 			manageEvents();
 	
-			if( oldValue == null )
+			if( event == AttributeChangeEvent.ADD )
 			{
 				if( element instanceof Node )
 				{
@@ -867,7 +867,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 						l.graphAttributeAdded( getId(), attribute, newValue );					
 				}
 			}
-			else if( newValue == null )
+			else if( event == AttributeChangeEvent.REMOVE )
 			{
 				if( element instanceof Node )
 				{
@@ -910,7 +910,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		}
 		else
 		{
-			eventQueue.add( new AttributeChangedEvent( element, attribute, oldValue, newValue ) );
+			eventQueue.add( new AttributeChangedEvent( element, attribute, event, oldValue, newValue ) );
 		}
 	}
 
@@ -1130,17 +1130,20 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		Element element;
 
 		String attribute;
+		
+		AttributeChangeEvent event;
 
 		Object oldValue;
 
 		Object newValue;
 
-		AttributeChangedEvent( Element element, String attribute, Object oldValue, Object newValue )
+		AttributeChangedEvent( Element element, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 		{
-			this.element = element;
+			this.element   = element;
 			this.attribute = attribute;
-			this.oldValue = oldValue;
-			this.newValue = newValue;
+			this.event     = event;
+			this.oldValue  = oldValue;
+			this.newValue  = newValue;
 		}
 	}
 	
@@ -1156,7 +1159,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		{
 			AttributeChangedEvent ev = (AttributeChangedEvent)event;
 			
-			if( ev.oldValue == null )
+			if( ev.event == AttributeChangeEvent.ADD )
 			{
 				if( ev.element instanceof Node )
 				{
@@ -1174,7 +1177,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 						l.graphAttributeAdded( getId(), ev.attribute, ev.newValue );										
 				}
 			}
-			else if( ev.newValue == null )
+			else if( ev.event == AttributeChangeEvent.REMOVE )
 			{
 				if( ev.element instanceof Node )
 				{

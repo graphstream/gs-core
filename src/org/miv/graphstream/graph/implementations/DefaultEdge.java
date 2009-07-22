@@ -239,9 +239,9 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 	}
 
 	@Override
-	protected void attributeChanged( String attribute, Object oldValue, Object newValue )
+	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
 		if( src != null )
-			( (DefaultGraph) src.getGraph() ).attributeChangedEvent( this, attribute, oldValue, newValue );
+			( (DefaultGraph) src.getGraph() ).attributeChangedEvent( this, attribute, event, oldValue, newValue );
 	}
 }

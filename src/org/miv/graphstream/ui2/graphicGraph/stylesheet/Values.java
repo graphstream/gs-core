@@ -103,6 +103,43 @@ public class Values implements Iterable<Float>
 		return values.get( i );
 	}
 	
+	/**
+	 * Values units.
+	 * @return The units used for each value.
+	 */
+	public Style.Units getUnits()
+	{
+		return units;
+	}
+	
+	@Override
+	public boolean equals( Object o )
+	{
+		if( o != this )
+		{
+			if( ! ( o instanceof Values ) )
+				return false;
+			
+			Values other = (Values)o;
+			
+			if( other.units != units )
+				return false;
+
+			int n = values.size();
+
+			if( other.values.size() != n )
+				return false;
+			
+			for( int i=0; i<n; i++ )
+			{
+				if( ! other.values.get( i ).equals( values.get( i ) ) )
+					return false;
+			}
+		}
+		
+		return true;
+	}
+	
 	public Iterator<Float> iterator()
 	{
 		return values.iterator();
@@ -130,6 +167,17 @@ public class Values implements Iterable<Float>
 		}
 		
 		return builder.toString();
+	}
+
+	/**
+	 * Copy the given values to this set. The units are also copied.
+	 * @param values The values to copy.
+	 */
+	public void copy( Values values )
+	{
+		units = values.units;
+		this.values.clear();
+		this.values.addAll( values.values );
 	}
 	
 	/**

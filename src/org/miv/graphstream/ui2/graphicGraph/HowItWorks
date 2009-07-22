@@ -118,8 +118,48 @@ nodes by edges.
 	both attributes and elements). However due to the attribute filtering feature, most
 	attributes will not pass through the graphic graph.
 	
-	TODO ensure that no event is produced if a node or edge already exists or is already deleted
-	to avoid recursivity.	
+	Graph synchronisation
+	---------------------
+	
+	The fact the graphic graph is a filter allows to do such a thing : You have a main graph
+	that you are working on, and you have a graphic graph (maybe in another thread) that is
+	listening at the main graph. But to get back the modifications done by the viewer (moving
+	a node for example), you make the main graph a listener of the graphic graph. You end up
+	with a loop like this :
+	
+		 +--->main graph ---listens-at---> graphic graph---+
+		 |                                                 |
+		 +------------------listens-at---------------------+
+		 
+	This could lead to nasty recursive calls. For example imagine that you change an attribute
+	"ui.foo" in the main graph. You expect the graphic graph to get the modification since it
+	listens at the main graph. This is what will happen. But by modifying itself, the graphic
+	graph will automatically generate an attribute changed event to its listeners : that is
+	toward the main graph that will generate an attribute changed event toward the graphic graph,
+	etc. etc.
+	
+	However such a loop is really helpful. We call this "graph synchronisation" since the idea
+	is to propagate any change from the main graph to the graphic graph and any change from
+	the graphic graph to the main graph. This is useful because all the changes you will do 
+	in the main graph will appear in the viewer since the graphic graph changed. But any change
+	you do with the mouse in the graphic graph can be propagated in the main graph also.
+	
+	To avoid the recursion problem when synchronising graphs we observe a strict rule each change
+	to a graph generates an event only if something really changes. Lets use the same example
+	as above. If we add the "ui.foo" attribute on the main graph with the value "bar". The main
+	graph did not stored such an attribute, therefore it adds it. It appropriately generates an
+	"attribute added" event. The graphic graph receives this event. It does not store any "ui.foo"
+	attribute, so it stores it also. As it did not stored such an attribute it also generates the
+	"ui.foo" "attribute added" event toward the main graph with value "bar. The main graph receives
+	such an event, but already have the "ui.foo" attribute with the same exact value "bar".
+	Therefore it does nothing and the recursion stops. The graphs are synchronised.
+
+	For this to work, the graph must be able to compare values. Therefore if you use complex 
+	attributes, and graph synchronisation, you MUST ALWAYS ensure that the attribute has a
+	"public boolean equals(Object)" method. ALWAYS.
+	
+	Note : If you do not provide such an equal method in an attribute value of your own, the
+	recursion will most often stop, but strange values may happen in your graph.	
 
 How does the style sheet and styles communicate with the graphic elements
 =========================================================================

@@ -374,29 +374,50 @@ public class DefaultGraph extends AbstractElement implements Graph
 	
 	protected Node addNode_( String tag ) throws SingletonException
 	{
-		DefaultNode node = (DefaultNode) nodeFactory.newInstance(tag,this);
-		DefaultNode old  = (DefaultNode) nodes.put( tag, node );
-
-		if( old != null  )
+		Node n = nodes.get( tag );
+		
+		if( n == null )	// Avoid recursive calls when synchronising graphs.
 		{
-			nodes.put( tag, old );
+			DefaultNode node = (DefaultNode) nodeFactory.newInstance(tag,this);
+			DefaultNode old  = (DefaultNode) nodes.put( tag, node );
 			
-			if( strictChecking )
-			{
-				throw new SingletonException( "id '"+tag+
-						"' already used, cannot add node" );
-			}
-			else
-			{
-				node = old;
-			}
+			n = node;
+
+			assert( old == null );
+			
+			nodes.put( tag, node );
+			afterNodeAddEvent( node );
 		}
-		else
+		else if( strictChecking )
 		{
-			afterNodeAddEvent( (DefaultNode)node );
+			throw new SingletonException( "id '" + tag + "' already used, cannot add node" );
 		}
 
-		return (DefaultNode)node;
+		return n;
+		
+//		DefaultNode node = (DefaultNode) nodeFactory.newInstance(tag,this);
+//		DefaultNode old  = (DefaultNode) nodes.put( tag, node );
+//
+//		if( old != null  )
+//		{
+//			nodes.put( tag, old );
+//			
+//			if( strictChecking )
+//			{
+//				throw new SingletonException( "id '"+tag+
+//						"' already used, cannot add node" );
+//			}
+//			else
+//			{
+//				node = old;
+//			}
+//		}
+//		else
+//		{
+//			afterNodeAddEvent( (DefaultNode)node );
+//		}
+//
+//		return (DefaultNode)node;
 	}
 	
 
@@ -481,10 +502,20 @@ public class DefaultGraph extends AbstractElement implements Graph
 
 		if( src != null && trg != null )
 		{
-			DefaultEdge edge = (DefaultEdge) ((DefaultNode)src).addEdgeToward( tag, (DefaultNode)trg, directed );
-			edges.put( edge.getId(), (DefaultEdge) edge );
+			Edge e = edges.get( tag );
 			
-			return edge;
+			if( e == null )	// Avoid recursive calls when synchronising graphs.
+			{
+				DefaultEdge edge = (DefaultEdge) ((DefaultNode)src).addEdgeToward( tag, (DefaultNode)trg, directed );
+				edges.put( edge.getId(), (DefaultEdge) edge );
+				e = edge;
+			}
+			else if( strictChecking )
+			{
+				throw new SingletonException( "cannot add edge '" + tag + "', identifier already exists" );
+			}
+			
+			return e;
 		}
 		
 		return null;
@@ -814,22 +845,19 @@ public class DefaultGraph extends AbstractElement implements Graph
 	}
 
 	@Override
-	protected void attributeChanged( String attribute, Object oldValue, Object newValue )
+	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
-		attributeChangedEvent( this, attribute, oldValue, newValue );
+		attributeChangedEvent( this, attribute, event, oldValue, newValue );
 	}
 
-	protected void attributeChangedEvent( Element element, String attribute, Object oldValue, Object newValue )
+	protected void attributeChangedEvent( Element element, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
 		if( ! eventProcessing )
 		{
 			eventProcessing = true;
 			manageEvents();
 
-			// TODO add a better internal attribute event management
-			// handle null value more gracefully.
-			
-			if( oldValue == null )
+			if( event == AttributeChangeEvent.ADD )
 			{
 				if( element instanceof Node )
 				{
@@ -847,7 +875,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 						l.graphAttributeAdded( getId(), attribute, newValue );					
 				}
 			}
-			else if( newValue == null )
+			else if( event == AttributeChangeEvent.REMOVE )
 			{
 				if( element instanceof Node )
 				{
@@ -891,7 +919,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 		else
 		{
 //			printPosition( "ChgEdge in EventProc" );
-			eventQueue.add( new AttributeChangedEvent( element, attribute, oldValue, newValue ) );
+			eventQueue.add( new AttributeChangedEvent( element, attribute, event, oldValue, newValue ) );
 		}
 	}
 
@@ -1204,17 +1232,20 @@ public class DefaultGraph extends AbstractElement implements Graph
 		Element element;
 
 		String attribute;
+		
+		AttributeChangeEvent event;
 
 		Object oldValue;
 
 		Object newValue;
 
-		AttributeChangedEvent( Element element, String attribute, Object oldValue, Object newValue )
+		AttributeChangedEvent( Element element, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 		{
-			this.element = element;
+			this.element   = element;
 			this.attribute = attribute;
-			this.oldValue = oldValue;
-			this.newValue = newValue;
+			this.event     = event;
+			this.oldValue  = oldValue;
+			this.newValue  = newValue;
 		}
 	}
 	
@@ -1231,7 +1262,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 		{
 			AttributeChangedEvent ev = (AttributeChangedEvent)event;
 			
-			if( ev.oldValue == null )
+			if( ev.event == AttributeChangeEvent.ADD )
 			{
 				if( ev.element instanceof Node )
 				{
@@ -1249,7 +1280,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 						l.graphAttributeAdded( getId(), ev.attribute, ev.newValue );										
 				}
 			}
-			else if( ev.newValue == null )
+			else if( ev.event == AttributeChangeEvent.REMOVE )
 			{
 				if( ev.element instanceof Node )
 				{

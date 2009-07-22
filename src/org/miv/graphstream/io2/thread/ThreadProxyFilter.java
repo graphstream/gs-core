@@ -25,9 +25,9 @@ package org.miv.graphstream.io2.thread;
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.Graph;
 import org.miv.graphstream.graph.Node;
-import org.miv.graphstream.io2.Filter;
 import org.miv.graphstream.io2.Input;
 import org.miv.graphstream.io2.InputBase;
+import org.miv.graphstream.io2.ProxyFilter;
 import org.miv.mbox.CannotPostException;
 import org.miv.mbox.MBox;
 import org.miv.mbox.MBoxListener;
@@ -56,17 +56,18 @@ import org.miv.mbox.MBoxStandalone;
  * 
  * <p>
  * The only restriction is that the output thread must regularly call the {@link #checkEvents()}
- * method to dispatch events coming from the source to all outputs registered.
+ * method to dispatch events coming from the source to all outputs registered (see the
+ * explanation in {@link org.miv.graphstream.io2.ProxyFilter}).
  * </p>
  * 
  * <p>
  * You can register any kind of input as source of event, but if the input is a graph, then
  * you can choose to "replay" all the content of the graph so that at the other end of the filter,
- * all outputs receive the complete content of the graph. This is the default behavior if this
+ * all outputs receive the complete content of the graph. This is the default behaviour if this
  * filter is constructed with a graph as input.
  * </p>
  */
-public class ThreadProxyFilter extends InputBase implements Filter, MBoxListener
+public class ThreadProxyFilter extends InputBase implements ProxyFilter, MBoxListener
 {
 // Attributes
 

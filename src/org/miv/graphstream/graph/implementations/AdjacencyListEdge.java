@@ -159,11 +159,9 @@ public class AdjacencyListEdge
 	 * @see org.miv.graphstream.graph.Element#attributeChanged(java.lang.String, java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	protected void attributeChanged( String attribute, Object oldValue, Object newValue )
+	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
 		if( n0 != null )
-			( (AdjacencyListGraph) n0.getGraph() ).attributeChangedEvent( this, attribute, oldValue, newValue );
-
+			( (AdjacencyListGraph) n0.getGraph() ).attributeChangedEvent( this, attribute, event, oldValue, newValue );
 	}
-
 }

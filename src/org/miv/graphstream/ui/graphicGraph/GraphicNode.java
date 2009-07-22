@@ -120,9 +120,9 @@ public class GraphicNode extends GraphicElement implements Node
     }
 
 	@Override
-	protected void attributeChanged( String attribute, Object oldValue, Object newValue )
+	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
-		super.attributeChanged( attribute, oldValue, newValue );
+		super.attributeChanged( attribute, event, oldValue, newValue );
 		
 		if( attribute.equals( "x" ) )
 		{

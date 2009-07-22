@@ -105,4 +105,23 @@ public class Value extends Number
 		
 		return builder.toString();
 	}
+	
+	public boolean equals( Value o )
+	{
+		if( o != this )
+		{
+			if( ! ( o instanceof Value ) )
+				return false;
+			
+			Value other = (Value)o;
+			
+			if( other.units != units )
+				return false;
+			
+			if( other.value != value )
+				return false;
+		}
+		
+		return true;
+	}
 }

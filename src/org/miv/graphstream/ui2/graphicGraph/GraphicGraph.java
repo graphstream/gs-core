@@ -436,32 +436,37 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	}
 
 	@Override
-	protected void attributeChanged( String attribute, Object oldValue, Object newValue )
+	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
 		// One of the most important method. Most of the communication comes from
 		// attributes.
 		
 		if( attribute.equals( "ui.stylesheet" ) || attribute.equals( "stylesheet" ) )
 		{
-			if( newValue instanceof String )
+			if( event == AttributeChangeEvent.ADD || event == AttributeChangeEvent.CHANGE )
 			{
-				try
+				if( newValue instanceof String )
 				{
-					loadStyleSheet( (String) newValue );
-					graphChanged = true;
+					try
+					{
+						loadStyleSheet( (String) newValue );
+						graphChanged = true;
+					}
+					catch( IOException e )
+					{
+						System.err.printf( "Error while parsing style sheet for graph '%s' : %n", getId() );
+						if( ((String)newValue).startsWith( "url" ) )
+							System.err.printf( "    %s%n", ((String)newValue) );
+						System.err.printf( "    %s%n", e.getMessage() );
+					}
 				}
-				catch( IOException e )
+				else
 				{
-					System.err.printf( "Error while parsing style sheet for graph '%s' : %n", getId() );
-					if( ((String)newValue).startsWith( "url" ) )
-						System.err.printf( "    %s%n", ((String)newValue) );
-					System.err.printf( "    %s%n", e.getMessage() );
+					System.err.printf( "Error with stylesheet specification what to do with '%s' ?%n", newValue );
 				}
 			}
-			else if( newValue == null )
+			else	// Remove the style.
 			{
-				// Remove the style.
-				
 				styleSheet.clear();
 				graphChanged = true;
 			}
@@ -469,30 +474,25 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		else if( attribute.startsWith( "ui.sprite." ) )
 		{
 			// Defers the sprite handling to the sprite API.
-			
-			if( oldValue == null )
-			     spriteAttribute( SpriteEvent.ADD, null, attribute, newValue );
-			else if( newValue == null )
-			     spriteAttribute( SpriteEvent.REMOVE, null, attribute, null );
-			else spriteAttribute( SpriteEvent.CHANGE, null, attribute, newValue );
+
+//			if( ! attrLock )	// The attrLock allows us to add/change/remove sprites attributes without entering in a recursive loop.
+				spriteAttribute( event, null, attribute, newValue );
 		}
-		
-		if( oldValue == null )		// ADD
+
+		switch( event )
 		{
-			for( GraphAttributesListener listener: attrListeners )
-				listener.graphAttributeAdded( getId(), attribute, newValue );
-		}
-		else if( newValue == null )	// REMOVE
-		{
-			for( GraphAttributesListener listener: attrListeners )
-			{
-				listener.graphAttributeRemoved( getId(), attribute );
-			}
-		}
-		else						// CHANGE
-		{
-			for( GraphAttributesListener listener: attrListeners )
-				listener.graphAttributeChanged( getId(), attribute, oldValue, newValue );						
+			case ADD:
+				for( GraphAttributesListener listener: attrListeners )
+					listener.graphAttributeAdded( getId(), attribute, newValue );
+				break;
+			case CHANGE:
+				for( GraphAttributesListener listener: attrListeners )
+					listener.graphAttributeChanged( getId(), attribute, oldValue, newValue );						
+				break;
+			case REMOVE:
+				for( GraphAttributesListener listener: attrListeners )
+					listener.graphAttributeRemoved( getId(), attribute );
+				break;
 		}
 	}
 
@@ -565,7 +565,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	@SuppressWarnings( "unchecked" )
     public Iterator<Node> iterator()
     {
-	    return (Iterator<Node>) styleGroups.nodes();
+	    return (Iterator<Node>) styleGroups.getNodeIterator();
     }
 	
 	public void addGraphListener( GraphListener listener )
@@ -870,10 +870,14 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	
 // Sprite interface
 
-	protected static enum SpriteEvent { ADD, CHANGE, REMOVE };
-	
-	protected void spriteAttribute( SpriteEvent event, Element element, String attribute, Object value )
+	protected void spriteAttribute( AttributeChangeEvent event, Element element, String attribute, Object value )
 	{
+//System.err.printf( "GG sprite attr %s %s (%s) (%s)%n",
+//		event,
+//		attribute,
+//		value,
+//		element != null ? element.getId() : "no element" );
+
 		String spriteId = attribute.substring( 10 );		// Remove the "ui.sprite." prefix.
 		int    pos      = spriteId.indexOf( '.' );			// Look if there is something after the sprite id.
 		String attr     = null;
@@ -890,21 +894,21 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		}
 		else
 		{
-			if( event == SpriteEvent.ADD )
+			if( event == AttributeChangeEvent.ADD )
 			{
 				GraphicSprite sprite = styleGroups.getSprite( spriteId );
 				
 				if( sprite != null )
 					sprite.addAttribute( attr, value );
 			}
-			else if( event == SpriteEvent.CHANGE )
+			else if( event == AttributeChangeEvent.CHANGE )
 			{
 				GraphicSprite sprite = styleGroups.getSprite( spriteId );
 				
 				if( sprite != null )
 					sprite.changeAttribute( attr, value );				
 			}
-			else if( event == SpriteEvent.REMOVE )
+			else if( event == AttributeChangeEvent.REMOVE )
 			{
 				GraphicSprite sprite = styleGroups.getSprite( spriteId );
 				
@@ -914,13 +918,13 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		}
 	}
 	
-	protected void addOrChangeSprite( SpriteEvent event, Element element, String spriteId, Object value )
+	protected void addOrChangeSprite( AttributeChangeEvent event, Element element, String spriteId, Object value )
 	{
-		if( event == SpriteEvent.ADD || event == SpriteEvent.CHANGE )
+		if( event == AttributeChangeEvent.ADD || event == AttributeChangeEvent.CHANGE )
 		{
 			GraphicSprite sprite = styleGroups.getSprite( spriteId );
 			
-			if( sprite == null ) 
+			if( sprite == null )
 				sprite = addSprite_( spriteId );
 
 			if( element != null )
@@ -934,7 +938,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 			if( value != null )
 				positionSprite( sprite, value );
 		}
-		else if( event == SpriteEvent.REMOVE )
+		else if( event == AttributeChangeEvent.REMOVE )
 		{
 			if( element == null )
 			{
@@ -966,9 +970,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	protected GraphicSprite addSprite_( String id )
 	{
 		GraphicSprite s = new GraphicSprite( id, this );
-
 		styleGroups.addElement( s );
-		
 		graphChanged = true;
 		
 		return s;
@@ -1061,6 +1063,10 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		else if( value instanceof Values )
 		{
 			sprite.setPosition( (Values)value );
+		}
+		else if( value == null )
+		{
+			throw new RuntimeException( "What do you expect with a null value ?" );
 		}
 		else
 		{

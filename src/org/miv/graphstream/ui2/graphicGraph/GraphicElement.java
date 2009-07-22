@@ -19,7 +19,6 @@ package org.miv.graphstream.ui2.graphicGraph;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.miv.graphstream.graph.GraphAttributesListener;
 import org.miv.graphstream.graph.implementations.AbstractElement;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Selector;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleConstants;
@@ -168,69 +167,93 @@ public abstract class GraphicElement extends AbstractElement
 	 * Handle the "ui.class", "label", "ui.style", etc. attributes.
 	 */
 	@Override
-    protected void attributeChanged( String attribute, Object oldValue, Object newValue )
+    protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
     {
-		if( attribute.equals( "ui.class" ) )
+		if( event == AttributeChangeEvent.ADD || event == AttributeChangeEvent.CHANGE )
 		{
-			mygraph.styleGroups.removeElement( this );
-			mygraph.styleGroups.addElement( this );
-			mygraph.graphChanged = true;
-		}
-		else if( attribute.equals( "label" ) || attribute.equals( "ui.label" ) )
-		{
-			label = StyleConstants.convertLabel( newValue );
-			mygraph.graphChanged = true;
-		}
-		else if( attribute.equals( "ui.style" ) )
-		{
-			// Cascade the new style in the style sheet.
-			
-			if( newValue instanceof String )
+			if( attribute.equals( "ui.class" ) )
 			{
-				try
-				{
-					mygraph.styleSheet.parseStyleFromString(
-							new Selector( getSelectorType(), getId(), null ),
-							(String)newValue );
-				}
-				catch( java.io.IOException e )
-				{
-					System.err.printf( "Error while parsing style for %S '%s' :", getSelectorType(), getId() );
-					System.err.printf( "    %s%n", e.getMessage() );
-					System.err.printf( "    The style was ignored" );
-				}
-
+				mygraph.styleGroups.removeElement( this );
+				mygraph.styleGroups.addElement( this );
 				mygraph.graphChanged = true;
 			}
-			else
+			else if( attribute.equals( "label" ) || attribute.equals( "ui.label" ) )
 			{
-				System.err.printf( "ERROR !!%n" );
+				label = StyleConstants.convertLabel( newValue );
+				mygraph.graphChanged = true;
+			}
+			else if( attribute.equals( "ui.style" ) )
+			{
+				// Cascade the new style in the style sheet.
+				
+				if( newValue instanceof String )
+				{
+					try
+					{
+						mygraph.styleSheet.parseStyleFromString(
+								new Selector( getSelectorType(), getId(), null ),
+								(String)newValue );
+					}
+					catch( java.io.IOException e )
+					{
+						System.err.printf( "Error while parsing style for %S '%s' :", getSelectorType(), getId() );
+						System.err.printf( "    %s%n", e.getMessage() );
+						System.err.printf( "    The style was ignored" );
+					}
+	
+					mygraph.graphChanged = true;
+				}
+				else
+				{
+					System.err.printf( "ERROR !!%n" );
+				}
+			}
+			else if( attribute.equals( "ui.hide" ) )
+			{
+				mygraph.graphChanged = true;
+			}
+			else if( attribute.equals( "ui.clicked" ) )
+			{
+				mygraph.graphChanged = true;
+			}
+			else if( attribute.equals( "ui.selected" ) )
+			{
+				mygraph.graphChanged = true;
+			}
+//			else if( attribute.equals( "ui.state" ) )
+//			{
+//				if( newValue == null )
+//					state = null;
+//				else if( newValue instanceof String )
+//					state = (String) newValue;
+//			}
+		}
+		else	// REMOVE
+		{
+			if( attribute.equals( "ui.class" ) )
+			{
+				mygraph.styleGroups.removeElement( this );
+				mygraph.styleGroups.addElement( this );
+				mygraph.graphChanged = true;
+			}
+			else if( attribute.equals( "label" ) || attribute.equals( "ui.label" ) )
+			{
+				label = "";
+				mygraph.graphChanged = true;
+			}
+			else if( attribute.equals( "ui.hide" ) )
+			{
+				mygraph.graphChanged = false;
+			}
+			else if( attribute.equals( "ui.clicked" ) )
+			{
+				mygraph.graphChanged = false;
+			}
+			else if( attribute.equals( "ui.selected" ) )
+			{
+				mygraph.graphChanged = false;
 			}
 		}
-		else if( attribute.equals( "ui.hide" ) )
-		{
-			mygraph.graphChanged = true;
-		}
-		else if( attribute.equals( "ui.clicked" ) )
-		{
-			mygraph.graphChanged = true;
-		}
-		else if( attribute.equals( "ui.selected" ) )
-		{
-			mygraph.graphChanged = true;
-		}
-/*		else if( attribute.equals( "ui.state" ) )
-		{
-			if( newValue == null )
-			{
-				state = null;
-			}
-			else if( newValue instanceof String )
-			{
-				state = (String) newValue;
-			}
-		}
-*/
     }
 
 // Overriding of standard attribute changing to filter them.

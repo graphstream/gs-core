@@ -221,7 +221,7 @@ public abstract class AbstractElement implements Element
 	public boolean hasAttribute( String key )
 	{
 		if( attributes != null )
-			return( attributes.get( key ) != null );
+			return attributes.containsKey( key );
 
 		return false;
 	}
@@ -356,7 +356,7 @@ public abstract class AbstractElement implements Element
 				String key = keys.next();
 				Object val = vals.next();
 
-				attributeChanged( key, val, null );
+				attributeChanged( key, AttributeChangeEvent.REMOVE, val, null );
 			}
 
 			attributes.clear();
@@ -365,6 +365,7 @@ public abstract class AbstractElement implements Element
 
 	public void addAttribute( String attribute, Object ... values )
 	{
+//System.err.printf("     #%s#addAttr(%s", getId(), attribute);
 		if( attributes == null )
 			attributes = new HashMap<String,Object>(1);
 
@@ -377,20 +378,39 @@ public abstract class AbstractElement implements Element
 		     value = values[0];
 		else value = values;
 		
+		// We take a particular care to avoid sending an "attributeChanged" event
+		// if the value changed is the same as the old one. For graph synchronisation
+		// (graph A listens at graph B that listens at graph A) this could cause
+		// infinite loops.
+		
 		if( old_value != null )
 		{
+//System.err.printf(" old=%s",old_value);
 			if( old_value != value )
 			{
-				if( ! old_value.equals( value ) )
-					attributeChanged( attribute, old_value, value );
-
 				attributes.put( attribute, value );
+
+				if( ! old_value.equals( value ) )
+				{
+//System.err.printf(" old!=new=%s -->AttrChange!",value);
+					attributeChanged( attribute, AttributeChangeEvent.CHANGE, old_value, value );
+				}
 			}
+			else
+			{
+//System.err.printf( " no event" );
+			}
+//System.err.printf( ")%n" );
 		}
 		else
 		{
+			AttributeChangeEvent event = AttributeChangeEvent.ADD;
+			
+			if( attributes.containsKey( attribute ) )	// In case the value is null,
+				event = AttributeChangeEvent.CHANGE;	// but the attribute exists.
+//System.err.printf(" new=%s)%n",value);
 			attributes.put( attribute, value );
-			attributeChanged( attribute, old_value, value );
+			attributeChanged( attribute, event, old_value, value );
 		}
 	}
 	
@@ -420,8 +440,11 @@ public abstract class AbstractElement implements Element
 	{
 		if( attributes != null )
 		{
-			attributeChanged( attribute, attributes.get( attribute ), null );
-			attributes.remove( attribute );
+			if( attributes.containsKey( attribute ) )	// Avoid recursive calls when synchronising graphs.
+			{
+				attributes.remove( attribute );
+				attributeChanged( attribute, AttributeChangeEvent.REMOVE, attributes.get( attribute ), null );
+			}
 		}
 	}
 	
@@ -433,6 +456,8 @@ public abstract class AbstractElement implements Element
 		return 0;
 	}
 
+	public static enum AttributeChangeEvent { ADD, CHANGE, REMOVE };
+	
 	/**
 	 * Called for each change in the attribute set. This method must be
 	 * implemented by sub-elements in order to send events to the graph
@@ -443,5 +468,5 @@ public abstract class AbstractElement implements Element
 	 * @param newValue The new value of the attribute, null if the attribute is
 	 *        about to be removed.
 	 */
-	protected abstract void attributeChanged( String attribute, Object oldValue, Object newValue );
+	protected abstract void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue );
 }

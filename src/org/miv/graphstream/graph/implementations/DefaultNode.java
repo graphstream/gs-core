@@ -208,10 +208,10 @@ public abstract class DefaultNode extends AbstractElement implements Node
 		throws IllegalStateException;
 
 	@Override
-	protected void attributeChanged( String attribute, Object oldValue, Object newValue )
+	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
 		if( G != null )
-			G.attributeChangedEvent( this, attribute, oldValue, newValue );
+			G.attributeChangedEvent( this, attribute, event, oldValue, newValue );
 	}
 	
 	@Override

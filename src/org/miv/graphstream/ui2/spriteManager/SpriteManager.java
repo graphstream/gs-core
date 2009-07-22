@@ -76,14 +76,7 @@ public class SpriteManager implements Iterable<Sprite>, GraphAttributesListener
 	 * graph, and when we receive an "add" event, we automatically create a sprite. We can
 	 * want to avoid listening at ourself.
 	 */
-	boolean adding = false;
-
-	/**
-	 * this acts as a lock when we are removing a sprite since we are also listener of the
-	 * graph, and when we receive an "remove" event, we automatically remove the sprite. We can
-	 * want to avoid listening at ourself.
-	 */
-	boolean removing = false;
+	boolean attributeLock = false;
 	
 // Construction
 	
@@ -223,17 +216,36 @@ public class SpriteManager implements Iterable<Sprite>, GraphAttributesListener
 	 */
 	public Sprite addSprite( String identifier )
 	{
+		return addSprite( identifier, null );
+	}
+	
+	/**
+	 * Add a sprite with the given identifier and position. If the sprite already exists, nothing
+	 * is done, excepted if the position is not null in which case it is repositioned. If the
+	 * sprite does not exists, it is added and if position is not null, it is used as the initial
+	 * position of the sprite. 
+	 * @param identifier The sprite identifier.
+	 * @param position The sprite position (or null for (0,0,0)).
+	 * @return The created sprite.
+	 */
+	protected Sprite addSprite( String identifier, Values position )
+	{
 		Sprite sprite = sprites.get( identifier ); 
 		
 		if( sprite == null )
 		{
-			adding = true;
-			sprite = factory.newSprite( identifier, this ); //new Sprite( identifier, this );
+			attributeLock = true;
+			sprite = factory.newSprite( identifier, this, position );
 			sprites.put( identifier, sprite );
-			adding = false;
+			attributeLock = false;
+		}
+		else
+		{
+			if( position != null )
+				sprite.setPosition( position );
 		}
 		
-		return sprite;
+		return sprite;		
 	}
 	
 	/**
@@ -246,10 +258,10 @@ public class SpriteManager implements Iterable<Sprite>, GraphAttributesListener
 		
 		if( sprite != null )
 		{
-			removing = true;
+			attributeLock = true;
 			sprites.remove( identifier );
 			sprite.removed();
-			removing = false;
+			attributeLock = false;
 		}		
 	}
 	
@@ -334,7 +346,7 @@ public class SpriteManager implements Iterable<Sprite>, GraphAttributesListener
 	
 	public void graphAttributeAdded( String graphId, String attribute, Object value )
     {
-		if( adding )
+		if( attributeLock )
 			return;		// We want to avoid listening at ourselves.
 		
 		if( attribute.startsWith( "ui.sprite." ) )
@@ -347,21 +359,59 @@ public class SpriteManager implements Iterable<Sprite>, GraphAttributesListener
 				{
 					// A sprite has been created by another entity.
 					// Synchronise this manager.
+					
+					Values position = null;
+					
+					if( value != null )
+						position = getPositionValue( value );
 		
-					addSprite( spriteId );
+					addSprite( spriteId, position );
+				}
+			}
+		}
+    }
+	
+	public void graphAttributeChanged( String graphId, String attribute, Object oldValue,
+            Object newValue )
+    {
+		if( attributeLock )
+			return;		// We want to avoid listening at ourselves.
+
+		if( attribute.startsWith( "ui.sprite." ) )
+		{
+			String spriteId = attribute.substring( 10 );
+
+			if( spriteId.indexOf( '.' ) < 0 )
+			{
+				Sprite s = getSprite( spriteId );
+				
+				if( s != null )
+				{
+					// The sprite has been moved by another entity.
+					// Update its position.
+
+					if( newValue != null )
+					{
+						Values position = getPositionValue( newValue );
+//System.err.printf( "       %%spriteMan set %s Position(%s) (from %s)%n", spriteId, position, newValue );
+						s.setPosition( position );
+					}
+					else
+					{
+						System.err.printf( "%s changed but newValue == null ! (old=%s)%n", spriteId, oldValue );
+					}
+				}
+				else
+				{
+					throw new RuntimeException( "WTF ! sprite changed, but not added...%n" );
 				}
 			}
 		}
     }
 
-	public void graphAttributeChanged( String graphId, String attribute, Object oldValue,
-            Object newValue )
-    {
-    }
-
 	public void graphAttributeRemoved( String graphId, String attribute )
     {
-		if( removing )
+		if( attributeLock )
 			return;		// We want to avoid listening at ourselves.
 		
 		if( attribute.startsWith( "ui.sprite." ) )

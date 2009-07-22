@@ -22,6 +22,8 @@
 
 package org.miv.graphstream.ui2.spriteManager;
 
+import org.miv.graphstream.ui2.graphicGraph.stylesheet.Values;
+
 /**
  * Factory for sprites.
  */
@@ -31,10 +33,14 @@ public class SpriteFactory
 	 * Create a new sprite for the given manager with the given identifier.
 	 * @param identifier Identifier of the newly created sprite.
 	 * @param manager The sprite manager this sprite will pertain to.
+	 * @param position The sprite initial position or null for (0,0,0,GU).
 	 * @return A new sprite.
 	 */
-	public Sprite newSprite( String identifier, SpriteManager manager )
+	public Sprite newSprite( String identifier, SpriteManager manager, Values position )
 	{
+		if( position != null )
+			return new Sprite( identifier, manager, position );
+		
 		return new Sprite( identifier, manager );
 	}
 }

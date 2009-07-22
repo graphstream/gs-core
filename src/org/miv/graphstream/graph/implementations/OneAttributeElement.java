@@ -203,7 +203,7 @@ public abstract class OneAttributeElement implements Element
 	 */
 	public boolean hasVector( String key )
 	{
-			if( attribute != null && attribute instanceof ArrayList )
+			if( attribute != null && attribute instanceof ArrayList<?> )
 				return  true;
 		
 		

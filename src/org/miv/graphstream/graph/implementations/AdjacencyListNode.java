@@ -441,9 +441,9 @@ public class AdjacencyListNode extends AbstractElement implements Node
 	}
 
 	@Override
-	protected void attributeChanged( String attribute, Object oldValue, Object newValue )
+	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
 		if( graph != null )
-			( (AdjacencyListGraph) graph ).attributeChangedEvent( this, attribute, oldValue, newValue );	
+			( (AdjacencyListGraph) graph ).attributeChangedEvent( this, attribute, event, oldValue, newValue );	
 	}
 }

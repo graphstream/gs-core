@@ -107,40 +107,43 @@ public class GraphicNode extends GraphicElement implements Node
     }
 
 	@Override
-	protected void attributeChanged( String attribute, Object oldValue, Object newValue )
+	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
-		super.attributeChanged( attribute, oldValue, newValue );
+		super.attributeChanged( attribute, event, oldValue, newValue );
 		
-		if( attribute.equals( "x" ) )
+		if( event == AttributeChangeEvent.ADD || event == AttributeChangeEvent.CHANGE )
 		{
-			x = numberAttribute( newValue );
-			mygraph.graphChanged = true;
-		}
-		else if( attribute.equals( "y" ) )
-		{
-			y = numberAttribute( newValue );
-			mygraph.graphChanged = true;
-		}
-		else if( attribute.equals( "z" ) )
-		{
-			z = numberAttribute( newValue );
-			mygraph.graphChanged = true;
-		}
-		else if( attribute.equals( "xy" ) || attribute.equals( "xyz" ) )
-		{
-			float pos[] = nodePosition( this );
-			
-			x = pos[0];
-			y = pos[1];
-			z = pos[2];
+			if( attribute.equals( "x" ) )
+			{
+				x = numberAttribute( newValue );
+				mygraph.graphChanged = true;
+			}
+			else if( attribute.equals( "y" ) )
+			{
+				y = numberAttribute( newValue );
+				mygraph.graphChanged = true;
+			}
+			else if( attribute.equals( "z" ) )
+			{
+				z = numberAttribute( newValue );
+				mygraph.graphChanged = true;
+			}
+			else if( attribute.equals( "xy" ) || attribute.equals( "xyz" ) )
+			{
+				float pos[] = nodePosition( this );
+				
+				x = pos[0];
+				y = pos[1];
+				z = pos[2];
+			}
 		}
 		
-		if( oldValue == null )		// ADD
+		if( event == AttributeChangeEvent.ADD )		// ADD
 		{
 			for( GraphAttributesListener listener: mygraph.attrListeners )
 				listener.nodeAttributeAdded( mygraph.getId(), getId(), attribute, newValue );
 		}
-		else if( newValue == null )	// REMOVE
+		else if( event == AttributeChangeEvent.REMOVE )	// REMOVE
 		{
 			for( GraphAttributesListener listener: mygraph.attrListeners )
 				listener.nodeAttributeRemoved( mygraph.getId(), getId(), attribute );			

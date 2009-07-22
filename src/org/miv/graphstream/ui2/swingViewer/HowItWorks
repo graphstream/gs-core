@@ -1,0 +1,63 @@
+The viewer
+==========
+
+The viewer is a layer above the GraphicGraph. The graphic graph knows nothing about it. The viewer
+observe the graphic graph and each time it changes, and if it can, the viewer draws the graph.
+
+Planned features :
+	* Have several "views" of an unique graphic graph.
+	* Allow the view to modify the graphic graph (so that modifications can enter the event stream).
+	* Allow to open an close views at will (restarting from the current state).
+	* Allow views to be in other toolkits than Swing.
+	* Provide simple graph view that demonstrate how all this works.
+
+ViewSet
+-------
+
+	* The view set contains all the active views on a graphic graph. It handles the graphic graph
+	  and calls the views when it changes.
+	* The view set is an iterative element, it registers a timer and activates at regular intervals
+	  (these intervals can vary in time).
+	* At regular intervals it calls the views.
+	* The views may or may not redraw when activated by the view set.
+		* This allows to have "animated views" that redraw constantly, very like simulations or
+		  even games (which indeed are kinds of simulations).
+		* But also to have "refresh on demand views" that only change when the informations to
+		  draw changed.
+
+Listeners
+---------
+
+	* For some events the view is able to directly modify the graphic graph. Then each listener
+	  on the graphic graph will be automatically triggered. This includes events like :
+	  	* adding or removing nodes, edges and sprites.
+	  	* adding, changing or removing attributes.
+	* But there are other kinds of events, a proposition would be to manage them via attributes.
+		* click on an element (node, edge, sprite) :
+			ui.clicked.
+				During the click (after pushing the button, and before releasing it)
+		* selection of one or more elements :
+			ui.selected
+		* displacement of an element
+			x, y, z, xy, xyz
+			The usual attributes.
+		* Edition of the text of an element
+			label
+			The usual attribute.
+		* etc.
+		
+		
+The automatic layout
+--------------------
+
+The automatic layout is now completely apart from the viewer. It consist in a something that looks
+like that :
+	
+	Graph ----listener----> Layout --+
+	  ^                              |
+	  |                              |
+	  +-------attributes-listener----+
+
+The layout is an output. It can also serve as an input for attributes only (since its only purpose
+is to change the xyz attributes of each node. Then the layout can run when one wants. Once when
+called, regularly when called, in a thread thanks to a proxy, even on a distant machine.		

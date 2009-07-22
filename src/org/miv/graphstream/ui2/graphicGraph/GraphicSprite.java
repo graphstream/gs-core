@@ -40,14 +40,9 @@ public class GraphicSprite extends GraphicElement
 	protected GraphicEdge edge;
 
 	/**
-	 * Sprite position, in graph units.
+	 * Sprite position.
 	 */
-	public float x, y, z;
-	
-	/**
-	 * Units for lengths and radii.
-	 */
-	public Style.Units units = Style.Units.GU;
+	public Values position = new Values( Style.Units.GU, 0, 0, 0 );
 	
 	/**
 	 * Bounds of the sprite (for nodeSelection). These are set by the renderer according to the node
@@ -73,16 +68,16 @@ public class GraphicSprite extends GraphicElement
 			Iterator<? extends Node> nodes = graph.getNodeIterator();
 		
 			GraphicNode node = (GraphicNode) nodes.next();
-			
-			x = node.x;
-			y = node.y;
-			z = node.z;
+
+			position.setValue( 0, node.x );
+			position.setValue( 1, node.y );
+			position.setValue( 2, node.z );
 		}
 		
 		String myPrefix = String.format( "ui.sprite.%s", id );
 		
 		if( mygraph.getAttribute( myPrefix ) == null )
-			mygraph.addAttribute( myPrefix, x, y, z );
+			mygraph.addAttribute( myPrefix, position );
 	}
 	
 // Access
@@ -128,19 +123,24 @@ public class GraphicSprite extends GraphicElement
 	@Override
 	public float getX()
 	{
-		return x; 
+		return position.getValue( 0 ); 
 	}
 
 	@Override
 	public float getY()
 	{
-		return y;
+		return position.getValue( 1 );
 	}
 	
 	@Override
 	public float getZ()
 	{
-		return z;
+		return position.getValue( 2 );
+	}
+	
+	public Style.Units getUnits()
+	{
+		return position.getUnits();
 	}
 	
 	@Override
@@ -154,10 +154,7 @@ public class GraphicSprite extends GraphicElement
 	@Override
     public void move( float x, float y, float z )
     {
-    	this.x = x;
-    	this.y = y;
-    	this.z = z;
-    	mygraph.graphChanged = true;
+		setPosition( x, y, z, Style.Units.GU );
     }
 	
 	@Override
@@ -226,16 +223,7 @@ public class GraphicSprite extends GraphicElement
 	 */
 	public void setPosition( float value )
 	{
-		if( edge != null )
-		{
-			if( value < 0 ) value = 0;
-			else if( value > 1 ) value = 1;
-		}
-		
-		x = value;
-		y = 0;
-		z = 0;
-		mygraph.graphChanged = true;
+		setPosition( value, 0, 0, getUnits() );
 	}
 	
 	/**
@@ -257,15 +245,21 @@ public class GraphicSprite extends GraphicElement
 			if( x < 0 ) x = 0;
 			else if( x > 1 ) x = 1;
 		}
-		
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		
-		if( units != null )
-			this.units = units;
 
-		mygraph.graphChanged = true;
+		boolean changed = false;
+		
+		if( getX()     != x     ) { changed = true; position.setValue( 0, x ); }
+		if( getY()     != y     ) { changed = true; position.setValue( 1, y ); }
+		if( getZ()     != z     ) { changed = true; position.setValue( 2, z ); }
+		if( getUnits() != units ) { changed = true; position.setUnits( units ); }
+
+		if( changed )
+		{
+			mygraph.graphChanged = true;
+			String prefix = String.format( "ui.sprite.%s", getId() );
+			
+			mygraph.setAttribute( prefix, position );
+		}
 	}
 	
 	public void setPosition( Values values )
@@ -275,9 +269,12 @@ public class GraphicSprite extends GraphicElement
 		float z = 0;
 		
 		if( values.getValueCount() > 0 ) x = values.getValue( 0 ); 
-		if( values.getValueCount() > 1 ) x = values.getValue( 1 ); 
-		if( values.getValueCount() > 2 ) x = values.getValue( 2 ); 
+		if( values.getValueCount() > 1 ) y = values.getValue( 1 ); 
+		if( values.getValueCount() > 2 ) z = values.getValue( 2 ); 
 		
+//System.err.printf( "setting %s position x=%f y=%f z=%f units=%s (value in=%s)%n", getId(), x, y, z, values.units, values );
+		if( x == 1 && y == 1 && z == 1 )
+			throw new RuntimeException( "WTF !!!" );
 		setPosition( x, y, z, values.units );
 	}
 	
@@ -292,13 +289,13 @@ public class GraphicSprite extends GraphicElement
 	}
 	
 	@Override
-    protected void attributeChanged( String attribute, Object oldValue, Object newValue )
+    protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
     {
-		super.attributeChanged( attribute, oldValue, newValue );
+		super.attributeChanged( attribute, event, oldValue, newValue );
 
 		String completeAttr = String.format( "ui.sprite.%s.%s", getId(), attribute );
-		
-		if( oldValue == null )		// ADD
+//System.err.printf( "GSprite add attribute %s %s (old=%s) (new=%s)%n", event, attribute, oldValue, newValue );
+		if( event == AttributeChangeEvent.ADD )		// ADD
 		{
 			Object o = mygraph.getAttribute( completeAttr );
 			
@@ -308,7 +305,7 @@ public class GraphicSprite extends GraphicElement
 					listener.graphAttributeAdded( mygraph.getId(), completeAttr, newValue );
 			}
 		}
-		else if( newValue == null )	// REMOVE
+		else if( event == AttributeChangeEvent.REMOVE )	// REMOVE
 		{
 			for( GraphAttributesListener listener: mygraph.attrListeners )
 				listener.graphAttributeRemoved( mygraph.getId(), completeAttr );			
