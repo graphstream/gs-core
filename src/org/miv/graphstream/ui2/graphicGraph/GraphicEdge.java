@@ -98,7 +98,7 @@ public class GraphicEdge extends GraphicElement implements Edge
 	
 
 	@Override
-    protected Selector.Type getSelectorType()
+    public Selector.Type getSelectorType()
     {
 	    return Selector.Type.EDGE;
     }
@@ -178,23 +178,11 @@ public class GraphicEdge extends GraphicElement implements Edge
 	}
 	
 	@Override
-	public boolean contains( float x, float y, float z )
-	{
-		return false;
-	}
-
-	@Override
     public void move( float x, float y, float z )
     {
     	// NOP on edges !!!
     }
     
-	@Override
-    public void setBounds( float x, float y, float w, float h )
-    {
-    	// NOP on edges !!!
-    }
-
 	@Override
 	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{

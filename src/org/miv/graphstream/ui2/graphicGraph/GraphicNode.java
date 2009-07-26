@@ -42,12 +42,6 @@ public class GraphicNode extends GraphicElement implements Node
 	public float x, y, z;
 
 	/**
-	 * Node bounds in graph units and on the 2D screen (set by the rendering engine). This
-	 * represents globally the space used on screen. In graph units.
-	 */
-	public float boundsX, boundsY, boundsW, boundsH;
-	
-	/**
 	 * New graphic node.
 	 * @param id The node identifier.
 	 * @param x The node X position.
@@ -68,16 +62,10 @@ public class GraphicNode extends GraphicElement implements Node
 	}
 
 	@Override
-    protected Selector.Type getSelectorType()
+    public Selector.Type getSelectorType()
     {
 	    return Selector.Type.NODE;
     }
-	
-	@Override
-	public boolean contains( float x, float y, float z )
-	{
-		return( x > boundsX && y > boundsY && x < ( boundsX + boundsW ) && y < ( boundsY + boundsH ) );
-	}
 	
 	@Override
 	public float getX()
@@ -182,15 +170,6 @@ public class GraphicNode extends GraphicElement implements Node
 		return 0;
 	}
 	
-	@Override
-	public void setBounds( float x, float y, float w, float h )
-	{
-		boundsX = x;
-		boundsY = y;
-		boundsW = w;
-		boundsH = h;
-	}
-
 	@Override
     protected void removed()
     {

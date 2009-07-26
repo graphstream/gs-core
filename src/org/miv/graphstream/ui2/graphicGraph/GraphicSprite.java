@@ -44,12 +44,6 @@ public class GraphicSprite extends GraphicElement
 	 */
 	public Values position = new Values( Style.Units.GU, 0, 0, 0 );
 	
-	/**
-	 * Bounds of the sprite (for nodeSelection). These are set by the renderer according to the node
-	 * shape. THis is in graph units.
-	 */
-	public float boundsX, boundsY, boundsZ, boundsW, boundsH, boundsD;
-	
 // Constructors
 	
 	/**
@@ -115,7 +109,7 @@ public class GraphicSprite extends GraphicElement
 	}
 
 	@Override
-    protected Selector.Type getSelectorType()
+    public Selector.Type getSelectorType()
     {
 	    return Selector.Type.SPRITE;
     }
@@ -143,12 +137,6 @@ public class GraphicSprite extends GraphicElement
 		return position.getUnits();
 	}
 	
-	@Override
-	public boolean contains( float x, float y, float z )
-	{
-		return( x > boundsX && y > boundsY && x < ( boundsX + boundsW ) && y < ( boundsY + boundsH ) );
-	}
-	
 // Commands
 
 	@Override
@@ -157,15 +145,6 @@ public class GraphicSprite extends GraphicElement
 		setPosition( x, y, z, Style.Units.GU );
     }
 	
-	@Override
-	public void setBounds( float x, float y, float w, float h )
-	{
-		boundsX = x;
-		boundsY = y;
-		boundsW = w;
-		boundsH = h;
-	}
-    
 	/**
 	 * Attach this sprite to the given node.
 	 * @param node A graphic node.

@@ -109,8 +109,8 @@ public class SwingBasicGraphView extends ViewBase
 			camera.setPadding( graph );
 			camera.setViewport( getWidth(), getHeight() );
 			camera.pushView( g );
-			System.err.printf( "%s", camera );
-			debugVisibleArea( g );
+//			System.err.printf( "%s", camera );
+//			debugVisibleArea( g );
 			renderGraph( g );
 			camera.popView( g );
 		}
@@ -231,12 +231,12 @@ public class SwingBasicGraphView extends ViewBase
 		float        height  = size.size() > 1 ? metrics.lengthToGu( size, 1 ) : width;
 		
 		setupNodeStyle( g, group );
-		
+
 		for( Element element: group )
 		{
 			GraphicNode node = (GraphicNode) element;
 
-			if( metrics.isVisible( node ) )
+			if( camera.isVisible( node ) )
 			{
 				float w2 = width  / 2;
 				float h2 = height / 2;
@@ -253,8 +253,7 @@ public class SwingBasicGraphView extends ViewBase
 	
 	protected void renderEdgeGroup( Graphics2D g, StyleGroup group )
 	{
-		GraphMetrics metrics = camera.metrics;
-		Line2D       shape   = new Line2D.Float();
+		Line2D shape = new Line2D.Float();
 		
 		setupEdgeStyle( g, group );
 		
@@ -264,7 +263,7 @@ public class SwingBasicGraphView extends ViewBase
 			GraphicNode node0 = (GraphicNode) edge.getNode0();
 			GraphicNode node1 = (GraphicNode) edge.getNode1();
 			
-			if( metrics.isVisible( node0 ) || metrics.isVisible( node1 ) )
+			if( camera.isVisible( edge ) )
 			{
 				shape.setLine( node0.x, node0.y, node1.x, node1.y );
 				g.draw( shape );
@@ -294,7 +293,7 @@ public class SwingBasicGraphView extends ViewBase
 		{
 			GraphicSprite sprite = (GraphicSprite) element;
 
-			if( metrics.isVisible( sprite ) )
+			if( camera.isVisible( sprite ) )
 			{
 				float w2 = width  / 2;
 				float h2 = height / 2;

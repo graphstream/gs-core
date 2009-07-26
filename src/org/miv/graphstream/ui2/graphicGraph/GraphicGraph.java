@@ -196,67 +196,6 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		return styleGroups;
 	}
 	
-	/**
-	 * Find the first node that is at the given coordinates. If there are several such nodes,
-	 * only one is selected. The coordinates are given in 2D (as the screen is 2D) and if the
-	 * graph is in 3D the z coordinate is ignored.
-	 * @param x The X coordinate.
-	 * @param y The Y coordinate.
-	 * @param z The Z coordinate.
-	 * @return The first node that match the coordinates, or null if no node match the coordinates.
-	 */
-	public GraphicNode findNode( float x, float y, float z )
-	{
-		for( Node n: styleGroups.nodes() )
-		{
-			GraphicNode node = (GraphicNode) n;
-			
-			if( node.contains( x, y, z ) )
-				return node;
-		}
-		
-		return null;
-	}
-	
-	/**
-	 * Find the first sprite that is at the given coordinates. If there are several such sprites,
-	 * only one is selected. The coordinates are given in 2D (as the screen is 2D) and if the
-	 * graph is in 3D the z coordinate is ignored.
-	 * @param x The X coordinate.
-	 * @param y The Y coordinate.
-	 * @return The first sprite that match the coordinates, or null if no sprite match the coordinates.
-	 */
-	public GraphicSprite findSprite( float x, float y, float z )
-	{
-		for( GraphicSprite sprite: styleGroups.sprites() )
-		{
-			if( sprite.contains( x, y, z ) )
-				return sprite;
-		}
-		
-		return null;
-	}
-
-	/**
-	 * Find a node or sprite at or around the given coordinates. If there is a node and a sprite,
-	 * the node is preferred. Return null if nothing is found at (x,y). The coordinates are given in
-	 * 2D (as the screen is 2D) and if the graph is in 3D, the z coordinate is ignored.  
-	 * @param x The X coordinate.
-	 * @param y The Y coordinate.
-	 * @param z The Z coordinate.
-	 * @return The first node or sprite that match the coordinate, or null if no node or sprite
-	 *    match these coordinates.
-	 */
-	public GraphicElement findNodeOrSprite( float x, float y, float z )
-	{
-		GraphicElement e = findNode( x, y, z );
-		
-		if( e == null )
-			e = findSprite( x, y, z );
-		
-		return e;
-	}
-	
 // Command
 
 	protected GraphicEdge addEdge( String id, String from, String to, boolean directed, HashMap<String, Object> attributes )

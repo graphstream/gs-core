@@ -16,8 +16,6 @@
 
 package org.miv.graphstream.ui2.swingViewer.basicView;
 
-import org.miv.graphstream.ui2.graphicGraph.GraphicNode;
-import org.miv.graphstream.ui2.graphicGraph.GraphicSprite;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Value;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Values;
 import org.miv.util.geom.Point3;
@@ -144,56 +142,6 @@ class GraphMetrics
 		return hi;
 	}
 	
-	/**
-	 * True if the node is in the visible area.
-	 * @param node The node to test.
-	 * @return False if the node is not in the visible area.
-	 */
-	public boolean isVisible( GraphicNode node )
-	{
-		float x = node.getX();
-		float y = node.getY();
-		
-		if( x < loVisible.x )
-			return false;
-			
-		if( x > hiVisible.x )
-			return false;
-		
-		if( y < loVisible.y )
-			return false;
-
-		if( y > hiVisible.y )
-			return false;
-		
-		return true;
-	}
-	
-	/**
-	 * True if the sprite is in the visible area.
-	 * @param sprite The sprite to test.
-	 * @return False if the sprite is not in the visible area.
-	 */
-	public boolean isVisible( GraphicSprite sprite )
-	{
-		float x = sprite.getX();
-		float y = sprite.getY();
-		
-		if( x < loVisible.x )
-			return false;
-			
-		if( x > hiVisible.x )
-			return false;
-		
-		if( y < loVisible.y )
-			return false;
-
-		if( y > hiVisible.y )
-			return false;
-		
-		return true;
-	}
-	
 // Access -- Convert values
 	
 	/**
@@ -230,6 +178,45 @@ class GraphMetrics
 			case PERCENTS:
 				return ( diagonal * value );
 			case GU:
+			default:
+				return value;
+		}
+	}
+	
+	/**
+	 * Convert a value in a given units to pixels.
+	 * @param value The value to convert (it contains its own units).
+	 */
+	public float lengthToPx( Value value )
+	{
+		switch( value.units )
+		{
+			case GU:
+				return (value.value-0.01f) * ratioPx2Gu;
+			case PERCENTS:
+				return ( diagonal * value.value ) * ratioPx2Gu;
+			case PX:
+			default:
+				return value.value;
+		}
+	}
+	
+	/**
+	 * Convert one of the given values in a given units pixels.
+	 * @param values The values set containing the value to convert (it contains its own units).
+	 * @param index Index of the value to convert.
+	 */
+	public float lengthToPx( Values values, int index )
+	{
+		float value = values.get( index );
+		
+		switch( values.units )
+		{
+			case GU:
+				return (value-0.01f) * ratioPx2Gu;
+			case PERCENTS:
+				return ( diagonal * value ) * ratioPx2Gu;
+			case PX:
 			default:
 				return value;
 		}

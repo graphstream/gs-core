@@ -18,8 +18,12 @@ package org.miv.graphstream.ui2.swingViewer.basicView;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 
+import org.miv.graphstream.ui2.graphicGraph.GraphicEdge;
+import org.miv.graphstream.ui2.graphicGraph.GraphicElement;
 import org.miv.graphstream.ui2.graphicGraph.GraphicGraph;
+import org.miv.graphstream.ui2.graphicGraph.GraphicNode;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Style;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Values;
 import org.miv.util.geom.Point3;
@@ -135,7 +139,81 @@ class Camera
 		
 		return builder.toString();
 	}
+	
+	/**
+	 * True if the element would be visible on screen. The method used is to transform the centre
+	 * of the element (which is always in graph units) using the camera actual transformation to
+	 * put it in pixel units. Then to look in the style sheet the size of the element and to test
+	 * if its enclosing rectangle intersects the view port. For edges, its two nodes are used. 
+	 * @param element The element to test.
+	 * @return True if the element is visible and therefore must be rendered.
+	 */
+	public boolean isVisible( GraphicElement element )
+	{
+		switch( element.getSelectorType() )
+		{
+			case NODE:
+				return isNodeOrSpriteVisible( element );
+			case EDGE:
+				return isEdgeVisible( (GraphicEdge) element );
+			case SPRITE:
+				return isNodeOrSpriteVisible( element );
+			default:
+				return false;
+		}
+	}
+	
+	protected boolean isNodeOrSpriteVisible( GraphicElement elt )
+	{
+		Values  size = elt.getStyle().getSize();
+		float   w2   = metrics.lengthToPx( size, 0 ) / 2;
+		float   h2   = size.size() > 1 ? metrics.lengthToPx( size, 1 )/2 : w2;
+		Point2D src  = new Point2D.Float( elt.getX(), elt.getY() );
+		Point2D dst  = new Point2D.Float();
+		
+		Tx.transform( src, dst );
 
+		float x1 = (float)dst.getX() - w2;
+		float x2 = (float)dst.getX() + w2;
+		float y1 = (float)dst.getY() - h2;
+		float y2 = (float)dst.getY() + h2;
+		
+		if( x2 < 0                        ) return false;
+		if( y2 < 0                        ) return false;
+		if( x1 > metrics.viewport.data[0] ) return false;
+		if( y1 > metrics.viewport.data[1] ) return false;
+		
+		return true;
+	}
+	
+	protected boolean isEdgeVisible( GraphicEdge edge )
+	{
+		Point2D src = new Point2D.Float( ((GraphicNode)edge.getNode0()).getX(), ((GraphicNode)edge.getNode0()).getY() );
+		Point2D dst = new Point2D.Float();
+		
+		Tx.transform( src, dst );
+		
+		float x1 = (float)dst.getX();
+		float y1 = (float)dst.getY();
+		
+		src.setLocation( ((GraphicNode)edge.getNode1()).getX(), ((GraphicNode)edge.getNode1()).getY() );
+		Tx.transform( src, dst );
+		
+		float x2 = (float)dst.getX();
+		float y2 = (float)dst.getY();
+		float t;
+		
+		if( x1 > x2 ) { t = x1; x1 = x2; x2 = t; }
+		if( y1 > y2 ) { t = y1; y1 = y2; y2 = t; }
+		
+		if( x2 < 0                        ) return false;
+		if( y2 < 0                        ) return false;
+		if( x1 > metrics.viewport.data[0] ) return false;
+		if( y1 > metrics.viewport.data[1] ) return false;
+		
+		return true;
+	}
+	
 // Command
 
 	/**

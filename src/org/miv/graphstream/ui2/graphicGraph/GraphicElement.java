@@ -91,7 +91,7 @@ public abstract class GraphicElement extends AbstractElement
 	/**
 	 * Type of selector for the graphic element (Node, Edge, Sprite ?).
 	 */
-	protected abstract Selector.Type getSelectorType();
+	public abstract Selector.Type getSelectorType();
 	
 	/**
 	 * Style group. An style group may reference several elements.
@@ -112,45 +112,23 @@ public abstract class GraphicElement extends AbstractElement
 	}
 
 	/**
-	 * Abscissa of the element. For edges this is the X of the "from" node.
+	 * Abscissa of the element, always in GU (graph units). For edges this is the X of the "from" node.
 	 */
 	public abstract float getX();
 
 
 	/**
-	 * Ordinate of the element. For edges this is the Y of the "from" node.
+	 * Ordinate of the element, always in GU (graph units). For edges this is the Y of the "from" node.
 	 */
 	public abstract float getY();
 	
 
 	/**
-	 * Depth of the element. For edges this is the Z of the "from" node.
+	 * Depth of the element, always in GU (graph units). For edges this is the Z of the "from" node.
 	 */
 	public abstract float getZ();
 
-	/**
-	 * Does the graphical representation on screen (2D thus) contains the point (x,y).
-	 * @param x The X coordinate in graph units.
-	 * @param y The Y coordinate in graph units.
-	 * @param z The Z coordinate in graph units.
-	 * @return True if the point is in the graphical representation of the element.
-	 */
-	public abstract boolean contains( float x, float y, float z );
-	
 // Commands
-
-	/**
-	 * Set the bounds of the graphical representation of this element on screen, in pixels.
-	 * This method allows renderers to specify the space occupied by an element on screen. This
-	 * is the reason why the units are pixels here. This allows to pick an element with the mouse
-	 * according to its real size on screen. This also allows to know if an element is out of
-	 * view and therefore to avoid drawing it.
-	 * @param x The lowest abscissa bound.
-	 * @param y The lowest ordinate bound.
-	 * @param w The node extent along abscissas.
-	 * @param h The node extent along ordinates.
-	 */
-	public abstract void setBounds( float x, float y, float w, float h );
 
 	/**
 	 * The graphic element was removed from the graphic graph, clean up.
@@ -158,7 +136,8 @@ public abstract class GraphicElement extends AbstractElement
 	protected abstract void removed();
 	
 	/**
-	 * Try to force move the element. For edge, this may move the two attached nodes.
+	 * Try to force the element to move at the give location in graph units (GU). For edges, this
+	 * may move the two attached nodes.
 	 * @param x The new X.
 	 * @param y The new Y.
 	 * @param z the new Z.
