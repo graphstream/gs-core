@@ -83,6 +83,15 @@ public class Values implements Iterable<Float>
 		
 		values.add( value.value );
 	}
+	
+	/**
+	 * Number of values in this set.
+	 * @return The number of values.
+	 */
+	public int size()
+	{
+		return values.size();
+	}
 
 	/**
 	 * Number of values in this set.
@@ -98,7 +107,7 @@ public class Values implements Iterable<Float>
 	 * @param i The value index.
 	 * @return The corresponding value.
 	 */
-	public float getValue( int i )
+	public float get( int i )
 	{
 		return values.get( i );
 	}

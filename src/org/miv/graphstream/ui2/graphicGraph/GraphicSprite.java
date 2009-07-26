@@ -123,19 +123,19 @@ public class GraphicSprite extends GraphicElement
 	@Override
 	public float getX()
 	{
-		return position.getValue( 0 ); 
+		return position.get( 0 ); 
 	}
 
 	@Override
 	public float getY()
 	{
-		return position.getValue( 1 );
+		return position.get( 1 );
 	}
 	
 	@Override
 	public float getZ()
 	{
-		return position.getValue( 2 );
+		return position.get( 2 );
 	}
 	
 	public Style.Units getUnits()
@@ -268,9 +268,9 @@ public class GraphicSprite extends GraphicElement
 		float y = 0;
 		float z = 0;
 		
-		if( values.getValueCount() > 0 ) x = values.getValue( 0 ); 
-		if( values.getValueCount() > 1 ) y = values.getValue( 1 ); 
-		if( values.getValueCount() > 2 ) z = values.getValue( 2 ); 
+		if( values.getValueCount() > 0 ) x = values.get( 0 ); 
+		if( values.getValueCount() > 1 ) y = values.get( 1 ); 
+		if( values.getValueCount() > 2 ) z = values.get( 2 ); 
 		
 //System.err.printf( "setting %s position x=%f y=%f z=%f units=%s (value in=%s)%n", getId(), x, y, z, values.units, values );
 		if( x == 1 && y == 1 && z == 1 )

@@ -163,7 +163,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	 * Reset the "changed" flag.
 	 * @see #graphChangedFlag()
 	 */
-	public void resteGraphChangedFlag()
+	public void resetGraphChangedFlag()
 	{
 		graphChanged = false;
 	}
@@ -561,7 +561,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
     {
 	    return styleGroups.nodes();
     }
-
+	
 	@SuppressWarnings( "unchecked" )
     public Iterator<Node> iterator()
     {

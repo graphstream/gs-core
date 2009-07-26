@@ -31,7 +31,7 @@ import org.miv.graphstream.ui2.graphicGraph.stylesheet.Style;
  * 
  * @author Antoine Dutot
  */
-public class StyleGroup extends Style
+public class StyleGroup extends Style implements Iterable<Element>
 {
 // Attribute
 
@@ -192,6 +192,20 @@ public class StyleGroup extends Style
 	 * @return The elements iterator.
 	 */
 	public Iterator<? extends Element> getElementIterator()
+	{
+		return elements.values().iterator();
+	}
+	
+	/**
+	 * Iterable set of elements.
+	 * @return All the elements in no particular order.
+	 */
+	public Iterable<? extends Element> elements()
+	{
+		return elements.values();
+	}
+	
+	public Iterator<Element> iterator()
 	{
 		return elements.values().iterator();
 	}

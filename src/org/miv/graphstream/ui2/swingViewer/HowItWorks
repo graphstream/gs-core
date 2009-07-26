@@ -1,6 +1,8 @@
 The viewer
 ==========
 
+This only discuss the architecture of this specific viewer that uses Swing as its toolkit.
+
 The viewer is a layer above the GraphicGraph. The graphic graph knows nothing about it. The viewer
 observe the graphic graph and each time it changes, and if it can, the viewer draws the graph.
 
@@ -8,8 +10,9 @@ Planned features :
 	* Have several "views" of an unique graphic graph.
 	* Allow the view to modify the graphic graph (so that modifications can enter the event stream).
 	* Allow to open an close views at will (restarting from the current state).
-	* Allow views to be in other toolkits than Swing.
 	* Provide simple graph view that demonstrate how all this works.
+	* Provide a 3D graph view using Jogl.
+	* Provide a complete Swing/Java2D implementation that is usable everywhere.
 
 ViewSet
 -------
@@ -32,7 +35,8 @@ Listeners
 	  on the graphic graph will be automatically triggered. This includes events like :
 	  	* adding or removing nodes, edges and sprites.
 	  	* adding, changing or removing attributes.
-	* But there are other kinds of events, a proposition would be to manage them via attributes.
+	* But there are other kinds of events, a proposition would be to manage them via
+	  predefined attributes.
 		* click on an element (node, edge, sprite) :
 			ui.clicked.
 				During the click (after pushing the button, and before releasing it)
@@ -45,8 +49,43 @@ Listeners
 			label
 			The usual attribute.
 		* etc.
-		
-		
+
+
+The viewer, JFrames, Swing components and integration
+-----------------------------------------------------
+
+By default the viewer is only a set of views. Each view inherits JPanel and therefore is a
+JComponent.
+
+Then several scenario can occur :
+	1. One view only :
+		a. Embedded in an application.
+		b. The viewer creates a window for it.
+			i. If the window is closed it can be opened back.
+			ii. If the window is closed the viewers closes.
+	2. Several views :
+		a. Embedded in an application.
+		b. The viewer creates a window for all views.
+			i. If the window is closed it can be opened back.
+			ii. If the window is closed the viewers and all the views are closed.
+		c. The viewer creates a window per view. 
+			i. If one window is closed it can be opened back.
+			ii. If one window is closed, the whole viewer closes with all other views.
+
+We do not want to provide a way to embed all views in one unique window, in any case the solution
+chosen to do this would not be sufficiently configurable to be usable. Therefore this is let to
+the application developer. However it should be possible to create a simple frame to contain
+individual views. Then the viewer has a setting for the window close button :
+	* Close definitively.
+	* Hide only.			
+This setting is respected by all views and the viewer. There will exist methods that setup the
+viewer for some configurations :
+	* addView()						Add a specific view.
+	* createDefaultView()			Only create a default viewer that can be embedded.
+	* openDefaultViewWithFrame()	Open only one default viewer in its frame.
+	* openAllViewsInTheirFrame()	Open all views added via addView() or createDefaultView() in
+									their own frame.
+
 The automatic layout
 --------------------
 

@@ -140,13 +140,15 @@ public abstract class GraphicElement extends AbstractElement
 // Commands
 
 	/**
-	 * Set the bounds of the graphical representation of this element on screen. This method allows
-	 * renderers to specify the space occupied by an element on screen. This allows to pick an
-	 * element with the mouse according to its real size on screen. This is set in graph units.
-	 * @param x The lowest X bound.
-	 * @param y The lowest Y bound.
-	 * @param w The node extent along X.
-	 * @param h The node extent along Y.
+	 * Set the bounds of the graphical representation of this element on screen, in pixels.
+	 * This method allows renderers to specify the space occupied by an element on screen. This
+	 * is the reason why the units are pixels here. This allows to pick an element with the mouse
+	 * according to its real size on screen. This also allows to know if an element is out of
+	 * view and therefore to avoid drawing it.
+	 * @param x The lowest abscissa bound.
+	 * @param y The lowest ordinate bound.
+	 * @param w The node extent along abscissas.
+	 * @param h The node extent along ordinates.
 	 */
 	public abstract void setBounds( float x, float y, float w, float h );
 

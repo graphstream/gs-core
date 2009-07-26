@@ -290,9 +290,9 @@ public class Sprite implements Element
 	{
 		boolean changed = false;
 	
-		if( position.getValue( 0 ) != x     ) { changed = true; position.setValue( 0 , x ); }
-		if( position.getValue( 1 ) != y     ) { changed = true; position.setValue( 1 , y ); }
-		if( position.getValue( 2 ) != z     ) { changed = true; position.setValue( 2 , z ); }
+		if( position.get( 0 ) != x     ) { changed = true; position.setValue( 0 , x ); }
+		if( position.get( 1 ) != y     ) { changed = true; position.setValue( 1 , y ); }
+		if( position.get( 2 ) != z     ) { changed = true; position.setValue( 2 , z ); }
 		if( position.units         != units ) { changed = true; position.setUnits( units ); }
 		
 		if( changed )
@@ -306,13 +306,13 @@ public class Sprite implements Element
 		if( n > 2 )
 		{
 			setPosition( values.units,
-				values.getValue( 0 ),
-				values.getValue( 1 ),
-				values.getValue( 2 ) );
+				values.get( 0 ),
+				values.get( 1 ),
+				values.get( 2 ) );
 		}
 		else if( n > 0 )
 		{
-			setPosition( values.getValue( 0 ) );
+			setPosition( values.get( 0 ) );
 		}
 	}
 	
