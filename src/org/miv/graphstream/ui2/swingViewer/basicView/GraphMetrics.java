@@ -21,7 +21,7 @@ import org.miv.graphstream.ui2.graphicGraph.stylesheet.Values;
 import org.miv.util.geom.Point3;
 import org.miv.util.geom.Vector3;
 
-/**
+/**p
  * Various geometric informations on the graphic graph.
  * 
  * <p>This class extends the GraphMetrics to provide not only metrics on the graphic graph but
@@ -221,17 +221,7 @@ class GraphMetrics
 				return value;
 		}
 	}
-	
-	/**
-	 * Convert a value in pixels to graph units.
-	 * @param pixels The value in pixels.
-	 * @return The value in graph units.
-	 */
-	public float pixelsToGu( float pixels )
-	{
-		return( ( pixels - 0.01f ) / ratioPx2Gu );
-	}
-	
+		
 	@Override
 	public String toString()
 	{

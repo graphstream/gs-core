@@ -94,7 +94,7 @@ public class Viewer implements ActionListener
 	 * Set of fonts.
 	 */
 	protected FontCache fonts;
-	
+
 // Construction
 	
 	public Viewer( ProxyFilter input )
@@ -283,7 +283,7 @@ public class Viewer implements ActionListener
 		for( Node n: graph )
 		{
 			GraphicNode node = (GraphicNode) n;
-System.err.printf(  "node %s (%f %f %f)%n", node.getId(), node.x, node.y, node.z );
+			
 			if( node.x < minx ) minx = node.x; if( node.x > maxx ) maxx = node.x;
 			if( node.y < miny ) miny = node.y; if( node.y > maxy ) maxy = node.y;
 			if( node.z < minz ) minz = node.z; if( node.z > maxz ) maxz = node.z;
@@ -299,22 +299,7 @@ System.err.printf(  "node %s (%f %f %f)%n", node.getId(), node.x, node.y, node.z
 			if( y < miny ) miny = y; if( y > maxy ) maxy = y;
 			if( z < minz ) minz = z; if( z > maxz ) maxz = z;
 		}
-/*	
-		float borderx = 0, bordery = 0, borderz = 0;
-		
-		Values padding = graph.getStyle().getPadding();
-		
-		if     ( padding.size() > 2 ) { borderx = padding.get( 0 ); bordery = padding.get( 1 ); borderz = padding.get( 2 ); }
-		else if( padding.size() > 1 ) { borderx = padding.get( 0 ); bordery = padding.get( 1 ); }
-		else if( padding.size() > 0 ) { borderx = bordery = borderz = padding.get( 0 ); }
-		
-		minx -= borderx;
-		maxx += borderx;
-		miny -= bordery;
-		maxy += bordery;
-		minz -= borderz;
-		maxz += borderz;
-*/		
+
 		synchronized( views )
 		{
 			for( View view: views.values() )

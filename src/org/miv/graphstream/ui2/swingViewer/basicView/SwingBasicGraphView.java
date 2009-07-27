@@ -27,12 +27,15 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
 import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.ui2.graphicGraph.GraphicEdge;
+import org.miv.graphstream.ui2.graphicGraph.GraphicElement;
 import org.miv.graphstream.ui2.graphicGraph.GraphicNode;
 import org.miv.graphstream.ui2.graphicGraph.GraphicSprite;
 import org.miv.graphstream.ui2.graphicGraph.StyleGroup;
@@ -88,6 +91,18 @@ public class SwingBasicGraphView extends ViewBase
 		return camera.metrics.diagonal;
 	}
 
+	@Override
+    public ArrayList<GraphicElement> allNodesOrSpritesIn( float x1, float y1, float x2, float y2 )
+    {
+		return camera.allNodesOrSpritesIn( graph, x1, y1, x2, y2 );
+    }
+
+	@Override
+    public GraphicElement findNodeOrSpriteAt( float x, float y )
+    {
+	    return camera.findNodeOrSpriteAt( graph, x, y );
+    }
+
 // Command	
 
 	@Override
@@ -113,6 +128,7 @@ public class SwingBasicGraphView extends ViewBase
 //			debugVisibleArea( g );
 			renderGraph( g );
 			camera.popView( g );
+			renderSelection( g );
 		}
 	}
 	
@@ -147,6 +163,13 @@ public class SwingBasicGraphView extends ViewBase
 		camera.setRotation( theta );
 		canvasChanged = true;
 	}
+
+	@Override
+    public void moveElementAtPx( GraphicElement element, float x, float y )
+    {
+	   Point2D.Float p = camera.inverseTransform( x, y );
+	   element.move( p.x, p.y, element.getZ() );
+    }
 	
 // Rendering
 	
@@ -306,6 +329,31 @@ public class SwingBasicGraphView extends ViewBase
 	protected void setupSpriteStyle( Graphics2D g, StyleGroup group )
 	{
 		g.setColor( group.getFillColor( 0 ) );
+	}
+	
+	protected void renderSelection( Graphics2D g )
+	{
+		if( selection != null && selection.x1 != selection.x2 && selection.y1 != selection.y2 )
+		{
+			float x1 = selection.x1;
+			float y1 = selection.y1;
+			float x2 = selection.x2;
+			float y2 = selection.y2;
+			float t;
+			
+			if( x1 > x2 ) { t = x1; x1 = x2; x2 = t; }
+			if( y1 > y2 ) { t = y1; y1 = y2; y2 = t; }
+	
+			g.setColor( new Color( 50, 50, 200, 128 ) );
+			g.fillRect( (int)x1, (int)y1, (int)(x2-x1), (int)(y2-y1) );
+			g.setColor( new Color( 0, 0, 0, 128 ) );
+			g.drawLine( 0, (int)y1, getWidth(), (int)y1 );
+			g.drawLine( 0, (int)y2, getWidth(), (int)y2 );
+			g.drawLine( (int)x1, 0, (int)x1, getHeight() );
+			g.drawLine( (int)x2, 0, (int)x2, getHeight() );
+			g.setColor( new Color( 50, 50, 200, 64 ) );
+			g.drawRect( (int)x1, (int)y1, (int)(x2-x1), (int)(y2-y1) );
+		}
 	}
 	
 // Utility | Debug

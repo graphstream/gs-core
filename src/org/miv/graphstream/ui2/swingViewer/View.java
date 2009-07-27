@@ -22,8 +22,11 @@
 
 package org.miv.graphstream.ui2.swingViewer;
 
+import java.util.ArrayList;
+
 import javax.swing.JPanel;
 
+import org.miv.graphstream.ui2.graphicGraph.GraphicElement;
 import org.miv.graphstream.ui2.graphicGraph.GraphicGraph;
 import org.miv.util.geom.Point3;
 
@@ -84,10 +87,29 @@ public abstract class View extends JPanel
 	 */
 	public abstract float getGraphDimension();
 
+	/**
+	 * Search for the first node or sprite (in that order) that contains the point at coordinates
+	 * (x, y).
+	 * @param x The point abscissa.
+	 * @param y The point ordinate.
+	 * @return The first node or sprite at the given coordinates or null if nothing found. 
+	 */
+	public abstract GraphicElement findNodeOrSpriteAt( float x, float y );
+
+	/**
+	 * Search for all the nodes and sprites contained inside the rectangle (x1,y1)-(x2,y2).
+	 * @param x1 The rectangle lowest point abscissa.
+	 * @param y1 The rectangle lowest point ordinate.
+	 * @param x2 The rectangle highest point abscissa.
+	 * @param y2 The rectangle highest point ordinate.
+	 * @return The set of sprites and nodes in the given rectangle.
+	 */
+	public abstract ArrayList<GraphicElement> allNodesOrSpritesIn( float x1, float y1, float x2, float y2 );
+	
 // Command
 	
 	/**
-	 * Set the bounds of the graphic graph in GU.
+	 * Set the bounds of the graphic graph in GU. Called by the Viewer.
 	 * @param minx Lowest abscissa.
 	 * @param miny Lowest ordinate.
 	 * @param minz Lowest depth.
@@ -98,21 +120,21 @@ public abstract class View extends JPanel
 	public abstract void setBounds( float minx, float miny, float minz, float maxx, float maxy, float maxz );
 	
 	/**
-	 * Redisplay or update the view contents.
+	 * Redisplay or update the view contents. Called by the Viewer.
 	 * @param graph The graphic graph to represent.
 	 * @param graphChanged True if the graph changed since the last call to this method.
 	 */
 	public abstract void display( GraphicGraph graph, boolean graphChanged );
 	
 	/**
-	 * Close definitively this view.
+	 * Close definitively this view. Called by the Viewer.
 	 * @param graph The graphic graph.
 	 */
 	public abstract void close( GraphicGraph graph );
 	
 	/**
 	 * Open this view JPanel in a frame. The argument allows to put the panel in a new frame or
-	 * to remove it from the frame (if it already exists).
+	 * to remove it from the frame (if it already exists). Called by the Viewer.
 	 * @param on Add the panel in its own frame or remove it if it already was in its own frame.
 	 */
 	public abstract void openInAFrame( boolean on );
@@ -141,4 +163,33 @@ public abstract class View extends JPanel
 	 * @param theta The rotation angle in degrees.
 	 */
 	public abstract void setViewRotation( float theta );
+	
+	/**
+	 * Called by the mouse manager to specify where a node and sprite selection started.
+	 * @param x1 The selection start abscissa.
+	 * @param y1 The selection start ordinate.
+	 */
+	public abstract void beginSelectionAt( float x1, float y1 );
+	
+	/**
+	 * The selection already started grows toward position (x, y).
+	 * @param x The new end selection abscissa.
+	 * @param y The new end selection ordinate.
+	 */
+	public abstract void selectionGrowsAt( float x, float y );
+	
+	/**
+	 * Called by the mouse manager to specify where a node and spite selection stopped.
+	 * @param x2 The selection stop abscissa.
+	 * @param y2 The selection stop ordinate.
+	 */
+	public abstract void endSelectionAt( float x2, float y2 );
+	
+	/**
+	 * Force an element to move at the given location in pixels.
+	 * @param element The element.
+	 * @param x The requested position abscissa in pixels.
+	 * @param y The requested position ordinate in pixels.
+	 */
+	public abstract void moveElementAtPx( GraphicElement element, float x, float y );
 }

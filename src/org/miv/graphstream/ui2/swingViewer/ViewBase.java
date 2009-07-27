@@ -50,6 +50,10 @@ import org.miv.graphstream.ui2.swingViewer.Viewer;
  * </ul>
  * </p>
  * 
+ * <p>
+ * This view also handle a current selection of nodes and sprites.
+ * </p>
+ * 
  * <h3>The painting mechanism</h3>
  * 
  * 		<p>This mechanism pushes a repaint query each time the viewer asks us to repaint. Two flags
@@ -103,7 +107,20 @@ public abstract class ViewBase extends View implements ComponentListener, Window
 	 */
 	protected boolean canvasChanged = true;
 
+	/**
+	 * Manager for events with the keyboard.
+	 */
 	protected ShortcutManager shortcuts;
+	
+	/**
+	 * Manager for events with the mouse.
+	 */
+	protected MouseManager mouseClicks;
+
+	/**
+	 * Current selection or null.
+	 */
+	protected Selection selection = null;
 
 // Construction
 	
@@ -114,9 +131,12 @@ public abstract class ViewBase extends View implements ComponentListener, Window
 		this.viewer = viewer;
 		this.graph  = viewer.getGraphicGraph();
 		shortcuts   = new ShortcutManager( this );
+		mouseClicks = new MouseManager( this.graph, this );
 		
 		addComponentListener( this );
 		addKeyListener( shortcuts );
+		addMouseListener( mouseClicks );
+		addMouseMotionListener( mouseClicks );
 	}
 	
 // Access
@@ -152,6 +172,8 @@ public abstract class ViewBase extends View implements ComponentListener, Window
 		graph.addAttribute( "ui.viewClosed", getId() );
 		removeComponentListener( this );
 		removeKeyListener( shortcuts );
+		removeMouseListener( mouseClicks );
+		removeMouseMotionListener( mouseClicks );
 	    openInAFrame( false );
     }
 	
@@ -189,7 +211,45 @@ public abstract class ViewBase extends View implements ComponentListener, Window
 	}
 	
 	public abstract void render( Graphics2D g );
+
+// Selection
+		
+	/**
+	 * The current selection.
+	 */
+	protected class Selection
+	{
+		public float x1, y1, x2, y2;
+	}
 	
+	@Override
+    public void beginSelectionAt( float x1, float y1 )
+    {
+		if( selection == null )
+			selection = new Selection();
+		
+		selection.x1  = x1;
+		selection.y1  = y1;
+		selection.x2  = x1;
+		selection.y2  = y1;
+		canvasChanged = true;
+    }
+
+	@Override
+    public void selectionGrowsAt( float x, float y )
+    {
+		selection.x2  = x;
+		selection.y2  = y;
+		canvasChanged = true;
+    }
+
+	@Override
+    public void endSelectionAt( float x2, float y2 )
+    {
+		selection = null;
+		canvasChanged = true;
+    }
+
 // Utility
 	
 	protected void setupGraphics( Graphics2D g )
