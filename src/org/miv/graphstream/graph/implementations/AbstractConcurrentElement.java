@@ -340,8 +340,11 @@ public abstract class AbstractConcurrentElement
 	/* @Override */
 	public void removeAttribute(String attribute)
 	{
-		attributeChanged( attribute, attributes.get( attribute ), null );
-		attributes.remove( attribute );
+		if( attributes.containsKey( attribute ) )
+		{
+			attributeChanged( attribute, attributes.get( attribute ), null );
+			attributes.remove( attribute );
+		}
 	}
 
 	/* @Override */
@@ -371,5 +374,4 @@ public abstract class AbstractConcurrentElement
 	protected abstract void attributeChanged( String attribute, Object oldValue, Object newValue );
 	protected abstract void attributeAdded( String attribute, Object value );
 	protected abstract void attributeRemoved( String attribute );
-
 }

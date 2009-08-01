@@ -272,6 +272,9 @@ public class GraphicSprite extends GraphicElement
     {
 		super.attributeChanged( attribute, event, oldValue, newValue );
 
+//		if( attribute.equals( "ui.clicked" ) )	// Filter the clicks to avoid loops XXX BAD !!! XXX 
+//			return;
+
 		String completeAttr = String.format( "ui.sprite.%s.%s", getId(), attribute );
 //System.err.printf( "GSprite add attribute %s %s (old=%s) (new=%s)%n", event, attribute, oldValue, newValue );
 		if( event == AttributeChangeEvent.ADD )		// ADD

@@ -26,6 +26,7 @@ package org.miv.graphstream.graph.implementations;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -104,12 +105,12 @@ public class DefaultGraph extends AbstractElement implements Graph
 	/**
 	 * Set of graph attributes listeners.
 	 */
-	protected ArrayList<GraphAttributesListener> attrListeners = new ArrayList<GraphAttributesListener>();
+	protected HashSet<GraphAttributesListener> attrListeners = new HashSet<GraphAttributesListener>();
 	
 	/**
 	 * Set of graph elements listeners.
 	 */
-	protected ArrayList<GraphElementsListener> eltsListeners = new ArrayList<GraphElementsListener>();
+	protected HashSet<GraphElementsListener> eltsListeners = new HashSet<GraphElementsListener>();
 
 	/**
 	 * Verify name space conflicts, removal of non-existing elements, use of
@@ -680,15 +681,8 @@ public class DefaultGraph extends AbstractElement implements Graph
 		}
 		else
 		{
-			int index = attrListeners.lastIndexOf( listener );
-
-			if( index >= 0 )
-				attrListeners.remove( index );
-			
-			index = eltsListeners.lastIndexOf( listener );
-			
-			if( index >= 0 )
-				eltsListeners.remove( index );
+			attrListeners.remove( listener );
+			eltsListeners.remove( listener );
 		}
 	}
 	
@@ -701,10 +695,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 		}
 		else
 		{
-			int index = attrListeners.lastIndexOf( listener );
-
-			if( index >= 0 )
-				attrListeners.remove( index );
+			attrListeners.remove( listener );
 		}		
 	}
 	
@@ -717,11 +708,8 @@ public class DefaultGraph extends AbstractElement implements Graph
 		}
 		else
 		{
-			int index = eltsListeners.lastIndexOf( listener );
-
-			if( index >= 0 )
-				eltsListeners.remove( index );
-		}		
+			eltsListeners.remove( listener );
+		}
 	}
 	
 	protected void removeListenerLater( Object listener )

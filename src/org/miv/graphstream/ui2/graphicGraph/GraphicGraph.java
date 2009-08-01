@@ -119,12 +119,12 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	/**
 	 * Set of graph attributes listeners.
 	 */
-	protected ArrayList<GraphAttributesListener> attrListeners = new ArrayList<GraphAttributesListener>();
+	protected HashSet<GraphAttributesListener> attrListeners = new HashSet<GraphAttributesListener>();
 	
 	/**
 	 * Set of graph elements listeners.
 	 */
-	protected ArrayList<GraphElementsListener> eltsListeners = new ArrayList<GraphElementsListener>();
+	protected HashSet<GraphElementsListener> eltsListeners = new HashSet<GraphElementsListener>();
 
 // Construction
 
@@ -194,6 +194,12 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	public StyleGroupSet getStyleGroups()
 	{
 		return styleGroups;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return String.format( "[%s %d nodes %d edges]", getId(), getNodeCount(), getEdgeCount() );
 	}
 	
 // Command
@@ -515,10 +521,8 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	
 	public void removeGraphListener( GraphListener listener )
 	{
-		int index = attrListeners.lastIndexOf( listener );
-
-		if( index >= 0 )
-			attrListeners.remove( index );
+		attrListeners.remove( listener );
+		eltsListeners.remove( listener );
 	}
 	
 	public void addGraphAttributesListener( GraphAttributesListener listener )
@@ -528,15 +532,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	
 	public void removeGraphAttributesListener( GraphAttributesListener listener )
 	{
-		int index = attrListeners.lastIndexOf( listener );
-
-		if( index >= 0 )
-			attrListeners.remove( index );
-		
-		index = eltsListeners.lastIndexOf( listener );
-		
-		if( index >= 0 )
-			eltsListeners.remove( index );
+		attrListeners.remove( listener );
 	}
 	
 	public void addGraphElementsListener( GraphElementsListener listener )
@@ -546,10 +542,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	
 	public void removeGraphElementsListener( GraphElementsListener listener )
 	{
-		int index = eltsListeners.lastIndexOf( listener );
-
-		if( index >= 0 )
-			eltsListeners.remove( index );
+		eltsListeners.remove( listener );
 	}
 
 	public Iterable<GraphAttributesListener> getGraphAttributesListeners()

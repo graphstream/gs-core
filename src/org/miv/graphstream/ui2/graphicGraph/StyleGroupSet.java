@@ -689,9 +689,10 @@ public class StyleGroupSet implements StyleSheetListener
 	}
 	
 	/**
-	 * Push an event on the event stack. Events trigger the replacement of a style by an alternative
-	 * style (or meta-class) when possible. If an event is on the event stack, each time a style has
-	 * an alternative corresponding to the event, the alternative is used instead of the style.
+	 * Push a global event on the event stack. Events trigger the replacement of a style by an
+	 * alternative style (or meta-class) when possible. If an event is on the event stack, each
+	 * time a style has an alternative corresponding to the event, the alternative is used instead
+	 * of the style.
 	 * @param event The event to push.
 	 */
 	public void pushEvent( String event )
@@ -700,12 +701,66 @@ public class StyleGroupSet implements StyleSheetListener
 	}
 	
 	/**
-	 * Pop an event from the event set.
+	 * Push an event specifically for a given element. This is normally done
+	 * automatically by the graphic element.
+	 * @param element The element considered.
+	 * @param event The event to push.
+	 */
+	public void pushEventFor( Element element, String event )
+	{
+		StyleGroup group = getGroup( getElementGroup( element ) );
+		
+		if( group != null )
+			group.pushEventFor( element, event );
+	}
+	
+	/**
+	 * Pop a global event from the event set. 
 	 * @param event The event to remove.
 	 */
 	public void popEvent( String event )
 	{
 		eventSet.popEvent( event );
+	}
+	
+	/**
+	 * Pop an event specifically for a given element. This is normally done
+	 * automatically by the graphic element.
+	 * @param element The element considered.
+	 * @param event The event to pop.
+	 */
+	public void popEventFor( Element element, String event )
+	{
+		StyleGroup group = getGroup( getElementGroup( element ) );
+		
+		if( group != null )
+			group.popEventFor( element, event );
+	}
+	
+	/**
+	 * Specify the given element has dynamic style attribute values. This is normally done
+	 * automatically by the graphic element.
+	 * @param element The element to add to the dynamic subset.
+	 */
+	public void pushElementAsDynamic( Element element )
+	{
+		StyleGroup group = getGroup( getElementGroup( element ) );
+		
+		if( group != null )
+			group.pushElementAsDynamic( element );		
+	}
+	
+	/**
+	 * Remove the given element from the subset of elements having dynamic style attribute values.
+	 * This is normally done automatically by the graphic element.
+	 * @param element The element to remove from the dynamic subset.
+	 */
+	public void popElementAsDynamic( Element element )
+	{
+		StyleGroup group = getGroup( getElementGroup( element ) );
+		
+		if( group != null )
+			group.popElementAsDynamic( element );
 	}
 	
 	/**

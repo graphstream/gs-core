@@ -115,7 +115,9 @@ public class Viewer implements ActionListener
 		this.images = new ImageCache();
 		this.fonts  = new FontCache();
 		
-		input.addGraphListener( graph );
+		if( input != null )
+			input.addGraphListener( graph );
+
 		timer.setCoalesce( true );
 		timer.setRepeats( true );
 		timer.start();
@@ -152,7 +154,11 @@ public class Viewer implements ActionListener
 	
 	public ProxyFilter getThreadProxyOnGraphicGraph()
 	{
-		return new ThreadProxyFilter( graph );
+		ThreadProxyFilter fromSwing = new ThreadProxyFilter( graph );
+
+		((ThreadProxyFilter)input).addAttributesSynchro( graph, fromSwing );
+		
+		return fromSwing;
 	}
 	
 	/**

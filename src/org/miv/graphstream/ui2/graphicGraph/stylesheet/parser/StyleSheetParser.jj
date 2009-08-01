@@ -282,6 +282,8 @@ Selector select():
 				)
 	  )
 	| ( <DOT>   ( ( t=<IDENTIFIER> { select.setClass( t.image ); } )
+	            | ( t=<CLICKED>    { select.setClass( "clicked" ); } )  // If we want "clicked" and
+	            | ( t=<SELECTED>   { select.setClass( "selected" ); } ) // "selected" to be normal classes.
 				| ( t=<STRING>     { select.setClass( t.image.substring( 1, t.image.length()-1 ) ); } )
 				)
 	  )

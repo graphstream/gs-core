@@ -159,7 +159,16 @@ nodes by edges.
 	"public boolean equals(Object)" method. ALWAYS.
 	
 	Note : If you do not provide such an equal method in an attribute value of your own, the
-	recursion will most often stop, but strange values may happen in your graph.	
+	recursion will most often stop, but strange values may happen in your graph.
+	
+	TODO XXX With the ThreadProxyModel a problem can still arise :
+		1 An attribute or element is added then removed in the graphic graph.
+		2 The two events are generated before the main graph checks its events.
+		3 the main graph receives a add then a remove.
+		4 The two events are generated before the graphic graph checks its events.
+		5 etc... there is no way to ensure the events already occurred.
+		==> this is the "echo" problem or "larsen" problem.
+		==> If this happen, enable event coalescing in the Thread Proxy 
 
 How does the style sheet and styles communicate with the graphic elements
 =========================================================================
@@ -295,3 +304,68 @@ Now lets see how the sprites are handled really.
 		could proliferate.
 		
 	That's all !
+	
+How the style group set and style groups work and how to draw the graphic graph
+===============================================================================
+
+The style group set and style group make use of the style sheet to group elements by style. In
+fact as said above, the graphic graph does not store the graph as usual. Instead the graph is
+entirely stored in the StyleGroupSet. The style group set as is name suggests is a set of
+StyleGroups.
+
+Style groups are set of elements that have the same style. It is in the nature of the style sheet
+to define such groups. The selectors ("node", "edge", "node.foo", "node#A", ect.) often define rules
+that apply to several elements (the "node" selector for example applies to ALL nodes). Furthermore
+the groups defined by the styles are mutually exclusive, no element can be in two groups at a time.
+Only the "node#A" selectors (and all # selectors) apply to one element only, but they are usually
+few.
+
+Therefore we can use these groups to store all the graph, and this is what is done in the graphic
+graph.
+
+The purpose of doing all these groups is to ease the way things are drawn. Most of the time, graphic
+engines take a lot of time "pushing" graphic state before really drawing. This means that operations
+like defining what is the current colour, line width, texture, font, gradient, are often costly
+and changing them for each element is a waste of time if several elements share the same settings.
+
+Furthermore, we can sort all groups following the very important Z-order. Indeed each style define
+the virtual plane (parallel to the screen) where the elements having this style must be drawn.
+Elements with a low Z must be drawn under others and with a high Z mist be drawn above others. The
+best way to do this is to draw low Z elements first and high Z elements last. This is the Z order.
+
+We call the fact of drawing all elements of the same style at once (thus pushing the graphic state
+only once before drawing the elements) a "bulk operation" or "bulk drawing".
+
+However not all elements in a group can be drawn in a bulk operation. Some style define "dynamic
+style properties". For example the "fill-mode" can have the value "dyn-plain". This means that
+the color of the element is fixed by the style only if the element does not have the "ui.color"
+attribute. Else this attribute defines the colour of the element. This allows for really fast
+changing of the element colour (in fact the ui.color defines the index of the color to use in
+the style, since the style can define a palette of colours for an element).
+
+Such element with an dynamic style attribute cannot be drawn in a bulk operation since one of
+the graphic state is not the same as other elements. Another kind of element that cannot be
+drawn in a bulk operation are the elements actually modified by an event. There are actually
+two kinds of events in the style sheet : "clicked" and "selected". These events are produced by
+the viewer. The style sheet can define a specific style that will modify the element when the
+event occurs. Such "event" style are not style groups since they occur often and would imply
+to move the element from one style group to another often. Furthermore they inherit the style
+of the element they apply to and would force to create a large number of style group.
+
+So when such an event occur on an element it cannot be draw in a bulk operation, like with dynamic
+values. Therefore we have three sets of elements in a style group:
+	1. Dynamic elements :  Elements that have a dynamic style attribute value.
+	2. Event elements   :  Elements that are actually modified by an event.
+	3. Bulk elements    :  Other elements.
+Most of the time all the elements of a group will be in the bulk set. But it can happen that the
+dynamic and event subset contain some elements (in which case the elements will not be in bulk,
+these subsets are exclusive).
+
+Therefore when drawing the elements of the group you first have to draw all the bulk elements. Then
+if they are not empty, draw the event and dynamic element subsets. This way you can optimise
+drawing. Naturally the style group class provides an iterator on all the elements without
+distinction and, if you push the graphic state for each element you can draw them using such an
+iterator.
+
+
+ 

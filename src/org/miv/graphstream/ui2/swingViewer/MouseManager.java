@@ -81,11 +81,6 @@ public class MouseManager implements MouseInputListener
 	
 	protected void mouseButtonRelease( MouseEvent event, ArrayList<GraphicElement> elementsInArea )
 	{
-		System.err.printf( "selection = {", event.getX(), event.getY() );
-		for( GraphicElement element: elementsInArea )
-			System.err.printf( " %s", element.getId() );
-		System.err.printf( " }%n" );
-		
 		for( GraphicElement element: elementsInArea )
 		{
 			if( ! element.hasAttribute( "ui.selected" ) )
@@ -153,6 +148,7 @@ public class MouseManager implements MouseInputListener
 		if( curElement != null )
 		{
 			mouseButtonReleaseOffElement( curElement, event );
+			curElement = null;
 		}
 		else
 		{
@@ -166,8 +162,6 @@ public class MouseManager implements MouseInputListener
 			mouseButtonRelease( event, view.allNodesOrSpritesIn( x1, y1, x2, y2 ) );
 			view.endSelectionAt( x2, y2 );
 		}
-
-		curElement = null;
     }
 
 	public void mouseEntered( MouseEvent event )

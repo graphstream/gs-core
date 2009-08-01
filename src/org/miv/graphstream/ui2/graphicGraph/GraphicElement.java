@@ -195,10 +195,22 @@ public abstract class GraphicElement extends AbstractElement
 			}
 			else if( attribute.equals( "ui.clicked" ) )
 			{
+				style.pushEventFor( this, "clicked" );
 				mygraph.graphChanged = true;
 			}
 			else if( attribute.equals( "ui.selected" ) )
 			{
+				style.pushEventFor( this, "selected" );
+				mygraph.graphChanged = true;
+			}
+			else if( attribute.equals( "ui.color" ) )
+			{
+				style.pushElementAsDynamic( this );
+				mygraph.graphChanged = true;
+			}
+			else if( attribute.equals( "ui.size" ) )
+			{
+				style.pushElementAsDynamic( this );
 				mygraph.graphChanged = true;
 			}
 //			else if( attribute.equals( "ui.state" ) )
@@ -224,15 +236,27 @@ public abstract class GraphicElement extends AbstractElement
 			}
 			else if( attribute.equals( "ui.hide" ) )
 			{
-				mygraph.graphChanged = false;
+				mygraph.graphChanged = true;
 			}
 			else if( attribute.equals( "ui.clicked" ) )
 			{
-				mygraph.graphChanged = false;
+				style.popEventFor( this, "clicked" );
+				mygraph.graphChanged = true;
 			}
 			else if( attribute.equals( "ui.selected" ) )
 			{
-				mygraph.graphChanged = false;
+				style.popEventFor( this, "selected" );
+				mygraph.graphChanged = true;
+			}
+			else if( attribute.equals( "ui.color" ) )
+			{
+				style.popElementAsDynamic( this );
+				mygraph.graphChanged = true;
+			}
+			else if( attribute.equals( "ui.size" ) )
+			{
+				style.popElementAsDynamic( this );
+				mygraph.graphChanged = true;
 			}
 		}
     }

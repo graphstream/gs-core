@@ -1,0 +1,6 @@
+property		value			attribute		resolve to
+----------------------------------------------------------
+fill-mode:		dyn-plain		ui.color		plain
+size-mode:		dyn-size		ui.size			normal
+
+	

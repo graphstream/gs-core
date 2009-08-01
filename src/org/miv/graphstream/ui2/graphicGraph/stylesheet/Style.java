@@ -107,7 +107,7 @@ public class Style extends StyleConstants
 	 */
 	public Object getValue( String property, String...events )
 	{
-		if( events != null && events.length > 0 && alternates != null )
+		if( events != null && events.length > 0 )//&& alternates != null )
 		{
 			Object o = null;
 			int    i = events.length- 1;
@@ -122,7 +122,7 @@ public class Style extends StyleConstants
 			if( o != null )
 				return o;
 		}
-		
+
 		Object value = values.get( property );
 		
 		if( value == null )

@@ -126,6 +126,9 @@ public class GraphicNode extends GraphicElement implements Node
 			}
 		}
 		
+//		if( attribute.equals( "ui.clicked" ) )	// Filter the clicks to avoid loops XXX BAD !!! XXX 
+//			return;
+		
 		if( event == AttributeChangeEvent.ADD )		// ADD
 		{
 			for( GraphAttributesListener listener: mygraph.attrListeners )

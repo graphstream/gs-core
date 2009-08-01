@@ -184,6 +184,14 @@ class Camera
 		}
 	}
 
+	/**
+	 * Return the given point in pixels converted in graph units (GU) using the inverse
+	 * transformation of the current projection matrix. The inverse matrix is computed only
+	 * once each time a new projection matrix is created.
+	 * @param x The source point abscissa in pixels.
+	 * @param y The source point ordinate in pixels.
+	 * @return The resulting points in graph units.
+	 */
 	public Point2D.Float inverseTransform( float x, float y )
 	{
 		Point2D.Float src = new Point2D.Float( x, y );
