@@ -39,7 +39,7 @@ package org.miv.graphstream.io2;
  * </p>
  * 
  * <p>
- * With proxyes, there is a buffer often compared to a mail box. Each event produced as input is
+ * With proxies, there is a buffer often compared to a mail box. Each event produced as input is
  * buffered and when the output is free to receive these events it can check the mail box and
  * empty it, thus receiving the pending events. This way of doing is completely non synchronised
  * and non blocking (due to the mail box). 
@@ -68,4 +68,6 @@ public interface ProxyFilter extends Filter
 	 * Check if some events are pending and dispatch them to the registered outputs.
 	 */
 	void checkEvents();
+	
+//	void synchronizeWith( ProxyFilter other, Filter on );
 }

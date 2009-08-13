@@ -284,13 +284,15 @@ public class GraphicSprite extends GraphicElement
 			if( o == null || ( ! o.equals( newValue ) ) )
 			{
 				for( GraphAttributesListener listener: mygraph.attrListeners )
-					listener.graphAttributeAdded( mygraph.getId(), completeAttr, newValue );
+					if( mygraph.muteAtrs != listener )
+						listener.graphAttributeAdded( mygraph.getId(), completeAttr, newValue );
 			}
 		}
 		else if( event == AttributeChangeEvent.REMOVE )	// REMOVE
 		{
 			for( GraphAttributesListener listener: mygraph.attrListeners )
-				listener.graphAttributeRemoved( mygraph.getId(), completeAttr );			
+				if( mygraph.muteAtrs != listener )
+					listener.graphAttributeRemoved( mygraph.getId(), completeAttr );			
 		}
 		else						// CHANGE
 		{
@@ -299,9 +301,13 @@ public class GraphicSprite extends GraphicElement
 			if( o == null || ( ! o.equals( newValue ) ) )
 			{
 				for( GraphAttributesListener listener: mygraph.attrListeners )
-					listener.graphAttributeChanged( mygraph.getId(), completeAttr, oldValue, newValue );
+					if( mygraph.muteAtrs != listener )
+						listener.graphAttributeChanged( mygraph.getId(), completeAttr, oldValue, newValue );
 			}
 		}
+		
+		mygraph.muteAtrs = null;
+		mygraph.muteElts = null;
     }
 
 	@Override

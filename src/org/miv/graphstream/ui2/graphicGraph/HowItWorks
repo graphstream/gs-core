@@ -160,15 +160,27 @@ nodes by edges.
 	
 	Note : If you do not provide such an equal method in an attribute value of your own, the
 	recursion will most often stop, but strange values may happen in your graph.
-	
-	TODO XXX With the ThreadProxyModel a problem can still arise :
-		1 An attribute or element is added then removed in the graphic graph.
+
+	However we can still have some recursion problems. If we try synchronisation in the same
+	thread, all will work. If we put some latency between the time the events are produced and
+	the time the events are consumed, we can run into the "echo" (or "feedback" or "Larsen")
+	problem. This happens for example with the thread proxy filter or the network proxy filter.
+	Both are "passive" in the way they handle messages : the receiving hand must check messages
+	are available to receive them. Therefore messages are not processed directly when received.
+	This can lead to this "echo" problem, we have two threads the main thread and the graphic
+	thread, as well as two graphs the main graph and graphic graph, they are synchronised,
+	that is the graphic graph listens at the main graph and the main graph listens at the
+	graphic graph through a thread proxy filter :
+		1 An attribute or element is added then as soon removed in the graphic graph.
 		2 The two events are generated before the main graph checks its events.
 		3 the main graph receives a add then a remove.
 		4 The two events are generated before the graphic graph checks its events.
-		5 etc... there is no way to ensure the events already occurred.
-		==> this is the "echo" problem or "larsen" problem.
-		==> If this happen, enable event coalescing in the Thread Proxy 
+		5 etc... there is no way to ensure the events already occurred and
+		  the events will be generated in loop passing from a graph to another.
+	To avoid such a problem there is a simple solution : when the graphic thread is checking
+	events it cut its event sending mechanism toward the main thread. In the same way, when
+	the main thread is receiving events from the graphic thread is cuts event propagation
+	toward the graphic graph.
 
 How does the style sheet and styles communicate with the graphic elements
 =========================================================================

@@ -392,8 +392,11 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	public void clear()
 	{
 		for( GraphElementsListener listener: eltsListeners )
-			listener.graphCleared( getId() );
+			if( listener != muteElts )
+				listener.graphCleared( getId() );
 
+		muteElts = null;
+		muteAtrs = null;
 		nodes.clear();
 		edges.clear();
 		
@@ -596,7 +599,11 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	public void stepBegins(double time)
 	{
 		for( GraphElementsListener l : eltsListeners )
-			l.stepBegins( getId(), time );
+			if( l != muteElts )
+				l.stepBegins( getId(), time );
+
+		muteElts = null;
+		muteAtrs = null;
 	}
 	
 	/**
@@ -771,7 +778,8 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 			eventProcessing=true;
 			manageEvents();
 			for( GraphElementsListener l: eltsListeners )
-				l.nodeAdded( getId(), node.getId() );
+				if( l != muteElts )
+					l.nodeAdded( getId(), node.getId() );
 			manageEvents();
 			eventProcessing=false;
 			checkListenersToRemove();
@@ -780,6 +788,9 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		{
 			eventQueue.add( new AfterNodeAddEvent(node) );
 		}
+		
+		muteAtrs = null;
+		muteElts = null;
 	}
 
 	protected void beforeNodeRemoveEvent( AdjacencyListNode node )
@@ -789,7 +800,8 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 			eventProcessing=true;
 			manageEvents();
 			for( GraphElementsListener l: eltsListeners )
-				l.nodeRemoved( getId(), node.getId() );
+				if( l != muteElts )
+					l.nodeRemoved( getId(), node.getId() );
 			manageEvents();
 			eventProcessing=false;
 			checkListenersToRemove();
@@ -798,6 +810,9 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		{
 			eventQueue.add( new BeforeNodeRemoveEvent( node ) );
 		}
+		
+		muteAtrs = null;
+		muteElts = null;
 	}
 
 	protected void afterEdgeAddEvent( AdjacencyListEdge edge )
@@ -807,7 +822,8 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 			eventProcessing=true;
 			manageEvents();
 			for( GraphElementsListener l: eltsListeners )
-				l.edgeAdded( getId(), edge.getId(), edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
+				if( l != muteElts )
+					l.edgeAdded( getId(), edge.getId(), edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
 			manageEvents();
 			eventProcessing=false;
 			checkListenersToRemove();
@@ -816,6 +832,9 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		{
 			eventQueue.add( new AfterEdgeAddEvent(edge) );
 		}
+		
+		muteAtrs = null;
+		muteElts = null;
 	}
 
 	protected void beforeEdgeRemoveEvent( AdjacencyListEdge edge )
@@ -825,7 +844,8 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 			eventProcessing=true;
 			manageEvents();
 			for( GraphElementsListener l: eltsListeners )
-				l.edgeRemoved( getId(), edge.getId() );
+				if( l != muteElts )
+					l.edgeRemoved( getId(), edge.getId() );
 			manageEvents();
 			eventProcessing=false;
 			checkListenersToRemove();
@@ -834,6 +854,9 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		{
 			eventQueue.add( new BeforeEdgeRemoveEvent( edge ) );
 		}
+		
+		muteAtrs = null;
+		muteElts = null;
 	}
 
 	@Override
@@ -854,17 +877,20 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 				if( element instanceof Node )
 				{
 					for( GraphAttributesListener l: attrListeners )
-						l.nodeAttributeAdded( getId(), element.getId(), attribute, newValue );
+						if( muteAtrs != l )
+							l.nodeAttributeAdded( getId(), element.getId(), attribute, newValue );
 				}
 				else if( element instanceof Edge )
 				{
 					for( GraphAttributesListener l: attrListeners )
-						l.edgeAttributeAdded( getId(), element.getId(), attribute, newValue );					
+						if( muteAtrs != l )
+							l.edgeAttributeAdded( getId(), element.getId(), attribute, newValue );					
 				}
 				else
 				{
 					for( GraphAttributesListener l: attrListeners )
-						l.graphAttributeAdded( getId(), attribute, newValue );					
+						if( muteAtrs != l )
+							l.graphAttributeAdded( getId(), attribute, newValue );					
 				}
 			}
 			else if( event == AttributeChangeEvent.REMOVE )
@@ -872,17 +898,20 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 				if( element instanceof Node )
 				{
 					for( GraphAttributesListener l: attrListeners )
-						l.nodeAttributeRemoved( getId(), element.getId(), attribute );
+						if( muteAtrs != l )
+							l.nodeAttributeRemoved( getId(), element.getId(), attribute );
 				}
 				else if( element instanceof Edge )
 				{
 					for( GraphAttributesListener l: attrListeners )
-						l.edgeAttributeRemoved( getId(), element.getId(), attribute );					
+						if( muteAtrs != l )
+							l.edgeAttributeRemoved( getId(), element.getId(), attribute );					
 				}
 				else
 				{
 					for( GraphAttributesListener l: attrListeners )
-						l.graphAttributeRemoved( getId(), attribute );					
+						if( muteAtrs != l )
+							l.graphAttributeRemoved( getId(), attribute );					
 				}								
 			}
 			else
@@ -890,26 +919,33 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 				if( element instanceof Node )
 				{
 					for( GraphAttributesListener l: attrListeners )
-						l.nodeAttributeChanged( getId(), element.getId(), attribute, oldValue, newValue );
+						if( muteAtrs != l )
+							l.nodeAttributeChanged( getId(), element.getId(), attribute, oldValue, newValue );
 				}
 				else if( element instanceof Edge )
 				{
 					for( GraphAttributesListener l: attrListeners )
-						l.edgeAttributeChanged( getId(), element.getId(), attribute, oldValue, newValue );					
+						if( muteAtrs != l )
+							l.edgeAttributeChanged( getId(), element.getId(), attribute, oldValue, newValue );					
 				}
 				else
 				{
 					for( GraphAttributesListener l: attrListeners )
-						l.graphAttributeChanged( getId(), attribute, oldValue, newValue );					
+						if( muteAtrs != l )
+							l.graphAttributeChanged( getId(), attribute, oldValue, newValue );					
 				}				
 			}
 	
+			muteAtrs = null;
+			muteElts = null;
 			manageEvents();
 			eventProcessing=false;
 			checkListenersToRemove();
 		}
 		else
 		{
+			muteAtrs = null;
+			muteElts = null;
 			eventQueue.add( new AttributeChangedEvent( element, attribute, event, oldValue, newValue ) );
 		}
 	}
@@ -940,95 +976,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		FileOutput output = FileOutputFactory.outputFor( filename );
 		write( output, filename );
 	}	
-/*
-	public void read( String filename ) throws IOException, GraphParseException, NotFoundException
-	{
-		GraphReaderListenerHelper listener = new GraphReaderListenerHelper( this );
-		GraphReader reader = GraphReaderFactory.readerFor( filename );
-		reader.addGraphReaderListener( listener );
-		reader.read( filename );
-	}
 
-	public void read( GraphReader reader, String filename ) throws IOException, GraphParseException
-	{
-		GraphReaderListenerHelper listener = new GraphReaderListenerHelper( this );
-		reader.addGraphReaderListener( listener );
-		reader.read( filename );
-	}
-
-	public void write( String filename ) throws IOException
-	{
-		GraphWriterHelper gwh = new GraphWriterHelper( this );
-		gwh.write( filename );
-	}
-
-	public void write( GraphWriter writer, String filename ) throws IOException
-	{
-		GraphWriterHelper gwh = new GraphWriterHelper( this );
-		gwh.write( filename, writer );
-	}
-
-	public int readPositionFile( String posFileName ) throws IOException
-	{
-		if( posFileName == null )
-			throw new IOException( "no filename given" );
-
-		Scanner scanner = new Scanner( new BufferedInputStream( new FileInputStream( posFileName ) ) );
-		int ignored = 0;
-		int mapped = 0;
-		int line = 1;
-		String id = null;
-		float x = 0, y = 0, z = 0;
-
-		scanner.useLocale( Locale.US );
-		scanner.useDelimiter( "\\s|\\n|:" );
-
-		try
-		{
-			while( scanner.hasNext() )
-			{
-				id = scanner.next();
-
-				x = scanner.nextFloat();
-				y = scanner.nextFloat();
-				z = scanner.nextFloat();
-
-				line++;
-
-				Node node = lookForNode( id );
-
-				if( node != null )
-				{
-					node.addAttribute( "x", x );
-					node.addAttribute( "y", y );
-					node.addAttribute( "z", z );
-					mapped++;
-				}
-				else
-				{
-					ignored++;
-				}
-			}
-		}
-		catch( InputMismatchException e )
-		{
-			e.printStackTrace();
-			throw new IOException( "parse error '" + posFileName + "':" + line + ": " + e.getMessage() );
-		}
-		catch( NoSuchElementException e )
-		{
-			throw new IOException( "unexpected end of file '" + posFileName + "':" + line + ": " + e.getMessage() );
-		}
-		catch( IllegalStateException e )
-		{
-			throw new IOException( "scanner error '" + posFileName + "':" + line + ": " + e.getMessage() );
-		}
-
-		scanner.close();
-
-		return ignored;
-	}
-*/
 	public GraphViewerRemote display()
 	{
 		return display( true );
@@ -1343,5 +1291,29 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		
 		if( node != null )
 			node.removeAttribute( attribute );
+    }
+
+// Mute synchronisation
+	
+	protected GraphAttributesListener muteAtrs = null;
+	
+	protected GraphElementsListener muteElts = null;
+	
+	public void muteSource( GraphListener listener )
+    {
+		muteAtrs = listener;
+		muteElts = listener;
+    }
+
+	public void muteSource( GraphAttributesListener listener )
+    {
+		muteAtrs = listener;
+		muteElts = null;
+    }
+
+	public void muteSource( GraphElementsListener listener )
+    {
+		muteAtrs = null;
+		muteElts = listener;
     }
 }

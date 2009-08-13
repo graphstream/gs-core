@@ -36,7 +36,7 @@ import org.miv.graphstream.graph.GraphListener;
  * @see Filter
  */
 public interface Input
-{
+{	
 	/**
 	 * Add a listener for all graph events (attributes and graph elements) coming from this input.
 	 * This is similar to registering a listener for attributes an another for elements.

@@ -156,7 +156,7 @@ public class Viewer implements ActionListener
 	{
 		ThreadProxyFilter fromSwing = new ThreadProxyFilter( graph );
 
-		((ThreadProxyFilter)input).addAttributesSynchro( graph, fromSwing );
+		((ThreadProxyFilter)input).synchronizeWith( fromSwing, graph );
 		
 		return fromSwing;
 	}

@@ -191,18 +191,24 @@ public class GraphicEdge extends GraphicElement implements Edge
 		if( event == AttributeChangeEvent.ADD )		// ADD
 		{
 			for( GraphAttributesListener listener: mygraph.attrListeners )
-				listener.edgeAttributeAdded( mygraph.getId(), getId(), attribute, newValue );
+				if( listener != mygraph.muteAtrs )
+					listener.edgeAttributeAdded( mygraph.getId(), getId(), attribute, newValue );
 		}
 		else if( event == AttributeChangeEvent.REMOVE )	// REMOVE
 		{
 			for( GraphAttributesListener listener: mygraph.attrListeners )
-				listener.edgeAttributeRemoved( mygraph.getId(), getId(), attribute );			
+				if( listener != mygraph.muteAtrs )
+					listener.edgeAttributeRemoved( mygraph.getId(), getId(), attribute );			
 		}
 		else						// CHANGE
 		{
 			for( GraphAttributesListener listener: mygraph.attrListeners )
-				listener.edgeAttributeChanged( mygraph.getId(), getId(), attribute, oldValue, newValue );						
+				if( listener != mygraph.muteAtrs )
+					listener.edgeAttributeChanged( mygraph.getId(), getId(), attribute, oldValue, newValue );						
 		}
+		
+		mygraph.muteAtrs = null;
+		mygraph.muteElts = null;
 	}
 	
 	/**

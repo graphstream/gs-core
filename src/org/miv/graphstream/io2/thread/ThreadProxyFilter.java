@@ -30,9 +30,11 @@ import org.miv.graphstream.graph.GraphAttributesListener;
 import org.miv.graphstream.graph.GraphElementsListener;
 import org.miv.graphstream.graph.GraphListener;
 import org.miv.graphstream.graph.Node;
+import org.miv.graphstream.io2.Filter;
 import org.miv.graphstream.io2.Input;
 import org.miv.graphstream.io2.InputBase;
 import org.miv.graphstream.io2.ProxyFilter;
+import org.miv.graphstream.io2.SynchronizableInput;
 import org.miv.mbox.CannotPostException;
 import org.miv.mbox.MBox;
 import org.miv.mbox.MBoxListener;
@@ -97,13 +99,6 @@ public class ThreadProxyFilter extends InputBase implements ProxyFilter, MBoxLis
 	 */
 	protected boolean unregisterWhenPossible = false;
 
-	/**
-	 * If true, when the set of pending events checked by "checkEvents()" contains both an add
-	 * and a delete for an element or attribute, all the messages for this element or attribute are
-	 * removed. This allows to avoid the "larsen" effect when synchronising graphs. 
-	 */
-	protected boolean coalesce = false;
-	
 	protected ArrayList<InputSynchro> synchro = new ArrayList<InputSynchro>();
 	
 	protected static class InputSynchro
@@ -135,20 +130,40 @@ public class ThreadProxyFilter extends InputBase implements ProxyFilter, MBoxLis
 		
 		public void disable()
 		{
-//System.err.printf( "remove %s from %s%n", attrListener, input );
-			
-			if( attrListener != null )
-				input.removeGraphAttributesListener( attrListener );
-			if( eltsListener != null )
-				input.removeGraphElementsListener( eltsListener );
+//System.err.printf( "    remove %s from %s%n", attrListener, input );
+		
+			if( input instanceof SynchronizableInput )
+			{
+				SynchronizableInput si = (SynchronizableInput) input;
+				
+				if( attrListener != null )
+					si.muteSource( attrListener );
+				
+				if( eltsListener != null )
+					si.muteSource( eltsListener );
+			}
+			else
+			{
+				if( attrListener != null )
+					input.removeGraphAttributesListener( attrListener );
+				if( eltsListener != null )
+					input.removeGraphElementsListener( eltsListener );
+			}
 		}
 		
 		public void enable()
 		{
-			if( attrListener != null )
-				input.addGraphAttributesListener( attrListener );
-			if( eltsListener != null )
-				input.addGraphElementsListener( eltsListener );
+			if( ! ( input instanceof SynchronizableInput ) )
+			{
+				if( attrListener != null )
+					input.addGraphAttributesListener( attrListener );
+				if( eltsListener != null )
+					input.addGraphElementsListener( eltsListener );
+			}
+			else
+			{
+			//	((SynchronizableInput)input).unmute();
+			}
 		}
 	}
 	
@@ -233,31 +248,26 @@ public class ThreadProxyFilter extends InputBase implements ProxyFilter, MBoxLis
 	@Override
 	public String toString()
 	{
-		return String.format( "thread-proxy(%s->%s)", input, from );
+		String dest = "nil";
+		
+		if( attrListeners.size() > 0 )
+			dest = attrListeners.get( 0 ).toString();
+		
+		return String.format( "thread-proxy(from %s to %s)", from, dest );
 	}
 	
 // Command
 
 	/**
-	 * The given listener of the given input are also senders of event to the input. XXX describe
-	 * this in depth and choose good names for this mechanism.
+	 * Allow filter/filter synchronisation through two thread proxy filters in the two opposite
+	 * directions.
+	 * @param other The other thread proxy filter going in the reverse direction.
+	 * @param onThis one of the outputs of this proxy thread filter, source of events for the
+	 * "other" thread proxy filter.
 	 */
-	public void addAttributesSynchro( Input input, GraphAttributesListener listener )
+	public void synchronizeWith( ThreadProxyFilter other, Filter onThis )
 	{
-		synchro.add( new InputSynchro( input, listener ) );
-	}
-	
-	/**
-	 * Enable or disable event coalescing. when enabled (default=off), when calling
-	 * {@link #checkEvents()}, if the set of pending events contains both the addition AND removal
-	 * of an element of attribute, all the events concerning this element or attribute are deleted
-	 * from the event set before being dispatched. This can improve event handling efficiency and
-	 * avoid the "larsen" or "echo" problem that can occurs due to the desynchronised nature of
-	 * this thread proxy.
-	 */
-	public void setCoalesce( boolean on )
-	{
-		coalesce = on;
+		synchro.add( new InputSynchro( onThis, other ) );
 	}
 	
 	/**
@@ -275,112 +285,20 @@ public class ThreadProxyFilter extends InputBase implements ProxyFilter, MBoxLis
 	 */
 	public void checkEvents()
 	{
-		if( coalesce )
-		{
-			ArrayList<Message> messages = ((MBoxStandalone)events).popPendingMessages();
-			int                n        = messages.size();
-			boolean[]          indices  = new boolean[n];
-			
-			for( int i=0; i<n; i++ )
-			{
-				Message message = messages.get( i );
-				
-				if( message.data[0].equals( GraphEvents.ADD_NODE ) )
-					checkRemoveElement( i, messages, (String) message.data[2], GraphEvents.DEL_NODE, indices );
-				else if( message.data[0].equals( GraphEvents.ADD_EDGE ) )
-					checkRemoveElement( i, messages, (String) message.data[2], GraphEvents.DEL_EDGE, indices );
-				else if( message.data[0].equals( GraphEvents.ADD_NODE_ATTR ) )
-					checkRemoveAttribute( i, messages, (String) message.data[2], GraphEvents.CHG_NODE_ATTR, GraphEvents.DEL_NODE_ATTR, indices );
-				else if( message.data[0].equals( GraphEvents.ADD_EDGE_ATTR ) )
-					checkRemoveAttribute( i, messages, (String) message.data[2], GraphEvents.CHG_EDGE_ATTR, GraphEvents.DEL_EDGE_ATTR, indices );
-				else if( message.data[0].equals( GraphEvents.ADD_GRAPH_ATTR ) )
-					checkRemoveAttribute( i, messages, (String) message.data[2], GraphEvents.CHG_GRAPH_ATTR, GraphEvents.DEL_GRAPH_ATTR, indices );
-			}
-//		
-//			System.err.printf( "------------------------------%n" );
-//			for( int i=0; i<n; i++ )
-//			{
-//				Message message = messages.get(i);
-//				
-//				System.err.printf( "Message %s %s  %s%n", message.data[0], (String)message.data[2],
-//						indices[i] ? "X" : "" );
-//			}
-			
-			for( int i=0; i<n; i++ )
-			{
-				if( ! indices[i] )
-				{
-					Message message = messages.get( i );
-					processMessage( message.from, message.data );
-				}
-			}
-		}
-		else
-		{
-			ArrayList<Message> messages = ((MBoxStandalone)events).popPendingMessages();
+		ArrayList<Message> messages = ((MBoxStandalone)events).popPendingMessages();
 //System.err.printf( "from %s : %d messages%n", from, messages.size() );
 
+		for( Message message: messages )
+		{
 			for( InputSynchro sync: synchro ) sync.disable();
-			for( Message message: messages )  processMessage( message.from, message.data );
+			processMessage( message.from, message.data );
 			for( InputSynchro sync: synchro ) sync.enable();
+		}
 //System.err.printf( "end-from %s%n", from );
 			
-			//((MBoxStandalone)events).processMessages();
-		}
+		//((MBoxStandalone)events).processMessages();
 	}
 
-	protected void checkRemoveAttribute( int begIndex, ArrayList<Message> messages, String attribute, GraphEvents CHG, GraphEvents DEL, boolean indices[] )
-	{
-		int endIndex = -1;
-		
-		for( int i=begIndex; i<messages.size(); i++ )
-		{
-			Message m = messages.get(i);
-			
-			if( m.data[0].equals( DEL ) && m.data[2].equals( attribute ) )
-			{
-				endIndex = i;
-				i = messages.size();
-			}
-		}
-		
-		if( endIndex > begIndex )
-		{
-			indices[begIndex] = true;
-			indices[endIndex] = true;
-			
-			for( int i=begIndex+1; i<endIndex-1; i++ )
-			{
-				Message m = messages.get( i );
-				
-				if( m.data[0].equals( CHG ) && m.data[2].equals( attribute ) )
-					indices[i] = true;
-			}
-		}
-	}
-
-	protected void checkRemoveElement( int begIndex, ArrayList<Message> messages, String attribute, GraphEvents DEL, boolean[] indices )
-	{
-		int endIndex = -1;
-		
-		for( int i=begIndex; i<messages.size(); i++ )
-		{
-			Message m = messages.get(i);
-			
-			if( m.data[0].equals( DEL ) )
-			{
-				endIndex = i;
-				i = messages.size();
-			}
-		}
-		
-		if( endIndex > begIndex )
-		{
-			indices[begIndex] = true;
-			indices[endIndex] = true;
-		}
-	}
-	
 // Command
 	
 	/**

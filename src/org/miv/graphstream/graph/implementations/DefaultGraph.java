@@ -40,6 +40,7 @@ import org.miv.graphstream.graph.GraphListener;
 import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.graph.NodeFactory;
 import org.miv.graphstream.io.GraphParseException;
+import org.miv.graphstream.io2.SynchronizableInput;
 import org.miv.graphstream.io2.file.FileInput;
 import org.miv.graphstream.io2.file.FileInputFactory;
 import org.miv.graphstream.io2.file.FileOutput;
@@ -90,7 +91,7 @@ import org.miv.util.SingletonException;
  * @see org.miv.graphstream.graph.implementations.DefaultEdge
  * @see org.miv.graphstream.graph.implementations.AbstractElement
  */
-public class DefaultGraph extends AbstractElement implements Graph
+public class DefaultGraph extends AbstractElement implements Graph, SynchronizableInput
 {
 	/**
 	 * Set of nodes indexed by their id.
@@ -325,7 +326,11 @@ public class DefaultGraph extends AbstractElement implements Graph
 	public void clear()
 	{
 		for( GraphElementsListener listener: eltsListeners )
-			listener.graphCleared( getId() );
+			if( listener != muteElts )
+				listener.graphCleared( getId() );
+		
+		muteElts = null;
+		muteAtrs = null;
 		
 		nodes.clear();
 		edges.clear();
@@ -648,10 +653,14 @@ public class DefaultGraph extends AbstractElement implements Graph
 		return null;
 	}
 
-	public void stepBegins(double time)
+	public void stepBegins( double time )
 	{
 		for( GraphElementsListener l : eltsListeners )
-			l.stepBegins( getId(), time );
+			if( l != muteElts )
+				l.stepBegins( getId(), time );
+	
+		muteElts = null;
+		muteAtrs = null;
 	}
 	
 // Events
@@ -759,14 +768,19 @@ public class DefaultGraph extends AbstractElement implements Graph
 			manageEvents();
 
 			for( GraphElementsListener l: eltsListeners )
-				l.nodeAdded( getId(), node.getId() );
-
+				if( l != muteElts )
+					l.nodeAdded( getId(), node.getId() );
+		
+			muteElts = null;
+			muteAtrs = null;
 			manageEvents();
 			eventProcessing = false;
 			checkListenersToRemove();
 		}
 		else 
 		{
+			muteElts = null;
+			muteAtrs = null;
 			eventQueue.add( new AfterNodeAddEvent(node) );
 		}
 	}
@@ -779,14 +793,19 @@ public class DefaultGraph extends AbstractElement implements Graph
 			manageEvents();
 
 			for( GraphElementsListener l: eltsListeners )
-				l.nodeRemoved( getId(), node.getId() );
+				if( l != muteElts )
+					l.nodeRemoved( getId(), node.getId() );
 
+			muteElts = null;
+			muteAtrs = null;
 			manageEvents();
 			eventProcessing = false;
 			checkListenersToRemove();
 		}
 		else 
 		{
+			muteElts = null;
+			muteAtrs = null;
 			eventQueue.add( new BeforeNodeRemoveEvent( node ) );
 		}
 	}
@@ -799,14 +818,19 @@ public class DefaultGraph extends AbstractElement implements Graph
 			manageEvents();
 
 			for( GraphElementsListener l: eltsListeners )
-				l.edgeAdded( getId(), edge.getId(), edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
+				if( l != muteElts )
+					l.edgeAdded( getId(), edge.getId(), edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
 
+			muteElts = null;
+			muteAtrs = null;
 			manageEvents();
 			eventProcessing = false;
 			checkListenersToRemove();
 		}
 		else 
 		{
+			muteElts = null;
+			muteAtrs = null;
 //			printPosition( "AddEdge in EventProc" );
 			eventQueue.add( new AfterEdgeAddEvent(edge) );
 		}
@@ -820,13 +844,19 @@ public class DefaultGraph extends AbstractElement implements Graph
 			manageEvents();
 
 			for( GraphElementsListener l: eltsListeners )
-				l.edgeRemoved( getId(), edge.getId() );
+				if( l != muteElts )
+					l.edgeRemoved( getId(), edge.getId() );
 
+			muteElts = null;
+			muteAtrs = null;
 			manageEvents();
 			eventProcessing = false;
 			checkListenersToRemove();
 		}
-		else {
+		else
+		{
+			muteElts = null;
+			muteAtrs = null;
 //			printPosition( "DelEdge in EventProc" );
 			eventQueue.add( new BeforeEdgeRemoveEvent( edge ) );
 		}
@@ -850,17 +880,20 @@ public class DefaultGraph extends AbstractElement implements Graph
 				if( element instanceof Node )
 				{
 					for( GraphAttributesListener l: attrListeners )
-						l.nodeAttributeAdded( getId(), element.getId(), attribute, newValue );
+						if( l != muteAtrs )
+							l.nodeAttributeAdded( getId(), element.getId(), attribute, newValue );
 				}
 				else if( element instanceof Edge )
 				{
 					for( GraphAttributesListener l: attrListeners )
-						l.edgeAttributeAdded( getId(), element.getId(), attribute, newValue );
+						if( l != muteAtrs )
+							l.edgeAttributeAdded( getId(), element.getId(), attribute, newValue );
 				}
 				else
 				{
 					for( GraphAttributesListener l: attrListeners )
-						l.graphAttributeAdded( getId(), attribute, newValue );					
+						if( l != muteAtrs )
+							l.graphAttributeAdded( getId(), attribute, newValue );					
 				}
 			}
 			else if( event == AttributeChangeEvent.REMOVE )
@@ -868,17 +901,20 @@ public class DefaultGraph extends AbstractElement implements Graph
 				if( element instanceof Node )
 				{
 					for( GraphAttributesListener l: attrListeners )
-						l.nodeAttributeRemoved( getId(), element.getId(), attribute );
+						if( l != muteAtrs )
+							l.nodeAttributeRemoved( getId(), element.getId(), attribute );
 				}
 				else if( element instanceof Edge )
 				{
 					for( GraphAttributesListener l: attrListeners )
-						l.edgeAttributeRemoved( getId(), element.getId(), attribute );
+						if( l != muteAtrs )
+							l.edgeAttributeRemoved( getId(), element.getId(), attribute );
 				}
 				else
 				{
 					for( GraphAttributesListener l: attrListeners )
-						l.graphAttributeRemoved( getId(), attribute );					
+						if( l != muteAtrs )
+							l.graphAttributeRemoved( getId(), attribute );					
 				}								
 			}
 			else
@@ -886,20 +922,25 @@ public class DefaultGraph extends AbstractElement implements Graph
 				if( element instanceof Node )
 				{
 					for( GraphAttributesListener l: attrListeners )
-						l.nodeAttributeChanged( getId(), element.getId(), attribute, oldValue, newValue );
+						if( l != muteAtrs )
+							l.nodeAttributeChanged( getId(), element.getId(), attribute, oldValue, newValue );
 				}
 				else if( element instanceof Edge )
 				{
 					for( GraphAttributesListener l: attrListeners )
-						l.edgeAttributeChanged( getId(), element.getId(), attribute, oldValue, newValue );
+						if( l != muteAtrs )
+							l.edgeAttributeChanged( getId(), element.getId(), attribute, oldValue, newValue );
 				}
 				else
 				{
 					for( GraphAttributesListener l: attrListeners )
-						l.graphAttributeChanged( getId(), attribute, oldValue, newValue );					
+						if( l != muteAtrs )
+							l.graphAttributeChanged( getId(), attribute, oldValue, newValue );					
 				}				
 			}
 
+			muteElts = null;
+			muteAtrs = null;
 			manageEvents();
 			eventProcessing = false;
 			checkListenersToRemove();
@@ -908,6 +949,8 @@ public class DefaultGraph extends AbstractElement implements Graph
 		{
 //			printPosition( "ChgEdge in EventProc" );
 			eventQueue.add( new AttributeChangedEvent( element, attribute, event, oldValue, newValue ) );
+			muteElts = null;
+			muteAtrs = null;
 		}
 	}
 
@@ -924,20 +967,8 @@ public class DefaultGraph extends AbstractElement implements Graph
 		FileInput input = FileInputFactory.inputFor( filename );
 		input.addGraphListener( this );
 		read( input, filename );
-//		GraphReaderListenerHelper listener = new GraphReaderListenerHelper( this );
-//		GraphReader reader = GraphReaderFactory.readerFor( filename );
-//		reader.addGraphReaderListener( listener );
-//		reader.read( filename );
 	}
-/*	
-	public void read( GraphReader reader, String filename )
-		throws IOException, GraphParseException
-	{
-		GraphReaderListenerHelper listener = new GraphReaderListenerHelper( this );
-		reader.addGraphReaderListener( listener );
-		reader.read( filename );
-	}
-*/
+
 	public void write( FileOutput output, String filename ) throws IOException
     {
 		output.writeAll( this, filename );
@@ -948,79 +979,8 @@ public class DefaultGraph extends AbstractElement implements Graph
 	{
 		FileOutput output = FileOutputFactory.outputFor( filename );
 		write( output, filename );
-//		GraphWriterHelper gwh = new GraphWriterHelper( this );
-//		gwh.write( filename );
 	}
-/*	
-	public void write( GraphWriter writer, String filename )
-		throws IOException
-	{
-		GraphWriterHelper gwh = new GraphWriterHelper( this );
-		gwh.write( filename, writer );
-	}
-	
-	public int readPositionFile( String posFileName )
-		throws IOException
-	{
-		if( posFileName == null )
-			throw new IOException( "no filename given" );
-		
-		Scanner scanner = new Scanner( new BufferedInputStream( new FileInputStream( posFileName ) ) );
-		int     ignored = 0;
-		int     mapped  = 0;
-		int     line    = 1;
-		String  id      = null;
-		float   x = 0, y = 0, z = 0;
 
-		scanner.useLocale( Locale.US );
-		scanner.useDelimiter( "\\s|\\n|:" );
-
-		try
-		{
-			while( scanner.hasNext() )
-			{
-				id = scanner.next();
-
-				x  = scanner.nextFloat();
-				y  = scanner.nextFloat();
-				z  = scanner.nextFloat();
-
-				line++;
-				
-				DefaultNode node = (DefaultNode) nodes.get( id );
-
-				if( node != null )
-				{
-					node.addAttribute( "x", x );
-					node.addAttribute( "y", y );
-					node.addAttribute( "z", z );
-					mapped++;
-				}
-				else
-				{
-					ignored++;
-				}
-			}
-		}
-		catch( InputMismatchException e )
-		{
-			e.printStackTrace();
-			throw new IOException( "parse error '"+posFileName+"':"+line+": " + e.getMessage() );
-		}
-		catch( NoSuchElementException e )
-		{
-			throw new IOException( "unexpected end of file '"+posFileName+"':"+line+": " + e.getMessage() );
-		}
-		catch( IllegalStateException e )
-		{
-			throw new IOException( "scanner error '"+posFileName+"':"+line+": " + e.getMessage() );
-		}
-
-		scanner.close();
-
-		return ignored;
-	}
-*/	
 	public GraphViewerRemote display()
 	{
 		return display( true );
@@ -1434,5 +1394,29 @@ public class DefaultGraph extends AbstractElement implements Graph
 		
 		if( node != null )
 			node.removeAttribute( attribute );
+    }
+
+// Mute synchronisation
+	
+	protected GraphAttributesListener muteAtrs = null;
+	
+	protected GraphElementsListener muteElts = null;
+	
+	public void muteSource( GraphListener listener )
+    {
+		muteAtrs = listener;
+		muteElts = listener;
+    }
+
+	public void muteSource( GraphAttributesListener listener )
+    {
+		muteAtrs = listener;
+		muteElts = null;
+    }
+
+	public void muteSource( GraphElementsListener listener )
+    {
+		muteAtrs = null;
+		muteElts = listener;
     }
 }

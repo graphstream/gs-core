@@ -132,18 +132,24 @@ public class GraphicNode extends GraphicElement implements Node
 		if( event == AttributeChangeEvent.ADD )		// ADD
 		{
 			for( GraphAttributesListener listener: mygraph.attrListeners )
-				listener.nodeAttributeAdded( mygraph.getId(), getId(), attribute, newValue );
+				if( mygraph.muteAtrs != listener )
+					listener.nodeAttributeAdded( mygraph.getId(), getId(), attribute, newValue );
 		}
 		else if( event == AttributeChangeEvent.REMOVE )	// REMOVE
 		{
 			for( GraphAttributesListener listener: mygraph.attrListeners )
-				listener.nodeAttributeRemoved( mygraph.getId(), getId(), attribute );			
+				if( mygraph.muteAtrs != listener )
+					listener.nodeAttributeRemoved( mygraph.getId(), getId(), attribute );			
 		}
 		else						// CHANGE
 		{
 			for( GraphAttributesListener listener: mygraph.attrListeners )
-				listener.nodeAttributeChanged( mygraph.getId(), getId(), attribute, oldValue, newValue );						
+				if( mygraph.muteAtrs != listener )
+					listener.nodeAttributeChanged( mygraph.getId(), getId(), attribute, oldValue, newValue );						
 		}
+		
+		mygraph.muteAtrs = null;
+		mygraph.muteElts = null;
 	}
 
 	/**

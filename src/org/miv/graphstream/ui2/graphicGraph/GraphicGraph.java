@@ -30,6 +30,7 @@ import org.miv.graphstream.graph.GraphElementsListener;
 import org.miv.graphstream.graph.GraphListener;
 import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.graph.NodeFactory;
+import org.miv.graphstream.io2.SynchronizableInput;
 import org.miv.graphstream.io2.file.FileInput;
 import org.miv.graphstream.io2.file.FileOutput;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Style;
@@ -80,8 +81,10 @@ import org.miv.util.SingletonException;
  * All other attributes are filtered and not stored. The result is that if the graphic graph is
  * used as an input (a source of graph events) some attributes will not pass through the filter.
  * </p>
+ * 
+ * TODO : this graph cannot handle modification inside event listener methods !!
  */
-public class GraphicGraph extends AbstractElement implements Graph, StyleGroupListener
+public class GraphicGraph extends AbstractElement implements Graph, SynchronizableInput, StyleGroupListener
 {
 // Attribute
 
@@ -243,7 +246,11 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 			graphChanged = true;
 			
 			for( GraphElementsListener listener: eltsListeners )
-				listener.edgeAdded( getId(), id, from, to, directed );
+				if( listener != muteElts )
+					listener.edgeAdded( getId(), id, from, to, directed );
+		
+			muteElts = null;
+			muteAtrs = null;
 		}
 			
 		return edge;
@@ -262,7 +269,11 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 			graphChanged = true;
 		
 			for( GraphElementsListener listener: eltsListeners )
-				listener.nodeAdded( getId(), id );
+				if( listener != muteElts )
+					listener.nodeAdded( getId(), id );
+			
+			muteElts = null;
+			muteAtrs = null;
 		}
 			
 		return node;
@@ -292,7 +303,11 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		if( edge != null )
 		{
 			for( GraphElementsListener listener: eltsListeners )
-				listener.edgeRemoved( getId(), edge.getId() );
+				if( listener != muteElts )
+					listener.edgeRemoved( getId(), edge.getId() );
+			
+			muteElts = null;
+			muteAtrs = null;
 
 			if( connectivity.get( edge.from ) != null )
 				connectivity.get( edge.from ).remove( edge );
@@ -341,7 +356,11 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		if( node != null )
 		{
 			for( GraphElementsListener listener: eltsListeners )
-				listener.nodeRemoved( getId(), node.getId() );
+				if( listener != muteElts )
+					listener.nodeRemoved( getId(), node.getId() );
+			
+			muteElts = null;
+			muteAtrs = null;
 			
 		    if(connectivity.get(node) != null)
 		    {
@@ -428,23 +447,33 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		{
 			case ADD:
 				for( GraphAttributesListener listener: attrListeners )
-					listener.graphAttributeAdded( getId(), attribute, newValue );
+					if( listener != muteAtrs )
+						listener.graphAttributeAdded( getId(), attribute, newValue );
 				break;
 			case CHANGE:
 				for( GraphAttributesListener listener: attrListeners )
-					listener.graphAttributeChanged( getId(), attribute, oldValue, newValue );						
+					if( listener != muteAtrs )
+						listener.graphAttributeChanged( getId(), attribute, oldValue, newValue );						
 				break;
 			case REMOVE:
 				for( GraphAttributesListener listener: attrListeners )
-					listener.graphAttributeRemoved( getId(), attribute );
+					if( listener != muteAtrs )
+						listener.graphAttributeRemoved( getId(), attribute );
 				break;
 		}
+		
+		muteElts = null;
+		muteAtrs = null;
 	}
 
 	public void clear()
 	{
 		for( GraphElementsListener listener: eltsListeners )
-			listener.graphCleared( getId() );
+			if( listener != muteElts )
+				listener.graphCleared( getId() );
+		
+		muteElts = null;
+		muteAtrs = null;
 		
 		connectivity.clear();
 		styleGroups.clear();
@@ -797,7 +826,11 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		step = time;
 		
 		for( GraphElementsListener listener: eltsListeners )
-			listener.stepBegins( getId(), time );
+			if( listener != muteElts )
+				listener.stepBegins( getId(), time );
+		
+		muteElts = null;
+		muteAtrs = null;
     }
 	
 // Sprite interface
@@ -1071,4 +1104,28 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		if( matcher.matches() )
 			super.addAttribute( attribute, values );
 	}
+	
+// Mute synchronisation
+	
+	protected GraphAttributesListener muteAtrs = null;
+	
+	protected GraphElementsListener muteElts = null;
+	
+	public void muteSource( GraphListener listener )
+    {
+		muteAtrs = listener;
+		muteElts = listener;
+    }
+
+	public void muteSource( GraphAttributesListener listener )
+    {
+		muteAtrs = listener;
+		muteElts = null;
+    }
+
+	public void muteSource( GraphElementsListener listener )
+    {
+		muteAtrs = null;
+		muteElts = listener;
+    }
 }

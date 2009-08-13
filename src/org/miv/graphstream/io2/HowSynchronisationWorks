@@ -1,0 +1,116 @@
+Synchronisation
+===============
+
+	The whole I/O system is based on the idea of inputs sending "graph" events to output they are
+	connected to, eventually passing through filters. Filters are input and output at the same time.
+	A stream of graph events traverse these connected components. The whole project, GraphStream,
+	was named according to this scheme.
+	
+	All this pipelining assumes there is a start and a end in the stream of events, and that the
+	graph representing these connections is a tree. In other words, there are no loops, an event
+	sent at a given point will never come back. It will flow through the pipeline, sometimes being
+	duplicated when there are branches, but that is all.
+	
+	Here is an example :
+	                           +-----> filter -------> output
+	                           |    (remove some       (file)
+	                           |      attributes)
+	                           |
+	   graph -----> filter ----+-----> filter -------> output
+	  (source)     (filter     |      (network)     (view on
+	                 some      |                     remote machine)
+	               elements)   |    
+	                           +-----> filter -------> output
+	                                 (add some         (file)
+	                                  attributes)
+	
+	However sometimes it could be really useful to be able to have loops. For example let's imagine
+	we need to maintain two graphs that must have the same structure (elements, nodes, edges),
+	but distinct value attributes. When one graph is edited, the other must follow and vice versa.
+	
+	Another example is when you work in two threads or on two distinct computer and need to copy a
+	graph from one thread/computer to the other and vice versa.
+	
+	However having such a loop can cause obvious problems :
+	
+	      +---------------> graph2
+	      |                   |
+	    graph1 <--------------+
+	    
+	Most of the time the schema above can be generalised as :
+	
+	      +---------------> filter2
+	      |                   |
+	    filter1 <-------------+
+	    
+	Indeed, we can fall in an infinite loop : g1 is edited and produces an event. g2 receives the
+	event and produce an event, g1 receives the event and produces and event, etc.
+	
+	To avoid such endless loops, GraphStream uses two rules, one implicit and one explicit.
+	
+	The implicit rule is "event on change". This means that an event is produced only if a change
+	really occurred. For example when you change the value of an attribute, if the new value is
+	the same as the old one, no event is produced. If you add an existing node, no event is
+	produced (an the node is not replaced!).
+	
+	This simple rule allows to synchronise two filters (graphs are filters) if they are in the
+	same thread and avoids obvious bugs. This works because all events are processed in order.
+	However there is still a problem with it : it produces more "event" traffic than needed. For
+	example if you edit g1 with a new attribute, it is propagated to g2, then anew to g1 that will
+	see that it already exist and will no more propagate it (event on change rule). Clearly the
+	last part is not necessary (more on this later).
+	
+	Furthermore when the two filters are on distinct machines or in distinct threads, things can
+	become a little
+	more tricky. If you use thread synchronisation or a blocking scheme when calling remote methods
+	there will be no problems. This works with the simple "event on change" rule.
+	
+	However if you use buffering and non-blocking message passing, as proposed by the
+	ThreadProxyFilter and NetProxyFilter a "echo" or "feedback" problem can occur.
+	
+	Lets first remember what are "blocking" and "non blocking" method schemes. When you call a
+	method the execution stops of your code stops at the calling point until the method returns.
+	This is blocking since you must wait the method to return. When using thread synchronisation,
+	you block your thread waiting for the distant method to return. When using RMI your distant
+	call blocks until the distant method returns.
+	
+	When using the ThreadProxyFilter or the NetProxyFilter, you issue calls but do not wait for
+	them to return. The calls are buffered and sent when possible. On the other side (in the 
+	remote computer or thread) a specific process looks at these calls and process them. This
+	is non blocking since you do not wait. This is really advantageous since you have very
+	minimal locking and you never wait for a distant call.
+	
+	However when doing this your graph events are buffered. Imagine you add an attribute and
+	instantly remove it just after. Such events may be buffered and sent later to the distant
+	filter listening at you. It will process them and produce the same events that will come
+	back to you. You enter anew in an infinite loop. The "event on change" cannot apply since
+	the attribute is never existent when you process the events "add then remove". Therefore
+	there is really a change. This is the "echo" problem.
+	
+	To accommodate this "echo" problem and to avoid the unnecessary traffic generated by the "event
+	on change" rule, one can use an explicit synchronisation mechanism. This implies to explicitly
+	tell the two ends of the loop they are working hand in hand.
+	
+	The "event on change" rule is here only to avoid bugs. When you create a synchronisation loop,
+	if you are an educated programmer, you will use explicit synchronisation to avoid unnecessary
+	traffic and "echo" problems.
+	
+	The explicit synchronisation works using a "muting" mechanism. The idea is simple. When g1
+	produces and event, toward g2, it tells g2 that the events come from him. g2 then send back
+	the same events to all its listeners excepted g1. g1 is muted.
+	
+	In other words this explicit synchronisation works by telling to the listener "hey I send you
+	an event, but do not send it to me back, I am already aware of it". You can synchronise two
+	filters if they implement the "SynchronizableOutput" interface. Most filters of GraphStream
+	do (and hopefully all graphs implementations do).
+	
+	XXX TODO implement such a synchronisation in graphs.
+	
+	When working with threads or across a network you often have such a scheme :
+	
+	       +--------- filter1 --------> graph2
+	       |                              |
+	     graph1 <------- filter2 ---------+
+	     
+	Synchronisation works the same excepted that the two part to synchronise are filter1 and
+	filter2, not the graphs.
