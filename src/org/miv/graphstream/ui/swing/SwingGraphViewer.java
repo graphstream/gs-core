@@ -25,8 +25,10 @@ package org.miv.graphstream.ui.swing;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -227,14 +229,23 @@ public class SwingGraphViewer extends GraphViewerBase implements ActionListener
 		
 		if( window != null )
 		{
-			ImageIcon icon = createImageIcon( "GraphStreamSmallLogo24.png", "" );
+			//ImageIcon icon = createImageIcon( "GraphStreamSmallLogo24.png", "" );
 
+			ArrayList<Image> imageList = new ArrayList<Image>();
+			
+			imageList.add( createImageIcon( "GraphStreamSmallLogo24.png", "" ).getImage() );
+			imageList.add( createImageIcon( "GSLogo11a32.png", "" ).getImage() );
+			imageList.add( createImageIcon( "GSLogo11a64.png", "" ).getImage() );
+			imageList.add( createImageIcon( "GSLogo11a128.png", "" ).getImage() );
+			
+			window.setIconImages( imageList );
+			
 			window.add( renderer );
 			window.setSize( 300, 300 );
 			window.setMinimumSize( new Dimension( 200, 200 ) );
 			window.setVisible( true );
 			window.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-			window.setIconImage( icon.getImage() );
+//			window.setIconImage( icon.getImage() );
 		}
 	}
 	

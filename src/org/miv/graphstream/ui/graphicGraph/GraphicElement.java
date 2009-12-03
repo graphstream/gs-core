@@ -252,7 +252,6 @@ public abstract class GraphicElement extends AbstractElement
 			if( newValue == null )
 			     rule.getStyle().unsetColor();
 			else rule.getStyle().setColor( GraphicGraph.convertColor( newValue ) );
-
 			mygraph.graphChanged = true;
 		}
 		else if( attribute.equals( "ui.width" ) || attribute.equals( "width" ) )

@@ -143,6 +143,12 @@ public interface Graph extends Element, Filter, Iterable<Node>
 	 * @return True if enabled.
 	 */
 	public boolean isAutoCreationEnabled();
+	
+	/**
+	 * The current step.
+	 * @return The step.
+	 */
+	public double getStep();
 
 // Command
 	

@@ -223,6 +223,7 @@ Properties common to nodes, edges and sprites
 
 size-mode:
 	normal
+	fit
 	dyn-size(ui.size)
 
 size:
@@ -258,7 +259,9 @@ shape:
 	jcomponent
 
 jcomponent:
-	<object>
+	button
+	text-field
+	panel
 
 Properties for nodes
 ====================

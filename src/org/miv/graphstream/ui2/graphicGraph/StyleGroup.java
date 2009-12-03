@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.miv.graphstream.graph.Element;
+import org.miv.graphstream.ui2.graphicGraph.GraphicElement.ElementRenderer;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Rule;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Selector;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Style;
@@ -113,7 +114,12 @@ public class StyleGroup extends Style implements Iterable<Element>
 	 * The set of bulk elements.
 	 */
 	protected BulkElements bulkElements = new BulkElements();
-	
+
+	/**
+	 * Associated renderers.
+	 */
+	public HashMap<String,ElementRenderer> renderers;
+
 // Construction
 	
 	/**
@@ -344,6 +350,30 @@ public class StyleGroup extends Style implements Iterable<Element>
 		return elements.values().iterator();
 	}
 
+	/**
+	 * The associated renderers.
+	 * @return A renderer or null if not found.
+	 */
+	public ElementRenderer getRenderer( String id )
+	{
+		if( renderers != null )
+			return renderers.get( id );
+		
+		return null;
+	}
+	
+	/**
+	 * Set of events for a given element or null if the element has not currently occurring events.
+	 * @return A set of events or null if none occurring at that time.
+	 */
+	public ElementEvents getEventsFor( Element element )
+	{
+		if( eventsFor != null )
+			return eventsFor.get( element );
+		
+		return null;
+	}
+
 // Command
 
 	/**
@@ -491,6 +521,29 @@ public class StyleGroup extends Style implements Iterable<Element>
 	public void setValue( String property, Object value )
 	{
 		throw new RuntimeException( "you cannot change the values of a style group." );
+	}
+
+	/**
+	 * Add a renderer to this group.
+	 * @param id The renderer identifier.
+	 * @param renderer The renderer.
+	 */
+	public void addRenderer( String id, ElementRenderer renderer )
+	{
+		if( renderers == null )
+			renderers = new HashMap<String, ElementRenderer>();
+		
+		renderers.put( id, renderer );
+	}
+	
+	/**
+	 * Remove a renderer.
+	 * @param id The renderer identifier.
+	 * @return The removed renderer or null if not found.
+	 */
+	public ElementRenderer removeRenderer( String id )
+	{
+		return renderers.remove( id );
 	}
 
 	@Override

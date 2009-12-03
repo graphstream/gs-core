@@ -163,6 +163,11 @@ public class NodeParticle extends Particle
 			
 			attraction( delta );
 			
+//			int N = neighbours.size();
+//			if( N > 40 )
+//			     System.err.printf( "* BIG ** [%05d] rep=%05.5f att=%05.5f%n", N, repE, attE );
+//			else System.err.printf( "  Small  [%05d] rep=%05.5f att=%05.5f%n", N, repE, attE );
+			
 			disp.scalarMult( box.force );
 			
 			len = disp.length();
@@ -242,7 +247,7 @@ public class NodeParticle extends Particle
 				
 				float len    = delta.normalize();
 				float factor = len != 0 ? ( box.K2 / ( len * len ) ) : 0.00001f;
-
+								
 				delta.scalarMult( -factor );
 				disp.add( delta );
 				box.energies.accumulateEnergy( factor );	// TODO check this
@@ -314,13 +319,14 @@ public class NodeParticle extends Particle
 
 						if( len > 0 )// && len < ( box.k * box.viewZone ) )
 						{
+							if( len < box.k ) len = box.k;	// XXX NEW To prevent infinite repulsion.
 							float factor = len != 0 ? ( box.K2 / ( len * len ) ) : 0.00001f;
 							box.energies.accumulateEnergy( factor );	// TODO check this
 							repE   += factor;
 							delta.scalarMult( -factor );
+							
+							disp.add( delta );
 						}
-						
-						disp.add( delta );
 					}
 				}
 			}
@@ -359,16 +365,15 @@ public class NodeParticle extends Particle
 			
 						float len = delta.normalize();
 						
-						//if( len < 0.2f * box.area )
+						if( len > 0 )
 						{
-							if( len != 0 )
-							{
-								float factor = len != 0 ? ( ( box.K2 / ( len * len ) ) * (bary.weight) ) : 0.00001f;
-								box.energies.accumulateEnergy( factor );
-								delta.scalarMult( -factor );
-								repE   += factor;
-							}
-			
+							if( len < box.k ) len = box.k;	// XXX NEW To prevent infinite repulsion.
+							float factor = len != 0 ? ( ( box.K2 / ( len * len ) ) * (bary.weight) ) : 0.00001f;
+								
+							box.energies.accumulateEnergy( factor );
+							delta.scalarMult( -factor );
+							repE   += factor;
+							
 							disp.add( delta );
 						}
 					}
@@ -389,10 +394,11 @@ public class NodeParticle extends Particle
 
 				float len = delta.normalize();
 				float k   = box.k;
-				
+
 				float factor = box.K1 * ( len - k );
 
-				delta.scalarMult( factor );
+//				delta.scalarMult( factor );
+				delta.scalarMult( factor * ( 1f/(neighbours.size()*0.1f) ) );	// XXX NEW inertia based on the node degree.
 				disp.add( delta );
 				attE += factor;
 				
@@ -493,4 +499,18 @@ public class NodeParticle extends Particle
 		if( box.is3D )
 			pos.z += box.random.nextFloat() * k * 2 - 1;
 	}
+
+	@Override
+    public void inserted()
+    {
+	    // TODO Auto-generated method stub
+	    
+    }
+
+	@Override
+    public void removed()
+    {
+	    // TODO Auto-generated method stub
+	    
+    }
 }

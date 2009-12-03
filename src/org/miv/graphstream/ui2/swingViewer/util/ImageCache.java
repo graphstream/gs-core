@@ -21,7 +21,7 @@
  * 	Guilhelm Savin
  */
 
-package org.miv.graphstream.ui2.swingViewer;
+package org.miv.graphstream.ui2.swingViewer.util;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

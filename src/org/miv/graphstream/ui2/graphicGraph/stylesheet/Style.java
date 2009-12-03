@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import javax.swing.JComponent;
-
 /**
  * A style is a whole set of settings for a graphic element.
  * 
@@ -478,11 +476,11 @@ public class Style extends StyleConstants
 	}
 
 	/**
-	 * The element JComponent if available.
+	 * The element JComponent type if available.
 	 */
-	public JComponent getJComponent()
+	public JComponents getJComponent()
 	{
-		return (JComponent) getValue( "jcomponent" );
+		return (JComponents) getValue( "jcomponent" );
 	}
 	
 	/**
@@ -591,7 +589,7 @@ public class Style extends StyleConstants
     	values.put( "text-visibility"     , null );
     	values.put( "text-color"          , textColor );
     	values.put( "text-style"          , TextStyle.NORMAL );
-    	values.put( "text-font"           , "sans" );
+    	values.put( "text-font"           , "default" );
     	values.put( "text-size"           , new Value( Units.PX, 10 ) );
     	values.put( "text-alignment"      , TextAlignment.CENTER );
     	

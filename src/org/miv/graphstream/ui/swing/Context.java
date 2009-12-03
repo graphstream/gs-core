@@ -36,7 +36,7 @@ import org.miv.graphstream.ui.graphicGraph.GraphicElement;
 import org.miv.graphstream.ui.graphicGraph.GraphicNode;
 import org.miv.graphstream.ui.graphicGraph.stylesheet.Style;
 import org.miv.graphstream.ui.graphicGraph.stylesheet.Value;
-import org.miv.graphstream.ui2.swingViewer.FontCache;
+import org.miv.graphstream.ui.swing.FontCache;
 
 /**
  * Shared settings used during graph rendering.

@@ -23,20 +23,23 @@
 package org.miv.graphstream.ui2.swingViewer;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
+import org.miv.graphstream.ui2.graphicGraph.GraphicElement;
 import org.miv.graphstream.ui2.graphicGraph.GraphicGraph;
 import org.miv.graphstream.ui2.swingViewer.View;
 import org.miv.graphstream.ui2.swingViewer.Viewer;
+import org.miv.graphstream.ui2.swingViewer.util.MouseManager;
+import org.miv.graphstream.ui2.swingViewer.util.ShortcutManager;
+import org.miv.util.geom.Point3;
 
 /**
  * Base for constructing views.
@@ -78,7 +81,7 @@ import org.miv.graphstream.ui2.swingViewer.Viewer;
  * 		attribute to the graph when the view is closed or hidden, and removes it when the view
  * 		is shown. The value of this graph attribute is the identifier of the view.</p>
  */
-public abstract class ViewBase extends View implements ComponentListener, WindowListener
+public class DefaultView extends View implements ComponentListener, WindowListener
 {
 // Attribute
 	
@@ -103,11 +106,6 @@ public abstract class ViewBase extends View implements ComponentListener, Window
 	protected boolean graphChanged;
 	
 	/**
-	 * True as soon as the canvas dimensions changed.
-	 */
-	protected boolean canvasChanged = true;
-
-	/**
 	 * Manager for events with the keyboard.
 	 */
 	protected ShortcutManager shortcuts;
@@ -116,27 +114,34 @@ public abstract class ViewBase extends View implements ComponentListener, Window
 	 * Manager for events with the mouse.
 	 */
 	protected MouseManager mouseClicks;
+	
+	/**
+	 * The graph renderer.
+	 */
+	protected GraphRenderer renderer;
 
 	/**
-	 * Current selection or null.
+	 * Set to true each time the drawing canvas changed.
 	 */
-	protected Selection selection = null;
+	protected boolean canvasChanged = true;
 
 // Construction
 	
-	public ViewBase( Viewer viewer, String identifier )
+	public DefaultView( Viewer viewer, String identifier, GraphRenderer renderer )
 	{
-		super( identifier );
+		super( viewer, identifier );
 		
-		this.viewer = viewer;
-		this.graph  = viewer.getGraphicGraph();
-		shortcuts   = new ShortcutManager( this );
-		mouseClicks = new MouseManager( this.graph, this );
+		this.viewer   = viewer;
+		this.graph    = viewer.getGraphicGraph();
+		this.renderer = renderer;
+		shortcuts     = new ShortcutManager( this );
+		mouseClicks   = new MouseManager( this.graph, this );
 		
 		addComponentListener( this );
 		addKeyListener( shortcuts );
 		addMouseListener( mouseClicks );
 		addMouseMotionListener( mouseClicks );
+		renderer.open( graph, this );
 	}
 	
 // Access
@@ -158,9 +163,9 @@ public abstract class ViewBase extends View implements ComponentListener, Window
 		{
 			Graphics2D g2 = (Graphics2D) g;
 
-			super.paint( g );
-			setupGraphics( g2 );
+//			super.paint( g );
 			render( g2 );
+			paintChildren( g2 );
 
 			graphChanged = canvasChanged = false;
 		}
@@ -169,6 +174,7 @@ public abstract class ViewBase extends View implements ComponentListener, Window
 	@Override
     public void close( GraphicGraph graph )
     {
+		renderer.close();
 		graph.addAttribute( "ui.viewClosed", getId() );
 		removeComponentListener( this );
 		removeKeyListener( shortcuts );
@@ -210,81 +216,34 @@ public abstract class ViewBase extends View implements ComponentListener, Window
 		}
 	}
 	
-	public abstract void render( Graphics2D g );
+	public void render( Graphics2D g )
+	{
+		setBackground( graph.getStyle().getFillColor( 0 ) );
+		renderer.render( g, getWidth(), getHeight() );
+	}
 
 // Selection
 		
-	/**
-	 * The current selection.
-	 */
-	protected class Selection
-	{
-		public float x1, y1, x2, y2;
-	}
-	
 	@Override
     public void beginSelectionAt( float x1, float y1 )
     {
-		if( selection == null )
-			selection = new Selection();
-		
-		selection.x1  = x1;
-		selection.y1  = y1;
-		selection.x2  = x1;
-		selection.y2  = y1;
+		renderer.beginSelectionAt( x1, y1 );
 		canvasChanged = true;
     }
 
 	@Override
     public void selectionGrowsAt( float x, float y )
     {
-		selection.x2  = x;
-		selection.y2  = y;
+		renderer.selectionGrowsAt( x, y );
 		canvasChanged = true;
     }
 
 	@Override
     public void endSelectionAt( float x2, float y2 )
     {
-		selection = null;
+		renderer.endSelectionAt( x2, y2 );
 		canvasChanged = true;
     }
-
-// Utility
-	
-	protected void setupGraphics( Graphics2D g )
-	{
-		g.setRenderingHint( RenderingHints.KEY_INTERPOLATION,       RenderingHints.VALUE_INTERPOLATION_BICUBIC );
-		g.setRenderingHint( RenderingHints.KEY_RENDERING,           RenderingHints.VALUE_RENDER_QUALITY );
-		g.setRenderingHint( RenderingHints.KEY_TEXT_ANTIALIASING,   RenderingHints.VALUE_TEXT_ANTIALIAS_ON );
-	    g.setRenderingHint( RenderingHints.KEY_ANTIALIASING,        RenderingHints.VALUE_ANTIALIAS_ON );
-	    g.setRenderingHint( RenderingHints.KEY_COLOR_RENDERING,     RenderingHints.VALUE_COLOR_RENDER_QUALITY );
-	    g.setRenderingHint( RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY );
-	    g.setRenderingHint( RenderingHints.KEY_STROKE_CONTROL,      RenderingHints.VALUE_STROKE_PURE );
-	}
-	
-	protected void displayNothingToDo( Graphics2D g )
-	{
-		int w = getWidth();
-		int h = getHeight();
-		
-		String msg1 = "Graph width/height/depth is zero !!";
-		String msg2 = "Place components using the 'xyz' attribute.";
-		
-		g.setColor( Color.RED );
-		g.drawLine( 0, 0, w, h );
-		g.drawLine( 0, h, w, 0 );
-		
-		float msg1length = g.getFontMetrics().stringWidth( msg1 );
-		float msg2length = g.getFontMetrics().stringWidth( msg2 );
-		
-		float x = w/2;
-		float y = h/2;
-
-		g.setColor( Color.BLACK );
-		g.drawString( msg1, x - msg1length/2, y-20 );
-		g.drawString( msg2, x - msg2length/2, y+20 );
-	}
 	
 // Component listener
 
@@ -353,6 +312,84 @@ public abstract class ViewBase extends View implements ComponentListener, Window
 	public void windowOpened( WindowEvent e )
     {
 		graph.removeAttribute( "ui.viewClosed" );
+		canvasChanged = true;
+    }
+	
+// Methods deferred to the renderer
+	
+	@Override
+    public ArrayList<GraphicElement> allNodesOrSpritesIn( float x1, float y1, float x2, float y2 )
+    {
+		return renderer.allNodesOrSpritesIn( x1, y1, x2, y2 );
+    }
+
+	@Override
+    public GraphicElement findNodeOrSpriteAt( float x, float y )
+    {
+	    return renderer.findNodeOrSpriteAt( x, y );
+    }
+
+	@Override
+    public float getGraphDimension()
+    {
+	    return renderer.getGraphDimension();
+    }
+
+	@Override
+    public Point3 getViewCenter()
+    {
+	    return renderer.getViewCenter();
+    }
+
+	@Override
+    public float getViewPercent()
+    {
+	    return renderer.getViewPercent();
+    }
+
+	@Override
+    public float getViewRotation()
+    {
+	    return renderer.getViewRotation();
+    }
+
+	@Override
+    public void moveElementAtPx( GraphicElement element, float x, float y )
+    {
+		renderer.moveElementAtPx( element, x, y );
+    }
+
+	@Override
+    public void resetView()
+    {
+		renderer.resetView();
+		canvasChanged = true;
+    }
+
+	@Override
+    public void setBounds( float minx, float miny, float minz, float maxx, float maxy, float maxz )
+    {
+	    renderer.setBounds( minx, miny, minz, maxx, maxy, maxz );
+    }
+
+	@Override
+    public void setViewCenter( float x, float y, float z )
+    {
+	    renderer.setViewCenter( x, y, z );
+		canvasChanged = true;
+    }
+
+	@Override
+    public void setViewPercent( float percent )
+    {
+	    renderer.setViewPercent( percent );
+		canvasChanged = true;
+    }
+
+	@Override
+    public void setViewRotation( float theta )
+    {
+		renderer.setViewRotation( theta );
 		canvasChanged = true;
     }
 }

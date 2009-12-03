@@ -14,10 +14,11 @@
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-package org.miv.graphstream.ui2.swingViewer.basicView;
+package org.miv.graphstream.ui2.swingViewer.util;
 
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Value;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Values;
+import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleConstants;
 import org.miv.util.geom.Point3;
 import org.miv.util.geom.Vector3;
 
@@ -31,7 +32,7 @@ import org.miv.util.geom.Vector3;
  * <p>Here we call the canvas "view port" since this class allows to place a view port inside
  * the graph in order to zoom and pan the view.</p>
  */
-class GraphMetrics
+public class GraphMetrics
 {
 // Attribute
 	
@@ -145,33 +146,14 @@ class GraphMetrics
 // Access -- Convert values
 	
 	/**
-	 * Convert a value in a given units to graph units.
-	 * @param value The value to convert (it contains its own units).
+	 * Convert a value in given units to graph units.
+	 * @param value The value to convert.
+	 * @param units The units the value to convert is expressed in.
+	 * @return The value converted to GU.
 	 */
-	public float lengthToGu( Value value )
+	public float lengthToGu( float value, StyleConstants.Units units )
 	{
-		switch( value.units )
-		{
-			case PX:
-				return (value.value-0.01f) / ratioPx2Gu;
-			case PERCENTS:
-				return ( diagonal * value.value );
-			case GU:
-			default:
-				return value.value;
-		}
-	}
-	
-	/**
-	 * Convert one of the given values in a given units to graph units.
-	 * @param values The values set containing the value to convert (it contains its own units).
-	 * @param index Index of the value to convert.
-	 */
-	public float lengthToGu( Values values, int index )
-	{
-		float value = values.get( index );
-		
-		switch( values.units )
+		switch( units )
 		{
 			case PX:
 				return (value-0.01f) / ratioPx2Gu;
@@ -184,33 +166,32 @@ class GraphMetrics
 	}
 	
 	/**
-	 * Convert a value in a given units to pixels.
+	 * Convert a value in a given units to graph units.
 	 * @param value The value to convert (it contains its own units).
 	 */
-	public float lengthToPx( Value value )
+	public float lengthToGu( Value value )
 	{
-		switch( value.units )
-		{
-			case GU:
-				return (value.value-0.01f) * ratioPx2Gu;
-			case PERCENTS:
-				return ( diagonal * value.value ) * ratioPx2Gu;
-			case PX:
-			default:
-				return value.value;
-		}
+		return lengthToGu( value.value, value.units );
 	}
 	
 	/**
-	 * Convert one of the given values in a given units pixels.
+	 * Convert one of the given values in a given units to graph units.
 	 * @param values The values set containing the value to convert (it contains its own units).
 	 * @param index Index of the value to convert.
 	 */
-	public float lengthToPx( Values values, int index )
+	public float lengthToGu( Values values, int index )
 	{
-		float value = values.get( index );
-		
-		switch( values.units )
+		return lengthToGu( values.get( index ), values.units );
+	}
+	/**
+	 * Convert a value in a given units to pixels.
+	 * @param value The value to convert.
+	 * @param units The units the value to convert is expressed in.
+	 * @return The value converted in pixels.
+	 */
+	public float lengthToPx( float value, StyleConstants.Units units )
+	{
+		switch( units )
 		{
 			case GU:
 				return (value-0.01f) * ratioPx2Gu;
@@ -220,6 +201,25 @@ class GraphMetrics
 			default:
 				return value;
 		}
+	}
+	
+	/**
+	 * Convert a value in a given units to pixels.
+	 * @param value The value to convert (it contains its own units).
+	 */
+	public float lengthToPx( Value value )
+	{
+		return lengthToPx( value.value, value.units );
+	}
+	
+	/**
+	 * Convert one of the given values in a given units pixels.
+	 * @param values The values set containing the value to convert (it contains its own units).
+	 * @param index Index of the value to convert.
+	 */
+	public float lengthToPx( Values values, int index )
+	{
+		return lengthToPx( values.get( index ), values.units );
 	}
 		
 	@Override
@@ -287,5 +287,7 @@ class GraphMetrics
 		size.data[1] = hi.y - lo.y;
 		size.data[2] = hi.z - lo.z;
 		diagonal     = (float) Math.sqrt( size.data[0]*size.data[0] + size.data[1] * size.data[1] + size.data[2] * size.data[2] );
+		
+//		System.err.printf( "lo=%s hi=%s%n", lo, hi );
 	}
 }

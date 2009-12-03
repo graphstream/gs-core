@@ -53,9 +53,7 @@ public class GraphicNode extends GraphicElement implements Node
 	{
 		super( id, graph );
 		
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		move( x, y, z );
 		
 		if( attributes != null )
 			addAttributes( attributes );
@@ -91,7 +89,11 @@ public class GraphicNode extends GraphicElement implements Node
     	this.x = x;
     	this.y = y;
     	this.z = z;
-    	mygraph.graphChanged = true;
+    	
+    	mygraph.graphChanged  = true;
+    	mygraph.boundsChanged = true;
+    	
+    	callChangeListeners();
     }
 
 	@Override
@@ -99,30 +101,29 @@ public class GraphicNode extends GraphicElement implements Node
 	{
 		super.attributeChanged( attribute, event, oldValue, newValue );
 		
-		if( event == AttributeChangeEvent.ADD || event == AttributeChangeEvent.CHANGE )
+		if( attribute.startsWith( "ui.sprite." ) )
+		{
+			mygraph.spriteAttribute( event, this, attribute, newValue );
+		}
+		else if( event == AttributeChangeEvent.ADD || event == AttributeChangeEvent.CHANGE )
 		{
 			if( attribute.equals( "x" ) )
 			{
-				x = numberAttribute( newValue );
-				mygraph.graphChanged = true;
+				move( numberAttribute( newValue ), y, z );
 			}
 			else if( attribute.equals( "y" ) )
 			{
-				y = numberAttribute( newValue );
-				mygraph.graphChanged = true;
+				move( x, numberAttribute( newValue ), z );
 			}
 			else if( attribute.equals( "z" ) )
 			{
-				z = numberAttribute( newValue );
-				mygraph.graphChanged = true;
+				move( x, y, numberAttribute( newValue ) );
 			}
 			else if( attribute.equals( "xy" ) || attribute.equals( "xyz" ) )
 			{
 				float pos[] = nodePosition( this );
 				
-				x = pos[0];
-				y = pos[1];
-				z = pos[2];
+				move( pos[0], pos[1], pos[2] );
 			}
 		}
 		

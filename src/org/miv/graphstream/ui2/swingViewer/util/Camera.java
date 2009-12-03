@@ -14,13 +14,14 @@
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-package org.miv.graphstream.ui2.swingViewer.basicView;
+package org.miv.graphstream.ui2.swingViewer.util;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.ui2.graphicGraph.GraphicEdge;
@@ -31,6 +32,8 @@ import org.miv.graphstream.ui2.graphicGraph.GraphicSprite;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Style;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Values;
 import org.miv.util.geom.Point3;
+
+import static org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleConstants.*;
 
 /**
  * Define how the graph is viewed.
@@ -49,7 +52,7 @@ import org.miv.util.geom.Point3;
  * not invisible ?" (not in the camera view) or "on what element is the mouse cursor
  * actually ?".</p>
  */
-class Camera
+public class Camera
 {
 // Attribute
 	
@@ -97,6 +100,12 @@ class Camera
 	 * Padding around the graph.
 	 */
 	protected Values padding = new Values( Style.Units.GU, 0, 0, 0 );
+	
+	/**
+	 * Which node is visible. This allows to mark invisible nodes to fasten visibility tests for
+	 * nodes, attached sprites and edges.
+	 */
+	protected HashSet<String> nodeInvisible = new HashSet<String>();
 	
 // Construction
 	
@@ -174,11 +183,11 @@ class Camera
 		switch( element.getSelectorType() )
 		{
 			case NODE:
-				return isNodeOrSpriteVisible( element );
+				return ! nodeInvisible.contains( element.getId() );
 			case EDGE:
 				return isEdgeVisible( (GraphicEdge) element );
 			case SPRITE:
-				return isNodeOrSpriteVisible( element );
+				return isSpriteVisible( (GraphicSprite) element );
 			default:
 				return false;
 		}
@@ -194,68 +203,45 @@ class Camera
 	 */
 	public Point2D.Float inverseTransform( float x, float y )
 	{
-		Point2D.Float src = new Point2D.Float( x, y );
-		Point2D.Float dst = new Point2D.Float();
+		Point2D.Float p = new Point2D.Float( x, y );
 		
-		xT.transform( src, dst );
+		xT.transform( p, p );
 		
-		return dst;
+		return p;
 	}
 	
-	protected boolean isNodeOrSpriteVisible( GraphicElement elt )
+	/**
+	 * Transform a point in graph units into pixels.
+	 * @return The transformed point.
+	 */
+	public Point2D.Float transform( float x, float y )
 	{
-		return isNodeOrSpriteIn( elt, 0, 0, metrics.viewport.data[0], metrics.viewport.data[1] );
+		Point2D.Float p = new Point2D.Float( x, y );
+		
+		Tx.transform( p, p );
+		
+		return p;
 	}
 	
-	protected boolean isNodeOrSpriteIn( GraphicElement elt, float X1, float Y1, float X2, float Y2 )
+	/**
+	 * Process each node to check if it is in the actual view port, and mark invisible nodes. This
+	 * method allows for fast node, sprite and edge visibility checking when drawing. This must be
+	 * called before each rendering (if the view port changed).
+	 */
+	public void checkVisibility( GraphicGraph graph )
 	{
-		Values        size = elt.getStyle().getSize();
-		float         w2   = metrics.lengthToPx( size, 0 ) / 2;
-		float         h2   = size.size() > 1 ? metrics.lengthToPx( size, 1 )/2 : w2;
-		Point2D.Float src  = new Point2D.Float( elt.getX(), elt.getY() );
-		Point2D.Float dst  = new Point2D.Float();
+		float W = metrics.viewport.data[0];
+		float H = metrics.viewport.data[1];
 		
-		Tx.transform( src, dst );
-
-		float x1 = dst.x - w2;
-		float x2 = dst.x + w2;
-		float y1 = dst.y - h2;
-		float y2 = dst.y + h2;
+		nodeInvisible.clear();
 		
-		if( x2 < X1 ) return false;
-		if( y2 < Y1 ) return false;
-		if( x1 > X2 ) return false;
-		if( y1 > Y2 ) return false;
-		
-		return true;
-	}
-	
-	protected boolean isEdgeVisible( GraphicEdge edge )
-	{
-		Point2D.Float src = new Point2D.Float( ((GraphicNode)edge.getNode0()).getX(), ((GraphicNode)edge.getNode0()).getY() );
-		Point2D.Float dst = new Point2D.Float();
-		
-		Tx.transform( src, dst );
-		
-		float x1 = dst.x;
-		float y1 = dst.y;
-		
-		src.setLocation( ((GraphicNode)edge.getNode1()).getX(), ((GraphicNode)edge.getNode1()).getY() );
-		Tx.transform( src, dst );
-		
-		float x2 = dst.x;
-		float y2 = dst.y;
-		float t;
-		
-		if( x1 > x2 ) { t = x1; x1 = x2; x2 = t; }
-		if( y1 > y2 ) { t = y1; y1 = y2; y2 = t; }
-		
-		if( x2 < 0                        ) return false;
-		if( y2 < 0                        ) return false;
-		if( x1 > metrics.viewport.data[0] ) return false;
-		if( y1 > metrics.viewport.data[1] ) return false;
-		
-		return true;
+		for( Node node: graph.nodeSet() )
+		{
+			boolean visible = isNodeIn( (GraphicNode)node, 0, 0, W, H );
+			
+			if( ! visible )
+				nodeInvisible.add( node.getId() );
+		}
 	}
 	
 	/**
@@ -285,29 +271,6 @@ class Camera
 		return null;
 	}
 	
-	protected boolean nodeOrSpriteContains( GraphicElement elt, float x, float y )
-	{
-		Values        size = elt.getStyle().getSize();
-		float         w2   = metrics.lengthToPx( size, 0 ) / 2;
-		float         h2   = size.size() > 1 ? metrics.lengthToPx( size, 1 )/2 : w2;
-		Point2D.Float src  = new Point2D.Float( elt.getX(), elt.getY() );
-		Point2D.Float dst  = new Point2D.Float();
-		
-		Tx.transform( src, dst );
-
-		float x1 = dst.x - w2;
-		float x2 = dst.x + w2;
-		float y1 = dst.y - h2;
-		float y2 = dst.y + h2;
-		
-		if( x < x1 ) return false;
-		if( y < y1 ) return false;
-		if( x > x2 ) return false;
-		if( y > y2 ) return false;
-		
-		return true;		
-	}
-	
 	/**
 	 * Search for all the nodes and sprites contained inside the rectangle (x1,y1)-(x2,y2).
 	 * @param graph The graph to search for.
@@ -323,19 +286,34 @@ class Camera
 		
 		for( Node node: graph )
 		{
-			if( isNodeOrSpriteIn( (GraphicNode)node, x1, y1, x2, y2 ) )
+			if( isNodeIn( (GraphicNode)node, x1, y1, x2, y2 ) )
 				elts.add( (GraphicNode)node );
 		}
 		
 		for( GraphicSprite sprite: graph.spriteSet() )
 		{
-			if( isNodeOrSpriteIn( sprite, x1, y1, x2, y2 ) )
+			if( isSpriteIn( sprite, x1, y1, x2, y2 ) )
 				elts.add( sprite );
 		}
 		
 		return elts;
 	}
 	
+	/**
+	 * Compute the real position of a sprite according to its eventual attachment in graph units.
+	 * @param sprite The sprite.
+	 * @param pos Receiver for the sprite 2D position, can be null. 
+	 * @param units The units in which the position must be computed (the sprite already contains units).
+	 * @return The same instance as the one given by parameter pos or a new one if pos was null,
+	 * containing the computed position in the given units.
+	 */
+	public Point2D.Float getSpritePosition( GraphicSprite sprite, Point2D.Float pos, Units units )
+	{
+		if(      sprite.isAttachedToNode() ) return getSpritePositionNode( sprite, pos, units );
+		else if( sprite.isAttachedToEdge() ) return getSpritePositionEdge( sprite, pos, units );
+		else                                 return getSpritePositionFree( sprite, pos, units );
+	}
+
 // Command
 
 	/**
@@ -416,7 +394,7 @@ class Camera
 		
 		return Tx;
 	}
-	
+
 	/**
 	 * Compute a transformation that pass from graph units (user space) to a pixel units (device
 	 * space) so that the view (zoom and centre) requested by the user is produced.
@@ -566,5 +544,250 @@ class Camera
 			return padding.get( 1 );
 		
 		return getPaddingXpx();
-	}	
+	}
+	
+	/**
+	 * Check if a sprite is visible in the current view port.
+	 * @param sprite The sprite to check.
+	 * @return True if visible.
+	 */
+	protected boolean isSpriteVisible( GraphicSprite sprite )
+	{
+		return isSpriteIn( sprite, 0, 0, metrics.viewport.data[0], metrics.viewport.data[1] );
+	}
+
+	/**
+	 * Check if an edge is visible in the current view port.
+	 * @param edge The edge to check.
+	 * @return True if visible.
+	 */
+	protected boolean isEdgeVisible( GraphicEdge edge )
+	{
+		boolean node0Invis = nodeInvisible.contains( edge.getNode0().getId() );
+		boolean node1Invis = nodeInvisible.contains( edge.getNode1().getId() );
+		
+		return ! ( node0Invis && node1Invis );
+	}
+
+	/**
+	 * Is the given node visible in the given area.
+	 * @param node The node to check.
+	 * @param X1 The min abscissa of the area.
+	 * @param Y1 The min ordinate of the area.
+	 * @param X2 The max abscissa of the area.
+	 * @param Y2 The max ordinate of the area.
+	 * @return True if the node lies in the given area.
+	 */
+	protected boolean isNodeIn( GraphicNode node, float X1, float Y1, float X2, float Y2 )
+	{
+		Values        size = node.getStyle().getSize();
+		float         w2   = metrics.lengthToPx( size, 0 ) / 2;
+		float         h2   = size.size() > 1 ? metrics.lengthToPx( size, 1 )/2 : w2;
+		Point2D.Float src  = new Point2D.Float( node.getX(), node.getY() );
+		boolean       vis  = true;
+		
+		Tx.transform( src, src );
+
+		float x1 = src.x - w2;
+		float x2 = src.x + w2;
+		float y1 = src.y - h2;
+		float y2 = src.y + h2;
+		
+		if(      x2 < X1 ) vis = false;
+		else if( y2 < Y1 ) vis = false;
+		else if( x1 > X2 ) vis = false;
+		else if( y1 > Y2 ) vis = false;
+		
+		return vis;
+	}
+	
+	/**
+	 * Is the given sprite visible in the given area.
+	 * @param sprite The sprite to check.
+	 * @param X1 The min abscissa of the area.
+	 * @param Y1 The min ordinate of the area.
+	 * @param X2 The max abscissa of the area.
+	 * @param Y2 The max ordinate of the area.
+	 * @return True if the node lies in the given area.
+	 */
+	protected boolean isSpriteIn( GraphicSprite sprite, float X1, float Y1, float X2, float Y2 )
+	{
+		if( sprite.isAttachedToNode() )
+		{
+			return ( ! nodeInvisible.contains( sprite.getNodeAttachment().getId() ) );
+		}
+		else if( sprite.isAttachedToEdge() )
+		{
+			return isEdgeVisible( sprite.getEdgeAttachment() );
+		}
+		else
+		{
+			Values        size = sprite.getStyle().getSize();
+			float         w2   = metrics.lengthToPx( size, 0 ) / 2;
+			float         h2   = size.size() > 1 ? metrics.lengthToPx( size, 1 )/2 : w2;
+			Point2D.Float src  = new Point2D.Float( sprite.getX(), sprite.getY() );
+	
+			Tx.transform( src, src );
+	
+			float x1 = src.x - w2;
+			float x2 = src.x + w2;
+			float y1 = src.y - h2;
+			float y2 = src.y + h2;
+		
+			if( x2 < X1 ) return false;
+			if( y2 < Y1 ) return false;
+			if( x1 > X2 ) return false;
+			if( y1 > Y2 ) return false;
+			
+			return true;
+		}
+	}
+
+	/**
+	 * Check if a node or sprite contains the given point (x,y).
+	 * @param elt The node or sprite.
+	 * @param x The point abscissa.
+	 * @param y The point ordinate.
+	 * @return True if (x,y) is in the given element.
+	 */
+	protected boolean nodeOrSpriteContains( GraphicElement elt, float x, float y )
+	{
+		Values        size = elt.getStyle().getSize();
+		float         w2   = metrics.lengthToPx( size, 0 ) / 2;
+		float         h2   = size.size() > 1 ? metrics.lengthToPx( size, 1 )/2 : w2;
+		Point2D.Float src  = new Point2D.Float( elt.getX(), elt.getY() );
+		Point2D.Float dst  = new Point2D.Float();
+		
+		Tx.transform( src, dst );
+
+		float x1 = dst.x - w2;
+		float x2 = dst.x + w2;
+		float y1 = dst.y - h2;
+		float y2 = dst.y + h2;
+		
+		if( x < x1 ) return false;
+		if( y < y1 ) return false;
+		if( x > x2 ) return false;
+		if( y > y2 ) return false;
+		
+		return true;		
+	}
+	
+	/**
+	 * Compute the position of a sprite if it is not attached.
+	 * @param sprite The sprite.
+	 * @param pos Where to stored the computed position, if null, the position is created.
+	 * @param units The units the computed position must be given into. 
+	 * @return The same instance as pos, or a new one if pos was null.
+	 */
+	protected Point2D.Float getSpritePositionFree( GraphicSprite sprite, Point2D.Float pos, Units units )
+	{
+		if( pos == null )
+			pos = new Point2D.Float();
+		
+		if( sprite.getUnits() == units )
+		{
+			pos.x = sprite.getX();
+			pos.y = sprite.getY();
+		}
+		else if( units == Units.GU && sprite.getUnits() == Units.PX )
+		{
+			pos.x = sprite.getX();
+			pos.y = sprite.getY();
+			
+			xT.transform( pos, pos );
+		}
+		else if( units == Units.PX &&  sprite.getUnits() == Units.GU )
+		{
+			pos.x = sprite.getX();
+			pos.y = sprite.getY();
+		
+			Tx.transform( pos, pos );
+		}
+		else
+		{
+			throw new RuntimeException( "Unhandled yet sprite positioning." );
+		}
+		
+		return pos;
+	}
+
+	/**
+	 * Compute the position of a sprite if attached to a node.
+	 * @param sprite The sprite.
+	 * @param pos Where to stored the computed position, if null, the position is created.
+	 * @param units The units the computed position must be given into. 
+	 * @return The same instance as pos, or a new one if pos was null.
+	 */
+	protected Point2D.Float getSpritePositionNode( GraphicSprite sprite, Point2D.Float pos, Units units )
+	{
+		if( pos == null )
+			pos = new Point2D.Float();
+		
+		GraphicNode node    = sprite.getNodeAttachment();
+		float       radius  = metrics.lengthToGu( sprite.getX(), sprite.getUnits() );
+		float       z       = sprite.getZ();
+		
+		pos.x = node.x + ( (float)Math.cos( z ) * radius );
+		pos.y = node.y + ( (float)Math.sin( z ) * radius );
+
+		if( units == Units.PX )
+			Tx.transform( pos, pos );
+		
+		return pos;
+	}
+	
+	/**
+	 * Compute the position of a sprite if attached to an edge.
+	 * @param sprite The sprite.
+	 * @param pos Where to stored the computed position, if null, the position is created.
+	 * @param units The units the computed position must be given into. 
+	 * @return The same instance as pos, or a new one if pos was null.
+	 */
+	protected Point2D.Float getSpritePositionEdge( GraphicSprite sprite, Point2D.Float pos, Units units )
+	{
+		if( pos == null )
+			pos = new Point2D.Float();
+		
+		GraphicEdge edge = sprite.getEdgeAttachment();
+		
+		if( edge.isCurve() )
+		{
+			//renderSpriteAttachedToCubicEdge( ce, sprite, camera );
+			// TODO XXX
+			throw new RuntimeException( "Edge on curve not yet supported." );
+		}
+		else
+		{
+			float x  = ((GraphicNode)edge.getSourceNode()).x;
+			float y  = ((GraphicNode)edge.getSourceNode()).y;
+			float dx = ((GraphicNode)edge.getTargetNode()).x - x;
+			float dy = ((GraphicNode)edge.getTargetNode()).y - y;
+			float d  = sprite.getX();						// Percent on the edge.
+			float o  = sprite.getY();						// Offset from the position given by percent, perpendicular to the edge.
+			
+			d = d > 1 ? 1 : d;
+			d = d < 0 ? 0 : d;
+			
+			x += dx * d;
+			y += dy * d;
+			
+			d   = (float) Math.sqrt( dx*dx + dy*dy );
+			dx /= d;
+			dy /= d;
+			
+			x += -dy * o;
+			y +=  dx * o;
+			
+			pos.x = x;
+			pos.y = y;
+			
+			if( units == Units.PX )
+			{
+				Tx.transform( pos, pos );
+			}
+		}
+		
+		return pos;
+	}
 }

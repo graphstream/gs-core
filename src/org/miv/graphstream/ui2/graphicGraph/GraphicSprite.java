@@ -20,6 +20,7 @@ import org.miv.graphstream.graph.GraphAttributesListener;
 import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Selector;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Style;
+import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleConstants;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Values;
 
 /**
@@ -42,7 +43,7 @@ public class GraphicSprite extends GraphicElement
 	/**
 	 * Sprite position.
 	 */
-	public Values position = new Values( Style.Units.GU, 0, 0, 0 );
+	public Values position = new Values( StyleConstants.Units.GU, 0, 0, 0 );
 	
 // Constructors
 	
@@ -106,6 +107,30 @@ public class GraphicSprite extends GraphicElement
 			return n;
 		
 		return getEdgeAttachment();
+	}
+	
+	/**
+	 * True if the sprite is attached to a node or edge.
+	 */
+	public boolean isAttached()
+	{
+		return ( edge != null || node != null );
+	}
+
+	/**
+	 * True if the sprite is attached to a node.
+	 */
+	public boolean isAttachedToNode()
+	{
+		return node != null;
+	}
+
+	/**
+	 * True if the node is attached to an edge.
+	 */
+	public boolean isAttachedToEdge()
+	{
+		return edge != null;
 	}
 
 	@Override
@@ -234,10 +259,13 @@ public class GraphicSprite extends GraphicElement
 
 		if( changed )
 		{
-			mygraph.graphChanged = true;
+			mygraph.graphChanged  = true;
+	    	mygraph.boundsChanged = true;
+
 			String prefix = String.format( "ui.sprite.%s", getId() );
 			
 			mygraph.setAttribute( prefix, position );
+			callChangeListeners();
 		}
 	}
 	

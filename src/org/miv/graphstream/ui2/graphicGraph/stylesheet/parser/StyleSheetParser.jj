@@ -175,14 +175,15 @@ TOKEN: { < ATZOOM            : "at-zoom" >  }
 TOKEN: { < UNDERZOOM         : "under-zoom" > }
 TOKEN: { < OVERZOOM          : "over-zoom" > }
 TOKEN: { < ZOOMS             : "zooms" > }
+TOKEN: { < FIT               : "fit" >  }
 
 TOKEN: { < BOLD              : "bold" > }
 TOKEN: { < BOLD_ITALIC       : "bold-italic" > }
 TOKEN: { < ITALIC            : "italic" > }
 
 TOKEN: { < ALONG             : "along" > }
-TOKEN: { < ATLEFT            : "atleft" > }
-TOKEN: { < ATRIGHT           : "atright" > }
+TOKEN: { < ATLEFT            : "at-left" > }
+TOKEN: { < ATRIGHT           : "at-right" > }
 TOKEN: { < CENTER            : "center" > }
 TOKEN: { < LEFT              : "left" > }
 TOKEN: { < RIGHT             : "right" > }
@@ -200,6 +201,10 @@ TOKEN: { < BOX               : "box" > }
 TOKEN: { < CROSS             : "cross" > }
 TOKEN: { < DIAMOND           : "diamond" > }
 TOKEN: { < POLYGON           : "polygon" > }
+
+TOKEN: { < BUTTON            : "button" > }
+TOKEN: { < TEXTFIELD         : "text-field" > }
+TOKEN: { < PANEL             : "panel" > }
 
 TOKEN: { < LINE              : "line" > }
 TOKEN: { < POLYLINE          : "polyline" > } 
@@ -317,6 +322,7 @@ void style( Style style ):
 	Style.Shape              shape;
 	Style.SpriteOrientation  spriteOrient;
 	Style.ArrowShape         arrowShape;
+	Style.JComponents        component;
 }
 {
 	( ( <COMMENT> )
@@ -342,6 +348,7 @@ void style( Style style ):
 	| ( <TEXTALIGNMENT>      <COLON> textAlignment = textAlign()         <SEMICOLON> { style.setValue( "text-alignment",       textAlignment  ); } )
 	| ( <ICONMODE>           <COLON> iconMode      = iconMode()          <SEMICOLON> { style.setValue( "icon-mode",            iconMode       ); } )
 	| ( <ICON>               <COLON> url           = url()               <SEMICOLON> { style.setValue( "icon",                 url            ); } )
+	| ( <JCOMPONENT>         <COLON> component     = jcomponent()        <SEMICOLON> { style.setValue( "jcomponent",           component      ); } )
 	| ( <VISIBILITYMODE>     <COLON> visMode       = visMode()           <SEMICOLON> { style.setValue( "visibility-mode",      visMode        ); } )
 	| ( <VISIBILITY>         <COLON> values        = values()            <SEMICOLON> { style.setValue( "visibility",           values         ); } )
 	| ( <SIZEMODE>           <COLON> sizeMode      = sizeMode()          <SEMICOLON> { style.setValue( "size-mode",            sizeMode       ); } )
@@ -473,14 +480,13 @@ Style.StrokeMode strokeMode():
 	Style.StrokeMode m;
 }
 {
-	( ( <NONE>               { m = Style.StrokeMode.NONE;              } )
-	| ( <PLAIN>              { m = Style.StrokeMode.PLAIN;             } )
-	| ( <DASHES>             { m = Style.StrokeMode.DASHES;            } )
-	| ( <DOTS>               { m = Style.StrokeMode.DOTS;              } )
+	( ( <NONE>               { m = Style.StrokeMode.NONE;   } )
+	| ( <PLAIN>              { m = Style.StrokeMode.PLAIN;  } )
+	| ( <DASHES>             { m = Style.StrokeMode.DASHES; } )
+	| ( <DOTS>               { m = Style.StrokeMode.DOTS;   } )
 	)
 	{ return m; }
 }
-
 
 Style.ShadowMode shadowMode():
 {
@@ -545,6 +551,7 @@ Style.SizeMode sizeMode():
 }
 {
 	( ( <NORMAL>  { m = Style.SizeMode.NORMAL;   } )
+    | ( <FIT >    { m = Style.SizeMode.FIT;      } ) 
 	| ( <DYNSIZE> { m = Style.SizeMode.DYN_SIZE; } )
 	)
 	{ return m; }
@@ -640,6 +647,18 @@ Style.ArrowShape arrowShape():
 	| ( <IMAGE>   { s = Style.ArrowShape.IMAGE;   } )
 	)
 	{ return s; }
+}
+
+Style.JComponents jcomponent():
+{
+	Style.JComponents c;
+}
+{
+	( ( <BUTTON>    { c = Style.JComponents.BUTTON;     } )
+	| ( <TEXTFIELD> { c = Style.JComponents.TEXT_FIELD; } )
+	| ( <PANEL>     { c = Style.JComponents.PANEL;      } ) 
+	)
+	{ return c; }
 }
 
 Style.SpriteOrientation spriteOrient():

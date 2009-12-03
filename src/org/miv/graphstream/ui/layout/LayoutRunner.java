@@ -138,7 +138,8 @@ public class LayoutRunner extends Thread implements MBoxListener
 	public static Layout newDefaultLayout()
 	{
 //		return new org.miv.graphstream.algorithm.layout2.elasticbox.ElasticBox();
-		return new org.miv.graphstream.ui.layout.springbox.SpringBox();
+//		return new org.miv.graphstream.ui.layout.springbox.SpringBox();
+		return new org.miv.graphstream.ui.layout.springboxLeRetour.SpringBox();
 	}
 
 	/**
@@ -198,10 +199,10 @@ public class LayoutRunner extends Thread implements MBoxListener
 		while( loop )
 		{
 			inbox.processMessages();
+			proxy.checkEvents();
 
 			if( ! pause )
 			{
-				proxy.checkEvents();
 				layout.compute();
 				informRemotes();
 				Thread.yield();

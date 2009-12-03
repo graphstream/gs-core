@@ -12,24 +12,23 @@
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place - Suite 330, Boston, MA 02111-1307, USA.
+ * 
+ * Copyright 2006 - 2009
+ * 	Julien Baudry
+ * 	Antoine Dutot
+ * 	Yoann Pigné
+ * 	Guilhelm Savin
  */
 
 package org.miv.graphstream.ui2.graphicGraph;
 
-import org.miv.graphstream.graph.Element;
-
 /**
- * Listen at the changes in the style group set.
+ * Interface for entities interested in changes on graphic elements.
  * 
- * @author Antoine Dutot
+ * This interface main role is to advise renderer that an element changed and therefore
+ * must be redrawn. This allows to avoid redrawing elements that did not changed.
  */
-public interface StyleGroupListener
+public interface GraphicElementChangeListener
 {
-	/**
-	 * The style of the element changed.
-	 * @param element The element.
-	 * @param oldStyle The old style.
-	 * @param style The changed style or the new style of the element.
-	 */
-	void elementStyleChanged( Element element, StyleGroup oldStyle, StyleGroup style );
+	void graphicElementChanged( GraphicElement element );
 }

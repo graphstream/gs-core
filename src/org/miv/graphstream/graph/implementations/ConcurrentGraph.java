@@ -67,6 +67,8 @@ public class ConcurrentGraph
 	
 	protected ConcurrentLinkedQueue<GraphAttributesListener> alisteners;
 	protected ConcurrentLinkedQueue<GraphElementsListener> elisteners;
+
+	protected double step;
 	
 	public ConcurrentGraph()
 	{
@@ -409,6 +411,11 @@ public class ConcurrentGraph
 	{
 		this.nodeFactory = nf;
 	}
+	
+	public double getStep()
+	{
+		return step;
+	}
 /*
 	public void read(String filename) 
 		throws IOException, GraphParseException, NotFoundException
@@ -557,6 +564,8 @@ public class ConcurrentGraph
 
 	public void stepBegins(double time)
 	{
+		step = time;
+		
 		for(GraphElementsListener l : elisteners)
 			l.stepBegins( getId(), time );
 	}

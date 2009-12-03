@@ -14,7 +14,7 @@
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-package org.miv.graphstream.ui2.swingViewer;
+package org.miv.graphstream.ui2.swingViewer.util;
 
 /**
  * A simple counter that allows to count the number of frames per second.

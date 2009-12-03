@@ -20,7 +20,7 @@
  * 	Guilhelm Savin
  */
 
-package org.miv.graphstream.ui2.swingViewer;
+package org.miv.graphstream.ui2.swingViewer.util;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -31,6 +31,7 @@ import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.ui2.graphicGraph.GraphicElement;
 import org.miv.graphstream.ui2.graphicGraph.GraphicGraph;
 import org.miv.graphstream.ui2.graphicGraph.GraphicSprite;
+import org.miv.graphstream.ui2.swingViewer.View;
 
 /**
  * A global behaviour for all mouse events on graphic elements.
@@ -66,6 +67,8 @@ public class MouseManager implements MouseInputListener
 	
 	protected void mouseButtonPress( MouseEvent event )
 	{
+		view.requestFocus();
+		
 		for( Node node: graph )
 		{
 			if( node.hasAttribute( "ui.selected" ) )

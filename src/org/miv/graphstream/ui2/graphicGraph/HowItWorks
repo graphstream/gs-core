@@ -50,12 +50,12 @@ a graph, the Swing thread is used. Then several scenarios could occur :
 	  graph graphical representations. In this case, the whole application can be done
 	  inside the Swing thread and the main thread can be left alone.
 	* You want to run one or more algorithms on the graph in the main thread and use
-	  the display capabilities to monitor them. In this case the application is spit in two
+	  the display capabilities to monitor them. In this case the application is split in two
 	  threads, the main thread that runs the algorithms on a graph implementation, and
 	  the Swing thread that displays the graph.
 	* In any of the case above, you want the computation (an algorithm, a simulation) on the
 	  graph to occur in a dedicated thread that will not be interrupted by display or user
-	  events (buttons, clics, etc.).
+	  events (buttons, clics, etc. (although it can catch them !)).
 	  
 In all cases excepted the first, you have two threads, with one containing a standard graph
 implementation, and another doing the display of this graph. Lets call them the main thread
@@ -82,7 +82,7 @@ would be locked every time.
 Instead we have chosen to consume a little more memory (you will see that the graphic graph
 tries to minimise its memory consumption), by storing a copy of the main graph as a graphic
 graph, an use the thread proxy mechanism to copy the main graph to the Swing graph. The mail
-box principle is a very thing layer between the two threads will little overhead. In addition
+box principle is a very thin layer between the two threads will little overhead. In addition
 it can be exchanged to a network proxy mechanism, allowing to put the graph computation on
 one machine and the display on a distant machine, which is an overly cool concept.   
 
@@ -103,7 +103,7 @@ nodes by edges.
 		* all attributes starting with "ui.*",
 		* attributes "x", "y", "z", "xy", "xyz",
 		* attribute "label",
-		* attribute "stylesheet".
+		* attribute "stylesheet", although "ui.stylesheet" is preferred.
 	
 	Some of these attributes are directly converted to object attributes (variables of an instance)
 	of the graphic graph elements. All styles are parsed automatically and update the style sheet.
@@ -180,7 +180,9 @@ nodes by edges.
 	To avoid such a problem there is a simple solution : when the graphic thread is checking
 	events it cut its event sending mechanism toward the main thread. In the same way, when
 	the main thread is receiving events from the graphic thread is cuts event propagation
-	toward the graphic graph.
+	toward the graphic graph. We call this technique "muting". It is implemented as an
+	interface to some Input named SynchronizableInput. All graphs implementation implements
+	SynchronizableInput. 
 
 How does the style sheet and styles communicate with the graphic elements
 =========================================================================
@@ -193,7 +195,7 @@ style sheet. The StyleGroupSet handles this complex process automatically.
 
 As some elements may have the same style, they are put in the same style groups.
 
-When a style change the style groups are automatically update, some elements may change of group
+When a style change the style groups are automatically updated, some elements may change of group
 in the process. Once again, the style group set handles all this process automatically.
 
 How the sprites work
@@ -342,7 +344,7 @@ and changing them for each element is a waste of time if several elements share 
 
 Furthermore, we can sort all groups following the very important Z-order. Indeed each style define
 the virtual plane (parallel to the screen) where the elements having this style must be drawn.
-Elements with a low Z must be drawn under others and with a high Z mist be drawn above others. The
+Elements with a low Z must be drawn under others and with a high Z must be drawn above others. The
 best way to do this is to draw low Z elements first and high Z elements last. This is the Z order.
 
 We call the fact of drawing all elements of the same style at once (thus pushing the graphic state
@@ -355,8 +357,10 @@ attribute. Else this attribute defines the colour of the element. This allows fo
 changing of the element colour (in fact the ui.color defines the index of the color to use in
 the style, since the style can define a palette of colours for an element).
 
-Such element with an dynamic style attribute cannot be drawn in a bulk operation since one of
-the graphic state is not the same as other elements. Another kind of element that cannot be
+Such element with a dynamic style attribute cannot be drawn in a bulk operation since one of
+the graphic state is not the same as other elements (they can be drawn in semi-bulk operation :
+most attributes are fixed once and some attributes (colour, width) change for each element).
+Another kind of element that cannot be
 drawn in a bulk operation are the elements actually modified by an event. There are actually
 two kinds of events in the style sheet : "clicked" and "selected". These events are produced by
 the viewer. The style sheet can define a specific style that will modify the element when the
@@ -374,10 +378,51 @@ dynamic and event subset contain some elements (in which case the elements will 
 these subsets are exclusive).
 
 Therefore when drawing the elements of the group you first have to draw all the bulk elements. Then
-if they are not empty, draw the event and dynamic element subsets. This way you can optimise
-drawing. Naturally the style group class provides an iterator on all the elements without
+if they are not empty, draw the event and dynamic element subsets. The style group provide iterators
+for these three subsets. This way you can optimise
+drawing. Naturally the style group class also provides an iterator on all the elements without
 distinction and, if you push the graphic state for each element you can draw them using such an
 iterator.
 
+How JComponent style works
+==========================
 
- 
+It is possible to specify that the shape of an element be defined by a JComponent. This is done via
+the style property "shape" with value "jcomponent" and then the style property "jcomponent" with
+values "button", "text-field" and "panel".
+
+The button and text-field allow predefined components that will modify specific attributes of the
+element they are attached to :
+	* button
+		- ui.label				The label of the button.
+		- ui.clicked			If the button clicked.
+		- ui.last-clicked		The last time the button was clicked.
+		- ui.active				Is the button usable.
+		- ui.toggle				If true, the button remains clicked or unclicked.
+		- style properties
+			- stroke-color		colour of the button border
+			- stroke-width		width of the button border
+			- fill-color		colour of the button.
+			- text-color		colour of the button label.
+			- text-style		Style of the font.
+			- text-font			Text font.
+			- text-size			Size in points of the font.
+		Note that most of this functionality can be emulated with a standard node or sprite, the
+		purpose of the button JComponent is to have something that "looks like" a system button.
+	* text-field
+		- ui.label				The label of the field.
+		- ui.last-changed		The last time the field was changed.
+		- style properties
+			- stroke-color		colour of the text-field border
+			- stroke-width		width of the text-field border
+			- fill-color		colour of the text-field.
+			- text-color		colour of the text-field label.
+			- text-style		Style of the font.
+			- text-font			Text font.
+			- text-size			Size in points of the font.
+		Note that this allows only to provide an editable text.
+	* panel
+		This is a standard JPanel.
+
+	For these three shapes a specific attribute "ui.handle" will contain the reference of the
+	component (as an Object). Naturally it is usable only in the Swing thread.

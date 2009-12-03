@@ -22,43 +22,26 @@
 
 package org.miv.graphstream.ui2.swingViewer;
 
+import java.awt.Container;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-import javax.swing.JPanel;
-
-import org.miv.graphstream.ui2.graphicGraph.GraphicElement;
 import org.miv.graphstream.ui2.graphicGraph.GraphicGraph;
+import org.miv.graphstream.ui2.graphicGraph.GraphicElement;
 import org.miv.util.geom.Point3;
 
 /**
- * A view on a graphic graph.
+ * Interface for classes that draw a GraphicGraph in a swing component.
  */
-public abstract class View extends JPanel
+public interface GraphRenderer
 {
-// Attribute
+// Initialisation
 	
-	/**
-	 * The view identifier.
-	 */
-	private String id;
+	void open( GraphicGraph graph, Container drawingSurface );
 	
-// Construction
+	void close();
 	
-	/**
-	 * New view.
-	 * @param identifier The view unique identifier.
-	 */
-	public View( Viewer viewer, String identifier )
-	{
-		id = identifier;
-	}
-
 // Access
-	
-	public String getId()
-	{
-		return id;
-	}
 	
 	/**
 	 * The view centre (a point in graph units).
@@ -109,7 +92,7 @@ public abstract class View extends JPanel
 // Command
 	
 	/**
-	 * Set the bounds of the graphic graph in GU. Called by the Viewer.
+	 * Set the bounds of the graphic graph in GU.
 	 * @param minx Lowest abscissa.
 	 * @param miny Lowest ordinate.
 	 * @param minz Lowest depth.
@@ -120,24 +103,9 @@ public abstract class View extends JPanel
 	public abstract void setBounds( float minx, float miny, float minz, float maxx, float maxy, float maxz );
 	
 	/**
-	 * Redisplay or update the view contents. Called by the Viewer.
-	 * @param graph The graphic graph to represent.
-	 * @param graphChanged True if the graph changed since the last call to this method.
+	 * Redisplay or update the view contents.
 	 */
-	public abstract void display( GraphicGraph graph, boolean graphChanged );
-	
-	/**
-	 * Close definitively this view. Called by the Viewer.
-	 * @param graph The graphic graph.
-	 */
-	public abstract void close( GraphicGraph graph );
-	
-	/**
-	 * Open this view JPanel in a frame. The argument allows to put the panel in a new frame or
-	 * to remove it from the frame (if it already exists). Called by the Viewer.
-	 * @param on Add the panel in its own frame or remove it if it already was in its own frame.
-	 */
-	public abstract void openInAFrame( boolean on );
+	public abstract void render( Graphics2D g, int width, int height );
 	
 	/**
 	 * Reset the view to the automatic mode.

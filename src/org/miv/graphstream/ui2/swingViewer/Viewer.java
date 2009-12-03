@@ -28,13 +28,14 @@ import java.util.HashMap;
 
 import javax.swing.Timer;
 
-import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.io2.ProxyFilter;
 import org.miv.graphstream.io2.thread.ThreadProxyFilter;
 import org.miv.graphstream.ui2.graphicGraph.GraphicGraph;
-import org.miv.graphstream.ui2.graphicGraph.GraphicNode;
-import org.miv.graphstream.ui2.graphicGraph.GraphicSprite;
-import org.miv.graphstream.ui2.swingViewer.basicView.SwingBasicGraphView;
+import org.miv.graphstream.ui2.swingViewer.basicView.SwingBasicGraphRenderer;
+import org.miv.graphstream.ui2.swingViewer.genView.SwingGraphRenderer;
+import org.miv.graphstream.ui2.swingViewer.util.FontCache;
+import org.miv.graphstream.ui2.swingViewer.util.ImageCache;
+import org.miv.util.geom.Point3;
 
 /**
  * Set of views on a graphic graph.
@@ -152,7 +153,7 @@ public class Viewer implements ActionListener
 		return closeFramePolicy;
 	}
 	
-	public ProxyFilter getThreadProxyOnGraphicGraph()
+	public ThreadProxyFilter getThreadProxyOnGraphicGraph()
 	{
 		ThreadProxyFilter fromSwing = new ThreadProxyFilter( graph );
 
@@ -210,7 +211,8 @@ public class Viewer implements ActionListener
 	{
 		synchronized( views )
 		{
-			View view = new SwingBasicGraphView( this, DEFAULT_VIEW_ID );
+			View view = new DefaultView( this, DEFAULT_VIEW_ID, new SwingBasicGraphRenderer() ); // new SwingBasicGraphView( this, DEFAULT_VIEW_ID );
+//			View view = new DefaultView( this, DEFAULT_VIEW_ID, new SwingGraphRenderer() );
 			addView( view );
 		
 			if( openInAFrame )
@@ -234,7 +236,7 @@ public class Viewer implements ActionListener
 			
 			if( old != null )
 				old.close( graph );
-			
+		
 			return old;
 		}
 	}
@@ -258,7 +260,7 @@ public class Viewer implements ActionListener
     {
 		if( input != null )
 			input.checkEvents();
-		
+
 		boolean changed = graph.graphChangedFlag();
 	
 		if( changed )
@@ -281,35 +283,15 @@ public class Viewer implements ActionListener
 	 */
 	protected void computeGraphMetrics()
 	{
-		float minx, miny, minz, maxx, maxy, maxz;
-		
-		minx = miny = minz =  10000000;	// A bug with Float.MAX_VALUE during comparisons ?
-		maxx = maxy = maxz = -10000000;	// A bug with Float.MIN_VALUE during comparisons ?
-		
-		for( Node n: graph )
-		{
-			GraphicNode node = (GraphicNode) n;
-			
-			if( node.x < minx ) minx = node.x; if( node.x > maxx ) maxx = node.x;
-			if( node.y < miny ) miny = node.y; if( node.y > maxy ) maxy = node.y;
-			if( node.z < minz ) minz = node.z; if( node.z > maxz ) maxz = node.z;
-		}
-		
-		for( GraphicSprite sprite: graph.spriteSet() )
-		{
-			float x = sprite.getX();
-			float y = sprite.getY();
-			float z = sprite.getZ();
-			
-			if( x < minx ) minx = x; if( x > maxx ) maxx = x;
-			if( y < miny ) miny = y; if( y > maxy ) maxy = y;
-			if( z < minz ) minz = z; if( z > maxz ) maxz = z;
-		}
+		graph.computeBounds();
 
 		synchronized( views )
 		{
+			Point3 lo = graph.getMinPos();
+			Point3 hi = graph.getMaxPos();
+			
 			for( View view: views.values() )
-				view.setBounds( minx, miny, minz, maxx, maxy, maxz );
+				view.setBounds( lo.x, lo.y, lo.z, hi.x, hi.y, hi.z );
 		}
 	}
 }

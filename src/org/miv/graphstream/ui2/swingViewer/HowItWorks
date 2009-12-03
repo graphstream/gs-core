@@ -13,6 +13,8 @@ Planned features :
 	* Provide simple graph view that demonstrate how all this works.
 	* Provide a 3D graph view using Jogl.
 	* Provide a complete Swing/Java2D implementation that is usable everywhere.
+	* Hide a GraphRenderer inside view that allows people wanting to use the low-level rendering
+	  routines of graph stream without all the viewer/view complexities.
 
 ViewSet
 -------
@@ -50,6 +52,14 @@ Listeners
 			The usual attribute.
 		* etc.
 
+Renderers
+---------
+
+	* Views only do "administrative" tasks like opening a window or a panel, doing some
+	  actions when the mouse or keyboard is used, etc.
+	* The rendering is done by a renderer that is not coupled with views. In other words, it can
+	  be used apart for project that only need to render a graph but want to implement the view
+	  control by themselves.
 
 The viewer, JFrames, Swing components and integration
 -----------------------------------------------------

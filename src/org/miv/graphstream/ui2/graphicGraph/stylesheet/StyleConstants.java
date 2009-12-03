@@ -107,7 +107,7 @@ public class StyleConstants
 	 * How to set the size of the element.
 	 */
 	public static enum SizeMode {
-		NORMAL, DYN_SIZE
+		NORMAL, FIT, DYN_SIZE
 	}
 
 	/**
@@ -146,6 +146,13 @@ public class StyleConstants
 	 */
 	public static enum ArrowShape {
 		NONE, ARROW, CIRCLE, DIAMOND, IMAGE
+	}
+	
+	/**
+	 * Possible JComponents.
+	 */
+	public static enum JComponents {
+		BUTTON, TEXT_FIELD, PANEL
 	}
 	
 // Static

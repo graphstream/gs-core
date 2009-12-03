@@ -61,7 +61,7 @@ import org.miv.graphstream.graph.GraphListener;
  * <p>Therefore, to avoid these problems it is possible to explicitly synchronise X and Y.
  * The way each one know the other depends on them, however they rely on one mechanism : muting.</p>
  * 
- * <p>Muting allow an input to avoid sending the next event that will occur to a specific listener
+ * <p>Muting allows an input to avoid sending the next event that will occur to a specific listener
  * that is the source of the event.</p>
  * 
  * <p>Imagine some change occurs on X. Normally an event is unconditionally generated to all

@@ -182,7 +182,7 @@ public class SpringBox implements Layout, ParticleBoxListener
 	/**
 	 * If true a file is created to output the statistics of the elastic box algorithm.
 	 */
-	protected boolean outputStats = true;
+	protected boolean outputStats = false;
 	
 	/**
 	 * If true a file is created for each node (!!!) and its movement statistics are logged.

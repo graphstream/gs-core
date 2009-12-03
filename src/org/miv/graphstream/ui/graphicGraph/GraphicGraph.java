@@ -460,6 +460,11 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 		return e;
 	}
 	
+	public double getStep()
+	{
+		return step;
+	}
+	
 // Commands
 	
 	/**
@@ -810,11 +815,11 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 	@Override
 	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
-		//System.err.printf( "attribute changed on graphic-graph : %s -> %s%n", attribute, newValue );
-		
+//		System.err.printf( "attribute changed on graphic-graph : %s -> %s%n", attribute, newValue );
+																																																		
 		if( attribute.equals( "ui.stylesheet" ) || attribute.equals( "stylesheet" ) )
 		{
-			if( newValue instanceof String )
+			if( newValue instanceof String )																																																																				
 			{
 				try
 				{
@@ -837,6 +842,10 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 				styleSheet.clear();
 				checkStyles();
 				graphChanged = true;
+			}
+			else
+			{
+				System.err.printf( "Stylesheet attribute not a string ? %s%n", newValue.getClass().getName() );
 			}
 		}
 		else if( attribute.equals( "ui.multigraph" ) )

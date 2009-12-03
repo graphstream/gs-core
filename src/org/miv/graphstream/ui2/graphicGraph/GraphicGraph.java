@@ -34,6 +34,7 @@ import org.miv.graphstream.io2.SynchronizableInput;
 import org.miv.graphstream.io2.file.FileInput;
 import org.miv.graphstream.io2.file.FileOutput;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Style;
+import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleConstants;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleSheet;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Value;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Values;
@@ -41,6 +42,7 @@ import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleConstants.Units;
 
 import org.miv.util.NotFoundException;
 import org.miv.util.SingletonException;
+import org.miv.util.geom.Point3;
 
 /**
  * Graph representation used in display classes.
@@ -128,6 +130,21 @@ public class GraphicGraph extends AbstractElement implements Graph, Synchronizab
 	 * Set of graph elements listeners.
 	 */
 	protected HashSet<GraphElementsListener> eltsListeners = new HashSet<GraphElementsListener>();
+	
+	/**
+	 * Set to true each time a sprite or node moved.
+	 */
+	protected boolean boundsChanged = true;
+	
+	/**
+	 * Maximum position of a node or sprite in the graphic graph. Computed by {@link #computeBounds()}.
+	 */
+	protected Point3 hi = new Point3();
+	
+	/**
+	 * Minimum position of a node or sprite in the graphic graph. Computed by {@link #computeBounds()}.
+	 */
+	protected Point3 lo = new Point3();
 
 // Construction
 
@@ -205,8 +222,80 @@ public class GraphicGraph extends AbstractElement implements Graph, Synchronizab
 		return String.format( "[%s %d nodes %d edges]", getId(), getNodeCount(), getEdgeCount() );
 	}
 	
+	public double getStep()
+	{
+		return step;
+	}
+	
+	/**
+	 * The maximum position of a node or sprite. Notice that this is updated only each time the
+	 * {@link #computeBounds()} method is called.
+	 * @return The maximum node or sprite position.
+	 */
+	public Point3 getMaxPos()
+	{
+		return hi;
+	}
+	
+	/**
+	 * The minimum position of a node or sprite. Notice that this is updated only each time the
+	 * {@link #computeBounds()} method is called.
+	 * @return The minimum node or sprite position.
+	 */
+	public Point3 getMinPos()
+	{
+		return lo;
+	}
+	
 // Command
 
+	/**
+	 * Compute the overall bounds of the graphic graph according to the nodes and sprites positions.
+	 * We can only compute the graph bounds from the nodes and sprites centres since the node and
+	 * graph bounds may in certain circumstances be computed according to the graph bounds. The
+	 * bounds are stored in the graph metrics. 
+	 * 
+	 * This operation will process each node and sprite and is therefore costly. However it does
+	 * this computation again only when a node or sprite moved. Therefore it can be called several
+	 * times, if nothing moved in the graph, the computation will not be redone.
+	 * 
+	 * @see #getMaxPos()
+	 * @see #getMinPos()
+	 */
+	public void computeBounds()
+	{
+		if( boundsChanged )
+		{
+			lo.x = lo.y = lo.z =  10000000;	// A bug with Float.MAX_VALUE during comparisons ?
+			hi.x = hi.y = hi.z = -10000000;	// A bug with Float.MIN_VALUE during comparisons ?
+			
+			for( Node n: nodeSet() )
+			{
+				GraphicNode node = (GraphicNode) n;
+				
+				if( node.x < lo.x ) lo.x = node.x; if( node.x > hi.x ) hi.x = node.x;
+				if( node.y < lo.y ) lo.y = node.y; if( node.y > hi.y ) hi.y = node.y;
+				if( node.z < lo.z ) lo.z = node.z; if( node.z > hi.z ) hi.z = node.z;
+			}
+			
+			for( GraphicSprite sprite: spriteSet() )
+			{
+				if( sprite.getUnits() == StyleConstants.Units.GU )
+				{
+					float x = sprite.getX();
+					float y = sprite.getY();
+					float z = sprite.getZ();
+				
+					if( x < lo.x ) lo.x = x; if( x > hi.x ) hi.x = x;
+					if( y < lo.y ) lo.y = y; if( y > hi.y ) hi.y = y;
+					if( z < lo.z ) lo.z = z; if( z > hi.z ) hi.z = z;
+				}
+			}
+			
+			boundsChanged = false;
+		}
+	}
+	
 	protected GraphicEdge addEdge( String id, String from, String to, boolean directed, HashMap<String, Object> attributes )
 	{
 		GraphicEdge edge = (GraphicEdge) styleGroups.getEdge( id );
@@ -504,7 +593,7 @@ public class GraphicGraph extends AbstractElement implements Graph, Synchronizab
 
 // Style group listener interface
 	
-	public void elementStyleChanged( Element element, StyleGroup style )
+	public void elementStyleChanged( Element element, StyleGroup oldStyle, StyleGroup style )
     {
 		if( element instanceof GraphicElement )
 		{
@@ -523,6 +612,11 @@ public class GraphicGraph extends AbstractElement implements Graph, Synchronizab
 			throw new RuntimeException( "WTF ?" );
 		}
     }
+	
+	public void styleChanged( StyleGroup style )
+	{
+		
+	}
 
 // Graph interface
 

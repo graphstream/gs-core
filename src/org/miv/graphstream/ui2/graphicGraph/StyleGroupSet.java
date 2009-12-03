@@ -603,6 +603,16 @@ public class StyleGroupSet implements StyleSheetListener
 	 */
 	public StyleGroup addElement( Element element )
 	{
+		StyleGroup group = addElement_( element );
+		
+		for( StyleGroupListener listener: listeners )
+			listener.elementStyleChanged( element, null, group );
+		
+		return group;
+	}
+
+	protected StyleGroup addElement_( Element element )
+	{
 		ArrayList<Rule> rules = stylesheet.getRulesFor( element );
 		String          gid   = stylesheet.getStyleGroupIdFor( element, rules );
 		StyleGroup      group = groups.get( gid );
@@ -612,9 +622,6 @@ public class StyleGroupSet implements StyleSheetListener
 		else group.addElement( element );
 		
 		addElementToReverseSearch( element, gid );
-		
-		for( StyleGroupListener listener: listeners )
-			listener.elementStyleChanged( element, group );
 		
 		return group;
 	}
@@ -638,6 +645,55 @@ public class StyleGroupSet implements StyleSheetListener
 			if( removeEmptyGroups && group.isEmpty() )
 				removeGroup( group );
 		}
+	}
+	
+	/**
+	 * Check if an element need to change from a style group to another.
+	 * 
+	 * <p>
+	 * When an element can have potentially changed style due to some of its attributes (ui.class
+	 * for example), instead of removing it then reading it, use this method to move the element
+	 * from its current style group to a potentially different style group.
+	 * </p>
+	 * 
+	 * <p>
+	 * Explanation of this method : checking the style of
+	 * an element may be done by removing it ({@link #removeElement(Element)}) and then re-adding
+	 * it ({@link #addElement(Element)}). This must be done by the element since it knows when
+	 * to check this. However you cannot only remove and add, since the style group inside which
+	 * the element is can have events occurring on it, and these events must be passed from its old
+	 * style to its new style. This method does all this information passing.
+	 * </p>
+	 * 
+	 * @param element The element to move.
+	 */
+	public void checkElementStyleGroup( Element element )	// TODO rename into "checkElementStyleGroup()"
+	{
+		// Get the old event set for the given element.
+		
+		StyleGroup oldGroup = getGroup( getElementGroup( element ) );
+		StyleGroup.ElementEvents events = null;
+		
+		if( oldGroup != null )
+			events = oldGroup.getEventsFor( element );
+		
+		// Remove the element from its old style and add it to insert it in the correct style.
+		
+		removeElement( element );
+		addElement_( element );
+		
+		// Eventually push the events on the new style group.
+		
+		StyleGroup newGroup = getGroup( getElementGroup( element ) );
+		
+		if( newGroup != null && events != null )
+		{
+			for( String event: events.events )
+				pushEventFor( element, event );
+		}
+		
+		for( StyleGroupListener listener: listeners )
+			listener.elementStyleChanged( element, oldGroup, newGroup );
 	}
 	
 	protected void addElementToReverseSearch( Element element, String groupId )
@@ -931,8 +987,9 @@ public class StyleGroupSet implements StyleSheetListener
 		
 		if( element != null )
 		{
-			removeElement( element );	// Remove the element from its old group. Potentially delete a group.
-			addElement( element );		// Add the element to its new own group (since this is an ID style).
+			checkElementStyleGroup( element );
+//			removeElement( element );	// Remove the element from its old group. Potentially delete a group.
+//			addElement( element );		// Add the element to its new own group (since this is an ID style).
 		}
 	}
 
@@ -950,8 +1007,9 @@ public class StyleGroupSet implements StyleSheetListener
 		
 		for( Element element: elementsToCheck )
 		{
-			removeElement( element );
-			addElement( element );
+			checkElementStyleGroup( element );
+//			removeElement( element );
+//			addElement( element );
 		}
 	}
 	

@@ -1234,6 +1234,20 @@ protected class Node extends Particle
 		if( is3D )
 			pos.z += random.nextFloat() * k * 2 - 1;
 	}
+
+	@Override
+    public void inserted()
+    {
+	    // TODO Auto-generated method stub
+	    
+    }
+
+	@Override
+    public void removed()
+    {
+	    // TODO Auto-generated method stub
+	    
+    }
 }
 
 /**

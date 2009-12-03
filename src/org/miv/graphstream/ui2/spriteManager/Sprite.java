@@ -293,10 +293,10 @@ public class Sprite implements Element
 		if( position.get( 0 ) != x     ) { changed = true; position.setValue( 0 , x ); }
 		if( position.get( 1 ) != y     ) { changed = true; position.setValue( 1 , y ); }
 		if( position.get( 2 ) != z     ) { changed = true; position.setValue( 2 , z ); }
-		if( position.units         != units ) { changed = true; position.setUnits( units ); }
+		if( position.units    != units ) { changed = true; position.setUnits( units ); }
 		
 		if( changed )
-			manager.graph.setAttribute( completeId, position );
+			manager.graph.setAttribute( completeId, new Values( position ) );
 	}
 	
 	protected void setPosition( Values values )

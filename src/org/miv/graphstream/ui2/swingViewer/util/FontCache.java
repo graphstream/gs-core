@@ -21,13 +21,13 @@
  * 	Guilhelm Savin
  */
 
-package org.miv.graphstream.ui2.swingViewer;
+package org.miv.graphstream.ui2.swingViewer.util;
 
 import java.awt.Font;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.miv.graphstream.ui.graphicGraph.stylesheet.Style;
+import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleConstants;
 
 /**
  * A cache for fonts.
@@ -68,6 +68,11 @@ public class FontCache
 		return defaultFont;
 	}
 	
+	public Font getDefaultFont( StyleConstants.TextStyle style, int size )
+	{
+		return getFont( "SansSerif", style, size );
+	}
+	
 	/**
 	 * Lookup a font, and if not found, try to load it, if still not available, return the
 	 * default font.
@@ -76,7 +81,7 @@ public class FontCache
 	 * @param size The font size in points.
 	 * @return A font.
 	 */
-	public Font getFont( String name, Style.TextStyle style, int size )
+	public Font getFont( String name, StyleConstants.TextStyle style, int size )
 	{
 		FontSlot slot = cache.get( name );
 		
@@ -110,35 +115,37 @@ class FontSlot
 	
 	public HashMap<Integer,Font> boldItalic;
 	
-	public FontSlot( String name, Style.TextStyle style, int size )
+	public FontSlot( String name, StyleConstants.TextStyle style, int size )
 	{
 		this.name = name;
 		insert( style, size );
 	}
 	
-	protected Map<Integer,Font> mapFromStyle( Style.TextStyle style )
+	protected Map<Integer,Font> mapFromStyle( StyleConstants.TextStyle style )
 	{
 		switch( style )
 		{
 			case BOLD:        if( bold       == null ) bold       = new HashMap<Integer,Font>(); return bold;
 			case ITALIC:      if( italic     == null ) italic     = new HashMap<Integer,Font>(); return italic;
 			case BOLD_ITALIC: if( boldItalic == null ) boldItalic = new HashMap<Integer,Font>(); return boldItalic;
+			case NORMAL:
 			default:          if( normal     == null ) normal     = new HashMap<Integer,Font>(); return normal;
 		}			
 	}
 	
-	protected int toJavaStyle( Style.TextStyle style )
+	protected int toJavaStyle( StyleConstants.TextStyle style )
 	{
 		switch( style )
 		{
 			case BOLD:        return Font.BOLD; 
 			case ITALIC:      return Font.ITALIC;
 			case BOLD_ITALIC: return Font.BOLD + Font.ITALIC;
+			case NORMAL:
 			default:          return Font.PLAIN;
 		}
 	}
 	
-	public Font insert( Style.TextStyle style, int size )
+	public Font insert( StyleConstants.TextStyle style, int size )
 	{
 		return insert( mapFromStyle( style ), toJavaStyle( style ), size );
 	}
@@ -158,7 +165,7 @@ class FontSlot
 		return font;
 	}
 	
-	protected Font getFont( Style.TextStyle style, int size )
+	protected Font getFont( StyleConstants.TextStyle style, int size )
 	{
 		Map<Integer,Font> map = mapFromStyle( style );
 		

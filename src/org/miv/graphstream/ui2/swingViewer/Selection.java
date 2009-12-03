@@ -12,24 +12,17 @@
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place - Suite 330, Boston, MA 02111-1307, USA.
- */
-
-package org.miv.graphstream.ui2.graphicGraph;
-
-import org.miv.graphstream.graph.Element;
-
-/**
- * Listen at the changes in the style group set.
  * 
- * @author Antoine Dutot
+ * Copyright 2006 - 2009
+ * 	Julien Baudry
+ * 	Antoine Dutot
+ * 	Yoann Pigné
+ * 	Guilhelm Savin
  */
-public interface StyleGroupListener
+
+package org.miv.graphstream.ui2.swingViewer;
+
+public class Selection
 {
-	/**
-	 * The style of the element changed.
-	 * @param element The element.
-	 * @param oldStyle The old style.
-	 * @param style The changed style or the new style of the element.
-	 */
-	void elementStyleChanged( Element element, StyleGroup oldStyle, StyleGroup style );
+	public float x1, y1, x2, y2;
 }

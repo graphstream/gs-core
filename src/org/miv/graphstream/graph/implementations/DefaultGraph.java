@@ -150,7 +150,11 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 	 *  Helpful class that dynamically instantiate edges according to a given class name.
 	 */
 	protected EdgeFactory edgeFactory;
-	
+
+	/**
+	 * Current time step.
+	 */
+	protected double step;
 	
 // Constructors
 
@@ -316,6 +320,11 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 	public void setNodeFactory( NodeFactory nf )
 	{
 		this.nodeFactory = nf;
+	}
+	
+	public double getStep()
+	{
+		return step;
 	}
 
 // Commands
@@ -655,6 +664,8 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 
 	public void stepBegins( double time )
 	{
+		step = time;
+		
 		for( GraphElementsListener l : eltsListeners )
 			if( l != muteElts )
 				l.stepBegins( getId(), time );

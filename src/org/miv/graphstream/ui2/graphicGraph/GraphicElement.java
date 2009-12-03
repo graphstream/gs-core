@@ -16,6 +16,7 @@
 
 package org.miv.graphstream.ui2.graphicGraph;
 
+import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,6 +54,12 @@ import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleConstants;
  */
 public abstract class GraphicElement extends AbstractElement
 {
+// Nested interfaces
+	
+	public interface ElementRenderer
+	{
+	}
+	
 // Attribute
 	
 	/**
@@ -71,9 +78,14 @@ public abstract class GraphicElement extends AbstractElement
 	public StyleGroup style;
 
 	/**
-	 * The element state.
+	 * Associated GUI component.
 	 */
-	//public String state = null;
+	public Object component;
+	
+	/**
+	 * Set of listeners for change events.
+	 */
+	protected HashSet<GraphicElementChangeListener> changeListeners = null;
 	
 // Construction
 	
@@ -128,6 +140,15 @@ public abstract class GraphicElement extends AbstractElement
 	 */
 	public abstract float getZ();
 
+	/**
+	 * The associated GUI component.
+	 * @return An object.
+	 */
+	public Object getComponent()
+	{
+		return component;
+	}
+	
 // Commands
 
 	/**
@@ -145,23 +166,35 @@ public abstract class GraphicElement extends AbstractElement
 	public abstract void move( float x, float y, float z );
 
 	/**
+	 * Set the GUI component of this element.
+	 * @param component The component.
+	 */
+	public void setComponent( Object component )
+	{
+		this.component = component;
+	}
+	
+	/**
 	 * Handle the "ui.class", "label", "ui.style", etc. attributes.
 	 */
 	@Override
     protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
     {
+		boolean changed = false;
+		
 		if( event == AttributeChangeEvent.ADD || event == AttributeChangeEvent.CHANGE )
 		{
 			if( attribute.equals( "ui.class" ) )
 			{
-				mygraph.styleGroups.removeElement( this );
-				mygraph.styleGroups.addElement( this );
-				mygraph.graphChanged = true;
+				mygraph.styleGroups.checkElementStyleGroup( this );
+//				mygraph.styleGroups.removeElement( tis );
+//				mygraph.styleGroups.addElement( this );
+				mygraph.graphChanged = changed = true;
 			}
 			else if( attribute.equals( "label" ) || attribute.equals( "ui.label" ) )
 			{
 				label = StyleConstants.convertLabel( newValue );
-				mygraph.graphChanged = true;
+				mygraph.graphChanged = changed = true;
 			}
 			else if( attribute.equals( "ui.style" ) )
 			{
@@ -182,7 +215,7 @@ public abstract class GraphicElement extends AbstractElement
 						System.err.printf( "    The style was ignored" );
 					}
 	
-					mygraph.graphChanged = true;
+					mygraph.graphChanged = changed = true;
 				}
 				else
 				{
@@ -191,27 +224,27 @@ public abstract class GraphicElement extends AbstractElement
 			}
 			else if( attribute.equals( "ui.hide" ) )
 			{
-				mygraph.graphChanged = true;
+				mygraph.graphChanged = changed = true;
 			}
 			else if( attribute.equals( "ui.clicked" ) )
 			{
 				style.pushEventFor( this, "clicked" );
-				mygraph.graphChanged = true;
+				mygraph.graphChanged = changed = true;
 			}
 			else if( attribute.equals( "ui.selected" ) )
 			{
 				style.pushEventFor( this, "selected" );
-				mygraph.graphChanged = true;
+				mygraph.graphChanged = changed = true;
 			}
 			else if( attribute.equals( "ui.color" ) )
 			{
 				style.pushElementAsDynamic( this );
-				mygraph.graphChanged = true;
+				mygraph.graphChanged = changed = true;
 			}
 			else if( attribute.equals( "ui.size" ) )
 			{
 				style.pushElementAsDynamic( this );
-				mygraph.graphChanged = true;
+				mygraph.graphChanged = changed = true;
 			}
 //			else if( attribute.equals( "ui.state" ) )
 //			{
@@ -225,14 +258,13 @@ public abstract class GraphicElement extends AbstractElement
 		{
 			if( attribute.equals( "ui.class" ) )
 			{
-				mygraph.styleGroups.removeElement( this );
-				mygraph.styleGroups.addElement( this );
-				mygraph.graphChanged = true;
+				mygraph.styleGroups.checkElementStyleGroup( this );
+				mygraph.graphChanged = changed = true;
 			}
 			else if( attribute.equals( "label" ) || attribute.equals( "ui.label" ) )
 			{
 				label = "";
-				mygraph.graphChanged = true;
+				mygraph.graphChanged = changed = true;
 			}
 			else if( attribute.equals( "ui.hide" ) )
 			{
@@ -241,25 +273,55 @@ public abstract class GraphicElement extends AbstractElement
 			else if( attribute.equals( "ui.clicked" ) )
 			{
 				style.popEventFor( this, "clicked" );
-				mygraph.graphChanged = true;
+				mygraph.graphChanged = changed = true;
 			}
 			else if( attribute.equals( "ui.selected" ) )
 			{
 				style.popEventFor( this, "selected" );
-				mygraph.graphChanged = true;
+				mygraph.graphChanged = changed = true;
 			}
 			else if( attribute.equals( "ui.color" ) )
 			{
 				style.popElementAsDynamic( this );
-				mygraph.graphChanged = true;
+				mygraph.graphChanged = changed = true;
 			}
 			else if( attribute.equals( "ui.size" ) )
 			{
 				style.popElementAsDynamic( this );
-				mygraph.graphChanged = true;
+				mygraph.graphChanged = changed = true;
 			}
 		}
+		
+		if( changed )
+			callChangeListeners();
     }
+	
+	protected void callChangeListeners()
+	{
+		if( changeListeners != null )
+			for( GraphicElementChangeListener listener: changeListeners )
+				listener.graphicElementChanged( this );
+    }
+	
+	public void addChangeListener( GraphicElementChangeListener listener )
+	{
+		if( changeListeners == null )
+			changeListeners.add( listener );
+		
+		changeListeners.add( listener );
+	}
+	
+	public void removeChangeListener( GraphicElementChangeListener listener )
+	{
+		if( changeListeners != null )
+			changeListeners.remove( listener );
+	}
+	
+	public void clearListeners()
+	{
+		if( changeListeners != null )
+			changeListeners.clear();
+	}
 
 // Overriding of standard attribute changing to filter them.
 	

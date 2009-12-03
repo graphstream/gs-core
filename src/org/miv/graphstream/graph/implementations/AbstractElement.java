@@ -382,6 +382,10 @@ public abstract class AbstractElement implements Element
 		// if the value changed is the same as the old one. For graph synchronisation
 		// (graph A listens at graph B that listens at graph A) this could cause
 		// infinite loops.
+		//
+		// XXX
+		// XXX what happens if the sprite is modified with the same instance changed ?
+		// XXX
 		
 		if( old_value != null )
 		{

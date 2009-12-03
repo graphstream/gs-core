@@ -625,7 +625,7 @@ public class ThreadProxyFilter extends InputBase implements ProxyFilter, MBoxLis
 		{
 			String graphId = (String) data[1];
 			double time    = (Double) data[2];
-			
+
 			sendStepBegins( graphId, time );
 		}
 		else if( data[0].equals( GraphEvents.ADD_GRAPH_ATTR ) )

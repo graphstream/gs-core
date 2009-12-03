@@ -188,7 +188,11 @@ public class GraphicEdge extends GraphicElement implements Edge
 	{
 		super.attributeChanged( attribute, event, oldValue, newValue );
 		
-		if( event == AttributeChangeEvent.ADD )		// ADD
+		if( attribute.startsWith( "ui.sprite." ) )
+		{
+			mygraph.spriteAttribute( event, this, attribute, newValue );
+		}
+		else if( event == AttributeChangeEvent.ADD )		// ADD
 		{
 			for( GraphAttributesListener listener: mygraph.attrListeners )
 				if( listener != mygraph.muteAtrs )

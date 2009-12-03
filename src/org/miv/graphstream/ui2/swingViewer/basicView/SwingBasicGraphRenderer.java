@@ -24,6 +24,7 @@ package org.miv.graphstream.ui2.swingViewer.basicView;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
@@ -35,6 +36,7 @@ import java.util.HashSet;
 import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.ui2.graphicGraph.GraphicEdge;
 import org.miv.graphstream.ui2.graphicGraph.GraphicElement;
+import org.miv.graphstream.ui2.graphicGraph.GraphicGraph;
 import org.miv.graphstream.ui2.graphicGraph.GraphicNode;
 import org.miv.graphstream.ui2.graphicGraph.GraphicSprite;
 import org.miv.graphstream.ui2.graphicGraph.StyleGroup;
@@ -42,15 +44,17 @@ import org.miv.graphstream.ui2.graphicGraph.StyleGroupSet;
 import org.miv.graphstream.ui2.graphicGraph.StyleGroup.ElementEvents;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Value;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Values;
-import org.miv.graphstream.ui2.graphicGraph.stylesheet.Style;
-import org.miv.graphstream.ui2.swingViewer.ViewBase;
-import org.miv.graphstream.ui2.swingViewer.Viewer;
+import org.miv.graphstream.ui2.swingViewer.GraphRendererBase;
+import org.miv.graphstream.ui2.swingViewer.util.Camera;
+import org.miv.graphstream.ui2.swingViewer.util.GraphMetrics;
 import org.miv.util.geom.Point3;
+
+import static org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleConstants.*;
 
 /**
  * A very simple view of the graph (programming example).
  */
-public class SwingBasicGraphView extends ViewBase
+public class SwingBasicGraphRenderer extends GraphRendererBase
 {
 // Attribute
 	
@@ -61,44 +65,47 @@ public class SwingBasicGraphView extends ViewBase
 	
 // Construction
 	
-	public SwingBasicGraphView( Viewer viewer, String identifier )
+	public SwingBasicGraphRenderer() {}
+	
+	@Override
+	public void open( GraphicGraph graph, Container renderingSurface )
 	{
-		super( viewer, identifier );
+		super.open( graph, renderingSurface );
+	}
+	
+	@Override
+	public void close()
+	{
+		super.close();
 	}
 	
 // Access
 
-	@Override
 	public Point3 getViewCenter()
 	{
 		return camera.getViewCenter();
 	}
 	
-	@Override
 	public float getViewPercent()
 	{
 		return camera.getViewPercent();
 	}
 	
-	@Override
 	public float getViewRotation()
 	{
 		return camera.getViewRotation();
 	}
 	
-	@Override
 	public float getGraphDimension()
 	{
-		return camera.metrics.diagonal;
+		return camera.getMetrics().diagonal;
 	}
 
-	@Override
     public ArrayList<GraphicElement> allNodesOrSpritesIn( float x1, float y1, float x2, float y2 )
     {
 		return camera.allNodesOrSpritesIn( graph, x1, y1, x2, y2 );
     }
 
-	@Override
     public GraphicElement findNodeOrSpriteAt( float x, float y )
     {
 	    return camera.findNodeOrSpriteAt( graph, x, y );
@@ -106,66 +113,52 @@ public class SwingBasicGraphView extends ViewBase
 
 // Command	
 
-	@Override
 	public void setBounds( float minx, float miny, float minz, float maxx, float maxy, float maxz )
 	{
-		camera.metrics.setBounds( minx, miny, minz, maxx, maxy, maxz );
+		camera.getMetrics().setBounds( minx, miny, minz, maxx, maxy, maxz );
 	}
 
-	@Override
-	public void render( Graphics2D g )
+	public void render( Graphics2D g, int width, int height )
 	{
-		if( camera.metrics.diagonal == 0 | ( graph.getNodeCount() == 0 && graph.getSpriteCount() == 0 ) )
+		if( camera.getMetrics().diagonal == 0 | ( graph.getNodeCount() == 0 && graph.getSpriteCount() == 0 ) )
 		{
-			displayNothingToDo( g );
+			displayNothingToDo( g, width, height );
 		}
 		else
 		{
-			setBackground( graph.getStyle().getFillColor( 0 ) );
 			camera.setPadding( graph );
-			camera.setViewport( getWidth(), getHeight() );
-			camera.pushView( g );
+			camera.setViewport( width, height );
 //			System.err.printf( "%s", camera );
 //			debugVisibleArea( g );
 			renderGraph( g );
-			camera.popView( g );
 			renderSelection( g );
 		}
 	}
 	
 	
-	@Override
 	public void resetView()
 	{
 		camera.setAutoFitView( true );
 		camera.setRotation( 0 );
-		canvasChanged = true;
 	}
 
-	@Override
 	public void setViewCenter( float x, float y, float z )
 	{
 		camera.setAutoFitView( false );
 		camera.setCenter( x, y /* ignore Z */ );
-		canvasChanged = true;
 	}
 
-	@Override
 	public void setViewPercent( float percent )
 	{
 		camera.setAutoFitView( false );
 		camera.setZoom( percent );
-		canvasChanged = true;
 	}
 
-	@Override
 	public void setViewRotation( float theta )
 	{
 		camera.setRotation( theta );
-		canvasChanged = true;
 	}
 
-	@Override
     public void moveElementAtPx( GraphicElement element, float x, float y )
     {
 	   Point2D.Float p = camera.inverseTransform( x, y );
@@ -178,10 +171,12 @@ public class SwingBasicGraphView extends ViewBase
 	{
 		StyleGroup   style   = graph.getStyle(); 
 		Rectangle2D  rect    = new Rectangle2D.Float();
-		GraphMetrics metrics = camera.metrics; 
+		GraphMetrics metrics = camera.getMetrics(); 
 		float        px1     = metrics.px1;
 		Value        stroke  = style.getShadowWidth();
-		
+
+		renderGraphBackground( g );
+		camera.pushView( g );
 		renderGraphElements( g );
 		
 		if( style.getStrokeWidth().value != 0 )
@@ -191,6 +186,8 @@ public class SwingBasicGraphView extends ViewBase
 			g.setColor( graph.getStyle().getStrokeColor( 0 ) );
 			g.draw( rect );
 		}
+
+		camera.popView( g );
 	}
 	
 	/**
@@ -208,6 +205,19 @@ public class SwingBasicGraphView extends ViewBase
 				renderGroup( g, group );
 			}
 		}
+	}
+	
+	/**
+	 * Render the background of the graph.
+	 * @param g The Swing graphics.
+	 */
+	protected void renderGraphBackground( Graphics2D g )
+	{
+		StyleGroup group = graph.getStyle();
+		
+		g.setColor( group.getFillColor( 0 ) );
+		g.fillRect( 0, 0, (int)camera.getMetrics().viewport.data[0],
+		                  (int)camera.getMetrics().viewport.data[1] );
 	}
 	
 	/**
@@ -251,7 +261,10 @@ public class SwingBasicGraphView extends ViewBase
 	
 	protected void renderNodeGroup( Graphics2D g, StyleGroup group, Element element )
 	{
-		GraphMetrics metrics = camera.metrics;
+		if( group.getShape() == Shape.JCOMPONENT )
+			return;
+		
+		GraphMetrics metrics = camera.getMetrics();
 		Values       size    = group.getSize();
 		Ellipse2D    shape   = new Ellipse2D.Float();
 		float        width   = metrics.lengthToGu( size, 0 );
@@ -313,7 +326,7 @@ public class SwingBasicGraphView extends ViewBase
 	{
 		Color color = group.getFillColor( 0 );
 		
-		if( element != null && group.getFillMode() == Style.FillMode.DYN_PLAIN )
+		if( element != null && group.getFillMode() == FillMode.DYN_PLAIN )
 		{
 			int n = group.getFillColorCount();
 			
@@ -405,7 +418,7 @@ public class SwingBasicGraphView extends ViewBase
 	
 	protected void setupEdgeStyle( Graphics2D g2, StyleGroup group )
 	{
-		float width = camera.metrics.lengthToGu( group.getSize(), 0 );
+		float width = camera.getMetrics().lengthToGu( group.getSize(), 0 );
 
 		g2.setColor( group.getFillColor( 0 ) );
 		g2.setStroke( new BasicStroke( width ) );
@@ -421,7 +434,7 @@ public class SwingBasicGraphView extends ViewBase
 		if( events != null )
 			events.activate();
 		
-		GraphMetrics metrics = camera.metrics;
+		GraphMetrics metrics = camera.getMetrics();
 		Ellipse2D    shape   = new Ellipse2D.Float();
 		Values       size    = group.getSize();
 		float        width   = metrics.lengthToGu( size, 0 );
@@ -482,16 +495,19 @@ public class SwingBasicGraphView extends ViewBase
 			float y2 = selection.y2;
 			float t;
 			
+			float w = camera.getMetrics().getSize().data[0];
+			float h = camera.getMetrics().getSize().data[1];
+			
 			if( x1 > x2 ) { t = x1; x1 = x2; x2 = t; }
 			if( y1 > y2 ) { t = y1; y1 = y2; y2 = t; }
 	
 			g.setColor( new Color( 50, 50, 200, 128 ) );
 			g.fillRect( (int)x1, (int)y1, (int)(x2-x1), (int)(y2-y1) );
 			g.setColor( new Color( 0, 0, 0, 128 ) );
-			g.drawLine( 0, (int)y1, getWidth(), (int)y1 );
-			g.drawLine( 0, (int)y2, getWidth(), (int)y2 );
-			g.drawLine( (int)x1, 0, (int)x1, getHeight() );
-			g.drawLine( (int)x2, 0, (int)x2, getHeight() );
+			g.drawLine( 0, (int)y1, (int)w, (int)y1 );
+			g.drawLine( 0, (int)y2, (int)w, (int)y2 );
+			g.drawLine( (int)x1, 0, (int)x1, (int)h );
+			g.drawLine( (int)x2, 0, (int)x2, (int)h );
 			g.setColor( new Color( 50, 50, 200, 64 ) );
 			g.drawRect( (int)x1, (int)y1, (int)(x2-x1), (int)(y2-y1) );
 		}
@@ -506,25 +522,56 @@ public class SwingBasicGraphView extends ViewBase
 	protected void debugVisibleArea( Graphics2D g )
 	{
 		Rectangle2D rect = new Rectangle2D.Float();
+		GraphMetrics metrics = camera.getMetrics();
 		
-		float x = camera.metrics.loVisible.x;
-		float y = camera.metrics.loVisible.y;
-		float w = (float) Math.abs( camera.metrics.hiVisible.x - x );
-		float h = (float) Math.abs( camera.metrics.hiVisible.y - y );
+		float x = metrics.loVisible.x;
+		float y = metrics.loVisible.y;
+		float w = (float) Math.abs( metrics.hiVisible.x - x );
+		float h = (float) Math.abs( metrics.hiVisible.y - y );
 		
 		rect.setFrame( x, y, w, h );
-		g.setStroke( new BasicStroke( camera.metrics.px1 * 4 ) );
+		g.setStroke( new BasicStroke( metrics.px1 * 4 ) );
 		g.setColor( Color.RED );
 		g.draw( rect );
 
 		g.setColor( Color.BLUE );
 		Ellipse2D ellipse = new Ellipse2D.Float();
-		float px1 = camera.metrics.px1;
-		ellipse.setFrame( camera.center.x-3*px1, camera.center.y-3*px1, px1*6, px1*6 );
+		float px1 = metrics.px1;
+		ellipse.setFrame( camera.getViewCenter().x-3*px1, camera.getViewCenter().y-3*px1, px1*6, px1*6 );
 		g.fill( ellipse );
-		ellipse.setFrame( camera.metrics.lo.x-3*px1, camera.metrics.lo.y-3*px1, px1*6, px1*6 );
+		ellipse.setFrame( metrics.lo.x-3*px1, metrics.lo.y-3*px1, px1*6, px1*6 );
 		g.fill( ellipse );
-		ellipse.setFrame( camera.metrics.hi.x-3*px1, camera.metrics.hi.y-3*px1, px1*6, px1*6 );
+		ellipse.setFrame( metrics.hi.x-3*px1, metrics.hi.y-3*px1, px1*6, px1*6 );
 		g.fill( ellipse );
 	}
+	
+// Style Group Listener
+
+    public void elementStyleChanged( Element element, StyleGroup oldStyle, StyleGroup style )
+    {
+/*		GraphicElement gelement  = (GraphicElement) element;
+		Object         component = gelement.getComponent();
+		
+		if( style.getShape() == Shape.JCOMPONENT )
+		{
+			if( component == null )	// Create a new one.
+			{
+				
+			}
+			else	// Maybe change the component.f
+			{
+				
+			}
+		}
+		else
+		{
+			if( component != null )
+				gelement.setComponent( null );
+		}
+ */   }
+    
+    public void styleChanged( StyleGroup group )
+    {
+    	
+    }
 }

@@ -172,6 +172,11 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 * inside from the listener. This can happen !! We create this list on demand.
 	 */
 	protected ArrayList<Object> listenersToRemove;
+	
+	/**
+	 * The current step.
+	 */
+	protected double step;
 
 // Constructors
 
@@ -505,6 +510,11 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	{
 		return eltsListeners;
 	}
+	
+	public double getStep()
+	{
+		return step;
+	}
 
 	/**
 	 * @complexity O( 2*log(n)+log(m) ) with n the number of nodes and m the number of edges in the graph.
@@ -596,8 +606,10 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		return null;
 	}
 
-	public void stepBegins(double time)
+	public void stepBegins( double time )
 	{
+		step = time;
+		
 		for( GraphElementsListener l : eltsListeners )
 			if( l != muteElts )
 				l.stepBegins( getId(), time );
