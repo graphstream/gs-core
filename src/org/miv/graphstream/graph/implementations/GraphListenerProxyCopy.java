@@ -140,8 +140,6 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 		}
 	}
 	
-// Access
-	
 // Command
 	
 	public void addGraphListener( GraphListener listener )

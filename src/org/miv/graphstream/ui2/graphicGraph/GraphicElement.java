@@ -56,7 +56,7 @@ public abstract class GraphicElement extends AbstractElement
 {
 // Nested interfaces
 	
-	public interface ElementRenderer
+	public interface SwingElementRenderer
 	{
 	}
 	

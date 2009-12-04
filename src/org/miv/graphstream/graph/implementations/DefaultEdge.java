@@ -25,6 +25,7 @@ package org.miv.graphstream.graph.implementations;
 
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.Node;
+import org.miv.graphstream.io2.InputBase;
 import org.miv.util.*;
 
 /**
@@ -142,7 +143,7 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 	{
 		if( directed != on )
 		{
-			src.G.beforeEdgeRemoveEvent( this );
+			src.G.listeners.sendEdgeRemoved( src.getId(), getId() );
 		
 			src.unregisterEdge( this );
 			trg.unregisterEdge( this );
@@ -152,13 +153,13 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 			src.registerEdge( this );
 			trg.registerEdge( this );
 		
-			src.G.afterEdgeAddEvent( this );
+			src.G.listeners.sendEdgeAdded( src.getId(), getId(), src.getId(), trg.getId(), directed );
 		}
 	}
 	
 	public void switchDirection()
 	{
-		src.G.beforeEdgeRemoveEvent( this );
+		src.G.listeners.sendEdgeRemoved( src.getId(), getId() );
 		
 		src.unregisterEdge( this );
 		trg.unregisterEdge( this );
@@ -172,7 +173,7 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 		src.registerEdge( this );
 		trg.registerEdge( this );
 		
-		src.G.afterEdgeAddEvent( this );
+		src.G.listeners.sendEdgeAdded( src.getId(), getId(), src.getId(), trg.getId(), directed );
 	}
 
 	/**
@@ -232,7 +233,7 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 		}
 		
 		g = (DefaultGraph) src.getGraph();
-		g.beforeEdgeRemoveEvent( this );
+		g.listeners.sendEdgeRemoved( src.getId(), getId() );
 
 		src = null;
 		trg = null;
@@ -242,6 +243,8 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
 		if( src != null )
-			( (DefaultGraph) src.getGraph() ).attributeChangedEvent( this, attribute, event, oldValue, newValue );
+			src.G.listeners.sendAttributeChangedEvent( src.getId(),
+					getId(), InputBase.ElementType.EDGE,
+					attribute, event, oldValue, newValue );
 	}
 }

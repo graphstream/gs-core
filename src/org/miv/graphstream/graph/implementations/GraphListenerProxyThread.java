@@ -186,7 +186,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 		inputGraph.addGraphListener( this );		
 		((MBoxStandalone)this.events).addListener( this );
 	}
-	
+
 // Commands
 
 	/**

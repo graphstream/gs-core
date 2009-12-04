@@ -20,39 +20,46 @@
  * 	Guilhelm Savin
  */
 
-package org.miv.graphstream.ui2.swingViewer.basicView;
+package org.miv.graphstream.ui2.swingViewer.basicRenderer;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.miv.graphstream.graph.Element;
-import org.miv.graphstream.ui2.graphicGraph.GraphicEdge;
 import org.miv.graphstream.ui2.graphicGraph.GraphicElement;
 import org.miv.graphstream.ui2.graphicGraph.GraphicGraph;
-import org.miv.graphstream.ui2.graphicGraph.GraphicNode;
-import org.miv.graphstream.ui2.graphicGraph.GraphicSprite;
 import org.miv.graphstream.ui2.graphicGraph.StyleGroup;
 import org.miv.graphstream.ui2.graphicGraph.StyleGroupSet;
-import org.miv.graphstream.ui2.graphicGraph.StyleGroup.ElementEvents;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Value;
-import org.miv.graphstream.ui2.graphicGraph.stylesheet.Values;
 import org.miv.graphstream.ui2.swingViewer.GraphRendererBase;
 import org.miv.graphstream.ui2.swingViewer.util.Camera;
 import org.miv.graphstream.ui2.swingViewer.util.GraphMetrics;
 import org.miv.util.geom.Point3;
 
-import static org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleConstants.*;
-
 /**
- * A very simple view of the graph (programming example).
+ * A very simple view of the graph that respect only a subset of CSS.
+ * 
+ * <p>
+ * This is a minimal implementation of a renderer that only supports a
+ * subset of the CSS :
+ * 	<ul>
+ * 		<li>Colours</li>
+ * 		<li>Widths</li>
+ * 		<li>Borders</li>
+ * 	</ul>
+ * </p>
+ * 
+ * TODO
+ * 	- Le texte.
+ * 	- Les sprites.
+ * 	- Les bordures.
  */
 public class SwingBasicGraphRenderer extends GraphRendererBase
 {
@@ -62,6 +69,12 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 	 * Set the view on the view port defined by the metrics.
 	 */
 	protected Camera camera = new Camera();
+
+	protected NodeRenderer nodeRenderer = new NodeRenderer();
+
+	protected EdgeRenderer edgeRenderer = new EdgeRenderer();
+	
+	protected SpriteRenderer spriteRenderer = new SpriteRenderer();
 	
 // Construction
 	
@@ -221,19 +234,6 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 	}
 	
 	/**
-	 * Show the frame per second indicator.
-	 * @param g2 The Swing graphics.
-	protected void renderFps( Graphics2D g2 )
-	{
-		if( fpsInfo )
-		{
-			g2.setColor( Color.GRAY );
-			g2.drawString( String.format( "fps %.6f", fps.getAverageFramesPerSecond() ), 10, 15 );
-		}
-	}
-	 */
-
-	/**
 	 * Render a style group.
 	 * @param g The Swing graphics.
 	 * @param group The group to render.
@@ -243,243 +243,17 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 		switch( group.getType() )
 		{
 			case NODE:
-				renderNodeGroup( g, group );
+				nodeRenderer.render( group, g, camera );
 				break;
 			case EDGE:
-				renderEdgeGroup( g, group );
+				edgeRenderer.render( group, g, camera );
 				break;
 			case SPRITE:
-				renderSpriteGroup( g, group );
+				spriteRenderer.render( group, g, camera );
 				break;
 		}
 	}
-	
-	protected void renderNodeGroup( Graphics2D g, StyleGroup group )
-	{
-		renderNodeGroup( g, group, null );
-	}
-	
-	protected void renderNodeGroup( Graphics2D g, StyleGroup group, Element element )
-	{
-		if( group.getShape() == Shape.JCOMPONENT )
-			return;
 		
-		GraphMetrics metrics = camera.getMetrics();
-		Values       size    = group.getSize();
-		Ellipse2D    shape   = new Ellipse2D.Float();
-		float        width   = metrics.lengthToGu( size, 0 );
-		float        height  = size.size() > 1 ? metrics.lengthToGu( size, 1 ) : width;
-		float        w2      = width  / 2;
-		float        h2      = height / 2;
-		
-		setupNodeStyle( g, group, element );
-
-		if( element != null )
-		{
-			GraphicNode node = (GraphicNode) element;
-			
-			shape.setFrame( node.x-w2, node.y-h2, width, height );
-			g.fill( shape );
-		}
-		else
-		{
-			for( Element e: group.bulkElements() )
-			{
-				GraphicNode node = (GraphicNode) e;
-	
-				if( camera.isVisible( node ) )
-				{
-					shape.setFrame( node.x-w2, node.y-h2, width, height );
-					g.fill( shape );
-				}
-			}
-			
-			if( group.hasDynamicElements() )
-			{
-				for( Element e: group.dynamicElements() )
-				{
-					GraphicElement ge = (GraphicElement)e;
-					
-					if( camera.isVisible( ge ) && ! group.elementHasEvents( ge ) )
-						renderNodeGroup( g, group, ge );
-				}
-			}
-			
-			if( group.hasEventElements() )
-			{
-				for( ElementEvents event: group.elementsEvents() )
-				{
-					GraphicElement e = (GraphicElement) event.getElement();
-					
-					if( camera.isVisible( e ) )
-					{
-						event.activate();
-						renderNodeGroup( g, group, e );
-						event.deactivate();
-					}
-				}
-			}
-		}
-	}
-	
-	protected void setupNodeStyle( Graphics2D g, StyleGroup group, Element element )
-	{
-		Color color = group.getFillColor( 0 );
-		
-		if( element != null && group.getFillMode() == FillMode.DYN_PLAIN )
-		{
-			int n = group.getFillColorCount();
-			
-			if( element.hasNumber( "ui.color" ) && n > 1 )
-			{
-				float value = (float) element.getNumber( "ui.color" );
-				
-				if( value < 0 ) value = 0; else if( value > 1 ) value = 1;
-				
-				if( value == 1 )
-				{
-					color = group.getFillColor( n-1 );	// Simplification, faster.
-				}
-				else if( value != 0 )	// If value == 0, color is already set above.
-				{
-					float div = 1f / (n-1);
-					int   col = (int) ( value / div );
-
-					div = ( value - (div*col) ) / div;
-//					div = value / div - col;
-					
-					Color color0 = group.getFillColor( col );
-					Color color1 = group.getFillColor( col + 1 );
-					float red    = ( (color0.getRed()  *(1-div)) + (color1.getRed()  *div) ) / 255f;
-					float green  = ( (color0.getGreen()*(1-div)) + (color1.getGreen()*div) ) / 255f;
-					float blue   = ( (color0.getBlue() *(1-div)) + (color1.getBlue() *div) ) / 255f;
-					float alpha  = ( (color0.getAlpha()*(1-div)) + (color1.getAlpha()*div) ) / 255f;
-						
-					color = new Color( red, green, blue, alpha );
-				}
-			}
-		}
-		
-		g.setColor( color );
-	}
-	
-	protected void renderEdgeGroup( Graphics2D g, StyleGroup group )
-	{
-		renderEdgeGroup( g, group, null );
-	}
-	
-	protected void renderEdgeGroup( Graphics2D g, StyleGroup group, ElementEvents events )
-	{
-		if( events != null  )
-			events.activate();
-
-		Line2D shape = new Line2D.Float();
-		
-		setupEdgeStyle( g, group );
-		
-		if( events != null )
-		{
-			GraphicEdge edge  = (GraphicEdge) events.getElement();
-			GraphicNode node0 = (GraphicNode) edge.getNode0();
-			GraphicNode node1 = (GraphicNode) edge.getNode1();
-			
-			shape.setLine( node0.x, node0.y, node1.x, node1.y );
-			g.draw( shape );
-		}
-		else
-		{
-			for( Element element: group )
-			{
-				GraphicEdge edge = (GraphicEdge) element;
-				
-				if( ! group.elementHasEvents( edge ) && camera.isVisible( edge ) )
-				{
-					GraphicNode node0 = (GraphicNode) edge.getNode0();
-					GraphicNode node1 = (GraphicNode) edge.getNode1();
-
-					shape.setLine( node0.x, node0.y, node1.x, node1.y );
-					g.draw( shape );
-				}
-			}
-			
-			if( group.hasEventElements() )
-			{
-				for( ElementEvents e: group.elementsEvents() )
-				{
-					if( camera.isVisible( (GraphicElement)e.getElement() ) )
-						renderEdgeGroup( g, group, e );
-				}
-			}
-		}
-		
-		if( events != null )
-			events.deactivate();
-	}
-	
-	protected void setupEdgeStyle( Graphics2D g2, StyleGroup group )
-	{
-		float width = camera.getMetrics().lengthToGu( group.getSize(), 0 );
-
-		g2.setColor( group.getFillColor( 0 ) );
-		g2.setStroke( new BasicStroke( width ) );
-	}
-
-	protected void renderSpriteGroup( Graphics2D g, StyleGroup group )
-	{
-		renderSpriteGroup( g, group, null );
-	}
-
-	protected void renderSpriteGroup( Graphics2D g, StyleGroup group, ElementEvents events )
-	{
-		if( events != null )
-			events.activate();
-		
-		GraphMetrics metrics = camera.getMetrics();
-		Ellipse2D    shape   = new Ellipse2D.Float();
-		Values       size    = group.getSize();
-		float        width   = metrics.lengthToGu( size, 0 );
-		float        height  = size.size() > 1 ? metrics.lengthToGu( size, 1 ) : width;
-		
-		setupSpriteStyle( g, group );
-
-		if( events != null )
-		{
-			GraphicSprite sprite = (GraphicSprite) events.getElement();
-
-			float w2 = width  / 2;
-			float h2 = height / 2;
-			shape.setFrame( sprite.getX()-w2, sprite.getY()-h2, width, height );
-			g.fill( shape );			
-		}
-		else
-		{
-			for( Element element: group )
-			{
-				GraphicSprite sprite = (GraphicSprite) element;
-	
-				if( ! group.elementHasEvents( sprite ) && camera.isVisible( sprite ) )
-				{
-					float w2 = width  / 2;
-					float h2 = height / 2;
-					shape.setFrame( sprite.getX()-w2, sprite.getY()-h2, width, height );
-					g.fill( shape );
-				}
-			}
-			
-			if( group.hasEventElements() )
-			{
-				for( ElementEvents e: group.elementsEvents() )
-				{
-					if( camera.isVisible( (GraphicElement)e.getElement() ) )
-						renderSpriteGroup( g, group, e );
-				}
-			}
-		}
-		
-		if( events != null )
-			events.deactivate();
-	}
-	
 	protected void setupSpriteStyle( Graphics2D g, StyleGroup group )
 	{
 		g.setColor( group.getFillColor( 0 ) );
@@ -549,29 +323,5 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 
     public void elementStyleChanged( Element element, StyleGroup oldStyle, StyleGroup style )
     {
-/*		GraphicElement gelement  = (GraphicElement) element;
-		Object         component = gelement.getComponent();
-		
-		if( style.getShape() == Shape.JCOMPONENT )
-		{
-			if( component == null )	// Create a new one.
-			{
-				
-			}
-			else	// Maybe change the component.f
-			{
-				
-			}
-		}
-		else
-		{
-			if( component != null )
-				gelement.setComponent( null );
-		}
- */   }
-    
-    public void styleChanged( StyleGroup group )
-    {
-    	
     }
 }

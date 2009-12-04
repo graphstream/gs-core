@@ -26,9 +26,7 @@ package org.miv.graphstream.graph.implementations;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.EdgeFactory;
@@ -40,6 +38,7 @@ import org.miv.graphstream.graph.GraphListener;
 import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.graph.NodeFactory;
 import org.miv.graphstream.io.GraphParseException;
+import org.miv.graphstream.io2.InputBase;
 import org.miv.graphstream.io2.SynchronizableInput;
 import org.miv.graphstream.io2.file.FileInput;
 import org.miv.graphstream.io2.file.FileInputFactory;
@@ -104,16 +103,6 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 	protected HashMap<String,Edge> edges = new HashMap<String,Edge>();
 
 	/**
-	 * Set of graph attributes listeners.
-	 */
-	protected HashSet<GraphAttributesListener> attrListeners = new HashSet<GraphAttributesListener>();
-	
-	/**
-	 * Set of graph elements listeners.
-	 */
-	protected HashSet<GraphElementsListener> eltsListeners = new HashSet<GraphElementsListener>();
-
-	/**
 	 * Verify name space conflicts, removal of non-existing elements, use of
 	 * non-existing elements.
 	 */
@@ -124,22 +113,6 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 	 * between two non-existing nodes, create the nodes.
 	 */
 	protected boolean autoCreate = false;
-	
-	/**
-	 * A queue that allow the management of events (nodes/edge add/delete/change) in the right order. 
-	 */
-	protected LinkedList<GraphEvent> eventQueue = new LinkedList<GraphEvent>();
-	
-	/**
-	 * A boolean that indicates whether or not an GraphListener event is being sent during another one. 
-	 */
-	protected boolean eventProcessing = false;
-	
-	/**
-	 * List of listeners to remove if the {@link #removeGraphListener(GraphListener)} is called
-	 * inside from the listener. This can happen !! We create this list on demand.
-	 */
-	protected ArrayList<Object> listenersToRemove;
 	
 	/**
 	 *  Helpful class that dynamically instantiate nodes according to a given class name.
@@ -155,6 +128,11 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 	 * Current time step.
 	 */
 	protected double step;
+
+	/**
+	 * The set of listeners of this graph.
+	 */
+	protected MyInputBase listeners = new MyInputBase();
 	
 // Constructors
 
@@ -166,7 +144,7 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 	 */
 	public DefaultGraph()
 	{
-		this( "" );
+		this( "DefaultGraph" );
 	}
 	
 	/**
@@ -192,7 +170,7 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 	 */
 	public DefaultGraph( boolean strictChecking, boolean autoCreate )
 	{
-		this( "", strictChecking, autoCreate );
+		this( "DefaultGraph", strictChecking, autoCreate );
 	}
 	
 	/**
@@ -334,13 +312,7 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 	 */
 	public void clear()
 	{
-		for( GraphElementsListener listener: eltsListeners )
-			if( listener != muteElts )
-				listener.graphCleared( getId() );
-		
-		muteElts = null;
-		muteAtrs = null;
-		
+		listeners.sendGraphCleared( getId() );
 		nodes.clear();
 		edges.clear();
 		clearAttributes();
@@ -351,8 +323,7 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 	 */
 	public void clearListeners()
 	{
-		eltsListeners.clear();
-		attrListeners.clear();
+		listeners.clearListeners();
 	}
 	
 	public boolean isStrict()
@@ -367,12 +338,12 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 
 	public Iterable<GraphAttributesListener> getGraphAttributesListeners()
 	{
-		return attrListeners;
+		return listeners.graphAttributesListeners();
 	}
 	
 	public Iterable<GraphElementsListener> getGraphElementsListeners()
 	{
-		return eltsListeners;
+		return listeners.graphElementsListeners();
 	}
 
 // Commands -- Nodes
@@ -401,7 +372,7 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 			assert( old == null );
 			
 			nodes.put( tag, node );
-			afterNodeAddEvent( node );
+			listeners.sendNodeAdded( getId(), node.getId() );
 		}
 		else if( strictChecking )
 		{
@@ -456,7 +427,7 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 		if( node != null )
 		{
 			node.disconnectAllEdges();
-			beforeNodeRemoveEvent( node );
+			listeners.sendNodeRemoved( getId(), node.getId() );
 			
 			if( ! fromNodeIterator )
 				nodes.remove( tag );
@@ -562,7 +533,7 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 		// TODO: this strange behaviour should disappear ! Adding BA should cause
 		// an error. Use changeOrientation instead.
 		if( edge.getId().equals( id ) )
-			afterEdgeAddEvent( edge );
+			listeners.sendEdgeAdded( getId(), id, from, to, directed );
 		return edge;
 	}
 
@@ -665,304 +636,17 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 	public void stepBegins( double time )
 	{
 		step = time;
-		
-		for( GraphElementsListener l : eltsListeners )
-			if( l != muteElts )
-				l.stepBegins( getId(), time );
-	
-		muteElts = null;
-		muteAtrs = null;
+
+		listeners.sendStepBegins( getId(), time );
 	}
 	
 // Events
 
-	public void addGraphListener( GraphListener listener )
-	{
-		attrListeners.add( listener );
-		eltsListeners.add( listener );
-	}
-	
-	public void addGraphAttributesListener( GraphAttributesListener listener )
-	{
-		attrListeners.add( listener );
-	}
-	
-	public void addGraphElementsListener( GraphElementsListener listener )
-	{
-		eltsListeners.add( listener );
-	}
-
-	public void removeGraphListener( GraphListener listener )
-	{
-		if( eventProcessing )
-		{
-			// We cannot remove the listener while processing events !!!
-			removeListenerLater( listener );
-		}
-		else
-		{
-			attrListeners.remove( listener );
-			eltsListeners.remove( listener );
-		}
-	}
-	
-	public void removeGraphAttributesListener( GraphAttributesListener listener )
-	{
-		if( eventProcessing )
-		{
-			// We cannot remove the listener while processing events !!!
-			removeListenerLater( listener );
-		}
-		else
-		{
-			attrListeners.remove( listener );
-		}		
-	}
-	
-	public void removeGraphElementsListener( GraphElementsListener listener )
-	{
-		if( eventProcessing )
-		{
-			// We cannot remove the listener while processing events !!!
-			removeListenerLater( listener );
-		}
-		else
-		{
-			eltsListeners.remove( listener );
-		}
-	}
-	
-	protected void removeListenerLater( Object listener )
-	{
-		if( listenersToRemove == null )
-			listenersToRemove = new ArrayList<Object>();
-		
-		listenersToRemove.add( listener );	
-	}
-	
-	protected void checkListenersToRemove()
-	{
-		if( listenersToRemove != null && listenersToRemove.size() > 0 )
-		{
-			for( Object listener: listenersToRemove )
-			{
-				if( listener instanceof GraphListener )
-					removeGraphListener( (GraphListener) listener );
-				else if( listener instanceof GraphAttributesListener )
-					removeGraphAttributesListener( (GraphAttributesListener) listener );
-				else if( listener instanceof GraphElementsListener )
-					removeGraphElementsListener( (GraphElementsListener) listener );
-			}
-
-			listenersToRemove.clear();
-			listenersToRemove = null;
-		}
-	}
-
-	/**
-	 * If in "event processing mode", ensure all pending events are processed.
-	 */
-	protected void manageEvents()
-	{
-		if( eventProcessing )
-		{
-			while( ! eventQueue.isEmpty() )
-				manageEvent( eventQueue.remove() );
-		}
-	}
-
-	protected void afterNodeAddEvent( Node node )
-	{
-		if( ! eventProcessing )
-		{
-			eventProcessing = true;
-			manageEvents();
-
-			for( GraphElementsListener l: eltsListeners )
-				if( l != muteElts )
-					l.nodeAdded( getId(), node.getId() );
-		
-			muteElts = null;
-			muteAtrs = null;
-			manageEvents();
-			eventProcessing = false;
-			checkListenersToRemove();
-		}
-		else 
-		{
-			muteElts = null;
-			muteAtrs = null;
-			eventQueue.add( new AfterNodeAddEvent(node) );
-		}
-	}
-
-	protected void beforeNodeRemoveEvent( Node node )
-	{
-		if( ! eventProcessing )
-		{
-			eventProcessing = true;
-			manageEvents();
-
-			for( GraphElementsListener l: eltsListeners )
-				if( l != muteElts )
-					l.nodeRemoved( getId(), node.getId() );
-
-			muteElts = null;
-			muteAtrs = null;
-			manageEvents();
-			eventProcessing = false;
-			checkListenersToRemove();
-		}
-		else 
-		{
-			muteElts = null;
-			muteAtrs = null;
-			eventQueue.add( new BeforeNodeRemoveEvent( node ) );
-		}
-	}
-
-	protected void afterEdgeAddEvent( Edge edge )
-	{
-		if( ! eventProcessing )
-		{
-			eventProcessing = true;
-			manageEvents();
-
-			for( GraphElementsListener l: eltsListeners )
-				if( l != muteElts )
-					l.edgeAdded( getId(), edge.getId(), edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
-
-			muteElts = null;
-			muteAtrs = null;
-			manageEvents();
-			eventProcessing = false;
-			checkListenersToRemove();
-		}
-		else 
-		{
-			muteElts = null;
-			muteAtrs = null;
-//			printPosition( "AddEdge in EventProc" );
-			eventQueue.add( new AfterEdgeAddEvent(edge) );
-		}
-	}
-
-	protected void beforeEdgeRemoveEvent( Edge edge )
-	{
-		if( ! eventProcessing )
-		{
-			eventProcessing = true;
-			manageEvents();
-
-			for( GraphElementsListener l: eltsListeners )
-				if( l != muteElts )
-					l.edgeRemoved( getId(), edge.getId() );
-
-			muteElts = null;
-			muteAtrs = null;
-			manageEvents();
-			eventProcessing = false;
-			checkListenersToRemove();
-		}
-		else
-		{
-			muteElts = null;
-			muteAtrs = null;
-//			printPosition( "DelEdge in EventProc" );
-			eventQueue.add( new BeforeEdgeRemoveEvent( edge ) );
-		}
-	}
-
 	@Override
 	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
-		attributeChangedEvent( this, attribute, event, oldValue, newValue );
-	}
-
-	protected void attributeChangedEvent( Element element, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
-	{
-		if( ! eventProcessing )
-		{
-			eventProcessing = true;
-			manageEvents();
-
-			if( event == AttributeChangeEvent.ADD )
-			{
-				if( element instanceof Node )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						if( l != muteAtrs )
-							l.nodeAttributeAdded( getId(), element.getId(), attribute, newValue );
-				}
-				else if( element instanceof Edge )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						if( l != muteAtrs )
-							l.edgeAttributeAdded( getId(), element.getId(), attribute, newValue );
-				}
-				else
-				{
-					for( GraphAttributesListener l: attrListeners )
-						if( l != muteAtrs )
-							l.graphAttributeAdded( getId(), attribute, newValue );					
-				}
-			}
-			else if( event == AttributeChangeEvent.REMOVE )
-			{
-				if( element instanceof Node )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						if( l != muteAtrs )
-							l.nodeAttributeRemoved( getId(), element.getId(), attribute );
-				}
-				else if( element instanceof Edge )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						if( l != muteAtrs )
-							l.edgeAttributeRemoved( getId(), element.getId(), attribute );
-				}
-				else
-				{
-					for( GraphAttributesListener l: attrListeners )
-						if( l != muteAtrs )
-							l.graphAttributeRemoved( getId(), attribute );					
-				}								
-			}
-			else
-			{
-				if( element instanceof Node )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						if( l != muteAtrs )
-							l.nodeAttributeChanged( getId(), element.getId(), attribute, oldValue, newValue );
-				}
-				else if( element instanceof Edge )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						if( l != muteAtrs )
-							l.edgeAttributeChanged( getId(), element.getId(), attribute, oldValue, newValue );
-				}
-				else
-				{
-					for( GraphAttributesListener l: attrListeners )
-						if( l != muteAtrs )
-							l.graphAttributeChanged( getId(), attribute, oldValue, newValue );					
-				}				
-			}
-
-			muteElts = null;
-			muteAtrs = null;
-			manageEvents();
-			eventProcessing = false;
-			checkListenersToRemove();
-		}
-		else
-		{
-//			printPosition( "ChgEdge in EventProc" );
-			eventQueue.add( new AttributeChangedEvent( element, attribute, event, oldValue, newValue ) );
-			muteElts = null;
-			muteAtrs = null;
-		}
+		listeners.sendAttributeChangedEvent( getId(), null, InputBase.ElementType.GRAPH,
+				attribute, event, oldValue, newValue );
 	}
 
 // Commands -- Utility
@@ -1134,175 +818,6 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 		}
 	}
 	
-// Events Management
-
-	/**
-	 * Interface that provide general purpose classification for evens involved
-	 * in graph modifications
-	 */
-	interface GraphEvent {}
-
-	class AfterEdgeAddEvent implements GraphEvent
-	{
-		Edge edge;
-
-		AfterEdgeAddEvent( Edge edge )
-		{
-			this.edge = edge;
-		}
-	}
-
-	class BeforeEdgeRemoveEvent implements GraphEvent
-	{
-		Edge edge;
-
-		BeforeEdgeRemoveEvent( Edge edge )
-		{
-			this.edge = edge;
-		}
-	}
-
-	class AfterNodeAddEvent implements GraphEvent
-	{
-		Node node;
-
-		AfterNodeAddEvent( Node node )
-		{
-			this.node = node;
-		}
-	}
-
-	class BeforeNodeRemoveEvent implements GraphEvent
-	{
-		Node node;
-
-		BeforeNodeRemoveEvent( Node node )
-		{
-			this.node = node;
-		}
-	}
-
-	class BeforeGraphClearEvent implements GraphEvent
-	{
-	}
-
-	class AttributeChangedEvent implements GraphEvent
-	{
-		Element element;
-
-		String attribute;
-		
-		AttributeChangeEvent event;
-
-		Object oldValue;
-
-		Object newValue;
-
-		AttributeChangedEvent( Element element, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
-		{
-			this.element   = element;
-			this.attribute = attribute;
-			this.event     = event;
-			this.oldValue  = oldValue;
-			this.newValue  = newValue;
-		}
-	}
-	
-	/**
-	 * Private method that manages the events stored in the {@link #eventQueue}.
-	 * These event where created while being invoked from another event
-	 * invocation.
-	 * @param event
-	 */
-	private void 
-	manageEvent( GraphEvent event )
-	{
-		if( event.getClass() == AttributeChangedEvent.class )
-		{
-			AttributeChangedEvent ev = (AttributeChangedEvent)event;
-			
-			if( ev.event == AttributeChangeEvent.ADD )
-			{
-				if( ev.element instanceof Node )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						l.nodeAttributeAdded( getId(), ev.element.getId(), ev.attribute, ev.newValue );
-				}
-				else if( ev.element instanceof Edge )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						l.edgeAttributeAdded( getId(), ev.element.getId(), ev.attribute, ev.newValue );					
-				}
-				else
-				{
-					for( GraphAttributesListener l: attrListeners )
-						l.graphAttributeAdded( getId(), ev.attribute, ev.newValue );										
-				}
-			}
-			else if( ev.event == AttributeChangeEvent.REMOVE )
-			{
-				if( ev.element instanceof Node )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						l.nodeAttributeRemoved( getId(), ev.element.getId(), ev.attribute );
-				}
-				else if( ev.element instanceof Edge )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						l.edgeAttributeRemoved( getId(), ev.element.getId(), ev.attribute );					
-				}
-				else
-				{
-					for( GraphAttributesListener l: attrListeners )
-						l.graphAttributeRemoved( getId(), ev.attribute );										
-				}
-			}
-			else
-			{
-				if( ev.element instanceof Node )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						l.nodeAttributeChanged( getId(), ev.element.getId(), ev.attribute, ev.oldValue, ev.newValue );
-				}
-				else if( ev.element instanceof Edge )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						l.edgeAttributeChanged( getId(), ev.element.getId(), ev.attribute, ev.oldValue, ev.newValue );					
-				}
-				else
-				{
-					for( GraphAttributesListener l: attrListeners )
-						l.graphAttributeChanged( getId(), ev.attribute, ev.oldValue, ev.newValue );										
-				}				
-			}
-		}
-		
-		// Elements events
-		
-		else if( event.getClass() == AfterEdgeAddEvent.class )
-		{
-			Edge e = ((AfterEdgeAddEvent)event).edge;
-			
-			for( GraphElementsListener l: eltsListeners )
-				l.edgeAdded( getId(), e.getId(), e.getNode0().getId(), e.getNode1().getId(), e.isDirected() );
-		}
-		else if( event.getClass() == AfterNodeAddEvent.class )
-		{
-			for( GraphElementsListener l: eltsListeners )
-				l.nodeAdded( getId(), ((AfterNodeAddEvent)event).node.getId() );
-		}
-		else if( event.getClass() == BeforeEdgeRemoveEvent.class )
-		{
-			for( GraphElementsListener l: eltsListeners )
-				l.edgeRemoved( getId(), ((BeforeEdgeRemoveEvent)event).edge.getId() );
-		}
-		else if( event.getClass() == BeforeNodeRemoveEvent.class )
-		{
-			for( GraphElementsListener l: eltsListeners )
-				l.nodeRemoved( getId(), ((BeforeNodeRemoveEvent)event).node.getId() );
-		}
-	}
-	
 // Output
 
 	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId,
@@ -1406,8 +921,45 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 		if( node != null )
 			node.removeAttribute( attribute );
     }
+	
+	public void addGraphAttributesListener( GraphAttributesListener listener )
+	{
+		listeners.addGraphAttributesListener( listener );
+	}
+	
+	public void addGraphElementsListener( GraphElementsListener listener )
+	{
+		listeners.addGraphElementsListener( listener );
+	}
+	
+	public void addGraphListener( GraphListener listener )
+	{
+		listeners.addGraphListener( listener );
+	}
+	
+	public void removeGraphAttributesListener( GraphAttributesListener listener )
+	{
+		listeners.removeGraphAttributesListener( listener );
+	}
+	
+	public void removeGraphElementsListener( GraphElementsListener listener )
+	{
+		listeners.removeGraphElementsListener( listener );
+	}
+	
+	public void removeGraphListener( GraphListener listener )
+	{
+		listeners.removeGraphListener( listener );
+	}
 
-// Mute synchronisation
+// Handling the listeners -- We use the IO2 InputBase for this.
+	
+	class MyInputBase extends InputBase
+	{
+		
+	}
+
+// Mute synchronisation XXX to remove XXX
 	
 	protected GraphAttributesListener muteAtrs = null;
 	

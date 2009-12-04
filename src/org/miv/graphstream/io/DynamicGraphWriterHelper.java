@@ -24,7 +24,6 @@
 package org.miv.graphstream.io;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import org.miv.graphstream.graph.Graph;
 import org.miv.graphstream.graph.GraphListener;

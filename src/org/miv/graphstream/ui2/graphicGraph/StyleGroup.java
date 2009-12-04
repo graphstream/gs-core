@@ -23,7 +23,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.miv.graphstream.graph.Element;
-import org.miv.graphstream.ui2.graphicGraph.GraphicElement.ElementRenderer;
+import org.miv.graphstream.ui2.graphicGraph.GraphicElement.SwingElementRenderer;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Rule;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Selector;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Style;
@@ -118,7 +118,7 @@ public class StyleGroup extends Style implements Iterable<Element>
 	/**
 	 * Associated renderers.
 	 */
-	public HashMap<String,ElementRenderer> renderers;
+	public HashMap<String,SwingElementRenderer> renderers;
 
 // Construction
 	
@@ -354,7 +354,7 @@ public class StyleGroup extends Style implements Iterable<Element>
 	 * The associated renderers.
 	 * @return A renderer or null if not found.
 	 */
-	public ElementRenderer getRenderer( String id )
+	public SwingElementRenderer getRenderer( String id )
 	{
 		if( renderers != null )
 			return renderers.get( id );
@@ -528,10 +528,10 @@ public class StyleGroup extends Style implements Iterable<Element>
 	 * @param id The renderer identifier.
 	 * @param renderer The renderer.
 	 */
-	public void addRenderer( String id, ElementRenderer renderer )
+	public void addRenderer( String id, SwingElementRenderer renderer )
 	{
 		if( renderers == null )
-			renderers = new HashMap<String, ElementRenderer>();
+			renderers = new HashMap<String, SwingElementRenderer>();
 		
 		renderers.put( id, renderer );
 	}
@@ -541,7 +541,7 @@ public class StyleGroup extends Style implements Iterable<Element>
 	 * @param id The renderer identifier.
 	 * @return The removed renderer or null if not found.
 	 */
-	public ElementRenderer removeRenderer( String id )
+	public SwingElementRenderer removeRenderer( String id )
 	{
 		return renderers.remove( id );
 	}

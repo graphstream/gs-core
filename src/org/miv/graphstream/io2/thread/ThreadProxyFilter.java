@@ -79,6 +79,8 @@ public class ThreadProxyFilter extends InputBase implements ProxyFilter, MBoxLis
 {
 // Attributes
 
+	protected String id;
+	
 	/**
 	 * The event sender name, usually the graph name.
 	 */

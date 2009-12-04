@@ -33,8 +33,9 @@ package org.miv.graphstream.graph;
  * @see org.miv.graphstream.graph.GraphListener
  * 
  */
-public class GraphListenerAdapter implements GraphListener
+public abstract class GraphListenerAdapter implements GraphListener
 {
+	public abstract String getId();
 
 	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId,
             boolean directed )

@@ -29,6 +29,7 @@ import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.graph.Graph;
 import org.miv.graphstream.graph.Node;
+import org.miv.graphstream.io2.InputBase;
 import org.miv.util.*;
 
 import java.util.*;
@@ -211,7 +212,8 @@ public abstract class DefaultNode extends AbstractElement implements Node
 	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
 		if( G != null )
-			G.attributeChangedEvent( this, attribute, event, oldValue, newValue );
+			G.listeners.sendAttributeChangedEvent( G.getId(), getId(),
+					InputBase.ElementType.NODE, attribute, event, oldValue, newValue );
 	}
 	
 	@Override
