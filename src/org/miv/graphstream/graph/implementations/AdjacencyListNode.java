@@ -32,6 +32,7 @@ import org.miv.graphstream.graph.DepthFirstIterator;
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.Graph;
 import org.miv.graphstream.graph.Node;
+import org.miv.graphstream.io2.InputBase.ElementType;
 
 /**
  * <p>
@@ -250,6 +251,12 @@ public class AdjacencyListNode extends AbstractElement implements Node
 		this.graph = graph;
 		edges = new ArrayList<Edge>();
 	}
+
+	@Override
+	protected String getMyGraphId()
+	{
+		return graph.getId();
+	}
 	
 	public Iterator<Node> getBreadthFirstIterator()
 	{
@@ -441,9 +448,10 @@ public class AdjacencyListNode extends AbstractElement implements Node
 	}
 
 	@Override
-	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+	protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
 		if( graph != null )
-			( (AdjacencyListGraph) graph ).attributeChangedEvent( this, attribute, event, oldValue, newValue );	
+			((AdjacencyListGraph)graph).listeners.sendAttributeChangedEvent(
+					sourceId, getId(), ElementType.NODE, attribute, event, oldValue, newValue );
 	}
 }

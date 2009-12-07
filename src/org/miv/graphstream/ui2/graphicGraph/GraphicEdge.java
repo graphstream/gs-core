@@ -16,6 +16,7 @@
 package org.miv.graphstream.ui2.graphicGraph;
 
 import org.miv.graphstream.graph.*;
+import org.miv.graphstream.io2.InputBase.ElementType;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Selector;
 
 import java.util.ArrayList;
@@ -184,35 +185,17 @@ public class GraphicEdge extends GraphicElement implements Edge
     }
     
 	@Override
-	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+	protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
-		super.attributeChanged( attribute, event, oldValue, newValue );
+		super.attributeChanged( sourceId, attribute, event, oldValue, newValue );
 		
 		if( attribute.startsWith( "ui.sprite." ) )
 		{
 			mygraph.spriteAttribute( event, this, attribute, newValue );
 		}
-		else if( event == AttributeChangeEvent.ADD )		// ADD
-		{
-			for( GraphAttributesListener listener: mygraph.attrListeners )
-				if( listener != mygraph.muteAtrs )
-					listener.edgeAttributeAdded( mygraph.getId(), getId(), attribute, newValue );
-		}
-		else if( event == AttributeChangeEvent.REMOVE )	// REMOVE
-		{
-			for( GraphAttributesListener listener: mygraph.attrListeners )
-				if( listener != mygraph.muteAtrs )
-					listener.edgeAttributeRemoved( mygraph.getId(), getId(), attribute );			
-		}
-		else						// CHANGE
-		{
-			for( GraphAttributesListener listener: mygraph.attrListeners )
-				if( listener != mygraph.muteAtrs )
-					listener.edgeAttributeChanged( mygraph.getId(), getId(), attribute, oldValue, newValue );						
-		}
 		
-		mygraph.muteAtrs = null;
-		mygraph.muteElts = null;
+		mygraph.listeners.sendAttributeChangedEvent( sourceId,
+				getId(), ElementType.EDGE, attribute, event, oldValue, newValue );
 	}
 	
 	/**

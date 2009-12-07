@@ -95,6 +95,16 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 	
 // Getters
 
+	@Override
+	protected String getMyGraphId()
+	{
+		if( src != null && src.G != null )
+			//return src.G.getId();
+			return src.G.time.newEvent();
+		
+		throw new RuntimeException( "WTF ?" );
+	}
+	
 	public boolean isDirected()
 	{
 		return directed;
@@ -143,7 +153,7 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 	{
 		if( directed != on )
 		{
-			src.G.listeners.sendEdgeRemoved( src.getId(), getId() );
+			src.G.listeners.sendEdgeRemoved( src.G.time.newEvent(), getId() );
 		
 			src.unregisterEdge( this );
 			trg.unregisterEdge( this );
@@ -153,13 +163,13 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 			src.registerEdge( this );
 			trg.registerEdge( this );
 		
-			src.G.listeners.sendEdgeAdded( src.getId(), getId(), src.getId(), trg.getId(), directed );
+			src.G.listeners.sendEdgeAdded( src.G.time.newEvent(), getId(), src.getId(), trg.getId(), directed );
 		}
 	}
 	
 	public void switchDirection()
 	{
-		src.G.listeners.sendEdgeRemoved( src.getId(), getId() );
+		src.G.listeners.sendEdgeRemoved( src.G.time.newEvent(), getId() );
 		
 		src.unregisterEdge( this );
 		trg.unregisterEdge( this );
@@ -173,7 +183,7 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 		src.registerEdge( this );
 		trg.registerEdge( this );
 		
-		src.G.listeners.sendEdgeAdded( src.getId(), getId(), src.getId(), trg.getId(), directed );
+		src.G.listeners.sendEdgeAdded( src.G.time.newEvent(), getId(), src.getId(), trg.getId(), directed );
 	}
 
 	/**
@@ -214,7 +224,7 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 	 * @throws IllegalStateException If the edge is partially bound (to only
 	 * one node) or bound to non existing nodes.
 	 */
-	protected void unbind()
+	protected void unbind( String sourceId )
 		throws IllegalStateException
 	{
 		DefaultGraph g;
@@ -233,17 +243,17 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 		}
 		
 		g = (DefaultGraph) src.getGraph();
-		g.listeners.sendEdgeRemoved( src.getId(), getId() );
+		g.listeners.sendEdgeRemoved( sourceId, getId() );
 
 		src = null;
 		trg = null;
 	}
 
 	@Override
-	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+	protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
 		if( src != null )
-			src.G.listeners.sendAttributeChangedEvent( src.getId(),
+			src.G.listeners.sendAttributeChangedEvent( sourceId,
 					getId(), InputBase.ElementType.EDGE,
 					attribute, event, oldValue, newValue );
 	}

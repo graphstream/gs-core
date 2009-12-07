@@ -266,6 +266,12 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 
 // Access
 
+	@Override
+	protected String getMyGraphId()
+	{
+		return getId();
+	}
+	
 	/**
 	 * The set of nodes. Use the z-index instead of iterating on the node set
 	 * for rendering.
@@ -813,7 +819,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 	}
 
 	@Override
-	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+	protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
 //		System.err.printf( "attribute changed on graphic-graph : %s -> %s%n", attribute, newValue );
 																																																		

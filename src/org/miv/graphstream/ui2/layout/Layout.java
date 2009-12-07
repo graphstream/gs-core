@@ -23,7 +23,7 @@
 
 package org.miv.graphstream.ui2.layout;
 
-import org.miv.graphstream.io2.Output;
+import org.miv.graphstream.io2.Filter;
 import org.miv.util.geom.*;
 
 /**
@@ -80,7 +80,7 @@ import org.miv.util.geom.*;
  * 
  * @since 20050706
  */
-public interface Layout extends Output
+public interface Layout extends Filter
 {
 // Access
 
@@ -96,7 +96,7 @@ public interface Layout extends Output
 	int getNodeMoved();
 
 	/**
-	 * Percent of nodes moving (between [0..1]).
+	 * How close to stabilisation the layout algorithm is.
 	 */
 	double getStabilization();
 
@@ -141,12 +141,12 @@ public interface Layout extends Output
 	void clear();
 
 	/**
-	 * Add a listener for layout events.
+	 * Add a listener for specific layout events.
 	 */
 	void addListener( LayoutListener listener );
 
 	/**
-	 * Remove a listener for layout events.
+	 * Remove a listener for specific layout events.
 	 */
 	void removeListener( LayoutListener listener );
 

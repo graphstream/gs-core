@@ -16,7 +16,7 @@
 
 package org.miv.graphstream.ui2.graphicGraph;
 
-import java.util.HashSet;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -82,11 +82,6 @@ public abstract class GraphicElement extends AbstractElement
 	 */
 	public Object component;
 	
-	/**
-	 * Set of listeners for change events.
-	 */
-	protected HashSet<GraphicElementChangeListener> changeListeners = null;
-	
 // Construction
 	
 	/**
@@ -99,6 +94,12 @@ public abstract class GraphicElement extends AbstractElement
     }
 	
 // Access
+	
+	@Override
+	protected String getMyGraphId()
+	{
+		return mygraph.getId();
+	}
 
 	/**
 	 * Type of selector for the graphic element (Node, Edge, Sprite ?).
@@ -178,10 +179,8 @@ public abstract class GraphicElement extends AbstractElement
 	 * Handle the "ui.class", "label", "ui.style", etc. attributes.
 	 */
 	@Override
-    protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+    protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
     {
-		boolean changed = false;
-		
 		if( event == AttributeChangeEvent.ADD || event == AttributeChangeEvent.CHANGE )
 		{
 			if( attribute.equals( "ui.class" ) )
@@ -189,12 +188,12 @@ public abstract class GraphicElement extends AbstractElement
 				mygraph.styleGroups.checkElementStyleGroup( this );
 //				mygraph.styleGroups.removeElement( tis );
 //				mygraph.styleGroups.addElement( this );
-				mygraph.graphChanged = changed = true;
+				mygraph.graphChanged = true;
 			}
 			else if( attribute.equals( "label" ) || attribute.equals( "ui.label" ) )
 			{
 				label = StyleConstants.convertLabel( newValue );
-				mygraph.graphChanged = changed = true;
+				mygraph.graphChanged = true;
 			}
 			else if( attribute.equals( "ui.style" ) )
 			{
@@ -215,7 +214,7 @@ public abstract class GraphicElement extends AbstractElement
 						System.err.printf( "    The style was ignored" );
 					}
 	
-					mygraph.graphChanged = changed = true;
+					mygraph.graphChanged = true;
 				}
 				else
 				{
@@ -224,27 +223,27 @@ public abstract class GraphicElement extends AbstractElement
 			}
 			else if( attribute.equals( "ui.hide" ) )
 			{
-				mygraph.graphChanged = changed = true;
+				mygraph.graphChanged = true;
 			}
 			else if( attribute.equals( "ui.clicked" ) )
 			{
 				style.pushEventFor( this, "clicked" );
-				mygraph.graphChanged = changed = true;
+				mygraph.graphChanged = true;
 			}
 			else if( attribute.equals( "ui.selected" ) )
 			{
 				style.pushEventFor( this, "selected" );
-				mygraph.graphChanged = changed = true;
+				mygraph.graphChanged = true;
 			}
 			else if( attribute.equals( "ui.color" ) )
 			{
 				style.pushElementAsDynamic( this );
-				mygraph.graphChanged = changed = true;
+				mygraph.graphChanged = true;
 			}
 			else if( attribute.equals( "ui.size" ) )
 			{
 				style.pushElementAsDynamic( this );
-				mygraph.graphChanged = changed = true;
+				mygraph.graphChanged = true;
 			}
 //			else if( attribute.equals( "ui.state" ) )
 //			{
@@ -259,12 +258,12 @@ public abstract class GraphicElement extends AbstractElement
 			if( attribute.equals( "ui.class" ) )
 			{
 				mygraph.styleGroups.checkElementStyleGroup( this );
-				mygraph.graphChanged = changed = true;
+				mygraph.graphChanged = true;
 			}
 			else if( attribute.equals( "label" ) || attribute.equals( "ui.label" ) )
 			{
 				label = "";
-				mygraph.graphChanged = changed = true;
+				mygraph.graphChanged = true;
 			}
 			else if( attribute.equals( "ui.hide" ) )
 			{
@@ -273,56 +272,26 @@ public abstract class GraphicElement extends AbstractElement
 			else if( attribute.equals( "ui.clicked" ) )
 			{
 				style.popEventFor( this, "clicked" );
-				mygraph.graphChanged = changed = true;
+				mygraph.graphChanged = true;
 			}
 			else if( attribute.equals( "ui.selected" ) )
 			{
 				style.popEventFor( this, "selected" );
-				mygraph.graphChanged = changed = true;
+				mygraph.graphChanged = true;
 			}
 			else if( attribute.equals( "ui.color" ) )
 			{
 				style.popElementAsDynamic( this );
-				mygraph.graphChanged = changed = true;
+				mygraph.graphChanged =true;
 			}
 			else if( attribute.equals( "ui.size" ) )
 			{
 				style.popElementAsDynamic( this );
-				mygraph.graphChanged = changed = true;
+				mygraph.graphChanged = true;
 			}
 		}
-		
-		if( changed )
-			callChangeListeners();
     }
 	
-	protected void callChangeListeners()
-	{
-		if( changeListeners != null )
-			for( GraphicElementChangeListener listener: changeListeners )
-				listener.graphicElementChanged( this );
-    }
-	
-	public void addChangeListener( GraphicElementChangeListener listener )
-	{
-		if( changeListeners == null )
-			changeListeners.add( listener );
-		
-		changeListeners.add( listener );
-	}
-	
-	public void removeChangeListener( GraphicElementChangeListener listener )
-	{
-		if( changeListeners != null )
-			changeListeners.remove( listener );
-	}
-	
-	public void clearListeners()
-	{
-		if( changeListeners != null )
-			changeListeners.clear();
-	}
-
 // Overriding of standard attribute changing to filter them.
 	
 	protected static Pattern acceptedAttribute;
@@ -338,5 +307,37 @@ public abstract class GraphicElement extends AbstractElement
 		
 		if( matcher.matches() )
 			super.addAttribute( attribute, values );
+	}
+	
+// Make change _ methods visible
+
+	@Override
+	protected void addAttribute_( String sourceId, String attribute, Object ... values )
+	{
+		super.addAttribute_( sourceId, attribute, values );
+	}
+	
+	@Override
+	protected void changeAttribute_( String sourceId, String attribute, Object ... values )
+	{
+		super.changeAttribute_( sourceId, attribute, values );
+	}
+	
+	@Override
+	protected void setAttribute_( String sourceId, String attribute, Object ...values )
+	{
+		super.setAttribute_( sourceId, attribute, values );
+	}
+	
+	@Override
+	protected void addAttributes_( String sourceId, Map<String,Object> attributes )
+	{
+		super.addAttributes_( sourceId, attributes );
+	}
+	
+	@Override
+	protected void removeAttribute_( String sourceId, String attribute )
+	{
+		super.removeAttribute_( sourceId, attribute );
 	}
 }

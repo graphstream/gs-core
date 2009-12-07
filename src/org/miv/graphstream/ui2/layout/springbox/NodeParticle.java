@@ -482,7 +482,7 @@ public class NodeParticle extends Particle
 	{
 		for( EdgeSpring edge: neighbours )
 		{
-			box.removeEdge( edge.id );
+			box.removeEdge( box.getLayoutAlgorithmName(), edge.id );
 		}
 	}
 	

@@ -22,24 +22,16 @@
 
 package org.miv.graphstream.io2.thread;
 
-import java.util.ArrayList;
-
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.Graph;
-import org.miv.graphstream.graph.GraphAttributesListener;
-import org.miv.graphstream.graph.GraphElementsListener;
-import org.miv.graphstream.graph.GraphListener;
 import org.miv.graphstream.graph.Node;
-import org.miv.graphstream.io2.Filter;
 import org.miv.graphstream.io2.Input;
 import org.miv.graphstream.io2.InputBase;
 import org.miv.graphstream.io2.ProxyFilter;
-import org.miv.graphstream.io2.SynchronizableInput;
 import org.miv.mbox.CannotPostException;
 import org.miv.mbox.MBox;
 import org.miv.mbox.MBoxListener;
 import org.miv.mbox.MBoxStandalone;
-import org.miv.mbox.MBoxBase.Message;
 
 /**
  * Filter that allows to pass graph events between two threads without explicit synchronisation.
@@ -101,74 +93,6 @@ public class ThreadProxyFilter extends InputBase implements ProxyFilter, MBoxLis
 	 */
 	protected boolean unregisterWhenPossible = false;
 
-	protected ArrayList<InputSynchro> synchro = new ArrayList<InputSynchro>();
-	
-	protected static class InputSynchro
-	{
-		public Input input;
-		public GraphAttributesListener attrListener;
-		public GraphElementsListener eltsListener;
-		
-		public InputSynchro( Input input, GraphAttributesListener attrListener )
-		{
-			this.input        = input;
-			this.attrListener = attrListener;
-			this.eltsListener = null;
-		}
-		
-		public InputSynchro( Input input, GraphElementsListener eltsListener )
-		{
-			this.input        = input;
-			this.attrListener = null;
-			this.eltsListener = eltsListener;			
-		}
-		
-		public InputSynchro( Input input, GraphListener listener )
-		{
-			this.input        = input;
-			this.attrListener = listener;
-			this.eltsListener = listener;
-		}
-		
-		public void disable()
-		{
-//System.err.printf( "    remove %s from %s%n", attrListener, input );
-		
-			if( input instanceof SynchronizableInput )
-			{
-				SynchronizableInput si = (SynchronizableInput) input;
-				
-				if( attrListener != null )
-					si.muteSource( attrListener );
-				
-				if( eltsListener != null )
-					si.muteSource( eltsListener );
-			}
-			else
-			{
-				if( attrListener != null )
-					input.removeGraphAttributesListener( attrListener );
-				if( eltsListener != null )
-					input.removeGraphElementsListener( eltsListener );
-			}
-		}
-		
-		public void enable()
-		{
-			if( ! ( input instanceof SynchronizableInput ) )
-			{
-				if( attrListener != null )
-					input.addGraphAttributesListener( attrListener );
-				if( eltsListener != null )
-					input.addGraphElementsListener( eltsListener );
-			}
-			else
-			{
-			//	((SynchronizableInput)input).unmute();
-			}
-		}
-	}
-	
 // Constructors
 
 	/**
@@ -266,11 +190,11 @@ public class ThreadProxyFilter extends InputBase implements ProxyFilter, MBoxLis
 	 * @param other The other thread proxy filter going in the reverse direction.
 	 * @param onThis one of the outputs of this proxy thread filter, source of events for the
 	 * "other" thread proxy filter.
-	 */
 	public void synchronizeWith( ThreadProxyFilter other, Filter onThis )
 	{
 		synchro.add( new InputSynchro( onThis, other ) );
 	}
+	 */
 	
 	/**
 	 * Ask the proxy to unregister from the event input source (stop receive events) as soon as
@@ -287,18 +211,7 @@ public class ThreadProxyFilter extends InputBase implements ProxyFilter, MBoxLis
 	 */
 	public void checkEvents()
 	{
-		ArrayList<Message> messages = ((MBoxStandalone)events).popPendingMessages();
-//System.err.printf( "from %s : %d messages%n", from, messages.size() );
-
-		for( Message message: messages )
-		{
-			for( InputSynchro sync: synchro ) sync.disable();
-			processMessage( message.from, message.data );
-			for( InputSynchro sync: synchro ) sync.enable();
-		}
-//System.err.printf( "end-from %s%n", from );
-			
-		//((MBoxStandalone)events).processMessages();
+		((MBoxStandalone)events).processMessages();
 	}
 
 // Command

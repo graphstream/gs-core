@@ -30,7 +30,8 @@ import org.miv.graphstream.graph.GraphElementsListener;
 import org.miv.graphstream.graph.GraphListener;
 import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.graph.NodeFactory;
-import org.miv.graphstream.io2.SynchronizableInput;
+import org.miv.graphstream.io2.InputBase;
+import org.miv.graphstream.io2.InputBase.ElementType;
 import org.miv.graphstream.io2.file.FileInput;
 import org.miv.graphstream.io2.file.FileOutput;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Style;
@@ -77,7 +78,7 @@ import org.miv.util.geom.Point3;
  * <ul>
  * 		<li>All attributes starting with "ui.".</li>
  * 		<li>The "x", "y", "z", "xy" and "xyz" attributes.</li>
- * 		<li>The "stylesheet" attribute.</li>
+ * 		<li>The "stylesheet" attribute (although "ui.stylesheet" is preferred).</li>
  * 		<li>The "label" attribute.</li>
  * </ul>
  * All other attributes are filtered and not stored. The result is that if the graphic graph is
@@ -86,7 +87,7 @@ import org.miv.util.geom.Point3;
  * 
  * TODO : this graph cannot handle modification inside event listener methods !!
  */
-public class GraphicGraph extends AbstractElement implements Graph, SynchronizableInput, StyleGroupListener
+public class GraphicGraph extends AbstractElement implements Graph, StyleGroupListener
 {
 // Attribute
 
@@ -122,16 +123,6 @@ public class GraphicGraph extends AbstractElement implements Graph, Synchronizab
 	public double step = 0;
 	
 	/**
-	 * Set of graph attributes listeners.
-	 */
-	protected HashSet<GraphAttributesListener> attrListeners = new HashSet<GraphAttributesListener>();
-	
-	/**
-	 * Set of graph elements listeners.
-	 */
-	protected HashSet<GraphElementsListener> eltsListeners = new HashSet<GraphElementsListener>();
-	
-	/**
 	 * Set to true each time a sprite or node moved.
 	 */
 	protected boolean boundsChanged = true;
@@ -145,6 +136,13 @@ public class GraphicGraph extends AbstractElement implements Graph, Synchronizab
 	 * Minimum position of a node or sprite in the graphic graph. Computed by {@link #computeBounds()}.
 	 */
 	protected Point3 lo = new Point3();
+	
+	/**
+	 * Set of listeners of this graph.
+	 */
+	protected GraphListeners listeners = new GraphListeners();
+	
+	protected class GraphListeners extends InputBase {};
 
 // Construction
 
@@ -169,6 +167,12 @@ public class GraphicGraph extends AbstractElement implements Graph, Synchronizab
 
 // Access
 
+	@Override
+	protected String getMyGraphId()
+	{
+		return getId();
+	}
+	
 	/**
 	 * True if the graph was edited or changed in any way since the last reset of the "changed"
 	 * flag.
@@ -296,7 +300,7 @@ public class GraphicGraph extends AbstractElement implements Graph, Synchronizab
 		}
 	}
 	
-	protected GraphicEdge addEdge( String id, String from, String to, boolean directed, HashMap<String, Object> attributes )
+	protected GraphicEdge addEdge( String sourceId, String id, String from, String to, boolean directed, HashMap<String, Object> attributes )
 	{
 		GraphicEdge edge = (GraphicEdge) styleGroups.getEdge( id );
 		
@@ -334,18 +338,13 @@ public class GraphicGraph extends AbstractElement implements Graph, Synchronizab
 			
 			graphChanged = true;
 			
-			for( GraphElementsListener listener: eltsListeners )
-				if( listener != muteElts )
-					listener.edgeAdded( getId(), id, from, to, directed );
-		
-			muteElts = null;
-			muteAtrs = null;
+			listeners.sendEdgeAdded( sourceId, id, from, to, directed );
 		}
 			
 		return edge;
 	}
 
-	protected GraphicNode addNode( String id, float x, float y, float z, HashMap<String, Object> attributes )
+	protected GraphicNode addNode( String sourceId, String id, float x, float y, float z, HashMap<String, Object> attributes )
 	{
 		GraphicNode node = (GraphicNode) styleGroups.getNode( id );
 		
@@ -357,12 +356,7 @@ public class GraphicGraph extends AbstractElement implements Graph, Synchronizab
 		
 			graphChanged = true;
 		
-			for( GraphElementsListener listener: eltsListeners )
-				if( listener != muteElts )
-					listener.nodeAdded( getId(), id );
-			
-			muteElts = null;
-			muteAtrs = null;
+			listeners.sendNodeAdded( sourceId, id );
 		}
 			
 		return node;
@@ -385,18 +379,13 @@ public class GraphicGraph extends AbstractElement implements Graph, Synchronizab
 		}
 	}
 
-	public Edge removeEdge( String id ) throws NotFoundException
+	public Edge removeEdge( String sourceId, String id ) throws NotFoundException
 	{
 		GraphicEdge edge = (GraphicEdge) styleGroups.getEdge( id );
 		
 		if( edge != null )
 		{
-			for( GraphElementsListener listener: eltsListeners )
-				if( listener != muteElts )
-					listener.edgeRemoved( getId(), edge.getId() );
-			
-			muteElts = null;
-			muteAtrs = null;
+			listeners.sendEdgeRemoved( sourceId, id );
 
 			if( connectivity.get( edge.from ) != null )
 				connectivity.get( edge.from ).remove( edge );
@@ -412,7 +401,7 @@ public class GraphicGraph extends AbstractElement implements Graph, Synchronizab
 		return edge;
 	}
 
-	public Edge removeEdge( String from, String to ) throws NotFoundException
+	public Edge removeEdge( String sourceId, String from, String to ) throws NotFoundException
 	{
 		GraphicNode node0 = (GraphicNode) styleGroups.getNode( from );
 		GraphicNode node1 = (GraphicNode) styleGroups.getNode( to );
@@ -428,7 +417,7 @@ public class GraphicGraph extends AbstractElement implements Graph, Synchronizab
 				{
 					if( edge0 == edge1 )
 					{
-						removeEdge( edge0.getId() );
+						removeEdge( sourceId, edge0.getId() );
 						return edge0;
 					}
 				}
@@ -438,18 +427,13 @@ public class GraphicGraph extends AbstractElement implements Graph, Synchronizab
 		return null;
 	}
 
-	public Node removeNode( String id )
+	public Node removeNode( String sourceId, String id )
 	{
 		GraphicNode node = (GraphicNode) styleGroups.getNode( id );
 		
 		if( node != null )
 		{
-			for( GraphElementsListener listener: eltsListeners )
-				if( listener != muteElts )
-					listener.nodeRemoved( getId(), node.getId() );
-			
-			muteElts = null;
-			muteAtrs = null;
+			listeners.sendNodeRemoved( sourceId, id );
 			
 		    if(connectivity.get(node) != null)
 		    {
@@ -459,7 +443,7 @@ public class GraphicGraph extends AbstractElement implements Graph, Synchronizab
 		    	ArrayList<GraphicEdge> l = new ArrayList<GraphicEdge>( connectivity.get( node ) );
 		    	
 		    	for( GraphicEdge edge: l )
-		    		removeEdge( edge.getId() );
+		    		removeEdge( sourceId, edge.getId() );
 
 		    	connectivity.remove( node );
 		    }
@@ -489,7 +473,7 @@ public class GraphicGraph extends AbstractElement implements Graph, Synchronizab
 	}
 
 	@Override
-	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+	protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
 		// One of the most important method. Most of the communication comes from
 		// attributes.
@@ -532,38 +516,18 @@ public class GraphicGraph extends AbstractElement implements Graph, Synchronizab
 				spriteAttribute( event, null, attribute, newValue );
 		}
 
-		switch( event )
-		{
-			case ADD:
-				for( GraphAttributesListener listener: attrListeners )
-					if( listener != muteAtrs )
-						listener.graphAttributeAdded( getId(), attribute, newValue );
-				break;
-			case CHANGE:
-				for( GraphAttributesListener listener: attrListeners )
-					if( listener != muteAtrs )
-						listener.graphAttributeChanged( getId(), attribute, oldValue, newValue );						
-				break;
-			case REMOVE:
-				for( GraphAttributesListener listener: attrListeners )
-					if( listener != muteAtrs )
-						listener.graphAttributeRemoved( getId(), attribute );
-				break;
-		}
+		// We filter attributes.
 		
-		muteElts = null;
-		muteAtrs = null;
+//		Matcher matcher = GraphicElement.acceptedAttribute.matcher( attribute );
+			
+//		if( matcher.matches() )
+			listeners.sendAttributeChangedEvent( sourceId, getId(),
+					ElementType.GRAPH, attribute, event, oldValue, newValue );
 	}
 
-	public void clear()
+	public void clear( String sourceId )
 	{
-		for( GraphElementsListener listener: eltsListeners )
-			if( listener != muteElts )
-				listener.graphCleared( getId() );
-		
-		muteElts = null;
-		muteAtrs = null;
-		
+		listeners.sendGraphCleared( sourceId );
 		connectivity.clear();
 		styleGroups.clear();
 
@@ -638,67 +602,79 @@ public class GraphicGraph extends AbstractElement implements Graph, Synchronizab
 	
 	public void addGraphListener( GraphListener listener )
 	{
-		attrListeners.add( listener );
-		eltsListeners.add( listener );		
+		listeners.addGraphListener( listener );
 	}
 	
 	public void removeGraphListener( GraphListener listener )
 	{
-		attrListeners.remove( listener );
-		eltsListeners.remove( listener );
+		listeners.removeGraphListener( listener );
 	}
 	
 	public void addGraphAttributesListener( GraphAttributesListener listener )
 	{
-		attrListeners.add( listener );		
+		listeners.addGraphAttributesListener( listener );
 	}
 	
 	public void removeGraphAttributesListener( GraphAttributesListener listener )
 	{
-		attrListeners.remove( listener );
+		listeners.removeGraphAttributesListener( listener );
 	}
 	
 	public void addGraphElementsListener( GraphElementsListener listener )
 	{
-		eltsListeners.add( listener );		
+		listeners.addGraphElementsListener( listener );
 	}
 	
 	public void removeGraphElementsListener( GraphElementsListener listener )
 	{
-		eltsListeners.remove( listener );
+		listeners.removeGraphElementsListener( listener );
 	}
 
 	public Iterable<GraphAttributesListener> getGraphAttributesListeners()
     {
-		return attrListeners;
+		return listeners.graphAttributesListeners();
     }
 
 	public Iterable<GraphElementsListener> getGraphElementsListeners()
     {
-		return eltsListeners;
+		return listeners.graphElementsListeners();
     }
 
 	public void clearListeners()
     {
-		eltsListeners.clear();
-		attrListeners.clear();
+		listeners.clearListeners();
     }
 	
 	public Edge addEdge( String id, String from, String to ) throws SingletonException,
             NotFoundException
     {
-		return addEdge( id, from, to, false, null );
+		return addEdge( getId(), id, from, to, false, null );
     }
 
 	public Edge addEdge( String id, String from, String to, boolean directed )
             throws SingletonException, NotFoundException
     {
-		return addEdge( id, from, to, directed, null );
+		return addEdge( getId(), id, from, to, directed, null );
     }
 
 	public Node addNode( String id ) throws SingletonException
     {
-		return addNode( id, 0, 0, 0, null );
+		return addNode( getId(), id, 0, 0, 0, null );
+    }
+
+	public void clear()
+    {
+		clear( getId() );
+    }
+
+	public Edge removeEdge( String id ) throws NotFoundException
+    {
+	    return removeEdge( getId(), id );
+    }
+
+	public Node removeNode( String id ) throws NotFoundException
+    {
+	    return removeNode( getId(), id );
     }
 
 	public org.miv.graphstream.ui.GraphViewerRemote display()
@@ -711,6 +687,11 @@ public class GraphicGraph extends AbstractElement implements Graph, Synchronizab
 		throw new RuntimeException( "not implemented !" );
     }
 
+	public void stepBegins( double time )
+	{
+		stepBegins( getId(), time );
+	}
+	
 	public EdgeFactory edgeFactory()
     {
 		return null;
@@ -818,113 +799,152 @@ public class GraphicGraph extends AbstractElement implements Graph, Synchronizab
 
 // Output interface
 	
-	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
-    {
-		Edge edge = getEdge( edgeId );
+	protected boolean notSourceOfEvent( String sourceId )
+	{
+		// XXX change this.
+		return notMyId1( sourceId );
+	}
+	
+	// XXX remove this.
+	protected boolean notMyId1( String sourceId )
+	{
+		String ids[] = sourceId.split( "," );
+		String myId = getId();
+		for( String id: ids )
+			if( id.equals( myId ) )
+				return false;
+		
+		return true;
+	}
 
-		if( edge != null )
-			edge.addAttribute( attribute, value );
+	protected String extendsSourceId( String sourceId )
+	{
+		return String.format( "%s,%s", sourceId, getId() );
+	}
+	
+	public void edgeAttributeAdded( String sourceId, String edgeId, String attribute, Object value )
+    {
+		if( notSourceOfEvent( sourceId ) )
+		{
+			Edge edge = getEdge( edgeId );
+
+			if( edge != null )
+				((GraphicEdge)edge).addAttribute_( extendsSourceId( sourceId ), attribute, value );
+		}
     }
 
-	public void edgeAttributeChanged( String graphId, String edgeId, String attribute,
+	public void edgeAttributeChanged( String sourceId, String edgeId, String attribute,
             Object oldValue, Object newValue )
     {
-		Edge edge = getEdge( edgeId );
+		if( notSourceOfEvent( sourceId ) )
+		{
+			Edge edge = getEdge( edgeId );
 
-		if( edge != null )
-			edge.changeAttribute( attribute, newValue );
-    }
+			if( edge != null )
+				((GraphicEdge)edge).changeAttribute_( extendsSourceId( sourceId ), attribute, newValue );
+		}
+    }	
 
-	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+	public void edgeAttributeRemoved( String sourceId, String edgeId, String attribute )
     {
-		Edge edge = getEdge( edgeId );
+		if( notSourceOfEvent( sourceId ) )
+		{
+			Edge edge = getEdge( edgeId );
 
-		if( edge != null )
-			edge.removeAttribute( attribute );
+			if( edge != null )
+				((GraphicEdge)edge).removeAttribute_( extendsSourceId( sourceId ), attribute );
+		}
     }
 
-	public void graphAttributeAdded( String graphId, String attribute, Object value )
+	public void graphAttributeAdded( String sourceId, String attribute, Object value )
     {
-		addAttribute( attribute, value );
+		if( notSourceOfEvent( sourceId ) )
+			addAttribute_( extendsSourceId( sourceId ), attribute, value );
     }
 
-	public void graphAttributeChanged( String graphId, String attribute, Object oldValue,
+	public void graphAttributeChanged( String sourceId, String attribute, Object oldValue,
             Object newValue )
     {
-		changeAttribute( attribute, newValue );
+		if( notSourceOfEvent( sourceId ) )
+			changeAttribute_( extendsSourceId( sourceId ), attribute, newValue );
     }
 
-	public void graphAttributeRemoved( String graphId, String attribute )
+	public void graphAttributeRemoved( String sourceId, String attribute )
     {
-		removeAttribute( attribute );
+		if( notSourceOfEvent( sourceId ) )
+			removeAttribute_( extendsSourceId( sourceId ), attribute );
     }
 
-	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+	public void nodeAttributeAdded( String sourceId, String nodeId, String attribute, Object value )
     {
-		Node node = getNode( nodeId );
+		if( notSourceOfEvent( sourceId ) )
+		{
+			Node node = getNode( nodeId );
 		
-		if( node != null )
-			node.addAttribute( attribute, value );
+			if( node != null )
+				((GraphicNode)node).addAttribute_( extendsSourceId( sourceId ), attribute, value );
+		}
     }
 
-	public void nodeAttributeChanged( String graphId, String nodeId, String attribute,
+	public void nodeAttributeChanged( String sourceId, String nodeId, String attribute,
             Object oldValue, Object newValue )
     {
-		Node node = getNode( nodeId );
+		if( notSourceOfEvent( sourceId ) )
+		{
+			Node node = getNode( nodeId );
 		
-		if( node != null )
-			node.changeAttribute( attribute, newValue );
+			if( node != null )
+				((GraphicNode)node).changeAttribute_( extendsSourceId( sourceId ), attribute, newValue );
+		}
     }
 
-	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+	public void nodeAttributeRemoved( String sourceId, String nodeId, String attribute )
     {
-		Node node = getNode( nodeId );
+		if( notSourceOfEvent( sourceId ) )
+		{
+			Node node = getNode( nodeId );
 		
-		if( node != null )
-			node.removeAttribute( attribute );
+			if( node != null )
+				((GraphicNode)node).removeAttribute_( extendsSourceId( sourceId ), attribute );
+		}
     }
 
-	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId,
+	public void edgeAdded( String sourceId, String edgeId, String fromNodeId, String toNodeId,
             boolean directed )
     {
-		addEdge( edgeId, fromNodeId, toNodeId, directed );
+		if( notSourceOfEvent( sourceId ) )
+			addEdge( extendsSourceId( sourceId ), edgeId, fromNodeId, toNodeId, directed, null );
     }
 
-	public void edgeRemoved( String graphId, String edgeId )
+	public void edgeRemoved( String sourceId, String edgeId )
     {
-		removeEdge( edgeId );
+		if( notSourceOfEvent( sourceId ) )
+			removeEdge( extendsSourceId( sourceId ), edgeId );
     }
 
-	public void graphCleared( String graphId )
+	public void graphCleared( String sourceId )
     {
-		clear();
+		if( notSourceOfEvent( sourceId ) )
+			clear( extendsSourceId( sourceId ) );
     }
 
-	public void nodeAdded( String graphId, String nodeId )
+	public void nodeAdded( String sourceId, String nodeId )
     {
-		addNode( nodeId );
+		if( notSourceOfEvent( sourceId ) )
+			addNode( extendsSourceId( sourceId ), nodeId, 0, 0, 0, null );
     }
 
-	public void nodeRemoved( String graphId, String nodeId )
+	public void nodeRemoved( String sourceId, String nodeId )
     {
-		removeNode( nodeId );
+		if( notSourceOfEvent( sourceId ) )
+			removeNode( extendsSourceId( sourceId ), nodeId );
     }
 
-	public void stepBegins( String graphId, double time )
-    {
-		stepBegins( time );
-    }
-
-	public void stepBegins( double time )
+	public void stepBegins( String sourceId, double time )
     {
 		step = time;
-		
-		for( GraphElementsListener listener: eltsListeners )
-			if( listener != muteElts )
-				listener.stepBegins( getId(), time );
-		
-		muteElts = null;
-		muteAtrs = null;
+	
+		listeners.sendStepBegins( sourceId, time );
     }
 	
 // Sprite interface
@@ -1198,28 +1218,4 @@ public class GraphicGraph extends AbstractElement implements Graph, Synchronizab
 		if( matcher.matches() )
 			super.addAttribute( attribute, values );
 	}
-	
-// Mute synchronisation
-	
-	protected GraphAttributesListener muteAtrs = null;
-	
-	protected GraphElementsListener muteElts = null;
-	
-	public void muteSource( GraphListener listener )
-    {
-		muteAtrs = listener;
-		muteElts = listener;
-    }
-
-	public void muteSource( GraphAttributesListener listener )
-    {
-		muteAtrs = listener;
-		muteElts = null;
-    }
-
-	public void muteSource( GraphElementsListener listener )
-    {
-		muteAtrs = null;
-		muteElts = listener;
-    }
 }

@@ -46,6 +46,7 @@ public class MultiGraph extends DefaultGraph
 	 * @see #MultiGraph(boolean, boolean)
 	 * @see #MultiGraph(String, boolean, boolean) 
 	 */
+	@Deprecated
 	public MultiGraph()
 	{
 		this( "" );
@@ -72,6 +73,7 @@ public class MultiGraph extends DefaultGraph
 	 * @see #setStrict(boolean)
 	 * @see #setAutoCreate(boolean)
 	 */
+	@Deprecated
 	public MultiGraph( boolean strictChecking, boolean autoCreate )
 	{
 		this( "", strictChecking, autoCreate );

@@ -172,6 +172,16 @@ public abstract class DefaultNode extends AbstractElement implements Node
 
 // Access -- Not in Node interface
 
+	@Override
+	protected String getMyGraphId()
+	{
+		if( G != null )
+//			return G.getId();
+			return G.time.newEvent();
+	
+		throw new RuntimeException( "WTF ?" );
+	}
+	
 	public Iterable<? extends Edge> getEdgeSet()
 	{
 		return edges;
@@ -209,10 +219,10 @@ public abstract class DefaultNode extends AbstractElement implements Node
 		throws IllegalStateException;
 
 	@Override
-	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+	protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
 		if( G != null )
-			G.listeners.sendAttributeChangedEvent( G.getId(), getId(),
+			G.listeners.sendAttributeChangedEvent( sourceId, getId(),
 					InputBase.ElementType.NODE, attribute, event, oldValue, newValue );
 	}
 	

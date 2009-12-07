@@ -72,6 +72,12 @@ public abstract class GraphicElement extends AbstractElement
 	
 // Access
 
+	@Override
+	protected String getMyGraphId()
+	{
+		return mygraph.getId();
+	}
+	
 	/**
 	 * Type of selector for the graphic element (Node, Edge, Sprite ?).
 	 */
@@ -185,23 +191,23 @@ public abstract class GraphicElement extends AbstractElement
 	{
 		if( hasAttribute( "ui.clicked" ) )
 		{
-			attributeChanged( "ui.clicked", AttributeChangeEvent.CHANGE, null, true );
+			attributeChanged( getMyGraphId(), "ui.clicked", AttributeChangeEvent.CHANGE, null, true );
 		}
 		if( hasAttribute( "ui.selected" ) )
 		{
-			attributeChanged( "ui.selected", AttributeChangeEvent.CHANGE, null, true );
+			attributeChanged( getMyGraphId(), "ui.selected", AttributeChangeEvent.CHANGE, null, true );
 		}
 		if( hasAttribute( "ui.state" ) )
 		{
-			attributeChanged( "ui.state", AttributeChangeEvent.CHANGE, null, getAttribute( "ui.state" ) );
+			attributeChanged( getMyGraphId(), "ui.state", AttributeChangeEvent.CHANGE, null, getAttribute( "ui.state" ) );
 		}
 		if( hasAttribute( "ui.color" ) )
 		{
-			attributeChanged( "ui.color", AttributeChangeEvent.CHANGE, null, getAttribute( "ui.color" ) );
+			attributeChanged( getMyGraphId(), "ui.color", AttributeChangeEvent.CHANGE, null, getAttribute( "ui.color" ) );
 		}
 		if( hasAttribute( "ui.width" ) )
 		{
-			attributeChanged( "ui.width", AttributeChangeEvent.CHANGE, null, getAttribute( "ui.width" ) );
+			attributeChanged( getMyGraphId(), "ui.width", AttributeChangeEvent.CHANGE, null, getAttribute( "ui.width" ) );
 		}
 	}
 	
@@ -230,7 +236,7 @@ public abstract class GraphicElement extends AbstractElement
 	 * Handle the "class", "color", "width", "label" and "style" attributes.
 	 */
 	@Override
-    protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+    protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
     {
 		if( attribute.equals( "ui.class" ) || attribute.equals( "class" ) )
 		{

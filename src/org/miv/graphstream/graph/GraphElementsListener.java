@@ -33,42 +33,42 @@ public interface GraphElementsListener
 {
 	/**
 	 * A node was inserted in the given graph.
-	 * @param graphId Identifier of the graph where the node was added.
+	 * @param sourceId Identifier of the graph where the node was added.
 	 * @param nodeId Identifier of the added node.
 	 */
-	public void nodeAdded( String graphId, String nodeId );
+	public void nodeAdded( String sourceId, String nodeId );
 
 	/**
 	 * A node was removed from the graph.
-	 * @param graphId Identifier of the graph where the node will be removed.
+	 * @param sourceId Identifier of the graph where the node will be removed.
 	 * @param nodeId Identifier of the removed node.
 	 */
-	public void nodeRemoved( String graphId, String nodeId );
+	public void nodeRemoved( String sourceId, String nodeId );
 
 	/**
 	 * An edge was inserted in graph.
-	 * @param graphId Identifier of the graph where the edge was added.
+	 * @param sourceId Identifier of the graph where the edge was added.
 	 * @param edgeId Identifier of the added edge.
 	 * @param fromNodeId Identifier of the first node of the edge.
 	 * @param toNodeId Identifier of the second node of the edge.
 	 * @param directed If true, the edge is directed.
 	 */
-	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId, boolean directed );
+	public void edgeAdded( String sourceId, String edgeId, String fromNodeId, String toNodeId, boolean directed );
 
 	/**
 	 * An edge of graph was removed.The nodes the edge connects may already have been
 	 * removed from the graph.
-	 * @param graphId The graph where the edge will be removed.
+	 * @param sourceId The graph where the edge will be removed.
 	 * @param edgeId The edge that will be removed.
 	 */
-	public void edgeRemoved( String graphId, String edgeId );
+	public void edgeRemoved( String sourceId, String edgeId );
 	
 	/**
 	 * The whole graph was cleared. All the nodes, edges and attributes of the
 	 * graph are removed.
-	 * @param graphId The graph cleared.
+	 * @param sourceId The graph cleared.
 	 */
-	public void graphCleared( String graphId );
+	public void graphCleared( String sourceId );
 	
 	/**
 	 * <p>
@@ -83,9 +83,9 @@ public interface GraphElementsListener
 	 * to measure the time in the graph's evolution.
 	 * </p>
 	 * 
-	 * @param graphId Identifier of the graph where the step starts.
+	 * @param sourceId Identifier of the graph where the step starts.
 	 * @param time A numerical value that may give a timestamp to track the evolution of the graph
 	 *   over the time.
 	 */
-	public void stepBegins( String graphId, double time );
+	public void stepBegins( String sourceId, double time );
 }

@@ -47,6 +47,7 @@ public class SingleGraph extends DefaultGraph
 	 * @see #SingleGraph(boolean, boolean)
 	 * @see #SingleGraph(String, boolean, boolean) 
 	 */
+	@Deprecated
 	public SingleGraph()
 	{
 		this( "" );
@@ -73,6 +74,7 @@ public class SingleGraph extends DefaultGraph
 	 * @see #setStrict(boolean)
 	 * @see #setAutoCreate(boolean)
 	 */
+	@Deprecated
 	public SingleGraph( boolean strictChecking, boolean autoCreate )
 	{
 		this( "", strictChecking, autoCreate );

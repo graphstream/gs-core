@@ -16,8 +16,8 @@ package org.miv.graphstream.ui2.graphicGraph;
 
 import java.util.Iterator;
 
-import org.miv.graphstream.graph.GraphAttributesListener;
 import org.miv.graphstream.graph.Node;
+import org.miv.graphstream.io2.InputBase.ElementType;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Selector;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Style;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleConstants;
@@ -265,7 +265,6 @@ public class GraphicSprite extends GraphicElement
 			String prefix = String.format( "ui.sprite.%s", getId() );
 			
 			mygraph.setAttribute( prefix, position );
-			callChangeListeners();
 		}
 	}
 	
@@ -296,46 +295,18 @@ public class GraphicSprite extends GraphicElement
 	}
 	
 	@Override
-    protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+    protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
     {
-		super.attributeChanged( attribute, event, oldValue, newValue );
+		super.attributeChanged( sourceId, attribute, event, oldValue, newValue );
 
 //		if( attribute.equals( "ui.clicked" ) )	// Filter the clicks to avoid loops XXX BAD !!! XXX 
 //			return;
 
 		String completeAttr = String.format( "ui.sprite.%s.%s", getId(), attribute );
 //System.err.printf( "GSprite add attribute %s %s (old=%s) (new=%s)%n", event, attribute, oldValue, newValue );
-		if( event == AttributeChangeEvent.ADD )		// ADD
-		{
-			Object o = mygraph.getAttribute( completeAttr );
-			
-			if( o == null || ( ! o.equals( newValue ) ) )
-			{
-				for( GraphAttributesListener listener: mygraph.attrListeners )
-					if( mygraph.muteAtrs != listener )
-						listener.graphAttributeAdded( mygraph.getId(), completeAttr, newValue );
-			}
-		}
-		else if( event == AttributeChangeEvent.REMOVE )	// REMOVE
-		{
-			for( GraphAttributesListener listener: mygraph.attrListeners )
-				if( mygraph.muteAtrs != listener )
-					listener.graphAttributeRemoved( mygraph.getId(), completeAttr );			
-		}
-		else						// CHANGE
-		{
-			Object o = mygraph.getAttribute( completeAttr );
-
-			if( o == null || ( ! o.equals( newValue ) ) )
-			{
-				for( GraphAttributesListener listener: mygraph.attrListeners )
-					if( mygraph.muteAtrs != listener )
-						listener.graphAttributeChanged( mygraph.getId(), completeAttr, oldValue, newValue );
-			}
-		}
 		
-		mygraph.muteAtrs = null;
-		mygraph.muteElts = null;
+		mygraph.listeners.sendAttributeChangedEvent( sourceId, mygraph.getId(),
+				ElementType.GRAPH, completeAttr, event, oldValue, newValue );
     }
 
 	@Override

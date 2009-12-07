@@ -20,17 +20,34 @@
  * 	Guilhelm Savin
  */
 
-package org.miv.graphstream.io2;
+package org.miv.graphstream.io2.sync;
 
-/**
- * Sink and source of graph events.
- * 
- * <p>A filter is something that can receive graph events and produce graph events as a result
- * or transformation.</p>
- * 
- * @see Input
- * @see Output
- */
-public interface Filter extends Input, Output
+public class SourceTime
 {
+	protected long time = 0;
+	
+	protected String id;
+	
+	protected SinkTime myTime;
+	
+	public SourceTime( String id )
+	{
+		this.id = id;
+	}
+	
+	public SourceTime( String id, SinkTime myTime )
+	{
+		this.id     = id;
+		this.myTime = myTime;
+	}
+	
+	public String newEvent()
+	{
+		time++;
+		
+		if( myTime != null )
+			myTime.setTimeFor( id, time );
+		
+		return String.format( "%s:%d", id, time );
+	}
 }

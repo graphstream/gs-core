@@ -39,18 +39,24 @@ import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.graph.NodeFactory;
 import org.miv.graphstream.io.GraphParseException;
 import org.miv.graphstream.io2.InputBase;
-import org.miv.graphstream.io2.SynchronizableInput;
 import org.miv.graphstream.io2.file.FileInput;
 import org.miv.graphstream.io2.file.FileInputFactory;
 import org.miv.graphstream.io2.file.FileOutput;
 import org.miv.graphstream.io2.file.FileOutputFactory;
+import org.miv.graphstream.io2.sync.SinkTime;
+import org.miv.graphstream.io2.sync.SourceTime;
 import org.miv.graphstream.ui.GraphViewer;
 import org.miv.graphstream.ui.GraphViewerRemote;
 import org.miv.util.NotFoundException;
 import org.miv.util.SingletonException;
 
 /**
- * DefaultGraph.
+ * Default implementation for the Graph interface.
+ *
+ * <p>
+ * This implementation is declined in two sub implementations {@link SingleGraph} and
+ * {@link MultiGraph}. 
+ * </p>
  * 
  * <p>
  * A graph is a set of graph {@link org.miv.graphstream.graph.Element}s. Graph
@@ -90,7 +96,7 @@ import org.miv.util.SingletonException;
  * @see org.miv.graphstream.graph.implementations.DefaultEdge
  * @see org.miv.graphstream.graph.implementations.AbstractElement
  */
-public class DefaultGraph extends AbstractElement implements Graph, SynchronizableInput
+public class DefaultGraph extends AbstractElement implements Graph
 {
 	/**
 	 * Set of nodes indexed by their id.
@@ -132,7 +138,10 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 	/**
 	 * The set of listeners of this graph.
 	 */
-	protected MyInputBase listeners = new MyInputBase();
+	protected GraphListeners listeners = new GraphListeners();
+	
+	protected SourceTime time;
+	protected SinkTime otherTimes;
 	
 // Constructors
 
@@ -142,6 +151,7 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 	 * @see #DefaultGraph(boolean, boolean)
 	 * @see #DefaultGraph(String, boolean, boolean) 
 	 */
+	@Deprecated
 	public DefaultGraph()
 	{
 		this( "DefaultGraph" );
@@ -168,6 +178,7 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 	 * @see #setStrict(boolean)
 	 * @see #setAutoCreate(boolean)
 	 */
+	@Deprecated
 	public DefaultGraph( boolean strictChecking, boolean autoCreate )
 	{
 		this( "DefaultGraph", strictChecking, autoCreate );
@@ -188,6 +199,9 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 		super( id );
 		setStrict( strictChecking );
 		setAutoCreate( autoCreate );
+		
+		otherTimes = new SinkTime();
+		time       = new SourceTime( id, otherTimes );
 		
 		// Factories that dynamically create nodes and edges.
 
@@ -211,6 +225,13 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 
 // Access -- Nodes
 
+	@Override
+	protected String getMyGraphId()
+	{
+		//return getId();
+		return time.newEvent();
+	}
+	
 	/**
 	 * @complexity O(1).
 	 */
@@ -304,27 +325,6 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 	{
 		return step;
 	}
-
-// Commands
-
-	/**
-	 * @complexity O(1)
-	 */
-	public void clear()
-	{
-		listeners.sendGraphCleared( getId() );
-		nodes.clear();
-		edges.clear();
-		clearAttributes();
-	}
-	
-	/**
-	 * @complexity O(1)
-	 */
-	public void clearListeners()
-	{
-		listeners.clearListeners();
-	}
 	
 	public boolean isStrict()
 	{
@@ -346,6 +346,32 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 		return listeners.graphElementsListeners();
 	}
 
+// Commands
+	
+	/**
+	 * @complexity O(1)
+	 */
+	public void clearListeners()
+	{
+		listeners.clearListeners();
+	}
+
+	/**
+	 * @complexity O(1)
+	 */
+	public void clear()
+	{
+		clear_( time.newEvent() );
+	}
+	
+	protected void clear_( String sourceId )
+	{
+		listeners.sendGraphCleared( sourceId );
+		nodes.clear();
+		edges.clear();
+		clearAttributes();
+	}
+
 // Commands -- Nodes
 
 	public void setStrict( boolean on )
@@ -358,26 +384,28 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 		autoCreate = on;
 	}
 	
-	protected Node addNode_( String tag ) throws SingletonException
+	protected Node addNode_( String sourceId, String nodeId ) throws SingletonException
 	{
-		Node n = nodes.get( tag );
+//System.err.printf( "%s.addNode_(%s, %s)%n", getId(), sourceId, nodeId );
+		Node n = nodes.get( nodeId );
 		
-		if( n == null )	// Avoid recursive calls when synchronising graphs.
+		if( n == null )
 		{
-			DefaultNode node = (DefaultNode) nodeFactory.newInstance(tag,this);
-			DefaultNode old  = (DefaultNode) nodes.put( tag, node );
+			DefaultNode node = (DefaultNode) nodeFactory.newInstance(nodeId,this);
+			DefaultNode old  = (DefaultNode) nodes.put( nodeId, node );
 			
 			n = node;
 
 			assert( old == null );
 			
-			nodes.put( tag, node );
-			listeners.sendNodeAdded( getId(), node.getId() );
+			nodes.put( nodeId, node );
 		}
 		else if( strictChecking )
 		{
-			throw new SingletonException( "id '" + tag + "' already used, cannot add node" );
+			throw new SingletonException( "id '" + nodeId + "' already used, cannot add node" );
 		}
+		
+		listeners.sendNodeAdded( sourceId, nodeId );
 
 		return n;
 		
@@ -412,32 +440,35 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 	 */
 	public Node addNode( String id ) throws SingletonException
 	{
-		return addNode_( id ) ; 
+		return addNode_( time.newEvent(), id ) ; 
 	}
 	
-	protected Node removeNode_( String tag, boolean fromNodeIterator ) throws NotFoundException
+	protected Node removeNode_( String sourceId, String nodeId, boolean fromNodeIterator ) throws NotFoundException
 	{
+System.err.printf( "%s.removeNode_(%s, %s)%n", getId(), sourceId, nodeId );
 		// The fromNodeIterator flag allows to know if this remove node call was
 		// made from inside a node iterator or not. If from a node iterator,
 		// we must not remove the node from the nodes set, this is done by the
 		// iterator.
 		
-		DefaultNode node = (DefaultNode) nodes.get( tag );
+		DefaultNode node = (DefaultNode) nodes.get( nodeId );
 		
-		if( node != null )
+		if( node != null )	// XXX probably to remove !!
 		{
+			listeners.sendNodeRemoved( sourceId, nodeId );
 			node.disconnectAllEdges();
-			listeners.sendNodeRemoved( getId(), node.getId() );
 			
 			if( ! fromNodeIterator )
-				nodes.remove( tag );
+				nodes.remove( nodeId );
 			
 			return node;
 		}
 
 		if( strictChecking )
-			throw new NotFoundException( "node id '"+tag+"' not found, cannot remove" );
-		
+			throw new NotFoundException( "node id '"+nodeId+"' not found, cannot remove" );
+
+		listeners.sendNodeRemoved( sourceId, nodeId );
+
 		return null;
 	}
 
@@ -446,10 +477,10 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 	 */
 	public Node removeNode( String id ) throws NotFoundException
 	{
-		return removeNode_( id, false );
+		return removeNode_( time.newEvent(), id, false );
 	}
 
-	protected Edge addEdge_( String tag, String from, String to, boolean directed )
+	protected Edge addEdge_( String sourceId, String edgeId, String from, String to, boolean directed )
 		throws SingletonException, NotFoundException
 	{
 		Node src;
@@ -488,17 +519,20 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 
 		if( src != null && trg != null )
 		{
-			Edge e = edges.get( tag );
+			Edge e = edges.get( edgeId );
 			
 			if( e == null )	// Avoid recursive calls when synchronising graphs.
 			{
-				DefaultEdge edge = (DefaultEdge) ((DefaultNode)src).addEdgeToward( tag, (DefaultNode)trg, directed );
+				DefaultEdge edge = (DefaultEdge) ((DefaultNode)src).addEdgeToward( edgeId, (DefaultNode)trg, directed );
 				edges.put( edge.getId(), (DefaultEdge) edge );
 				e = edge;
+				
+				if( edge.getId().equals( edgeId ) )
+					listeners.sendEdgeAdded( sourceId, edgeId, from, to, directed );
 			}
 			else if( strictChecking )
 			{
-				throw new SingletonException( "cannot add edge '" + tag + "', identifier already exists" );
+				throw new SingletonException( "cannot add edge '" + edgeId + "', identifier already exists" );
 			}
 			
 			return e;
@@ -522,7 +556,7 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 	public Edge addEdge( String id, String from, String to, boolean directed )
 		throws SingletonException, NotFoundException
 	{
-		Edge edge = addEdge_( id, from, to, directed );
+		Edge edge = addEdge_( time.newEvent(), id, from, to, directed );
 		// An explanation for this strange "if": in the SingleGraph implementation
 		// when a directed edge between A and B is added with id AB, if a second
 		// directed edge between B and A is added with id BA, the second edge is
@@ -532,8 +566,8 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 		// be generated.
 		// TODO: this strange behaviour should disappear ! Adding BA should cause
 		// an error. Use changeOrientation instead.
-		if( edge.getId().equals( id ) )
-			listeners.sendEdgeAdded( getId(), id, from, to, directed );
+//		if( edge.getId().equals( id ) )
+//			listeners.sendEdgeAdded( getId(), id, from, to, directed );
 		return edge;
 	}
 
@@ -542,6 +576,11 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 	 */
 	public Edge removeEdge( String from, String to )
 		throws NotFoundException
+	{
+		return removeEdge_( time.newEvent(), from, to );
+	}
+	
+	protected Edge removeEdge_( String sourceId, String from, String to )
 	{
 		try
 		{
@@ -577,7 +616,7 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 				//		beforeEdgeRemoveEvent( edge );
 
 				edges.remove( ( (AbstractElement) edge ).getId() );
-				((DefaultEdge)edge).unbind();
+				((DefaultEdge)edge).unbind( sourceId );
 
 				return edge;
 			}
@@ -602,50 +641,55 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 	 */
 	public Edge removeEdge( String id ) throws NotFoundException
 	{
-		return removeEdge_( id, false );
+		return removeEdge_( time.newEvent(), id, false );
 	}
 	
-	protected Edge removeEdge_( String id, boolean fromEdgeIterator )
+	protected Edge removeEdge_( String sourceId, String edgeId, boolean fromEdgeIterator )
 	{
 		try
 		{
 			DefaultEdge edge = null;
 			
 			if( fromEdgeIterator )
-			     edge = (DefaultEdge) edges.get( id );
-			else edge = (DefaultEdge) edges.remove( id );
+			     edge = (DefaultEdge) edges.get( edgeId );
+			else edge = (DefaultEdge) edges.remove( edgeId );
 
 			if( edge != null )
 			{
-				edge.unbind();
+				edge.unbind( sourceId );
 				return edge;
 			}
 		}
 		catch( IllegalStateException e )
 		{
 			if( strictChecking )
-				throw new NotFoundException( "illegal edge state while removing edge '"+id+"'" );
+				throw new NotFoundException( "illegal edge state while removing edge '"+edgeId+"'" );
 		}
 
-		if( strictChecking )
-			throw new NotFoundException( "edge '"+id+"' does not exist, cannot remove" );
+//		if( strictChecking )
+//			throw new NotFoundException( "edge '"+edgeId+"' does not exist, cannot remove" );
 		
 		return null;
 	}
 
 	public void stepBegins( double time )
 	{
+		stepBegins_( this.time.newEvent(), time );
+	}
+	
+	protected void stepBegins_( String sourceId, double time )
+	{
 		step = time;
 
-		listeners.sendStepBegins( getId(), time );
+		listeners.sendStepBegins( sourceId, time );
 	}
 	
 // Events
 
 	@Override
-	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+	protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
-		listeners.sendAttributeChangedEvent( getId(), null, InputBase.ElementType.GRAPH,
+		listeners.sendAttributeChangedEvent( sourceId, null, InputBase.ElementType.GRAPH,
 				attribute, event, oldValue, newValue );
 	}
 
@@ -803,7 +847,7 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 			{
 				if( current != null )
 				{
-					graph.removeNode_( current.getId(), true );
+					graph.removeNode_( graph.getId(), current.getId(), true );
 					iterator.remove();
 				}
 			}
@@ -811,115 +855,158 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 			{
 				if( current != null )
 				{
-					graph.removeEdge_( current.getId(), true );
+					graph.removeEdge_( graph.getId(), current.getId(), true );
 					iterator.remove();
 				}
 			}
 		}
 	}
-	
-// Output
-
-	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId,
-            boolean directed )
-    {
-		addEdge( edgeId, fromNodeId, toNodeId, directed );
-    }
-
-	public void edgeRemoved( String graphId, String edgeId )
-    {
-		removeEdge( edgeId );
-    }
 
 	public void graphCleared()
     {
 		clear();
     }
-
-	public void nodeAdded( String graphId, String nodeId )
+	
+// Output interface
+	
+	public void edgeAdded( String sourceId, String edgeId, String fromNodeId, String toNodeId,
+            boolean directed )
     {
-		addNode( nodeId );
+//System.err.printf( "%s.edgeAdded( %s, %s ) => ", getId(), sourceId, edgeId );
+		if( otherTimes.isNewEvent( sourceId ) )
+		{
+//			System.err.printf( "adding%n" );
+			addEdge_( sourceId, edgeId, fromNodeId, toNodeId, directed );
+		}
+//		else System.err.printf( "ignoring%n" );
     }
 
-	public void nodeRemoved( String graphId, String nodeId )
+	public void edgeRemoved( String sourceId, String edgeId )
     {
-		removeNode( nodeId );
+		if( otherTimes.isNewEvent( sourceId ) )
+			removeEdge_( sourceId, edgeId, false );
     }
 
-	public void stepBegins( String graphId, double time )
+	public void nodeAdded( String sourceId, String nodeId )
     {
-		stepBegins( time );
+//System.err.printf( "%s.nodeAdded( %s, %s ) => ", getId(), sourceId, nodeId );
+		if( otherTimes.isNewEvent( sourceId ) )
+		{
+//			System.err.printf( "adding%n" );
+			addNode_( sourceId, nodeId );
+		}
+//		else System.err.printf( "ignoring%n" );
     }
 
-	public void graphCleared( String graphId )
+	public void nodeRemoved( String sourceId, String nodeId )
     {
-		clear();
+System.err.printf( "%s.nodeRemoved( %s, %s ) => ", getId(), sourceId, nodeId );
+		if( otherTimes.isNewEvent( sourceId ) )
+		{
+			System.err.printf( "removing%n" );
+			removeNode_( sourceId, nodeId, false );
+			
+		}
+		else System.err.printf( "ignoring%n" );
     }
 
-	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+	public void stepBegins( String sourceId, double time )
     {
-		Edge edge = getEdge( edgeId );
+		if( otherTimes.isNewEvent( sourceId ) )
+			stepBegins_(sourceId, time );
+    }
+
+	public void graphCleared( String sourceId )
+    {
+		if( otherTimes.isNewEvent( sourceId ) )
+			clear_( sourceId );
+    }
+
+	public void edgeAttributeAdded( String sourceId, String edgeId, String attribute, Object value )
+    {
+		if( otherTimes.isNewEvent( sourceId ) )
+		{
+			Edge edge = getEdge( edgeId );
 		
-		if( edge != null )
-			edge.addAttribute( attribute, value );
+			if( edge != null )
+				((DefaultEdge)edge).addAttribute_( sourceId, attribute, value );
+		}
     }
 
-	public void edgeAttributeChanged( String graphId, String edgeId, String attribute,
+	public void edgeAttributeChanged( String sourceId, String edgeId, String attribute,
             Object oldValue, Object newValue )
     {
-		Edge edge = getEdge( edgeId );
-		
-		if( edge != null )
-			edge.changeAttribute( attribute, newValue );
+		if( otherTimes.isNewEvent( sourceId ) )
+		{
+			Edge edge = getEdge( edgeId );
+			
+			if( edge != null )
+				((DefaultEdge)edge).changeAttribute_( sourceId, attribute, newValue );
+		}
     }
 
-	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+	public void edgeAttributeRemoved( String sourceId, String edgeId, String attribute )
     {
-		Edge edge = getEdge( edgeId );
-		
-		if( edge != null )
-			edge.removeAttribute( attribute );
+		if( otherTimes.isNewEvent( sourceId ) )
+		{
+			Edge edge = getEdge( edgeId );
+			
+			if( edge != null )
+				((DefaultEdge)edge).removeAttribute_( sourceId, attribute );
+		}
     }
 
-	public void graphAttributeAdded( String graphId, String attribute, Object value )
+	public void graphAttributeAdded( String sourceId, String attribute, Object value )
     {
-		addAttribute( attribute, value );
+		if( otherTimes.isNewEvent( sourceId ) )
+			addAttribute_( sourceId, attribute, value );
     }
 
-	public void graphAttributeChanged( String graphId, String attribute, Object oldValue,
+	public void graphAttributeChanged( String sourceId, String attribute, Object oldValue,
             Object newValue )
     {
-		changeAttribute( attribute, newValue );
+		if( otherTimes.isNewEvent( sourceId ) )
+			changeAttribute_( sourceId, attribute, newValue );
     }
 
-	public void graphAttributeRemoved( String graphId, String attribute )
+	public void graphAttributeRemoved( String sourceId, String attribute )
     {
-		removeAttribute( attribute );
+		if( otherTimes.isNewEvent( sourceId ) )
+			removeAttribute_( sourceId, attribute );
     }
 
-	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+	public void nodeAttributeAdded( String sourceId, String nodeId, String attribute, Object value )
     {
-		Node node = getNode( nodeId );
-		
-		if( node != null )
-			node.addAttribute( attribute, value );
+		if( otherTimes.isNewEvent( sourceId ) )
+		{
+			Node node = getNode( nodeId );
+			
+			if( node != null )
+				((DefaultNode)node).addAttribute_( sourceId, attribute, value );
+		}
     }
 
-	public void nodeAttributeChanged( String graphId, String nodeId, String attribute,
+	public void nodeAttributeChanged( String sourceId, String nodeId, String attribute,
             Object oldValue, Object newValue )
     {
-		Node node = getNode( nodeId );
-		
-		if( node != null )
-			node.changeAttribute( attribute, newValue );
+		if( otherTimes.isNewEvent( sourceId ) )
+		{
+			Node node = getNode( nodeId );
+			
+			if( node != null )
+				((DefaultNode)node).changeAttribute_( sourceId, attribute, newValue );
+		}
     }
 
-	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+	public void nodeAttributeRemoved( String sourceId, String nodeId, String attribute )
     {
-		Node node = getNode( nodeId );
-		
-		if( node != null )
-			node.removeAttribute( attribute );
+		if( otherTimes.isNewEvent( sourceId ) )
+		{
+			Node node = getNode( nodeId );
+			
+			if( node != null )
+				((DefaultNode)node).removeAttribute_( sourceId, attribute );
+		}
     }
 	
 	public void addGraphAttributesListener( GraphAttributesListener listener )
@@ -954,32 +1041,5 @@ public class DefaultGraph extends AbstractElement implements Graph, Synchronizab
 
 // Handling the listeners -- We use the IO2 InputBase for this.
 	
-	class MyInputBase extends InputBase
-	{
-		
-	}
-
-// Mute synchronisation XXX to remove XXX
-	
-	protected GraphAttributesListener muteAtrs = null;
-	
-	protected GraphElementsListener muteElts = null;
-	
-	public void muteSource( GraphListener listener )
-    {
-		muteAtrs = listener;
-		muteElts = listener;
-    }
-
-	public void muteSource( GraphAttributesListener listener )
-    {
-		muteAtrs = listener;
-		muteElts = null;
-    }
-
-	public void muteSource( GraphElementsListener listener )
-    {
-		muteAtrs = null;
-		muteElts = listener;
-    }
+	class GraphListeners extends InputBase {}
 }

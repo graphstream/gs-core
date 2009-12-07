@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Random;
 
+import org.miv.graphstream.io2.InputBase;
 import org.miv.graphstream.ui2.layout.Layout;
 import org.miv.graphstream.ui2.layout.LayoutListener;
 import org.miv.pherd.ParticleBox;
@@ -45,7 +46,7 @@ import org.miv.util.NotFoundException;
 import org.miv.util.SingletonException;
 import org.miv.util.geom.Point3;
 
-public class SpringBox implements Layout, ParticleBoxListener
+public class SpringBox extends InputBase implements Layout, ParticleBoxListener
 {
 // Attributes -- Data
 	
@@ -77,7 +78,8 @@ public class SpringBox implements Layout, ParticleBoxListener
 	protected Point3 hi = new Point3( 1, 1, 1 );
 	
 	/**
-	 * Set of listeners.
+	 * Set of listeners. These are listeners for specific movement events, however, the usual
+	 * Input interface is usable to obtain xyz attributes.
 	 */
 	protected ArrayList<LayoutListener> listeners = new ArrayList<LayoutListener>();
 	
@@ -428,7 +430,7 @@ public class SpringBox implements Layout, ParticleBoxListener
 
 // Graph representation
 	
-	protected void addNode( String id ) throws SingletonException
+	protected void addNode( String sourceId, String id ) throws SingletonException
 	{
 		nodes.addParticle( new NodeParticle( this, id ) );
 	}
@@ -462,7 +464,7 @@ public class SpringBox implements Layout, ParticleBoxListener
 			node.setWeight( weight );
 	}
 
-	protected void removeNode( String id ) throws NotFoundException
+	protected void removeNode( String sourceId, String id ) throws NotFoundException
 	{
 		NodeParticle node = (NodeParticle) nodes.removeParticle( id );
 		
@@ -472,7 +474,7 @@ public class SpringBox implements Layout, ParticleBoxListener
 		}
 	}
 
-	protected void addEdge( String id, String from, String to, boolean directed )
+	protected void addEdge( String sourceId, String id, String from, String to, boolean directed )
 			throws NotFoundException, SingletonException
 	{
 		NodeParticle n0 = (NodeParticle) nodes.getParticle( from );
@@ -519,7 +521,7 @@ public class SpringBox implements Layout, ParticleBoxListener
 			edge.weight = weight;
 	}
 
-	protected void removeEdge( String id ) throws NotFoundException
+	protected void removeEdge( String sourceId, String id ) throws NotFoundException
 	{
 		EdgeSpring e = edges.remove( id );
 		
@@ -556,6 +558,11 @@ public class SpringBox implements Layout, ParticleBoxListener
 		{
 			for( LayoutListener listener: listeners )
 				listener.nodeMoved( (String)id, x, y, z );
+			
+			Object xyz[] = new Object[3];
+			xyz[0] = x; xyz[1] = y; xyz[2] = z;
+			
+			sendNodeAttributeChanged( getLayoutAlgorithmName(), (String)id, "xyz", xyz, xyz );
 		}
 	}
 
@@ -576,26 +583,26 @@ public class SpringBox implements Layout, ParticleBoxListener
     {
     }	
 	
-// Graph listener
+// Output interface
 
 	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId, boolean directed )
 	{
-		addEdge( edgeId, fromNodeId, toNodeId, directed );
+		addEdge( graphId, edgeId, fromNodeId, toNodeId, directed );
 	}
 	
 	public void nodeAdded( String graphId, String nodeId )
 	{
-		addNode( nodeId );
+		addNode( graphId, nodeId );
 	}
 	
 	public void edgeRemoved( String graphId, String edgeId )
 	{
-		removeEdge( edgeId );
+		removeEdge( graphId, edgeId );
 	}
 	
 	public void nodeRemoved( String graphId, String nodeId )
 	{
-		removeNode( nodeId );
+		removeNode( graphId, nodeId );
 	}
 	
 	public void graphCleared( String graphId )

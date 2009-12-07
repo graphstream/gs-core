@@ -58,7 +58,7 @@ package org.miv.graphstream.io2;
  * When the other end is ready it can check these events in one operation. 
  * </p>
  * 
- * <p>However proxyes have a limitation : they force the receiving end to check for events 
+ * <p>However proxies have a limitation : they force the receiving end to check for events 
  * regularly. This is however most of the time not a problem since most work on graphs in
  * GraphStream is dynamic and runs iteratively.</p>
  */
@@ -68,6 +68,4 @@ public interface ProxyFilter extends Filter
 	 * Check if some events are pending and dispatch them to the registered outputs.
 	 */
 	void checkEvents();
-	
-//	void synchronizeWith( ProxyFilter other, Filter on );
 }

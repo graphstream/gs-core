@@ -24,14 +24,11 @@
 package org.miv.graphstream.graph.implementations;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.EdgeFactory;
-import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.graph.Graph;
 import org.miv.graphstream.graph.GraphAttributesListener;
 import org.miv.graphstream.graph.GraphElementsListener;
@@ -39,6 +36,8 @@ import org.miv.graphstream.graph.GraphListener;
 import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.graph.NodeFactory;
 import org.miv.graphstream.io.GraphParseException;
+import org.miv.graphstream.io2.InputBase;
+import org.miv.graphstream.io2.InputBase.ElementType;
 import org.miv.graphstream.io2.file.FileInput;
 import org.miv.graphstream.io2.file.FileInputFactory;
 import org.miv.graphstream.io2.file.FileOutput;
@@ -125,26 +124,6 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	protected HashMap<String,Edge> edges = new HashMap<String, Edge>();
 	
 	/**
-	 * A queue that allow the management of events (nodes/edge add/delete/change) in the right order. 
-	 */
-	protected LinkedList<GraphEvent> eventQueue = new LinkedList<GraphEvent>();
-	
-	/**
-	 * A boolean that indicates whether or not an GraphListener event is being sent during another one. 
-	 */
-	protected boolean eventProcessing = false;
-
-	/**
-	 * Set of graph attributes listeners.
-	 */
-	protected ArrayList<GraphAttributesListener> attrListeners = new ArrayList<GraphAttributesListener>();
-	
-	/**
-	 * set of graph elements listeners.
-	 */
-	protected ArrayList<GraphElementsListener> eltsListeners = new ArrayList<GraphElementsListener>();
-
-	/**
 	 * Verify name space conflicts, removal of non-existing elements, use of
 	 * non-existing elements.
 	 */
@@ -168,16 +147,17 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	protected EdgeFactory edgeFactory;
 	
 	/**
-	 * List of listeners to remove if the {@link #removeGraphListener(GraphListener)} is called
-	 * inside from the listener. This can happen !! We create this list on demand.
-	 */
-	protected ArrayList<Object> listenersToRemove;
-	
-	/**
 	 * The current step.
 	 */
 	protected double step;
 
+	/**
+	 * The set of listeners.
+	 */
+	protected GraphListeners listeners = new GraphListeners();
+	
+	protected class GraphListeners extends InputBase {}
+	
 // Constructors
 
 	/**
@@ -186,9 +166,10 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 * @see #AdjacencyListGraph(boolean, boolean)
 	 * @see #AdjacencyListGraph(String, boolean, boolean) 
 	 */
+	@Deprecated
 	public AdjacencyListGraph()
 	{
-		this( "" );
+		this( "AdjListGraph" );
 	}
 	
 	/**
@@ -212,6 +193,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 * @see #setStrict(boolean)
 	 * @see #setAutoCreate(boolean)
 	 */
+	@Deprecated
 	public AdjacencyListGraph( boolean strictChecking, boolean autoCreate )
 	{
 		this( "", strictChecking, autoCreate );
@@ -248,6 +230,12 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 			}
 		};
 	}
+	
+	@Override
+	protected String getMyGraphId()
+	{
+		return getId();
+	}
 
 	public EdgeFactory edgeFactory()
 	{
@@ -274,7 +262,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		return addEdge( id, node1, node2, false );
 	}
 
-	protected Edge addEdge_( String tag, String from, String to, boolean directed ) throws SingletonException, NotFoundException
+	protected Edge addEdge_( String sourceId, String edgeId, String from, String to, boolean directed ) throws SingletonException, NotFoundException
 	{
 		Node src;
 		Node trg;
@@ -311,12 +299,12 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		if( src != null && trg != null )
 		{
 			Edge edge = null;
-			Edge old = lookForEdge( tag );
+			Edge old = lookForEdge( edgeId );
 			if( old != null )
 			{
 				if( strictChecking )
 				{
-					throw new SingletonException( "id '" + tag + "' already used, cannot add edge" );
+					throw new SingletonException( "id '" + edgeId + "' already used, cannot add edge" );
 				}
 				else
 				{
@@ -331,13 +319,13 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 				}
 				else
 				{
-					edge = edgeFactory.newInstance(tag,src,trg,directed);
+					edge = edgeFactory.newInstance(edgeId,src,trg,directed);
 					//edge.setDirected( directed );
 					
-					edges.put( tag,edge );
+					edges.put( edgeId,edge );
 					((AdjacencyListNode)src).edges.add( edge );
 					((AdjacencyListNode)trg).edges.add( edge );
-					afterEdgeAddEvent( (AdjacencyListEdge) edge );
+					listeners.sendEdgeAdded( sourceId, edgeId, from, to, directed );
 				}
 			}
 			return edge;
@@ -351,7 +339,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 */
 	public Edge addEdge( String id, String from, String to, boolean directed ) throws SingletonException, NotFoundException
 	{
-		Edge e = addEdge_( id, from, to, directed );
+		Edge e = addEdge_( getId(), id, from, to, directed );
 		return e;
 	}
 
@@ -360,20 +348,20 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 */
 	public Node addNode( String id ) throws SingletonException
 	{
-		Node n = addNode_( id );
+		Node n = addNode_( getId(), id );
 		
 		return n;
 	}
 
-	protected Node addNode_( String tag ) throws SingletonException
+	protected Node addNode_( String sourceId, String nodeId ) throws SingletonException
 	{
 		Node node;
-		Node old = lookForNode( tag );
+		Node old = lookForNode( nodeId );
 		if( old != null )
 		{
 			if( strictChecking )
 			{
-				throw new SingletonException( "id '" + tag + "' already used, cannot add node" );
+				throw new SingletonException( "id '" + nodeId + "' already used, cannot add node" );
 			}
 			else
 			{
@@ -382,10 +370,10 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		}
 		else
 		{
-			node = nodeFactory.newInstance(tag,this);
+			node = nodeFactory.newInstance(nodeId,this);
 			
-			nodes.put(tag, node );
-			afterNodeAddEvent( (AdjacencyListNode) node);
+			nodes.put(nodeId, node );
+			listeners.sendNodeAdded( sourceId, nodeId );
 		}
 
 		return node;
@@ -396,21 +384,15 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 */
 	public void clear()
 	{
-		for( GraphElementsListener listener: eltsListeners )
-			if( listener != muteElts )
-				listener.graphCleared( getId() );
+		clear_( getId() );
+	}
+	
+	protected void clear_( String sourceId )
+	{
+		listeners.sendGraphCleared( sourceId );
 
-		muteElts = null;
-		muteAtrs = null;
 		nodes.clear();
 		edges.clear();
-		
-/* Generates a ConcurrentModificationException :
-		for( String n: nodes.keySet() )
-		{
-			removeNode( n );
-		}
-*/
 	}
 
 	/**
@@ -418,8 +400,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 */
 	public void clearListeners()
 	{
-		attrListeners.clear();
-		eltsListeners.clear();
+		listeners.clearListeners();
 	}
 
 	/**
@@ -503,12 +484,12 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 
 	public Iterable<GraphAttributesListener> getGraphAttributesListeners()
 	{
-		return attrListeners;
+		return listeners.graphAttributesListeners();
 	}
 	
 	public Iterable<GraphElementsListener> getGraphElementsListeners()
 	{
-		return eltsListeners;
+		return listeners.graphElementsListeners();
 	}
 	
 	public double getStep()
@@ -521,21 +502,27 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 */
 	public Edge removeEdge( String from, String to ) throws NotFoundException
 	{
+		return removeEdge_( getId(), from, to );
+	}
+	
+	protected Edge removeEdge_( String sourceId, String from, String to )
+	{
 		Node n0 = lookForNode( from );
 		Node n1 = lookForNode( to );
+
 		if( n0 != null && n1 != null )
 		{
 			Edge e = ( (AdjacencyListNode) n0 ).hasEdgeToward( n1 );
 			if( e != null )
 			{
-				return removeEdge(e);
+				return removeEdge_( sourceId, e);
 			}
 			else
 			{
 				e = ( (AdjacencyListNode) n0 ).hasEdgeToward( n1 );
 				if( e != null )
 				{
-					return removeEdge(e);
+					return removeEdge_( sourceId, e);
 				}
 			}
 		}
@@ -548,10 +535,10 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	public Edge removeEdge( String id ) throws NotFoundException
 	{
 		Edge edge = lookForEdge( id );
+		
 		if( edge != null )
-		{
-			removeEdge( edge );
-		}
+			removeEdge_( getId(), edge );
+		
 		return edge;
 	}
 
@@ -562,12 +549,20 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 */
 	public Edge removeEdge( Edge edge ) throws NotFoundException
 	{
-		beforeEdgeRemoveEvent( (AdjacencyListEdge) edge );
+		return removeEdge_( getId(), edge );
+	}
+	
+	protected Edge removeEdge_( String sourceId, Edge edge )
+	{
+		listeners.sendEdgeRemoved( sourceId, edge.getId() );
+		
 		Node n0 = edge.getSourceNode();
 		Node n1 = edge.getTargetNode();
+		
 		( (AdjacencyListNode) n0 ).edges.remove( edge );
 		( (AdjacencyListNode) n1 ).edges.remove( edge );
 		edges.remove( edge.getId() );
+	
 		return edge;
 	}
 
@@ -579,7 +574,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		Node node = lookForNode( id );
 		if( node != null )
 		{
-			return removeNode( node );
+			return removeNode_( getId(), node );
 		}
 		return null;
 	}
@@ -591,10 +586,15 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 */
 	public Node removeNode( Node node ) throws NotFoundException
 	{
+		return removeNode_( getId(), node );
+	}
+	
+	protected Node removeNode_( String sourceId, Node node )
+	{
 		if( node != null )
 		{
 			disconnectEdges( node );
-			beforeNodeRemoveEvent( (AdjacencyListNode) node );
+			listeners.sendNodeRemoved( sourceId, node.getId() );
 			nodes.remove( node.getId() );
 
 			return node;
@@ -608,20 +608,20 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 
 	public void stepBegins( double time )
 	{
+		stepBegins_( getId(), time );
+	}
+	
+	protected void stepBegins_( String sourceId, double time )
+	{
 		step = time;
 		
-		for( GraphElementsListener l : eltsListeners )
-			if( l != muteElts )
-				l.stepBegins( getId(), time );
-
-		muteElts = null;
-		muteAtrs = null;
+		listeners.sendStepBegins( sourceId, time );
 	}
 	
 	/**
-	 * When a node is deregistered from a graph, it must not keep edges
+	 * When a node is unregistered from a graph, it must not keep edges
 	 * connected to nodes still in the graph. This methods unbind all edges
-	 * connected to this node (this also deregister them from the graph).
+	 * connected to this node (this also unregister them from the graph).
 	 */
 	protected void disconnectEdges( Node node ) throws IllegalStateException
 	{
@@ -672,295 +672,47 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	
 // Events
 
-	/**
-	 * @complexity 0( 1).
-	 */
 	public void addGraphListener( GraphListener listener )
 	{
-		attrListeners.add( listener );
-		eltsListeners.add( listener );
+		listeners.addGraphListener( listener );
 	}
 	
 	public void addGraphAttributesListener( GraphAttributesListener listener )
 	{
-		attrListeners.add( listener );
+		listeners.addGraphAttributesListener( listener );
 	}
 	
 	public void addGraphElementsListener( GraphElementsListener listener )
 	{
-		eltsListeners.add( listener );
+		listeners.addGraphElementsListener( listener );
 	}
 	
 	public void removeGraphListener( GraphListener listener )
 	{
-		if( eventProcessing )
-		{
-			// We cannot remove the listener while processing events !!!
-			removeListenerLater( listener );
-		}
-		else
-		{
-			int index = attrListeners.lastIndexOf( listener );
-
-			if( index >= 0 )
-				attrListeners.remove( index );
-			
-			index = eltsListeners.lastIndexOf( listener );
-			
-			if( index >= 0 )
-				eltsListeners.remove( index );
-		}
+		listeners.removeGraphListener( listener );
 	}
 	
 	public void removeGraphAttributesListener( GraphAttributesListener listener )
 	{
-		if( eventProcessing )
-		{
-			// We cannot remove the listener while processing events !!!
-			removeListenerLater( listener );
-		}
-		else
-		{
-			int index = attrListeners.lastIndexOf( listener );
-
-			if( index >= 0 )
-				attrListeners.remove( index );
-		}		
+		listeners.removeGraphAttributesListener( listener );
 	}
 	
 	public void removeGraphElementsListener( GraphElementsListener listener )
 	{
-		if( eventProcessing )
-		{
-			// We cannot remove the listener while processing events !!!
-			removeListenerLater( listener );
-		}
-		else
-		{
-			int index = eltsListeners.lastIndexOf( listener );
-
-			if( index >= 0 )
-				eltsListeners.remove( index );
-		}		
-	}
-
-	protected void removeListenerLater( Object listener )
-	{
-		if( listenersToRemove == null )
-			listenersToRemove = new ArrayList<Object>();
-		
-		listenersToRemove.add( listener );	
-	}
-	
-	protected void checkListenersToRemove()
-	{
-		if( listenersToRemove != null && listenersToRemove.size() > 0 )
-		{
-			for( Object listener: listenersToRemove )
-			{
-				if( listener instanceof GraphListener )
-					removeGraphListener( (GraphListener) listener );
-				else if( listener instanceof GraphAttributesListener )
-					removeGraphAttributesListener( (GraphAttributesListener) listener );
-				else if( listener instanceof GraphElementsListener )
-					removeGraphElementsListener( (GraphElementsListener) listener );
-			}
-
-			listenersToRemove.clear();
-			listenersToRemove = null;
-		}
-	}
-
-	/**
-	 * If in "event processing mode", ensure all pending events are processed.
-	 */
-	protected void manageEvents()
-	{
-		if( eventProcessing )
-		{
-			while( ! eventQueue.isEmpty() )
-				manageEvent( eventQueue.remove() );
-		}
-	}
-
-	protected void afterNodeAddEvent( AdjacencyListNode node )
-	{
-		if(!eventProcessing)
-		{
-			eventProcessing=true;
-			manageEvents();
-			for( GraphElementsListener l: eltsListeners )
-				if( l != muteElts )
-					l.nodeAdded( getId(), node.getId() );
-			manageEvents();
-			eventProcessing=false;
-			checkListenersToRemove();
-		}
-		else 
-		{
-			eventQueue.add( new AfterNodeAddEvent(node) );
-		}
-		
-		muteAtrs = null;
-		muteElts = null;
-	}
-
-	protected void beforeNodeRemoveEvent( AdjacencyListNode node )
-	{
-		if(!eventProcessing)
-		{
-			eventProcessing=true;
-			manageEvents();
-			for( GraphElementsListener l: eltsListeners )
-				if( l != muteElts )
-					l.nodeRemoved( getId(), node.getId() );
-			manageEvents();
-			eventProcessing=false;
-			checkListenersToRemove();
-		}
-		else 
-		{
-			eventQueue.add( new BeforeNodeRemoveEvent( node ) );
-		}
-		
-		muteAtrs = null;
-		muteElts = null;
-	}
-
-	protected void afterEdgeAddEvent( AdjacencyListEdge edge )
-	{
-		if(!eventProcessing)
-		{
-			eventProcessing=true;
-			manageEvents();
-			for( GraphElementsListener l: eltsListeners )
-				if( l != muteElts )
-					l.edgeAdded( getId(), edge.getId(), edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
-			manageEvents();
-			eventProcessing=false;
-			checkListenersToRemove();
-		}
-		else 
-		{
-			eventQueue.add( new AfterEdgeAddEvent(edge) );
-		}
-		
-		muteAtrs = null;
-		muteElts = null;
-	}
-
-	protected void beforeEdgeRemoveEvent( AdjacencyListEdge edge )
-	{
-		if(!eventProcessing)
-		{
-			eventProcessing=true;
-			manageEvents();
-			for( GraphElementsListener l: eltsListeners )
-				if( l != muteElts )
-					l.edgeRemoved( getId(), edge.getId() );
-			manageEvents();
-			eventProcessing=false;
-			checkListenersToRemove();
-		}
-		else
-		{
-			eventQueue.add( new BeforeEdgeRemoveEvent( edge ) );
-		}
-		
-		muteAtrs = null;
-		muteElts = null;
+		listeners.removeGraphElementsListener( listener );
 	}
 
 	@Override
-	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+	protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
-		attributeChangedEvent( this, attribute, event, oldValue, newValue );
+		listeners.sendAttributeChangedEvent( sourceId, getId(),
+				ElementType.GRAPH, attribute, event, oldValue, newValue );
 	}
 
-	protected void attributeChangedEvent( Element element, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
-	{
-		if(!eventProcessing)
-		{
-			eventProcessing=true;
-			manageEvents();
-	
-			if( event == AttributeChangeEvent.ADD )
-			{
-				if( element instanceof Node )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						if( muteAtrs != l )
-							l.nodeAttributeAdded( getId(), element.getId(), attribute, newValue );
-				}
-				else if( element instanceof Edge )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						if( muteAtrs != l )
-							l.edgeAttributeAdded( getId(), element.getId(), attribute, newValue );					
-				}
-				else
-				{
-					for( GraphAttributesListener l: attrListeners )
-						if( muteAtrs != l )
-							l.graphAttributeAdded( getId(), attribute, newValue );					
-				}
-			}
-			else if( event == AttributeChangeEvent.REMOVE )
-			{
-				if( element instanceof Node )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						if( muteAtrs != l )
-							l.nodeAttributeRemoved( getId(), element.getId(), attribute );
-				}
-				else if( element instanceof Edge )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						if( muteAtrs != l )
-							l.edgeAttributeRemoved( getId(), element.getId(), attribute );					
-				}
-				else
-				{
-					for( GraphAttributesListener l: attrListeners )
-						if( muteAtrs != l )
-							l.graphAttributeRemoved( getId(), attribute );					
-				}								
-			}
-			else
-			{
-				if( element instanceof Node )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						if( muteAtrs != l )
-							l.nodeAttributeChanged( getId(), element.getId(), attribute, oldValue, newValue );
-				}
-				else if( element instanceof Edge )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						if( muteAtrs != l )
-							l.edgeAttributeChanged( getId(), element.getId(), attribute, oldValue, newValue );					
-				}
-				else
-				{
-					for( GraphAttributesListener l: attrListeners )
-						if( muteAtrs != l )
-							l.graphAttributeChanged( getId(), attribute, oldValue, newValue );					
-				}				
-			}
-	
-			muteAtrs = null;
-			muteElts = null;
-			manageEvents();
-			eventProcessing=false;
-			checkListenersToRemove();
-		}
-		else
-		{
-			muteAtrs = null;
-			muteElts = null;
-			eventQueue.add( new AttributeChangedEvent( element, attribute, event, oldValue, newValue ) );
-		}
-	}
+	public void graphCleared()
+    {
+		clear_( getId() );
+    }
 
 // Commands -- Utility
 
@@ -1031,301 +783,161 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
         return null;
 	}
 
-// Events Management
-	
-	/**
-	 * Interface that provide general purpose classification for evens involved
-	 * in graph modifications
-	 */
-	interface GraphEvent
-	{
-	}
-
-	class AfterEdgeAddEvent  implements GraphEvent
-	{
-		AdjacencyListEdge edge;
-
-		AfterEdgeAddEvent( AdjacencyListEdge edge )
-		{
-			this.edge = edge;
-		}
-	}
-
-	class BeforeEdgeRemoveEvent implements GraphEvent
-	{
-		AdjacencyListEdge edge;
-
-		BeforeEdgeRemoveEvent( AdjacencyListEdge edge )
-		{
-			this.edge = edge;
-		}
-	}
-
-	class AfterNodeAddEvent implements GraphEvent
-	{
-		AdjacencyListNode node;
-
-		AfterNodeAddEvent( AdjacencyListNode node )
-		{
-			this.node = node;
-		}
-	}
-
-	class BeforeNodeRemoveEvent implements GraphEvent
-	{
-		AdjacencyListNode node;
-
-		BeforeNodeRemoveEvent( AdjacencyListNode node )
-		{
-			this.node = node;
-		}
-	}
-
-	class BeforeGraphClearEvent implements GraphEvent
-	{
-	}
-
-	class AttributeChangedEvent implements GraphEvent
-	{
-		Element element;
-
-		String attribute;
-		
-		AttributeChangeEvent event;
-
-		Object oldValue;
-
-		Object newValue;
-
-		AttributeChangedEvent( Element element, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
-		{
-			this.element   = element;
-			this.attribute = attribute;
-			this.event     = event;
-			this.oldValue  = oldValue;
-			this.newValue  = newValue;
-		}
-	}
-	
-	/**
-	 * Private method that manages the events stored in the {@link #eventQueue}.
-	 * These event where created while being invoked from another event
-	 * invocation.
-	 * @param event
-	 */
-	private void manageEvent( GraphEvent event )
-	{
-		if( event.getClass() == AttributeChangedEvent.class )
-		{
-			AttributeChangedEvent ev = (AttributeChangedEvent)event;
-			
-			if( ev.event == AttributeChangeEvent.ADD )
-			{
-				if( ev.element instanceof Node )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						l.nodeAttributeAdded( getId(), ev.element.getId(), ev.attribute, ev.newValue );
-				}
-				else if( ev.element instanceof Edge )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						l.edgeAttributeAdded( getId(), ev.element.getId(), ev.attribute, ev.newValue );					
-				}
-				else
-				{
-					for( GraphAttributesListener l: attrListeners )
-						l.graphAttributeAdded( getId(), ev.attribute, ev.newValue );										
-				}
-			}
-			else if( ev.event == AttributeChangeEvent.REMOVE )
-			{
-				if( ev.element instanceof Node )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						l.nodeAttributeRemoved( getId(), ev.element.getId(), ev.attribute );
-				}
-				else if( ev.element instanceof Edge )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						l.edgeAttributeRemoved( getId(), ev.element.getId(), ev.attribute );					
-				}
-				else
-				{
-					for( GraphAttributesListener l: attrListeners )
-						l.graphAttributeRemoved( getId(), ev.attribute );										
-				}
-			}
-			else
-			{
-				if( ev.element instanceof Node )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						l.nodeAttributeChanged( getId(), ev.element.getId(), ev.attribute, ev.oldValue, ev.newValue );
-				}
-				else if( ev.element instanceof Edge )
-				{
-					for( GraphAttributesListener l: attrListeners )
-						l.edgeAttributeChanged( getId(), ev.element.getId(), ev.attribute, ev.oldValue, ev.newValue );					
-				}
-				else
-				{
-					for( GraphAttributesListener l: attrListeners )
-						l.graphAttributeChanged( getId(), ev.attribute, ev.oldValue, ev.newValue );										
-				}				
-			}
-		}
-		
-		// Elements events
-		
-		else if( event.getClass() == AfterEdgeAddEvent.class )
-		{
-			Edge e = ((AfterEdgeAddEvent)event).edge;
-			
-			for( GraphElementsListener l: eltsListeners )
-				l.edgeAdded( getId(), e.getId(), e.getNode0().getId(), e.getNode1().getId(), e.isDirected() );
-		}
-		else if( event.getClass() == AfterNodeAddEvent.class )
-		{
-			for( GraphElementsListener l: eltsListeners )
-				l.nodeAdded( getId(), ((AfterNodeAddEvent)event).node.getId() );
-		}
-		else if( event.getClass() == BeforeEdgeRemoveEvent.class )
-		{
-			for( GraphElementsListener l: eltsListeners )
-				l.edgeRemoved( getId(), ((BeforeEdgeRemoveEvent)event).edge.getId() );
-		}
-		else if( event.getClass() == BeforeNodeRemoveEvent.class )
-		{
-			for( GraphElementsListener l: eltsListeners )
-				l.nodeRemoved( getId(), ((BeforeNodeRemoveEvent)event).node.getId() );
-		}
-	}
-
 // Output
 
-	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId,
+	protected boolean notMyEvent( String sourceId )
+	{
+		return notMyId1( sourceId );
+	}
+
+	protected String extendsSourceId( String sourceId )
+	{
+		// We know that our ID is not yet in the sourceId.
+		return String.format( "%s,%s", sourceId, getId() );
+	}
+
+	protected boolean notMyId1( String sourceId )
+	{
+		String ids[] = sourceId.split( "," );
+		String myId = getId();
+		for( String id: ids )
+			if( id.equals( myId ) )
+				return false;
+		
+		return true;
+	}
+	
+	public void edgeAdded( String sourceId, String edgeId, String fromNodeId, String toNodeId,
             boolean directed )
     {
-		addEdge( edgeId, fromNodeId, toNodeId, directed );
+		if( notMyEvent( sourceId ) )
+			addEdge_( extendsSourceId( sourceId ), edgeId, fromNodeId, toNodeId, directed );
     }
 
-	public void edgeRemoved( String graphId, String edgeId )
+	public void edgeRemoved( String sourceId, String edgeId )
     {
-		removeEdge( edgeId );
+		if( notMyEvent( sourceId ) )
+		{
+			Edge e = getEdge( edgeId );
+			
+			if( e != null )
+				removeEdge_( extendsSourceId( sourceId ), getEdge( edgeId ) );
+		}
     }
 
-	public void graphCleared()
+	public void graphCleared( String sourceId )
     {
-		clear();
+		if( notMyEvent( sourceId ) )
+			clear_( extendsSourceId( sourceId ) );
     }
 
-	public void nodeAdded( String graphId, String nodeId )
+	public void nodeAdded( String sourceId, String nodeId )
     {
-		addNode( nodeId );
+		if( notMyEvent( sourceId ) )
+			addNode_( extendsSourceId( sourceId ), nodeId );
     }
 
-	public void nodeRemoved( String graphId, String nodeId )
+	public void nodeRemoved( String sourceId, String nodeId )
     {
-		removeNode( nodeId );
+		if( notMyEvent( sourceId ) )
+		{
+			Node n = getNode( nodeId );
+			
+			if( n != null )
+				removeNode_( extendsSourceId( sourceId ), n );
+		}
     }
 
-	public void stepBegins( String graphId, double time )
+	public void stepBegins( String sourceId, double time )
     {
-		stepBegins( time );
+		if( notMyEvent( sourceId ) )
+			stepBegins_( extendsSourceId( sourceId ), time );
     }
 
-	public void graphCleared( String graphId )
+	public void edgeAttributeAdded( String sourceId, String edgeId, String attribute, Object value )
     {
-		clear();
-    }
-
-	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
-    {
-		Edge edge = getEdge( edgeId );
+		if( notMyEvent( sourceId ) )
+		{
+			Edge edge = getEdge( edgeId );
 		
-		if( edge != null )
-			edge.addAttribute( attribute, value );
+			if( edge != null )
+				((AdjacencyListEdge)edge).addAttribute_( extendsSourceId( sourceId ), attribute, value );
+		}
     }
 
-	public void edgeAttributeChanged( String graphId, String edgeId, String attribute,
+	public void edgeAttributeChanged( String sourceId, String edgeId, String attribute,
             Object oldValue, Object newValue )
     {
-		Edge edge = getEdge( edgeId );
+		if( notMyEvent( sourceId ) )
+		{
+			Edge edge = getEdge( edgeId );
 		
-		if( edge != null )
-			edge.changeAttribute( attribute, newValue );
+			if( edge != null )
+				((AdjacencyListEdge)edge).changeAttribute_( extendsSourceId( sourceId ), attribute, newValue );
+		}
     }
 
-	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+	public void edgeAttributeRemoved( String sourceId, String edgeId, String attribute )
     {
-		Edge edge = getEdge( edgeId );
+		if( notMyEvent( sourceId ) )
+		{
+			Edge edge = getEdge( edgeId );
 		
-		if( edge != null )
-			edge.removeAttribute( attribute );
+			if( edge != null )
+				((AdjacencyListEdge)edge).removeAttribute_( extendsSourceId( sourceId ), attribute );
+		}
     }
 
-	public void graphAttributeAdded( String graphId, String attribute, Object value )
+	public void graphAttributeAdded( String sourceId, String attribute, Object value )
     {
-		addAttribute( attribute, value );
+		if( notMyEvent( sourceId ) )
+			addAttribute_( extendsSourceId( sourceId ), attribute, value );
     }
 
-	public void graphAttributeChanged( String graphId, String attribute, Object oldValue,
+	public void graphAttributeChanged( String sourceId, String attribute, Object oldValue,
             Object newValue )
     {
-		changeAttribute( attribute, newValue );
+		if( notMyEvent( sourceId ) )
+			changeAttribute_( extendsSourceId( sourceId ), attribute, newValue );
     }
 
-	public void graphAttributeRemoved( String graphId, String attribute )
+	public void graphAttributeRemoved( String sourceId, String attribute )
     {
-		removeAttribute( attribute );
+		if( notMyEvent( sourceId ) )
+			removeAttribute_( extendsSourceId( sourceId ), attribute );
     }
 
-	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+	public void nodeAttributeAdded( String sourceId, String nodeId, String attribute, Object value )
     {
-		Node node = getNode( nodeId );
+		if( notMyEvent( sourceId ) )
+		{
+			Node node = getNode( nodeId );
 		
-		if( node != null )
-			node.addAttribute( attribute, value );
+			if( node != null )
+				((AdjacencyListNode)node).addAttribute_( extendsSourceId( sourceId ), attribute, value );
+		}
     }
 
-	public void nodeAttributeChanged( String graphId, String nodeId, String attribute,
+	public void nodeAttributeChanged( String sourceId, String nodeId, String attribute,
             Object oldValue, Object newValue )
     {
-		Node node = getNode( nodeId );
-		
-		if( node != null )
-			node.changeAttribute( attribute, newValue );
+		if( notMyEvent( sourceId ) )
+		{
+			Node node = getNode( nodeId );
+			
+			if( node != null )
+				((AdjacencyListNode)node).changeAttribute_( extendsSourceId( sourceId ), attribute, newValue );
+		}
     }
 
-	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+	public void nodeAttributeRemoved( String sourceId, String nodeId, String attribute )
     {
-		Node node = getNode( nodeId );
-		
-		if( node != null )
-			node.removeAttribute( attribute );
-    }
-
-// Mute synchronisation
-	
-	protected GraphAttributesListener muteAtrs = null;
-	
-	protected GraphElementsListener muteElts = null;
-	
-	public void muteSource( GraphListener listener )
-    {
-		muteAtrs = listener;
-		muteElts = listener;
-    }
-
-	public void muteSource( GraphAttributesListener listener )
-    {
-		muteAtrs = listener;
-		muteElts = null;
-    }
-
-	public void muteSource( GraphElementsListener listener )
-    {
-		muteAtrs = null;
-		muteElts = listener;
+		if( notMyEvent( sourceId ) )
+		{
+			Node node = getNode( nodeId );
+			
+			if( node != null )
+				((AdjacencyListNode)node).removeAttribute_( extendsSourceId( sourceId ), attribute );
+		}
     }
 }

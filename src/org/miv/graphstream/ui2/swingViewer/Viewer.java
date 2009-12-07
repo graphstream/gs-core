@@ -154,11 +154,7 @@ public class Viewer implements ActionListener
 	
 	public ThreadProxyFilter getThreadProxyOnGraphicGraph()
 	{
-		ThreadProxyFilter fromSwing = new ThreadProxyFilter( graph );
-
-		((ThreadProxyFilter)input).synchronizeWith( fromSwing, graph );
-		
-		return fromSwing;
+		return new ThreadProxyFilter( graph );
 	}
 	
 	/**

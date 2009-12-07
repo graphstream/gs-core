@@ -107,6 +107,7 @@ public interface Edge extends Element
 	 * bidirectionnal.
 	 * @complexity O(1)
 	 */
+	@Deprecated 
 	public void setDirected( boolean on );
 
 	/**
@@ -115,5 +116,6 @@ public interface Edge extends Element
 	 * see the {@link #setDirected(boolean)} method.
 	 * @complexity O(1)
 	 */
+	@Deprecated
 	public void switchDirection();	
 }

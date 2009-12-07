@@ -207,9 +207,9 @@ public class GraphicEdge extends GraphicElement implements Edge
     }
 
 	@Override
-	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+	protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
-		super.attributeChanged( attribute, event, oldValue, newValue );
+		super.attributeChanged( sourceId, attribute, event, oldValue, newValue );
 		
 		if( attribute.equals( "ui.edge-style" ) || attribute.equals( "edge-style" ) )
 		{

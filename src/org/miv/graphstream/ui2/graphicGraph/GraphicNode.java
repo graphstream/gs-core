@@ -16,6 +16,7 @@
 package org.miv.graphstream.ui2.graphicGraph;
 
 import org.miv.graphstream.graph.*;
+import org.miv.graphstream.io2.InputBase.ElementType;
 import org.miv.graphstream.ui2.graphicGraph.stylesheet.Selector;
 
 import java.util.ArrayList;
@@ -92,14 +93,12 @@ public class GraphicNode extends GraphicElement implements Node
     	
     	mygraph.graphChanged  = true;
     	mygraph.boundsChanged = true;
-    	
-    	callChangeListeners();
     }
 
 	@Override
-	protected void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+	protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
-		super.attributeChanged( attribute, event, oldValue, newValue );
+		super.attributeChanged( sourceId, attribute, event, oldValue, newValue );
 		
 		if( attribute.startsWith( "ui.sprite." ) )
 		{
@@ -127,30 +126,8 @@ public class GraphicNode extends GraphicElement implements Node
 			}
 		}
 		
-//		if( attribute.equals( "ui.clicked" ) )	// Filter the clicks to avoid loops XXX BAD !!! XXX 
-//			return;
-		
-		if( event == AttributeChangeEvent.ADD )		// ADD
-		{
-			for( GraphAttributesListener listener: mygraph.attrListeners )
-				if( mygraph.muteAtrs != listener )
-					listener.nodeAttributeAdded( mygraph.getId(), getId(), attribute, newValue );
-		}
-		else if( event == AttributeChangeEvent.REMOVE )	// REMOVE
-		{
-			for( GraphAttributesListener listener: mygraph.attrListeners )
-				if( mygraph.muteAtrs != listener )
-					listener.nodeAttributeRemoved( mygraph.getId(), getId(), attribute );			
-		}
-		else						// CHANGE
-		{
-			for( GraphAttributesListener listener: mygraph.attrListeners )
-				if( mygraph.muteAtrs != listener )
-					listener.nodeAttributeChanged( mygraph.getId(), getId(), attribute, oldValue, newValue );						
-		}
-		
-		mygraph.muteAtrs = null;
-		mygraph.muteElts = null;
+		mygraph.listeners.sendAttributeChangedEvent( sourceId,
+				getId(), ElementType.NODE, attribute, event, oldValue, newValue );
 	}
 
 	/**

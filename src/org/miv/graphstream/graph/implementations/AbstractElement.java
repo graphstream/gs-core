@@ -83,6 +83,9 @@ public abstract class AbstractElement implements Element
 	{
 		return id;
 	}
+	
+	protected abstract String getMyGraphId();
+
 /*
 	public void setId(String id)
 	{
@@ -341,10 +344,51 @@ public abstract class AbstractElement implements Element
 	{
 		return id;
 	}
+	
+	public int getAttributeCount()
+	{
+		if( attributes != null )
+			return attributes.size();
+		
+		return 0;
+	}
 
+	/**
+	 * Utility that tells if the given id appears in a comma separated list of identifiers.
+	 * @param id The id to search for.
+	 * @param idList The list of identifiers separated by commas, without spaces.
+	 * return true if the id is in the list.
+	 */
+	protected boolean containsId( String id, String idList )
+	{
+		// XXX TODO not working !!! XXX
+		int len = id.length();
+		int beg = 0;
+		int end = idList.indexOf( ',' );
+		
+		while( end > 0 )
+		{
+			if( end-beg == len )
+			{
+				if( idList.regionMatches( beg, id, 0, len ) )
+					return false;
+			}
+			
+			beg = end+1;
+			end = idList.indexOf( ',', beg );
+		}
+		
+		return ! idList.regionMatches( beg, id, 0, len );
+	}
+	
 // Command
 	
 	public void clearAttributes()
+	{
+		clearAttributes_( getMyGraphId() );
+	}
+	
+	protected void clearAttributes_( String sourceId )
 	{
 		if( attributes != null )
 		{
@@ -356,7 +400,7 @@ public abstract class AbstractElement implements Element
 				String key = keys.next();
 				Object val = vals.next();
 
-				attributeChanged( key, AttributeChangeEvent.REMOVE, val, null );
+				attributeChanged( sourceId, key, AttributeChangeEvent.REMOVE, val, null );	// XXX
 			}
 
 			attributes.clear();
@@ -365,7 +409,11 @@ public abstract class AbstractElement implements Element
 
 	public void addAttribute( String attribute, Object ... values )
 	{
-//System.err.printf("     #%s#addAttr(%s", getId(), attribute);
+		addAttribute_( getMyGraphId(), attribute, values );
+	}
+	
+	protected void addAttribute_( String sourceId, String attribute, Object ... values )
+	{
 		if( attributes == null )
 			attributes = new HashMap<String,Object>(1);
 
@@ -378,57 +426,41 @@ public abstract class AbstractElement implements Element
 		     value = values[0];
 		else value = values;
 		
-		// We take a particular care to avoid sending an "attributeChanged" event
-		// if the value changed is the same as the old one. For graph synchronisation
-		// (graph A listens at graph B that listens at graph A) this could cause
-		// infinite loops.
-		//
-		// XXX
-		// XXX what happens if the sprite is modified with the same instance changed ?
-		// XXX
-		
-		if( old_value != null )
-		{
-//System.err.printf(" old=%s",old_value);
-			if( old_value != value )
-			{
-				attributes.put( attribute, value );
-
-				if( ! old_value.equals( value ) )
-				{
-//System.err.printf(" old!=new=%s -->AttrChange!",value);
-					attributeChanged( attribute, AttributeChangeEvent.CHANGE, old_value, value );
-				}
-			}
-			else
-			{
-//System.err.printf( " no event" );
-			}
-//System.err.printf( ")%n" );
-		}
-		else
-		{
-			AttributeChangeEvent event = AttributeChangeEvent.ADD;
+		AttributeChangeEvent event = AttributeChangeEvent.ADD;
 			
-			if( attributes.containsKey( attribute ) )	// In case the value is null,
-				event = AttributeChangeEvent.CHANGE;	// but the attribute exists.
-//System.err.printf(" new=%s)%n",value);
-			attributes.put( attribute, value );
-			attributeChanged( attribute, event, old_value, value );
-		}
+		if( attributes.containsKey( attribute ) )	// In case the value is null,
+			event = AttributeChangeEvent.CHANGE;	// but the attribute exists.
+		
+		attributes.put( attribute, value );
+		attributeChanged( sourceId, attribute, event, old_value, value );
 	}
 	
 	public void changeAttribute( String attribute, Object ... values )
 	{
-		addAttribute( attribute, values );
+		changeAttribute_( getMyGraphId(), attribute, values );
+	}
+	
+	protected void changeAttribute_( String sourceId, String attribute, Object ... values )
+	{
+		addAttribute_( sourceId, attribute, values );
 	}
 	
 	public void setAttribute( String attribute, Object ... values )
 	{
-		addAttribute( attribute, values );
+		setAttribute_( getMyGraphId(), attribute, values );
+	}
+	
+	protected void setAttribute_( String sourceId, String attribute, Object ...values )
+	{
+		addAttribute_( sourceId, attribute, values );
 	}
 	
 	public void addAttributes( Map<String,Object> attributes )
+	{
+		addAttributes_( getMyGraphId(), attributes );
+	}
+	
+	protected void addAttributes_( String sourceId, Map<String,Object> attributes )
 	{
 		if( this.attributes == null )
 			this.attributes = new HashMap<String,Object>(1);
@@ -437,27 +469,24 @@ public abstract class AbstractElement implements Element
 		Iterator<Object> j = attributes.values().iterator();
 
 		while( i.hasNext() && j.hasNext() )
-			addAttribute( i.next(), j.next() );
+			addAttribute_( sourceId, i.next(), j.next() );
 	}
 	
 	public void removeAttribute( String attribute )
+	{
+		removeAttribute_( getMyGraphId(), attribute );
+	}
+	
+	protected void removeAttribute_( String sourceId, String attribute )
 	{
 		if( attributes != null )
 		{
 			if( attributes.containsKey( attribute ) )	// Avoid recursive calls when synchronising graphs.
 			{
 				attributes.remove( attribute );
-				attributeChanged( attribute, AttributeChangeEvent.REMOVE, attributes.get( attribute ), null );
+				attributeChanged( sourceId, attribute, AttributeChangeEvent.REMOVE, attributes.get( attribute ), null );
 			}
 		}
-	}
-	
-	public int getAttributeCount()
-	{
-		if( attributes != null )
-			return attributes.size();
-		
-		return 0;
 	}
 
 	public static enum AttributeChangeEvent { ADD, CHANGE, REMOVE };
@@ -466,11 +495,12 @@ public abstract class AbstractElement implements Element
 	 * Called for each change in the attribute set. This method must be
 	 * implemented by sub-elements in order to send events to the graph
 	 * listeners.
+	 * @param sourceId The source of the change.
 	 * @param attribute The attribute name that changed.
 	 * @param oldValue The old value of the attribute, null if the attribute was
 	 *        added.
 	 * @param newValue The new value of the attribute, null if the attribute is
 	 *        about to be removed.
 	 */
-	protected abstract void attributeChanged( String attribute, AttributeChangeEvent event, Object oldValue, Object newValue );
+	protected abstract void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue );
 }
