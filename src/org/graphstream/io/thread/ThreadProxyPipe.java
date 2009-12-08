@@ -25,7 +25,7 @@ package org.graphstream.io.thread;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
-import org.graphstream.io.ProxyFilter;
+import org.graphstream.io.ProxyPipe;
 import org.graphstream.io.Source;
 import org.graphstream.io.SourceBase;
 import org.miv.mbox.CannotPostException;
@@ -57,7 +57,7 @@ import org.miv.mbox.MBoxStandalone;
  * <p>
  * The only restriction is that the output thread must regularly call the {@link #checkEvents()}
  * method to dispatch events coming from the source to all outputs registered (see the
- * explanation in {@link org.graphstream.io.ProxyFilter}).
+ * explanation in {@link org.graphstream.io.ProxyPipe}).
  * </p>
  * 
  * <p>
@@ -67,7 +67,7 @@ import org.miv.mbox.MBoxStandalone;
  * filter is constructed with a graph as input.
  * </p>
  */
-public class ThreadProxyPipe extends SourceBase implements ProxyFilter, MBoxListener
+public class ThreadProxyPipe extends SourceBase implements ProxyPipe, MBoxListener
 {
 // Attributes
 

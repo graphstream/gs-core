@@ -28,7 +28,7 @@ import java.util.HashMap;
 
 import javax.swing.Timer;
 
-import org.graphstream.io.ProxyFilter;
+import org.graphstream.io.ProxyPipe;
 import org.graphstream.io.thread.ThreadProxyPipe;
 import org.graphstream.ui2.graphicGraph.GraphicGraph;
 import org.graphstream.ui2.swingViewer.basicRenderer.SwingBasicGraphRenderer;
@@ -63,7 +63,7 @@ public class Viewer implements ActionListener
 	/**
 	 * The source of graph events.
 	 */
-	protected ProxyFilter input;
+	protected ProxyPipe input;
 	
 	/**
 	 * Timer in the Swing thread.
@@ -97,7 +97,7 @@ public class Viewer implements ActionListener
 
 // Construction
 	
-	public Viewer( ProxyFilter input )
+	public Viewer( ProxyPipe input )
 	{
 		this( new GraphicGraph(), input );
 	}
@@ -107,7 +107,7 @@ public class Viewer implements ActionListener
 		this( graph, null );
 	}
 	
-	protected Viewer( GraphicGraph graph, ProxyFilter input )
+	protected Viewer( GraphicGraph graph, ProxyPipe input )
 	{
 		this.graph  = graph;
 		this.input  = input;

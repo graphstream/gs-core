@@ -62,7 +62,7 @@ package org.graphstream.io;
  * regularly. This is however most of the time not a problem since most work on graphs in
  * GraphStream is dynamic and runs iteratively.</p>
  */
-public interface ProxyFilter extends Pipe
+public interface ProxyPipe extends Pipe
 {
 	/**
 	 * Check if some events are pending and dispatch them to the registered outputs.
