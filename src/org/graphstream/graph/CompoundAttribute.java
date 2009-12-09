@@ -20,7 +20,6 @@
  * 	Yoann Pigné
  * 	Guilhelm Savin
  */
-
 package org.graphstream.graph;
 
 import java.util.HashMap;

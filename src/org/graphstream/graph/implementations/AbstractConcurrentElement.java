@@ -20,7 +20,6 @@
  * 	Yoann Pigné
  * 	Guilhelm Savin
  */
-
 package org.graphstream.graph.implementations;
 
 import java.util.ArrayList;
