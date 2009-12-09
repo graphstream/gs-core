@@ -17,9 +17,9 @@
 options { JDK_VERSION = "1.5"; STATIC = false; }
 
 PARSER_BEGIN(StyleSheetParser)
-package org.miv.graphstream.ui2.graphicGraph.stylesheet.parser;
+package org.graphstream.ui2.graphicGraph.stylesheet.parser;
 
-import org.miv.graphstream.ui2.graphicGraph.stylesheet.*;
+import org.graphstream.ui2.graphicGraph.stylesheet.*;
 //import org.miv.graphstream.ui2.graphicGraph.GraphicGraph;
 import java.awt.Color;
 import java.io.InputStream;

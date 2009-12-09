@@ -38,9 +38,6 @@ import org.miv.util.set.*;
  * set of attributes.
  * </p>
  * 
- * @see org.graphstream.graph.Graph
- * @see org.graphstream.graph.Node
- * @see org.graphstream.graph.Edge
  * @since 20040910
  */
 public abstract class AbstractElement implements Element
@@ -352,34 +349,6 @@ public abstract class AbstractElement implements Element
 		return 0;
 	}
 
-	/**
-	 * Utility that tells if the given id appears in a comma separated list of identifiers.
-	 * @param id The id to search for.
-	 * @param idList The list of identifiers separated by commas, without spaces.
-	 * return true if the id is in the list.
-	 */
-	protected boolean containsId( String id, String idList )
-	{
-		// XXX TODO not working !!! XXX
-		int len = id.length();
-		int beg = 0;
-		int end = idList.indexOf( ',' );
-		
-		while( end > 0 )
-		{
-			if( end-beg == len )
-			{
-				if( idList.regionMatches( beg, id, 0, len ) )
-					return false;
-			}
-			
-			beg = end+1;
-			end = idList.indexOf( ',', beg );
-		}
-		
-		return ! idList.regionMatches( beg, id, 0, len );
-	}
-	
 // Command
 	
 	public void clearAttributes()
