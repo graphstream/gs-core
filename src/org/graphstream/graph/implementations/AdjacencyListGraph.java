@@ -36,12 +36,14 @@ import org.graphstream.graph.GraphListener;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.NodeFactory;
 import org.graphstream.io.GraphParseException;
+import org.graphstream.io.Pipe;
 import org.graphstream.io.SourceBase;
 import org.graphstream.io.SourceBase.ElementType;
 import org.graphstream.io.file.FileSink;
 import org.graphstream.io.file.FileSinkFactory;
 import org.graphstream.io.file.FileSource;
 import org.graphstream.io.file.FileSourceFactory;
+import org.graphstream.io.sync.SinkTime;
 import org.graphstream.ui.GraphViewer;
 import org.graphstream.ui.GraphViewerRemote;
 import org.miv.util.NotFoundException;
@@ -154,9 +156,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	/**
 	 * The set of listeners.
 	 */
-	protected GraphListeners listeners = new GraphListeners();
-	
-	protected class GraphListeners extends SourceBase {}
+	protected GraphListeners listeners;
 	
 // Constructors
 
@@ -214,6 +214,8 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		super( id );
 		setStrict( strictChecking );
 		setAutoCreate( autoCreate );
+		
+		listeners  = new GraphListeners();
 		
 		nodeFactory = new NodeFactory()
 		{
@@ -807,137 +809,240 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		return true;
 	}
 	
-	public void edgeAdded( String sourceId, String edgeId, String fromNodeId, String toNodeId,
+	public void edgeAdded( String sourceId, long timeId, String edgeId, String fromNodeId, String toNodeId,
             boolean directed )
     {
-		if( notMyEvent( sourceId ) )
-			addEdge_( extendsSourceId( sourceId ), edgeId, fromNodeId, toNodeId, directed );
+		listeners.edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId, directed);
     }
 
-	public void edgeRemoved( String sourceId, String edgeId )
+	public void edgeRemoved( String sourceId, long timeId, String edgeId )
     {
-		if( notMyEvent( sourceId ) )
-		{
-			Edge e = getEdge( edgeId );
-			
-			if( e != null )
-				removeEdge_( extendsSourceId( sourceId ), getEdge( edgeId ) );
-		}
+		listeners.edgeRemoved(sourceId, timeId, edgeId);
     }
 
-	public void graphCleared( String sourceId )
+	public void graphCleared( String sourceId, long timeId )
     {
-		if( notMyEvent( sourceId ) )
-			clear_( extendsSourceId( sourceId ) );
+		listeners.graphCleared(sourceId, timeId);
     }
 
-	public void nodeAdded( String sourceId, String nodeId )
+	public void nodeAdded( String sourceId, long timeId, String nodeId )
     {
-		if( notMyEvent( sourceId ) )
-			addNode_( extendsSourceId( sourceId ), nodeId );
+		listeners.nodeAdded(sourceId, timeId, nodeId);
     }
 
-	public void nodeRemoved( String sourceId, String nodeId )
+	public void nodeRemoved( String sourceId, long timeId, String nodeId )
     {
-		if( notMyEvent( sourceId ) )
-		{
-			Node n = getNode( nodeId );
-			
-			if( n != null )
-				removeNode_( extendsSourceId( sourceId ), n );
-		}
+		listeners.nodeRemoved(sourceId, timeId, nodeId);
     }
 
-	public void stepBegins( String sourceId, double time )
+	public void stepBegins( String sourceId, long timeId, double step )
     {
-		if( notMyEvent( sourceId ) )
-			stepBegins_( extendsSourceId( sourceId ), time );
+		listeners.stepBegins(sourceId, timeId, step);
     }
 
-	public void edgeAttributeAdded( String sourceId, String edgeId, String attribute, Object value )
+	public void edgeAttributeAdded( String sourceId, long timeId, String edgeId, String attribute, Object value )
     {
-		if( notMyEvent( sourceId ) )
-		{
-			Edge edge = getEdge( edgeId );
-		
-			if( edge != null )
-				((AdjacencyListEdge)edge).addAttribute_( extendsSourceId( sourceId ), attribute, value );
-		}
+		listeners.edgeAttributeAdded(sourceId, timeId, edgeId, attribute, value);
     }
 
-	public void edgeAttributeChanged( String sourceId, String edgeId, String attribute,
+	public void edgeAttributeChanged( String sourceId, long timeId, String edgeId, String attribute,
             Object oldValue, Object newValue )
     {
-		if( notMyEvent( sourceId ) )
-		{
-			Edge edge = getEdge( edgeId );
-		
-			if( edge != null )
-				((AdjacencyListEdge)edge).changeAttribute_( extendsSourceId( sourceId ), attribute, newValue );
-		}
+		listeners.edgeAttributeChanged(sourceId, timeId, edgeId, attribute, oldValue, newValue);
     }
 
-	public void edgeAttributeRemoved( String sourceId, String edgeId, String attribute )
+	public void edgeAttributeRemoved( String sourceId, long timeId, String edgeId, String attribute )
     {
-		if( notMyEvent( sourceId ) )
-		{
-			Edge edge = getEdge( edgeId );
-		
-			if( edge != null )
-				((AdjacencyListEdge)edge).removeAttribute_( extendsSourceId( sourceId ), attribute );
-		}
+		listeners.edgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
     }
 
-	public void graphAttributeAdded( String sourceId, String attribute, Object value )
+	public void graphAttributeAdded( String sourceId, long timeId, String attribute, Object value )
     {
-		if( notMyEvent( sourceId ) )
-			addAttribute_( extendsSourceId( sourceId ), attribute, value );
+		listeners.graphAttributeAdded(sourceId, timeId, attribute, value);
     }
 
-	public void graphAttributeChanged( String sourceId, String attribute, Object oldValue,
+	public void graphAttributeChanged( String sourceId, long timeId, String attribute, Object oldValue,
             Object newValue )
     {
-		if( notMyEvent( sourceId ) )
-			changeAttribute_( extendsSourceId( sourceId ), attribute, newValue );
+		listeners.graphAttributeChanged(sourceId, timeId, attribute, oldValue, newValue);
     }
 
-	public void graphAttributeRemoved( String sourceId, String attribute )
+	public void graphAttributeRemoved( String sourceId, long timeId, String attribute )
     {
-		if( notMyEvent( sourceId ) )
-			removeAttribute_( extendsSourceId( sourceId ), attribute );
+		listeners.graphAttributeRemoved(sourceId, timeId, attribute);
     }
 
-	public void nodeAttributeAdded( String sourceId, String nodeId, String attribute, Object value )
+	public void nodeAttributeAdded( String sourceId, long timeId, String nodeId, String attribute, Object value )
     {
-		if( notMyEvent( sourceId ) )
-		{
-			Node node = getNode( nodeId );
-		
-			if( node != null )
-				((AdjacencyListNode)node).addAttribute_( extendsSourceId( sourceId ), attribute, value );
-		}
+		listeners.nodeAttributeAdded(sourceId, timeId, nodeId, attribute, value);
     }
 
-	public void nodeAttributeChanged( String sourceId, String nodeId, String attribute,
+	public void nodeAttributeChanged( String sourceId, long timeId, String nodeId, String attribute,
             Object oldValue, Object newValue )
     {
-		if( notMyEvent( sourceId ) )
-		{
-			Node node = getNode( nodeId );
-			
-			if( node != null )
-				((AdjacencyListNode)node).changeAttribute_( extendsSourceId( sourceId ), attribute, newValue );
-		}
+		listeners.nodeAttributeChanged(sourceId, timeId, nodeId, attribute, oldValue, newValue);
     }
 
-	public void nodeAttributeRemoved( String sourceId, String nodeId, String attribute )
+	public void nodeAttributeRemoved( String sourceId, long timeId, String nodeId, String attribute )
     {
-		if( notMyEvent( sourceId ) )
-		{
-			Node node = getNode( nodeId );
-			
-			if( node != null )
-				((AdjacencyListNode)node).removeAttribute_( extendsSourceId( sourceId ), attribute );
-		}
+		listeners.nodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
     }
+
+	// Handling the listeners -- We use the IO2 InputBase for this.
+		
+	class GraphListeners
+		extends SourceBase
+		implements Pipe
+	{
+		SinkTime sinkTime;
+
+		public GraphListeners()
+		{
+			super( getId() );
+
+			sinkTime = new SinkTime();
+			sourceTime.setSinkTime(sinkTime);
+		}
+
+		public void edgeAttributeAdded(String sourceId, long timeId,
+				String edgeId, String attribute, Object value) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				Edge edge = getEdge( edgeId );
+				
+				if( edge != null )
+					((AdjacencyListEdge)edge).addAttribute_( extendsSourceId( sourceId ), attribute, value );
+			}
+		}
+
+		public void edgeAttributeChanged(String sourceId, long timeId,
+				String edgeId, String attribute, Object oldValue,
+				Object newValue) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				Edge edge = getEdge( edgeId );
+				
+				if( edge != null )
+					((AdjacencyListEdge)edge).changeAttribute_( extendsSourceId( sourceId ), attribute, newValue );
+			}
+		}
+
+		public void edgeAttributeRemoved(String sourceId, long timeId,
+				String edgeId, String attribute) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				Edge edge = getEdge( edgeId );
+				
+				if( edge != null )
+					((AdjacencyListEdge)edge).removeAttribute_( extendsSourceId( sourceId ), attribute );
+			}
+		}
+
+		public void graphAttributeAdded(String sourceId, long timeId,
+				String attribute, Object value) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				addAttribute_( sourceId, attribute, value );
+			}
+		}
+
+		public void graphAttributeChanged(String sourceId, long timeId,
+				String attribute, Object oldValue, Object newValue) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				changeAttribute_( sourceId, attribute, newValue );
+			}
+		}
+
+		public void graphAttributeRemoved(String sourceId, long timeId,
+				String attribute) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				removeAttribute_( sourceId, attribute );
+			}
+		}
+
+		public void nodeAttributeAdded(String sourceId, long timeId,
+				String nodeId, String attribute, Object value) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				Node node = getNode( nodeId );
+				
+				if( node != null )
+					((AdjacencyListNode)node).addAttribute_( extendsSourceId( sourceId ), attribute, value );
+			}
+		}
+
+		public void nodeAttributeChanged(String sourceId, long timeId,
+				String nodeId, String attribute, Object oldValue,
+				Object newValue) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				Node node = getNode( nodeId );
+				
+				if( node != null )
+					((AdjacencyListNode)node).changeAttribute_( extendsSourceId( sourceId ), attribute, newValue );
+			}
+		}
+
+		public void nodeAttributeRemoved(String sourceId, long timeId,
+				String nodeId, String attribute) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				Node node = getNode( nodeId );
+
+				if( node != null )
+					((AdjacencyListNode)node).removeAttribute_( extendsSourceId( sourceId ), attribute );
+			}
+		}
+
+		public void edgeAdded(String sourceId, long timeId, String edgeId,
+				String fromNodeId, String toNodeId, boolean directed) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				addEdge_( extendsSourceId( sourceId ), edgeId, fromNodeId, toNodeId, directed );
+			}
+		}
+
+		public void edgeRemoved(String sourceId, long timeId, String edgeId) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				Edge e = getEdge( edgeId );
+				
+				if( e != null )
+					removeEdge_( extendsSourceId( sourceId ), getEdge( edgeId ) );
+			}
+		}
+
+		public void graphCleared(String sourceId, long timeId) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				clear_( extendsSourceId( sourceId ) );
+			}
+		}
+
+		public void nodeAdded(String sourceId, long timeId, String nodeId) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				addNode_( extendsSourceId( sourceId ), nodeId );
+			}
+		}
+
+		public void nodeRemoved(String sourceId, long timeId, String nodeId) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				Node n = getNode( nodeId );
+				
+				if( n != null )
+					removeNode_( extendsSourceId( sourceId ), n );
+			}
+		}
+
+		public void stepBegins(String sourceId, long timeId, double step) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				stepBegins_( extendsSourceId( sourceId ), step );
+			}
+		}
+	}
 }
