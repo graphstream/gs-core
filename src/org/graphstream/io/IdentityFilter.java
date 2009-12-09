@@ -22,6 +22,12 @@
 
 package org.graphstream.io;
 
+import org.graphstream.graph.GraphEvent;
+import org.graphstream.graph.GraphEvent.AttributeEvent;
+import org.graphstream.graph.GraphEvent.EdgeEvent;
+import org.graphstream.graph.GraphEvent.GraphStepEvent;
+import org.graphstream.graph.GraphEvent.NodeEvent;
+
 /**
  * A base filter that do not filter anything.
  *
@@ -35,84 +41,84 @@ package org.graphstream.io;
  * input toward several outputs.
  * </p>
  */
-public class IdentityFilter extends SourceBase implements Pipe
+public class IdentityFilter 
+	extends SourceBase
+	implements Pipe
 {
-	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
-    {
-		sendEdgeAttributeAdded( graphId, edgeId, attribute, value );
-    }
 
-	public void edgeAttributeChanged( String graphId, String edgeId, String attribute,
-            Object oldValue, Object newValue )
-    {
-		sendEdgeAttributeChanged( graphId, edgeId, attribute, oldValue, newValue );
-    }
+	public void edgeAttributeAdded(AttributeEvent e)
+	{
+		appendEvent(e);
+	}
 
-	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
-    {
-		sendEdgeAttributeRemoved( graphId, edgeId, attribute );
-    }
+	public void edgeAttributeChanged(AttributeEvent e)
+	{
+		appendEvent(e);
+	}
 
-	public void graphAttributeAdded( String graphId, String attribute, Object value )
-    {
-		sendGraphAttributeAdded( graphId, attribute, value );
-    }
+	public void edgeAttributeRemoved(AttributeEvent e)
+	{
+		appendEvent(e);
+	}
 
-	public void graphAttributeChanged( String graphId, String attribute, Object oldValue,
-            Object newValue )
-    {
-		sendGraphAttributeChanged( graphId, attribute, oldValue, newValue );
-    }
+	public void graphAttributeAdded(AttributeEvent e)
+	{
+		appendEvent(e);
+	}
 
-	public void graphAttributeRemoved( String graphId, String attribute )
-    {
-		sendGraphAttributeRemoved( graphId, attribute );
-    }
+	public void graphAttributeChanged(AttributeEvent e)
+	{
+		appendEvent(e);
+	}
 
-	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
-    {
-		sendNodeAdded( graphId, nodeId );
-    }
+	public void graphAttributeRemoved(AttributeEvent e)
+	{
+		appendEvent(e);
+	}
 
-	public void nodeAttributeChanged( String graphId, String nodeId, String attribute,
-            Object oldValue, Object newValue )
-    {
-		sendNodeAttributeChanged( graphId, nodeId, attribute, oldValue, newValue );
-    }
+	public void nodeAttributeAdded(AttributeEvent e)
+	{
+		appendEvent(e);
+	}
 
-	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
-    {
-		sendNodeAttributeRemoved( graphId, nodeId, attribute );
-    }
+	public void nodeAttributeChanged(AttributeEvent e)
+	{
+		appendEvent(e);
+	}
 
-	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId,
-            boolean directed )
-    {
-		sendEdgeAdded( graphId, edgeId, fromNodeId, toNodeId, directed );
-    }
+	public void nodeAttributeRemoved(AttributeEvent e)
+	{
+		appendEvent(e);
+	}
 
-	public void edgeRemoved( String graphId, String edgeId )
-    {
-		sendEdgeRemoved( graphId, edgeId );
-    }
+	public void edgeAdded(EdgeEvent e)
+	{
+		appendEvent(e);
+	}
 
-	public void graphCleared( String graphId )
-    {
-		sendGraphCleared( graphId );
-    }
+	public void edgeRemoved(EdgeEvent e)
+	{
+		appendEvent(e);
+	}
 
-	public void nodeAdded( String graphId, String nodeId )
-    {
-		sendNodeAdded( graphId, nodeId );
-    }
+	public void graphCleared(GraphEvent e)
+	{
+		appendEvent(e);
+	}
 
-	public void nodeRemoved( String graphId, String nodeId )
-    {
-		sendNodeRemoved( graphId, nodeId );
-    }
+	public void nodeAdded(NodeEvent e)
+	{
+		appendEvent(e);
+	}
 
-	public void stepBegins( String graphId, double time )
-    {
-		sendStepBegins( graphId, time );
-    }
+	public void nodeRemoved(NodeEvent e)
+	{
+		appendEvent(e);
+	}
+
+	public void stepBegins(GraphStepEvent e)
+	{
+		appendEvent(e);
+	}
+
 }

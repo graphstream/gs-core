@@ -28,11 +28,17 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import org.graphstream.graph.CompoundAttribute;
+import org.graphstream.graph.GraphEvent;
+import org.graphstream.graph.GraphEvent.AttributeEvent;
+import org.graphstream.graph.GraphEvent.EdgeEvent;
+import org.graphstream.graph.GraphEvent.GraphStepEvent;
+import org.graphstream.graph.GraphEvent.NodeEvent;
 
 /**
  * File output for the DGS (Dynamic Graph Stream) file format.
  */
-public class FileSinkDGS extends FileSinkBase
+public class FileSinkDGS
+	extends FileSinkBase
 {
 // Attribute
 	
@@ -62,86 +68,76 @@ public class FileSinkDGS extends FileSinkBase
 	{
 		// NOP
 	}
-
-	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
-	{
-		edgeAttributeChanged( graphId, edgeId, attribute, null, value );
+	
+	public void edgeAttributeAdded(AttributeEvent e) {
+		out.printf("ce \"%s\" %s%n", e.getElementId(), attributeString(e
+				.getAttributeKey(), e.getNewValue(), false));
 	}
 
-	public void edgeAttributeChanged( String graphId, String edgeId, String attribute,
-	        Object oldValue, Object newValue )
-	{
-		out.printf( "ce \"%s\" %s%n", edgeId, attributeString( attribute, newValue, false ) );
+	public void edgeAttributeChanged(AttributeEvent e) {
+		out.printf("ce \"%s\" %s%n", e.getElementId(), attributeString(e
+				.getAttributeKey(), e.getNewValue(), false));
 	}
 
-	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
-	{
-		out.printf( "ce \"%s\" %s%n", edgeId, attributeString( attribute, null, true ) );
+	public void edgeAttributeRemoved(AttributeEvent e) {
+		out.printf("ce \"%s\" %s%n", e.getElementId(), attributeString(e
+				.getAttributeKey(), null, true));
 	}
 
-	public void graphAttributeAdded( String graphId, String attribute, Object value )
-	{
-		graphAttributeChanged( graphId, attribute, null, value );
+	public void graphAttributeAdded(AttributeEvent e) {
+		out.printf("cg %s%n", attributeString(e.getAttributeKey(), e
+				.getNewValue(), false));
 	}
 
-	public void graphAttributeChanged( String graphId, String attribute, Object oldValue,
-	        Object newValue )
-	{
-		out.printf( "cg %s%n", attributeString( attribute, newValue, false ) );
+	public void graphAttributeChanged(AttributeEvent e) {
+		out.printf("cg %s%n", attributeString(e.getAttributeKey(), e
+				.getNewValue(), false));
 	}
 
-	public void graphAttributeRemoved( String graphId, String attribute )
-	{
-		out.printf( "cg %s%n", attributeString( attribute, null, true ) );
+	public void graphAttributeRemoved(AttributeEvent e) {
+		out.printf("cg %s%n", attributeString(e.getAttributeKey(), null, true));
 	}
 
-	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
-	{
-		nodeAttributeChanged( graphId, nodeId, attribute, null, value );
+	public void nodeAttributeAdded(AttributeEvent e) {
+		out.printf("cn \"%s\" %s%n", e.getElementId(), attributeString(e
+				.getAttributeKey(), e.getNewValue(), false));
 	}
 
-	public void nodeAttributeChanged( String graphId, String nodeId, String attribute,
-	        Object oldValue, Object newValue )
-	{
-		out.printf( "cn \"%s\" %s%n", nodeId, attributeString( attribute, newValue, false ) );
+	public void nodeAttributeChanged(AttributeEvent e) {
+		out.printf("cn \"%s\" %s%n", e.getElementId(), attributeString(e
+				.getAttributeKey(), e.getNewValue(), false));
 	}
 
-	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
-	{
-		out.printf( "cn \"%s\" %s%n", nodeId, attributeString( attribute, null, true ) );
+	public void nodeAttributeRemoved(AttributeEvent e) {
+		out.printf("cn \"%s\" %s%n", e.getElementId(), attributeString(e
+				.getAttributeKey(), null, true));
 	}
 
-	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId,
-	        boolean directed )
-	{
-		out.printf( "ae \"%s\" \"%s\" %s \"%s\"%n", edgeId, fromNodeId, directed ? ">" : "", toNodeId );
+	public void edgeAdded(EdgeEvent e) {
+		out.printf("ae \"%s\" \"%s\" %s \"%s\"%n", e.getElementId(), e
+				.getSourceNode(), e.isDirected() ? ">" : "", e.getTargetNode());
 	}
 
-	public void edgeRemoved( String graphId, String edgeId )
-	{
-		out.printf( "de \"%s\"%n", edgeId );
+	public void edgeRemoved(EdgeEvent e) {
+		out.printf( "de \"%s\"%n", e.getElementId() );
 	}
 
-	public void graphCleared( String graphId )
-	{
+	public void graphCleared(GraphEvent e) {
 		out.printf( "clear%n" );
 	}
 
-	public void nodeAdded( String graphId, String nodeId )
-	{
-		out.printf( "an \"%s\"%n", nodeId );
+	public void nodeAdded(NodeEvent e) {
+		out.printf( "an \"%s\"%n", e.getElementId() );
 	}
 
-	public void nodeRemoved( String graphId, String nodeId )
-	{
-		out.printf( "dn \"%s\"%n", nodeId );
+	public void nodeRemoved(NodeEvent e) {
+		out.printf( "dn \"%s\"%n", e.getElementId() );
 	}
 
-	public void stepBegins( String graphId, double time )
-	{
-		out.printf( Locale.US, "st %f%n", time );
+	public void stepBegins(GraphStepEvent e) {
+		out.printf( Locale.US, "st %f%n", e.getTime() );
 	}
-	
+
 // Utility
 	
 	protected String attributeString( String key, Object value, boolean remove )
