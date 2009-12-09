@@ -1,17 +1,18 @@
 /*
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of GraphStream.
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * GraphStream is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place - Suite 330, Boston, MA 02111-1307, USA.
+ * GraphStream is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Copyright 2006 - 2009
  * 	Julien Baudry
@@ -19,35 +20,91 @@
  * 	Yoann Pigné
  * 	Guilhelm Savin
  */
-
 package org.graphstream.io.sync;
 
 public class SourceTime
 {
-	protected long time = 0;
+	protected String	sourceId;
+	/**
+	 * Current value of the time for this source.
+	 */
+	protected long 		currentTimeId;
+	/**
+	 * 
+	 */
+	protected SinkTime	sinkTime;
 	
-	protected String id;
-	
-	protected SinkTime myTime;
-	
-	public SourceTime( String id )
+	/**
+	 * Create a new SourceTime for a given id.
+	 * Current time id is set to 0.
+	 */
+	public SourceTime()
 	{
-		this.id = id;
+		this(0);
+	}
+	/**
+	 * Create a new SourceTime for a given id and a given time.
+	 * 
+	 * @param currentTimeId
+	 */
+	public SourceTime( long currentTimeId )
+	{
+		this(null,currentTimeId,null);
 	}
 	
-	public SourceTime( String id, SinkTime myTime )
+	public SourceTime( String sourceId )
 	{
-		this.id     = id;
-		this.myTime = myTime;
+		this(sourceId,0,null);
 	}
 	
-	public String newEvent()
+	public SourceTime( String sourceId, SinkTime sinkTime )
 	{
-		time++;
+		this(sourceId,0,sinkTime);
+	}
+	/**
+	 * Create a new SourceTime for a given id and a given time.
+	 * 
+	 * @param currentTimeId
+	 */
+	public SourceTime( String sourceId, long currentTimeId )
+	{
+		this(sourceId,currentTimeId,null);
+	}
+	
+	public SourceTime( String sourceId, long currentTimeId, SinkTime sinkTime )
+	{
+		this.sourceId		= sourceId;
+		this.currentTimeId 	= currentTimeId;
+		this.sinkTime		= sinkTime;
+	}
+	
+	public SinkTime getSinkTime()
+	{
+		return sinkTime;
+	}
+	
+	public String getSourceId()
+	{
+		return sourceId;
+	}
+	
+	public void setSourceId( String sourceId )
+	{
+		this.sourceId = sourceId;
+	}
+	
+	public void setSinkTime( SinkTime st )
+	{
+		this.sinkTime = st;
+	}
+	
+	public long newEvent()
+	{
+		currentTimeId++;
 		
-		if( myTime != null )
-			myTime.setTimeFor( id, time );
+		if( sinkTime != null )
+			sinkTime.setTimeFor(sourceId,currentTimeId);
 		
-		return String.format( "%s:%d", id, time );
+		return currentTimeId;
 	}
 }

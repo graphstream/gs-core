@@ -36,7 +36,7 @@ import org.miv.util.NotFoundException;
  * file formats with a magic cookie or header), and if it fails it tries to look
  * at the file name extension.
  *
- * @see org.graphstream.io.GraphReader
+ * @see org.graphstream.io.old.GraphReader
  */
 public class FileSourceFactory
 {

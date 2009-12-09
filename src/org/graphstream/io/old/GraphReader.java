@@ -21,8 +21,9 @@
  * 	Guilhelm Savin
  */
 
-package org.graphstream.io;
+package org.graphstream.io.old;
 
+import org.graphstream.io.GraphParseException;
 import org.miv.util.*;
 import java.io.*;
 

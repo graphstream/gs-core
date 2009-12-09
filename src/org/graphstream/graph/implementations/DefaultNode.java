@@ -176,8 +176,8 @@ public abstract class DefaultNode extends AbstractElement implements Node
 	protected String getMyGraphId()
 	{
 		if( G != null )
-//			return G.getId();
-			return G.time.newEvent();
+			return G.getId();
+			//return G.time.newEvent();
 	
 		throw new RuntimeException( "WTF ?" );
 	}

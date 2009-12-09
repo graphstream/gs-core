@@ -21,7 +21,7 @@
  * 	Guilhelm Savin
  */
 
-package org.graphstream.io;
+package org.graphstream.io.old;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;

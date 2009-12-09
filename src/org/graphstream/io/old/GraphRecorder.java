@@ -21,7 +21,7 @@
  * 	Guilhelm Savin
  */
 
-package org.graphstream.io;
+package org.graphstream.io.old;
 
 import java.io.IOException;
 import java.util.Iterator;

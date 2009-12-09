@@ -42,7 +42,8 @@ import org.miv.util.geom.Point3;
  * identifier of the corresponding element in the graph. A minimal CSS style sheet is included
  * in the generated file and it is easy to add another.</p>
  */
-public class FileSinkSVG extends FileSinkBase
+public class FileSinkSVG
+	extends FileSinkBase
 {
 // Attribute
 	
@@ -106,55 +107,55 @@ public class FileSinkSVG extends FileSinkBase
 		out.printf( "</svg>%n" );
     }
 
-	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+	public void edgeAttributeAdded( String graphId, long timeId, String edgeId, String attribute, Object value )
     {
 		// NOP
     }
 
-	public void edgeAttributeChanged( String graphId, String edgeId, String attribute,
+	public void edgeAttributeChanged( String graphId, long timeId, String edgeId, String attribute,
             Object oldValue, Object newValue )
     {
 		// NOP
     }
 
-	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+	public void edgeAttributeRemoved( String graphId, long timeId, String edgeId, String attribute )
     {
 		// NOP
     }
 
-	public void graphAttributeAdded( String graphId, String attribute, Object value )
+	public void graphAttributeAdded( String graphId, long timeId, String attribute, Object value )
     {
 		// NOP
     }
 
-	public void graphAttributeChanged( String graphId, String attribute, Object oldValue,
+	public void graphAttributeChanged( String graphId, long timeId, String attribute, Object oldValue,
             Object newValue )
     {
 		// NOP
     }
 
-	public void graphAttributeRemoved( String graphId, String attribute )
+	public void graphAttributeRemoved( String graphId, long timeId, String attribute )
     {
 		// NOP
     }
 
-	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+	public void nodeAttributeAdded( String graphId, long timeId, String nodeId, String attribute, Object value )
     {
 		setNodePos( nodeId, attribute, value );
     }
 
-	public void nodeAttributeChanged( String graphId, String nodeId, String attribute,
+	public void nodeAttributeChanged( String graphId, long timeId, String nodeId, String attribute,
             Object oldValue, Object newValue )
     {
 		setNodePos( nodeId, attribute, newValue );
     }
 
-	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+	public void nodeAttributeRemoved( String graphId, long timeId, String nodeId, String attribute )
     {
 		// NOP
     }
 
-	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId,
+	public void edgeAdded( String graphId, long timeId, String edgeId, String fromNodeId, String toNodeId,
             boolean directed )
     {
 		Point3 p0 = nodePos.get( fromNodeId );
@@ -168,27 +169,27 @@ public class FileSinkSVG extends FileSinkBase
 		}
     }
 
-	public void edgeRemoved( String graphId, String edgeId )
+	public void edgeRemoved( String graphId, long timeId, String edgeId )
     {
 		// NOP
     }
 
-	public void graphCleared( String graphId )
+	public void graphCleared( String graphId, long timeId )
     {
 		// NOP
     }
 
-	public void nodeAdded( String graphId, String nodeId )
+	public void nodeAdded( String graphId, long timeId, String nodeId )
     {
 		nodePos.put( nodeId, new Point3() );
     }
 
-	public void nodeRemoved( String graphId, String nodeId )
+	public void nodeRemoved( String graphId, long timeId, String nodeId )
     {
 		nodePos.remove( nodeId );
     }
 
-	public void stepBegins( String graphId, double time )
+	public void stepBegins( String graphId, long timeId, double time )
     {
 		// NOP
     }

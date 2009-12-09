@@ -126,112 +126,112 @@ public class AttributesFilter extends IdentityFilter
 // GraphListener
 	
 	@Override
-	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+	public void edgeAttributeAdded( String graphId, long timeId, String edgeId, String attribute, Object value )
     {
 		if( ! edgePredicate.matches( attribute, value ) )
 		{
 			if( ! globalPredicate.matches( attribute, value ) )
 			{
-				sendEdgeAttributeAdded( graphId, edgeId, attribute, value );
+				sendEdgeAttributeAdded( graphId, timeId, edgeId, attribute, value );
 			}
 		}
     }
 
 	@Override
-	public void edgeAttributeChanged( String graphId, String edgeId, String attribute,
+	public void edgeAttributeChanged( String graphId, long timeId, String edgeId, String attribute,
             Object oldValue, Object newValue )
     {
 		if( ! edgePredicate.matches( attribute, newValue ) )
 		{
 			if( ! globalPredicate.matches( attribute, newValue ) )
 			{
-				sendEdgeAttributeChanged( graphId, edgeId, attribute, oldValue, newValue );
+				sendEdgeAttributeChanged( graphId, timeId, edgeId, attribute, oldValue, newValue );
 			}
 		}
     }
 
 	@Override
-	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+	public void edgeAttributeRemoved( String graphId, long timeId, String edgeId, String attribute )
     {
 		if( ! edgePredicate.matches( attribute, null ) )
 		{
 			if( ! globalPredicate.matches( attribute, null ) )
 			{
-				sendEdgeAttributeRemoved( graphId, edgeId, attribute );
+				sendEdgeAttributeRemoved( graphId, timeId, edgeId, attribute );
 			}
 		}
     }
 
 	@Override
-	public void graphAttributeAdded( String graphId, String attribute, Object value )
+	public void graphAttributeAdded( String graphId, long timeId, String attribute, Object value )
     {
 		if( ! graphPredicate.matches( attribute, value ) )
 		{
 			if( ! globalPredicate.matches( attribute, value ) )
 			{
-				sendGraphAttributeAdded( graphId, attribute, value );
+				sendGraphAttributeAdded( graphId, timeId, attribute, value );
 			}
 		}
     }
 
 	@Override
-	public void graphAttributeChanged( String graphId, String attribute, Object oldValue,
+	public void graphAttributeChanged( String graphId, long timeId, String attribute, Object oldValue,
             Object newValue )
     {
 		if( ! graphPredicate.matches( attribute, newValue ) )
 		{
 			if( ! globalPredicate.matches( attribute, newValue ) )
 			{
-				sendGraphAttributeChanged( graphId, attribute, oldValue, newValue );
+				sendGraphAttributeChanged( graphId, timeId, attribute, oldValue, newValue );
 			}
 		}
     }
 
 	@Override
-	public void graphAttributeRemoved( String graphId, String attribute )
+	public void graphAttributeRemoved( String graphId, long timeId, String attribute )
     {
 		if( ! graphPredicate.matches( attribute, null ) )
 		{
 			if( ! globalPredicate.matches( attribute, null ) )
 			{
-				sendGraphAttributeRemoved( graphId, attribute );
+				sendGraphAttributeRemoved( graphId, timeId, attribute );
 			}
 		}
     }
 
 	@Override
-	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+	public void nodeAttributeAdded( String graphId, long timeId, String nodeId, String attribute, Object value )
     {
 		if( ! nodePredicate.matches( attribute, value ) )
 		{
 			if( ! globalPredicate.matches( attribute, value ) )
 			{
-				sendNodeAttributeAdded( graphId, nodeId, attribute, value );
+				sendNodeAttributeAdded( graphId, timeId, nodeId, attribute, value );
 			}
 		}
     }
 
 	@Override
-	public void nodeAttributeChanged( String graphId, String nodeId, String attribute,
+	public void nodeAttributeChanged( String graphId, long timeId, String nodeId, String attribute,
             Object oldValue, Object newValue )
     {
 		if( ! nodePredicate.matches( attribute, newValue ) )
 		{
 			if( ! globalPredicate.matches( attribute, newValue ) )
 			{
-				sendNodeAttributeChanged( graphId, nodeId, attribute, oldValue, newValue );
+				sendNodeAttributeChanged( graphId, timeId, nodeId, attribute, oldValue, newValue );
 			}
 		}
     }
 
 	@Override
-	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+	public void nodeAttributeRemoved( String graphId, long timeId, String nodeId, String attribute )
     {
 		if( ! nodePredicate.matches( attribute, null ) )
 		{
 			if( ! globalPredicate.matches( attribute, null ) )
 			{
-				sendNodeAttributeRemoved( graphId, nodeId, attribute );
+				sendNodeAttributeRemoved( graphId, timeId, nodeId, attribute );
 			}
 		}
     }

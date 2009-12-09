@@ -29,7 +29,8 @@ import java.util.Map;
 /**
  * Graph writer for the GraphViz DOT format.
  */
-public class FileSinkDOT extends FileSinkBase
+public class FileSinkDOT
+	extends FileSinkBase
 {
 // Attribute
 	
@@ -66,55 +67,55 @@ public class FileSinkDOT extends FileSinkBase
 		out.printf( "}%n" );
 	}
 
-	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+	public void edgeAttributeAdded( String graphId, long timeId, String edgeId, String attribute, Object value )
 	{
 		// NOP
 	}
 
-	public void edgeAttributeChanged( String graphId, String edgeId, String attribute,
+	public void edgeAttributeChanged( String graphId, long timeId, String edgeId, String attribute,
 	        Object oldValue, Object newValue )
 	{
 		// NOP
 	}
 
-	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+	public void edgeAttributeRemoved( String graphId, long timeId, String edgeId, String attribute )
 	{
 		// NOP
 	}
 
-	public void graphAttributeAdded( String graphId, String attribute, Object value )
+	public void graphAttributeAdded( String graphId, long timeId, String attribute, Object value )
 	{
 		// NOP
 	}
 
-	public void graphAttributeChanged( String graphId, String attribute, Object oldValue,
+	public void graphAttributeChanged( String graphId, long timeId, String attribute, Object oldValue,
 	        Object newValue )
 	{
 		// NOP
 	}
 
-	public void graphAttributeRemoved( String graphId, String attribute )
+	public void graphAttributeRemoved( String graphId, long timeId, String attribute )
 	{
 		// NOP
 	}
 
-	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+	public void nodeAttributeAdded( String graphId, long timeId, String nodeId, String attribute, Object value )
 	{
 		out.printf( "\t%s [ %s ];%n", nodeId, outputAttribute( attribute, value, true ) );
 	}
 
-	public void nodeAttributeChanged( String graphId, String nodeId, String attribute,
+	public void nodeAttributeChanged( String graphId, long timeId, String nodeId, String attribute,
 	        Object oldValue, Object newValue )
 	{
 		out.printf( "\t%s [ %s ];%n", nodeId, outputAttribute( attribute, newValue, true ) );
 	}
 
-	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+	public void nodeAttributeRemoved( String graphId, long timeId, String nodeId, String attribute )
 	{
 		// NOP
 	}
 
-	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId,
+	public void edgeAdded( String graphId, long timeId, String edgeId, String fromNodeId, String toNodeId,
 	        boolean directed )
 	{
 		if( directed )
@@ -122,27 +123,27 @@ public class FileSinkDOT extends FileSinkBase
 		else out.printf( "\t%s -- %s;%n", fromNodeId, toNodeId );
 	}
 
-	public void edgeRemoved( String graphId, String edgeId )
+	public void edgeRemoved( String graphId, long timeId, String edgeId )
 	{
 		// NOP
 	}
 
-	public void graphCleared( String graphId )
+	public void graphCleared( String graphId, long timeId )
 	{
 		// NOP
 	}
 
-	public void nodeAdded( String graphId, String nodeId )
+	public void nodeAdded( String graphId, long timeId, String nodeId )
 	{
 		out.printf( "\t%s;%n", nodeId );
 	}
 
-	public void nodeRemoved( String graphId, String nodeId )
+	public void nodeRemoved( String graphId, long timeId, String nodeId )
 	{
 		// NOP
 	}
 
-	public void stepBegins( String graphId, double time )
+	public void stepBegins( String graphId, long timeId, double step )
 	{
 		// NOP
 	}

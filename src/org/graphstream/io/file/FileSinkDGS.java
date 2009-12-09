@@ -32,7 +32,8 @@ import org.graphstream.graph.CompoundAttribute;
 /**
  * File output for the DGS (Dynamic Graph Stream) file format.
  */
-public class FileSinkDGS extends FileSinkBase
+public class FileSinkDGS
+	extends FileSinkBase
 {
 // Attribute
 	
@@ -63,83 +64,83 @@ public class FileSinkDGS extends FileSinkBase
 		// NOP
 	}
 
-	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+	public void edgeAttributeAdded( String graphId, long timeId, String edgeId, String attribute, Object value )
 	{
-		edgeAttributeChanged( graphId, edgeId, attribute, null, value );
+		edgeAttributeChanged( graphId, timeId, edgeId, attribute, null, value );
 	}
 
-	public void edgeAttributeChanged( String graphId, String edgeId, String attribute,
+	public void edgeAttributeChanged( String graphId, long timeId, String edgeId, String attribute,
 	        Object oldValue, Object newValue )
 	{
 		out.printf( "ce \"%s\" %s%n", edgeId, attributeString( attribute, newValue, false ) );
 	}
 
-	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+	public void edgeAttributeRemoved( String graphId, long timeId, String edgeId, String attribute )
 	{
 		out.printf( "ce \"%s\" %s%n", edgeId, attributeString( attribute, null, true ) );
 	}
 
-	public void graphAttributeAdded( String graphId, String attribute, Object value )
+	public void graphAttributeAdded( String graphId, long timeId, String attribute, Object value )
 	{
-		graphAttributeChanged( graphId, attribute, null, value );
+		graphAttributeChanged( graphId, timeId, attribute, null, value );
 	}
 
-	public void graphAttributeChanged( String graphId, String attribute, Object oldValue,
+	public void graphAttributeChanged( String graphId, long timeId, String attribute, Object oldValue,
 	        Object newValue )
 	{
 		out.printf( "cg %s%n", attributeString( attribute, newValue, false ) );
 	}
 
-	public void graphAttributeRemoved( String graphId, String attribute )
+	public void graphAttributeRemoved( String graphId, long timeId, String attribute )
 	{
 		out.printf( "cg %s%n", attributeString( attribute, null, true ) );
 	}
 
-	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+	public void nodeAttributeAdded( String graphId, long timeId, String nodeId, String attribute, Object value )
 	{
-		nodeAttributeChanged( graphId, nodeId, attribute, null, value );
+		nodeAttributeChanged( graphId, timeId, nodeId, attribute, null, value );
 	}
 
-	public void nodeAttributeChanged( String graphId, String nodeId, String attribute,
+	public void nodeAttributeChanged( String graphId, long timeId, String nodeId, String attribute,
 	        Object oldValue, Object newValue )
 	{
 		out.printf( "cn \"%s\" %s%n", nodeId, attributeString( attribute, newValue, false ) );
 	}
 
-	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+	public void nodeAttributeRemoved( String graphId, long timeId, String nodeId, String attribute )
 	{
 		out.printf( "cn \"%s\" %s%n", nodeId, attributeString( attribute, null, true ) );
 	}
 
-	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId,
+	public void edgeAdded( String graphId, long timeId, String edgeId, String fromNodeId, String toNodeId,
 	        boolean directed )
 	{
 		out.printf( "ae \"%s\" \"%s\" %s \"%s\"%n", edgeId, fromNodeId, directed ? ">" : "", toNodeId );
 	}
 
-	public void edgeRemoved( String graphId, String edgeId )
+	public void edgeRemoved( String graphId, long timeId, String edgeId )
 	{
 		out.printf( "de \"%s\"%n", edgeId );
 	}
 
-	public void graphCleared( String graphId )
+	public void graphCleared( String graphId, long timeId )
 	{
 		out.printf( "clear%n" );
 	}
 
-	public void nodeAdded( String graphId, String nodeId )
+	public void nodeAdded( String graphId, long timeId, String nodeId )
 	{
 		out.printf( "an \"%s\"%n", nodeId );
 	}
 
-	public void nodeRemoved( String graphId, String nodeId )
+	public void nodeRemoved( String graphId, long timeId, String nodeId )
 	{
 		out.printf( "dn \"%s\"%n", nodeId );
 	}
 
-	public void stepBegins( String graphId, double time )
+	public void stepBegins( String graphId, long timeId, double step )
 	{
-		out.printf( Locale.US, "st %f%n", time );
+		out.printf( Locale.US, "st %f%n", step );
 	}
 	
 // Utility

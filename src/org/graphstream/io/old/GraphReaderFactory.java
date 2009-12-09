@@ -21,7 +21,7 @@
  * 	Guilhelm Savin
  */
 
-package org.graphstream.io;
+package org.graphstream.io.old;
 
 import org.graphstream.graph.Graph;
 import org.miv.util.*;
@@ -35,7 +35,7 @@ import java.io.*;
  * file formats with a magic cookie or header), and if it fails it tries to look
  * at the file name extension.
  *
- * @see org.graphstream.io.GraphReader
+ * @see org.graphstream.io.old.GraphReader
  * @since 20050515
  */
 public class GraphReaderFactory
@@ -75,7 +75,7 @@ public class GraphReaderFactory
 	 * 
 	 * <p>
 	 * Works exactly like {@link #readerFor(String)} but additionnaly create a
-	 * {@link org.graphstream.io.GraphReaderListenerHelper} that will listen
+	 * {@link org.graphstream.io.old.GraphReaderListenerHelper} that will listen
 	 * at the created reader and modify the given graph accordingly.
 	 * </p>
 	 * 
@@ -88,7 +88,7 @@ public class GraphReaderFactory
 	 * @param graph The graph to modify accordingly.
 	 * @return A graph reader suitable for the fileName graph format and
 	 *   whose listener is connected to a
-	 *   {@link org.graphstream.io.GraphReaderListenerHelper} that will
+	 *   {@link org.graphstream.io.old.GraphReaderListenerHelper} that will
 	 *   modify a graph according to what is read.
 	 * @throws IOException If the file is not readable or accessible.
 	 * @throws NotFoundException If no reader can be found to read the given file.

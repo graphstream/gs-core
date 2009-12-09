@@ -68,117 +68,117 @@ public class RMISource
 		}
 	}
 	
-	public void edgeAdded(String graphId, String edgeId, String fromNodeId,
+	public void edgeAdded(String graphId, long timeId, String edgeId, String fromNodeId,
 			String toNodeId, boolean directed) throws RemoteException
 	{
 		for( GraphElementsListener gel : elementsListeners )
-			gel.edgeAdded(graphId,edgeId,fromNodeId,toNodeId,directed);
+			gel.edgeAdded(graphId,timeId,edgeId,fromNodeId,toNodeId,directed);
 	}
 
-	public void edgeAttributeAdded(String graphId, String edgeId,
+	public void edgeAttributeAdded(String graphId, long timeId, String edgeId,
 			String attribute, Object value)
 		throws RemoteException
 	{
 		for( GraphAttributesListener gal : attributesListeners )
-			gal.edgeAttributeAdded(graphId,edgeId,attribute,value);
+			gal.edgeAttributeAdded(graphId,timeId,edgeId,attribute,value);
 	}
 
-	public void edgeAttributeChanged(String graphId, String edgeId,
+	public void edgeAttributeChanged(String graphId, long timeId, String edgeId,
 			String attribute, Object oldValue, Object newValue)
 			throws RemoteException
 	{
 		for( GraphAttributesListener gal : attributesListeners )
-			gal.edgeAttributeChanged(graphId,edgeId,attribute,oldValue,newValue);
+			gal.edgeAttributeChanged(graphId,timeId,edgeId,attribute,oldValue,newValue);
 	}
 
-	public void edgeAttributeRemoved(String graphId, String edgeId,
+	public void edgeAttributeRemoved(String graphId, long timeId, String edgeId,
 			String attribute)
 		throws RemoteException
 	{
 		for( GraphAttributesListener gal : attributesListeners )
-			gal.edgeAttributeRemoved(graphId,edgeId,attribute);
+			gal.edgeAttributeRemoved(graphId,timeId,edgeId,attribute);
 	}
 
-	public void edgeRemoved(String graphId, String edgeId)
+	public void edgeRemoved(String graphId, long timeId, String edgeId)
 			throws RemoteException
 	{
 		for( GraphElementsListener gel : elementsListeners )
-			gel.edgeRemoved(graphId,edgeId);
+			gel.edgeRemoved(graphId,timeId,edgeId);
 	}
 
-	public void graphAttributeAdded(String graphId, String attribute,
+	public void graphAttributeAdded(String graphId, long timeId, String attribute,
 			Object value)
 		throws RemoteException
 	{
 		for( GraphAttributesListener gal : attributesListeners )
-			gal.graphAttributeAdded(graphId,attribute,value);
+			gal.graphAttributeAdded(graphId,timeId,attribute,value);
 	}
 
-	public void graphAttributeChanged(String graphId, String attribute,
+	public void graphAttributeChanged(String graphId, long timeId, String attribute,
 			Object oldValue, Object newValue)
 		throws RemoteException
 	{
 		for( GraphAttributesListener gal : attributesListeners )
-			gal.graphAttributeChanged(graphId,attribute,oldValue,newValue);
+			gal.graphAttributeChanged(graphId,timeId,attribute,oldValue,newValue);
 	}
 
-	public void graphAttributeRemoved(String graphId, String attribute)
+	public void graphAttributeRemoved(String graphId, long timeId, String attribute)
 			throws RemoteException
 	{
 		for( GraphAttributesListener gal : attributesListeners )
-			gal.graphAttributeRemoved(graphId,attribute);
+			gal.graphAttributeRemoved(graphId,timeId,attribute);
 	}
 
-	public void graphCleared(String graphId)
+	public void graphCleared(String graphId, long timeId)
 		throws RemoteException
 	{
 		for( GraphElementsListener gel : elementsListeners )
-			gel.graphCleared(graphId);
+			gel.graphCleared(graphId,timeId);
 	}
 
-	public void nodeAdded(String graphId, String nodeId)
+	public void nodeAdded(String graphId, long timeId, String nodeId)
 		throws RemoteException
 	{
 		for( GraphElementsListener gel : elementsListeners )
-			gel.nodeAdded(graphId,nodeId);
+			gel.nodeAdded(graphId,timeId,nodeId);
 	}
 
-	public void nodeAttributeAdded(String graphId, String nodeId,
+	public void nodeAttributeAdded(String graphId, long timeId, String nodeId,
 			String attribute, Object value)
 		throws RemoteException
 	{
 		for( GraphAttributesListener gal : attributesListeners )
-			gal.nodeAttributeAdded(graphId,nodeId,attribute,value);
+			gal.nodeAttributeAdded(graphId,timeId,nodeId,attribute,value);
 	}
 
-	public void nodeAttributeChanged(String graphId, String nodeId,
+	public void nodeAttributeChanged(String graphId, long timeId, String nodeId,
 			String attribute, Object oldValue, Object newValue)
 			throws RemoteException
 	{
 		for( GraphAttributesListener gal : attributesListeners )
-			gal.nodeAttributeChanged(graphId,nodeId,attribute,oldValue,newValue);
+			gal.nodeAttributeChanged(graphId,timeId,nodeId,attribute,oldValue,newValue);
 	}
 
-	public void nodeAttributeRemoved(String graphId, String nodeId,
+	public void nodeAttributeRemoved(String graphId, long timeId, String nodeId,
 			String attribute)
 		throws RemoteException
 	{
 		for( GraphAttributesListener gal : attributesListeners )
-			gal.nodeAttributeRemoved(graphId,nodeId,attribute);
+			gal.nodeAttributeRemoved(graphId,timeId,nodeId,attribute);
 	}
 
-	public void nodeRemoved(String graphId, String nodeId)
+	public void nodeRemoved(String graphId, long timeId, String nodeId)
 			throws RemoteException
 	{
 		for( GraphElementsListener gel : elementsListeners )
-			gel.nodeRemoved(graphId,nodeId);
+			gel.nodeRemoved(graphId,timeId,nodeId);
 	}
 
-	public void stepBegins(String graphId, double time)
+	public void stepBegins(String graphId, long timeId, double step)
 		throws RemoteException
 	{
 		for( GraphElementsListener gel : elementsListeners )
-			gel.stepBegins(graphId,time);
+			gel.stepBegins(graphId,timeId,step);
 	}
 
 	public void addGraphAttributesListener(GraphAttributesListener listener)

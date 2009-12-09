@@ -20,8 +20,9 @@
  * 	Yoann Pigné
  * 	Guilhelm Savin
  */
-package org.graphstream.io;
+package org.graphstream.io.old;
 
+import org.graphstream.io.GraphParseException;
 import org.graphstream.io.tlp.GraphReaderTLPParser;
 
 import java.io.IOException;

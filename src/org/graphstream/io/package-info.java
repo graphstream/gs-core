@@ -47,7 +47,7 @@
  * 
  * <p>
  * However there exists two utility classes
- * {@link org.miv.graphstream.io.GraphWriterHelper} and
+ * {@link org.graphstream.io.old.graphstream.io.GraphWriterHelper} and
  * {@link org.miv.graphstream.io.GraphReaderListenerHelper} are provided to read
  * and write instances of the {@link org.miv.graphstream.graph.Graph} class. As
  * a last facility, this graph class contains two methods nammed read and write
@@ -55,7 +55,7 @@
  * </p>
  * 
  * <p>
- * The {@link org.miv.graphstream.io.GraphReaderFactory} class allows to
+ * The {@link org.graphstream.io.old.graphstream.io.GraphReaderFactory} class allows to
  * instanciate a graph reader according to a given file name. This class tries
  * to deduce the graph format from the file name, and for some formats from the
  * first bytes of the file.

@@ -36,7 +36,7 @@ public interface GraphAttributesListener
 	 * @param attribute The attribute name.
 	 * @param value The attribute new value.
 	 */
-	public void graphAttributeAdded( String sourceId, String attribute, Object value );
+	public void graphAttributeAdded( String sourceId, long timeId, String attribute, Object value );
 	
 	/**
 	 * A graph attribute was changed.
@@ -45,14 +45,14 @@ public interface GraphAttributesListener
 	 * @param oldValue The attribute old value.
 	 * @param newValue The attribute new value.
 	 */
-	public void graphAttributeChanged( String sourceId, String attribute, Object oldValue, Object newValue );
+	public void graphAttributeChanged( String sourceId, long timeId, String attribute, Object oldValue, Object newValue );
 	
 	/**
 	 * A graph attribute was removed.
 	 * @param sourceId Identifier of the graph where the attribute was removed.
 	 * @param attribute The removed attribute name.
 	 */
-	public void graphAttributeRemoved( String sourceId, String attribute );
+	public void graphAttributeRemoved( String sourceId, long timeId, String attribute );
 	
 	/**
 	 * A node attribute was added.
@@ -61,7 +61,7 @@ public interface GraphAttributesListener
 	 * @param attribute The attribute name.
 	 * @param value The attribute new value.
 	 */
-	public void nodeAttributeAdded( String sourceId, String nodeId, String attribute, Object value );
+	public void nodeAttributeAdded( String sourceId, long timeId, String nodeId, String attribute, Object value );
 	
 	/**
 	 * A node attribute was changed.
@@ -71,7 +71,7 @@ public interface GraphAttributesListener
 	 * @param oldValue The attribute old value.
 	 * @param newValue The attribute new value.
 	 */
-	public void nodeAttributeChanged( String sourceId, String nodeId, String attribute, Object oldValue, Object newValue );
+	public void nodeAttributeChanged( String sourceId, long timeId, String nodeId, String attribute, Object oldValue, Object newValue );
 	
 	/**
 	 * A node attribute was removed.
@@ -79,7 +79,7 @@ public interface GraphAttributesListener
 	 * @param nodeId Identifier of the node whose attribute was removed.
 	 * @param attribute The removed attribute name.
 	 */
-	public void nodeAttributeRemoved( String sourceId, String nodeId, String attribute );
+	public void nodeAttributeRemoved( String sourceId, long timeId, String nodeId, String attribute );
 
 	/**
 	 * A edge attribute was added.
@@ -88,7 +88,7 @@ public interface GraphAttributesListener
 	 * @param attribute The attribute name.
 	 * @param value The attribute new value.
 	 */
-	public void edgeAttributeAdded( String sourceId, String edgeId, String attribute, Object value );
+	public void edgeAttributeAdded( String sourceId, long timeId, String edgeId, String attribute, Object value );
 
 	/**
 	 * A edge attribute was changed.
@@ -98,7 +98,7 @@ public interface GraphAttributesListener
 	 * @param oldValue The attribute old value.
 	 * @param newValue The attribute new value.
 	 */
-	public void edgeAttributeChanged( String sourceId, String edgeId, String attribute, Object oldValue, Object newValue );
+	public void edgeAttributeChanged( String sourceId, long timeId, String edgeId, String attribute, Object oldValue, Object newValue );
 	
 	/**
 	 * A edge attribute was removed.
@@ -106,5 +106,5 @@ public interface GraphAttributesListener
 	 * @param edgeId Identifier of the edge whose attribute was removed.
 	 * @param attribute The removed attribute name.
 	 */
-	public void edgeAttributeRemoved( String sourceId, String edgeId, String attribute );
+	public void edgeAttributeRemoved( String sourceId, long timeId, String edgeId, String attribute );
 }

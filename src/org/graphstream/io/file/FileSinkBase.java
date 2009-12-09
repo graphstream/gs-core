@@ -66,7 +66,8 @@ import org.graphstream.graph.Node;
  * </ul>
  * </p>
  */
-public abstract class FileSinkBase implements FileSink
+public abstract class FileSinkBase
+	implements FileSink
 {
 // Attribute
 	
@@ -97,29 +98,30 @@ public abstract class FileSinkBase implements FileSink
 	 */
 	protected void exportGraph( Graph graph )
 	{
-		String graphId = graph.getId();
+		String 	graphId = graph.getId();
+		long	timeId	= 0;
 		
 		for( String key: graph.getAttributeKeySet() )
-			graphAttributeAdded( graphId, key, graph.getAttribute( key ) );
+			graphAttributeAdded( graphId, timeId++, key, graph.getAttribute( key ) );
 		
 		for( Node node: graph )
 		{
 			String nodeId = node.getId();
-			nodeAdded( graphId, nodeId );
+			nodeAdded( graphId, timeId++, nodeId );
 			
 			if( node.getAttributeCount() > 0 )
 				for( String key: node.getAttributeKeySet() )
-					nodeAttributeAdded( graphId, nodeId, key, node.getAttribute( key ) );
+					nodeAttributeAdded( graphId, timeId++, nodeId, key, node.getAttribute( key ) );
 		}
 		
 		for( Edge edge: graph.edgeSet() )
 		{
 			String edgeId = edge.getId();
-			edgeAdded( graphId, edgeId, edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
+			edgeAdded( graphId, timeId++, edgeId, edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
 			
 			if( edge.getAttributeCount() > 0 )
 				for( String key: edge.getAttributeKeySet() )
-					nodeAttributeAdded( graphId, edgeId, key, edge.getAttribute( key ) );
+					nodeAttributeAdded( graphId, timeId++, edgeId, key, edge.getAttribute( key ) );
 		}
 	}
 	

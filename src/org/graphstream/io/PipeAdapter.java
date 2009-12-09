@@ -36,34 +36,76 @@ import org.graphstream.graph.GraphListener;
 public class PipeAdapter
 	implements Pipe
 {
-	public void addGraphAttributesListener(GraphAttributesListener listener) {}
-	public void addGraphElementsListener(GraphElementsListener listener) {}
-	public void addGraphListener(GraphListener listener) {}
-	public void removeGraphAttributesListener(GraphAttributesListener listener) {}
-	public void removeGraphElementsListener(GraphElementsListener listener) {}
-	public void removeGraphListener(GraphListener listener) {}
-	public void edgeAttributeAdded(String graphId, String edgeId,
-			String attribute, Object value) {}
-	public void edgeAttributeChanged(String graphId, String edgeId,
-			String attribute, Object oldValue, Object newValue) {}
-	public void edgeAttributeRemoved(String graphId, String edgeId,
-			String attribute) {}
-	public void graphAttributeAdded(String graphId, String attribute,
-			Object value) {}
-	public void graphAttributeChanged(String graphId, String attribute,
-			Object oldValue, Object newValue) {}
-	public void graphAttributeRemoved(String graphId, String attribute) {}
-	public void nodeAttributeAdded(String graphId, String nodeId,
-			String attribute, Object value) {}
-	public void nodeAttributeChanged(String graphId, String nodeId,
-			String attribute, Object oldValue, Object newValue) {}
-	public void nodeAttributeRemoved(String graphId, String nodeId,
-			String attribute) {}
-	public void edgeAdded(String graphId, String edgeId, String fromNodeId,
-			String toNodeId, boolean directed) {}
-	public void edgeRemoved(String graphId, String edgeId) {}
-	public void graphCleared(String graphId) {}
-	public void nodeAdded(String graphId, String nodeId) {}
-	public void nodeRemoved(String graphId, String nodeId) {}
-	public void stepBegins(String graphId, double time) {}
+	public void addGraphAttributesListener(GraphAttributesListener listener) {
+	}
+
+	public void addGraphElementsListener(GraphElementsListener listener) {
+	}
+
+	public void addGraphListener(GraphListener listener) {
+	}
+
+	public void removeGraphAttributesListener(GraphAttributesListener listener) {
+	}
+
+	public void removeGraphElementsListener(GraphElementsListener listener) {
+	}
+
+	public void removeGraphListener(GraphListener listener) {
+	}
+
+	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
+			String attribute, Object value) {
+	}
+
+	public void edgeAttributeChanged(String sourceId, long timeId,
+			String edgeId, String attribute, Object oldValue, Object newValue) {
+	}
+
+	public void edgeAttributeRemoved(String sourceId, long timeId,
+			String edgeId, String attribute) {
+	}
+
+	public void graphAttributeAdded(String sourceId, long timeId,
+			String attribute, Object value) {
+	}
+
+	public void graphAttributeChanged(String sourceId, long timeId,
+			String attribute, Object oldValue, Object newValue) {
+	}
+
+	public void graphAttributeRemoved(String sourceId, long timeId,
+			String attribute) {
+	}
+
+	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
+			String attribute, Object value) {
+	}
+
+	public void nodeAttributeChanged(String sourceId, long timeId,
+			String nodeId, String attribute, Object oldValue, Object newValue) {
+	}
+
+	public void nodeAttributeRemoved(String sourceId, long timeId,
+			String nodeId, String attribute) {
+	}
+
+	public void edgeAdded(String sourceId, long timeId, String edgeId,
+			String fromNodeId, String toNodeId, boolean directed) {
+	}
+
+	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
+	}
+
+	public void graphCleared(String sourceId, long timeId) {
+	}
+
+	public void nodeAdded(String sourceId, long timeId, String nodeId) {
+	}
+
+	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
+	}
+
+	public void stepBegins(String sourceId, long timeId, double step) {
+	}
 }

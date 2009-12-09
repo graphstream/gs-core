@@ -21,9 +21,11 @@
  * 	Guilhelm Savin
  */
 
-package org.graphstream.io;
+package org.graphstream.io.old;
 
 import java.util.Map;
+
+import org.graphstream.io.GraphParseException;
 
 /**
  * Dynamic graph reader listener.
@@ -53,7 +55,7 @@ import java.util.Map;
  * It adds the ability to add or remove individual attributes to node, edges and
  * graphs. The GraphReaderListener is depreciated by this interface.</p>
  * 
- * @see org.graphstream.io.GraphReader
+ * @see org.graphstream.io.old.GraphReader
  */
 public interface GraphReaderListenerExtended
 {

@@ -21,7 +21,7 @@
  * 	Guilhelm Savin
  */
 
-package org.graphstream.io;
+package org.graphstream.io.old;
 
 import java.io.IOException;
 
@@ -32,7 +32,7 @@ import org.graphstream.graph.GraphListener;
  * A graph writer helper that listens at a graph and writes back all modifications as events.
  * 
  * <p>
- * At the contrary of the {@link org.graphstream.io.GraphWriterHelper} that takes
+ * At the contrary of the {@link org.graphstream.io.old.GraphWriterHelper} that takes
  * a snap shot of the graph at the current time, this dynamic writer helper outputs
  * each change in the graph at the time of its occurrence, and therefore stores in
  * the file the history of the graph evolution. 

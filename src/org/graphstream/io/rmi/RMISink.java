@@ -86,14 +86,14 @@ public class RMISink
 			inputs.remove(url);
 	}
 	
-	public void edgeAttributeAdded(String graphId, String edgeId,
+	public void edgeAttributeAdded(String graphId, long timeId, String edgeId,
 			String attribute, Object value)
 	{
 		for( RMIAdapterIn in : inputs.values() )
 		{
 			try
 			{
-				in.edgeAttributeAdded(graphId,edgeId,attribute,value);
+				in.edgeAttributeAdded(graphId,timeId,edgeId,attribute,value);
 			}
 			catch( Exception e )
 			{
@@ -102,14 +102,14 @@ public class RMISink
 		}
 	}
 
-	public void edgeAttributeChanged(String graphId, String edgeId,
+	public void edgeAttributeChanged(String graphId, long timeId, String edgeId,
 			String attribute, Object oldValue, Object newValue)
 	{
 		for( RMIAdapterIn in : inputs.values() )
 		{
 			try
 			{
-				in.edgeAttributeChanged(graphId,edgeId,attribute,oldValue,newValue);
+				in.edgeAttributeChanged(graphId,timeId,edgeId,attribute,oldValue,newValue);
 			}
 			catch( Exception e )
 			{
@@ -118,14 +118,14 @@ public class RMISink
 		}
 	}
 
-	public void edgeAttributeRemoved(String graphId, String edgeId,
+	public void edgeAttributeRemoved(String graphId, long timeId, String edgeId,
 			String attribute)
 	{
 		for( RMIAdapterIn in : inputs.values() )
 		{
 			try
 			{
-				in.edgeAttributeRemoved(graphId,edgeId,attribute);
+				in.edgeAttributeRemoved(graphId,timeId,edgeId,attribute);
 			}
 			catch( Exception e )
 			{
@@ -134,14 +134,14 @@ public class RMISink
 		}
 	}
 
-	public void graphAttributeAdded(String graphId, String attribute,
+	public void graphAttributeAdded(String graphId, long timeId, String attribute,
 			Object value)
 	{
 		for( RMIAdapterIn in : inputs.values() )
 		{
 			try
 			{
-				in.graphAttributeAdded(graphId,attribute,value);
+				in.graphAttributeAdded(graphId,timeId,attribute,value);
 			}
 			catch( Exception e )
 			{
@@ -150,14 +150,14 @@ public class RMISink
 		}
 	}
 
-	public void graphAttributeChanged(String graphId, String attribute,
+	public void graphAttributeChanged(String graphId, long timeId, String attribute,
 			Object oldValue, Object newValue)
 	{
 		for( RMIAdapterIn in : inputs.values() )
 		{
 			try
 			{
-				in.graphAttributeChanged(graphId,attribute,oldValue,newValue);
+				in.graphAttributeChanged(graphId,timeId,attribute,oldValue,newValue);
 			}
 			catch( Exception e )
 			{
@@ -166,13 +166,13 @@ public class RMISink
 		}
 	}
 
-	public void graphAttributeRemoved(String graphId, String attribute)
+	public void graphAttributeRemoved(String graphId, long timeId, String attribute)
 	{
 		for( RMIAdapterIn in : inputs.values() )
 		{
 			try
 			{
-				in.graphAttributeRemoved(graphId,attribute);
+				in.graphAttributeRemoved(graphId,timeId,attribute);
 			}
 			catch( Exception e )
 			{
@@ -181,14 +181,14 @@ public class RMISink
 		}
 	}
 
-	public void nodeAttributeAdded(String graphId, String nodeId,
+	public void nodeAttributeAdded(String graphId, long timeId, String nodeId,
 			String attribute, Object value)
 	{
 		for( RMIAdapterIn in : inputs.values() )
 		{
 			try
 			{
-				in.nodeAttributeAdded(graphId,nodeId,attribute,value);
+				in.nodeAttributeAdded(graphId,timeId,nodeId,attribute,value);
 			}
 			catch( Exception e )
 			{
@@ -197,14 +197,14 @@ public class RMISink
 		}
 	}
 
-	public void nodeAttributeChanged(String graphId, String nodeId,
+	public void nodeAttributeChanged(String graphId, long timeId, String nodeId,
 			String attribute, Object oldValue, Object newValue)
 	{
 		for( RMIAdapterIn in : inputs.values() )
 		{
 			try
 			{
-				in.nodeAttributeChanged(graphId,nodeId,attribute,oldValue,newValue);
+				in.nodeAttributeChanged(graphId,timeId,nodeId,attribute,oldValue,newValue);
 			}
 			catch( Exception e )
 			{
@@ -213,14 +213,14 @@ public class RMISink
 		}
 	}
 
-	public void nodeAttributeRemoved(String graphId, String nodeId,
+	public void nodeAttributeRemoved(String graphId, long timeId, String nodeId,
 			String attribute)
 	{
 		for( RMIAdapterIn in : inputs.values() )
 		{
 			try
 			{
-				in.nodeAttributeRemoved(graphId,nodeId,attribute);
+				in.nodeAttributeRemoved(graphId,timeId,nodeId,attribute);
 			}
 			catch( Exception e )
 			{
@@ -229,14 +229,14 @@ public class RMISink
 		}
 	}
 
-	public void edgeAdded(String graphId, String edgeId, String fromNodeId,
+	public void edgeAdded(String graphId, long timeId, String edgeId, String fromNodeId,
 			String toNodeId, boolean directed)
 	{
 		for( RMIAdapterIn in : inputs.values() )
 		{
 			try
 			{
-				in.edgeAdded(graphId,edgeId,fromNodeId,toNodeId,directed);
+				in.edgeAdded(graphId,timeId,edgeId,fromNodeId,toNodeId,directed);
 			}
 			catch( Exception e )
 			{
@@ -245,13 +245,13 @@ public class RMISink
 		}
 	}
 
-	public void edgeRemoved(String graphId, String edgeId)
+	public void edgeRemoved(String graphId, long timeId, String edgeId)
 	{
 		for( RMIAdapterIn in : inputs.values() )
 		{
 			try
 			{
-				in.edgeRemoved(graphId,edgeId);
+				in.edgeRemoved(graphId,timeId,edgeId);
 			}
 			catch( Exception e )
 			{
@@ -260,13 +260,13 @@ public class RMISink
 		}
 	}
 
-	public void graphCleared(String graphId)
+	public void graphCleared(String graphId, long timeId)
 	{
 		for( RMIAdapterIn in : inputs.values() )
 		{
 			try
 			{
-				in.graphCleared(graphId);
+				in.graphCleared(graphId,timeId);
 			}
 			catch( Exception e )
 			{
@@ -275,13 +275,13 @@ public class RMISink
 		}
 	}
 
-	public void nodeAdded(String graphId, String nodeId)
+	public void nodeAdded(String graphId, long timeId, String nodeId)
 	{
 		for( RMIAdapterIn in : inputs.values() )
 		{
 			try
 			{
-				in.nodeAdded(graphId,nodeId);
+				in.nodeAdded(graphId,timeId,nodeId);
 			}
 			catch( Exception e )
 			{
@@ -290,13 +290,13 @@ public class RMISink
 		}
 	}
 
-	public void nodeRemoved(String graphId, String nodeId)
+	public void nodeRemoved(String graphId, long timeId, String nodeId)
 	{
 		for( RMIAdapterIn in : inputs.values() )
 		{
 			try
 			{
-				in.nodeRemoved(graphId,nodeId);
+				in.nodeRemoved(graphId,timeId,nodeId);
 			}
 			catch( Exception e )
 			{
@@ -305,13 +305,13 @@ public class RMISink
 		}
 	}
 
-	public void stepBegins(String graphId, double time)
+	public void stepBegins(String graphId, long timeId, double step)
 	{
 		for( RMIAdapterIn in : inputs.values() )
 		{
 			try
 			{
-				in.stepBegins(graphId,time);
+				in.stepBegins(graphId,timeId,step);
 			}
 			catch( Exception e )
 			{

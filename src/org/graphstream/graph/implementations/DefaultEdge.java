@@ -99,8 +99,8 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 	protected String getMyGraphId()
 	{
 		if( src != null && src.G != null )
-			//return src.G.getId();
-			return src.G.time.newEvent();
+			return src.G.getId();
+			//return src.G.time.newEvent();
 		
 		throw new RuntimeException( "WTF ?" );
 	}
@@ -153,7 +153,7 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 	{
 		if( directed != on )
 		{
-			src.G.listeners.sendEdgeRemoved( src.G.time.newEvent(), getId() );
+			src.G.listeners.sendEdgeRemoved( getMyGraphId(), getId() );
 		
 			src.unregisterEdge( this );
 			trg.unregisterEdge( this );
@@ -163,13 +163,13 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 			src.registerEdge( this );
 			trg.registerEdge( this );
 		
-			src.G.listeners.sendEdgeAdded( src.G.time.newEvent(), getId(), src.getId(), trg.getId(), directed );
+			src.G.listeners.sendEdgeAdded( getMyGraphId(), getId(), src.getId(), trg.getId(), directed );
 		}
 	}
 	
 	public void switchDirection()
 	{
-		src.G.listeners.sendEdgeRemoved( src.G.time.newEvent(), getId() );
+		src.G.listeners.sendEdgeRemoved( getMyGraphId(), getId() );
 		
 		src.unregisterEdge( this );
 		trg.unregisterEdge( this );
@@ -183,7 +183,7 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 		src.registerEdge( this );
 		trg.registerEdge( this );
 		
-		src.G.listeners.sendEdgeAdded( src.G.time.newEvent(), getId(), src.getId(), trg.getId(), directed );
+		src.G.listeners.sendEdgeAdded( getMyGraphId(), getId(), src.getId(), trg.getId(), directed );
 	}
 
 	/**

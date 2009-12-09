@@ -21,11 +21,12 @@
  * 	Guilhelm Savin
  */
 
-package org.graphstream.io;
+package org.graphstream.io.old;
 
 import java.util.*;
 
 import org.graphstream.graph.*;
+import org.graphstream.io.GraphParseException;
 
 /**
  * Default implementation for a graph reader listener that build a graph

@@ -21,9 +21,11 @@
  * 	Guilhelm Savin
  */
 
-package org.graphstream.io;
+package org.graphstream.io.old;
 
 import java.util.*;
+
+import org.graphstream.io.GraphParseException;
 
 /**
  * Dynamic graph reader listener.
@@ -49,7 +51,7 @@ import java.util.*;
  * attributes, is not the one expected. This will interrupt the parser
  * (GraphReader) that will in turn throw a GraphParseException.</p>
  * 
- * @see org.graphstream.io.GraphReader
+ * @see org.graphstream.io.old.GraphReader
  * @since 20040911
  */
 public interface GraphReaderListener

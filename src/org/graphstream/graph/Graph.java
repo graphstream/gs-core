@@ -382,7 +382,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @throws NotFoundException If the file cannot be found or if the format is not recognised.
 	 * @throws GraphParseException If there is a parsing error while reading the file.
 	 * @throws IOException If an input output error occurs during the graph reading.
-	 * @see org.graphstream.io.GraphReader
+	 * @see org.graphstream.io.old.GraphReader
 	 */
 	public void read( String filename ) throws IOException, GraphParseException, NotFoundException;
 
@@ -393,7 +393,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @throws NotFoundException If the file cannot be found or if the format is not recognised.
 	 * @throws GraphParseException If there is a parsing error while reading the file.
 	 * @throws IOException If an input/output error occurs during the graph reading.
-	 * @see org.graphstream.io.GraphReader
+	 * @see org.graphstream.io.old.GraphReader
 	 */
 	public void read( FileSource input, String filename ) throws IOException, GraphParseException;
 
@@ -401,7 +401,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * Utility method to write a graph in DGS format to a file.
 	 * @param filename The file that will contain the saved graph (or URL).
 	 * @throws IOException If an input/output error occurs during the graph writing.
-	 * @see org.graphstream.io.GraphWriter
+	 * @see org.graphstream.io.old.GraphWriter
 	 */
 	public void write( String filename ) throws IOException;
 
@@ -410,7 +410,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @param filename The file that will contain the saved graph (or URL).
 	 * @param output The output format to use.
 	 * @throws IOException If an input/output error occurs during the graph writing.
-	 * @see org.graphstream.io.GraphWriter
+	 * @see org.graphstream.io.old.GraphWriter
 	 */
 	public void write( FileSink output, String filename ) throws IOException;
 

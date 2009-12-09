@@ -21,10 +21,12 @@
  * 	Guilhelm Savin
  */
 
-package org.graphstream.io;
+package org.graphstream.io.old;
 
 import java.io.IOException;
 import java.util.*;
+
+import org.graphstream.io.GraphParseException;
 
 /**
  * This reader listener directly writes all incomming events to a file
