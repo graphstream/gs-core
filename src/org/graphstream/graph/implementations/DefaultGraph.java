@@ -997,7 +997,6 @@ System.err.printf( "%s.removeNode_(%s, %s)%n", getId(), sourceId, nodeId );
 			sourceTime.setSinkTime(sinkTime);
 		}
 
-		@Override
 		public void edgeAttributeAdded(String sourceId, long timeId,
 				String edgeId, String attribute, Object value) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
@@ -1009,7 +1008,6 @@ System.err.printf( "%s.removeNode_(%s, %s)%n", getId(), sourceId, nodeId );
 			}
 		}
 
-		@Override
 		public void edgeAttributeChanged(String sourceId, long timeId,
 				String edgeId, String attribute, Object oldValue,
 				Object newValue) {
@@ -1022,7 +1020,6 @@ System.err.printf( "%s.removeNode_(%s, %s)%n", getId(), sourceId, nodeId );
 			}
 		}
 
-		@Override
 		public void edgeAttributeRemoved(String sourceId, long timeId,
 				String edgeId, String attribute) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
@@ -1034,7 +1031,6 @@ System.err.printf( "%s.removeNode_(%s, %s)%n", getId(), sourceId, nodeId );
 			}
 		}
 
-		@Override
 		public void graphAttributeAdded(String sourceId, long timeId,
 				String attribute, Object value) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
@@ -1043,7 +1039,6 @@ System.err.printf( "%s.removeNode_(%s, %s)%n", getId(), sourceId, nodeId );
 			}
 		}
 
-		@Override
 		public void graphAttributeChanged(String sourceId, long timeId,
 				String attribute, Object oldValue, Object newValue) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
@@ -1052,7 +1047,6 @@ System.err.printf( "%s.removeNode_(%s, %s)%n", getId(), sourceId, nodeId );
 			}
 		}
 
-		@Override
 		public void graphAttributeRemoved(String sourceId, long timeId,
 				String attribute) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
@@ -1061,7 +1055,6 @@ System.err.printf( "%s.removeNode_(%s, %s)%n", getId(), sourceId, nodeId );
 			}
 		}
 
-		@Override
 		public void nodeAttributeAdded(String sourceId, long timeId,
 				String nodeId, String attribute, Object value) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
@@ -1073,7 +1066,6 @@ System.err.printf( "%s.removeNode_(%s, %s)%n", getId(), sourceId, nodeId );
 			}
 		}
 
-		@Override
 		public void nodeAttributeChanged(String sourceId, long timeId,
 				String nodeId, String attribute, Object oldValue,
 				Object newValue) {
@@ -1086,7 +1078,6 @@ System.err.printf( "%s.removeNode_(%s, %s)%n", getId(), sourceId, nodeId );
 			}
 		}
 
-		@Override
 		public void nodeAttributeRemoved(String sourceId, long timeId,
 				String nodeId, String attribute) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
@@ -1098,7 +1089,6 @@ System.err.printf( "%s.removeNode_(%s, %s)%n", getId(), sourceId, nodeId );
 			}
 		}
 
-		@Override
 		public void edgeAdded(String sourceId, long timeId, String edgeId,
 				String fromNodeId, String toNodeId, boolean directed) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
@@ -1107,7 +1097,6 @@ System.err.printf( "%s.removeNode_(%s, %s)%n", getId(), sourceId, nodeId );
 			}
 		}
 
-		@Override
 		public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
 			{
@@ -1115,7 +1104,6 @@ System.err.printf( "%s.removeNode_(%s, %s)%n", getId(), sourceId, nodeId );
 			}
 		}
 
-		@Override
 		public void graphCleared(String sourceId, long timeId) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
 			{
@@ -1123,7 +1111,6 @@ System.err.printf( "%s.removeNode_(%s, %s)%n", getId(), sourceId, nodeId );
 			}
 		}
 
-		@Override
 		public void nodeAdded(String sourceId, long timeId, String nodeId) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
 			{
@@ -1131,7 +1118,6 @@ System.err.printf( "%s.removeNode_(%s, %s)%n", getId(), sourceId, nodeId );
 			}
 		}
 
-		@Override
 		public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
 			{
@@ -1139,7 +1125,6 @@ System.err.printf( "%s.removeNode_(%s, %s)%n", getId(), sourceId, nodeId );
 			}
 		}
 
-		@Override
 		public void stepBegins(String sourceId, long timeId, double step) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
 			{
