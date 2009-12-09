@@ -1,18 +1,17 @@
 /*
- * This file is part of GraphStream.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
  * 
- * GraphStream is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * 
- * GraphStream is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place - Suite 330, Boston, MA 02111-1307, USA.
  * 
  * Copyright 2006 - 2009
  * 	Julien Baudry
@@ -20,6 +19,7 @@
  * 	Yoann Pigné
  * 	Guilhelm Savin
  */
+
 package org.graphstream.io.file;
 
 import java.io.IOException;
@@ -28,7 +28,6 @@ import java.io.PrintStream;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.GraphEvent;
 import org.graphstream.graph.Node;
 
 /**
@@ -67,8 +66,7 @@ import org.graphstream.graph.Node;
  * </ul>
  * </p>
  */
-public abstract class FileSinkBase
-	implements FileSink
+public abstract class FileSinkBase implements FileSink
 {
 // Attribute
 	
@@ -76,8 +74,6 @@ public abstract class FileSinkBase
 	 * The output.
 	 */
 	protected OutputStream output;
-	
-	protected volatile long timeOrEventIdUsedToExport = 0;
 	
 // Command
 	
@@ -104,37 +100,26 @@ public abstract class FileSinkBase
 		String graphId = graph.getId();
 		
 		for( String key: graph.getAttributeKeySet() )
-			graphAttributeAdded(GraphEvent.createGraphAttributeAddedEvent(
-					graphId, timeOrEventIdUsedToExport++, key, graph.getAttribute(key)));
+			graphAttributeAdded( graphId, key, graph.getAttribute( key ) );
 		
 		for( Node node: graph )
 		{
 			String nodeId = node.getId();
-			nodeAdded(GraphEvent.createNodeAddedEvent(graphId,
-					timeOrEventIdUsedToExport++, nodeId));
+			nodeAdded( graphId, nodeId );
 			
 			if( node.getAttributeCount() > 0 )
 				for( String key: node.getAttributeKeySet() )
-					nodeAttributeAdded(GraphEvent
-							.createNodeAttributeAddedEvent(graphId,
-									timeOrEventIdUsedToExport++, nodeId, key,
-									node.getAttribute(key)));
+					nodeAttributeAdded( graphId, nodeId, key, node.getAttribute( key ) );
 		}
 		
 		for( Edge edge: graph.edgeSet() )
 		{
 			String edgeId = edge.getId();
-			edgeAdded(GraphEvent.createEdgeAddedEvent(graphId,
-					timeOrEventIdUsedToExport++, edgeId, edge.getSourceNode()
-							.getId(), edge.getTargetNode().getId(), edge
-							.isDirected()));
+			edgeAdded( graphId, edgeId, edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
 			
 			if( edge.getAttributeCount() > 0 )
 				for( String key: edge.getAttributeKeySet() )
-					edgeAttributeAdded(GraphEvent
-							.createNodeAttributeAddedEvent(graphId,
-									timeOrEventIdUsedToExport++, edgeId, key,
-									edge.getAttribute(key)));
+					nodeAttributeAdded( graphId, edgeId, key, edge.getAttribute( key ) );
 		}
 	}
 	

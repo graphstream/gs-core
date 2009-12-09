@@ -24,19 +24,11 @@ package org.graphstream.io;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.graphstream.graph.GraphAttributesListener;
 import org.graphstream.graph.GraphElementsListener;
-import org.graphstream.graph.GraphEvent;
-import org.graphstream.graph.GraphEvent.GraphAction;
-import org.graphstream.graph.GraphEvent.ElementType;
-import org.graphstream.graph.GraphEvent.ElementEvent;
-import org.graphstream.graph.GraphEvent.NodeEvent;
-import org.graphstream.graph.GraphEvent.EdgeEvent;
-import org.graphstream.graph.GraphEvent.AttributeEvent;
-import org.graphstream.graph.GraphEvent.GraphStepEvent;
 import org.graphstream.graph.GraphListener;
+import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
 
 /**
  * Base implementation of an input that provide basic listener handling.
@@ -60,11 +52,12 @@ import org.graphstream.graph.GraphListener;
  * during event handling.
  * </p>
  */
-public abstract class SourceBase
-	implements Source
+public abstract class SourceBase implements Source
 {
 // Attribute
 	
+	public enum ElementType { NODE, EDGE, GRAPH };
+
 	/**
 	 * Set of graph attributes listeners.
 	 */
@@ -83,15 +76,13 @@ public abstract class SourceBase
 	/**
 	 * A boolean that indicates whether or not an GraphListener event is being sent during another one. 
 	 */
-	protected AtomicBoolean eventProcessing = new AtomicBoolean(false);
+	protected boolean eventProcessing = false;
 	
 	/**
 	 * List of listeners to remove if the {@link #removeGraphListener(GraphListener)} is called
 	 * inside from the listener. This can happen !! We create this list on demand.
 	 */
 	protected ArrayList<Object> listenersToRemove;
-	
-	volatile long timeOrEventId = 0;
 	
 // Construction
 	
@@ -133,7 +124,7 @@ public abstract class SourceBase
 	
 	public void removeGraphListener( GraphListener listener )
 	{
-		if( eventProcessing.get() )
+		if( eventProcessing )
 		{
 			// We cannot remove the listener while processing events !!!
 			removeListenerLater( listener );
@@ -147,7 +138,7 @@ public abstract class SourceBase
 	
 	public void removeGraphAttributesListener( GraphAttributesListener listener )
 	{
-		if( eventProcessing.get() )
+		if( eventProcessing )
 		{
 			// We cannot remove the listener while processing events !!!
 			removeListenerLater( listener );
@@ -160,7 +151,7 @@ public abstract class SourceBase
 	
 	public void removeGraphElementsListener( GraphElementsListener listener )
 	{
-		if( eventProcessing.get() )
+		if( eventProcessing )
 		{
 			// We cannot remove the listener while processing events !!!
 			removeListenerLater( listener );
@@ -203,7 +194,8 @@ public abstract class SourceBase
 	 */
 	public void sendGraphCleared( String sourceId )
 	{
-		appendEvent(GraphEvent.createGraphClearedEvent(sourceId, timeOrEventId++));
+		for( GraphElementsListener listener: eltsListeners )
+				listener.graphCleared( sourceId );
 	}
 
 	/**
@@ -213,7 +205,8 @@ public abstract class SourceBase
 	 */
 	public void sendStepBegins( String sourceId, double time )
 	{
-		appendEvent(GraphEvent.createGraphStepEvent(sourceId, timeOrEventId++, time));
+		for( GraphElementsListener l : eltsListeners )
+				l.stepBegins( sourceId, time );
 	}
 
 	/**
@@ -223,7 +216,22 @@ public abstract class SourceBase
 	 */
 	public void sendNodeAdded( String sourceId, String nodeId )
 	{
-		appendEvent(GraphEvent.createNodeAddedEvent(sourceId, timeOrEventId++, nodeId));
+		if( ! eventProcessing )
+		{
+			eventProcessing = true;
+			manageEvents();
+
+			for( GraphElementsListener l: eltsListeners )
+					l.nodeAdded( sourceId, nodeId );
+		
+			manageEvents();
+			eventProcessing = false;
+			checkListenersToRemove();
+		}
+		else 
+		{
+			eventQueue.add( new AfterNodeAddEvent( sourceId, nodeId ) );
+		}
 	}
 
 	/**
@@ -233,8 +241,22 @@ public abstract class SourceBase
 	 */
 	public void sendNodeRemoved( String sourceId, String nodeId )
 	{
-		appendEvent(GraphEvent
-				.createNodeRemovedEvent(sourceId, timeOrEventId++, nodeId));
+		if( ! eventProcessing )
+		{
+			eventProcessing = true;
+			manageEvents();
+
+			for( GraphElementsListener l: eltsListeners )
+					l.nodeRemoved( sourceId, nodeId );
+
+			manageEvents();
+			eventProcessing = false;
+			checkListenersToRemove();
+		}
+		else 
+		{
+			eventQueue.add( new BeforeNodeRemoveEvent( sourceId, nodeId ) );
+		}
 	}
 	/**
 	 * Send an "edge added" event to all element listeners.
@@ -246,8 +268,23 @@ public abstract class SourceBase
 	 */
 	public void sendEdgeAdded( String sourceId, String edgeId, String fromNodeId, String toNodeId, boolean directed )
 	{
-		appendEvent(GraphEvent.createEdgeAddedEvent(sourceId, timeOrEventId++, edgeId,
-				fromNodeId, toNodeId, directed));
+		if( ! eventProcessing )
+		{
+			eventProcessing = true;
+			manageEvents();
+
+			for( GraphElementsListener l: eltsListeners )
+					l.edgeAdded( sourceId, edgeId, fromNodeId, toNodeId, directed );
+
+			manageEvents();
+			eventProcessing = false;
+			checkListenersToRemove();
+		}
+		else 
+		{
+//			printPosition( "AddEdge in EventProc" );
+			eventQueue.add( new AfterEdgeAddEvent( sourceId, edgeId, fromNodeId, toNodeId, directed ) );
+		}
 	}
 
 	/**
@@ -257,8 +294,23 @@ public abstract class SourceBase
 	 */
 	public void sendEdgeRemoved( String sourceId, String edgeId )
 	{
-		appendEvent(GraphEvent
-				.createEdgeRemovedEvent(sourceId, timeOrEventId++, edgeId));
+		if( ! eventProcessing )
+		{
+			eventProcessing = true;
+			manageEvents();
+
+			for( GraphElementsListener l: eltsListeners )
+					l.edgeRemoved( sourceId, edgeId );
+
+			manageEvents();
+			eventProcessing = false;
+			checkListenersToRemove();
+		}
+		else
+		{
+//			printPosition( "DelEdge in EventProc" );
+			eventQueue.add( new BeforeEdgeRemoveEvent( sourceId, edgeId ) );
+		}
 	}
 
 	/**
@@ -270,8 +322,8 @@ public abstract class SourceBase
 	 */
 	protected void sendEdgeAttributeAdded( String sourceId, String edgeId, String attribute, Object value )
     {
-		appendEvent(GraphEvent.createEdgeAttributeAddedEvent(sourceId, timeOrEventId++,
-				edgeId, attribute, value));
+		sendAttributeChangedEvent( sourceId, edgeId, ElementType.EDGE, attribute,
+				AttributeChangeEvent.ADD, null, value );
     }
 
 	/**
@@ -285,8 +337,8 @@ public abstract class SourceBase
 	protected void sendEdgeAttributeChanged( String sourceId, String edgeId, String attribute,
             Object oldValue, Object newValue )
     {
-		appendEvent(GraphEvent.createEdgeAttributeChangedEvent(sourceId,
-				timeOrEventId++, edgeId, attribute, oldValue, newValue));
+		sendAttributeChangedEvent( sourceId, edgeId, ElementType.EDGE, attribute,
+				AttributeChangeEvent.CHANGE, oldValue, newValue );
     }
 
 	/**
@@ -297,8 +349,8 @@ public abstract class SourceBase
 	 */
 	protected void sendEdgeAttributeRemoved( String sourceId, String edgeId, String attribute )
     {
-		appendEvent(GraphEvent.createEdgeAttributeRemovedEvent(sourceId,
-				timeOrEventId++, edgeId, attribute));
+		sendAttributeChangedEvent( sourceId, edgeId, ElementType.EDGE, attribute,
+				AttributeChangeEvent.REMOVE, null, null );
     }
 
 	/**
@@ -309,8 +361,8 @@ public abstract class SourceBase
 	 */
 	protected void sendGraphAttributeAdded( String sourceId, String attribute, Object value )
     {
-		appendEvent(GraphEvent.createGraphAttributeAddedEvent(sourceId,
-				timeOrEventId++, attribute, value));
+		sendAttributeChangedEvent( sourceId, null, ElementType.GRAPH, attribute,
+				AttributeChangeEvent.ADD, null, value );
     }
 
 	/**
@@ -323,8 +375,8 @@ public abstract class SourceBase
 	protected void sendGraphAttributeChanged( String sourceId, String attribute, Object oldValue,
             Object newValue )
     {
-		appendEvent(GraphEvent.createGraphAttributeChangedEvent(sourceId,
-				timeOrEventId++, attribute, oldValue, newValue));
+		sendAttributeChangedEvent( sourceId, null, ElementType.GRAPH, attribute,
+				AttributeChangeEvent.CHANGE, oldValue, newValue );
     }
 
 	/**
@@ -334,8 +386,8 @@ public abstract class SourceBase
 	 */
 	protected void sendGraphAttributeRemoved( String sourceId, String attribute )
     {
-		appendEvent(GraphEvent.createGraphAttributeRemovedEvent(sourceId,
-				timeOrEventId++, attribute));
+		sendAttributeChangedEvent( sourceId, null, ElementType.GRAPH, attribute,
+				AttributeChangeEvent.REMOVE, null, null );
     }
 
 	/**
@@ -347,8 +399,8 @@ public abstract class SourceBase
 	 */
 	protected void sendNodeAttributeAdded( String sourceId, String nodeId, String attribute, Object value )
     {
-		appendEvent(GraphEvent.createNodeAttributeAddedEvent(sourceId, timeOrEventId++,
-				nodeId, attribute, value));
+		sendAttributeChangedEvent( sourceId, nodeId, ElementType.NODE, attribute,
+				AttributeChangeEvent.ADD, null, value );
     }
 
 	/**
@@ -362,8 +414,8 @@ public abstract class SourceBase
 	protected void sendNodeAttributeChanged( String sourceId, String nodeId, String attribute,
             Object oldValue, Object newValue )
     {
-		appendEvent(GraphEvent.createNodeAttributeChangedEvent(sourceId,
-				timeOrEventId++, nodeId, attribute, oldValue, newValue));
+		sendAttributeChangedEvent( sourceId, nodeId, ElementType.NODE, attribute,
+				AttributeChangeEvent.CHANGE, oldValue, newValue );
     }
 
 	/**
@@ -374,34 +426,102 @@ public abstract class SourceBase
 	 */
 	protected void sendNodeAttributeRemoved( String sourceId, String nodeId, String attribute )
     {
-		appendEvent(GraphEvent.createNodeAttributeRemovedEvent(sourceId,
-				timeOrEventId++, nodeId, attribute));
+		sendAttributeChangedEvent( sourceId, nodeId, ElementType.NODE, attribute,
+				AttributeChangeEvent.REMOVE, null, null );
     }
-// Deferred event management
 
-	protected void appendEvent( GraphEvent e )
+	/**
+	 * Send a add/change/remove attribute event on an element. This method is a generic way of
+	 * notifying of an attribute change and is equivalent to individual send*Attribute*() methods.
+	 * @param sourceId The source identifier.
+	 * @param eltId The changed element identifier.
+	 * @param eltType The changed element type.
+	 * @param attribute The changed attribute.
+	 * @param event The add/change/remove action.
+	 * @param oldValue The old attribute value (null if the attribute is removed or added).
+	 * @param newValue The new attribute value (null if removed).
+	 */
+	public void sendAttributeChangedEvent( String sourceId, String eltId, ElementType eltType, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
-		if( eventProcessing.compareAndSet(false,true) )//! eventProcessing )
+		if( ! eventProcessing )
 		{
-			//eventProcessing = true;
+			eventProcessing = true;
 			manageEvents();
-			manageEvent(e);
-			//eventProcessing = false;
-			eventProcessing.set(false);
+
+			if( event == AttributeChangeEvent.ADD )
+			{
+				if( eltType == ElementType.NODE )
+				{
+					for( GraphAttributesListener l: attrListeners )
+							l.nodeAttributeAdded( sourceId, eltId, attribute, newValue );
+				}
+				else if( eltType == ElementType.EDGE )
+				{
+					for( GraphAttributesListener l: attrListeners )
+							l.edgeAttributeAdded( sourceId, eltId, attribute, newValue );
+				}
+				else
+				{
+					for( GraphAttributesListener l: attrListeners )
+							l.graphAttributeAdded( sourceId, attribute, newValue );					
+				}
+			}
+			else if( event == AttributeChangeEvent.REMOVE )
+			{
+				if( eltType == ElementType.NODE )
+				{
+					for( GraphAttributesListener l: attrListeners )
+							l.nodeAttributeRemoved( sourceId, eltId, attribute );
+				}
+				else if( eltType == ElementType.EDGE )
+				{
+					for( GraphAttributesListener l: attrListeners )
+							l.edgeAttributeRemoved( sourceId, eltId, attribute );
+				}
+				else
+				{
+					for( GraphAttributesListener l: attrListeners )
+							l.graphAttributeRemoved( sourceId, attribute );					
+				}								
+			}
+			else
+			{
+				if( eltType == ElementType.NODE )
+				{
+					for( GraphAttributesListener l: attrListeners )
+							l.nodeAttributeChanged( sourceId, eltId, attribute, oldValue, newValue );
+				}
+				else if( eltType == ElementType.EDGE )
+				{
+					for( GraphAttributesListener l: attrListeners )
+							l.edgeAttributeChanged( sourceId, eltId, attribute, oldValue, newValue );
+				}
+				else
+				{
+					for( GraphAttributesListener l: attrListeners )
+							l.graphAttributeChanged( sourceId, attribute, oldValue, newValue );					
+				}				
+			}
+
+			manageEvents();
+			eventProcessing = false;
 			checkListenersToRemove();
 		}
 		else
 		{
-			eventQueue.add(e);
+//			printPosition( "ChgEdge in EventProc" );
+			eventQueue.add( new AttributeChangedEvent( sourceId, eltId, eltType, attribute, event, oldValue, newValue ) );
 		}
 	}
 	
+// Deferred event management
+
 	/**
 	 * If in "event processing mode", ensure all pending events are processed.
 	 */
 	protected void manageEvents()
 	{
-		if( eventProcessing.get() )
+		if( eventProcessing )
 		{
 			while( ! eventQueue.isEmpty() )
 				manageEvent( eventQueue.remove() );
@@ -416,105 +536,195 @@ public abstract class SourceBase
 	 */
 	private void manageEvent( GraphEvent event )
 	{
-		if( event.getGraphAction() == GraphAction.attributeAdded )
+		if( event.getClass() == AttributeChangedEvent.class )
 		{
-			AttributeEvent ae = (AttributeEvent) event;
+			AttributeChangedEvent ev = (AttributeChangedEvent)event;
 			
-			if( ae.getElementType() == ElementType.node )
+			if( ev.event == AttributeChangeEvent.ADD )
 			{
-				for( GraphAttributesListener l: attrListeners )
-					l.nodeAttributeAdded(ae);
+				if( ev.eltType == ElementType.NODE )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.nodeAttributeAdded( ev.sourceId, ev.eltId, ev.attribute, ev.newValue );
+				}
+				else if( ev.eltType == ElementType.EDGE )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.edgeAttributeAdded( ev.sourceId, ev.eltId, ev.attribute, ev.newValue );					
+				}
+				else
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.graphAttributeAdded( ev.sourceId, ev.attribute, ev.newValue );										
+				}
 			}
-			else if( ae.getElementType() == ElementType.edge )
+			else if( ev.event == AttributeChangeEvent.REMOVE )
 			{
-				for( GraphAttributesListener l: attrListeners )
-					l.edgeAttributeAdded(ae);
+				if( ev.eltType == ElementType.NODE )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.nodeAttributeRemoved( ev.sourceId, ev.eltId, ev.attribute );
+				}
+				else if( ev.eltType == ElementType.EDGE )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.edgeAttributeRemoved( ev.sourceId, ev.eltId, ev.attribute );					
+				}
+				else
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.graphAttributeRemoved( ev.sourceId, ev.attribute );										
+				}
 			}
-			else if( ae.getElementType() == ElementType.graph )
+			else
 			{
-				for( GraphAttributesListener l: attrListeners )
-					l.graphAttributeAdded(ae);
+				if( ev.eltType == ElementType.NODE )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.nodeAttributeChanged( ev.sourceId, ev.eltId, ev.attribute, ev.oldValue, ev.newValue );
+				}
+				else if( ev.eltType == ElementType.EDGE )
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.edgeAttributeChanged( ev.sourceId, ev.eltId, ev.attribute, ev.oldValue, ev.newValue );					
+				}
+				else
+				{
+					for( GraphAttributesListener l: attrListeners )
+						l.graphAttributeChanged( ev.sourceId, ev.attribute, ev.oldValue, ev.newValue );										
+				}				
 			}
 		}
-		else if( event.getGraphAction() == GraphAction.attributeChanged )
+		
+		// Elements events
+		
+		else if( event.getClass() == AfterEdgeAddEvent.class )
 		{
-			AttributeEvent ae = (AttributeEvent) event;
+			AfterEdgeAddEvent e = (AfterEdgeAddEvent) event;
 			
-			if( ae.getElementType() == ElementType.node )
-			{
-				for( GraphAttributesListener l: attrListeners )
-					l.nodeAttributeChanged(ae);
-			}
-			else if( ae.getElementType() == ElementType.edge )
-			{
-				for( GraphAttributesListener l: attrListeners )
-					l.edgeAttributeChanged(ae);
-			}
-			else if( ae.getElementType() == ElementType.graph )
-			{
-				for( GraphAttributesListener l: attrListeners )
-					l.graphAttributeChanged(ae);
-			}
-		}
-		else if( event.getGraphAction() == GraphAction.attributeRemoved )
-		{
-			AttributeEvent ae = (AttributeEvent) event;
-			
-			if( ae.getElementType() == ElementType.node )
-			{
-				for( GraphAttributesListener l: attrListeners )
-					l.nodeAttributeRemoved(ae);
-			}
-			else if( ae.getElementType() == ElementType.edge )
-			{
-				for( GraphAttributesListener l: attrListeners )
-					l.edgeAttributeRemoved(ae);
-			}
-			else if( ae.getElementType() == ElementType.graph )
-			{
-				for( GraphAttributesListener l: attrListeners )
-					l.graphAttributeRemoved(ae);
-			}
-		}
-		else if( event.getGraphAction() == GraphAction.elementAdded )
-		{
-			ElementEvent ee = (ElementEvent) event;
-			
-			if( ee.getElementType() == ElementType.node )
-			{
-				for( GraphElementsListener l: eltsListeners )
-					l.nodeAdded( (NodeEvent) event );
-			}
-			else if( ee.getElementType() == ElementType.edge )
-			{
-				for( GraphElementsListener l: eltsListeners )
-					l.edgeAdded( (EdgeEvent) event );
-			}
-		}
-		else if( event.getGraphAction() == GraphAction.elementRemoved )
-		{
-			ElementEvent ee = (ElementEvent) event;
-			
-			if( ee.getElementType() == ElementType.node )
-			{
-				for( GraphElementsListener l: eltsListeners )
-					l.nodeRemoved( (NodeEvent) event );
-			}
-			else if( ee.getElementType() == ElementType.edge )
-			{
-				for( GraphElementsListener l: eltsListeners )
-					l.edgeRemoved( (EdgeEvent) event );
-			}
-		}
-		else if( event.getGraphAction() == GraphAction.graphCleared )
-		{
 			for( GraphElementsListener l: eltsListeners )
-				l.graphCleared(event);
+				l.edgeAdded( e.sourceId, e.edgeId, e.fromNodeId, e.toNodeId, e.directed );
 		}
-		else if( event.getGraphAction() == GraphAction.stepBegins )
+		else if( event.getClass() == AfterNodeAddEvent.class )
 		{
+			AfterNodeAddEvent e = (AfterNodeAddEvent) event;
+			
 			for( GraphElementsListener l: eltsListeners )
-				l.stepBegins((GraphStepEvent)event);
+				l.nodeAdded( e.sourceId, e.nodeId );
+		}
+		else if( event.getClass() == BeforeEdgeRemoveEvent.class )
+		{
+			BeforeEdgeRemoveEvent e = (BeforeEdgeRemoveEvent) event;
+			
+			for( GraphElementsListener l: eltsListeners )
+				l.edgeRemoved( e.sourceId, e.edgeId );
+		}
+		else if( event.getClass() == BeforeNodeRemoveEvent.class )
+		{
+			BeforeNodeRemoveEvent e = (BeforeNodeRemoveEvent) event;
+			
+			for( GraphElementsListener l: eltsListeners )
+				l.nodeRemoved( e.sourceId, e.nodeId );
+		}
+	}
+
+// Events Management
+
+	/**
+	 * Interface that provide general purpose classification for evens involved
+	 * in graph modifications
+	 */
+	class GraphEvent
+	{
+		String sourceId;
+		
+		GraphEvent( String sourceId )
+		{
+			this.sourceId = sourceId;
+		}
+	}
+
+	class AfterEdgeAddEvent extends GraphEvent
+	{
+		String edgeId;
+		String fromNodeId;
+		String toNodeId;
+		boolean directed;
+
+		AfterEdgeAddEvent( String sourceId, String edgeId, String fromNodeId, String toNodeId, boolean directed )
+		{
+			super( sourceId );
+			this.edgeId = edgeId;
+			this.fromNodeId = fromNodeId;
+			this.toNodeId = toNodeId;
+			this.directed = directed;
+		}
+	}
+
+	class BeforeEdgeRemoveEvent extends GraphEvent
+	{
+		String edgeId;
+
+		BeforeEdgeRemoveEvent( String sourceId, String edgeId )
+		{
+			super( sourceId );
+			this.edgeId = edgeId;
+		}
+	}
+
+	class AfterNodeAddEvent extends GraphEvent
+	{
+		String nodeId;
+
+		AfterNodeAddEvent( String sourceId, String nodeId )
+		{
+			super( sourceId );
+			this.nodeId = nodeId;
+		}
+	}
+
+	class BeforeNodeRemoveEvent extends GraphEvent
+	{
+		String nodeId;
+
+		BeforeNodeRemoveEvent( String sourceId, String nodeId )
+		{
+			super( sourceId );
+			this.nodeId = nodeId;
+		}
+	}
+
+	class BeforeGraphClearEvent extends GraphEvent
+	{
+		BeforeGraphClearEvent( String sourceId )
+		{
+			super( sourceId );
+		}
+	}
+
+	class AttributeChangedEvent extends GraphEvent
+	{
+		ElementType eltType;
+		
+		String eltId;
+		
+		String attribute;
+		
+		AttributeChangeEvent event;
+
+		Object oldValue;
+
+		Object newValue;
+
+		AttributeChangedEvent( String sourceId, String eltId, ElementType eltType, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+		{
+			super( sourceId );
+			this.eltType   = eltType;
+			this.eltId     = eltId;
+			this.attribute = attribute;
+			this.event     = event;
+			this.oldValue  = oldValue;
+			this.newValue  = newValue;
 		}
 	}
 }

@@ -22,10 +22,6 @@
 
 package org.graphstream.graph;
 
-import org.graphstream.graph.GraphEvent.EdgeEvent;
-import org.graphstream.graph.GraphEvent.GraphStepEvent;
-import org.graphstream.graph.GraphEvent.NodeEvent;
-
 /**
  * Interface to listen at changes in the graph structure.
  * 
@@ -40,14 +36,14 @@ public interface GraphElementsListener
 	 * @param sourceId Identifier of the graph where the node was added.
 	 * @param nodeId Identifier of the added node.
 	 */
-	public void nodeAdded( NodeEvent e );//String sourceId, String nodeId );
+	public void nodeAdded( String sourceId, String nodeId );
 
 	/**
 	 * A node was removed from the graph.
 	 * @param sourceId Identifier of the graph where the node will be removed.
 	 * @param nodeId Identifier of the removed node.
 	 */
-	public void nodeRemoved( NodeEvent e );//String sourceId, String nodeId );
+	public void nodeRemoved( String sourceId, String nodeId );
 
 	/**
 	 * An edge was inserted in graph.
@@ -57,7 +53,7 @@ public interface GraphElementsListener
 	 * @param toNodeId Identifier of the second node of the edge.
 	 * @param directed If true, the edge is directed.
 	 */
-	public void edgeAdded( EdgeEvent e );//String sourceId, String edgeId, String fromNodeId, String toNodeId, boolean directed );
+	public void edgeAdded( String sourceId, String edgeId, String fromNodeId, String toNodeId, boolean directed );
 
 	/**
 	 * An edge of graph was removed.The nodes the edge connects may already have been
@@ -65,14 +61,14 @@ public interface GraphElementsListener
 	 * @param sourceId The graph where the edge will be removed.
 	 * @param edgeId The edge that will be removed.
 	 */
-	public void edgeRemoved( EdgeEvent e );//String sourceId, String edgeId );
+	public void edgeRemoved( String sourceId, String edgeId );
 	
 	/**
 	 * The whole graph was cleared. All the nodes, edges and attributes of the
 	 * graph are removed.
 	 * @param sourceId The graph cleared.
 	 */
-	public void graphCleared( GraphEvent e );//String sourceId );
+	public void graphCleared( String sourceId );
 	
 	/**
 	 * <p>
@@ -91,5 +87,5 @@ public interface GraphElementsListener
 	 * @param time A numerical value that may give a timestamp to track the evolution of the graph
 	 *   over the time.
 	 */
-	public void stepBegins( GraphStepEvent e );//String sourceId, double time );
+	public void stepBegins( String sourceId, double time );
 }
