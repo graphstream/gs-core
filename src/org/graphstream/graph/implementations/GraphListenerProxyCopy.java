@@ -89,12 +89,14 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 
 		Iterable<String> k = inGraph.getAttributeKeySet();
 
+		long timeId = 0;
+		
 		if( k != null )
 		{
 			for( String key: k )
 			{
 				Object val = inGraph.getAttribute( key );
-				graphAttributeAdded( inGraph.getId(), key, val );
+				graphAttributeAdded( inGraph.getId(), timeId++, key, val );
 			}
 		}
 
@@ -105,7 +107,7 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 
 		for( Node node: inGraph )
 		{
-			nodeAdded( inGraph.getId(), node.getId() );
+			nodeAdded( inGraph.getId(), timeId++, node.getId() );
 
 			k = node.getAttributeKeySet();
 
@@ -114,7 +116,7 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 				for( String key: k )
 				{
 					Object val = node.getAttribute( key );
-					nodeAttributeAdded( inGraph.getId(), node.getId(), key, val );
+					nodeAttributeAdded( inGraph.getId(), timeId++, node.getId(), key, val );
 				}
 			}
 		}
@@ -125,7 +127,7 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 
 		for( Edge edge : inGraph.edgeSet() )
 		{
-			edgeAdded( inGraph.getId(), edge.getId(), edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
+			edgeAdded( inGraph.getId(), timeId++, edge.getId(), edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
 
 			k = edge.getAttributeKeySet();
 
@@ -134,7 +136,7 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 				for( String key: k )
 				{
 					Object val = edge.getAttribute( key );
-					edgeAttributeAdded( inGraph.getId(), edge.getId(), key, val );
+					edgeAttributeAdded( inGraph.getId(), timeId++, edge.getId(), key, val );
 				}
 			}
 		}
@@ -164,37 +166,37 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 
 // Commands -- GraphListener
 
-	public void nodeAdded( String graphId, String nodeId )
+	public void nodeAdded( String graphId, long timeId, String nodeId )
     {
 		outGraph.addNode( nodeId );
     }
 
-	public void edgeAdded( String graphId, String edgeId, String fromId, String toId, boolean directed )
+	public void edgeAdded( String graphId, long timeId, String edgeId, String fromId, String toId, boolean directed )
     {
 		outGraph.addEdge( edgeId, fromId, toId, directed );
     }
 
-	public void nodeRemoved( String graphId, String nodeId )
+	public void nodeRemoved( String graphId, long timeId, String nodeId )
     {
 		outGraph.removeNode( nodeId );
     }
 
-	public void edgeRemoved( String graphId, String edgeId )
+	public void edgeRemoved( String graphId, long timeId, String edgeId )
     {
 		outGraph.removeEdge( edgeId );
     }
 	
-	public void graphCleared( String graphId )
+	public void graphCleared( String graphId, long timeId )
 	{
 		outGraph.clear();
 	}
 
-	public void stepBegins( String graphId, double time )
+	public void stepBegins( String graphId, long timeId, double time )
 	{
 		outGraph.stepBegins( time );
 	}
 
-	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+	public void edgeAttributeAdded( String graphId, long timeId, String edgeId, String attribute, Object value )
     {
 		Edge edge = outGraph.getEdge( edgeId );
 		
@@ -202,7 +204,7 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 			edge.setAttribute( attribute, value );			
     }
 
-	public void edgeAttributeChanged( String graphId, String edgeId, String attribute, Object oldValue, Object newValue )
+	public void edgeAttributeChanged( String graphId, long timeId, String edgeId, String attribute, Object oldValue, Object newValue )
     {
 		Edge edge = outGraph.getEdge( edgeId );
 		
@@ -210,7 +212,7 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 			edge.changeAttribute( attribute, newValue );			
     }
 
-	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+	public void edgeAttributeRemoved( String graphId, long timeId, String edgeId, String attribute )
     {
 		Edge edge = outGraph.getEdge( edgeId );
 		
@@ -218,22 +220,22 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 			edge.removeAttribute( attribute );			
     }
 
-	public void graphAttributeAdded( String graphId, String attribute, Object value )
+	public void graphAttributeAdded( String graphId, long timeId, String attribute, Object value )
     {
 		outGraph.setAttribute( attribute, value );
     }
 
-	public void graphAttributeChanged( String graphId, String attribute, Object oldValue, Object newValue )
+	public void graphAttributeChanged( String graphId, long timeId, String attribute, Object oldValue, Object newValue )
     {
 		outGraph.changeAttribute( attribute, newValue );
     }
 
-	public void graphAttributeRemoved( String graphId, String attribute )
+	public void graphAttributeRemoved( String graphId, long timeId, String attribute )
     {
 		outGraph.removeAttribute( attribute );
     }
 
-	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+	public void nodeAttributeAdded( String graphId, long timeId, String nodeId, String attribute, Object value )
     {
 		Node node = outGraph.getNode( nodeId );
 			
@@ -241,7 +243,7 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 			node.setAttribute( attribute, value );
     }
 
-	public void nodeAttributeChanged( String graphId, String nodeId, String attribute, Object oldValue, Object newValue )
+	public void nodeAttributeChanged( String graphId, long timeId, String nodeId, String attribute, Object oldValue, Object newValue )
     {
 		Node node = outGraph.getNode( nodeId );
 		
@@ -249,7 +251,7 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 			node.changeAttribute( attribute, newValue );
     }
 
-	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+	public void nodeAttributeRemoved( String graphId, long timeId, String nodeId, String attribute )
     {
 		Node node = outGraph.getNode( nodeId );
 		

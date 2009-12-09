@@ -304,13 +304,13 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 	
 // GraphListener -- Redirect events to the message box.
 
-	public void graphAttributeAdded( String graphId, String attribute, Object value )
+	public void graphAttributeAdded( String graphId, long timeId, String attribute, Object value )
     {
 		if( maybeUnregister() ) return;
 		
 		try
 		{
-			events.post( from, "gaa", graphId, attribute, value );
+			events.post( from, "gaa", graphId, timeId, attribute, value );
 		}
 		catch( CannotPostException e )
 		{
@@ -319,13 +319,13 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 		}
     }
 
-	public void graphAttributeChanged( String graphId, String attribute, Object oldValue, Object newValue )
+	public void graphAttributeChanged( String graphId, long timeId, String attribute, Object oldValue, Object newValue )
     {
 		if( maybeUnregister() ) return;
 		
 		try
 		{
-			events.post( from, "gac", graphId, attribute, oldValue, newValue );
+			events.post( from, "gac", graphId, timeId, attribute, oldValue, newValue );
 		}
 		catch( CannotPostException e )
 		{
@@ -334,13 +334,13 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 		}
     }
 
-	public void graphAttributeRemoved( String graphId, String attribute )
+	public void graphAttributeRemoved( String graphId, long timeId, String attribute )
     {
 		if( maybeUnregister() ) return;
 		
 		try
 		{
-			events.post( from, "gar", graphId, attribute );
+			events.post( from, "gar", graphId, timeId, attribute );
 		}
 		catch( CannotPostException e )
 		{
@@ -349,14 +349,14 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 		}
     }
 
-	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId,
+	public void edgeAdded( String graphId, long timeId, String edgeId, String fromNodeId, String toNodeId,
             boolean directed )
     {
 		if( maybeUnregister() ) return;
 
 		try
 		{
-			events.post( from, "ae", graphId, edgeId, fromNodeId, toNodeId, directed );
+			events.post( from, "ae", graphId, timeId, edgeId, fromNodeId, toNodeId, directed );
 		}
 		catch( CannotPostException e )
 		{
@@ -365,13 +365,13 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 		}
     }
 
-	public void edgeRemoved( String graphId, String edgeId )
+	public void edgeRemoved( String graphId, long timeId, String edgeId )
     {
 		if( maybeUnregister() ) return;
 
 		try
 		{
-			events.post( from, "de", graphId, edgeId );
+			events.post( from, "de", graphId, timeId, edgeId );
 		}
 		catch( CannotPostException e )
 		{
@@ -380,52 +380,52 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 		}
     }
 
-	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+	public void edgeAttributeAdded( String graphId, long timeId, String edgeId, String attribute, Object value )
     {
 		if( maybeUnregister() ) return;
 		
 		try
 		{
-			events.post( from, "eaa", graphId, edgeId, attribute, value );
+			events.post( from, "eaa", graphId, timeId, edgeId, attribute, value );
 		}
 		catch( CannotPostException e )
 		{
 		}
     }
 
-	public void edgeAttributeChanged( String graphId, String edgeId, String attribute, Object oldValue, Object newValue )
+	public void edgeAttributeChanged( String graphId, long timeId, String edgeId, String attribute, Object oldValue, Object newValue )
     {
 		if( maybeUnregister() ) return;
 		
 		try
 		{
-			events.post( from, "eac", graphId, edgeId, attribute, oldValue, newValue );
+			events.post( from, "eac", graphId, timeId, edgeId, attribute, oldValue, newValue );
 		}
 		catch( CannotPostException e )
 		{
 		}
     }
 
-	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+	public void edgeAttributeRemoved( String graphId, long timeId, String edgeId, String attribute )
     {
 		if( maybeUnregister() ) return;
 		
 		try
 		{
-			events.post( from, "ear", graphId, edgeId, attribute );
+			events.post( from, "ear", graphId, timeId, edgeId, attribute );
 		}
 		catch( CannotPostException e )
 		{
 		}
     }
 
-	public void nodeAdded( String graphId, String nodeId )
+	public void nodeAdded( String graphId, long timeId, String nodeId )
     {
 		if( maybeUnregister() ) return;
 
 		try
 		{
-			events.post( from, "an", graphId, nodeId );
+			events.post( from, "an", graphId, timeId, nodeId );
 		}
 		catch( CannotPostException e )
 		{
@@ -434,13 +434,13 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 		}
     }
 
-	public void nodeRemoved( String graphId, String nodeId )
+	public void nodeRemoved( String graphId, long timeId, String nodeId )
     {
 		if( maybeUnregister() ) return;
 
 		try
 		{
-			events.post( from, "dn", graphId, nodeId );
+			events.post( from, "dn", graphId, timeId, nodeId );
 		}
 		catch( CannotPostException e )
 		{
@@ -449,13 +449,13 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 		}
     }
 
-	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+	public void nodeAttributeAdded( String graphId, long timeId, String nodeId, String attribute, Object value )
     {
 		if( maybeUnregister() ) return;
 
 		try
 		{
-			events.post( from, "naa", graphId, nodeId, attribute, value );
+			events.post( from, "naa", graphId, timeId, nodeId, attribute, value );
 		}
 		catch( CannotPostException e )
 		{
@@ -464,13 +464,13 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 		}
     }
 
-	public void nodeAttributeChanged( String graphId, String nodeId, String attribute, Object oldValue, Object newValue )
+	public void nodeAttributeChanged( String graphId, long timeId, String nodeId, String attribute, Object oldValue, Object newValue )
     {
 		if( maybeUnregister() ) return;
 
 		try
 		{
-			events.post( from, "nac", graphId, nodeId, attribute, oldValue, newValue );
+			events.post( from, "nac", graphId, timeId, nodeId, attribute, oldValue, newValue );
 		}
 		catch( CannotPostException e )
 		{
@@ -479,13 +479,13 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 		}
     }
 
-	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+	public void nodeAttributeRemoved( String graphId, long timeId, String nodeId, String attribute )
     {
 		if( maybeUnregister() ) return;
 
 		try
 		{
-			events.post( from, "nar", graphId, nodeId, attribute );
+			events.post( from, "nar", graphId, timeId, nodeId, attribute );
 		}
 		catch( CannotPostException e )
 		{
@@ -494,13 +494,13 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 		}
     }
 	
-	public void graphCleared( String graphId )
+	public void graphCleared( String graphId, long timeId )
 	{
 		if( maybeUnregister() ) return;
 
 		try
 		{
-			events.post( from, "clear", graphId );
+			events.post( from, "clear", graphId, timeId );
 		}
 		catch( CannotPostException e )
 		{
@@ -509,13 +509,13 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 		}		
 	}
 
-	public void stepBegins( String graphId, double time )
+	public void stepBegins( String graphId, long timeId, double step )
     {
 		if( maybeUnregister() ) return;
 
 		try
 		{
-			events.post( from, "step", graphId, time );
+			events.post( from, "step", graphId, timeId, step );
 		}
 		catch( CannotPostException e )
 		{
@@ -548,44 +548,47 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 		{
 			if( data[0].equals( "gaa" ) )
 			{
-				if( data.length >= 4 && data[1] instanceof String && data[2] instanceof String )
+				if( data.length >= 5 && data[1] instanceof String && data[3] instanceof String )
 				{
 					String gid  = (String) data[1];
-					String attr = (String) data[2];
+					long   eid  = (Long) data[2];
+					String attr = (String) data[3];
 					
 					if( outputGraph != null )
 					{
-						outputGraph.addAttribute( attr, data[3] );
+						outputGraph.addAttribute( attr, data[4] );
 						gid = outputGraph.getId();
 					}
 					
 					for( GraphListener listener: listeners )
-						listener.graphAttributeAdded( gid, attr, data[3] );
+						listener.graphAttributeAdded( gid, eid, attr, data[4] );
 				}
 			}
 			else if( data[0].equals( "gac" ) )
 			{
-				if( data.length >= 5 && data[1] instanceof String && data[2] instanceof String )
+				if( data.length >= 6 && data[1] instanceof String && data[3] instanceof String )
 				{
 					String gid  = (String) data[1];
-					String attr = (String) data[2];
+					long   eid  = (Long) data[2];
+					String attr = (String) data[3];
 					
 					if( outputGraph != null )
 					{
-						outputGraph.changeAttribute( attr, data[3] );
+						outputGraph.changeAttribute( attr, data[4] );
 						gid = outputGraph.getId();
 					}
 					
 					for( GraphListener listener: listeners )
-						listener.graphAttributeChanged( gid, attr, data[3], data[4] );
+						listener.graphAttributeChanged( gid, eid, attr, data[4], data[5] );
 				}
 			}
 			else if( data[0].equals( "gar" ) )
 			{
-				if( data.length >= 3 && data[1] instanceof String && data[2] instanceof String )
+				if( data.length >= 4 && data[1] instanceof String && data[3] instanceof String )
 				{
 					String gid  = (String) data[1];
-					String attr = (String) data[2];
+					long   eid  = (Long) data[2];
+					String attr = (String) data[3];
 					
 					if( outputGraph != null )
 					{
@@ -594,18 +597,19 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 					}
 					
 					for( GraphListener listener: listeners )
-						listener.graphAttributeRemoved( gid, attr );
+						listener.graphAttributeRemoved( gid, eid, attr );
 				}				
 			}
 			else if( data[0].equals( "naa" ) )
 			{
-				if( data.length >= 5 && data[1] instanceof String
-				&&  data[2] instanceof String
-				&&  data[3] instanceof String )
+				if( data.length >= 6 && data[1] instanceof String
+				&&  data[3] instanceof String
+				&&  data[4] instanceof String )
 				{
 					String gid  = (String) data[1];
-					String id   = (String) data[2];
-					String attr = (String) data[3];
+					long   eid  = (Long) data[2];
+					String id   = (String) data[3];
+					String attr = (String) data[4];
 					Node   node = null;
 					
 					if( outputGraph != null )
@@ -614,22 +618,23 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 						gid  = outputGraph.getId();
 						
 						if( node != null )
-							node.addAttribute( attr, data[4] );
+							node.addAttribute( attr, data[5] );
 					}
 
 					for( GraphListener listener: listeners )
-						listener.nodeAttributeAdded( gid, id, attr, data[4] );
+						listener.nodeAttributeAdded( gid, eid, id, attr, data[5] );
 				}
 			}
 			else if( data[0].equals( "nac" ) )
 			{
-				if( data.length >= 6 && data[1] instanceof String
-				&&  data[2] instanceof String
-				&&  data[3] instanceof String )
+				if( data.length >= 7 && data[1] instanceof String
+				&&  data[3] instanceof String
+				&&  data[4] instanceof String )
 				{
 					String gid  = (String) data[1];
-					String id   = (String) data[2];
-					String attr = (String) data[3];
+					long   eid  = (Long) data[2];
+					String id   = (String) data[3];
+					String attr = (String) data[4];
 					Node   node = null;
 					
 					if( outputGraph != null )
@@ -638,22 +643,23 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 						gid  = outputGraph.getId();
 						
 						if( node != null )
-							node.changeAttribute( attr, data[4] );
+							node.changeAttribute( attr, data[5] );
 					}
 
 					for( GraphListener listener: listeners )
-						listener.nodeAttributeChanged( gid, id, attr, data[4], data[5] );
+						listener.nodeAttributeChanged( gid, eid, id, attr, data[5], data[6] );
 				}
 			}
 			else if( data[0].equals( "nar" ) )
 			{
-				if( data.length >= 4 && data[1] instanceof String
-				&&  data[2] instanceof String
-				&&  data[3] instanceof String )
+				if( data.length >= 5 && data[1] instanceof String
+				&&  data[3] instanceof String
+				&&  data[4] instanceof String )
 				{
 					String gid  = (String) data[1];
-					String id   = (String) data[2];
-					String attr = (String) data[3];
+					long   eid  = (Long) data[2];
+					String id   = (String) data[3];
+					String attr = (String) data[4];
 					Node   node = null;
 					
 					if( outputGraph != null )
@@ -666,18 +672,19 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 					}
 
 					for( GraphListener listener: listeners )
-						listener.nodeAttributeRemoved( gid, id, attr );
+						listener.nodeAttributeRemoved( gid, eid, id, attr );
 				}
 			}
 			else if( data[0].equals( "eaa" ) )
 			{
-				if( data.length >= 5 && data[1] instanceof String
-				&&  data[2] instanceof String
-				&&  data[3] instanceof String )
+				if( data.length >= 6 && data[1] instanceof String
+				&&  data[3] instanceof String
+				&&  data[4] instanceof String )
 				{
 					String gid  = (String) data[1];
-					String id   = (String) data[2];
-					String attr = (String) data[3];
+					long   eid  = (Long) data[2];
+					String id   = (String) data[3];
+					String attr = (String) data[4];
 					Edge   edge = null;
 					
 					if( outputGraph != null )
@@ -686,22 +693,23 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 						gid  = outputGraph.getId();
 						
 						if( edge != null )
-							edge.addAttribute( attr, data[4] );
+							edge.addAttribute( attr, data[5] );
 					}
 
 					for( GraphListener listener: listeners )
-						listener.edgeAttributeAdded( gid, id, attr, data[4] );
+						listener.edgeAttributeAdded( gid, eid, id, attr, data[5] );
 				}
 			}
 			else if( data[0].equals( "eac" ) )
 			{
-				if( data.length >= 6 && data[1] instanceof String
-				&&  data[2] instanceof String
-				&&  data[3] instanceof String )
+				if( data.length >= 7 && data[1] instanceof String
+				&&  data[3] instanceof String
+				&&  data[4] instanceof String )
 				{
 					String gid  = (String) data[1];
-					String id   = (String) data[2];
-					String attr = (String) data[3];
+					long   eid  = (Long) data[2];
+					String id   = (String) data[3];
+					String attr = (String) data[4];
 					Edge   edge = null;
 					
 					if( outputGraph != null )
@@ -710,22 +718,23 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 						gid  = outputGraph.getId();
 						
 						if( edge != null )
-							edge.changeAttribute( attr, data[4] );
+							edge.changeAttribute( attr, data[5] );
 					}
 
 					for( GraphListener listener: listeners )
-						listener.edgeAttributeChanged( gid, id, attr, data[4], data[5] );
+						listener.edgeAttributeChanged( gid, eid, id, attr, data[5], data[6] );
 				}
 			}
 			else if( data[0].equals( "ear" ) )
 			{
-				if( data.length >= 4 && data[1] instanceof String
-				&&  data[2] instanceof String
-				&&  data[3] instanceof String )
+				if( data.length >= 5 && data[1] instanceof String
+				&&  data[3] instanceof String
+				&&  data[4] instanceof String )
 				{
 					String gid  = (String) data[1];
-					String id   = (String) data[2];
-					String attr = (String) data[3];
+					long   eid  = (Long) data[2];
+					String id   = (String) data[3];
+					String attr = (String) data[4];
 					Edge   edge = null;
 					
 					if( outputGraph != null )
@@ -738,15 +747,16 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 					}
 
 					for( GraphListener listener: listeners )
-						listener.edgeAttributeRemoved( gid, id, attr );
+						listener.edgeAttributeRemoved( gid, eid, id, attr );
 				}
 			}
 			else if( data[0].equals( "an" ) )
 			{
-				if( data.length >= 3 && data[1] instanceof String && data[2] instanceof String )
+				if( data.length >= 4 && data[1] instanceof String && data[3] instanceof String )
 				{
 					String gid  = (String) data[1];
-					String id   = (String) data[2];
+					long   eid  = (Long) data[2];
+					String id   = (String) data[3];
 			
 					if( outputGraph != null )
 					{
@@ -756,20 +766,21 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 					}
 
 					for( GraphListener listener: listeners )
-						listener.nodeAdded( gid, id );
+						listener.nodeAdded( gid, eid, id );
 				}
 			}
 			else if( data[0].equals( "ae" ) )
 			{
-				if( data.length >= 5 && data[1] instanceof String
-						&& data[2] instanceof String && data[3] instanceof String
-				        && data[4] instanceof String && data[5] instanceof Boolean )
+				if( data.length >= 6 && data[1] instanceof String
+						&& data[3] instanceof String && data[4] instanceof String
+				        && data[5] instanceof String && data[6] instanceof Boolean )
 				{
 					String  gid  = (String)  data[1];
-					String  id   = (String)  data[2];
-					String  froM = (String)  data[3];
-					String  to   = (String)  data[4];
-					boolean dir  = (Boolean) data[5];
+					long   eid  = (Long) data[2];
+					String  id   = (String)  data[3];
+					String  froM = (String)  data[4];
+					String  to   = (String)  data[5];
+					boolean dir  = (Boolean) data[6];
 					
 					if( outputGraph != null )
 					{
@@ -779,15 +790,16 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 					}
 
 					for( GraphListener listener: listeners )
-						listener.edgeAdded( gid, id, froM, to, dir );
+						listener.edgeAdded( gid, eid, id, froM, to, dir );
 				}
 			}
 			else if( data[0].equals( "dn" ) )
 			{
-				if( data.length >= 2 && data[1] instanceof String && data[2] instanceof String )
+				if( data.length >= 3 && data[1] instanceof String && data[3] instanceof String )
 				{
 					String gid  = (String) data[1];
-					String id   = (String) data[2];
+					long   eid  = (Long) data[2];
+					String id   = (String) data[3];
 					
 					if( outputGraph != null )
 					{
@@ -797,15 +809,16 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 					}
 
 					for( GraphListener listener: listeners )
-						listener.nodeRemoved( gid, id );
+						listener.nodeRemoved( gid, eid, id );
 				}
 			}
 			else if( data[0].equals( "de" ) )
 			{
-				if( data.length >= 2 && data[1] instanceof String )
+				if( data.length >= 4 && data[1] instanceof String )
 				{
 					String gid  = (String) data[1];
-					String id   = (String) data[2];
+					long   eid  = (Long) data[2];
+					String id   = (String) data[3];
 					
 					if( outputGraph != null )
 					{
@@ -815,14 +828,15 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 					}
 
 					for( GraphListener listener: listeners )
-						listener.edgeRemoved( gid, id );
+						listener.edgeRemoved( gid, eid, id );
 				}
 			}
 			else if( data[0].equals( "clear" ) )
 			{
-				if( data.length >= 2 && data[1] instanceof String )
+				if( data.length >= 3 && data[1] instanceof String )
 				{
 					String gid  = (String) data[1];
+					long   eid  = (Long) data[2];
 					
 					if (outputGraph != null)
 					{
@@ -831,15 +845,16 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 					}
 	
 					for (GraphListener listener : listeners)
-						listener.graphCleared( gid );
+						listener.graphCleared( gid, eid );
 				}
 			}
 			else if( data[0].equals( "step" ) )
 			{
-				if( data.length >= 3 && data[1] instanceof String && data[2] instanceof Number )
+				if( data.length >= 4 && data[1] instanceof String && data[3] instanceof Number )
 				{
 					String gid  = (String) data[1];
-					double time = ((Number)data[2]).doubleValue();
+					long   eid  = (Long) data[2];
+					double time = ((Number)data[3]).doubleValue();
 					
 					if (outputGraph != null)
 					{
@@ -848,7 +863,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 					}
 	
 					for (GraphListener listener : listeners)
-						listener.stepBegins( gid, time );
+						listener.stepBegins( gid, eid, time );
 				}
 			}
 			else
