@@ -40,8 +40,11 @@ import org.graphstream.graph.Node;
 import org.graphstream.graph.NodeFactory;
 import org.graphstream.graph.implementations.AbstractElement;
 import org.graphstream.io.GraphParseException;
+import org.graphstream.io.Pipe;
+import org.graphstream.io.SourceBase;
 import org.graphstream.io.file.FileSink;
 import org.graphstream.io.file.FileSource;
+import org.graphstream.io.sync.SinkTime;
 import org.graphstream.ui.GraphViewerRemote;
 import org.graphstream.ui.graphicGraph.stylesheet.Rule;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
@@ -181,6 +184,8 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 	 */
 	public double step = 0;
 	
+	protected GraphListeners listeners;
+	
 	/**
 	 * Store the set of elements to render at one given z-index.
 	 */
@@ -252,6 +257,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 	{
 		super( "" );
 
+		listeners	 = new GraphListeners();
 		zIndex       = new ArrayList<Elements>( 256 );
 		styleSheet   = new StyleSheet();
 		nodes        = new HashMap<String, GraphicNode>();
@@ -1543,15 +1549,15 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 
 // Output
 
-	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId,
+	public void edgeAdded( String graphId, long timeId, String edgeId, String fromNodeId, String toNodeId,
             boolean directed )
     {
-		addEdge( edgeId, fromNodeId, toNodeId, directed );
+		listeners.edgeAdded(graphId, timeId, edgeId, fromNodeId, toNodeId, directed);
     }
 
-	public void edgeRemoved( String graphId, String edgeId )
+	public void edgeRemoved( String graphId, long timeId, String edgeId )
     {
-		removeEdge( edgeId );
+		listeners.edgeRemoved(graphId, timeId, edgeId);
     }
 
 	public void graphCleared()
@@ -1559,89 +1565,223 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 		clear();
     }
 
-	public void nodeAdded( String graphId, String nodeId )
+	public void nodeAdded( String graphId, long timeId, String nodeId )
     {
-		addNode( nodeId );
+		listeners.nodeAdded(graphId, timeId, nodeId);
     }
 
-	public void nodeRemoved( String graphId, String nodeId )
+	public void nodeRemoved( String graphId, long timeId, String nodeId )
     {
-		removeNode( nodeId );
+		listeners.nodeRemoved(graphId, timeId, nodeId);
     }
 
-	public void stepBegins( String graphId, double time )
+	public void stepBegins( String graphId, long timeId, double step )
     {
-		stepBegins( time );
+		listeners.stepBegins(graphId, timeId, step);
     }
 
-	public void graphCleared( String graphId )
+	public void graphCleared( String graphId, long timeId )
     {
-		clear();
+		listeners.graphCleared(graphId, timeId);
     }
 
-	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+	public void edgeAttributeAdded( String graphId, long timeId, String edgeId, String attribute, Object value )
     {
-		Edge edge = getEdge( edgeId );
-		
-		if( edge != null )
-			edge.addAttribute( attribute, value );
+		listeners.edgeAttributeAdded(graphId, timeId, edgeId, attribute, value);
     }
 
-	public void edgeAttributeChanged( String graphId, String edgeId, String attribute,
+	public void edgeAttributeChanged( String graphId, long timeId, String edgeId, String attribute,
             Object oldValue, Object newValue )
     {
-		Edge edge = getEdge( edgeId );
-		
-		if( edge != null )
-			edge.changeAttribute( attribute, newValue );
+		listeners.edgeAttributeChanged(graphId, timeId, edgeId, attribute, oldValue, newValue);
     }
 
-	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+	public void edgeAttributeRemoved( String graphId, long timeId, String edgeId, String attribute )
     {
-		Edge edge = getEdge( edgeId );
-		
-		if( edge != null )
-			edge.removeAttribute( attribute );
+		listeners.edgeAttributeRemoved(graphId, timeId, edgeId, attribute);
     }
 
-	public void graphAttributeAdded( String graphId, String attribute, Object value )
+	public void graphAttributeAdded( String graphId, long timeId, String attribute, Object value )
     {
-		addAttribute( attribute, value );
+		listeners.graphAttributeAdded(graphId, timeId, attribute, value);
     }
 
-	public void graphAttributeChanged( String graphId, String attribute, Object oldValue,
+	public void graphAttributeChanged( String graphId, long timeId, String attribute, Object oldValue,
             Object newValue )
     {
-		changeAttribute( attribute, newValue );
+		listeners.graphAttributeChanged(graphId, timeId, attribute, oldValue, newValue);
     }
 
-	public void graphAttributeRemoved( String graphId, String attribute )
+	public void graphAttributeRemoved( String graphId, long timeId, String attribute )
     {
-		removeAttribute( attribute );
+		listeners.graphAttributeRemoved(graphId, timeId, attribute);
     }
 
-	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+	public void nodeAttributeAdded( String graphId, long timeId, String nodeId, String attribute, Object value )
     {
-		Node node = getNode( nodeId );
-		
-		if( node != null )
-			node.addAttribute( attribute, value );
+		listeners.nodeAttributeAdded(graphId, timeId, nodeId, attribute, value);
     }
 
-	public void nodeAttributeChanged( String graphId, String nodeId, String attribute,
+	public void nodeAttributeChanged( String graphId, long timeId, String nodeId, String attribute,
             Object oldValue, Object newValue )
     {
-		Node node = getNode( nodeId );
-		
-		if( node != null )
-			node.changeAttribute( attribute, newValue );
+		listeners.nodeAttributeChanged(graphId, timeId, nodeId, attribute, oldValue, newValue);
     }
 
-	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+	public void nodeAttributeRemoved( String graphId, long timeId, String nodeId, String attribute )
     {
-		Node node = getNode( nodeId );
-		
-		if( node != null )
-			node.removeAttribute( attribute );
+		listeners.nodeAttributeRemoved(graphId, timeId, nodeId, attribute);
+    }
+	
+	class GraphListeners
+    	extends SourceBase
+    	implements Pipe
+    {
+    	SinkTime sinkTime;
+
+    	public GraphListeners()
+    	{
+    		super( getId() );
+
+    		sinkTime = new SinkTime();
+    		sourceTime.setSinkTime(sinkTime);
+    	}
+
+    	public void edgeAttributeAdded(String sourceId, long timeId,
+    			String edgeId, String attribute, Object value) {
+    		if( sinkTime.isNewEvent(sourceId, timeId) )
+    		{
+    			Edge edge = getEdge( edgeId );
+    			
+    			if( edge != null )
+    				edge.addAttribute( attribute, value );
+    		}
+    	}
+
+    	public void edgeAttributeChanged(String sourceId, long timeId,
+    			String edgeId, String attribute, Object oldValue,
+    			Object newValue) {
+    		if( sinkTime.isNewEvent(sourceId, timeId) )
+    		{
+    			Edge edge = getEdge( edgeId );
+    			
+    			if( edge != null )
+    				edge.changeAttribute( attribute, newValue );
+    		}
+    	}
+
+    	public void edgeAttributeRemoved(String sourceId, long timeId,
+    			String edgeId, String attribute) {
+    		if( sinkTime.isNewEvent(sourceId, timeId) )
+    		{
+    			Edge edge = getEdge( edgeId );
+    			
+    			if( edge != null )
+    				edge.removeAttribute( attribute );
+    		}
+    	}
+
+    	public void graphAttributeAdded(String sourceId, long timeId,
+    			String attribute, Object value) {
+    		if( sinkTime.isNewEvent(sourceId, timeId) )
+    		{
+    			addAttribute( attribute, value );
+    		}
+    	}
+
+    	public void graphAttributeChanged(String sourceId, long timeId,
+    			String attribute, Object oldValue, Object newValue) {
+    		if( sinkTime.isNewEvent(sourceId, timeId) )
+    		{
+    			changeAttribute( attribute, newValue );
+    		}
+    	}
+
+    	public void graphAttributeRemoved(String sourceId, long timeId,
+    			String attribute) {
+    		if( sinkTime.isNewEvent(sourceId, timeId) )
+    		{
+    			removeAttribute( attribute );
+    		}
+    	}
+
+    	public void nodeAttributeAdded(String sourceId, long timeId,
+    			String nodeId, String attribute, Object value) {
+    		if( sinkTime.isNewEvent(sourceId, timeId) )
+    		{
+    			Node node = getNode( nodeId );
+    			
+    			if( node != null )
+    				node.addAttribute( attribute, value );
+    		}
+    	}
+
+    	public void nodeAttributeChanged(String sourceId, long timeId,
+    			String nodeId, String attribute, Object oldValue,
+    			Object newValue) {
+    		if( sinkTime.isNewEvent(sourceId, timeId) )
+    		{
+    			Node node = getNode( nodeId );
+    			
+    			if( node != null )
+    				node.changeAttribute( attribute, newValue );
+    		}
+    	}
+
+    	public void nodeAttributeRemoved(String sourceId, long timeId,
+    			String nodeId, String attribute) {
+    		if( sinkTime.isNewEvent(sourceId, timeId) )
+    		{
+    			Node node = getNode( nodeId );
+    			
+    			if( node != null )
+    				node.removeAttribute( attribute );
+    		}
+    	}
+
+    	public void edgeAdded(String sourceId, long timeId, String edgeId,
+    			String fromNodeId, String toNodeId, boolean directed) {
+    		if( sinkTime.isNewEvent(sourceId, timeId) )
+    		{
+    			addEdge( edgeId, fromNodeId, toNodeId, directed );
+    		}
+    	}
+
+    	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
+    		if( sinkTime.isNewEvent(sourceId, timeId) )
+    		{
+    			removeEdge( edgeId );
+    		}
+    	}
+
+    	public void graphCleared(String sourceId, long timeId) {
+    		if( sinkTime.isNewEvent(sourceId, timeId) )
+    		{
+    			clear();
+    		}
+    	}
+
+    	public void nodeAdded(String sourceId, long timeId, String nodeId) {
+    		if( sinkTime.isNewEvent(sourceId, timeId) )
+    		{
+    			System.out.printf( "graphicnode added\n");
+    			addNode( nodeId );
+    		}
+    		else System.err.print("not synchro (graphic)\n");
+    	}
+
+    	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
+    		if( sinkTime.isNewEvent(sourceId, timeId) )
+    		{
+    			removeNode(nodeId);
+    		}
+    	}
+
+    	public void stepBegins(String sourceId, long timeId, double step) {
+    		if( sinkTime.isNewEvent(sourceId, timeId) )
+    		{
+    			GraphicGraph.this.stepBegins( step );
+    		}
+    	}
     }
 }

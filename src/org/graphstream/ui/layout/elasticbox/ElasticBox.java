@@ -1345,42 +1345,42 @@ protected class Edge
 
 // Graph listener
 	
-	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId, boolean directed )
+	public void edgeAdded( String graphId, long timeId, String edgeId, String fromNodeId, String toNodeId, boolean directed )
 	{
 		addEdge( edgeId, fromNodeId, toNodeId, directed );
 	}
 	
-	public void nodeAdded( String graphId, String nodeId )
+	public void nodeAdded( String graphId, long timeId, String nodeId )
 	{
 		addNode( nodeId );
 	}
 	
-	public void edgeRemoved( String graphId, String edgeId )
+	public void edgeRemoved( String graphId, long timeId, String edgeId )
 	{
 		removeEdge( edgeId );
 	}
 	
-	public void nodeRemoved( String graphId, String nodeId )
+	public void nodeRemoved( String graphId, long timeId, String nodeId )
 	{
 		removeNode( nodeId );
 	}
 	
-	public void graphCleared( String graphId )
+	public void graphCleared( String graphId, long timeId )
 	{
 		clear();
 	}
 	
-	public void stepBegins( String graphId, double time )
+	public void stepBegins( String graphId, long timeId, double time )
 	{
 		// NOP !
 	}
 
-	public void graphAttributeAdded( String graphId, String attribute, Object value )
+	public void graphAttributeAdded( String graphId, long timeId, String attribute, Object value )
     {
-		graphAttributeChanged( graphId, attribute, null, value );
+		graphAttributeChanged( graphId, timeId, attribute, null, value );
     }
 
-	public void graphAttributeChanged( String graphId, String attribute, Object oldValue, Object value )
+	public void graphAttributeChanged( String graphId, long timeId, String attribute, Object oldValue, Object value )
 	{
 		if( attribute.equals( "layout.force" ) )
 		{
@@ -1445,16 +1445,16 @@ protected class Edge
 		}
 	}
 
-	public void graphAttributeRemoved( String graphId, String attribute )
+	public void graphAttributeRemoved( String graphId, long timeId, String attribute )
     {
     }
 
-	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+	public void nodeAttributeAdded( String graphId, long timeId, String nodeId, String attribute, Object value )
     {
-		nodeAttributeChanged( graphId, nodeId, attribute, null, value );
+		nodeAttributeChanged( graphId, timeId, nodeId, attribute, null, value );
     }
 	
-	public void nodeAttributeChanged( String graphId, String id, String attribute, Object oldValue, Object value )
+	public void nodeAttributeChanged( String graphId, long timeId, String id, String attribute, Object oldValue, Object value )
 	{
 		if( attribute.equals( "layout.weight" ) )
 		{
@@ -1465,16 +1465,16 @@ protected class Edge
 		}
 	}
 
-	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+	public void nodeAttributeRemoved( String graphId, long timeId, String nodeId, String attribute )
     {
     }
 
-	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+	public void edgeAttributeAdded( String graphId, long timeId, String edgeId, String attribute, Object value )
     {
-		edgeAttributeChanged( graphId, edgeId, attribute, null, value );
+		edgeAttributeChanged( graphId, timeId, edgeId, attribute, null, value );
     }
 	
-	public void edgeAttributeChanged( String graphId, String id, String attribute, Object oldValue, Object value )
+	public void edgeAttributeChanged( String graphId, long timeId, String id, String attribute, Object oldValue, Object value )
 	{
 		if( attribute.equals( "layout.weight" ) )
 		{
@@ -1490,7 +1490,7 @@ protected class Edge
 		}
 	}
 
-	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+	public void edgeAttributeRemoved( String graphId, long timeId, String edgeId, String attribute )
     {
     }
 }

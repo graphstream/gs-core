@@ -211,33 +211,38 @@ public class LayoutAlgorithm implements LayoutListener
 	
 	protected void replayGraph()
 	{
-		replayAttributesOf( graph );
+		// Hasardous ...
+		long timeId = 0;
+		
+		timeId = replayAttributesOf( graph, timeId );
 		
 		for( Node node: graph )
 		{
-			layout.nodeAdded( graph.getId(), node.getId() );
-			replayAttributesOf( node );
+			layout.nodeAdded( graph.getId(), timeId++, node.getId() );
+			timeId = replayAttributesOf( node, timeId );
 		}
 
 		for( Edge edge: graph.edgeSet() )
 		{
-			layout.edgeAdded( graph.getId(), edge.getId(), edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
-			replayAttributesOf( edge );
+			layout.edgeAdded( graph.getId(), timeId++, edge.getId(), edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
+			timeId = replayAttributesOf( edge, timeId );
 		}
 	}
 	
-	protected void replayAttributesOf( Element element )
+	protected long replayAttributesOf( Element element, long timeId )
 	{
 		for( String key: element.getAttributeKeySet() )
 		{
 			Object value = element.getAttribute( key );
 			
 			if( element instanceof Graph )
-				layout.graphAttributeAdded( element.getId(), key, value );
+				layout.graphAttributeAdded( element.getId(), timeId++, key, value );
 			else if( element instanceof Node )
-				layout.nodeAttributeAdded( graph.getId(), element.getId(), key, value );
+				layout.nodeAttributeAdded( graph.getId(), timeId++, element.getId(), key, value );
 			else if( element instanceof Edge )
-				layout.edgeAttributeAdded( graph.getId(), element.getId(), key, value );
+				layout.edgeAttributeAdded( graph.getId(), timeId++, element.getId(), key, value );
 		}
+		
+		return timeId;
 	}
 }

@@ -730,7 +730,7 @@ System.err.printf( "%s.removeNode_(%s, %s)%n", getId(), sourceId, nodeId );
 
 	public GraphViewerRemote display( boolean autoLayout )
 	{
-		String viewerClass = "org.miv.graphstream.ui.swing.SwingGraphViewer";
+		String viewerClass = "org.graphstream.ui.swing.SwingGraphViewer";
 		
 		try
         {
