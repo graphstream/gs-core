@@ -26,8 +26,28 @@ import java.util.HashMap;
 
 public class SinkTime
 {
+	/**
+	 * Key used to disable synchro.
+	 * Just run : java -DSYNC_DISABLE_KEY ...
+	 */
+	public static final String SYNC_DISABLE_KEY = "org.graphstream.io.sync.disable";
+	/**
+	 * Flag used to disable sync.
+	 */
+	protected static final boolean disableSync = System.getProperty(SYNC_DISABLE_KEY) != null;
+	
+	/**
+	 * Map storing times of sources.
+	 */
 	protected HashMap<String,Long> times = new HashMap<String,Long>();
 
+	/**
+	 * Update timeId for a source.
+	 * 
+	 * @param sourceId
+	 * @param timeId
+	 * @return true if time has been updated
+	 */
 	protected boolean setTimeFor( String sourceId, long timeId )
 	{
 		Long knownTimeId = times.get(sourceId);
@@ -45,9 +65,16 @@ public class SinkTime
 		
 		return false;
 	}
-	
+	/**
+	 * Allow to know if event is new for this source.
+	 * This updates the timeId mapped to the source.
+	 * 
+	 * @param sourceId
+	 * @param timeId
+	 * @return true if event is new for the source
+	 */
 	public boolean isNewEvent( String sourceId, long timeId )
 	{
-		return setTimeFor(sourceId,timeId);
+		return disableSync || setTimeFor(sourceId,timeId);
 	}
 }
