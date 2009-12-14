@@ -448,7 +448,6 @@ public class DefaultGraph extends AbstractElement implements Graph
 	
 	protected Node removeNode_( String sourceId, String nodeId, boolean fromNodeIterator ) throws NotFoundException
 	{
-System.err.printf( "%s.removeNode_(%s, %s)%n", getId(), sourceId, nodeId );
 		// The fromNodeIterator flag allows to know if this remove node call was
 		// made from inside a node iterator or not. If from a node iterator,
 		// we must not remove the node from the nodes set, this is done by the
