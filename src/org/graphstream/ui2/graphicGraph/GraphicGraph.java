@@ -35,7 +35,6 @@ import org.graphstream.io.SourceBase.ElementType;
 import org.graphstream.io.file.FileSink;
 import org.graphstream.io.file.FileSource;
 import org.graphstream.io.sync.SinkTime;
-import org.graphstream.io.sync.SourceTime;
 import org.graphstream.ui2.graphicGraph.stylesheet.Style;
 import org.graphstream.ui2.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui2.graphicGraph.stylesheet.StyleSheet;
@@ -142,9 +141,18 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	/**
 	 * Set of listeners of this graph.
 	 */
-	protected GraphListeners listeners = new GraphListeners();
+	protected GraphListeners listeners;
+
+	/**
+	 * Time of other known sources.
+	 */
+	protected SinkTime sinkTime = new SinkTime();
 	
-	protected class GraphListeners extends SourceBase {};
+	protected class GraphListeners extends SourceBase
+	{
+		public GraphListeners( String id, SinkTime sinkTime ) { super( id ); sourceTime.setSinkTime( sinkTime ); }
+		public long newEvent() { return sourceTime.newEvent(); }
+	};
 
 // Construction
 
@@ -153,10 +161,11 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	 * 
 	 * A default style sheet is created, it then can be "cascaded" with other style sheets.
 	 */
-	public GraphicGraph()
+	public GraphicGraph( String id )
 	{
-		super( "GraphicGraph" );
+		super( id );
 
+		listeners    = new GraphListeners( id, sinkTime );
 		styleSheet   = new StyleSheet();
 		styleGroups  = new StyleGroupSet( styleSheet );
 		connectivity = new HashMap<GraphicNode, ArrayList<GraphicEdge>>();
@@ -170,9 +179,15 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 // Access
 
 	@Override
-	protected String getMyGraphId()
+	protected String myGraphId()	// XXX
 	{
 		return getId();
+	}
+	
+	@Override
+	protected long newEvent()		// XXX
+	{
+		return listeners.newEvent();
 	}
 	
 	/**
@@ -302,7 +317,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		}
 	}
 	
-	protected GraphicEdge addEdge( String sourceId, String id, String from, String to, boolean directed, HashMap<String, Object> attributes )
+	protected GraphicEdge addEdge( String sourceId, long timeId, String id, String from, String to, boolean directed, HashMap<String, Object> attributes )
 	{
 		GraphicEdge edge = (GraphicEdge) styleGroups.getEdge( id );
 		
@@ -340,13 +355,13 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 			
 			graphChanged = true;
 			
-			listeners.sendEdgeAdded( sourceId, id, from, to, directed );
+			listeners.sendEdgeAdded( sourceId, timeId, id, from, to, directed );
 		}
 			
 		return edge;
 	}
 
-	protected GraphicNode addNode( String sourceId, String id, float x, float y, float z, HashMap<String, Object> attributes )
+	protected GraphicNode addNode( String sourceId, long timeId, String id, float x, float y, float z, HashMap<String, Object> attributes )
 	{
 		GraphicNode node = (GraphicNode) styleGroups.getNode( id );
 		
@@ -358,7 +373,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		
 			graphChanged = true;
 		
-			listeners.sendNodeAdded( sourceId, id );
+			listeners.sendNodeAdded( sourceId, timeId, id );
 		}
 			
 		return node;
@@ -381,13 +396,13 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		}
 	}
 
-	public Edge removeEdge( String sourceId, String id ) throws NotFoundException
+	public Edge removeEdge( String sourceId, long timeId, String id ) throws NotFoundException
 	{
 		GraphicEdge edge = (GraphicEdge) styleGroups.getEdge( id );
 		
 		if( edge != null )
 		{
-			listeners.sendEdgeRemoved( sourceId, id );
+			listeners.sendEdgeRemoved( sourceId, timeId, id );
 
 			if( connectivity.get( edge.from ) != null )
 				connectivity.get( edge.from ).remove( edge );
@@ -403,7 +418,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		return edge;
 	}
 
-	public Edge removeEdge( String sourceId, String from, String to ) throws NotFoundException
+	public Edge removeEdge( String sourceId, long timeId, String from, String to ) throws NotFoundException
 	{
 		GraphicNode node0 = (GraphicNode) styleGroups.getNode( from );
 		GraphicNode node1 = (GraphicNode) styleGroups.getNode( to );
@@ -419,7 +434,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 				{
 					if( edge0 == edge1 )
 					{
-						removeEdge( sourceId, edge0.getId() );
+						removeEdge( sourceId, timeId, edge0.getId() );
 						return edge0;
 					}
 				}
@@ -429,13 +444,13 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		return null;
 	}
 
-	public Node removeNode( String sourceId, String id )
+	public Node removeNode( String sourceId, long timeId, String id )
 	{
 		GraphicNode node = (GraphicNode) styleGroups.getNode( id );
 		
 		if( node != null )
 		{
-			listeners.sendNodeRemoved( sourceId, id );
+			listeners.sendNodeRemoved( sourceId, timeId, id );
 			
 		    if(connectivity.get(node) != null)
 		    {
@@ -445,7 +460,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		    	ArrayList<GraphicEdge> l = new ArrayList<GraphicEdge>( connectivity.get( node ) );
 		    	
 		    	for( GraphicEdge edge: l )
-		    		removeEdge( sourceId, edge.getId() );
+		    		removeEdge( sourceId, newEvent(), edge.getId() );
 
 		    	connectivity.remove( node );
 		    }
@@ -475,7 +490,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	}
 
 	@Override
-	protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+	protected void attributeChanged( String sourceId, long timeId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
 		// One of the most important method. Most of the communication comes from
 		// attributes.
@@ -523,13 +538,13 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 //		Matcher matcher = GraphicElement.acceptedAttribute.matcher( attribute );
 			
 //		if( matcher.matches() )
-			listeners.sendAttributeChangedEvent( sourceId, getId(),
+			listeners.sendAttributeChangedEvent( sourceId, timeId, getId(),
 					ElementType.GRAPH, attribute, event, oldValue, newValue );
 	}
 
-	public void clear( String sourceId )
+	public void clear( String sourceId, long timeId )
 	{
-		listeners.sendGraphCleared( sourceId );
+		listeners.sendGraphCleared( sourceId, timeId );
 		connectivity.clear();
 		styleGroups.clear();
 
@@ -650,33 +665,38 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	public Edge addEdge( String id, String from, String to ) throws SingletonException,
             NotFoundException
     {
-		return addEdge( getId(), id, from, to, false, null );
+		return addEdge( getId(), newEvent(), id, from, to, false, null );
     }
 
 	public Edge addEdge( String id, String from, String to, boolean directed )
             throws SingletonException, NotFoundException
     {
-		return addEdge( getId(), id, from, to, directed, null );
+		return addEdge( getId(), newEvent(), id, from, to, directed, null );
     }
 
 	public Node addNode( String id ) throws SingletonException
     {
-		return addNode( getId(), id, 0, 0, 0, null );
+		return addNode( getId(), newEvent(), id, 0, 0, 0, null );
     }
 
 	public void clear()
     {
-		clear( getId() );
+		clear( getId(), newEvent() );
     }
 
 	public Edge removeEdge( String id ) throws NotFoundException
     {
-	    return removeEdge( getId(), id );
+	    return removeEdge( getId(), newEvent(), id );
     }
+	
+	public Edge removeEdge( String from, String to ) throws NotFoundException
+	{
+		return removeEdge( getId(), newEvent(), from, to );
+	}
 
 	public Node removeNode( String id ) throws NotFoundException
     {
-	    return removeNode( getId(), id );
+	    return removeNode( getId(), newEvent(), id );
     }
 
 	public org.graphstream.ui.GraphViewerRemote display()
@@ -689,9 +709,9 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		throw new RuntimeException( "not implemented !" );
     }
 
-	public void stepBegins( double time )
+	public void stepBegins( double step )
 	{
-		stepBegins( getId(), time );
+		stepBegins( getId(), newEvent(), step );
 	}
 	
 	public EdgeFactory edgeFactory()
@@ -801,8 +821,6 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 
 // Output interface
 	
-	protected SinkTime sinkTime = new SinkTime();
-	
 	public void edgeAttributeAdded( String sourceId, long timeId, String edgeId, String attribute, Object value )
     {
 		if( sinkTime.isNewEvent( sourceId, timeId ) )
@@ -810,7 +828,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 			Edge edge = getEdge( edgeId );
 
 			if( edge != null )
-				((GraphicEdge)edge).addAttribute_( sourceId, attribute, value );
+				((GraphicEdge)edge).addAttribute_( sourceId, timeId, attribute, value );
 		}
     }
 
@@ -822,7 +840,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 			Edge edge = getEdge( edgeId );
 
 			if( edge != null )
-				((GraphicEdge)edge).changeAttribute_( sourceId, attribute, newValue );
+				((GraphicEdge)edge).changeAttribute_( sourceId, timeId, attribute, newValue );
 		}
     }	
 
@@ -833,27 +851,27 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 			Edge edge = getEdge( edgeId );
 
 			if( edge != null )
-				((GraphicEdge)edge).removeAttribute_( sourceId, attribute );
+				((GraphicEdge)edge).removeAttribute_( sourceId, timeId, attribute );
 		}
     }
 
 	public void graphAttributeAdded( String sourceId, long timeId, String attribute, Object value )
     {
 		if( sinkTime.isNewEvent( sourceId, timeId ) )
-			addAttribute_( sourceId, attribute, value );
+			addAttribute_( sourceId, timeId, attribute, value );
     }
 
 	public void graphAttributeChanged( String sourceId, long timeId, String attribute, Object oldValue,
             Object newValue )
     {
 		if( sinkTime.isNewEvent( sourceId, timeId ) )
-			changeAttribute_( sourceId, attribute, newValue );
+			changeAttribute_( sourceId, timeId, attribute, newValue );
     }
 
 	public void graphAttributeRemoved( String sourceId, long timeId, String attribute )
     {
 		if( sinkTime.isNewEvent( sourceId, timeId ) )
-			removeAttribute_( sourceId, attribute );
+			removeAttribute_( sourceId, timeId, attribute );
     }
 
 	public void nodeAttributeAdded( String sourceId, long timeId, String nodeId, String attribute, Object value )
@@ -863,7 +881,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 			Node node = getNode( nodeId );
 		
 			if( node != null )
-				((GraphicNode)node).addAttribute_( sourceId, attribute, value );
+				((GraphicNode)node).addAttribute_( sourceId, timeId, attribute, value );
 		}
     }
 
@@ -875,7 +893,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 			Node node = getNode( nodeId );
 		
 			if( node != null )
-				((GraphicNode)node).changeAttribute_( sourceId, attribute, newValue );
+				((GraphicNode)node).changeAttribute_( sourceId, timeId, attribute, newValue );
 		}
     }
 
@@ -886,7 +904,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 			Node node = getNode( nodeId );
 		
 			if( node != null )
-				((GraphicNode)node).removeAttribute_( sourceId, attribute );
+				((GraphicNode)node).removeAttribute_( sourceId, timeId, attribute );
 		}
     }
 
@@ -912,20 +930,20 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	public void nodeAdded( String sourceId, long timeId, String nodeId )
     {
 		if( sinkTime.isNewEvent( sourceId, timeId ) )
-			addNode( sourceId, nodeId, 0, 0, 0, null );
+			addNode( sourceId, timeId, nodeId, 0, 0, 0, null );
     }
 
 	public void nodeRemoved( String sourceId, long timeId, String nodeId )
     {
 		if( sinkTime.isNewEvent( sourceId, timeId ) )
-			removeNode( sourceId, nodeId );
+			removeNode( sourceId, timeId, nodeId );
     }
 
 	public void stepBegins( String sourceId, long timeId, double time )
     {
 		step = time;
 	
-		listeners.sendStepBegins( sourceId, time );
+		listeners.sendStepBegins( sourceId, timeId, time );
     }
 	
 // Sprite interface

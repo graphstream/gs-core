@@ -96,9 +96,9 @@ public class GraphicNode extends GraphicElement implements Node
     }
 
 	@Override
-	protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+	protected void attributeChanged( String sourceId, long timeId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
-		super.attributeChanged( sourceId, attribute, event, oldValue, newValue );
+		super.attributeChanged( sourceId, timeId, attribute, event, oldValue, newValue );
 		
 		if( attribute.startsWith( "ui.sprite." ) )
 		{
@@ -126,7 +126,7 @@ public class GraphicNode extends GraphicElement implements Node
 			}
 		}
 		
-		mygraph.listeners.sendAttributeChangedEvent( sourceId,
+		mygraph.listeners.sendAttributeChangedEvent( sourceId, timeId,
 				getId(), ElementType.NODE, attribute, event, oldValue, newValue );
 	}
 

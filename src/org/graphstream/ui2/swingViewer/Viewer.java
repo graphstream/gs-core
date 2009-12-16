@@ -99,7 +99,7 @@ public class Viewer implements ActionListener
 	
 	public Viewer( ProxyPipe input )
 	{
-		this( new GraphicGraph(), input );
+		this( new GraphicGraph( "GraphicGraph" ), input );
 	}
 	
 	public Viewer( GraphicGraph graph )

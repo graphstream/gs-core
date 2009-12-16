@@ -96,9 +96,15 @@ public abstract class GraphicElement extends AbstractElement
 // Access
 	
 	@Override
-	protected String getMyGraphId()
+	protected String myGraphId()	// XXX
 	{
 		return mygraph.getId();
+	}
+	
+	@Override
+	protected long newEvent()		// XXX
+	{
+		return mygraph.newEvent();
 	}
 
 	/**
@@ -179,7 +185,7 @@ public abstract class GraphicElement extends AbstractElement
 	 * Handle the "ui.class", "label", "ui.style", etc. attributes.
 	 */
 	@Override
-    protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+    protected void attributeChanged( String sourceId, long timeId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
     {
 		if( event == AttributeChangeEvent.ADD || event == AttributeChangeEvent.CHANGE )
 		{
@@ -312,32 +318,32 @@ public abstract class GraphicElement extends AbstractElement
 // Make change _ methods visible
 
 	@Override
-	protected void addAttribute_( String sourceId, String attribute, Object ... values )
+	protected void addAttribute_( String sourceId, long timeId, String attribute, Object ... values )
 	{
-		super.addAttribute_( sourceId, attribute, values );
+		super.addAttribute_( sourceId, timeId, attribute, values );
 	}
 	
 	@Override
-	protected void changeAttribute_( String sourceId, String attribute, Object ... values )
+	protected void changeAttribute_( String sourceId, long timeId, String attribute, Object ... values )
 	{
-		super.changeAttribute_( sourceId, attribute, values );
+		super.changeAttribute_( sourceId, timeId, attribute, values );
 	}
 	
 	@Override
-	protected void setAttribute_( String sourceId, String attribute, Object ...values )
+	protected void setAttribute_( String sourceId, long timeId, String attribute, Object ...values )
 	{
-		super.setAttribute_( sourceId, attribute, values );
+		super.setAttribute_( sourceId, timeId, attribute, values );
 	}
 	
 	@Override
-	protected void addAttributes_( String sourceId, Map<String,Object> attributes )
+	protected void addAttributes_( String sourceId, long timeId, Map<String,Object> attributes )
 	{
-		super.addAttributes_( sourceId, attributes );
+		super.addAttributes_( sourceId, timeId, attributes );
 	}
 	
 	@Override
-	protected void removeAttribute_( String sourceId, String attribute )
+	protected void removeAttribute_( String sourceId, long timeId, String attribute )
 	{
-		super.removeAttribute_( sourceId, attribute );
+		super.removeAttribute_( sourceId, timeId, attribute );
 	}
 }

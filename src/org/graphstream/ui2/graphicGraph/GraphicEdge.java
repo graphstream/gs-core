@@ -185,16 +185,16 @@ public class GraphicEdge extends GraphicElement implements Edge
     }
     
 	@Override
-	protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+	protected void attributeChanged( String sourceId, long timeId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
-		super.attributeChanged( sourceId, attribute, event, oldValue, newValue );
+		super.attributeChanged( sourceId, timeId, attribute, event, oldValue, newValue );
 		
 		if( attribute.startsWith( "ui.sprite." ) )
 		{
 			mygraph.spriteAttribute( event, this, attribute, newValue );
 		}
 		
-		mygraph.listeners.sendAttributeChangedEvent( sourceId,
+		mygraph.listeners.sendAttributeChangedEvent( sourceId, timeId,
 				getId(), ElementType.EDGE, attribute, event, oldValue, newValue );
 	}
 	
@@ -285,12 +285,12 @@ public class GraphicEdge extends GraphicElement implements Edge
 
 	public void setDirected( boolean on )
     {
-		directed = on;
+		directed = on;	/// XXX
     }
 
 	public void switchDirection()
     {
-		GraphicNode tmp;
+		GraphicNode tmp;	// XXX
 		tmp  = from;
 		from = to;
 		to   = tmp;
