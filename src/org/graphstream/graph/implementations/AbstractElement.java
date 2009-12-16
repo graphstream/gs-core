@@ -80,15 +80,15 @@ public abstract class AbstractElement implements Element
 		return id;
 	}
 	
-	protected abstract String getMyGraphId();
+	// XXX UGLY. how to create events in the abstract element ?
+	// XXX The various methods that add and remove attributes will propagate an event
+	// XXX sometimes this is in response to another event and the sourceId/timeId is given
+	// XXX sometimes this comes from a direct call to add/change/removeAttribute() methods
+	// XXX in which case we need to generate a new event (sourceId/timeId) using the graph
+	// XXX id and a new time. These methods allow access to this.
+	protected abstract String myGraphId();		// XXX
+	protected abstract long newEvent();			// XXX
 
-/*
-	public void setId(String id)
-	{
-		if( this.id != null )
-			this.id = id;
-	}
-*/
 	public Object getAttribute( String key )
 	{
 		if( attributes != null )
@@ -353,10 +353,10 @@ public abstract class AbstractElement implements Element
 	
 	public void clearAttributes()
 	{
-		clearAttributes_( getMyGraphId() );
+		clearAttributes_( myGraphId(), newEvent() );
 	}
 	
-	protected void clearAttributes_( String sourceId )
+	protected void clearAttributes_( String sourceId, long timeId )
 	{
 		if( attributes != null )
 		{
@@ -368,7 +368,7 @@ public abstract class AbstractElement implements Element
 				String key = keys.next();
 				Object val = vals.next();
 
-				attributeChanged( sourceId, key, AttributeChangeEvent.REMOVE, val, null );	// XXX
+				attributeChanged( sourceId, timeId, key, AttributeChangeEvent.REMOVE, val, null );
 			}
 
 			attributes.clear();
@@ -377,10 +377,10 @@ public abstract class AbstractElement implements Element
 
 	public void addAttribute( String attribute, Object ... values )
 	{
-		addAttribute_( getMyGraphId(), attribute, values );
+		addAttribute_( myGraphId(), newEvent(), attribute, values );
 	}
 	
-	protected void addAttribute_( String sourceId, String attribute, Object ... values )
+	protected void addAttribute_( String sourceId, long timeId, String attribute, Object ... values )
 	{
 		if( attributes == null )
 			attributes = new HashMap<String,Object>(1);
@@ -400,35 +400,35 @@ public abstract class AbstractElement implements Element
 			event = AttributeChangeEvent.CHANGE;	// but the attribute exists.
 		
 		attributes.put( attribute, value );
-		attributeChanged( sourceId, attribute, event, old_value, value );
+		attributeChanged( sourceId, timeId, attribute, event, old_value, value );
 	}
 	
 	public void changeAttribute( String attribute, Object ... values )
 	{
-		changeAttribute_( getMyGraphId(), attribute, values );
+		changeAttribute_( myGraphId(), newEvent(), attribute, values );
 	}
 	
-	protected void changeAttribute_( String sourceId, String attribute, Object ... values )
+	protected void changeAttribute_( String sourceId, long timeId, String attribute, Object ... values )
 	{
-		addAttribute_( sourceId, attribute, values );
+		addAttribute_( sourceId, timeId, attribute, values );
 	}
 	
 	public void setAttribute( String attribute, Object ... values )
 	{
-		setAttribute_( getMyGraphId(), attribute, values );
+		setAttribute_( myGraphId(), newEvent(), attribute, values );
 	}
 	
-	protected void setAttribute_( String sourceId, String attribute, Object ...values )
+	protected void setAttribute_( String sourceId, long timeId, String attribute, Object ...values )
 	{
-		addAttribute_( sourceId, attribute, values );
+		addAttribute_( sourceId, timeId, attribute, values );
 	}
 	
 	public void addAttributes( Map<String,Object> attributes )
 	{
-		addAttributes_( getMyGraphId(), attributes );
+		addAttributes_( myGraphId(), newEvent(), attributes );
 	}
 	
-	protected void addAttributes_( String sourceId, Map<String,Object> attributes )
+	protected void addAttributes_( String sourceId, long timeId, Map<String,Object> attributes )
 	{
 		if( this.attributes == null )
 			this.attributes = new HashMap<String,Object>(1);
@@ -437,22 +437,22 @@ public abstract class AbstractElement implements Element
 		Iterator<Object> j = attributes.values().iterator();
 
 		while( i.hasNext() && j.hasNext() )
-			addAttribute_( sourceId, i.next(), j.next() );
+			addAttribute_( sourceId, timeId, i.next(), j.next() );
 	}
 	
 	public void removeAttribute( String attribute )
 	{
-		removeAttribute_( getMyGraphId(), attribute );
+		removeAttribute_( myGraphId(), newEvent(), attribute );
 	}
 	
-	protected void removeAttribute_( String sourceId, String attribute )
+	protected void removeAttribute_( String sourceId, long timeId, String attribute )
 	{
 		if( attributes != null )
 		{
 			if( attributes.containsKey( attribute ) )	// Avoid recursive calls when synchronising graphs.
 			{
 				attributes.remove( attribute );
-				attributeChanged( sourceId, attribute, AttributeChangeEvent.REMOVE, attributes.get( attribute ), null );
+				attributeChanged( sourceId, timeId, attribute, AttributeChangeEvent.REMOVE, attributes.get( attribute ), null );
 			}
 		}
 	}
@@ -464,11 +464,12 @@ public abstract class AbstractElement implements Element
 	 * implemented by sub-elements in order to send events to the graph
 	 * listeners.
 	 * @param sourceId The source of the change.
+	 * @param timeId The source time of the change, for synchronisation.
 	 * @param attribute The attribute name that changed.
 	 * @param oldValue The old value of the attribute, null if the attribute was
 	 *        added.
 	 * @param newValue The new value of the attribute, null if the attribute is
 	 *        about to be removed.
 	 */
-	protected abstract void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue );
+	protected abstract void attributeChanged( String sourceId, long timeId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue );
 }

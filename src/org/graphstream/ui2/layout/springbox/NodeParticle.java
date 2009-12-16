@@ -480,10 +480,12 @@ public class NodeParticle extends Particle
 	 */
 	public void removeNeighborEdges()
 	{
-		for( EdgeSpring edge: neighbours )
-		{
+		ArrayList<EdgeSpring> edges = new ArrayList<EdgeSpring>( neighbours );
+		
+		for( EdgeSpring edge: edges )
 			box.removeEdge( box.getLayoutAlgorithmName(), edge.id );
-		}
+		
+		neighbours.clear();
 	}
 	
 	/**

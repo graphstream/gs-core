@@ -344,7 +344,7 @@ public class SpriteManager implements Iterable<Sprite>, GraphAttributesListener
 
 // GraphAttributesListener
 	
-	public void graphAttributeAdded( String graphId, String attribute, Object value )
+	public void graphAttributeAdded( String graphId, long time, String attribute, Object value )
     {
 		if( attributeLock )
 			return;		// We want to avoid listening at ourselves.
@@ -371,7 +371,7 @@ public class SpriteManager implements Iterable<Sprite>, GraphAttributesListener
 		}
     }
 	
-	public void graphAttributeChanged( String graphId, String attribute, Object oldValue,
+	public void graphAttributeChanged( String graphId, long time, String attribute, Object oldValue,
             Object newValue )
     {
 		if( attributeLock )
@@ -409,7 +409,7 @@ public class SpriteManager implements Iterable<Sprite>, GraphAttributesListener
 		}
     }
 
-	public void graphAttributeRemoved( String graphId, String attribute )
+	public void graphAttributeRemoved( String graphId, long time, String attribute )
     {
 		if( attributeLock )
 			return;		// We want to avoid listening at ourselves.
@@ -433,29 +433,29 @@ public class SpriteManager implements Iterable<Sprite>, GraphAttributesListener
 
 // Unused.
 	
-	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+	public void edgeAttributeAdded( String graphId, long time, String edgeId, String attribute, Object value )
     {
     }
 
-	public void edgeAttributeChanged( String graphId, String edgeId, String attribute,
+	public void edgeAttributeChanged( String graphId, long time, String edgeId, String attribute,
             Object oldValue, Object newValue )
     {
     }
 
-	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+	public void edgeAttributeRemoved( String graphId, long time, String edgeId, String attribute )
     {
     }
 
-	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+	public void nodeAttributeAdded( String graphId, long time, String nodeId, String attribute, Object value )
     {
     }
 
-	public void nodeAttributeChanged( String graphId, String nodeId, String attribute,
+	public void nodeAttributeChanged( String graphId, long time, String nodeId, String attribute,
             Object oldValue, Object newValue )
     {
     }
 
-	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+	public void nodeAttributeRemoved( String graphId, long time, String nodeId, String attribute )
     {
     }
 }

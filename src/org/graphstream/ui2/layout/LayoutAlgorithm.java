@@ -215,13 +215,13 @@ public class LayoutAlgorithm implements LayoutListener
 		
 		for( Node node: graph )
 		{
-			layout.nodeAdded( graph.getId(), node.getId() );
+			layout.nodeAdded( graph.getId(), -1, node.getId() );
 			replayAttributesOf( node );
 		}
 
 		for( Edge edge: graph.edgeSet() )
 		{
-			layout.edgeAdded( graph.getId(), edge.getId(), edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
+			layout.edgeAdded( graph.getId(), -1, edge.getId(), edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );
 			replayAttributesOf( edge );
 		}
 	}
@@ -233,11 +233,11 @@ public class LayoutAlgorithm implements LayoutListener
 			Object value = element.getAttribute( key );
 			
 			if( element instanceof Graph )
-				layout.graphAttributeAdded( element.getId(), key, value );
+				layout.graphAttributeAdded( element.getId(), -1, key, value );
 			else if( element instanceof Node )
-				layout.nodeAttributeAdded( graph.getId(), element.getId(), key, value );
+				layout.nodeAttributeAdded( graph.getId(), -1, element.getId(), key, value );
 			else if( element instanceof Edge )
-				layout.edgeAttributeAdded( graph.getId(), element.getId(), key, value );
+				layout.edgeAttributeAdded( graph.getId(), -1, element.getId(), key, value );
 		}
 	}
 }

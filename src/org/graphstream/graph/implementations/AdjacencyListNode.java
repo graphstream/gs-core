@@ -253,9 +253,15 @@ public class AdjacencyListNode extends AbstractElement implements Node
 	}
 
 	@Override
-	protected String getMyGraphId()
+	protected String myGraphId()	// XXX
 	{
 		return graph.getId();
+	}
+	
+	@Override
+	protected long newEvent()		// XXX
+	{
+		return ((AdjacencyListGraph)graph).newEvent();
 	}
 	
 	public Iterator<Node> getBreadthFirstIterator()
@@ -448,10 +454,10 @@ public class AdjacencyListNode extends AbstractElement implements Node
 	}
 
 	@Override
-	protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+	protected void attributeChanged( String sourceId, long timeId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
 		if( graph != null )
 			((AdjacencyListGraph)graph).listeners.sendAttributeChangedEvent(
-					sourceId, getId(), ElementType.NODE, attribute, event, oldValue, newValue );
+					sourceId, timeId, getId(), ElementType.NODE, attribute, event, oldValue, newValue );
 	}
 }

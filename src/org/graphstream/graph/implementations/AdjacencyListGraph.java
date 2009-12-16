@@ -234,9 +234,15 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	}
 	
 	@Override
-	protected String getMyGraphId()
+	protected String myGraphId()		// XXX
 	{
 		return getId();
+	}
+	
+	@Override
+	protected long newEvent()			// XXX
+	{
+		return listeners.newEvent();
 	}
 
 	public EdgeFactory edgeFactory()
@@ -264,7 +270,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		return addEdge( id, node1, node2, false );
 	}
 
-	protected Edge addEdge_( String sourceId, String edgeId, String from, String to, boolean directed ) throws SingletonException, NotFoundException
+	protected Edge addEdge_( String sourceId, long timeId, String edgeId, String from, String to, boolean directed ) throws SingletonException, NotFoundException
 	{
 		Node src;
 		Node trg;
@@ -327,7 +333,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 					edges.put( edgeId,edge );
 					((AdjacencyListNode)src).edges.add( edge );
 					((AdjacencyListNode)trg).edges.add( edge );
-					listeners.sendEdgeAdded( sourceId, edgeId, from, to, directed );
+					listeners.sendEdgeAdded( sourceId, timeId, edgeId, from, to, directed );
 				}
 			}
 			return edge;
@@ -341,7 +347,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 */
 	public Edge addEdge( String id, String from, String to, boolean directed ) throws SingletonException, NotFoundException
 	{
-		Edge e = addEdge_( getId(), id, from, to, directed );
+		Edge e = addEdge_( getId(), newEvent(), id, from, to, directed );
 		return e;
 	}
 
@@ -350,12 +356,12 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 */
 	public Node addNode( String id ) throws SingletonException
 	{
-		Node n = addNode_( getId(), id );
+		Node n = addNode_( getId(), newEvent(), id );
 		
 		return n;
 	}
 
-	protected Node addNode_( String sourceId, String nodeId ) throws SingletonException
+	protected Node addNode_( String sourceId, long timeId, String nodeId ) throws SingletonException
 	{
 		Node node;
 		Node old = lookForNode( nodeId );
@@ -375,7 +381,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 			node = nodeFactory.newInstance(nodeId,this);
 			
 			nodes.put(nodeId, node );
-			listeners.sendNodeAdded( sourceId, nodeId );
+			listeners.sendNodeAdded( sourceId, timeId, nodeId );
 		}
 
 		return node;
@@ -386,13 +392,12 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 */
 	public void clear()
 	{
-		clear_( getId() );
+		clear_( getId(), newEvent() );
 	}
 	
-	protected void clear_( String sourceId )
+	protected void clear_( String sourceId, long timeId )
 	{
-		listeners.sendGraphCleared( sourceId );
-
+		listeners.sendGraphCleared( sourceId, timeId );
 		nodes.clear();
 		edges.clear();
 	}
@@ -504,10 +509,10 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 */
 	public Edge removeEdge( String from, String to ) throws NotFoundException
 	{
-		return removeEdge_( getId(), from, to );
+		return removeEdge_( getId(), newEvent(), from, to );
 	}
 	
-	protected Edge removeEdge_( String sourceId, String from, String to )
+	protected Edge removeEdge_( String sourceId, long timeId, String from, String to )
 	{
 		Node n0 = lookForNode( from );
 		Node n1 = lookForNode( to );
@@ -517,14 +522,14 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 			Edge e = ( (AdjacencyListNode) n0 ).hasEdgeToward( n1 );
 			if( e != null )
 			{
-				return removeEdge_( sourceId, e);
+				return removeEdge_( sourceId, timeId, e);
 			}
 			else
 			{
 				e = ( (AdjacencyListNode) n0 ).hasEdgeToward( n1 );
 				if( e != null )
 				{
-					return removeEdge_( sourceId, e);
+					return removeEdge_( sourceId, timeId, e);
 				}
 			}
 		}
@@ -539,7 +544,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		Edge edge = lookForEdge( id );
 		
 		if( edge != null )
-			removeEdge_( getId(), edge );
+			removeEdge_( getId(), newEvent(), edge );
 		
 		return edge;
 	}
@@ -551,12 +556,12 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 */
 	public Edge removeEdge( Edge edge ) throws NotFoundException
 	{
-		return removeEdge_( getId(), edge );
+		return removeEdge_( getId(), newEvent(), edge );
 	}
 	
-	protected Edge removeEdge_( String sourceId, Edge edge )
+	protected Edge removeEdge_( String sourceId, long timeId, Edge edge )
 	{
-		listeners.sendEdgeRemoved( sourceId, edge.getId() );
+		listeners.sendEdgeRemoved( sourceId, timeId, edge.getId() );
 		
 		Node n0 = edge.getSourceNode();
 		Node n1 = edge.getTargetNode();
@@ -576,7 +581,8 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		Node node = lookForNode( id );
 		if( node != null )
 		{
-			return removeNode_( getId(), node );
+//System.err.printf( "%s.removeNode( %s )%n", getId(), id );
+			return removeNode_( getId(), newEvent(), node );
 		}
 		return null;
 	}
@@ -588,15 +594,16 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 */
 	public Node removeNode( Node node ) throws NotFoundException
 	{
-		return removeNode_( getId(), node );
+		return removeNode_( getId(), newEvent(), node );
 	}
 	
-	protected Node removeNode_( String sourceId, Node node )
+	protected Node removeNode_( String sourceId, long timeId, Node node )
 	{
 		if( node != null )
 		{
+//System.err.printf( "%s.removeNode_(%s, %d, %s)%n", getId(), sourceId, timeId, node.getId() );
+			listeners.sendNodeRemoved( sourceId, timeId, node.getId() );
 			disconnectEdges( node );
-			listeners.sendNodeRemoved( sourceId, node.getId() );
 			nodes.remove( node.getId() );
 
 			return node;
@@ -608,16 +615,16 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		return null;
 	}
 
-	public void stepBegins( double time )
+	public void stepBegins( double step )
 	{
-		stepBegins_( getId(), time );
+		stepBegins_( getId(), newEvent(), step );
 	}
 	
-	protected void stepBegins_( String sourceId, double time )
+	protected void stepBegins_( String sourceId, long timeId, double step )
 	{
-		step = time;
+		this.step = step;
 		
-		listeners.sendStepBegins( sourceId, time );
+		listeners.sendStepBegins( sourceId, timeId, step );
 	}
 	
 	/**
@@ -705,17 +712,17 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	}
 
 	@Override
-	protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+	protected void attributeChanged( String sourceId, long timeId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
-		listeners.sendAttributeChangedEvent( sourceId, getId(),
+		listeners.sendAttributeChangedEvent( sourceId, timeId, getId(),
 				ElementType.GRAPH, attribute, event, oldValue, newValue );
 	}
-
+/*
 	public void graphCleared()
     {
-		clear_( getId() );
+		clear_( getId(), newEvent() );
     }
-
+*/
 // Commands -- Utility
 
 	public void read( FileSource input, String filename ) throws IOException, GraphParseException
@@ -785,30 +792,8 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
         return null;
 	}
 
-// Output
+// Sink
 
-	protected boolean notMyEvent( String sourceId )
-	{
-		return notMyId1( sourceId );
-	}
-
-	protected String extendsSourceId( String sourceId )
-	{
-		// We know that our ID is not yet in the sourceId.
-		return String.format( "%s,%s", sourceId, getId() );
-	}
-
-	protected boolean notMyId1( String sourceId )
-	{
-		String ids[] = sourceId.split( "," );
-		String myId = getId();
-		for( String id: ids )
-			if( id.equals( myId ) )
-				return false;
-		
-		return true;
-	}
-	
 	public void edgeAdded( String sourceId, long timeId, String edgeId, String fromNodeId, String toNodeId,
             boolean directed )
     {
@@ -903,6 +888,11 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 			sinkTime = new SinkTime();
 			sourceTime.setSinkTime(sinkTime);
 		}
+		
+		protected long newEvent()
+		{
+			return sourceTime.newEvent();
+		}
 
 		public void edgeAttributeAdded(String sourceId, long timeId,
 				String edgeId, String attribute, Object value) {
@@ -911,7 +901,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 				Edge edge = getEdge( edgeId );
 				
 				if( edge != null )
-					((AdjacencyListEdge)edge).addAttribute_( extendsSourceId( sourceId ), attribute, value );
+					((AdjacencyListEdge)edge).addAttribute_( sourceId, timeId, attribute, value );
 			}
 		}
 
@@ -923,7 +913,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 				Edge edge = getEdge( edgeId );
 				
 				if( edge != null )
-					((AdjacencyListEdge)edge).changeAttribute_( extendsSourceId( sourceId ), attribute, newValue );
+					((AdjacencyListEdge)edge).changeAttribute_( sourceId, timeId, attribute, newValue );
 			}
 		}
 
@@ -934,7 +924,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 				Edge edge = getEdge( edgeId );
 				
 				if( edge != null )
-					((AdjacencyListEdge)edge).removeAttribute_( extendsSourceId( sourceId ), attribute );
+					((AdjacencyListEdge)edge).removeAttribute_( sourceId, timeId, attribute );
 			}
 		}
 
@@ -942,7 +932,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 				String attribute, Object value) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
 			{
-				addAttribute_( sourceId, attribute, value );
+				addAttribute_( sourceId, timeId, attribute, value );
 			}
 		}
 
@@ -950,7 +940,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 				String attribute, Object oldValue, Object newValue) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
 			{
-				changeAttribute_( sourceId, attribute, newValue );
+				changeAttribute_( sourceId, timeId, attribute, newValue );
 			}
 		}
 
@@ -958,7 +948,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 				String attribute) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
 			{
-				removeAttribute_( sourceId, attribute );
+				removeAttribute_( sourceId, timeId, attribute );
 			}
 		}
 
@@ -969,7 +959,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 				Node node = getNode( nodeId );
 				
 				if( node != null )
-					((AdjacencyListNode)node).addAttribute_( extendsSourceId( sourceId ), attribute, value );
+					((AdjacencyListNode)node).addAttribute_( sourceId, timeId, attribute, value );
 			}
 		}
 
@@ -981,7 +971,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 				Node node = getNode( nodeId );
 				
 				if( node != null )
-					((AdjacencyListNode)node).changeAttribute_( extendsSourceId( sourceId ), attribute, newValue );
+					((AdjacencyListNode)node).changeAttribute_( sourceId, timeId, attribute, newValue );
 			}
 		}
 
@@ -992,7 +982,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 				Node node = getNode( nodeId );
 
 				if( node != null )
-					((AdjacencyListNode)node).removeAttribute_( extendsSourceId( sourceId ), attribute );
+					((AdjacencyListNode)node).removeAttribute_( sourceId, timeId, attribute );
 			}
 		}
 
@@ -1000,7 +990,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 				String fromNodeId, String toNodeId, boolean directed) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
 			{
-				addEdge_( extendsSourceId( sourceId ), edgeId, fromNodeId, toNodeId, directed );
+				addEdge_( sourceId, timeId, edgeId, fromNodeId, toNodeId, directed );
 			}
 		}
 
@@ -1010,38 +1000,43 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 				Edge e = getEdge( edgeId );
 				
 				if( e != null )
-					removeEdge_( extendsSourceId( sourceId ), getEdge( edgeId ) );
+					removeEdge_( sourceId, timeId, getEdge( edgeId ) );
 			}
 		}
 
 		public void graphCleared(String sourceId, long timeId) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
 			{
-				clear_( extendsSourceId( sourceId ) );
+				clear_( sourceId, timeId );
 			}
 		}
 
 		public void nodeAdded(String sourceId, long timeId, String nodeId) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
 			{
-				addNode_( extendsSourceId( sourceId ), nodeId );
+				addNode_( sourceId, timeId, nodeId );
 			}
 		}
 
 		public void nodeRemoved(String sourceId, long timeId, String nodeId) {
+//System.err.printf( "%s.nodeRemoved( %s, %d, %s ) => ", getId(), sourceId, timeId, nodeId );
 			if( sinkTime.isNewEvent(sourceId, timeId) )
 			{
 				Node n = getNode( nodeId );
 				
 				if( n != null )
-					removeNode_( extendsSourceId( sourceId ), n );
+				{
+//System.err.printf( "=> removed%n" );
+					removeNode_( sourceId, timeId, n );
+				}
 			}
+//else System.err.printf( "=> ignored%n" );
 		}
 
 		public void stepBegins(String sourceId, long timeId, double step) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
 			{
-				stepBegins_( extendsSourceId( sourceId ), step );
+				stepBegins_( sourceId, timeId, step );
 			}
 		}
 	}

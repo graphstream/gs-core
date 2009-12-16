@@ -96,11 +96,19 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 // Getters
 
 	@Override
-	protected String getMyGraphId()
+	protected String myGraphId()		// XXX
 	{
 		if( src != null && src.G != null )
 			return src.G.getId();
-			//return src.G.time.newEvent();
+		
+		throw new RuntimeException( "WTF ?" );
+	}
+	
+	@Override
+	protected long newEvent()			// XXX
+	{
+		if( src != null && src.G != null )
+			return src.G.newEvent();
 		
 		throw new RuntimeException( "WTF ?" );
 	}
@@ -153,7 +161,7 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 	{
 		if( directed != on )
 		{
-			src.G.listeners.sendEdgeRemoved( getMyGraphId(), getId() );
+			src.G.listeners.sendEdgeRemoved( myGraphId(), newEvent(), getId() );
 		
 			src.unregisterEdge( this );
 			trg.unregisterEdge( this );
@@ -163,13 +171,13 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 			src.registerEdge( this );
 			trg.registerEdge( this );
 		
-			src.G.listeners.sendEdgeAdded( getMyGraphId(), getId(), src.getId(), trg.getId(), directed );
+			src.G.listeners.sendEdgeAdded( myGraphId(), newEvent(), getId(), src.getId(), trg.getId(), directed );
 		}
 	}
 	
 	public void switchDirection()
 	{
-		src.G.listeners.sendEdgeRemoved( getMyGraphId(), getId() );
+		src.G.listeners.sendEdgeRemoved( myGraphId(), newEvent(), getId() );
 		
 		src.unregisterEdge( this );
 		trg.unregisterEdge( this );
@@ -183,7 +191,7 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 		src.registerEdge( this );
 		trg.registerEdge( this );
 		
-		src.G.listeners.sendEdgeAdded( getMyGraphId(), getId(), src.getId(), trg.getId(), directed );
+		src.G.listeners.sendEdgeAdded( myGraphId(), newEvent(), getId(), src.getId(), trg.getId(), directed );
 	}
 
 	/**
@@ -224,7 +232,7 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 	 * @throws IllegalStateException If the edge is partially bound (to only
 	 * one node) or bound to non existing nodes.
 	 */
-	protected void unbind( String sourceId )
+	protected void unbind( String sourceId, long timeId )
 		throws IllegalStateException
 	{
 		DefaultGraph g;
@@ -243,17 +251,17 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 		}
 		
 		g = (DefaultGraph) src.getGraph();
-		g.listeners.sendEdgeRemoved( sourceId, getId() );
+		g.listeners.sendEdgeRemoved( sourceId, timeId, getId() );
 
 		src = null;
 		trg = null;
 	}
 
 	@Override
-	protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+	protected void attributeChanged( String sourceId, long timeId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
 		if( src != null )
-			src.G.listeners.sendAttributeChangedEvent( sourceId,
+			src.G.listeners.sendAttributeChangedEvent( sourceId, timeId,
 					getId(), SourceBase.ElementType.EDGE,
 					attribute, event, oldValue, newValue );
 	}

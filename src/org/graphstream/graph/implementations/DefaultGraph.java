@@ -229,11 +229,9 @@ public class DefaultGraph extends AbstractElement implements Graph
 // Access -- Nodes
 
 	@Override
-	protected String getMyGraphId()
-	{
-		return getId();
-		//return time.newEvent();
-	}
+	protected String myGraphId() { return getId(); }			// XXX how to avoid this ?
+	@Override
+	protected long newEvent() { return listeners.newEvent(); }	// XXX how to avoid this ?
 	
 	/**
 	 * @complexity O(1).
@@ -364,12 +362,12 @@ public class DefaultGraph extends AbstractElement implements Graph
 	 */
 	public void clear()
 	{
-		clear_( getId() );
+		clear_( getId(), listeners.newEvent() );
 	}
 	
-	protected void clear_( String sourceId )
+	protected void clear_( String sourceId, long timeId )
 	{
-		listeners.sendGraphCleared( sourceId );
+		listeners.sendGraphCleared( sourceId, timeId );
 		nodes.clear();
 		edges.clear();
 		clearAttributes();
@@ -387,9 +385,9 @@ public class DefaultGraph extends AbstractElement implements Graph
 		autoCreate = on;
 	}
 	
-	protected Node addNode_( String sourceId, String nodeId ) throws SingletonException
+	protected Node addNode_( String sourceId, long timeId, String nodeId ) throws SingletonException
 	{
-//System.err.printf( "%s.addNode_(%s, %s)%n", getId(), sourceId, nodeId );
+//System.err.printf( "%s.addNode_(%s, %d, %s)%n", getId(), sourceId, timeId, nodeId );
 		Node n = nodes.get( nodeId );
 		
 		if( n == null )
@@ -408,7 +406,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 			throw new SingletonException( "id '" + nodeId + "' already used, cannot add node" );
 		}
 		
-		listeners.sendNodeAdded( sourceId, nodeId );
+		listeners.sendNodeAdded( sourceId, timeId, nodeId );
 
 		return n;
 		
@@ -437,16 +435,15 @@ public class DefaultGraph extends AbstractElement implements Graph
 //		return (DefaultNode)node;
 	}
 	
-
 	/**
 	 * @complexity O(1)
 	 */
 	public Node addNode( String id ) throws SingletonException
 	{
-		return addNode_( getId(), id ) ; 
+		return addNode_( getId(), listeners.newEvent(), id ) ; 
 	}
 	
-	protected Node removeNode_( String sourceId, String nodeId, boolean fromNodeIterator ) throws NotFoundException
+	protected Node removeNode_( String sourceId, long timeId, String nodeId, boolean fromNodeIterator ) throws NotFoundException
 	{
 		// The fromNodeIterator flag allows to know if this remove node call was
 		// made from inside a node iterator or not. If from a node iterator,
@@ -457,7 +454,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 		
 		if( node != null )	// XXX probably to remove !!
 		{
-			listeners.sendNodeRemoved( sourceId, nodeId );
+			listeners.sendNodeRemoved( sourceId, timeId, nodeId );
 			node.disconnectAllEdges();
 			
 			if( ! fromNodeIterator )
@@ -465,11 +462,13 @@ public class DefaultGraph extends AbstractElement implements Graph
 			
 			return node;
 		}
+		else
+		{
+			listeners.sendNodeRemoved( sourceId, timeId, nodeId );
 
-		if( strictChecking )
-			throw new NotFoundException( "node id '"+nodeId+"' not found, cannot remove" );
-
-		listeners.sendNodeRemoved( sourceId, nodeId );
+			if( strictChecking )
+				throw new NotFoundException( "node id '"+nodeId+"' not found, cannot remove" );
+		}
 
 		return null;
 	}
@@ -479,10 +478,10 @@ public class DefaultGraph extends AbstractElement implements Graph
 	 */
 	public Node removeNode( String id ) throws NotFoundException
 	{
-		return removeNode_( getId(), id, false );
+		return removeNode_( getId(), listeners.newEvent(), id, false );
 	}
 
-	protected Edge addEdge_( String sourceId, String edgeId, String from, String to, boolean directed )
+	protected Edge addEdge_( String sourceId, long timeId, String edgeId, String from, String to, boolean directed )
 		throws SingletonException, NotFoundException
 	{
 		Node src;
@@ -530,7 +529,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 				e = edge;
 				
 				if( edge.getId().equals( edgeId ) )
-					listeners.sendEdgeAdded( sourceId, edgeId, from, to, directed );
+					listeners.sendEdgeAdded( sourceId, timeId, edgeId, from, to, directed );
 			}
 			else if( strictChecking )
 			{
@@ -558,7 +557,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	public Edge addEdge( String id, String from, String to, boolean directed )
 		throws SingletonException, NotFoundException
 	{
-		Edge edge = addEdge_( getId(), id, from, to, directed );
+		Edge edge = addEdge_( getId(), listeners.newEvent(), id, from, to, directed );
 		// An explanation for this strange "if": in the SingleGraph implementation
 		// when a directed edge between A and B is added with id AB, if a second
 		// directed edge between B and A is added with id BA, the second edge is
@@ -579,10 +578,10 @@ public class DefaultGraph extends AbstractElement implements Graph
 	public Edge removeEdge( String from, String to )
 		throws NotFoundException
 	{
-		return removeEdge_( getId(), from, to );
+		return removeEdge_( getId(), listeners.newEvent(), from, to );
 	}
 	
-	protected Edge removeEdge_( String sourceId, String from, String to )
+	protected Edge removeEdge_( String sourceId, long timeId, String from, String to )
 	{
 		try
 		{
@@ -618,7 +617,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 				//		beforeEdgeRemoveEvent( edge );
 
 				edges.remove( ( (AbstractElement) edge ).getId() );
-				((DefaultEdge)edge).unbind( sourceId );
+				((DefaultEdge)edge).unbind( sourceId, timeId );
 
 				return edge;
 			}
@@ -643,10 +642,10 @@ public class DefaultGraph extends AbstractElement implements Graph
 	 */
 	public Edge removeEdge( String id ) throws NotFoundException
 	{
-		return removeEdge_( getId(), id, false );
+		return removeEdge_( getId(), listeners.newEvent(), id, false );
 	}
 	
-	protected Edge removeEdge_( String sourceId, String edgeId, boolean fromEdgeIterator )
+	protected Edge removeEdge_( String sourceId, long timeId, String edgeId, boolean fromEdgeIterator )
 	{
 		try
 		{
@@ -658,7 +657,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 
 			if( edge != null )
 			{
-				edge.unbind( sourceId );
+				edge.unbind( sourceId, timeId );
 				return edge;
 			}
 		}
@@ -676,22 +675,22 @@ public class DefaultGraph extends AbstractElement implements Graph
 
 	public void stepBegins( double step )
 	{
-		stepBegins_( getId(), step );
+		stepBegins_( getId(), listeners.newEvent(), step );
 	}
 	
-	protected void stepBegins_( String sourceId, double time )
+	protected void stepBegins_( String sourceId, long timeId, double step )
 	{
-		step = time;
+		this.step = step;
 
-		listeners.sendStepBegins( sourceId, time );
+		listeners.sendStepBegins( sourceId, timeId, step );
 	}
 	
 // Events
 
 	@Override
-	protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+	protected void attributeChanged( String sourceId, long timeId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
-		listeners.sendAttributeChangedEvent( sourceId, null, SourceBase.ElementType.GRAPH,
+		listeners.sendAttributeChangedEvent( sourceId, timeId, getId(), SourceBase.ElementType.GRAPH,
 				attribute, event, oldValue, newValue );
 	}
 
@@ -781,7 +780,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	 * does more than only altering the node or edge sets (events for example).
 	 * @param <T> Can be an Edge or a Node.
 	 */
-	static class ElementIterator<T extends Element> implements Iterator<T>
+	class ElementIterator<T extends Element> implements Iterator<T>
 	{
 		/**
 		 * If true, acts on the node set, else on the edge set.
@@ -849,7 +848,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 			{
 				if( current != null )
 				{
-					graph.removeNode_( graph.getId(), current.getId(), true );
+					graph.removeNode_( graph.getId(), listeners.newEvent(), current.getId(), true );
 					iterator.remove();
 				}
 			}
@@ -857,7 +856,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 			{
 				if( current != null )
 				{
-					graph.removeEdge_( graph.getId(), current.getId(), true );
+					graph.removeEdge_( graph.getId(), listeners.newEvent(), current.getId(), true );
 					iterator.remove();
 				}
 			}
@@ -995,6 +994,11 @@ public class DefaultGraph extends AbstractElement implements Graph
 			sinkTime = new SinkTime();
 			sourceTime.setSinkTime(sinkTime);
 		}
+		
+		public long newEvent()
+		{
+			return sourceTime.newEvent();
+		}
 
 		public void edgeAttributeAdded(String sourceId, long timeId,
 				String edgeId, String attribute, Object value) {
@@ -1003,7 +1007,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 				Edge edge = getEdge( edgeId );
 				
 				if( edge != null )
-					((DefaultEdge)edge).addAttribute_( sourceId, attribute, value );
+					((DefaultEdge)edge).addAttribute_( sourceId, timeId, attribute, value );
 			}
 		}
 
@@ -1015,7 +1019,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 				Edge edge = getEdge( edgeId );
 				
 				if( edge != null )
-					((DefaultEdge)edge).changeAttribute_( sourceId, attribute, newValue );
+					((DefaultEdge)edge).changeAttribute_( sourceId, timeId, attribute, newValue );
 			}
 		}
 
@@ -1026,7 +1030,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 				Edge edge = getEdge( edgeId );
 				
 				if( edge != null )
-					((DefaultEdge)edge).removeAttribute_( sourceId, attribute );
+					((DefaultEdge)edge).removeAttribute_( sourceId, timeId, attribute );
 			}
 		}
 
@@ -1034,7 +1038,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 				String attribute, Object value) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
 			{
-				addAttribute_( sourceId, attribute, value );
+				addAttribute_( sourceId, timeId, attribute, value );
 			}
 		}
 
@@ -1042,7 +1046,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 				String attribute, Object oldValue, Object newValue) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
 			{
-				changeAttribute_( sourceId, attribute, newValue );
+				changeAttribute_( sourceId, timeId, attribute, newValue );
 			}
 		}
 
@@ -1050,7 +1054,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 				String attribute) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
 			{
-				removeAttribute_( sourceId, attribute );
+				removeAttribute_( sourceId, timeId, attribute );
 			}
 		}
 
@@ -1061,7 +1065,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 				Node node = getNode( nodeId );
 				
 				if( node != null )
-					((DefaultNode)node).addAttribute_( sourceId, attribute, value );
+					((DefaultNode)node).addAttribute_( sourceId, timeId, attribute, value );
 			}
 		}
 
@@ -1073,7 +1077,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 				Node node = getNode( nodeId );
 				
 				if( node != null )
-					((DefaultNode)node).changeAttribute_( sourceId, attribute, newValue );
+					((DefaultNode)node).changeAttribute_( sourceId, timeId, attribute, newValue );
 			}
 		}
 
@@ -1084,7 +1088,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 				Node node = getNode( nodeId );
 				
 				if( node != null )
-					((DefaultNode)node).removeAttribute_( sourceId, attribute );
+					((DefaultNode)node).removeAttribute_( sourceId, timeId, attribute );
 			}
 		}
 
@@ -1092,42 +1096,45 @@ public class DefaultGraph extends AbstractElement implements Graph
 				String fromNodeId, String toNodeId, boolean directed) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
 			{
-				addEdge_( sourceId, edgeId, fromNodeId, toNodeId, directed );
+				addEdge_( sourceId, timeId, edgeId, fromNodeId, toNodeId, directed );
 			}
 		}
 
 		public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
 			{
-				removeEdge_( sourceId, edgeId, false );
+				removeEdge_( sourceId, timeId, edgeId, false );
 			}
 		}
 
 		public void graphCleared(String sourceId, long timeId) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
 			{
-				clear_( sourceId );
+				clear_( sourceId, timeId );
 			}
 		}
 
 		public void nodeAdded(String sourceId, long timeId, String nodeId) {
+//System.err.printf( "%s.nodeAdded( %s, %d, %s ) =>", getId(), sourceId, timeId, nodeId );
 			if( sinkTime.isNewEvent(sourceId, timeId) )
 			{
-				addNode_( sourceId, nodeId );
+//System.err.printf( " adding%n" );
+				addNode_( sourceId, timeId, nodeId );
 			}
+//else System.err.printf( " ignoring%n" );
 		}
 
 		public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
 			{
-				removeNode_( sourceId, nodeId, false );
+				removeNode_( sourceId, timeId, nodeId, false );
 			}
 		}
 
 		public void stepBegins(String sourceId, long timeId, double step) {
 			if( sinkTime.isNewEvent(sourceId, timeId) )
 			{
-				stepBegins_(sourceId, step );
+				stepBegins_(sourceId, timeId, step );
 			}
 		}
 	}

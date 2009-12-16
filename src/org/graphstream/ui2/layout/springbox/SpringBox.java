@@ -79,7 +79,7 @@ public class SpringBox extends SourceBase implements Layout, ParticleBoxListener
 	
 	/**
 	 * Set of listeners. These are listeners for specific movement events, however, the usual
-	 * Input interface is usable to obtain xyz attributes.
+	 * "Source" interface is usable to obtain xyz attributes.
 	 */
 	protected ArrayList<LayoutListener> listeners = new ArrayList<LayoutListener>();
 	
@@ -585,42 +585,54 @@ public class SpringBox extends SourceBase implements Layout, ParticleBoxListener
 	
 // Output interface
 
-	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId, boolean directed )
+	public void edgeAdded( String graphId, long time, String edgeId, String fromNodeId, String toNodeId, boolean directed )
 	{
 		addEdge( graphId, edgeId, fromNodeId, toNodeId, directed );
+		sendEdgeAdded( graphId, time, edgeId, fromNodeId, toNodeId, directed );
 	}
 	
-	public void nodeAdded( String graphId, String nodeId )
+	public void nodeAdded( String graphId, long time, String nodeId )
 	{
 		addNode( graphId, nodeId );
+		sendNodeAdded( graphId, time, nodeId );
 	}
 	
-	public void edgeRemoved( String graphId, String edgeId )
+	public void edgeRemoved( String graphId, long time, String edgeId )
 	{
 		removeEdge( graphId, edgeId );
+		sendEdgeRemoved( graphId, time, edgeId );
 	}
 	
-	public void nodeRemoved( String graphId, String nodeId )
+	public void nodeRemoved( String graphId, long time, String nodeId )
 	{
 		removeNode( graphId, nodeId );
+		sendNodeRemoved( graphId, time, nodeId );
 	}
 	
-	public void graphCleared( String graphId )
+	public void graphCleared( String graphId, long time )
 	{
 		clear();
+		sendGraphCleared( graphId, time );
 	}
 	
-	public void stepBegins( String graphId, double time )
+	public void stepBegins( String graphId, long time, double step )
 	{
-		// NOP !
+		sendStepBegins( graphId, time, step );
 	}
 
-	public void graphAttributeAdded( String graphId, String attribute, Object value )
+	public void graphAttributeAdded( String graphId, long time, String attribute, Object value )
     {
-		graphAttributeChanged( graphId, attribute, null, value );
+		graphAttributeChanged_( graphId, attribute, null, value );
+		sendGraphAttributeAdded( graphId, time, attribute, value );
     }
+	
+	public void graphAttributeChanged( String graphId, long time, String attribute, Object oldValue, Object newValue )
+	{
+		graphAttributeChanged_( graphId, attribute, oldValue, newValue );
+		sendGraphAttributeChanged( graphId, time, attribute, oldValue, newValue );
+	}
 
-	public void graphAttributeChanged( String graphId, String attribute, Object oldValue, Object newValue )
+	protected void graphAttributeChanged_( String graphId, String attribute, Object oldValue, Object newValue )
     {
 		if( attribute.equals( "layout.force" ) )
 		{
@@ -664,16 +676,24 @@ public class SpringBox extends SourceBase implements Layout, ParticleBoxListener
 		}
     }
 
-	public void graphAttributeRemoved( String graphId, String attribute )
+	public void graphAttributeRemoved( String graphId, long time, String attribute )
     {
+		sendGraphAttributeRemoved( graphId, time, attribute );
     }
 
-	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+	public void nodeAttributeAdded( String graphId, long time, String nodeId, String attribute, Object value )
     {
-		nodeAttributeChanged( graphId, nodeId, attribute, null, value );
+		nodeAttributeChanged_( graphId, nodeId, attribute, null, value );
+		sendNodeAttributeAdded( graphId, time, nodeId, attribute, value );
     }
 
-	public void nodeAttributeChanged( String graphId, String nodeId, String attribute, Object oldValue, Object newValue )
+	public void nodeAttributeChanged( String graphId, long time, String nodeId, String attribute, Object oldValue, Object newValue )
+	{
+		nodeAttributeChanged_( graphId, nodeId, attribute, oldValue, newValue );
+		sendNodeAttributeChanged( graphId, time, nodeId, attribute, oldValue, newValue );
+	}
+	
+	protected void nodeAttributeChanged_( String graphId, String nodeId, String attribute, Object oldValue, Object newValue )
     {
 		if( attribute.equals( "layout.weight" ) )
 		{
@@ -684,16 +704,24 @@ public class SpringBox extends SourceBase implements Layout, ParticleBoxListener
 		}
     }
 
-	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+	public void nodeAttributeRemoved( String graphId, long time, String nodeId, String attribute )
     {
+		sendNodeAttributeRemoved( graphId, time, nodeId, attribute );
     }
 
-	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+	public void edgeAttributeAdded( String graphId, long time, String edgeId, String attribute, Object value )
     {
-		edgeAttributeChanged( graphId, edgeId, attribute, null, value );
+		edgeAttributeChanged_( graphId, edgeId, attribute, null, value );
+		sendEdgeAttributeAdded( graphId, time, edgeId, attribute, value );
     }
 
-	public void edgeAttributeChanged( String graphId, String edgeId, String attribute, Object oldValue, Object newValue )
+	public void edgeAttributeChanged( String graphId, long time, String edgeId, String attribute, Object oldValue, Object newValue )
+	{
+		edgeAttributeChanged_( graphId, edgeId, attribute, oldValue, newValue );
+		sendEdgeAttributeChanged( graphId, time, edgeId, attribute, oldValue, newValue );
+	}
+
+	protected void edgeAttributeChanged_( String graphId, String edgeId, String attribute, Object oldValue, Object newValue )
     {
 		if( attribute.equals( "layout.weight" ) )
 		{
@@ -709,7 +737,8 @@ public class SpringBox extends SourceBase implements Layout, ParticleBoxListener
 		}
     }
 
-	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+	public void edgeAttributeRemoved( String graphId, long time, String edgeId, String attribute )
     {
+		sendEdgeRemoved( attribute, time, edgeId );
     }
 }

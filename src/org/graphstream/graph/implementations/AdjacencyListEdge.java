@@ -70,9 +70,15 @@ public class AdjacencyListEdge
 	}
 	
 	@Override
-	protected String getMyGraphId()
+	protected String myGraphId()
 	{
 		return n0.graph.getId();
+	}
+	
+	@Override
+	protected long newEvent()
+	{
+		return ((AdjacencyListGraph)n0.graph).newEvent();
 	}
 
 	/*
@@ -141,9 +147,9 @@ public class AdjacencyListEdge
 	public void setDirected( boolean on )
 	{
 		// XXX Bug, the new edge created in the event stream will loose all its attributes.
-		((AdjacencyListGraph)n0.graph).listeners.sendEdgeRemoved( getMyGraphId(), getId() );
+		((AdjacencyListGraph)n0.graph).listeners.sendEdgeRemoved( myGraphId(), newEvent(), getId() );
 		this.directed = on;
-		((AdjacencyListGraph)n0.graph).listeners.sendEdgeAdded( getMyGraphId(), getId(), n0.getId(), n1.getId(), directed );
+		((AdjacencyListGraph)n0.graph).listeners.sendEdgeAdded( myGraphId(), newEvent(), getId(), n0.getId(), n1.getId(), directed );
 	}
 
 	/*
@@ -153,12 +159,12 @@ public class AdjacencyListEdge
 	public void switchDirection()
 	{
 		// XXX Bug, the new edge create in the event stream will loose all its attributes.
-		((AdjacencyListGraph)n0.graph).listeners.sendEdgeRemoved( getMyGraphId(), getId() );
+		((AdjacencyListGraph)n0.graph).listeners.sendEdgeRemoved( myGraphId(), newEvent(), getId() );
 		
 		AdjacencyListNode n = n0;
 		n0 = n1;
 		n1 = n;
-		((AdjacencyListGraph)n0.graph).listeners.sendEdgeAdded( getMyGraphId(), getId(), n0.getId(), n1.getId(), directed );
+		((AdjacencyListGraph)n0.graph).listeners.sendEdgeAdded( myGraphId(), newEvent(), getId(), n0.getId(), n1.getId(), directed );
 	}
 
 
@@ -167,10 +173,10 @@ public class AdjacencyListEdge
 	 * @see org.miv.graphstream.graph.Element#attributeChanged(java.lang.String, java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+	protected void attributeChanged( String sourceId, long timeId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
 		if( n0 != null )
 			((AdjacencyListGraph)n0.graph).listeners.sendAttributeChangedEvent(
-				sourceId, getId(), ElementType.EDGE, attribute, event, oldValue, newValue );
+				sourceId, timeId, getId(), ElementType.EDGE, attribute, event, oldValue, newValue );
 	}
 }
