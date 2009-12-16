@@ -25,17 +25,17 @@
  * Classes of the graph representation used by the graph viewer.
  * 
  * <p>
- * The graphic graph is a {@link org.miv.graphstream.graph.Graph} implementation
- * that also defines position attributes for its nodes and edges ({@link org.miv.graphstream.ui.graphicGraph.GraphicNode}
- * and {@link org.miv.graphstream.ui.graphicGraph.GraphicEdge}). It also
+ * The graphic graph is a {@link org.graphstream.graph.Graph} implementation
+ * that also defines position attributes for its nodes and edges ({@link org.graphstream.ui.graphicGraph.GraphicNode}
+ * and {@link org.graphstream.ui.graphicGraph.GraphicEdge}). It also
  * defines a style sheet and associates with each node and edge a style element
  * according to the style sheet (or a "style" attribute).
  * </p>
  * 
  * <p>
- * In addition, a sprite manager ({@link org.miv.graphstream.ui.graphicGraph.SpriteManager})
- * and {@link org.miv.graphstream.ui.Sprite} implementation
- * ({@link org.miv.graphstream.ui.graphicGraph.GraphicSprite}) is provided. Sprites are
+ * In addition, a sprite manager ({@link org.graphstream.ui.graphicGraph.SpriteManager})
+ * and {@link org.graphstream.ui.Sprite} implementation
+ * ({@link org.graphstream.ui.graphicGraph.GraphicSprite}) is provided. Sprites are
  * visual or textual elements that can be attached to the graph display to visualise
  * data on the graph.
  * </p>

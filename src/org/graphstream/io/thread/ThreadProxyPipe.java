@@ -26,6 +26,7 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.io.ProxyPipe;
+import org.graphstream.io.Sink;
 import org.graphstream.io.Source;
 import org.graphstream.io.SourceBase;
 import org.miv.mbox.CannotPostException;
@@ -106,7 +107,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe, MBoxListen
 	}
 	
 	/**
-	 * Like {@link #ThreadProxyFilter(Source)}, but allow to share the
+	 * Like {@link #ThreadProxyPipe(Source)}, but allow to share the
 	 * message box with another message processor. This can be needed to share the same message
 	 * stack, when message order is important.
 	 * @param input The source of events we listen at.
@@ -136,18 +137,31 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe, MBoxListen
 	}
 
 	/**
-	 * Like {@link #ThreadProxyFilter(Graph)} but allow to avoid replaying the graph.
+	 * Like {@link #ThreadProxyPipe(Graph)} but allow to avoid replaying the graph.
 	 * @param inputGraph The graph we listen at.
 	 * @param replayGraph If false, and if the input graph already contains element they are not
 	 *        replayed.
 	 */
 	public ThreadProxyPipe( Graph inputGraph, boolean replayGraph )
 	{
-		this( inputGraph, replayGraph, new MBoxStandalone() );
+		this( inputGraph, null, replayGraph );
+	}
+	
+	/**
+	 * Like {@link #ThreadProxyPipe(Graph,boolean)} but allows to pass an initial listener, therefore
+	 * specifying the input and output at once.
+	 * @param inputGraph The graph we listen at.
+	 * @param firstListener The initial listener to register.
+	 * @param replayGraph If false, and if the input graph already contains element they are not
+	 *        replayed.
+	 */
+	public ThreadProxyPipe( Graph inputGraph, Sink firstListener, boolean replayGraph )
+	{
+		this( inputGraph, firstListener, replayGraph, new MBoxStandalone() );
 	}
 
 	/**
-	 * Like {@link #ThreadProxyFilter(Graph,boolean)}, but allow to share the
+	 * Like {@link #ThreadProxyPipe(Graph,Sink,boolean)}, but allows to share the
 	 * message box with another message processor. This can be needed to share the same message
 	 * stack, when message order is important.
 	 * @param inputGraph The graph we listen at.
@@ -156,12 +170,15 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe, MBoxListen
 	 * @param sharedMBox The message box used to send and receive graph messages across the thread
 	 *        boundary.
 	 */
-	public ThreadProxyPipe( Graph inputGraph, boolean replayGraph, MBox sharedMBox )
+	public ThreadProxyPipe( Graph inputGraph, Sink firstListener, boolean replayGraph, MBox sharedMBox )
 	{
 		this.events      = sharedMBox;
 		this.from        = inputGraph.getId();
 		this.input       = inputGraph;
 
+		if( firstListener != null )
+			addGraphListener( firstListener );
+		
 		if( replayGraph )
 			replayGraph( inputGraph );
 		
@@ -231,23 +248,23 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe, MBoxListen
 	{
 		try
 		{
-			String graphId = graph.getId();
+			String graphId = "@replay";
 			
 			// Replay all graph attributes.
 			
 			if( graph.getAttributeKeySet() != null )
 				for( String key: graph.getAttributeKeySet() )
-					events.post( from, GraphEvents.ADD_GRAPH_ATTR, graphId, key, graph.getAttribute( key ) );
+					events.post( from, GraphEvents.ADD_GRAPH_ATTR, graphId, sourceTime.newEvent(), key, graph.getAttribute( key ) );
 			
 			// Replay all nodes and their attributes.
 
 			for( Node node: graph )
 			{
-				events.post( from, GraphEvents.ADD_NODE, graphId, node.getId() );
+				events.post( from, GraphEvents.ADD_NODE, graphId, sourceTime.newEvent(), node.getId() );
 
 				if( node.getAttributeKeySet() != null )
 					for( String key: node.getAttributeKeySet() )
-						events.post( from, GraphEvents.ADD_NODE_ATTR, graphId, node.getId(), key,
+						events.post( from, GraphEvents.ADD_NODE_ATTR, graphId, sourceTime.newEvent(), node.getId(), key,
 							node.getAttribute( key ) );
 			}
 
@@ -255,14 +272,14 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe, MBoxListen
 
 			for( Edge edge: graph.edgeSet() )
 			{
-				events.post( from, GraphEvents.ADD_EDGE, graphId, edge.getId(),
+				events.post( from, GraphEvents.ADD_EDGE, graphId, sourceTime.newEvent(), edge.getId(),
 						edge.getSourceNode().getId(),
 						edge.getTargetNode().getId(), edge.isDirected() );
 
 				if( edge.getAttributeKeySet() != null )
 					for( String key: edge.getAttributeKeySet() )
-						events.post( from, GraphEvents.ADD_EDGE_ATTR, graphId, edge.getId(), key,
-						       edge.getAttribute( key ) );
+						events.post( from, GraphEvents.ADD_EDGE_ATTR, graphId, sourceTime.newEvent(),
+							edge.getId(), key, edge.getAttribute( key ) );
 			}
 		}
 		catch( CannotPostException e )
@@ -503,8 +520,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe, MBoxListen
 	
 	public void processMessage( String from, Object[] data )
 	{
-//System.err.printf( "    msg(%s, %s, %s)%n", from, data[0], data[2] );
-		
+//System.err.printf( "    %s.msg(%s, %s, %s, %s)%n", from, data[1], data[2], data[0], data[3] );
 		if( data[0].equals( GraphEvents.ADD_NODE ) )
 		{
 			String graphId = (String) data[1];
@@ -524,7 +540,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe, MBoxListen
 		else if( data[0].equals( GraphEvents.ADD_EDGE ) )
 		{
 			String  graphId  = (String) data[1];
-			Long   timeId    = (Long)   data[2];
+			Long    timeId   = (Long)   data[2];
 			String  edgeId   = (String) data[3];
 			String  fromId   = (String) data[4];
 			String  toId     = (String) data[5];

@@ -29,14 +29,12 @@ import java.io.RandomAccessFile;
 import org.miv.util.NotFoundException;
 
 /**
- * Graph reader factory.
+ * File source factory.
  *
  * A graph reader factory allow to create readers according to a given file. It
  * both tries to read the start of the file to infer its type (works well for
  * file formats with a magic cookie or header), and if it fails it tries to look
  * at the file name extension.
- *
- * @see org.graphstream.io.old.GraphReader
  */
 public class FileSourceFactory
 {

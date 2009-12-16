@@ -73,9 +73,15 @@ public abstract class GraphicElement extends AbstractElement
 // Access
 
 	@Override
-	protected String getMyGraphId()
+	protected String myGraphId()
 	{
 		return mygraph.getId();
+	}
+	
+	@Override
+	protected long newEvent()
+	{
+		return mygraph.newEvent();
 	}
 	
 	/**
@@ -191,23 +197,23 @@ public abstract class GraphicElement extends AbstractElement
 	{
 		if( hasAttribute( "ui.clicked" ) )
 		{
-			attributeChanged( getMyGraphId(), "ui.clicked", AttributeChangeEvent.CHANGE, null, true );
+			attributeChanged( myGraphId(), newEvent(), "ui.clicked", AttributeChangeEvent.CHANGE, null, true );
 		}
 		if( hasAttribute( "ui.selected" ) )
 		{
-			attributeChanged( getMyGraphId(), "ui.selected", AttributeChangeEvent.CHANGE, null, true );
+			attributeChanged( myGraphId(), newEvent(), "ui.selected", AttributeChangeEvent.CHANGE, null, true );
 		}
 		if( hasAttribute( "ui.state" ) )
 		{
-			attributeChanged( getMyGraphId(), "ui.state", AttributeChangeEvent.CHANGE, null, getAttribute( "ui.state" ) );
+			attributeChanged( myGraphId(), newEvent(), "ui.state", AttributeChangeEvent.CHANGE, null, getAttribute( "ui.state" ) );
 		}
 		if( hasAttribute( "ui.color" ) )
 		{
-			attributeChanged( getMyGraphId(), "ui.color", AttributeChangeEvent.CHANGE, null, getAttribute( "ui.color" ) );
+			attributeChanged( myGraphId(), newEvent(), "ui.color", AttributeChangeEvent.CHANGE, null, getAttribute( "ui.color" ) );
 		}
 		if( hasAttribute( "ui.width" ) )
 		{
-			attributeChanged( getMyGraphId(), "ui.width", AttributeChangeEvent.CHANGE, null, getAttribute( "ui.width" ) );
+			attributeChanged( myGraphId(), newEvent(), "ui.width", AttributeChangeEvent.CHANGE, null, getAttribute( "ui.width" ) );
 		}
 	}
 	
@@ -236,7 +242,7 @@ public abstract class GraphicElement extends AbstractElement
 	 * Handle the "class", "color", "width", "label" and "style" attributes.
 	 */
 	@Override
-    protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+    protected void attributeChanged( String sourceId, long timeId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
     {
 		if( attribute.equals( "ui.class" ) || attribute.equals( "class" ) )
 		{

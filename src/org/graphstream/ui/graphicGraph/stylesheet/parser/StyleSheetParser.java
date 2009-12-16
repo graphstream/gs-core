@@ -31,6 +31,7 @@ import java.awt.Color;
 import java.io.InputStream;
 import java.io.Reader;
 
+@SuppressWarnings("all")
 public class StyleSheetParser implements StyleSheetParserConstants {
         /**
 	 * The style sheet.

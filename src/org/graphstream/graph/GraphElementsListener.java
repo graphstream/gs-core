@@ -84,7 +84,7 @@ public interface GraphElementsListener
 	 * </p>
 	 * 
 	 * @param sourceId Identifier of the graph where the step starts.
-	 * @param time A numerical value that may give a timestamp to track the evolution of the graph
+	 * @param timeId A numerical value that may give a timestamp to track the evolution of the graph
 	 *   over the time.
 	 */
 	public void stepBegins( String sourceId, long timeId, double step );

@@ -46,7 +46,7 @@ import java.util.HashSet;
  * <p>
  * Also, the format does not specify any direction for edges. By default all edges are
  * undirected. You can choose to make all edges directed by passing "true" as the first
- * arguments to constructors {@link #FileInputEdge(boolean)} or {@link #FileInputEdge(boolean, boolean)}.
+ * arguments to constructors {@link #FileSourceEdge(boolean)} or {@link #FileSourceEdge(boolean, boolean)}.
  * The direction of edges goes from the first node name on each line toward the second (or more)
  * node names on each line.
  * </p>
@@ -62,7 +62,7 @@ import java.util.HashSet;
  * This hash set consumes memory, but is the only way to ensure "add node" events are
  * correctly issued. If this input is directly connected to a graph, as graphs can
  * create non-existing nodes automatically, you can disable the hash set of nodes using
- * the constructor {@link #FileInputEdge(boolean, boolean)}, and giving "false" for the
+ * the constructor {@link #FileSourceEdge(boolean, boolean)}, and giving "false" for the
  * second argument.
  * </p>
  */

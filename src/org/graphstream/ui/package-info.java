@@ -31,8 +31,8 @@
  * <ul>
  * 		<li>The graph viewer classes that define the interface of a graph viewer
  *			UI component, as well as a mean to control it and listen at its events.
- * 		<li>The graphic graph classes in the {@link org.miv.graphstream.ui.graphicGraph}
- * 			package which define a {@link org.miv.graphstream.graph.Graph} implementation
+ * 		<li>The graphic graph classes in the {@link org.graphstream.ui.graphicGraph}
+ * 			package which define a {@link org.graphstream.graph.Graph} implementation
  * 			that listen at a graph, copy its structure and
  * 			defines a style sheet, attaches styles to graphic node and graphic edges,
  * 			define the notion of "sprite" and allows to position all these elements.</li>
@@ -44,7 +44,7 @@
  * </ul>
  *
  * <p>
- * The {@link org.miv.graphstream.ui.GraphViewer} class defines the services proposed
+ * The {@link org.graphstream.ui.GraphViewer} class defines the services proposed
  * by a graph viewer. A graph viewer is a graphical component that renders a graph to
  * visualise it. The graph viewer is made to run in a separate thread so that the viewer
  * can draw the graph in parallel with your code (which creates and modifies the graph).
@@ -54,7 +54,7 @@
  * 
  * <p>
  * A default base (incomplete abstract class) implementation is given by the
- * {@link org.miv.graphstream.ui.GraphViewerBase} class. This implementations creates a
+ * {@link org.graphstream.ui.GraphViewerBase} class. This implementations creates a
  * graphic graph in the viewer thread that copies your graph and provides graphic attributes
  * like positions and CSS style. Lets call the graph in the user thread the "user graph" and the
  * graph in the "viewer thread" the "graphic graph". The graphic graph is created automatically
@@ -69,12 +69,12 @@
  * </p>
  * 
  * <p>
- * A {@link org.miv.graphstream.ui.GraphViewerRemote} is provided to manipulate the graph viewer
+ * A {@link org.graphstream.ui.GraphViewerRemote} is provided to manipulate the graph viewer
  * from the user thread.
  * </p>
  * 
  * <p>
- * The {@link org.miv.graphstream.ui.graphicGraph} package provides the implementation for the graphic graph, for the style sheet
+ * The {@link org.graphstream.ui.graphicGraph} package provides the implementation for the graphic graph, for the style sheet
  * and style classes as well as for the style sheet parser.
  * </p
  * 

@@ -273,9 +273,15 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 // Access
 
 	@Override
-	protected String getMyGraphId()
+	protected String myGraphId()
 	{
 		return getId();
+	}
+	
+	@Override
+	protected long newEvent()
+	{
+		return listeners.newEvent();
 	}
 	
 	/**
@@ -825,7 +831,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 	}
 
 	@Override
-	protected void attributeChanged( String sourceId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+	protected void attributeChanged( String sourceId, long timeId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{
 //		System.err.printf( "attribute changed on graphic-graph : %s -> %s%n", attribute, newValue );
 																																																		
@@ -1645,6 +1651,11 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 
     		sinkTime = new SinkTime();
     		sourceTime.setSinkTime(sinkTime);
+    	}
+    	
+    	public long newEvent()
+    	{
+    		return sourceTime.newEvent();
     	}
 
     	public void edgeAttributeAdded(String sourceId, long timeId,
