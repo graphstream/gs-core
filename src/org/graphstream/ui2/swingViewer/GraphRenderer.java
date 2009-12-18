@@ -32,6 +32,15 @@ import org.miv.util.geom.Point3;
 
 /**
  * Interface for classes that draw a GraphicGraph in a swing component.
+ * 
+ * <p>There are two rendering mechanisms in the Swing ui package : the viewer and the
+ * renderers. The viewer is a complete architecture to render a graph in a panel or
+ * frame, handling all the details. The renderer architecture is a way to only
+ * render the graph in any surface, handled directly by the developer. When using
+ * the render you are must handle the graphic graph by yourself, but you have a
+ * lot more flexibility.</p>
+ * 
+ * <p>The viewer mechanisms uses graph renderers.</p>
  */
 public interface GraphRenderer
 {
@@ -103,7 +112,7 @@ public interface GraphRenderer
 	public abstract void setBounds( float minx, float miny, float minz, float maxx, float maxy, float maxz );
 	
 	/**
-	 * Redisplay or update the view contents.
+	 * Redisplay or update the graph.
 	 */
 	public abstract void render( Graphics2D g, int width, int height );
 	

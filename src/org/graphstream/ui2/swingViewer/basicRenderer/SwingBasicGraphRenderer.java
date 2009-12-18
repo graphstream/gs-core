@@ -204,6 +204,19 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 	}
 	
 	/**
+	 * Render the background of the graph.
+	 * @param g The Swing graphics.
+	 */
+	protected void renderGraphBackground( Graphics2D g )
+	{
+		StyleGroup group = graph.getStyle();
+		
+		g.setColor( group.getFillColor( 0 ) );
+		g.fillRect( 0, 0, (int)camera.getMetrics().viewport.data[0],
+		                  (int)camera.getMetrics().viewport.data[1] );
+	}
+
+	/**
 	 * Render the element of the graph.
 	 * @param g The Swing graphics.
 	 */
@@ -218,19 +231,6 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 				renderGroup( g, group );
 			}
 		}
-	}
-	
-	/**
-	 * Render the background of the graph.
-	 * @param g The Swing graphics.
-	 */
-	protected void renderGraphBackground( Graphics2D g )
-	{
-		StyleGroup group = graph.getStyle();
-		
-		g.setColor( group.getFillColor( 0 ) );
-		g.fillRect( 0, 0, (int)camera.getMetrics().viewport.data[0],
-		                  (int)camera.getMetrics().viewport.data[1] );
 	}
 	
 	/**

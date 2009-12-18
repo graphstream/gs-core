@@ -52,6 +52,11 @@ public class ImageCache
 	protected Image dummy;
 	
 	/**
+	 * The default singleton image cache instance.
+	 */
+	protected static ImageCache defaultImageCache;
+	
+	/**
 	 * New empty image cache.
 	 */
 	public ImageCache()
@@ -65,6 +70,19 @@ public class ImageCache
 		g2.drawLine( 0, img.getHeight()-1, img.getWidth()-1, 0 );
 		
 		dummy = img;
+	}
+	
+	/**
+	 * Default singleton image cache instance that can be shared. This method and singleton must
+	 * be used only in the Swing thread.
+	 * @return The default singleton image cache instance.
+	 */
+	public static ImageCache defaultImageCache()
+	{
+		if( defaultImageCache == null )
+			defaultImageCache = new ImageCache();
+		
+		return defaultImageCache;
 	}
 	
 	/**

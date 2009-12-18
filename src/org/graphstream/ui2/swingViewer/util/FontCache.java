@@ -50,6 +50,11 @@ public class FontCache
 	protected HashMap<String,FontSlot> cache = new HashMap<String,FontSlot>();
 	
 	/**
+	 * The default font cache.
+	 */
+	public static FontCache defaultFontCache;
+	
+	/**
 	 * New empty font cache.
 	 */
 	public FontCache()
@@ -66,6 +71,19 @@ public class FontCache
 	public Font getDefaultFont()
 	{
 		return defaultFont;
+	}
+	
+	/**
+	 * Default singleton instance for shared font cache. This method and cache can only be used
+	 * in the Swing thread.
+	 * @return The default singleton font cache instance.
+	 */
+	public static FontCache defaultFontCache()
+	{
+		if( defaultFontCache == null )
+			defaultFontCache = new FontCache();
+		
+		return defaultFontCache;
 	}
 	
 	public Font getDefaultFont( StyleConstants.TextStyle style, int size )

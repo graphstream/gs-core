@@ -68,6 +68,10 @@ import org.miv.util.geom.Point3;
  *		time the graph needs to be rendered anew in the canvas.</p>
  *
  *		<p>The {@link #render(Graphics2D)} is called only when a repainting is really needed.</p>
+ *
+ *		<p>All the painting, by default, is deferred to a {@link GraphRenderer} instance. This
+ *		mechanism allows developers that do not want to mess with the viewer/view mechanisms
+ *		to render a graph in any Swing surface.</p>
  * 
  * <h3>The optional frame handling</h3>
  * 
@@ -91,7 +95,7 @@ public class DefaultView extends View implements ComponentListener, WindowListen
 	protected Viewer viewer;
 	
 	/**
-	 * The graph to render.
+	 * The graph to render, shortcut to the viewers reference.
 	 */
 	protected GraphicGraph graph;
 	
@@ -129,7 +133,7 @@ public class DefaultView extends View implements ComponentListener, WindowListen
 	
 	public DefaultView( Viewer viewer, String identifier, GraphRenderer renderer )
 	{
-		super( viewer, identifier );
+		super( identifier );
 		
 		this.viewer   = viewer;
 		this.graph    = viewer.getGraphicGraph();

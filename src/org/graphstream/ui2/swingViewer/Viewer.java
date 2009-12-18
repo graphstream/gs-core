@@ -38,6 +38,36 @@ import org.miv.util.geom.Point3;
 
 /**
  * Set of views on a graphic graph.
+ * 
+ * <p>
+ * The viewer class is in charge of maintaining :
+ * <ul>
+ * 	<li>A "graphic graph" (a special graph that internally stores the graph under the form of style
+ *      sets of "graphic" elements),</li>
+ *	<li>The eventual proxy pipe from which the events come from (but graph events can come from any
+ *      kind of source),</li>
+ *  <li>A default view, and eventually more views on the graphic graph.</li>
+ *  <li>A flag that allows to repaint the view only if the graphic graph changed.<li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * The graphic graph can be created by the viewer or given at construction (to share it with another
+ * viewer).
+ * </p>
+ * 
+ * <p>
+ * Once created, the viewer runs in a loop inside the Swing thread. You cannot call methods on
+ * it directly if you are not in this thread. The only operation that you can use in other threads
+ * is the constructor, the {@link #addView(View)}, {@link #removeView(String)} and the
+ * {@link #close()} methods. Other methods are not protected from concurrent accesses.
+ * </p>
+ * 
+ * <p>
+ * Some constructors allow a "ProxyPipe" as argument. If given, the graphic graph is made listener
+ * of this pipe and the pipe is "pumped" during the view loop. This allows to run algorithms on a
+ * graph in the main thread (or any other thread) while letting the viewer run in the swing thread.
+ * </p>
  */
 public class Viewer implements ActionListener
 {
@@ -61,9 +91,9 @@ public class Viewer implements ActionListener
 	protected GraphicGraph graph;
 	
 	/**
-	 * The source of graph events.
+	 * If we have to pump events by ourself.
 	 */
-	protected ProxyPipe input;
+	protected ProxyPipe pumpPipe;
 	
 	/**
 	 * Timer in the Swing thread.
@@ -97,9 +127,9 @@ public class Viewer implements ActionListener
 
 // Construction
 	
-	public Viewer( ProxyPipe input )
+	public Viewer( ProxyPipe source )
 	{
-		this( new GraphicGraph( "GraphicGraph" ), input );
+		this( new GraphicGraph( String.format( "GraphicGraph_%d", (int)(Math.random()*10000) ) ), source );
 	}
 	
 	public Viewer( GraphicGraph graph )
@@ -107,16 +137,16 @@ public class Viewer implements ActionListener
 		this( graph, null );
 	}
 	
-	protected Viewer( GraphicGraph graph, ProxyPipe input )
+	protected Viewer( GraphicGraph graph, ProxyPipe source )
 	{
-		this.graph  = graph;
-		this.input  = input;
-		this.timer  = new Timer( delay, this );
-		this.images = new ImageCache();
-		this.fonts  = new FontCache();
+		this.graph    = graph;
+		this.pumpPipe = source;
+		this.timer    = new Timer( delay, this );
+		this.images   = ImageCache.defaultImageCache();
+		this.fonts    = FontCache.defaultFontCache();
 		
-		if( input != null )
-			input.addGraphListener( graph );
+		if( source != null )
+			source.addGraphListener( graph );
 
 		timer.setCoalesce( true );
 		timer.setRepeats( true );
@@ -131,14 +161,14 @@ public class Viewer implements ActionListener
 		synchronized( views )
 		{
 			timer.stop();
-			input.removeGraphListener( graph );
+			pumpPipe.removeGraphListener( graph );
 		
 			for( View view: views.values() )
 				view.close( graph );
 
-			graph = null;
-			input = null;
-			timer = null;
+			graph    = null;
+			pumpPipe = null;
+			timer    = null;
 		}
 	}
 	
@@ -229,7 +259,7 @@ public class Viewer implements ActionListener
 		{
 			View old = views.put( view.getId(), view );
 			
-			if( old != null )
+			if( old != null && old != view )
 				old.close( graph );
 		
 			return old;
@@ -253,8 +283,8 @@ public class Viewer implements ActionListener
 	 */
 	public void actionPerformed( ActionEvent e )
     {
-		if( input != null )
-			input.checkEvents();
+		if( pumpPipe != null )
+			pumpPipe.pump();
 
 		boolean changed = graph.graphChangedFlag();
 	

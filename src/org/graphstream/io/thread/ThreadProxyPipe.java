@@ -56,7 +56,7 @@ import org.miv.mbox.MBoxStandalone;
  * </p>
  * 
  * <p>
- * The only restriction is that the output thread must regularly call the {@link #checkEvents()}
+ * The only restriction is that the output thread must regularly call the {@link #pump()}
  * method to dispatch events coming from the source to all outputs registered (see the
  * explanation in {@link org.graphstream.io.ProxyPipe}).
  * </p>
@@ -226,7 +226,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe, MBoxListen
 	 * This method must be called regularly in the output thread to check if the input source sent
 	 * events. If some event occurred, the listeners will be called.
 	 */
-	public void checkEvents()
+	public void pump()
 	{
 		((MBoxStandalone)events).processMessages();
 	}

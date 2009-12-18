@@ -32,6 +32,10 @@ import org.miv.util.geom.Point3;
 
 /**
  * A view on a graphic graph.
+ * 
+ * <p>Basically a view is a Swing panel where a {@link GraphRenderer} renders the graphic
+ * graph. If you are in the Swing thread, you can change the view on the graphic graph
+ * using methods to translate, zoom and rotate the view.</p>
  */
 public abstract class View extends JPanel
 {
@@ -48,7 +52,7 @@ public abstract class View extends JPanel
 	 * New view.
 	 * @param identifier The view unique identifier.
 	 */
-	public View( Viewer viewer, String identifier )
+	public View( String identifier )
 	{
 		id = identifier;
 	}
