@@ -21,7 +21,9 @@
  * 	Guilhelm Savin
  */
 
-package org.graphstream.graph;
+package org.graphstream.ui;
+
+import org.graphstream.graph.GraphListener;
 
 /**
  * Helper class that allows to listen at a graph an either copy it or send events

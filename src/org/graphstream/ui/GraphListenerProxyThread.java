@@ -21,14 +21,13 @@
  * 	Guilhelm Savin
  */
 
-package org.graphstream.graph.implementations;
+package org.graphstream.ui;
 
 import java.util.ArrayList;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.GraphListener;
-import org.graphstream.graph.GraphListenerProxy;
 import org.graphstream.graph.Node;
 import org.miv.mbox.CannotPostException;
 import org.miv.mbox.MBox;
@@ -254,7 +253,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 				{
 					Object val = inputGraph.getAttribute( key );
 	
-					events.post( from, "gaa", gid, key, val );
+					events.post( from, "gaa", gid, -1L, key, val );
 				}
 			}
 
@@ -262,7 +261,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 
 			for( Node node: inputGraph )
 			{
-				events.post( from, "an", gid, node.getId() );
+				events.post( from, "an", gid, -1L, node.getId() );
 
 				if( node.getAttributeKeySet() != null )
 				{
@@ -270,7 +269,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 					{
 						Object val = node.getAttribute( key );
 
-						events.post( from, "naa", gid, node.getId(), key, val );
+						events.post( from, "naa", gid, -1L, node.getId(), key, val );
 					}
 				}
 			}
@@ -279,7 +278,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 
 			for( Edge edge: inputGraph.edgeSet() )
 			{
-				events.post( from, "ae", gid, edge.getId(),
+				events.post( from, "ae", gid, -1L, edge.getId(),
 						edge.getSourceNode().getId(),
 						edge.getTargetNode().getId(),
 						new Boolean( edge.isDirected() ) );
@@ -290,7 +289,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 					{
 						Object val = edge.getAttribute( key );
 
-						events.post( from, "eaa", gid, edge.getId(), key, val );
+						events.post( from, "eaa", gid, -1L, edge.getId(), key, val );
 					}
 				}
 			}
@@ -752,14 +751,17 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 			}
 			else if( data[0].equals( "an" ) )
 			{
+//System.err.printf( "AN ... len=%d", data.length );
 				if( data.length >= 4 && data[1] instanceof String && data[3] instanceof String )
 				{
 					String gid  = (String) data[1];
 					long   eid  = (Long) data[2];
 					String id   = (String) data[3];
+//System.err.printf( " %s %d %s", gid, eid, id );
 			
 					if( outputGraph != null )
 					{
+//System.err.printf( " adding node %s to ggraph ...", id );
 						outputGraph.addNode( id );
 
 						gid = outputGraph.getId();
@@ -768,6 +770,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 					for( GraphListener listener: listeners )
 						listener.nodeAdded( gid, eid, id );
 				}
+//System.err.printf( "%n" );
 			}
 			else if( data[0].equals( "ae" ) )
 			{

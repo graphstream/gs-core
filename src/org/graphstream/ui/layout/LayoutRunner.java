@@ -27,7 +27,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.graphstream.graph.*;
-import org.graphstream.graph.implementations.GraphListenerProxyThread;
+import org.graphstream.ui.GraphListenerProxy;
+import org.graphstream.ui.GraphListenerProxyThread;
 import org.miv.mbox.*;
 
 /**
@@ -54,7 +55,7 @@ import org.miv.mbox.*;
  * </p>
  * 
  * <p>
- * The layout is still a listener on the graph, but a {@link org.graphstream.graph.GraphListenerProxy}
+ * The layout is still a listener on the graph, but a {@link org.graphstream.ui.GraphListenerProxy}
  * is used. You have to pass a graph reference at construction, but this reference is used only
  * to build the graph listener proxy and is then never used (it is therefore safe to call
  * the constructor of this class in the thread of the graph). The proxy does the work of

@@ -27,9 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.GraphListenerProxy;
-import org.graphstream.graph.implementations.GraphListenerProxyCopy;
-import org.graphstream.graph.implementations.GraphListenerProxyThread;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
 import org.graphstream.ui.layout.Layout;

@@ -21,12 +21,11 @@
  * 	Guilhelm Savin
  */
 
-package org.graphstream.graph.implementations;
+package org.graphstream.ui;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.GraphListener;
-import org.graphstream.graph.GraphListenerProxy;
 import org.graphstream.graph.Node;
 
 /**

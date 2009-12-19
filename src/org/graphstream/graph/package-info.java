@@ -64,3 +64,4 @@
  * </p>
  */
 package org.graphstream.graph;
+import org.graphstream.ui.GraphListenerProxy;
