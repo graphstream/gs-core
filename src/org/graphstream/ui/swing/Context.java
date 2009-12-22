@@ -40,8 +40,7 @@ import org.graphstream.ui.graphicGraph.GraphicNode;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
 import org.graphstream.ui.graphicGraph.stylesheet.Value;
 import org.graphstream.ui.swing.FontCache;
-import org.util.InterpolatedFloat;
-
+import org.graphstream.ui.geom.InterpolatedFloat;
 
 /**
  * Shared settings used during graph rendering.
@@ -268,7 +267,7 @@ public class Context
 
 		initFontCache();
 		
-		org.util.Environment.getGlobalEnvironment().initializeFieldsOf( this );
+//		org.util.Environment.getGlobalEnvironment().initializeFieldsOf( this );
 	}
 
 // Access
@@ -563,7 +562,7 @@ public class Context
 	 */
 	public boolean step()
 	{
-		if( org.util.Environment.getGlobalEnvironment().getBooleanParameter( "SwingGraphRenderer.interpolateBounds" ) )
+/*		if( org.util.Environment.getGlobalEnvironment().getBooleanParameter( "SwingGraphRenderer.interpolateBounds" ) )
 		{
 			float gx = gX.getDirectValue();
 			float gy = gY.getDirectValue();
@@ -594,7 +593,7 @@ public class Context
 				return true;
 		}
 		else
-		{
+*/		{
 			float gx = graphX;
 			float gy = graphY;
 			float gw = graphW;

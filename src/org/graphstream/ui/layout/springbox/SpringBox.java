@@ -45,10 +45,9 @@ import org.graphstream.graph.ElementNotFoundException;
 import org.graphstream.graph.IdAlreadyInUseException;
 import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.layout.LayoutListener;
-import org.util.Environment;
-import org.util.geom.Locator;
-import org.util.geom.Point3;
-import org.util.set.FixedArrayList;
+//import org.util.Environment;
+import org.graphstream.ui.geom.Locator;
+import org.graphstream.ui.geom.Point3;
 
 /**
  * Spring and electric forces based layout algorithm.
@@ -320,7 +319,7 @@ public class SpringBox implements Layout
 		// Still check the environment for settings.
 		
 		setQuality( 1 );
-		checkEnvironment();
+//		checkEnvironment();
 		
 		if( viewZone < 2 )
 			viewZone = 2;
@@ -329,7 +328,7 @@ public class SpringBox implements Layout
 		
 //		System.err.printf( "You are using the SpringBox layout algorithm !%n" );
 	}
-	
+/*	
 	protected void checkEnvironment()
 	{
 		Environment env = Environment.getGlobalEnvironment();
@@ -358,7 +357,7 @@ public class SpringBox implements Layout
 			setThreadCount( threads );
 		}
 	}
-
+*/
 	/**
 	 * Creates the space map.
 	 */

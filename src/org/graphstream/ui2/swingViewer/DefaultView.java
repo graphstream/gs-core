@@ -37,7 +37,7 @@ import org.graphstream.ui2.graphicGraph.GraphicElement;
 import org.graphstream.ui2.graphicGraph.GraphicGraph;
 import org.graphstream.ui2.swingViewer.util.MouseManager;
 import org.graphstream.ui2.swingViewer.util.ShortcutManager;
-import org.util.geom.Point3;
+import org.graphstream.ui.geom.Point3;
 
 /**
  * Base for constructing views.

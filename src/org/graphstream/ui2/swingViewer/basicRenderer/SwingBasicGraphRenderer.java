@@ -41,7 +41,7 @@ import org.graphstream.ui2.graphicGraph.stylesheet.Value;
 import org.graphstream.ui2.swingViewer.GraphRendererBase;
 import org.graphstream.ui2.swingViewer.util.Camera;
 import org.graphstream.ui2.swingViewer.util.GraphMetrics;
-import org.util.geom.Point3;
+import org.graphstream.ui.geom.Point3;
 
 /**
  * A very simple view of the graph that respect only a subset of CSS.

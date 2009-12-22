@@ -32,7 +32,7 @@ import org.graphstream.ui2.graphicGraph.GraphicSprite;
 import org.graphstream.ui2.graphicGraph.stylesheet.Style;
 import org.graphstream.ui2.graphicGraph.stylesheet.Values;
 import org.graphstream.ui2.graphicGraph.stylesheet.StyleConstants.Units;
-import org.util.geom.Point3;
+import org.graphstream.ui.geom.Point3;
 
 /**
  * Define how the graph is viewed.

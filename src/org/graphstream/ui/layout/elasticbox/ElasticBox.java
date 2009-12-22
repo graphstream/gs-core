@@ -45,8 +45,7 @@ import org.miv.pherd.ntree.Cell;
 import org.miv.pherd.ntree.CellSpace;
 import org.miv.pherd.ntree.OctreeCellSpace;
 import org.miv.pherd.ntree.QuadtreeCellSpace;
-import org.util.geom.Point3;
-import org.util.geom.Vector3;
+import org.graphstream.ui.geom.*;
 
 /**
  * An implementation of a graph layout that mostly follows the Fruchterman-Reingold
@@ -351,12 +350,14 @@ public class ElasticBox implements Layout, ParticleBoxListener
 
 	public Point3 getLowPoint()
 	{
-		return nodes.getNTree().getLowestPoint();
+		org.miv.pherd.geom.Point3 p = nodes.getNTree().getLowestPoint(); 
+		return new Point3( p.x, p.y, p.z );
 	}
 
 	public Point3 getHiPoint()
 	{
-		return nodes.getNTree().getHighestPoint();
+		org.miv.pherd.geom.Point3 p = nodes.getNTree().getHighestPoint(); 
+		return new Point3( p.x, p.y, p.z );
 	}
 
 	public long getLastStepTime()
@@ -673,7 +674,7 @@ public class ElasticBox implements Layout, ParticleBoxListener
 			node.setWeight( weight );
 	}
 
-	protected void removeNode( String id ) throws NotFoundException
+	protected void removeNode( String id )// throws NotFoundException
 	{
 		Node node = (Node) nodes.removeParticle( id );
 		
@@ -732,7 +733,7 @@ public class ElasticBox implements Layout, ParticleBoxListener
 			edge.weight = weight;
 	}
 
-	protected void removeEdge( String id ) throws NotFoundException
+	protected void removeEdge( String id )// throws NotFoundException
 	{
 		Edge e = edges.remove( id );
 		
@@ -1320,8 +1321,8 @@ protected class Edge
 	{
 		if( ! ignored )
 		{
-			Point3 p0 = node0.getPosition();
-			Point3 p1 = node1.getPosition();
+			org.miv.pherd.geom.Point3 p0 = node0.getPosition();
+			org.miv.pherd.geom.Point3 p1 = node1.getPosition();
 		
 			spring.set( p1.x - p0.x, p1.y - p0.y, is3D ? p1.z - p0.z : 0 );
 

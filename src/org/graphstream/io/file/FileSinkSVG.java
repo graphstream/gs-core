@@ -29,7 +29,7 @@ import java.util.Iterator;
 
 import org.graphstream.ui.graphicGraph.stylesheet.Rule;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleSheet;
-import org.util.geom.Point3;
+import org.graphstream.ui.geom.Point3;
 
 /**
  * Transforms a graph into a SVG description.

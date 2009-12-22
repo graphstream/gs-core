@@ -41,7 +41,6 @@ import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.GraphicNode;
 import org.graphstream.ui.graphicGraph.GraphicSprite;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
-import org.util.InvalidOperationException;
 
 /**
  * Swing renderer for sprites.
@@ -97,7 +96,6 @@ public class SwingSpriteRenderer
 // Commands
 
 	public void renderSprites( GraphicGraph graph )
-		throws InvalidOperationException
 	{
 		Graphics2D g2 = ctx.g2;
 		
@@ -109,7 +107,7 @@ public class SwingSpriteRenderer
 		}
 	}
 
-	public void renderSprites( Map<String,GraphicSprite> sprites ) throws InvalidOperationException
+	public void renderSprites( Map<String,GraphicSprite> sprites )
 	{
 		if( ctx != null )
 		{

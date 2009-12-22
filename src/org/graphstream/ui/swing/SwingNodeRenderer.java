@@ -34,7 +34,6 @@ import java.util.Map;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.GraphicNode;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
-import org.util.InvalidOperationException;
 
 
 /**
@@ -77,7 +76,7 @@ public class SwingNodeRenderer
 
 // Commands
 
-	public void renderNode( GraphicNode node ) throws InvalidOperationException
+	public void renderNode( GraphicNode node )
 	{
 		if( ctx != null && ctx.drawNodes )
 		{
@@ -85,7 +84,7 @@ public class SwingNodeRenderer
 		}
 	}
 
-	public void renderNodes( GraphicGraph graph ) throws InvalidOperationException
+	public void renderNodes( GraphicGraph graph )
 	{
 		Graphics2D g2 = ctx.g2;
 		
@@ -95,7 +94,7 @@ public class SwingNodeRenderer
 		}
 	}
 
-	public void renderNodes( Map<String,GraphicNode> nodes ) throws InvalidOperationException
+	public void renderNodes( Map<String,GraphicNode> nodes )
 	{
 		if( ctx != null && ctx.drawNodes )
 		{

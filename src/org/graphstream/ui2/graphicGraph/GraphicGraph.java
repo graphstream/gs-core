@@ -45,7 +45,7 @@ import org.graphstream.ui2.graphicGraph.stylesheet.StyleSheet;
 import org.graphstream.ui2.graphicGraph.stylesheet.Value;
 import org.graphstream.ui2.graphicGraph.stylesheet.Values;
 import org.graphstream.ui2.graphicGraph.stylesheet.StyleConstants.Units;
-import org.util.geom.Point3;
+import org.graphstream.ui.geom.Point3;
 
 /**
  * Graph representation used in display classes.

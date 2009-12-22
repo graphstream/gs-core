@@ -31,8 +31,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Random;
 
-import org.graphstream.graph.NotFoundException;
-import org.graphstream.graph.SingletonException;
 import org.graphstream.io.SourceBase;
 import org.graphstream.ui2.layout.Layout;
 import org.graphstream.ui2.layout.LayoutListener;
@@ -43,7 +41,7 @@ import org.miv.pherd.ntree.BarycenterCellData;
 import org.miv.pherd.ntree.CellSpace;
 import org.miv.pherd.ntree.OctreeCellSpace;
 import org.miv.pherd.ntree.QuadtreeCellSpace;
-import org.util.geom.Point3;
+import org.graphstream.ui.geom.Point3;
 
 public class SpringBox extends SourceBase implements Layout, ParticleBoxListener
 {
@@ -240,12 +238,14 @@ public class SpringBox extends SourceBase implements Layout, ParticleBoxListener
 
 	public Point3 getLowPoint()
 	{
-		return nodes.getNTree().getLowestPoint();
+		org.miv.pherd.geom.Point3 p = nodes.getNTree().getLowestPoint(); 
+		return new Point3( p.x, p.y, p.z );
 	}
 
 	public Point3 getHiPoint()
 	{
-		return nodes.getNTree().getHighestPoint();
+		org.miv.pherd.geom.Point3 p = nodes.getNTree().getHighestPoint(); 
+		return new Point3( p.x, p.y, p.z );
 	}
 	
 	public ParticleBox getSpatialIndex()
@@ -463,7 +463,7 @@ public class SpringBox extends SourceBase implements Layout, ParticleBoxListener
 			node.setWeight( weight );
 	}
 
-	protected void removeNode( String sourceId, String id ) throws NotFoundException
+	protected void removeNode( String sourceId, String id )
 	{
 		NodeParticle node = (NodeParticle) nodes.removeParticle( id );
 		
@@ -520,7 +520,7 @@ public class SpringBox extends SourceBase implements Layout, ParticleBoxListener
 			edge.weight = weight;
 	}
 
-	protected void removeEdge( String sourceId, String id ) throws NotFoundException
+	protected void removeEdge( String sourceId, String id )
 	{
 		EdgeSpring e = edges.remove( id );
 		

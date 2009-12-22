@@ -38,8 +38,7 @@ import org.graphstream.ui.graphicGraph.GraphicEdge;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.GraphicNode;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
-import org.util.InvalidOperationException;
-import org.util.geom.Point3;
+import org.graphstream.ui.geom.Point3;
 
 /**
  * Swing EdgeRenderer.
@@ -87,7 +86,6 @@ public class SwingEdgeRenderer
 	}
 
 	public void renderEdge( GraphicEdge edge )
-		throws InvalidOperationException
 	{
 		if( ctx != null && ctx.drawEdges )
 		{
@@ -99,7 +97,7 @@ public class SwingEdgeRenderer
 		}
 	}
 
-	public void renderEdges( GraphicGraph graph ) throws InvalidOperationException
+	public void renderEdges( GraphicGraph graph )
 	{
 		if( ctx != null )
 		{
@@ -112,7 +110,7 @@ public class SwingEdgeRenderer
 		}
 	}
 
-	public void renderEdges( Map<String,GraphicEdge> edges ) throws InvalidOperationException
+	public void renderEdges( Map<String,GraphicEdge> edges )
 	{
 		if( ctx != null && ctx.drawEdges )
 		{
