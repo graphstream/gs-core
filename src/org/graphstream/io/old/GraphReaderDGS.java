@@ -23,13 +23,20 @@
 
 package org.graphstream.io.old;
 
-import org.graphstream.graph.*;
-import org.graphstream.io.GraphParseException;
-import org.miv.util.NotFoundException;
-
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StreamTokenizer;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
+
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.NotFoundException;
+import org.graphstream.io.GraphParseException;
 
 /**
  * Graph reader for the Dynamic Graph Stream format.

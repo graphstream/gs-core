@@ -28,7 +28,7 @@ import javax.swing.JPanel;
 
 import org.graphstream.ui2.graphicGraph.GraphicElement;
 import org.graphstream.ui2.graphicGraph.GraphicGraph;
-import org.miv.util.geom.Point3;
+import org.util.geom.Point3;
 
 /**
  * A view on a graphic graph.

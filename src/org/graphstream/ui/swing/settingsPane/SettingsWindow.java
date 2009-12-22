@@ -23,9 +23,12 @@
 
 package org.graphstream.ui.swing.settingsPane;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
 
 import org.graphstream.ui.swing.SwingGraphViewer;
 

@@ -26,7 +26,10 @@ package org.graphstream.io.old;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.graphstream.graph.*;
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.GraphListener;
+import org.graphstream.graph.Node;
 
 /**
  * Dynamically write the contents of a graph to a file, during the graph

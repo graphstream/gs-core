@@ -26,7 +26,6 @@ package org.graphstream.io.rmi;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.graphstream.graph.GraphAttributesListener;

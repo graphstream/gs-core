@@ -23,9 +23,14 @@
 
 package org.graphstream.ui.layout;
 
-import org.graphstream.graph.*;
-import org.miv.mbox.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
+
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+import org.miv.mbox.MBoxListener;
+import org.miv.mbox.MBoxStandalone;
 
 /**
  * Implementation of the layout listener that can be executed in

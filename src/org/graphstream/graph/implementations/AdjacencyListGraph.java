@@ -35,6 +35,8 @@ import org.graphstream.graph.GraphElementsListener;
 import org.graphstream.graph.GraphListener;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.NodeFactory;
+import org.graphstream.graph.ElementNotFoundException;
+import org.graphstream.graph.IdAlreadyInUseException;
 import org.graphstream.io.GraphParseException;
 import org.graphstream.io.Pipe;
 import org.graphstream.io.SourceBase;
@@ -46,8 +48,6 @@ import org.graphstream.io.file.FileSourceFactory;
 import org.graphstream.io.sync.SinkTime;
 import org.graphstream.ui.GraphViewer;
 import org.graphstream.ui.GraphViewerRemote;
-import org.miv.util.NotFoundException;
-import org.miv.util.SingletonException;
 
 /**
  * <p>
@@ -265,12 +265,12 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		this.nodeFactory = nf;
 	}
 
-	public Edge addEdge( String id, String node1, String node2 ) throws SingletonException, NotFoundException
+	public Edge addEdge( String id, String node1, String node2 ) throws IdAlreadyInUseException, ElementNotFoundException
 	{
 		return addEdge( id, node1, node2, false );
 	}
 
-	protected Edge addEdge_( String sourceId, long timeId, String edgeId, String from, String to, boolean directed ) throws SingletonException, NotFoundException
+	protected Edge addEdge_( String sourceId, long timeId, String edgeId, String from, String to, boolean directed ) throws IdAlreadyInUseException, ElementNotFoundException
 	{
 		Node src;
 		Node trg;
@@ -282,7 +282,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		{
 			if( strictChecking )
 			{
-				throw new NotFoundException( "cannot make edge from '" + from + "' to '" + to + "' since node '" + from
+				throw new ElementNotFoundException( "cannot make edge from '" + from + "' to '" + to + "' since node '" + from
 						+ "' is not part of this graph" );
 			}
 			else if( autoCreate )
@@ -295,7 +295,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		{
 			if( strictChecking )
 			{
-				throw new NotFoundException( "cannot make edge from '" + from + "' to '" + to + "' since node '" + to
+				throw new ElementNotFoundException( "cannot make edge from '" + from + "' to '" + to + "' since node '" + to
 						+ "' is not part of this graph" );
 			}
 			else if( autoCreate )
@@ -312,7 +312,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 			{
 				if( strictChecking )
 				{
-					throw new SingletonException( "id '" + edgeId + "' already used, cannot add edge" );
+					throw new IdAlreadyInUseException( "id '" + edgeId + "' already used, cannot add edge" );
 				}
 				else
 				{
@@ -323,7 +323,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 			{
 				if( ( (AdjacencyListNode) src ).hasEdgeToward( trg ) != null )
 				{
-					throw new SingletonException( "Cannot add edge between " + from + " and " + to + ". A link already exists." );
+					throw new IdAlreadyInUseException( "Cannot add edge between " + from + " and " + to + ". A link already exists." );
 				}
 				else
 				{
@@ -345,7 +345,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity O(log(n)) with n be the number of edges in the graph.
 	 */
-	public Edge addEdge( String id, String from, String to, boolean directed ) throws SingletonException, NotFoundException
+	public Edge addEdge( String id, String from, String to, boolean directed ) throws IdAlreadyInUseException, ElementNotFoundException
 	{
 		Edge e = addEdge_( getId(), newEvent(), id, from, to, directed );
 		return e;
@@ -354,14 +354,14 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity O(log(n)) with n be the number of nodes in the graph.
 	 */
-	public Node addNode( String id ) throws SingletonException
+	public Node addNode( String id ) throws IdAlreadyInUseException
 	{
 		Node n = addNode_( getId(), newEvent(), id );
 		
 		return n;
 	}
 
-	protected Node addNode_( String sourceId, long timeId, String nodeId ) throws SingletonException
+	protected Node addNode_( String sourceId, long timeId, String nodeId ) throws IdAlreadyInUseException
 	{
 		Node node;
 		Node old = lookForNode( nodeId );
@@ -369,7 +369,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		{
 			if( strictChecking )
 			{
-				throw new SingletonException( "id '" + nodeId + "' already used, cannot add node" );
+				throw new IdAlreadyInUseException( "id '" + nodeId + "' already used, cannot add node" );
 			}
 			else
 			{
@@ -507,7 +507,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity O( 2*log(n)+log(m) ) with n the number of nodes and m the number of edges in the graph.
 	 */
-	public Edge removeEdge( String from, String to ) throws NotFoundException
+	public Edge removeEdge( String from, String to ) throws ElementNotFoundException
 	{
 		return removeEdge_( getId(), newEvent(), from, to );
 	}
@@ -539,7 +539,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity O( 2*log(m) ) with  m the number of edges in the graph.
 	 */
-	public Edge removeEdge( String id ) throws NotFoundException
+	public Edge removeEdge( String id ) throws ElementNotFoundException
 	{
 		Edge edge = lookForEdge( id );
 		
@@ -554,7 +554,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 * @param edge The reference of the edge to remove.
 	 * @complexity O( log(m) ) with  m the number of edges in the graph.
 	 */
-	public Edge removeEdge( Edge edge ) throws NotFoundException
+	public Edge removeEdge( Edge edge ) throws ElementNotFoundException
 	{
 		return removeEdge_( getId(), newEvent(), edge );
 	}
@@ -576,7 +576,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity 0( 2*log(n) ) with n the number of nodes in the graph.
 	 */
-	public Node removeNode( String id ) throws NotFoundException
+	public Node removeNode( String id ) throws ElementNotFoundException
 	{
 		Node node = lookForNode( id );
 		if( node != null )
@@ -592,7 +592,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 * @param node The reference of the node to be removed.
 	 * @complexity 0( log(n) ) with n the number of nodes in the graph.
 	 */
-	public Node removeNode( Node node ) throws NotFoundException
+	public Node removeNode( Node node ) throws ElementNotFoundException
 	{
 		return removeNode_( getId(), newEvent(), node );
 	}
@@ -610,7 +610,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		}
 
 		if( strictChecking )
-			throw new NotFoundException( "node not found, cannot remove" );
+			throw new ElementNotFoundException( "node not found, cannot remove" );
 
 		return null;
 	}
@@ -731,9 +731,9 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
     }
 
 	public void read( String filename )
-		throws IOException, GraphParseException, NotFoundException
+		throws IOException, GraphParseException, ElementNotFoundException
 	{
-		FileSource input = FileSourceFactory.inputFor( filename );
+		FileSource input = FileSourceFactory.sourceFor( filename );
 		input.addGraphListener( this );
 		read( input, filename );
 	}
@@ -746,7 +746,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	public void write( String filename )
 		throws IOException
 	{
-		FileSink output = FileSinkFactory.outputFor( filename );
+		FileSink output = FileSinkFactory.sinkFor( filename );
 		write( output, filename );
 	}	
 

@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Random;
 
+import org.graphstream.graph.ElementNotFoundException;
+import org.graphstream.graph.IdAlreadyInUseException;
 import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.layout.LayoutListener;
 import org.miv.pherd.ParticleBox;
@@ -40,10 +42,7 @@ import org.miv.pherd.ntree.BarycenterCellData;
 import org.miv.pherd.ntree.CellSpace;
 import org.miv.pherd.ntree.OctreeCellSpace;
 import org.miv.pherd.ntree.QuadtreeCellSpace;
-import org.miv.util.Environment;
-import org.miv.util.NotFoundException;
-import org.miv.util.SingletonException;
-import org.miv.util.geom.Point3;
+import org.util.geom.Point3;
 
 public class SpringBox implements Layout, ParticleBoxListener
 {
@@ -213,7 +212,7 @@ public class SpringBox implements Layout, ParticleBoxListener
 		this.is3D   = is3D;
 		this.random = randomNumberGenerator;
 
-		checkEnvironment();
+		//checkEnvironment();
 		
 		if( is3D )
 		     space = new OctreeCellSpace( new Anchor( -1, -1, -1 ), new Anchor( 1, 1, 1 ) );
@@ -227,13 +226,13 @@ public class SpringBox implements Layout, ParticleBoxListener
 		System.err.printf( "You are using the SpringBox (sur le retour) layout algorithm !%n" );
 	}
 	
-	protected void checkEnvironment()
-	{
-		Environment env = Environment.getGlobalEnvironment();
-		
-		if( env.hasParameter( "Layout.3d" ) )
-			this.is3D = env.getBooleanParameter( "Layout.3d" );
-	}
+//	protected void checkEnvironment()
+//	{
+//		Environment env = Environment.getGlobalEnvironment();
+//		
+//		if( env.hasParameter( "Layout.3d" ) )
+//			this.is3D = env.getBooleanParameter( "Layout.3d" );
+//	}
 
 // Access
 
@@ -428,7 +427,7 @@ public class SpringBox implements Layout, ParticleBoxListener
 
 // Graph representation
 	
-	protected void addNode( String id ) throws SingletonException
+	protected void addNode( String id ) throws IdAlreadyInUseException
 	{
 		nodes.addParticle( new NodeParticle( this, id ) );
 	}
@@ -462,7 +461,7 @@ public class SpringBox implements Layout, ParticleBoxListener
 			node.setWeight( weight );
 	}
 
-	protected void removeNode( String id ) throws NotFoundException
+	protected void removeNode( String id ) throws ElementNotFoundException
 	{
 		NodeParticle node = (NodeParticle) nodes.removeParticle( id );
 		
@@ -473,7 +472,7 @@ public class SpringBox implements Layout, ParticleBoxListener
 	}
 
 	protected void addEdge( String id, String from, String to, boolean directed )
-			throws NotFoundException, SingletonException
+			throws ElementNotFoundException, IdAlreadyInUseException
 	{
 		NodeParticle n0 = (NodeParticle) nodes.getParticle( from );
 		NodeParticle n1 = (NodeParticle) nodes.getParticle( to );
@@ -519,7 +518,7 @@ public class SpringBox implements Layout, ParticleBoxListener
 			edge.weight = weight;
 	}
 
-	protected void removeEdge( String id ) throws NotFoundException
+	protected void removeEdge( String id ) throws ElementNotFoundException
 	{
 		EdgeSpring e = edges.remove( id );
 		

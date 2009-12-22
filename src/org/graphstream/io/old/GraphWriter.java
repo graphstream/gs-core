@@ -23,8 +23,9 @@
 
 package org.graphstream.io.old;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Map;
 
 /**
  * Graph writer interface.

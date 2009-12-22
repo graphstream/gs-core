@@ -31,7 +31,7 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Element;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
-import org.miv.util.SingletonException;
+import org.graphstream.graph.IdAlreadyInUseException;
 
 /**
  * Full implementation of {@link org.graphstream.graph.Node} that allows multiple
@@ -201,7 +201,7 @@ public class MultiNode extends DefaultNode
 	 */
 	@Override
 	protected void registerEdge( Edge edge )
-		throws IllegalArgumentException, SingletonException
+		throws IllegalArgumentException, IdAlreadyInUseException
 	{
 		// If the edge or an edge with the same id is already registered.
 

@@ -23,12 +23,21 @@
 
 package org.graphstream.io.old;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StreamTokenizer;
+import java.util.ArrayList;
+import java.util.HashMap;
 
+import org.graphstream.graph.NotFoundException;
 import org.graphstream.io.GraphParseException;
-import org.miv.util.*;
-import org.miv.util.geom.*;
+import org.util.geom.Bounds3;
+import org.util.geom.Point3;
 
 /**
  * Base for various graph readers.

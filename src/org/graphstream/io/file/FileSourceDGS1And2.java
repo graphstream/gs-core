@@ -34,8 +34,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
 
-import org.miv.util.NotFoundException;
-
 public class FileSourceDGS1And2 extends FileSourceBase
 {
 // Constants
@@ -522,7 +520,7 @@ public class FileSourceDGS1And2 extends FileSourceBase
 	}
 
 	@Override
-	public void begin( String filename ) throws IOException, NotFoundException
+	public void begin( String filename ) throws IOException
 	{
 		super.begin( filename );
 		init();

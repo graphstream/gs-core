@@ -221,13 +221,13 @@ public interface Element
 	 */
 	public Iterable<String> getAttributeKeySet();
 	
-	/**
-	 * Return a constant view of the attribute set under the form of a map.
-	 * The map can be iterated on, browsed, but not modified.
-	 * @return The set of attributes.
-	 */
-	@Deprecated
-	public Map<String, Object> getAttributeMap();
+//	/**
+//	 * Return a constant view of the attribute set under the form of a map.
+//	 * The map can be iterated on, browsed, but not modified.
+//	 * @return The set of attributes.
+//	 */
+//	@Deprecated
+//	public Map<String, Object> getAttributeMap();
 
 	/**
 	 * Remove all registered attributes. This includes numbers, labels and

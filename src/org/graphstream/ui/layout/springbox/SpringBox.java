@@ -23,13 +23,32 @@
 
 package org.graphstream.ui.layout.springbox;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.StreamTokenizer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.InputMismatchException;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
 
-import org.graphstream.ui.layout.*;
-import org.miv.util.*;
-import org.miv.util.geom.*;
-import org.miv.util.set.*;
+import org.graphstream.graph.ElementNotFoundException;
+import org.graphstream.graph.IdAlreadyInUseException;
+import org.graphstream.ui.layout.Layout;
+import org.graphstream.ui.layout.LayoutListener;
+import org.util.Environment;
+import org.util.geom.Locator;
+import org.util.geom.Point3;
+import org.util.set.FixedArrayList;
 
 /**
  * Spring and electric forces based layout algorithm.
@@ -980,9 +999,9 @@ public class SpringBox implements Layout
 	/**
 	 * Add a node id to the graph description.
 	 * @param id Identifier of the node.
-	 * @throws SingletonException If a node with this id already exists.
+	 * @throws IdAlreadyInUseException If a node with this id already exists.
 	 */
-	public Node addNode( String id ) throws SingletonException
+	public Node addNode( String id ) throws IdAlreadyInUseException
 	{
 		Node n = new Node( id, lo, hi );
 		Node old = nodes.put( id, n );
@@ -992,7 +1011,7 @@ public class SpringBox implements Layout
 			nodes.put( id, old );
 			
 			if( strict )
-				throw new SingletonException( "a node with id '" + id
+				throw new IdAlreadyInUseException( "a node with id '" + id
 					+ "' already exists" );
 		}
 		else
@@ -1007,9 +1026,9 @@ public class SpringBox implements Layout
 	/**
 	 * Remove a node from the graph description.
 	 * @param id Identifier of the node.
-	 * @throws NotFoundException If no node matches id.
+	 * @throws ElementNotFoundException If no node matches id.
 	 */
-	public void removeNode( String id ) throws NotFoundException
+	public void removeNode( String id ) throws ElementNotFoundException
 	{
 		Node n = nodes.get( id );
 
@@ -1029,7 +1048,7 @@ public class SpringBox implements Layout
 		else
 		{
 			if( strict )
-				throw new NotFoundException( "cannot remove node '" + id + "'" );
+				throw new ElementNotFoundException( "cannot remove node '" + id + "'" );
 		}
 	}
 
@@ -1042,7 +1061,7 @@ public class SpringBox implements Layout
 	 *        node.
 	 */
 	public void addEdge( String id, String from, String to, boolean directed )
-			throws NotFoundException, SingletonException
+			throws ElementNotFoundException, IdAlreadyInUseException
 	{
 		Node n0 = nodes.get( from );
 		Node n1 = nodes.get( to );
@@ -1081,7 +1100,7 @@ public class SpringBox implements Layout
 				edges.put( id, old );
 				
 				if( strict )
-					throw new SingletonException( "an edge with id '" + id
+					throw new IdAlreadyInUseException( "an edge with id '" + id
 						+ "' already exists" );
 			}
 			else
@@ -1095,7 +1114,7 @@ public class SpringBox implements Layout
 		}
 		else
 		{
-			throw new NotFoundException( "node '" + from + "' or node '" + to
+			throw new ElementNotFoundException( "node '" + from + "' or node '" + to
 					+ "' not found when adding edge '" + id + "'" );
 		}
 		
@@ -1170,7 +1189,7 @@ public class SpringBox implements Layout
 	 * Remove the edge id.
 	 * @param id Identifier of the edge.
 	 */
-	public void removeEdge( String id ) throws NotFoundException
+	public void removeEdge( String id ) throws ElementNotFoundException
 	{
 		Edge e = edges.remove( id );
 
@@ -1184,7 +1203,7 @@ public class SpringBox implements Layout
 		else
 		{
 			if( strict )
-				throw new NotFoundException( "cannot remove edge '" + id + "'" );
+				throw new ElementNotFoundException( "cannot remove edge '" + id + "'" );
 		}
 	}
 

@@ -28,7 +28,7 @@ import java.util.ArrayList;
 
 import org.graphstream.ui2.graphicGraph.GraphicElement;
 import org.graphstream.ui2.graphicGraph.GraphicGraph;
-import org.miv.util.geom.Point3;
+import org.util.geom.Point3;
 
 /**
  * Interface for classes that draw a GraphicGraph in a swing component.

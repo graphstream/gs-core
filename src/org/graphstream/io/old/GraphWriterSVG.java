@@ -35,8 +35,7 @@ import java.util.Map;
 
 import org.graphstream.ui.graphicGraph.stylesheet.Rule;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleSheet;
-
-import org.miv.util.geom.Point3;
+import org.util.geom.Point3;
 
 /**
  * Transforms a graph into a SVG description.

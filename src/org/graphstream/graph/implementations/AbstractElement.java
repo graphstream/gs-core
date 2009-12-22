@@ -22,11 +22,13 @@
  */
 package org.graphstream.graph.implementations;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.graphstream.graph.CompoundAttribute;
 import org.graphstream.graph.Element;
-import org.miv.util.set.*;
 
 /**
  * A base implementation of an element.
@@ -55,11 +57,11 @@ public abstract class AbstractElement implements Element
 	 */
 	protected HashMap<String,Object> attributes = null;
 	
-	/**
-	 * View of the internal hash map that only allows to browse element but not
-	 * to change them.
-	 */
-	protected ConstMap<String,Object> constMap = null;
+//	/**
+//	 * View of the internal hash map that only allows to browse element but not
+//	 * to change them.
+//	 */
+//	protected ConstMap<String,Object> constMap = null;
 
 // Construction
 
@@ -319,18 +321,18 @@ public abstract class AbstractElement implements Element
 		return null;
 	}
 	
-	public Map<String,Object> getAttributeMap()
-	{
-		if( attributes != null )
-		{
-			if( constMap == null )
-				constMap = new ConstMap<String,Object>( attributes );
-
-			return constMap;
-		}
-	
-		return null;
-	}
+//	public Map<String,Object> getAttributeMap()
+//	{
+//		if( attributes != null )
+//		{
+//			if( constMap == null )
+//				constMap = new ConstMap<String,Object>( attributes );
+//
+//			return constMap;
+//		}
+//	
+//		return null;
+//	}
 	
 	/**
 	 * Override the Object method

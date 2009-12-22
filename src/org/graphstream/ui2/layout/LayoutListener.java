@@ -23,7 +23,7 @@
 
 package org.graphstream.ui2.layout;
 
-import java.util.*;
+import java.util.Map;
 
 /**
  * Listener for layout algorithms.

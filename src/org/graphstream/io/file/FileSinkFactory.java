@@ -22,7 +22,6 @@
 
 package org.graphstream.io.file;
 
-import org.miv.util.NotFoundException;
 
 /**
  * Try to instantiate the correct writer given a graph filename.
@@ -39,10 +38,9 @@ public class FileSinkFactory
 	 * Look at the file name given and its extension and propose a file output for the format
 	 * that match this extension.
 	 * @param filename The file name where the graph will be written.
-	 * @return A file output.
-	 * @throws NotFoundException If no file output can be found for the given file name.
-	 */
-	public static FileSink outputFor( String filename ) throws NotFoundException
+	 * @return A file sink or null.
+	*/
+	public static FileSink sinkFor( String filename ) 
 	{
 		String fc = new String( filename );
 		filename = filename.toLowerCase();
@@ -58,6 +56,6 @@ public class FileSinkFactory
 //			return new FileOutputSVG();
 		// TODO
 		
-		throw new NotFoundException( "cannot find a suitable writer format for the given filemane "+fc );
+		return null;
 	}
 }

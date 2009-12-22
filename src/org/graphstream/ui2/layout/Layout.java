@@ -24,7 +24,7 @@
 package org.graphstream.ui2.layout;
 
 import org.graphstream.io.Pipe;
-import org.miv.util.geom.*;
+import org.util.geom.Point3;
 
 /**
  * Layout algorithm interface.

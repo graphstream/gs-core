@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Random;
 
+import org.graphstream.graph.NotFoundException;
+import org.graphstream.graph.SingletonException;
 import org.graphstream.io.SourceBase;
 import org.graphstream.ui2.layout.Layout;
 import org.graphstream.ui2.layout.LayoutListener;
@@ -41,10 +43,7 @@ import org.miv.pherd.ntree.BarycenterCellData;
 import org.miv.pherd.ntree.CellSpace;
 import org.miv.pherd.ntree.OctreeCellSpace;
 import org.miv.pherd.ntree.QuadtreeCellSpace;
-import org.miv.util.Environment;
-import org.miv.util.NotFoundException;
-import org.miv.util.SingletonException;
-import org.miv.util.geom.Point3;
+import org.util.geom.Point3;
 
 public class SpringBox extends SourceBase implements Layout, ParticleBoxListener
 {
@@ -215,7 +214,7 @@ public class SpringBox extends SourceBase implements Layout, ParticleBoxListener
 		this.is3D   = is3D;
 		this.random = randomNumberGenerator;
 
-		checkEnvironment();
+		//checkEnvironment();
 		
 		if( is3D )
 		     space = new OctreeCellSpace( new Anchor( -1, -1, -1 ), new Anchor( 1, 1, 1 ) );
@@ -229,13 +228,13 @@ public class SpringBox extends SourceBase implements Layout, ParticleBoxListener
 		System.err.printf( "You are using the SpringBox (sur le retour) layout algorithm !%n" );
 	}
 	
-	protected void checkEnvironment()
-	{
-		Environment env = Environment.getGlobalEnvironment();
-		
-		if( env.hasParameter( "Layout.3d" ) )
-			this.is3D = env.getBooleanParameter( "Layout.3d" );
-	}
+//	protected void checkEnvironment()
+//	{
+//		Environment env = Environment.getGlobalEnvironment();
+//		
+//		if( env.hasParameter( "Layout.3d" ) )
+//			this.is3D = env.getBooleanParameter( "Layout.3d" );
+//	}
 
 // Access
 

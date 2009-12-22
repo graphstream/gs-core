@@ -23,7 +23,7 @@
 
 package org.graphstream.io.old;
 
-import org.miv.util.NotFoundException;
+import org.graphstream.graph.NotFoundException;
 
 /**
  * Try to instantiate the correct writer given a graph filename.

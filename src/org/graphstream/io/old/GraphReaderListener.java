@@ -23,7 +23,7 @@
 
 package org.graphstream.io.old;
 
-import java.util.*;
+import java.util.Map;
 
 import org.graphstream.io.GraphParseException;
 

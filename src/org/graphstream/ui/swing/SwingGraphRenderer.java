@@ -23,36 +23,50 @@
 
 package org.graphstream.ui.swing;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
-import java.awt.image.*;
-import java.io.*;
-
-import javax.imageio.*;
-
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
 
-import javax.swing.*;
+import javax.imageio.ImageIO;
+import javax.swing.JPanel;
 
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.svggen.SVGGraphics2DIOException;
 import org.graphstream.ui.GraphViewer;
-import org.graphstream.ui.graphicGraph.*;
+import org.graphstream.ui.graphicGraph.GraphicEdge;
+import org.graphstream.ui.graphicGraph.GraphicElement;
+import org.graphstream.ui.graphicGraph.GraphicGraph;
+import org.graphstream.ui.graphicGraph.GraphicNode;
+import org.graphstream.ui.graphicGraph.GraphicSprite;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
 import org.graphstream.ui.graphicGraph.stylesheet.Style.TextStyle;
 import org.graphstream.ui.layout.LayoutListenerProxy;
 import org.graphstream.ui.swing.settingsPane.SettingsWindow;
-
-//import org.miv.graphstream.ui2.swing.FpsCounter;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 

@@ -23,15 +23,18 @@
 
 package org.graphstream.ui.swing;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.util.Map;
 
-import org.graphstream.ui.graphicGraph.*;
+import org.graphstream.ui.graphicGraph.GraphicGraph;
+import org.graphstream.ui.graphicGraph.GraphicNode;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
-import org.miv.util.*;
+import org.util.InvalidOperationException;
 
 
 /**

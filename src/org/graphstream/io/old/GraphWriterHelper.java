@@ -23,10 +23,12 @@
 
 package org.graphstream.io.old;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.Iterator;
 
-import org.graphstream.graph.*;
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
 
 /**
  * Helper to easily output a Graph instance to a file.

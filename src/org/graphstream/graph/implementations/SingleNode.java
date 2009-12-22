@@ -29,7 +29,7 @@ import java.util.Iterator;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
-import org.miv.util.SingletonException;
+import org.graphstream.graph.IdAlreadyInUseException;
 
 /**
  * Full implementation of {@link org.graphstream.graph.Node} that allows
@@ -186,7 +186,7 @@ public class SingleNode extends DefaultNode
 	 */
 	@Override
 	protected void registerEdge( Edge edge )
-		throws IllegalArgumentException, SingletonException
+		throws IllegalArgumentException, IdAlreadyInUseException
 	{
 		// If the edge or an edge with the same id is already registered.
 
@@ -195,7 +195,7 @@ public class SingleNode extends DefaultNode
 		if( other != this )	// case of loop edges
 		{
 			if( getEdgeToward( ( other ).getId() ) != null || getEdgeFrom( (  other ).getId() ) != null )
-				throw new SingletonException( "multi edges are not supported: edge between node '"+getId()+"' and '"+(  other ).getId()+"' already exists" );
+				throw new IdAlreadyInUseException( "multi edges are not supported: edge between node '"+getId()+"' and '"+(  other ).getId()+"' already exists" );
 		}
 
 		// Add the edge.

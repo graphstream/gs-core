@@ -19,8 +19,8 @@ package org.graphstream.ui2.swingViewer.util;
 import org.graphstream.ui2.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui2.graphicGraph.stylesheet.Value;
 import org.graphstream.ui2.graphicGraph.stylesheet.Values;
-import org.miv.util.geom.Point3;
-import org.miv.util.geom.Vector3;
+import org.util.geom.Point3;
+import org.util.geom.Vector3;
 
 /**p
  * Various geometric informations on the graphic graph.

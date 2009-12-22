@@ -23,16 +23,19 @@
 
 package org.graphstream.graph.implementations;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import org.graphstream.graph.BreadthFirstIterator;
 import org.graphstream.graph.DepthFirstIterator;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Element;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
+import org.graphstream.graph.IdAlreadyInUseException;
 import org.graphstream.io.SourceBase;
-import org.miv.util.*;
-
-import java.util.*;
 
 /**
  * Base implementation of a {@link org.graphstream.graph.Node} for the {@link DefaultGraph}.
@@ -214,7 +217,7 @@ public abstract class DefaultNode extends AbstractElement implements Node
 	 * Called by an edge to bind it.
 	 */
 	protected abstract void registerEdge( Edge edge )
-		throws IllegalArgumentException, SingletonException;
+		throws IllegalArgumentException, IdAlreadyInUseException;
 
 	protected abstract void unregisterEdge( Edge edge );
 	

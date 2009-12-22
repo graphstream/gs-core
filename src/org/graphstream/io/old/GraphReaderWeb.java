@@ -23,13 +23,24 @@
 
 package org.graphstream.io.old;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.util.regex.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.graphstream.graph.NotFoundException;
 import org.graphstream.io.GraphParseException;
-import org.miv.util.NotFoundException;
 
 /**
  * Browses web pages recursively from a start URL and associates nodes to pages,

@@ -15,12 +15,13 @@
  */
 package org.graphstream.ui2.graphicGraph;
 
-import org.graphstream.graph.*;
-import org.graphstream.io.SourceBase.ElementType;
-import org.graphstream.ui2.graphicGraph.stylesheet.Selector;
-
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Node;
+import org.graphstream.io.SourceBase.ElementType;
+import org.graphstream.ui2.graphicGraph.stylesheet.Selector;
 
 /**
  * Graphical edge.

@@ -23,19 +23,23 @@
 
 package org.graphstream.ui.swing;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.RectangularShape;
+
 import org.graphstream.ui.graphicGraph.GraphicEdge;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicNode;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
 import org.graphstream.ui.graphicGraph.stylesheet.Value;
-import org.graphstream.ui.swing.FontCache;
-import org.miv.util.InterpolatedFloat;
-
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RectangularShape;
+import org.util.InterpolatedFloat;
 
 
 /**
@@ -263,7 +267,7 @@ public class Context
 
 		initFontCache();
 		
-		org.miv.util.Environment.getGlobalEnvironment().initializeFieldsOf( this );
+		org.util.Environment.getGlobalEnvironment().initializeFieldsOf( this );
 	}
 
 // Access
@@ -558,7 +562,7 @@ public class Context
 	 */
 	public boolean step()
 	{
-		if( org.miv.util.Environment.getGlobalEnvironment().getBooleanParameter( "SwingGraphRenderer.interpolateBounds" ) )
+		if( org.util.Environment.getGlobalEnvironment().getBooleanParameter( "SwingGraphRenderer.interpolateBounds" ) )
 		{
 			float gx = gX.getDirectValue();
 			float gy = gY.getDirectValue();

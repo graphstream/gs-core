@@ -23,14 +23,16 @@
 
 package org.graphstream.ui.graphicGraph;
 
-import org.graphstream.graph.*;
-import org.graphstream.ui.graphicGraph.stylesheet.Selector;
-import org.graphstream.ui.graphicGraph.stylesheet.Selector.Type;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+import org.graphstream.ui.graphicGraph.stylesheet.Selector;
+import org.graphstream.ui.graphicGraph.stylesheet.Selector.Type;
 
 /**
  * Graphical node.

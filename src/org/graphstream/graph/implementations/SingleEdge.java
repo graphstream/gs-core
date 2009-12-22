@@ -24,7 +24,7 @@
 package org.graphstream.graph.implementations;
 
 import org.graphstream.graph.Node;
-import org.miv.util.SingletonException;
+import org.graphstream.graph.IdAlreadyInUseException;
 
 /**
  * Full implementation of {@link org.graphstream.graph.Edge} that allows only one
@@ -49,11 +49,11 @@ public class SingleEdge
 	 * @param directed Is the order source to target important?.
 	 * @throws IllegalArgumentException If the source and or the target are not
 	 *         part of a graph or not part of the same graph.
-	 * @throws SingletonException If the source or the target already reference
+	 * @throws IdAlreadyInUseException If the source or the target already reference
 	 *         this edge or if an edge with the same id already exists.
 	 */
 	protected SingleEdge( String tag, Node source, Node target, boolean directed )
-		throws IllegalStateException, SingletonException
+		throws IllegalStateException, org.graphstream.graph.IdAlreadyInUseException
 	{
 		super( tag, source, target, directed );
 	}

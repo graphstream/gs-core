@@ -26,7 +26,8 @@
 
 package org.graphstream.graph;
 
-import java.util.*;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * Path description.

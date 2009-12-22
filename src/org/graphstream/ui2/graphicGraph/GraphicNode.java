@@ -15,16 +15,18 @@
  */
 package org.graphstream.ui2.graphicGraph;
 
-import org.graphstream.graph.*;
-import org.graphstream.io.SourceBase.ElementType;
-import org.graphstream.ui2.graphicGraph.stylesheet.Selector;
+import static org.graphstream.ui2.graphicGraph.GraphPosLengthUtils.nodePosition;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import static org.graphstream.ui2.graphicGraph.GraphPosLengthUtils.*;
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+import org.graphstream.io.SourceBase.ElementType;
+import org.graphstream.ui2.graphicGraph.stylesheet.Selector;
 
 /**
  * Graphical node.

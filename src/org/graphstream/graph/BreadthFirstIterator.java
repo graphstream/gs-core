@@ -23,7 +23,10 @@
 
 package org.graphstream.graph;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
 /**
  * Iterator allowing to explore a graph in a breadth-first way.

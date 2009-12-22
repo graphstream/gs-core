@@ -41,7 +41,7 @@ import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.GraphicNode;
 import org.graphstream.ui.graphicGraph.GraphicSprite;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
-import org.miv.util.InvalidOperationException;
+import org.util.InvalidOperationException;
 
 /**
  * Swing renderer for sprites.

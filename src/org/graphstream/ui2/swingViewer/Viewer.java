@@ -34,7 +34,7 @@ import org.graphstream.ui2.graphicGraph.GraphicGraph;
 import org.graphstream.ui2.swingViewer.basicRenderer.SwingBasicGraphRenderer;
 import org.graphstream.ui2.swingViewer.util.FontCache;
 import org.graphstream.ui2.swingViewer.util.ImageCache;
-import org.miv.util.geom.Point3;
+import org.util.geom.Point3;
 
 /**
  * Set of views on a graphic graph.

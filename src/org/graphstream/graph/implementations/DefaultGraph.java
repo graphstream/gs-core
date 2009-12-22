@@ -37,6 +37,8 @@ import org.graphstream.graph.GraphElementsListener;
 import org.graphstream.graph.GraphListener;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.NodeFactory;
+import org.graphstream.graph.ElementNotFoundException;
+import org.graphstream.graph.IdAlreadyInUseException;
 import org.graphstream.io.GraphParseException;
 import org.graphstream.io.Pipe;
 import org.graphstream.io.SourceBase;
@@ -47,8 +49,6 @@ import org.graphstream.io.file.FileSourceFactory;
 import org.graphstream.io.sync.SinkTime;
 import org.graphstream.ui.GraphViewer;
 import org.graphstream.ui.GraphViewerRemote;
-import org.miv.util.NotFoundException;
-import org.miv.util.SingletonException;
 
 /**
  * Default implementation for the Graph interface.
@@ -385,7 +385,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 		autoCreate = on;
 	}
 	
-	protected Node addNode_( String sourceId, long timeId, String nodeId ) throws SingletonException
+	protected Node addNode_( String sourceId, long timeId, String nodeId ) throws IdAlreadyInUseException
 	{
 //System.err.printf( "%s.addNode_(%s, %d, %s)%n", getId(), sourceId, timeId, nodeId );
 		Node n = nodes.get( nodeId );
@@ -403,7 +403,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 		}
 		else if( strictChecking )
 		{
-			throw new SingletonException( "id '" + nodeId + "' already used, cannot add node" );
+			throw new IdAlreadyInUseException( "id '" + nodeId + "' already used, cannot add node" );
 		}
 		
 		listeners.sendNodeAdded( sourceId, timeId, nodeId );
@@ -438,12 +438,12 @@ public class DefaultGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity O(1)
 	 */
-	public Node addNode( String id ) throws SingletonException
+	public Node addNode( String id ) throws IdAlreadyInUseException
 	{
 		return addNode_( getId(), listeners.newEvent(), id ) ; 
 	}
 	
-	protected Node removeNode_( String sourceId, long timeId, String nodeId, boolean fromNodeIterator ) throws NotFoundException
+	protected Node removeNode_( String sourceId, long timeId, String nodeId, boolean fromNodeIterator ) throws ElementNotFoundException
 	{
 		// The fromNodeIterator flag allows to know if this remove node call was
 		// made from inside a node iterator or not. If from a node iterator,
@@ -467,7 +467,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 			listeners.sendNodeRemoved( sourceId, timeId, nodeId );
 
 			if( strictChecking )
-				throw new NotFoundException( "node id '"+nodeId+"' not found, cannot remove" );
+				throw new ElementNotFoundException( "node id '"+nodeId+"' not found, cannot remove" );
 		}
 
 		return null;
@@ -476,13 +476,13 @@ public class DefaultGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity O(1)
 	 */
-	public Node removeNode( String id ) throws NotFoundException
+	public Node removeNode( String id ) throws ElementNotFoundException
 	{
 		return removeNode_( getId(), listeners.newEvent(), id, false );
 	}
 
 	protected Edge addEdge_( String sourceId, long timeId, String edgeId, String from, String to, boolean directed )
-		throws SingletonException, NotFoundException
+		throws IdAlreadyInUseException, ElementNotFoundException
 	{
 		Node src;
 		Node trg;
@@ -494,7 +494,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 		{
 			if( strictChecking )
 			{
-				throw new NotFoundException( "cannot make edge from '"
+				throw new ElementNotFoundException( "cannot make edge from '"
 						+from+"' to '"+to+"' since node '"
 						+from+"' is not part of this graph" );
 			}
@@ -508,7 +508,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 		{
 			if( strictChecking )
 			{
-				throw new NotFoundException( "cannot make edge from '"
+				throw new ElementNotFoundException( "cannot make edge from '"
 						+from+"' to '"+to+"' since node '"+to
 						+"' is not part of this graph" );
 			}
@@ -533,7 +533,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 			}
 			else if( strictChecking )
 			{
-				throw new SingletonException( "cannot add edge '" + edgeId + "', identifier already exists" );
+				throw new IdAlreadyInUseException( "cannot add edge '" + edgeId + "', identifier already exists" );
 			}
 			
 			return e;
@@ -546,7 +546,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	 * @complexity O(1)
 	 */
 	public Edge addEdge( String id, String node1, String node2 )
-		throws SingletonException, NotFoundException
+		throws IdAlreadyInUseException, ElementNotFoundException
 	{
 		return addEdge( id, node1, node2, false );
 	}
@@ -555,7 +555,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	 * @complexity O(1)
 	 */
 	public Edge addEdge( String id, String from, String to, boolean directed )
-		throws SingletonException, NotFoundException
+		throws IdAlreadyInUseException, ElementNotFoundException
 	{
 		Edge edge = addEdge_( getId(), listeners.newEvent(), id, from, to, directed );
 		// An explanation for this strange "if": in the SingleGraph implementation
@@ -576,7 +576,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	 * @complexity O(1)
 	 */
 	public Edge removeEdge( String from, String to )
-		throws NotFoundException
+		throws ElementNotFoundException
 	{
 		return removeEdge_( getId(), listeners.newEvent(), from, to );
 	}
@@ -591,14 +591,14 @@ public class DefaultGraph extends AbstractElement implements Graph
 			if( src == null )
 			{
 				if( strictChecking )
-					throw new NotFoundException( "error while removing edge '"
+					throw new ElementNotFoundException( "error while removing edge '"
 							+from+"->"+to+"' node '"+from+"' cannot be found" );
 			}
 
 			if( trg == null )
 			{
 				if( strictChecking )
-					throw new NotFoundException( "error while removing edge '"
+					throw new ElementNotFoundException( "error while removing edge '"
 							+from+"->"+to+"' node '"+to+"' cannot be found" );
 			}
 
@@ -625,13 +625,13 @@ public class DefaultGraph extends AbstractElement implements Graph
 		catch( IllegalStateException e )
 		{
 			if( strictChecking )
-				throw new NotFoundException(
+				throw new ElementNotFoundException(
 						"illegal edge state while removing edge between nodes '"
 						+from+"' and '"+to+"'" );
 		}
 
 		if( strictChecking )
-			throw new NotFoundException( "no edge between nodes '"
+			throw new ElementNotFoundException( "no edge between nodes '"
 					+from+"' and '"+to+"'" );
 	
 		return null;
@@ -640,7 +640,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity O(1)
 	 */
-	public Edge removeEdge( String id ) throws NotFoundException
+	public Edge removeEdge( String id ) throws ElementNotFoundException
 	{
 		return removeEdge_( getId(), listeners.newEvent(), id, false );
 	}
@@ -664,7 +664,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 		catch( IllegalStateException e )
 		{
 			if( strictChecking )
-				throw new NotFoundException( "illegal edge state while removing edge '"+edgeId+"'" );
+				throw new ElementNotFoundException( "illegal edge state while removing edge '"+edgeId+"'" );
 		}
 
 //		if( strictChecking )
@@ -702,9 +702,9 @@ public class DefaultGraph extends AbstractElement implements Graph
     }
 
 	public void read( String filename )
-		throws IOException, GraphParseException, NotFoundException
+		throws IOException, GraphParseException, ElementNotFoundException
 	{
-		FileSource input = FileSourceFactory.inputFor( filename );
+		FileSource input = FileSourceFactory.sourceFor( filename );
 		input.addGraphListener( this );
 		read( input, filename );
 	}
@@ -717,7 +717,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	public void write( String filename )
 		throws IOException
 	{
-		FileSink output = FileSinkFactory.outputFor( filename );
+		FileSink output = FileSinkFactory.sinkFor( filename );
 		write( output, filename );
 	}
 

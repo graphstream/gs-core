@@ -23,7 +23,7 @@
 
 package org.graphstream.ui2.layout.springbox;
 
-import org.miv.util.geom.Vector3;
+import org.util.geom.Vector3;
 
 /**
  * Edge representation.

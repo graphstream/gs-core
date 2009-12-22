@@ -24,12 +24,15 @@
 
 package org.graphstream.ui.graphicGraph.stylesheet.parser;
 
-import org.graphstream.ui.graphicGraph.GraphicGraph;
-import org.graphstream.ui.graphicGraph.stylesheet.*;
-
 import java.awt.Color;
 import java.io.InputStream;
 import java.io.Reader;
+
+import org.graphstream.ui.graphicGraph.GraphicGraph;
+import org.graphstream.ui.graphicGraph.stylesheet.Rule;
+import org.graphstream.ui.graphicGraph.stylesheet.Selector;
+import org.graphstream.ui.graphicGraph.stylesheet.Style;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleSheet;
 
 @SuppressWarnings("all")
 public class StyleSheetParser implements StyleSheetParserConstants {

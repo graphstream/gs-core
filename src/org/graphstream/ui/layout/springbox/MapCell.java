@@ -23,7 +23,7 @@
 
 package org.graphstream.ui.layout.springbox;
 
-import java.util.*;
+import java.util.HashMap;
 
 /**
  * Part of the 2D or 3D space.

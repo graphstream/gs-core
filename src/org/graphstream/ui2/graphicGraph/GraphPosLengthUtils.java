@@ -16,10 +16,13 @@
 
 package org.graphstream.ui2.graphicGraph;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.Random;
 
-import org.graphstream.graph.*;
-import org.miv.util.NotFoundException;
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+import org.graphstream.graph.ElementNotFoundException;
 
 /**
  * Lots of small often used measuring algorithms on graphs.
@@ -106,17 +109,17 @@ public class GraphPosLengthUtils
 	 * fill up the array given as parameter. This array must have at least three cells.
 	 * @param id The node identifier.
 	 * @param xyz An array of at least three cells.
-	 * @throws NotFoundException If the node with the given identifier does not exist.
+	 * @throws ElementNotFoundException If the node with the given identifier does not exist.
 	 */
 	public static void nodePosition( Graph graph, String id, float xyz[] )
-		throws NotFoundException
+		throws ElementNotFoundException
 	{
 		Node node = graph.getNode( id );
 		
 		if( node != null )
 			nodePosition( node, xyz );
 		
-		throw new NotFoundException( "node '"+id+"' does not exist" );
+		throw new ElementNotFoundException( "node '"+id+"' does not exist" );
 	}
 	
 	/**
@@ -167,10 +170,10 @@ public class GraphPosLengthUtils
 	 * Compute the edge length of the given edge according to its two nodes positions.
 	 * @param id The identifier of the edge.
 	 * @return The edge length or -1 if the nodes of the edge have no positions.
-	 * @throws NotFoundException If the edge cannot be found.
+	 * @throws ElementNotFoundException If the edge cannot be found.
 	 */
 	public static float edgeLength( Graph graph, String id )
-		throws NotFoundException
+		throws ElementNotFoundException
 	{
 		Edge edge = graph.getEdge( id );
 		

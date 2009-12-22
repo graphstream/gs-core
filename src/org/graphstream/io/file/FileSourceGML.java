@@ -26,15 +26,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StreamTokenizer;
-
-import org.graphstream.io.file.FileSourceBase;
-
-import org.miv.util.geom.*;
-
-import java.lang.reflect.*;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import org.util.geom.Point3;
 
 
 /**
@@ -1183,11 +1180,11 @@ public class FileSourceGML extends FileSourceBase
 					{
 						fields[i].set( obj, value );
 					}
-					else if( c.equals( org.miv.util.geom.Point3.class ) )
+					else if( c.equals( org.util.geom.Point3.class ) )
 					{
 						fields[i].set( obj, getPoint3( value ) );
 					}
-					else if( c.equals( org.miv.util.geom.Bounds3.class ) )
+					else if( c.equals( org.util.geom.Bounds3.class ) )
 					{
 						fields[i].set( obj, getBounds3( value ) );
 					}

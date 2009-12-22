@@ -20,7 +20,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import org.graphstream.ui2.swingViewer.View;
-import org.miv.util.geom.Point3;
+import org.util.geom.Point3;
 
 /**
  * Utility to centralise the shortcuts and actions for all view instances.

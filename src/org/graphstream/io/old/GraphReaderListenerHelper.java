@@ -23,9 +23,11 @@
 
 package org.graphstream.io.old;
 
-import java.util.*;
+import java.util.Map;
 
-import org.graphstream.graph.*;
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
 import org.graphstream.io.GraphParseException;
 
 /**

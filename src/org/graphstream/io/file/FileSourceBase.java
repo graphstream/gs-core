@@ -22,13 +22,21 @@
 
 package org.graphstream.io.file;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StreamTokenizer;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.graphstream.io.SourceBase;
-import org.miv.util.*;
-import org.miv.util.geom.*;
+import org.util.geom.Bounds3;
+import org.util.geom.Point3;
 
 /**
  * Base for various graph file input.
@@ -134,7 +142,7 @@ abstract class FileSourceBase extends SourceBase implements FileSource
 	
 // Command -- Complete modeField.
 
-	public void readAll( String filename ) throws NotFoundException, IOException
+	public void readAll( String filename ) throws IOException
 	{
 		begin( filename );
 		while( nextEvents() );
@@ -164,7 +172,7 @@ abstract class FileSourceBase extends SourceBase implements FileSource
 
 // Commands -- By-event modeField.
 
-	public void begin( String filename ) throws NotFoundException, IOException
+	public void begin( String filename ) throws IOException
 	{
 		pushTokenizer( filename );
 	}

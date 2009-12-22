@@ -30,8 +30,6 @@ import org.graphstream.io.Pipe;
 import org.graphstream.io.file.FileSink;
 import org.graphstream.io.file.FileSource;
 import org.graphstream.ui.GraphViewerRemote;
-import org.miv.util.NotFoundException;
-import org.miv.util.SingletonException;
 
 /**
  * An Interface that advises general purpose methods for handling graphs.
@@ -202,9 +200,9 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * ignored and the already existing node is returned.
 	 * @param id Arbitrary and unique string identifying the node.
 	 * @return The created node (or the already existing node).
-	 * @throws SingletonException If the identifier is already used.
+	 * @throws IdAlreadyInUseException If the identifier is already used.
 	 */
-	public Node addNode( String id ) throws SingletonException;
+	public Node addNode( String id ) throws IdAlreadyInUseException;
 
 	/**
 	 * Remove the node using its identifier. An event is generated toward the
@@ -215,9 +213,9 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @return The removed node, if strict checking is disabled, it can return
 	 * 	       null if the node to remove does not exist.
 	 * @complexity O(1)
-	 * @throws NotFoundException If no node matches the given identifier.
+	 * @throws ElementNotFoundException If no node matches the given identifier.
 	 */
-	public Node removeNode( String id ) throws NotFoundException;
+	public Node removeNode( String id ) throws ElementNotFoundException;
 
 	/**
 	 * Add an undirected edge between nodes. An event is sent toward the
@@ -235,12 +233,12 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @return The newly created edge (this can return null, if strict checking
 	 *         is disabled, auto-creation disabled, and one or two of the given
 	 *         nodes do not exist).
-	 * @throws SingletonException If an edge already exist between 'from' and 'to',
+	 * @throws IdAlreadyInUseException If an edge already exist between 'from' and 'to',
 	 *         strict checking is enabled and the graph is not a multi-graph.
-	 * @throws NotFoundException If strict checking is enabled, and the 'from'
+	 * @throws ElementNotFoundException If strict checking is enabled, and the 'from'
 	 *         or 'to' node is not registered in the graph.
 	 */
-	public Edge addEdge( String id, String node1, String node2 ) throws SingletonException, NotFoundException;
+	public Edge addEdge( String id, String node1, String node2 ) throws IdAlreadyInUseException, ElementNotFoundException;
 
 	/**
 	 * Like {@link #addEdge(String, String, String)}, but this edge can be
@@ -255,12 +253,12 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @return The newly created edge (this can return null, if strict checking
 	 *         is disabled, auto-creation disabled, and one or two of the given
 	 *         nodes do not exist).
-	 * @throws SingletonException If an edge already exist between 'from' and 'to',
+	 * @throws IdAlreadyInUseException If an edge already exist between 'from' and 'to',
 	 *         strict checking is enabled, and the graph is not a multi-graph.
-	 * @throws NotFoundException If strict checking is enabled, and the 'from'
+	 * @throws ElementNotFoundException If strict checking is enabled, and the 'from'
 	 *         or 'to' node is not registered in the graph.
 	 */
-	public Edge addEdge( String id, String from, String to, boolean directed ) throws SingletonException, NotFoundException;
+	public Edge addEdge( String id, String from, String to, boolean directed ) throws IdAlreadyInUseException, ElementNotFoundException;
 
 	/**
 	 * Remove an edge given the identifier of its two linked nodes. If the edge
@@ -275,10 +273,10 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @param to The destination node identifier to select the edge.
 	 * @return The removed edge, or null if strict checking is disabled and
 	 *         at least one of the two given nodes does not exist.
-	 * @throws NotFoundException If the 'from' or 'to' node is not registered in
+	 * @throws ElementNotFoundException If the 'from' or 'to' node is not registered in
 	 *         the graph and strict checking is enabled.
 	 */
-	public Edge removeEdge( String from, String to ) throws NotFoundException;
+	public Edge removeEdge( String from, String to ) throws ElementNotFoundException;
 
 	/**
 	 * Remove the edge knowing its identifier. An event is sent toward the
@@ -288,10 +286,10 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @param id Identifier of the edge to remove.
 	 * @return The removed edge, or null if strict checking is disabled and
 	 *         the edge does not exist.
-	 * @throws NotFoundException If no edge matches the identifier and strict
+	 * @throws ElementNotFoundException If no edge matches the identifier and strict
 	 *         checking is enabled.
 	 */
-	public Edge removeEdge( String id ) throws NotFoundException;
+	public Edge removeEdge( String id ) throws ElementNotFoundException;
 
 	/**
 	 * <p>
@@ -379,17 +377,17 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * format by itself and instantiates the corresponding reader automatically.
 	 * If this process fails, a NotFoundException is raised.
 	 * @param filename The graph filename (or URL).
-	 * @throws NotFoundException If the file cannot be found or if the format is not recognised.
+	 * @throws ElementNotFoundException If the file cannot be found or if the format is not recognised.
 	 * @throws GraphParseException If there is a parsing error while reading the file.
 	 * @throws IOException If an input output error occurs during the graph reading.
 	 */
-	public void read( String filename ) throws IOException, GraphParseException, NotFoundException;
+	public void read( String filename ) throws IOException, GraphParseException, ElementNotFoundException;
 
 	/**
 	 * Utility method to read a graph using the given reader.
 	 * @param input An appropriate reader for the filename.
 	 * @param filename The graph filename (or URL).
-	 * @throws NotFoundException If the file cannot be found or if the format is not recognised.
+	 * @throws ElementNotFoundException If the file cannot be found or if the format is not recognised.
 	 * @throws GraphParseException If there is a parsing error while reading the file.
 	 * @throws IOException If an input/output error occurs during the graph reading.
 	 */

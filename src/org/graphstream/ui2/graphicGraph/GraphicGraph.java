@@ -17,7 +17,9 @@
 package org.graphstream.ui2.graphicGraph;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 
 import org.graphstream.graph.Edge;
@@ -29,6 +31,8 @@ import org.graphstream.graph.GraphElementsListener;
 import org.graphstream.graph.GraphListener;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.NodeFactory;
+import org.graphstream.graph.ElementNotFoundException;
+import org.graphstream.graph.IdAlreadyInUseException;
 import org.graphstream.graph.implementations.AbstractElement;
 import org.graphstream.io.SourceBase;
 import org.graphstream.io.SourceBase.ElementType;
@@ -41,10 +45,7 @@ import org.graphstream.ui2.graphicGraph.stylesheet.StyleSheet;
 import org.graphstream.ui2.graphicGraph.stylesheet.Value;
 import org.graphstream.ui2.graphicGraph.stylesheet.Values;
 import org.graphstream.ui2.graphicGraph.stylesheet.StyleConstants.Units;
-
-import org.miv.util.NotFoundException;
-import org.miv.util.SingletonException;
-import org.miv.util.geom.Point3;
+import org.util.geom.Point3;
 
 /**
  * Graph representation used in display classes.
@@ -396,7 +397,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		}
 	}
 
-	public Edge removeEdge( String sourceId, long timeId, String id ) throws NotFoundException
+	public Edge removeEdge( String sourceId, long timeId, String id ) throws ElementNotFoundException
 	{
 		GraphicEdge edge = (GraphicEdge) styleGroups.getEdge( id );
 		
@@ -418,7 +419,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		return edge;
 	}
 
-	public Edge removeEdge( String sourceId, long timeId, String from, String to ) throws NotFoundException
+	public Edge removeEdge( String sourceId, long timeId, String from, String to ) throws ElementNotFoundException
 	{
 		GraphicNode node0 = (GraphicNode) styleGroups.getNode( from );
 		GraphicNode node1 = (GraphicNode) styleGroups.getNode( to );
@@ -662,19 +663,19 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		listeners.clearListeners();
     }
 	
-	public Edge addEdge( String id, String from, String to ) throws SingletonException,
-            NotFoundException
+	public Edge addEdge( String id, String from, String to ) throws IdAlreadyInUseException,
+            ElementNotFoundException
     {
 		return addEdge( getId(), newEvent(), id, from, to, false, null );
     }
 
 	public Edge addEdge( String id, String from, String to, boolean directed )
-            throws SingletonException, NotFoundException
+            throws IdAlreadyInUseException, ElementNotFoundException
     {
 		return addEdge( getId(), newEvent(), id, from, to, directed, null );
     }
 
-	public Node addNode( String id ) throws SingletonException
+	public Node addNode( String id ) throws IdAlreadyInUseException
     {
 		return addNode( getId(), newEvent(), id, 0, 0, 0, null );
     }
@@ -684,17 +685,17 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		clear( getId(), newEvent() );
     }
 
-	public Edge removeEdge( String id ) throws NotFoundException
+	public Edge removeEdge( String id ) throws ElementNotFoundException
     {
 	    return removeEdge( getId(), newEvent(), id );
     }
 	
-	public Edge removeEdge( String from, String to ) throws NotFoundException
+	public Edge removeEdge( String from, String to ) throws ElementNotFoundException
 	{
 		return removeEdge( getId(), newEvent(), from, to );
 	}
 
-	public Node removeNode( String id ) throws NotFoundException
+	public Node removeNode( String id ) throws ElementNotFoundException
     {
 	    return removeNode( getId(), newEvent(), id );
     }

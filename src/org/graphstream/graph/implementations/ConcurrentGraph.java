@@ -45,8 +45,8 @@ import org.graphstream.io.file.FileSource;
 import org.graphstream.io.file.FileSourceFactory;
 import org.graphstream.ui.GraphViewer;
 import org.graphstream.ui.GraphViewerRemote;
-import org.miv.util.NotFoundException;
-import org.miv.util.SingletonException;
+import org.util.NotFoundException;
+import org.util.SingletonException;
 
 public class ConcurrentGraph 
 	extends AbstractConcurrentElement 

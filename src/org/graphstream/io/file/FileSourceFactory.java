@@ -26,8 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import org.miv.util.NotFoundException;
-
 /**
  * File source factory.
  *
@@ -58,9 +56,8 @@ public class FileSourceFactory
 	 * @param fileName Name of the graph file.
 	 * @return A graph reader suitable for the fileName graph format.
 	 * @throws IOException If the file is not readable or accessible.
-	 * @throws NotFoundException If no reader can be found to read the given file.
 	 */
-	public static FileSource inputFor( String fileName ) throws IOException
+	public static FileSource sourceFor( String fileName ) throws IOException
 	{
 		File file = new File( fileName );
 
@@ -149,6 +146,6 @@ public class FileSourceFactory
 //			return new FileInputTLP();
 		}
 		
-		throw new NotFoundException( "cannot find a suitable reader for file '" + fileName + "': unknown file content or extension" );
+		return null;
 	}
 }

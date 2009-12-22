@@ -29,8 +29,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.miv.util.NotFoundException;
-
 /**
  * Graph reader for GraphViz "dot" files.
  * 
@@ -162,7 +160,7 @@ public class FileSourceDOT extends FileSourceBase
 	}
 
 	@Override
-	public void begin( String fileName )throws NotFoundException, IOException
+	public void begin( String fileName )throws  IOException
 	{
 		super.begin( fileName );
 		init();

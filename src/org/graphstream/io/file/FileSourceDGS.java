@@ -34,8 +34,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
 
-import org.miv.util.NotFoundException;
-
 public class FileSourceDGS extends FileSourceBase
 {
 // Attribute
@@ -461,7 +459,7 @@ public class FileSourceDGS extends FileSourceBase
 // Command -- Basic parsing
 	
 	@Override
-	public void begin( String filename ) throws IOException, NotFoundException
+	public void begin( String filename ) throws IOException
 	{
 		super.begin( filename );
 		begin();

@@ -23,9 +23,12 @@
 
 package org.graphstream.io.old;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+
+import org.graphstream.graph.NotFoundException;
 import org.graphstream.io.GraphParseException;
-import org.miv.util.*;
-import java.io.*;
 
 /**
  * Graph reader interface.

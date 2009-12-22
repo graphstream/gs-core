@@ -23,16 +23,18 @@
 
 package org.graphstream.io.old;
 
-import org.graphstream.graph.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StreamTokenizer;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.NotFoundException;
 import org.graphstream.io.GraphParseException;
-import org.miv.util.geom.*;
-
-import org.miv.util.*;
-
-import java.io.*;
-import java.util.*;
-
-import java.lang.reflect.*;
+import org.util.geom.Point3;
 
 /**
  * Graph reader for GML files.

@@ -23,8 +23,13 @@
 
 package org.graphstream.io.old;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.HashSet;
+import java.util.Map;
 
 /**
  * Graph writer for the GraphViz DOT format.

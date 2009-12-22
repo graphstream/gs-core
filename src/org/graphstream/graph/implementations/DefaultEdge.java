@@ -25,8 +25,8 @@ package org.graphstream.graph.implementations;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
+import org.graphstream.graph.IdAlreadyInUseException;
 import org.graphstream.io.SourceBase;
-import org.miv.util.*;
 
 /**
  * Connection between two nodes.
@@ -68,11 +68,11 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 	 * @param directed Is the order source to target important?.
 	 * @throws IllegalArgumentException If the source and or the target are not
 	 *         part of a graph or not part of the same graph.
-	 * @throws SingletonException If the source or the target already reference
+	 * @throws IdAlreadyInUseException If the source or the target already reference
 	 *         this edge or if an edge with the same id already exists.
 	 */
 	protected DefaultEdge( String tag, Node source, Node target, boolean directed )
-		throws IllegalStateException, SingletonException
+		throws IllegalStateException, org.graphstream.graph.IdAlreadyInUseException
 	{
 		super( tag );
 		
@@ -202,12 +202,12 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 	 * @throws IllegalStateException if the edge is already bound, or if
 	 * source is not part of the same graph than target or one is not part of a
 	 * graph, or if the edge has no ID yet.
-	 * @throws SingletonException if source or target already register an edge
+	 * @throws IdAlreadyInUseException if source or target already register an edge
 	 * with the same name.
 	 */
 	@Deprecated
 	protected void bind( DefaultNode source, DefaultNode target, boolean directed )
-		throws IllegalStateException, SingletonException
+		throws IllegalStateException, IdAlreadyInUseException
 	{
 		if( src != null || trg != null )
 			throw new IllegalStateException(

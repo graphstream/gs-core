@@ -26,10 +26,11 @@ package org.graphstream.ui.layout;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.graphstream.graph.*;
+import org.graphstream.graph.Graph;
 import org.graphstream.ui.GraphListenerProxy;
 import org.graphstream.ui.GraphListenerProxyThread;
-import org.miv.mbox.*;
+import org.miv.mbox.MBoxListener;
+import org.miv.mbox.MBoxStandalone;
 
 /**
  * Shell that runs a layout algorithm in a thread.

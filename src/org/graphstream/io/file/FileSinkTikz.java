@@ -1,10 +1,6 @@
 package org.graphstream.io.file;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;

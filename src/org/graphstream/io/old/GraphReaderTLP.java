@@ -22,17 +22,15 @@
  */
 package org.graphstream.io.old;
 
-import org.graphstream.io.GraphParseException;
-import org.graphstream.io.tlp.GraphReaderTLPParser;
-
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.io.FileReader;
-
 import java.util.HashSet;
 
-import org.miv.util.NotFoundException;
+import org.graphstream.graph.NotFoundException;
+import org.graphstream.io.GraphParseException;
+import org.graphstream.io.tlp.GraphReaderTLPParser;
 
 /**
  *

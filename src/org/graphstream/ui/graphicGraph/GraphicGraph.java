@@ -26,8 +26,16 @@ package org.graphstream.ui.graphicGraph;
 import java.awt.Color;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
-import java.util.regex.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeFactory;
@@ -38,6 +46,8 @@ import org.graphstream.graph.GraphElementsListener;
 import org.graphstream.graph.GraphListener;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.NodeFactory;
+import org.graphstream.graph.ElementNotFoundException;
+import org.graphstream.graph.IdAlreadyInUseException;
 import org.graphstream.graph.implementations.AbstractElement;
 import org.graphstream.io.GraphParseException;
 import org.graphstream.io.Pipe;
@@ -50,8 +60,6 @@ import org.graphstream.ui.graphicGraph.stylesheet.Rule;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleSheet;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleSheetListener;
-import org.miv.util.NotFoundException;
-import org.miv.util.SingletonException;
 
 /**
  * Graph representation used in display classes.
@@ -741,7 +749,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 		}
 	}
 
-	public Edge removeEdge( String id ) throws NotFoundException
+	public Edge removeEdge( String id ) throws ElementNotFoundException
 	{
 		GraphicEdge edge = edges.get( id );
 		
@@ -762,7 +770,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 		return edge;
 	}
 
-	public Edge removeEdge( String from, String to ) throws NotFoundException
+	public Edge removeEdge( String from, String to ) throws ElementNotFoundException
 	{
 		GraphicNode node0 = nodes.get( from );
 		GraphicNode node1 = nodes.get( to );
@@ -1381,19 +1389,19 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 
 // Graph interface
 	
-	public Edge addEdge( String id, String from, String to ) throws SingletonException,
-            NotFoundException
+	public Edge addEdge( String id, String from, String to ) throws IdAlreadyInUseException,
+            ElementNotFoundException
     {
 		return addEdge( id, from, to, false, null );
     }
 
 	public Edge addEdge( String id, String from, String to, boolean directed )
-            throws SingletonException, NotFoundException
+            throws IdAlreadyInUseException, ElementNotFoundException
     {
 		return addEdge( id, from, to, directed, null );
     }
 
-	public Node addNode( String id ) throws SingletonException
+	public Node addNode( String id ) throws IdAlreadyInUseException
     {
 		return addNode( id, 0, 0, 0, null );
     }
@@ -1500,7 +1508,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 	{
 	}
 
-	public void read( String filename ) throws IOException, GraphParseException, NotFoundException
+	public void read( String filename ) throws IOException, GraphParseException, ElementNotFoundException
     {
 		throw new RuntimeException( "not implemented !" );
     }
