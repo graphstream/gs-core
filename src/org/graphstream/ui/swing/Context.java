@@ -39,6 +39,7 @@ import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicNode;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
 import org.graphstream.ui.graphicGraph.stylesheet.Value;
+import org.graphstream.ui.swing.FontCache;
 import org.util.InterpolatedFloat;
 
 

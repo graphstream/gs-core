@@ -45,11 +45,8 @@ import org.miv.pherd.ntree.Cell;
 import org.miv.pherd.ntree.CellSpace;
 import org.miv.pherd.ntree.OctreeCellSpace;
 import org.miv.pherd.ntree.QuadtreeCellSpace;
-import org.miv.util.Environment;
-import org.miv.util.NotFoundException;
-import org.miv.util.SingletonException;
-import org.miv.util.geom.Point3;
-import org.miv.util.geom.Vector3;
+import org.util.geom.Point3;
+import org.util.geom.Vector3;
 
 /**
  * An implementation of a graph layout that mostly follows the Fruchterman-Reingold
@@ -328,7 +325,7 @@ public class ElasticBox implements Layout, ParticleBoxListener
 		this.is3D   = is3D;
 		this.random = randomNumberGenerator;
 
-		checkEnvironment();
+//		checkEnvironment();
 		
 		if( is3D )
 		     space = new OctreeCellSpace( new Anchor( -1, -1, -1 ), new Anchor( 1, 1, 1 ) );
@@ -342,13 +339,13 @@ public class ElasticBox implements Layout, ParticleBoxListener
 		System.err.printf( "You are using the ElasticBox layout algorithm !%n" );
 	}
 	
-	protected void checkEnvironment()
-	{
-		Environment env = Environment.getGlobalEnvironment();
-		
-		if( env.hasParameter( "Layout.3d" ) )
-			this.is3D = env.getBooleanParameter( "Layout.3d" );
-	}
+//	protected void checkEnvironment()
+//	{
+//		Environment env = Environment.getGlobalEnvironment();
+//		
+//		if( env.hasParameter( "Layout.3d" ) )
+//			this.is3D = env.getBooleanParameter( "Layout.3d" );
+//	}
 
 // Access
 
@@ -637,7 +634,7 @@ public class ElasticBox implements Layout, ParticleBoxListener
 
 // Graph representation
 	
-	protected void addNode( String id ) throws SingletonException
+	protected void addNode( String id )
 	{
 		nodes.addParticle( new Node( id ) );
 		heat();
@@ -688,7 +685,6 @@ public class ElasticBox implements Layout, ParticleBoxListener
 	}
 
 	protected void addEdge( String id, String from, String to, boolean directed )
-			throws NotFoundException, SingletonException
 	{
 		Node n0 = (Node) nodes.getParticle( from );
 		Node n1 = (Node) nodes.getParticle( to );

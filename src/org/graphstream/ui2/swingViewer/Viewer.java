@@ -28,6 +28,7 @@ import java.util.HashMap;
 
 import javax.swing.Timer;
 
+import org.graphstream.graph.Graph;
 import org.graphstream.io.ProxyPipe;
 import org.graphstream.io.thread.ThreadProxyPipe;
 import org.graphstream.ui2.graphicGraph.GraphicGraph;
@@ -83,7 +84,20 @@ public class Viewer implements ActionListener
 	 */
 	public static enum CloseFramePolicy { CLOSE_VIEWER, HIDE_ONLY };
 	
+	/**
+	 * How does the viewer synchronise its internal graphic graph with the graph displayed. The
+	 * graph we display can be in the Swing thread (as will be the viewer, therefore in the
+	 * same thread as the viewer), in another thread, or on a distant machine.
+	 */
+	public enum ThreadingModel { GRAPH_IN_SWING_THREAD, GRAPH_IN_ANOTHER_THREAD, GRAPH_ON_NETWORK };
+	
 // Attribute
+	
+	/**
+	 * If true the graph we display is in another thread, the synchronisation between the graph
+	 * and the graphic graph must therefore use thread proxies.
+	 */
+	protected boolean graphInAnotherThread = true;
 	
 	/**
 	 * The graph observed by the views.
@@ -127,17 +141,54 @@ public class Viewer implements ActionListener
 
 // Construction
 	
+	/**
+	 * The graph is in another thread or machine, but the pipe already exists. The graphic graph 
+	 * displayed by this viewer is created.
+	 * @param source The source of graph events.
+	 */
 	public Viewer( ProxyPipe source )
 	{
-		this( new GraphicGraph( String.format( "GraphicGraph_%d", (int)(Math.random()*10000) ) ), source );
+		graphInAnotherThread = true;
+		init( new GraphicGraph( String.format( "GraphicGraph_%d", (int)(Math.random()*10000) ) ), source );
 	}
 	
+	/**
+	 * We draw a pre-existing graphic graph.
+	 * @param graph THe graph to draw.
+	 */
 	public Viewer( GraphicGraph graph )
 	{
-		this( graph, null );
+		graphInAnotherThread = false;
+		init( graph, (ProxyPipe)null );
 	}
 	
-	protected Viewer( GraphicGraph graph, ProxyPipe source )
+	/**
+	 * New viewer on a graph. The viewer always run in the Swing thread, therefore, you must specify
+	 * how it will take graph events from the graph you give. If the graph you give will be accessed
+	 * only from the Swing thread use ThreadingModel.GRAPH_IN_SWING_THREAD. If the graph you use
+	 * is accessed in another thread use ThreadingModel.GRAPH_IN_SWING_THREAD. This last scheme is
+	 * more powerful since it allows to run algorithms on the graph in parallel with the viewer.
+	 * @param graph The graph to render.
+	 * @param threadingModel The threading model.
+	 */
+	public Viewer( Graph graph, ThreadingModel threadingModel )
+	{
+		switch( threadingModel )
+		{
+			case GRAPH_IN_SWING_THREAD:
+				graphInAnotherThread = false;
+				init( new GraphicGraph( String.format( "GraphicGraph_%d", (int)(Math.random()*10000) ) ), (ProxyPipe)null );
+				break;
+			case GRAPH_IN_ANOTHER_THREAD:
+				graphInAnotherThread = true;
+				init( new GraphicGraph( String.format( "GraphicGraph_%d", (int)(Math.random()*10000) ) ), new ThreadProxyPipe( graph, true ) );
+				break;
+			case GRAPH_ON_NETWORK:
+				throw new RuntimeException( "TO DO, sorry !:-)" );
+		}
+	}
+	
+	protected void init( GraphicGraph graph, ProxyPipe source )
 	{
 		this.graph    = graph;
 		this.pumpPipe = source;
@@ -182,9 +233,22 @@ public class Viewer implements ActionListener
 		return closeFramePolicy;
 	}
 	
-	public ThreadProxyPipe getThreadProxyOnGraphicGraph()
+	/**
+	 * New proxy pipe on events coming from the viewer through a thread.
+	 * @return
+	 */
+	public ProxyPipe newThreadProxyOnGraphicGraph()
 	{
 		return new ThreadProxyPipe( graph );
+	}
+	
+	/**
+	 * New viewer pipe on the events coming from the viewer through a thread.
+	 * @return
+	 */
+	public ViewerPipe newViewerPipe()
+	{
+		return new ViewerPipe( String.format( "viewer_%d", (int)(Math.random()*10000) ), new ThreadProxyPipe( graph ) );
 	}
 	
 	/**

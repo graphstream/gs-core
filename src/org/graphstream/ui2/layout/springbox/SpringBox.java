@@ -429,7 +429,7 @@ public class SpringBox extends SourceBase implements Layout, ParticleBoxListener
 
 // Graph representation
 	
-	protected void addNode( String sourceId, String id ) throws SingletonException
+	protected void addNode( String sourceId, String id ) //throws SingletonException
 	{
 		nodes.addParticle( new NodeParticle( this, id ) );
 	}
@@ -474,7 +474,7 @@ public class SpringBox extends SourceBase implements Layout, ParticleBoxListener
 	}
 
 	protected void addEdge( String sourceId, String id, String from, String to, boolean directed )
-			throws NotFoundException, SingletonException
+//			throws NotFoundException, SingletonException
 	{
 		NodeParticle n0 = (NodeParticle) nodes.getParticle( from );
 		NodeParticle n1 = (NodeParticle) nodes.getParticle( to );
