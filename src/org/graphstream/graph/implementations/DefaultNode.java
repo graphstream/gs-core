@@ -35,7 +35,7 @@ import org.graphstream.graph.Element;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.IdAlreadyInUseException;
-import org.graphstream.io.SourceBase;
+import org.graphstream.stream.SourceBase;
 
 /**
  * Base implementation of a {@link org.graphstream.graph.Node} for the {@link DefaultGraph}.

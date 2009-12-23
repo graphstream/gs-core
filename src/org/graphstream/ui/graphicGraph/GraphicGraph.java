@@ -41,20 +41,20 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeFactory;
 import org.graphstream.graph.Element;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.GraphAttributesListener;
-import org.graphstream.graph.GraphElementsListener;
-import org.graphstream.graph.GraphListener;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.NodeFactory;
 import org.graphstream.graph.ElementNotFoundException;
 import org.graphstream.graph.IdAlreadyInUseException;
 import org.graphstream.graph.implementations.AbstractElement;
-import org.graphstream.io.GraphParseException;
-import org.graphstream.io.Pipe;
-import org.graphstream.io.SourceBase;
-import org.graphstream.io.file.FileSink;
-import org.graphstream.io.file.FileSource;
-import org.graphstream.io.sync.SinkTime;
+import org.graphstream.stream.AttributeSink;
+import org.graphstream.stream.ElementSink;
+import org.graphstream.stream.Sink;
+import org.graphstream.stream.GraphParseException;
+import org.graphstream.stream.Pipe;
+import org.graphstream.stream.SourceBase;
+import org.graphstream.stream.file.FileSink;
+import org.graphstream.stream.file.FileSource;
+import org.graphstream.stream.sync.SinkTime;
 import org.graphstream.ui.GraphViewerRemote;
 import org.graphstream.ui.graphicGraph.stylesheet.Rule;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
@@ -1406,17 +1406,17 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 		return addNode( id, 0, 0, 0, null );
     }
 
-	public void addGraphListener( GraphListener listener )
+	public void addSink( Sink listener )
     {
 		throw new RuntimeException( "not implemented !" );
     }
 	
-	public void addGraphAttributesListener( GraphAttributesListener listener )
+	public void addAttributeSink( AttributeSink listener )
 	{
 		throw new RuntimeException( "not implemented !" );		
 	}
 	
-	public void addGraphElementsListener( GraphElementsListener listener )
+	public void addElementSink( ElementSink listener )
 	{
 		throw new RuntimeException( "not implemented !" );		
 	}
@@ -1459,12 +1459,12 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 	    return edges.values();
     }
 
-	public Iterable<GraphAttributesListener> getGraphAttributesListeners()
+	public Iterable<AttributeSink> attributeSinks()
     {
 	    return null;
     }
 	
-	public Iterable<GraphElementsListener> getGraphElementsListeners()
+	public Iterable<ElementSink> elementSinks()
     {
 	    return null;
     }
@@ -1523,15 +1523,15 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
 		throw new RuntimeException( "not implemented !" );
     }
 
-	public void removeGraphListener( GraphListener listener )
+	public void removeSink( Sink listener )
     {
     }
 	
-	public void removeGraphAttributesListener( GraphAttributesListener listener )
+	public void removeAttributeSink( AttributeSink listener )
 	{
 	}
 	
-	public void removeGraphElementsListener( GraphElementsListener listener )
+	public void removeElementSink( ElementSink listener )
 	{
 		
 	}
@@ -1803,4 +1803,16 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
     		}
     	}
     }
+
+	public void clearAttributeSinks()
+	{
+	}
+
+	public void clearElementSinks()
+	{		
+	}
+
+	public void clearSinks()
+	{
+	}
 }

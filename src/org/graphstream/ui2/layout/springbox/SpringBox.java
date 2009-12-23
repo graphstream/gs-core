@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Random;
 
-import org.graphstream.io.SourceBase;
+import org.graphstream.stream.SourceBase;
 import org.graphstream.ui2.layout.Layout;
 import org.graphstream.ui2.layout.LayoutListener;
 import org.miv.pherd.ParticleBox;

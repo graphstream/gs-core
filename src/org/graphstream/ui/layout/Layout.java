@@ -23,7 +23,7 @@
 
 package org.graphstream.ui.layout;
 
-import org.graphstream.io.Sink;
+import org.graphstream.stream.Sink;
 import org.graphstream.ui.geom.Point3;
 
 /**
@@ -37,7 +37,7 @@ import org.graphstream.ui.geom.Point3;
  * </p>
  * 
  * <p>
- * The algorithm follows a graph by being a {@link org.graphstream.graph.GraphListener}.
+ * The algorithm follows a graph by being a {@link org.graphstream.stream.Sink}.
  * However, at the contrary of several
  * other algorithms, it does not work on the graph itself. It works on a
  * description of the graph and maintains its own vision of this graph. In

@@ -25,8 +25,8 @@ package org.graphstream.ui;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.GraphListener;
 import org.graphstream.graph.Node;
+import org.graphstream.stream.Sink;
 
 /**
  * Implementation of the GraphListenerProxy that merely copy the evolution of
@@ -73,7 +73,7 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 		inGraph  = input;
 		outGraph = output;
 		
-		inGraph.addGraphListener( this );
+		inGraph.addSink( this );
 		
 		if( replayGraph )
 			replayTheGraph();
@@ -143,19 +143,19 @@ public class GraphListenerProxyCopy implements GraphListenerProxy
 	
 // Command
 	
-	public void addGraphListener( GraphListener listener )
+	public void addGraphListener( Sink listener )
     {
-		outGraph.addGraphListener( listener );
+		outGraph.addSink( listener );
     }
 	
-	public void removeGraphListener( GraphListener listener )
+	public void removeGraphListener( Sink listener )
     {
-		outGraph.removeGraphListener( listener );
+		outGraph.removeSink( listener );
     }
 
 	public void unregisterFromGraph()
     {
-		inGraph.removeGraphListener( this );
+		inGraph.removeSink( this );
     }
 
 	public void checkEvents()

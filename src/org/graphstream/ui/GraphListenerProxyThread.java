@@ -27,8 +27,8 @@ import java.util.ArrayList;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.GraphListener;
 import org.graphstream.graph.Node;
+import org.graphstream.stream.Sink;
 import org.miv.mbox.CannotPostException;
 import org.miv.mbox.MBox;
 import org.miv.mbox.MBoxListener;
@@ -72,7 +72,7 @@ import org.miv.mbox.MBoxStandalone;
  * same thread.
  * </p>
  * 
- * @see org.graphstream.graph.GraphListener
+ * @see org.graphstream.stream.Sink
  * @since 20061208
  */
 public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListener
@@ -92,7 +92,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 	/**
 	 * The layout listeners in another thread than the layout one.
 	 */
-	protected ArrayList<GraphListener> listeners = new ArrayList<GraphListener>();
+	protected ArrayList<Sink> listeners = new ArrayList<Sink>();
 
 	/**
 	 * The graph to maintain according to the received events.
@@ -182,7 +182,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 		if( replayGraph )
 			replayGraph( inputGraph );
 		
-		inputGraph.addGraphListener( this );		
+		inputGraph.addSink( this );		
 		((MBoxStandalone)this.events).addListener( this );
 	}
 
@@ -201,7 +201,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 	 * Add a listener to the events of the input graph.
 	 * @param listener The listener to call for each event in the input graph.
 	 */
-	public void addGraphListener( GraphListener listener )
+	public void addGraphListener( Sink listener )
 	{
 		listeners.add( listener );
 	}
@@ -210,7 +210,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 	 * Remove a listener. 
 	 * @param listener The listener to remove.
 	 */
-	public void removeGraphListener( GraphListener listener )
+	public void removeGraphListener( Sink listener )
 	{
 		int index = listeners.indexOf( listener );
 		
@@ -527,7 +527,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 	{
 		if( unregisterWhenPossible )
 		{
-			inputGraph.removeGraphListener( this );
+			inputGraph.removeSink( this );
 			return true;
 		}
 		
@@ -559,7 +559,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 						gid = outputGraph.getId();
 					}
 					
-					for( GraphListener listener: listeners )
+					for( Sink listener: listeners )
 						listener.graphAttributeAdded( gid, eid, attr, data[4] );
 				}
 			}
@@ -577,7 +577,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 						gid = outputGraph.getId();
 					}
 					
-					for( GraphListener listener: listeners )
+					for( Sink listener: listeners )
 						listener.graphAttributeChanged( gid, eid, attr, data[4], data[5] );
 				}
 			}
@@ -595,7 +595,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 						gid = outputGraph.getId();
 					}
 					
-					for( GraphListener listener: listeners )
+					for( Sink listener: listeners )
 						listener.graphAttributeRemoved( gid, eid, attr );
 				}				
 			}
@@ -620,7 +620,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 							node.addAttribute( attr, data[5] );
 					}
 
-					for( GraphListener listener: listeners )
+					for( Sink listener: listeners )
 						listener.nodeAttributeAdded( gid, eid, id, attr, data[5] );
 				}
 			}
@@ -645,7 +645,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 							node.changeAttribute( attr, data[5] );
 					}
 
-					for( GraphListener listener: listeners )
+					for( Sink listener: listeners )
 						listener.nodeAttributeChanged( gid, eid, id, attr, data[5], data[6] );
 				}
 			}
@@ -670,7 +670,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 							node.removeAttribute( attr );
 					}
 
-					for( GraphListener listener: listeners )
+					for( Sink listener: listeners )
 						listener.nodeAttributeRemoved( gid, eid, id, attr );
 				}
 			}
@@ -695,7 +695,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 							edge.addAttribute( attr, data[5] );
 					}
 
-					for( GraphListener listener: listeners )
+					for( Sink listener: listeners )
 						listener.edgeAttributeAdded( gid, eid, id, attr, data[5] );
 				}
 			}
@@ -720,7 +720,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 							edge.changeAttribute( attr, data[5] );
 					}
 
-					for( GraphListener listener: listeners )
+					for( Sink listener: listeners )
 						listener.edgeAttributeChanged( gid, eid, id, attr, data[5], data[6] );
 				}
 			}
@@ -745,7 +745,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 							edge.removeAttribute( attr );
 					}
 
-					for( GraphListener listener: listeners )
+					for( Sink listener: listeners )
 						listener.edgeAttributeRemoved( gid, eid, id, attr );
 				}
 			}
@@ -767,7 +767,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 						gid = outputGraph.getId();
 					}
 
-					for( GraphListener listener: listeners )
+					for( Sink listener: listeners )
 						listener.nodeAdded( gid, eid, id );
 				}
 //System.err.printf( "%n" );
@@ -792,7 +792,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 						gid = outputGraph.getId();
 					}
 
-					for( GraphListener listener: listeners )
+					for( Sink listener: listeners )
 						listener.edgeAdded( gid, eid, id, froM, to, dir );
 				}
 			}
@@ -811,7 +811,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 						gid = outputGraph.getId();
 					}
 
-					for( GraphListener listener: listeners )
+					for( Sink listener: listeners )
 						listener.nodeRemoved( gid, eid, id );
 				}
 			}
@@ -830,7 +830,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 						gid = outputGraph.getId();
 					}
 
-					for( GraphListener listener: listeners )
+					for( Sink listener: listeners )
 						listener.edgeRemoved( gid, eid, id );
 				}
 			}
@@ -847,7 +847,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 						gid = outputGraph.getId();
 					}
 	
-					for (GraphListener listener : listeners)
+					for (Sink listener : listeners)
 						listener.graphCleared( gid, eid );
 				}
 			}
@@ -865,7 +865,7 @@ public class GraphListenerProxyThread implements GraphListenerProxy, MBoxListene
 						gid = outputGraph.getId();
 					}
 	
-					for (GraphListener listener : listeners)
+					for (Sink listener : listeners)
 						listener.stepBegins( gid, eid, time );
 				}
 			}

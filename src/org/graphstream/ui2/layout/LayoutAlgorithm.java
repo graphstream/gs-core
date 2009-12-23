@@ -124,7 +124,7 @@ public class LayoutAlgorithm implements LayoutListener
 		this.graph  = graph;
 		this.layout = layout;
 		
-		graph.addGraphListener( layout );
+		graph.addSink( layout );
 		layout.addListener( this );
 		replayGraph();
 	}
@@ -170,7 +170,7 @@ public class LayoutAlgorithm implements LayoutListener
 	{
 		if( graph != null && layout != null )
 		{
-			graph.removeGraphListener( layout );
+			graph.removeSink( layout );
 			layout.removeListener( this );
 		
 			graph  = null;

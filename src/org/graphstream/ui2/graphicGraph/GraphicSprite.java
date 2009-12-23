@@ -17,7 +17,7 @@ package org.graphstream.ui2.graphicGraph;
 import java.util.Iterator;
 
 import org.graphstream.graph.Node;
-import org.graphstream.io.SourceBase.ElementType;
+import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.ui2.graphicGraph.stylesheet.Selector;
 import org.graphstream.ui2.graphicGraph.stylesheet.Style;
 import org.graphstream.ui2.graphicGraph.stylesheet.StyleConstants;

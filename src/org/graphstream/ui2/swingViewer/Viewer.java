@@ -29,8 +29,8 @@ import java.util.HashMap;
 import javax.swing.Timer;
 
 import org.graphstream.graph.Graph;
-import org.graphstream.io.ProxyPipe;
-import org.graphstream.io.thread.ThreadProxyPipe;
+import org.graphstream.stream.ProxyPipe;
+import org.graphstream.stream.thread.ThreadProxyPipe;
 import org.graphstream.ui2.graphicGraph.GraphicGraph;
 import org.graphstream.ui2.swingViewer.basicRenderer.SwingBasicGraphRenderer;
 import org.graphstream.ui2.swingViewer.util.FontCache;
@@ -197,7 +197,7 @@ public class Viewer implements ActionListener
 		this.fonts    = FontCache.defaultFontCache();
 		
 		if( source != null )
-			source.addGraphListener( graph );
+			source.addSink( graph );
 
 		timer.setCoalesce( true );
 		timer.setRepeats( true );
@@ -212,7 +212,7 @@ public class Viewer implements ActionListener
 		synchronized( views )
 		{
 			timer.stop();
-			pumpPipe.removeGraphListener( graph );
+			pumpPipe.removeSink( graph );
 		
 			for( View view: views.values() )
 				view.close( graph );

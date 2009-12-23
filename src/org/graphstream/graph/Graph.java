@@ -25,10 +25,13 @@ package org.graphstream.graph;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.graphstream.io.GraphParseException;
-import org.graphstream.io.Pipe;
-import org.graphstream.io.file.FileSink;
-import org.graphstream.io.file.FileSource;
+import org.graphstream.stream.AttributeSink;
+import org.graphstream.stream.ElementSink;
+import org.graphstream.stream.Sink;
+import org.graphstream.stream.GraphParseException;
+import org.graphstream.stream.Pipe;
+import org.graphstream.stream.file.FileSink;
+import org.graphstream.stream.file.FileSource;
 import org.graphstream.ui.GraphViewerRemote;
 
 /**
@@ -41,9 +44,9 @@ import org.graphstream.ui.GraphViewerRemote;
  * </p>
  *
  * <p>
- * With {@link org.graphstream.io.Source}, {@link org.graphstream.io.Sink}
- * and {@link org.graphstream.graph.GraphListener}, this interface is one of the
- * most important. A graph is a {@link org.graphstream.io.Pipe} that buffers
+ * With {@link org.graphstream.stream.Source}, {@link org.graphstream.stream.Sink}
+ * and {@link org.graphstream.stream.Sink}, this interface is one of the
+ * most important. A graph is a {@link org.graphstream.stream.Pipe} that buffers
  * the graph events an present the graph structure as it is actually.
  * </p> 
  * 
@@ -161,12 +164,6 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @param ef the new EdgeFactory
 	 */
 	void setEdgeFactory( EdgeFactory ef );
-
-	/**
-	 * Remove any reference to listeners.
-	 * @see #clear()
-	 */
-	public void clearListeners();
 
 	/**
 	 * Enable or disable strict checking.
@@ -314,61 +311,61 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	/**
 	 * Add a listener for all events concerning this graph.
 	 * @param listener The listener to register.
-	 * @see #addGraphAttributesListener(GraphAttributesListener)
-	 * @see #addGraphElementsListener(GraphElementsListener)
+	 * @see #addAttributeSink(AttributeSink)
+	 * @see #addElementSink(ElementSink)
 	 */
-	public void addGraphListener( GraphListener listener );
+	public void addSink( Sink listener );
 
 	/**
 	 * Remove the given listener from the list of object interested in all events on
 	 * this graph. This method fails silently if listener is not registered in
 	 * this graph.
 	 * @param listener The listener to remove.
-	 * @see #addGraphAttributesListener(GraphAttributesListener)
-	 * @see #addGraphElementsListener(GraphElementsListener)
+	 * @see #addAttributeSink(AttributeSink)
+	 * @see #addElementSink(ElementSink)
 	 */
-	public void removeGraphListener( GraphListener listener );
+	public void removeSink( Sink listener );
 
 	/**
 	 * Add a listener only on the attributes (variables stored on the graph, nodes and edges) of
 	 * the graph. 
 	 * @param listener The listener to register.
-	 * @see #addGraphElementsListener(GraphElementsListener)
+	 * @see #addElementSink(ElementSink)
 	 */
-	public void addGraphAttributesListener( GraphAttributesListener listener );
+	public void addAttributeSink( AttributeSink listener );
 	
 	/**
 	 * Add a listener only on the elements (nodes and edges) of the graph. 
 	 * @param listener The listener to register.
-	 * @see #addGraphAttributesListener(GraphAttributesListener)
+	 * @see #addAttributeSink(AttributeSink)
 	 */
-	public void addGraphElementsListener( GraphElementsListener listener );
+	public void addElementSink( ElementSink listener );
 	
 	/**
 	 * Remove the given listener from the list of objects interested in attributes events on this
 	 * graph. This method fails silently if listener is not registered in this graph.
 	 * @param listener The listener to remove.
 	 */
-	public void removeGraphAttributesListener( GraphAttributesListener listener);
+	public void removeAttributeSink( AttributeSink listener);
 	
 	/**
 	 * Remove the given listener from the list of objects interested in elements events on this
 	 * graph. This method fails silently if listener is not registered in this graph.
 	 * @param listener The listener to remove.
 	 */
-	public void removeGraphElementsListener( GraphElementsListener listener );
+	public void removeElementSink( ElementSink listener );
 	
 	/**
-	 * Returns an "iterable" of {@link GraphAttributesListener} objects registered to this graph.
-	 * @return the set of {@link GraphAttributesListener} under the form of an iterable object.
+	 * Returns an "iterable" of {@link AttributeSink} objects registered to this graph.
+	 * @return the set of {@link AttributeSink} under the form of an iterable object.
 	 */
-	public Iterable<GraphAttributesListener> getGraphAttributesListeners();
+	public Iterable<AttributeSink> attributeSinks();
 	
 	/**
-	 * Returns an "iterable" of {@link GraphElementsListener} objects registered to this graph.
-	 * @return the list of {@link GraphElementsListener} under the form of an iterable object.
+	 * Returns an "iterable" of {@link ElementSink} objects registered to this graph.
+	 * @return the list of {@link ElementSink} under the form of an iterable object.
 	 */
-	public Iterable<GraphElementsListener> getGraphElementsListeners();
+	public Iterable<ElementSink> elementSinks();
 	
 // Utility shortcuts
 	

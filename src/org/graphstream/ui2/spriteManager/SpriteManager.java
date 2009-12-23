@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.GraphAttributesListener;
+import org.graphstream.stream.AttributeSink;
 import org.graphstream.ui2.graphicGraph.stylesheet.Style;
 import org.graphstream.ui2.graphicGraph.stylesheet.Value;
 import org.graphstream.ui2.graphicGraph.stylesheet.Values;
@@ -50,7 +50,7 @@ import org.graphstream.ui2.graphicGraph.stylesheet.StyleConstants.Units;
  * manager so that it creates specific instances of sprites instead of the default ones.
  * </p>
  */
-public class SpriteManager implements Iterable<Sprite>, GraphAttributesListener
+public class SpriteManager implements Iterable<Sprite>, AttributeSink
 {
 // Attribute
 	
@@ -91,7 +91,7 @@ public class SpriteManager implements Iterable<Sprite>, GraphAttributesListener
 		this.graph    = graph;
 		
 		lookForExistingSprites();
-		graph.addGraphAttributesListener( this );
+		graph.addAttributeSink( this );
 	}
 	
 	protected void lookForExistingSprites()
@@ -185,7 +185,7 @@ public class SpriteManager implements Iterable<Sprite>, GraphAttributesListener
 	 */
 	public void detach()
 	{
-		graph.removeGraphAttributesListener( this );
+		graph.removeAttributeSink( this );
 		sprites.clear();
 		
 		graph = null;

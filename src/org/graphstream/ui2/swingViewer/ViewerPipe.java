@@ -23,8 +23,8 @@ package org.graphstream.ui2.swingViewer;
 
 import java.util.HashSet;
 
-import org.graphstream.io.ProxyPipe;
-import org.graphstream.io.SourceBase;
+import org.graphstream.stream.ProxyPipe;
+import org.graphstream.stream.SourceBase;
 
 /**
  * Shell around a proxy pipe coming from the viewer allowing to put viewer listeners on a viewer
@@ -66,7 +66,7 @@ public class ViewerPipe extends SourceBase implements ProxyPipe
 	{
 		this.id     = id;
 		this.pipeIn = pipeIn;
-		pipeIn.addGraphListener( this );
+		pipeIn.addSink( this );
 	}
 	
 // Access

@@ -23,7 +23,7 @@
 
 package org.graphstream.ui;
 
-import org.graphstream.graph.GraphListener;
+import org.graphstream.stream.Sink;
 
 /**
  * Helper class that allows to listen at a graph an either copy it or send events
@@ -54,10 +54,10 @@ import org.graphstream.graph.GraphListener;
  * graph listener.
  * </p>
  * 
- * @see org.graphstream.graph.GraphListener
+ * @see org.graphstream.stream.Sink
  * @since 20061208
  */
-public interface GraphListenerProxy extends GraphListener
+public interface GraphListenerProxy extends Sink
 {
 // Commands
 
@@ -71,13 +71,13 @@ public interface GraphListenerProxy extends GraphListener
 	 * Add a listener to the events of the input graph.
 	 * @param listener The listener to call for each event in the input graph.
 	 */
-	void addGraphListener( GraphListener listener );
+	void addGraphListener( Sink listener );
 	
 	/**
 	 * Remove a listener. 
 	 * @param listener The listener to remove.
 	 */
-	void removeGraphListener( GraphListener listener );
+	void removeGraphListener( Sink listener );
 	
 	/**
 	 * This method must be called regularly to check if the input graph sent

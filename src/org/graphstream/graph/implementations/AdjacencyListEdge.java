@@ -25,7 +25,7 @@ package org.graphstream.graph.implementations;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
-import org.graphstream.io.SourceBase.ElementType;
+import org.graphstream.stream.SourceBase.ElementType;
 
 /**
   * <p>

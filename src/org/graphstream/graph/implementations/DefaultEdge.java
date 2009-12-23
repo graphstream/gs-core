@@ -26,7 +26,7 @@ package org.graphstream.graph.implementations;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.IdAlreadyInUseException;
-import org.graphstream.io.SourceBase;
+import org.graphstream.stream.SourceBase;
 
 /**
  * Connection between two nodes.

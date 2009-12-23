@@ -30,22 +30,22 @@ import java.util.Iterator;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeFactory;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.GraphAttributesListener;
-import org.graphstream.graph.GraphElementsListener;
-import org.graphstream.graph.GraphListener;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.NodeFactory;
 import org.graphstream.graph.ElementNotFoundException;
 import org.graphstream.graph.IdAlreadyInUseException;
-import org.graphstream.io.GraphParseException;
-import org.graphstream.io.Pipe;
-import org.graphstream.io.SourceBase;
-import org.graphstream.io.SourceBase.ElementType;
-import org.graphstream.io.file.FileSink;
-import org.graphstream.io.file.FileSinkFactory;
-import org.graphstream.io.file.FileSource;
-import org.graphstream.io.file.FileSourceFactory;
-import org.graphstream.io.sync.SinkTime;
+import org.graphstream.stream.AttributeSink;
+import org.graphstream.stream.ElementSink;
+import org.graphstream.stream.Sink;
+import org.graphstream.stream.GraphParseException;
+import org.graphstream.stream.Pipe;
+import org.graphstream.stream.SourceBase;
+import org.graphstream.stream.SourceBase.ElementType;
+import org.graphstream.stream.file.FileSink;
+import org.graphstream.stream.file.FileSinkFactory;
+import org.graphstream.stream.file.FileSource;
+import org.graphstream.stream.file.FileSourceFactory;
+import org.graphstream.stream.sync.SinkTime;
 import org.graphstream.ui.GraphViewer;
 import org.graphstream.ui.GraphViewerRemote;
 
@@ -405,9 +405,19 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity O(1).
 	 */
-	public void clearListeners()
+	public void clearSinks()
 	{
-		listeners.clearListeners();
+		listeners.clearSinks();
+	}
+	
+	public void clearAttributeSinks()
+	{
+		listeners.clearAttributeSinks();
+	}
+	
+	public void clearElementSinks()
+	{
+		listeners.clearElementSinks();
 	}
 
 	/**
@@ -489,14 +499,14 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		return strictChecking;
 	}
 
-	public Iterable<GraphAttributesListener> getGraphAttributesListeners()
+	public Iterable<AttributeSink> attributeSinks()
 	{
-		return listeners.graphAttributesListeners();
+		return listeners.attributeSinks();
 	}
 	
-	public Iterable<GraphElementsListener> getGraphElementsListeners()
+	public Iterable<ElementSink> elementSinks()
 	{
-		return listeners.graphElementsListeners();
+		return listeners.elementSinks();
 	}
 	
 	public double getStep()
@@ -681,34 +691,34 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	
 // Events
 
-	public void addGraphListener( GraphListener listener )
+	public void addSink( Sink listener )
 	{
-		listeners.addGraphListener( listener );
+		listeners.addSink( listener );
 	}
 	
-	public void addGraphAttributesListener( GraphAttributesListener listener )
+	public void addAttributeSink( AttributeSink listener )
 	{
-		listeners.addGraphAttributesListener( listener );
+		listeners.addAttributeSink( listener );
 	}
 	
-	public void addGraphElementsListener( GraphElementsListener listener )
+	public void addElementSink( ElementSink listener )
 	{
-		listeners.addGraphElementsListener( listener );
+		listeners.addElementSink( listener );
 	}
 	
-	public void removeGraphListener( GraphListener listener )
+	public void removeSink( Sink listener )
 	{
-		listeners.removeGraphListener( listener );
+		listeners.removeSink( listener );
 	}
 	
-	public void removeGraphAttributesListener( GraphAttributesListener listener )
+	public void removeAttributeSink( AttributeSink listener )
 	{
-		listeners.removeGraphAttributesListener( listener );
+		listeners.removeAttributeSink( listener );
 	}
 	
-	public void removeGraphElementsListener( GraphElementsListener listener )
+	public void removeElementSink( ElementSink listener )
 	{
-		listeners.removeGraphElementsListener( listener );
+		listeners.removeElementSink( listener );
 	}
 
 	@Override
@@ -734,7 +744,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		throws IOException, GraphParseException, ElementNotFoundException
 	{
 		FileSource input = FileSourceFactory.sourceFor( filename );
-		input.addGraphListener( this );
+		input.addSink( this );
 		read( input, filename );
 	}
 	
