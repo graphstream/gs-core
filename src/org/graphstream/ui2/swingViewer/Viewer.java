@@ -312,8 +312,8 @@ public class Viewer implements ActionListener
 	}
 	
 	/**
-	 * Add a view using its identifier identifier. If there was already a view with this identifier,
-	 * it is closed and returned.
+	 * Add a view using its identifier. If there was already a view with this identifier,
+	 * it is closed and returned (if different of the one added).
 	 * @param view The view to add.
 	 * @return The old view that was at the given identifier, if any, else null.
 	 */
@@ -327,6 +327,41 @@ public class Viewer implements ActionListener
 				old.close( graph );
 		
 			return old;
+		}
+	}
+	
+	/**
+	 * Add a new default view with a specific renderer. If a view with the same id exists, it is
+	 * removed and closed. By default the view is open in a frame.
+	 * @param id The new view identifier.
+	 * @param renderer The renderer to use.
+	 * @return The created view.
+	 */
+	public View addView( String id, GraphRenderer renderer )
+	{
+		return addView( id, renderer, true );
+	}
+	
+	/**
+	 * Same as {@link #addView(String, GraphRenderer)} but allows to specify that the view uses a
+	 * frame or not.
+	 * @param id The new view identifier.
+	 * @param renderer The renderer to use.
+	 * @param openInAFrame If true the view is open in a frame, else the returned view is a JPanel
+	 * that can be inserted in a GUI.
+	 * @return The created view.
+	 */
+	public View addView( String id, GraphRenderer renderer, boolean openInAFrame )
+	{
+		synchronized( views )
+		{
+			View view = new DefaultView( this, id, renderer );
+			addView( view );
+			
+			if( openInAFrame )
+				view.openInAFrame( true );
+			
+			return view;
 		}
 	}
 	

@@ -32,7 +32,6 @@ package org.graphstream.graph;
  * the methods with the <code>complexity</code> tag.
  * 
  * @since July 12 2007
- * 
  */
 public interface Edge extends Element
 {
@@ -41,7 +40,7 @@ public interface Edge extends Element
 	 * @return True if the edge is directed.
 	 * @complexity O(1)
 	 */
-	public boolean isDirected();
+	boolean isDirected();
 
 	/**
 	 * First node of the edge. This is equivalent to the {@link #getSourceNode()}
@@ -52,7 +51,7 @@ public interface Edge extends Element
 	 * @return The first node of the edge.
 	 * @complexity O(1)
 	 */
-	public Node getNode0();
+	Node getNode0();
 
 	/**
 	 * Second node of the edge. This is equivalent to the {@link #getTargetNode()}
@@ -63,7 +62,7 @@ public interface Edge extends Element
 	 * @return The second node of the edge.
 	 * @complexity O(1)
 	 */
-	public Node getNode1();
+	Node getNode1();
 
 	/**
 	 * Start node. When the edge is directed this is the source node, in this
@@ -75,7 +74,7 @@ public interface Edge extends Element
 	 * @return The origin node of the edge.
 	 * @complexity O(1)
 	 */
-	public Node getSourceNode();
+	Node getSourceNode();
 
 	/**
 	 * End node. When the edge is directed this is the target node, in this
@@ -87,7 +86,7 @@ public interface Edge extends Element
 	 * @return The destination node of the edge.
 	 * @complexity O(1)
 	 */
-	public Node getTargetNode();
+	Node getTargetNode();
 
 	/**
 	 * When knowing one node and one edge of this node, this method return the
@@ -97,7 +96,7 @@ public interface Edge extends Element
 	 * @return the opposite node of the given node.
 	 * @complexity O(1)
 	 */
-	public Node getOpposite( Node node );
+	Node getOpposite( Node node );
 
 	/**
 	 * Direct or undirect the edge. You make this edge directed, it will be
@@ -108,7 +107,7 @@ public interface Edge extends Element
 	 * @complexity O(1)
 	 */
 	@Deprecated 
-	public void setDirected( boolean on );
+	void setDirected( boolean on );
 
 	/**
 	 * Swap the source and target nodes. This allows to redirect an edge.
@@ -117,5 +116,5 @@ public interface Edge extends Element
 	 * @complexity O(1)
 	 */
 	@Deprecated
-	public void switchDirection();	
+	void switchDirection();	
 }

@@ -73,7 +73,18 @@ public interface Source
 	 */
 	void removeElementSink( ElementSink sink );
 	
+	/**
+	 * Remove all listener element sinks.
+	 */
 	void clearElementSinks();
+	
+	/**
+	 * Remove all listener attribute sinks.
+	 */
 	void clearAttributeSinks();
+	
+	/**
+	 * Remove all listener sinks.
+	 */
 	void clearSinks();
 }

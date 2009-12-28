@@ -59,7 +59,7 @@ public interface Element
 	 * Unique identifier of this element.
 	 * @return The identifier value. 
 	 */
-	public String getId();
+	String getId();
 
 	/**
 	 * Get the attribute object bound to the given key. The returned value maybe
@@ -68,7 +68,7 @@ public interface Element
 	 * @return The object bound to the given key or null if no object match this
 	 *         attribute name.
 	 */
-	public Object getAttribute( String key );
+	Object getAttribute( String key );
 
 	/**
 	 * Like {@link #getAttribute(String)}, but returns the first existing
@@ -77,7 +77,7 @@ public interface Element
 	 * @param keys Several strings naming attributes.
 	 * @return The first attribute that exists.
 	 */
-	public Object getFirstAttributeOf( String... keys );
+	Object getFirstAttributeOf( String... keys );
 
 	/**
 	 * Get the attribute object bound to the given key if it is an instance of
@@ -88,7 +88,7 @@ public interface Element
 	 * @return The object bound to the given key or null if no object match this
 	 *         attribute.
 	 */
-	public Object getAttribute( String key, Class<?> clazz );
+	Object getAttribute( String key, Class<?> clazz );
 	
 	/**
 	 * Like {@link #getAttribute(String, Class)}, but returns the first existing
@@ -98,7 +98,7 @@ public interface Element
 	 * @param keys Several string naming attributes.
 	 * @return The first attribute that exists.
 	 */
-	public Object getFirstAttributeOf( Class<?> clazz, String... keys );
+	Object getFirstAttributeOf( Class<?> clazz, String... keys );
 
 	/**
 	 * Get the label string bound to the given key key. Labels are special
@@ -107,7 +107,7 @@ public interface Element
 	 * @param key The label to search.
 	 * @return The label string value or null if not found.
 	 */
-	public CharSequence getLabel( String key );
+	CharSequence getLabel( String key );
 
 	/**
 	 * Get the number bound to key. Numbers are special attributes whose value
@@ -116,7 +116,7 @@ public interface Element
 	 * @param key The name of the number to search.
 	 * @return The number value or NaN if not found.
 	 */
-	public double getNumber( String key );
+	double getNumber( String key );
 
 	/**
 	 * Get the vector of number bound to key. Vectors of numbers are special
@@ -126,7 +126,7 @@ public interface Element
 	 * @return The vector of numbers or null if not found.
 	 * @complexity O(1)
 	 */
-	public ArrayList<? extends Number> getVector( String key );
+	ArrayList<? extends Number> getVector( String key );
 	
 	/**
 	 * Get the array of objects bound to key. Arrays of objects are special attributes whose value
@@ -136,7 +136,7 @@ public interface Element
 	 * @return The array of objects or null if not found.
 	 * @complexity O(1)
 	 */
-	public Object[] getArray( String key );
+	Object[] getArray( String key );
 	
 	/**
 	 * Get the hash bound to key. Hashes are special attributes whose value is a set of pairs
@@ -148,23 +148,23 @@ public interface Element
 	 * @return The hash or null if not found.
 	 * @complexity O(1)
 	 */
-	public HashMap<?,?> getHash( String key );
+	HashMap<?,?> getHash( String key );
 
 	/**
 	 * Does this element stores a value for the given attribute key.
 	 * @param key The name of the attribute to search.
 	 * @return True if a value is present for this attribute.
 	 */
-	public boolean hasAttribute( String key );
+	boolean hasAttribute( String key );
 
 	/**
 	 * Does this element stores a value for the given attribute key and this value is an
-	 * instance of the given clazz.
+	 * instance of the given class.
 	 * @param key The name of the attribute to search.
 	 * @param clazz The expected class of the attribute value.
 	 * @return True if a value is present for this attribute.
 	 */
-	public boolean hasAttribute( String key, Class<?> clazz );
+	boolean hasAttribute( String key, Class<?> clazz );
 
 	/**
 	 * Does this element stores a label value for the given key. A label is an attribute
@@ -173,7 +173,7 @@ public interface Element
 	 * @return True if a value is present for this attribute and implements
 	 *         CharSequence.
 	 */
-	public boolean hasLabel( String key );
+	boolean hasLabel( String key );
 
 	/**
 	 * Does this element stores a number for the given key. A number is an attribute
@@ -182,7 +182,7 @@ public interface Element
 	 * @return True if a value is present for this attribute and can contain a
 	 *         double (inherits from Number).
 	 */
-	public boolean hasNumber( String key );
+	boolean hasNumber( String key );
 
 	/**
 	 * Does this element stores a vector value for the given key. A vector is an attribute
@@ -191,7 +191,7 @@ public interface Element
 	 * @return True if a value is present for this attribute and can contain a
 	 *         sequence of numbers.
 	 */
-	public boolean hasVector( String key );
+	boolean hasVector( String key );
 
 	/**
 	 * Does this element stores a array value for the given key. A vector is an attribute
@@ -199,7 +199,7 @@ public interface Element
 	 * @param key The name of the array.
 	 * @return True if a value is present for this attribute and can contain an array object.
 	 */
-	public boolean hasArray( String key );
+	boolean hasArray( String key );
 
 	/**
 	 * Does this element stores a hash value for the given key. A hash is a set of pairs
@@ -207,33 +207,25 @@ public interface Element
 	 * @param key The name of the hash.
 	 * @return True if a value is present for this attribute and can contain a hash.
 	 */
-	public boolean hasHash( String key );
+	boolean hasHash( String key );
 	
 	/**
 	 * Iterator on all attributes keys.
 	 * @return An iterator on the key set of attributes.
 	 */
-	public Iterator<String> getAttributeKeyIterator();
+	Iterator<String> getAttributeKeyIterator();
 
 	/**
 	 * An iterable view on the set of attributes keys usable with the for-each loop.
 	 * @return an iterable view on each attribute key, null if there are no attributes.
 	 */
-	public Iterable<String> getAttributeKeySet();
+	Iterable<String> getAttributeKeySet();
 	
-//	/**
-//	 * Return a constant view of the attribute set under the form of a map.
-//	 * The map can be iterated on, browsed, but not modified.
-//	 * @return The set of attributes.
-//	 */
-//	@Deprecated
-//	public Map<String, Object> getAttributeMap();
-
 	/**
 	 * Remove all registered attributes. This includes numbers, labels and
 	 * vectors.
 	 */
-	public void clearAttributes();
+	void clearAttributes();
 
 	/**
 	 * Add or replace the value of an attribute.
@@ -247,7 +239,7 @@ public interface Element
 	 * @param attribute The attribute name.
 	 * @param values The attribute value or set of values.
 	 */
-	public void addAttribute( String attribute, Object ... values );
+	void addAttribute( String attribute, Object ... values );
 	
 	/**
 	 * Like {@link #addAttribute(String, Object...)} but for consistency.
@@ -255,7 +247,7 @@ public interface Element
 	 * @param values The attribute value or array of values.
 	 * @see #addAttribute(String, Object...)
 	 */
-	public void changeAttribute( String attribute, Object ... values );
+	void changeAttribute( String attribute, Object ... values );
 	
 	/**
 	 * Like {@link #addAttribute(String, Object...)} but for consistency.
@@ -263,7 +255,7 @@ public interface Element
 	 * @param values The attribute value or array of values.
 	 * @see #addAttribute(String, Object...)
 	 */
-	public void setAttribute( String attribute, Object ... values );
+	void setAttribute( String attribute, Object ... values );
 
 	/**
 	 * Add or replace each attribute found in attributes. Existing attributes
@@ -272,17 +264,17 @@ public interface Element
 	 * considered as labels.
 	 * @param attributes A set of (key,value) pairs.
 	 */
-	public void addAttributes( Map<String, Object> attributes );
+	void addAttributes( Map<String, Object> attributes );
 
 	/**
 	 * Remove an attribute. Non-existent attributes errors are ignored silently.
 	 * @param attribute Name of the attribute to remove.
 	 */
-	public void removeAttribute( String attribute );
+	void removeAttribute( String attribute );
 
 	/**
 	 * Number of attributes stored in this element.
 	 * @return the number of attributes. 
 	 */
-	public int getAttributeCount();	
+	int getAttributeCount();	
 }

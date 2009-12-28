@@ -36,14 +36,14 @@ public interface ElementSink
 	 * @param sourceId Identifier of the graph where the node was added.
 	 * @param nodeId Identifier of the added node.
 	 */
-	public void nodeAdded( String sourceId, long timeId, String nodeId );
+	void nodeAdded( String sourceId, long timeId, String nodeId );
 
 	/**
 	 * A node was removed from the graph.
 	 * @param sourceId Identifier of the graph where the node will be removed.
 	 * @param nodeId Identifier of the removed node.
 	 */
-	public void nodeRemoved( String sourceId, long timeId, String nodeId );
+	void nodeRemoved( String sourceId, long timeId, String nodeId );
 
 	/**
 	 * An edge was inserted in graph.
@@ -53,7 +53,7 @@ public interface ElementSink
 	 * @param toNodeId Identifier of the second node of the edge.
 	 * @param directed If true, the edge is directed.
 	 */
-	public void edgeAdded( String sourceId, long timeId, String edgeId, String fromNodeId, String toNodeId, boolean directed );
+	void edgeAdded( String sourceId, long timeId, String edgeId, String fromNodeId, String toNodeId, boolean directed );
 
 	/**
 	 * An edge of graph was removed.The nodes the edge connects may already have been
@@ -61,14 +61,14 @@ public interface ElementSink
 	 * @param sourceId The graph where the edge will be removed.
 	 * @param edgeId The edge that will be removed.
 	 */
-	public void edgeRemoved( String sourceId, long timeId, String edgeId );
+	void edgeRemoved( String sourceId, long timeId, String edgeId );
 	
 	/**
 	 * The whole graph was cleared. All the nodes, edges and attributes of the
 	 * graph are removed.
 	 * @param sourceId The graph cleared.
 	 */
-	public void graphCleared( String sourceId, long timeId );
+	void graphCleared( String sourceId, long timeId );
 	
 	/**
 	 * <p>
@@ -87,5 +87,5 @@ public interface ElementSink
 	 * @param timeId A numerical value that may give a timestamp to track the evolution of the graph
 	 *   over the time.
 	 */
-	public void stepBegins( String sourceId, long timeId, double step );
+	void stepBegins( String sourceId, long timeId, double step );
 }

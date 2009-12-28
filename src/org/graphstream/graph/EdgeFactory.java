@@ -38,5 +38,5 @@ public interface EdgeFactory
 	 * @param directed Is the edge directed (in the direction source toward target).
 	 * @return The newly created edge.
 	 */
-	public Edge newInstance( String id, Node src, Node dst, boolean directed );
+	Edge newInstance( String id, Node src, Node dst, boolean directed );
 }

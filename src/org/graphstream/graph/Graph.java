@@ -27,7 +27,7 @@ import java.util.Iterator;
 
 import org.graphstream.stream.AttributeSink;
 import org.graphstream.stream.ElementSink;
-import org.graphstream.stream.Sink;
+//import org.graphstream.stream.Sink;		// Not needed any more XXX
 import org.graphstream.stream.GraphParseException;
 import org.graphstream.stream.Pipe;
 import org.graphstream.stream.file.FileSink;
@@ -64,52 +64,52 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @param id Identifier of the node to find.
 	 * @return The searched node or null if not found.
 	 */
-	public Node getNode( String id );
+	Node getNode( String id );
 
 	/**
 	 * Get an edge by its identifier.
 	 * @param id Identifier of the edge to find.
 	 * @return The searched edge or null if not found.
 	 */
-	public Edge getEdge( String id );
+	Edge getEdge( String id );
 
 	/**
 	 * Number of nodes in this graph.
 	 * @return The number of nodes.
 	 */
-	public int getNodeCount();
+	int getNodeCount();
 
 	/**
 	 * Number of edges in this graph.
 	 * @return The number of edges.
 	 */
-	public int getEdgeCount();
+	int getEdgeCount();
 
 	/**
 	 * Iterator on the set of node, in random order.
 	 * @return The iterator.
 	 */
-	public Iterator<? extends Node> getNodeIterator();
+	Iterator<? extends Node> getNodeIterator();
 
 	/**
 	 * Iterator on the set of edges, in random order.
 	 * @return The iterator.
 	 */
-	public Iterator<? extends Edge> getEdgeIterator();
+	Iterator<? extends Edge> getEdgeIterator();
 
 	/**
 	 * Set of nodes usable in a for-each instruction.
 	 * @return An "iterable" view of the set of nodes.
 	 * @see #getNodeIterator()
 	 */
-	public Iterable<? extends Node> nodeSet();
+	Iterable<? extends Node> nodeSet();
 
 	/**
 	 * Set of edges usable in a for-each instruction.
 	 * @return An "iterable" view of the set of edges.
 	 * @see #getEdgeIterator()
 	 */
-	public Iterable<? extends Edge> edgeSet();
+	Iterable<? extends Edge> edgeSet();
 
 	/**
 	 * The factory used to create node instances.
@@ -135,7 +135,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * are free to respect strict checking or not.
 	 * @return True if enabled.
 	 */
-	public boolean isStrict();
+	boolean isStrict();
 
 	/**
 	 * Is the automatic creation of missing elements enabled?. If enabled, when
@@ -143,13 +143,13 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * in the graph, the nodes are automatically created.
 	 * @return True if enabled.
 	 */
-	public boolean isAutoCreationEnabled();
+	boolean isAutoCreationEnabled();
 	
 	/**
 	 * The current step.
 	 * @return The step.
 	 */
-	public double getStep();
+	double getStep();
 
 // Command
 	
@@ -170,23 +170,23 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @see #isStrict()
 	 * @param on True or false.
 	 */
-	public void setStrict( boolean on );
+	void setStrict( boolean on );
 
 	/**
 	 * Enable or disable the automatic creation of missing elements.
 	 * @see #isAutoCreationEnabled()
 	 * @param on True or false.
 	 */
-	public void setAutoCreate( boolean on );
+	void setAutoCreate( boolean on );
 
-// Output
+// Graph construction
 	
 	/**
 	 * Empties the graph completely by removing any references to nodes or edges.
 	 * Every attribute is also removed. However, listeners are kept.
-	 * @see #clearListeners()
+	 * @see #clearSinks()
 	 */
-	public void clear();
+	void clear();
 
 	/**
 	 * Add a node in the graph. This acts as a factory, creating the node
@@ -199,7 +199,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @return The created node (or the already existing node).
 	 * @throws IdAlreadyInUseException If the identifier is already used.
 	 */
-	public Node addNode( String id ) throws IdAlreadyInUseException;
+	Node addNode( String id ) throws IdAlreadyInUseException;
 
 	/**
 	 * Remove the node using its identifier. An event is generated toward the
@@ -212,7 +212,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @complexity O(1)
 	 * @throws ElementNotFoundException If no node matches the given identifier.
 	 */
-	public Node removeNode( String id ) throws ElementNotFoundException;
+	Node removeNode( String id ) throws ElementNotFoundException;
 
 	/**
 	 * Add an undirected edge between nodes. An event is sent toward the
@@ -235,7 +235,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @throws ElementNotFoundException If strict checking is enabled, and the 'from'
 	 *         or 'to' node is not registered in the graph.
 	 */
-	public Edge addEdge( String id, String node1, String node2 ) throws IdAlreadyInUseException, ElementNotFoundException;
+	Edge addEdge( String id, String node1, String node2 ) throws IdAlreadyInUseException, ElementNotFoundException;
 
 	/**
 	 * Like {@link #addEdge(String, String, String)}, but this edge can be
@@ -255,7 +255,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @throws ElementNotFoundException If strict checking is enabled, and the 'from'
 	 *         or 'to' node is not registered in the graph.
 	 */
-	public Edge addEdge( String id, String from, String to, boolean directed ) throws IdAlreadyInUseException, ElementNotFoundException;
+	Edge addEdge( String id, String from, String to, boolean directed ) throws IdAlreadyInUseException, ElementNotFoundException;
 
 	/**
 	 * Remove an edge given the identifier of its two linked nodes. If the edge
@@ -273,7 +273,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @throws ElementNotFoundException If the 'from' or 'to' node is not registered in
 	 *         the graph and strict checking is enabled.
 	 */
-	public Edge removeEdge( String from, String to ) throws ElementNotFoundException;
+	Edge removeEdge( String from, String to ) throws ElementNotFoundException;
 
 	/**
 	 * Remove the edge knowing its identifier. An event is sent toward the
@@ -286,7 +286,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @throws ElementNotFoundException If no edge matches the identifier and strict
 	 *         checking is enabled.
 	 */
-	public Edge removeEdge( String id ) throws ElementNotFoundException;
+	Edge removeEdge( String id ) throws ElementNotFoundException;
 
 	/**
 	 * <p>
@@ -304,68 +304,70 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 *            A numerical value that may give a timestamp to track the evolution of the graph
 	 *            over the time.
 	 */
-	public void stepBegins( double time );
+	void stepBegins( double time );
 
-// Input
+// Source
+	// XXX these methods are already in Source, do we remove them definitively from Graph ?
+	// XXX do we put the iterable attributeSinks and elementSinks in Source ? 
 	
-	/**
+	/*
 	 * Add a listener for all events concerning this graph.
 	 * @param listener The listener to register.
 	 * @see #addAttributeSink(AttributeSink)
 	 * @see #addElementSink(ElementSink)
+	void addSink( Sink listener );
 	 */
-	public void addSink( Sink listener );
 
-	/**
+	/*
 	 * Remove the given listener from the list of object interested in all events on
 	 * this graph. This method fails silently if listener is not registered in
 	 * this graph.
 	 * @param listener The listener to remove.
 	 * @see #addAttributeSink(AttributeSink)
 	 * @see #addElementSink(ElementSink)
+	void removeSink( Sink listener );
 	 */
-	public void removeSink( Sink listener );
 
-	/**
+	/*
 	 * Add a listener only on the attributes (variables stored on the graph, nodes and edges) of
 	 * the graph. 
 	 * @param listener The listener to register.
 	 * @see #addElementSink(ElementSink)
+	void addAttributeSink( AttributeSink listener );
 	 */
-	public void addAttributeSink( AttributeSink listener );
 	
-	/**
+	/*
 	 * Add a listener only on the elements (nodes and edges) of the graph. 
 	 * @param listener The listener to register.
 	 * @see #addAttributeSink(AttributeSink)
+	void addElementSink( ElementSink listener );
 	 */
-	public void addElementSink( ElementSink listener );
 	
-	/**
+	/*
 	 * Remove the given listener from the list of objects interested in attributes events on this
 	 * graph. This method fails silently if listener is not registered in this graph.
 	 * @param listener The listener to remove.
+	void removeAttributeSink( AttributeSink listener);
 	 */
-	public void removeAttributeSink( AttributeSink listener);
 	
-	/**
+	/*
 	 * Remove the given listener from the list of objects interested in elements events on this
 	 * graph. This method fails silently if listener is not registered in this graph.
 	 * @param listener The listener to remove.
+	void removeElementSink( ElementSink listener );
 	 */
-	public void removeElementSink( ElementSink listener );
 	
 	/**
 	 * Returns an "iterable" of {@link AttributeSink} objects registered to this graph.
 	 * @return the set of {@link AttributeSink} under the form of an iterable object.
 	 */
-	public Iterable<AttributeSink> attributeSinks();
+	Iterable<AttributeSink> attributeSinks();
 	
 	/**
 	 * Returns an "iterable" of {@link ElementSink} objects registered to this graph.
 	 * @return the list of {@link ElementSink} under the form of an iterable object.
 	 */
-	public Iterable<ElementSink> elementSinks();
+	Iterable<ElementSink> elementSinks();
 	
 // Utility shortcuts
 	
@@ -378,7 +380,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @throws GraphParseException If there is a parsing error while reading the file.
 	 * @throws IOException If an input output error occurs during the graph reading.
 	 */
-	public void read( String filename ) throws IOException, GraphParseException, ElementNotFoundException;
+	void read( String filename ) throws IOException, GraphParseException, ElementNotFoundException;
 
 	/**
 	 * Utility method to read a graph using the given reader.
@@ -388,14 +390,14 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @throws GraphParseException If there is a parsing error while reading the file.
 	 * @throws IOException If an input/output error occurs during the graph reading.
 	 */
-	public void read( FileSource input, String filename ) throws IOException, GraphParseException;
+	void read( FileSource input, String filename ) throws IOException, GraphParseException;
 
 	/**
 	 * Utility method to write a graph in DGS format to a file.
 	 * @param filename The file that will contain the saved graph (or URL).
 	 * @throws IOException If an input/output error occurs during the graph writing.
 	 */
-	public void write( String filename ) throws IOException;
+	void write( String filename ) throws IOException;
 
 	/**
 	 * Utility method to write a graph in the chosen format to a file.
@@ -403,7 +405,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @param output The output format to use.
 	 * @throws IOException If an input/output error occurs during the graph writing.
 	 */
-	public void write( FileSink output, String filename ) throws IOException;
+	void write( FileSink output, String filename ) throws IOException;
 
 	/**
 	 * Utility method that create a new graph viewer, and register the graph in
@@ -416,7 +418,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @return a graph viewer remote that allows to command the viewer (it is a remote since the
 	 *         viewer often run in another thread).
 	 */
-	public GraphViewerRemote display();
+	GraphViewerRemote display();
 
 	/**
 	 * Utility method that create a new graph viewer, and register the graph in
@@ -429,5 +431,5 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @return a graph viewer remote that allows to command the viewer (it is a remote since the
 	 *         viewer often run in another thread).
 	 */
-	public GraphViewerRemote display( boolean autoLayout );
+	GraphViewerRemote display( boolean autoLayout );
 }

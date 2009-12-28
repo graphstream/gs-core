@@ -34,5 +34,5 @@ public interface NodeFactory
 	 * Create a new instance of node.
 	 * @return The newly created edge.
 	 */
-	public Node newInstance( String id, Graph graph );
+	Node newInstance( String id, Graph graph );
 }
