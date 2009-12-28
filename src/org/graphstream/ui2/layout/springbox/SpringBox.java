@@ -223,7 +223,7 @@ public class SpringBox extends SourceBase implements Layout, ParticleBoxListener
 		nodes.addParticleBoxListener( this );
 		setQuality( quality );
 		
-		System.err.printf( "You are using the SpringBox (sur le retour) layout algorithm !%n" );
+//		System.err.printf( "You are using the SpringBox (sur le retour) layout algorithm !%n" );
 	}
 	
 //	protected void checkEnvironment()
