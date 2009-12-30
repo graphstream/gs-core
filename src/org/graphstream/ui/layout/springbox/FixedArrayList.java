@@ -152,11 +152,11 @@ public class FixedArrayList<E>
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("all")
 	public boolean
 	equals( Object o )
 	{
-		if( o instanceof FixedArrayList )
+		if( o instanceof FixedArrayList<?> )
 		{
 			FixedArrayList<? extends E> other = (FixedArrayList<? extends E>) o;
 
@@ -196,7 +196,7 @@ public class FixedArrayList<E>
 	}
 
 	/**
-	 * Last index used by the {@link #add(E)} method.
+	 * Last index used by the {@link #add(Object)} method.
 	 * @return The last insertion index.
 	 */
 	public int

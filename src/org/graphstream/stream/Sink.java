@@ -23,8 +23,6 @@
 
 package org.graphstream.stream;
 
-import org.graphstream.graph.Graph;
-
 /**
  * Sink of graph events.
  * 

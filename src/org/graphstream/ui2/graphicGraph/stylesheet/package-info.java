@@ -18,7 +18,7 @@
  * Definition of style sheets and styles.
  * 
  * <p>
- * The {@link org.miv.graphstream.ui2.graphicGraph.stylesheet.parser} sub-package provide a JavaCC
+ * The {@link org.graphstream.ui2.graphicGraph.stylesheet.parser} sub-package provide a JavaCC
  * parser for the style sheets defined in this package.
  * </p>
  * 
@@ -28,7 +28,7 @@
  * </p>
  * 
  * <p>
- * The {@link org.miv.graphstream.ui2.graphicGraph.stylesheet.Style} class contains the definition
+ * The {@link org.graphstream.ui2.graphicGraph.stylesheet.Style} class contains the definition
  * of a single style. A style is a set of pairs (property,value) that can inherit another style or
  * link to a set of alternative styles (also known as meta-classes, or events).
  * </p>
@@ -36,19 +36,19 @@
  * <p>
  * Inside the style the values can be colours, strings and numeric values. Numeric values can use
  * units of measure. This is why most numeric values in the style sheet are stored as instances of
- * {@link org.miv.graphstream.ui2.graphicGraph.stylesheet.Value}. This class stores a value an the
+ * {@link org.graphstream.ui2.graphicGraph.stylesheet.Value}. This class stores a value an the
  * units of measure it is expressed in.
  * </p>
  * 
  * <p>
  * In the style sheet, the styles are not referred directly, they are contained in
- * {@link org.miv.graphstream.ui2.graphicGraph.stylesheet.Rule}s. A rule is a pair (selector,style).
- * The {@link org.miv.graphstream.ui2.graphicGraph.stylesheet.Selector} class defines the set
+ * {@link org.graphstream.ui2.graphicGraph.stylesheet.Rule}s. A rule is a pair (selector,style).
+ * The {@link org.graphstream.ui2.graphicGraph.stylesheet.Selector} class defines the set
  * of elements the style applies to, it can be loosely compared to a regular expression.
  * </p>
  * 
  * <p>
- * The {@link org.miv.graphstream.ui2.graphicGraph.stylesheet.StyleSheetListener} allows to listen
+ * The {@link org.graphstream.ui2.graphicGraph.stylesheet.StyleSheetListener} allows to listen
  * at events occurring in the style sheet.
  * </p>
  */

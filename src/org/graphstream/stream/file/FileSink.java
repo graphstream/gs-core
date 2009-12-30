@@ -27,7 +27,6 @@ import java.io.OutputStream;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.stream.Sink;
-import org.graphstream.stream.Sink;
 import org.graphstream.stream.Source;
 
 /**

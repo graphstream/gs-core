@@ -42,7 +42,7 @@ public class FileSinkFactory
 	*/
 	public static FileSink sinkFor( String filename ) 
 	{
-		String fc = new String( filename );
+//		String fc = new String( filename );
 		filename = filename.toLowerCase();
 		
 		if( filename.endsWith( ".dgs" ) )

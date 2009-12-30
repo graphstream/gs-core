@@ -138,6 +138,7 @@ public class SingleNode extends DefaultNode
 	 * @param directed If the edge is directed only from this node to the target.
 	 */
 	@Override
+	@SuppressWarnings("deprecation")
 	protected Edge addEdgeToward( String tag, DefaultNode target, boolean directed )
 		throws IllegalArgumentException
 	{
