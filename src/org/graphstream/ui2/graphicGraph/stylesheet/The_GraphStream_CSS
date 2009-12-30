@@ -180,6 +180,17 @@ text-style:
 	
 	Style of the text.
 
+text-alignment:
+	center
+	left
+	right
+	at_left
+	at_right
+	under
+	above
+	justify
+	along
+
 text-font:
 	<string>
 	
