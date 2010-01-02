@@ -278,7 +278,7 @@ public class Style extends StyleConstants
 	/**
 	 * Color(s) of the element shadow.
 	 */
-    public Colors getShadowColor()
+    public Colors getShadowColors()
 	{
 		return (Colors) getValue( "shadow-color" );
 	}
