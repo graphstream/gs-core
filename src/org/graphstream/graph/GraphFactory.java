@@ -47,7 +47,7 @@ public class GraphFactory
 		{
 			String completeGraphClass ;
 			if(graphClass.split("[.]").length < 2) {
-				completeGraphClass = "org.miv.graphstream.graph.implementations."+graphClass ;
+				completeGraphClass = "org.graphstream.graph.implementations."+graphClass ;
 			}
 			else {
 				completeGraphClass = graphClass ;
