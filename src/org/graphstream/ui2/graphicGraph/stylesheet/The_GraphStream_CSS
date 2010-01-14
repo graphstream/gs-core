@@ -259,15 +259,20 @@ Properties common to nodes and sprites
 shape:
 	circle
 	box
+	rounded-box ? (todo)
 	diamond
 	triangle
 	cross
 	polygon
 	text-box
+	text-rounded-box ? (todo)
 	text-paragraph
 	text-ellipse
 	text-diamond
 	jcomponent
+	
+round-corner:		? (todo)
+	<number(1)[%]>	? (todo)
 
 jcomponent:
 	button
@@ -298,6 +303,7 @@ shape:
 	line
 	angle
 	cubic-curve
+	cubic-angle-curve ?	(todo)
 	polyline
 	blob
 	

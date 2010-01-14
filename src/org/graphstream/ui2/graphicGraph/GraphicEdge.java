@@ -53,7 +53,7 @@ public class GraphicEdge extends GraphicElement implements Edge
 	public boolean directed;
 	
 	/**
-	 * In case of a multi-graph this is the index of the node between to and from.
+	 * In case of a multi-graph this is the index of the edge between to and from.
 	 */
 	public int multi;
 	

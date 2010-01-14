@@ -194,10 +194,12 @@ TOKEN: { < JUSTIFY           : "justify" > }
 TOKEN: { < CIRCLE            : "circle" > }
 TOKEN: { < TRIANGLE          : "triangle" > }
 TOKEN: { < TEXTBOX           : "text-box" > }
-TOKEN: { < TEXTELLIPSE       : "text-ellipse" > }
+TOKEN: { < TEXTROUNDEDBOX    : "text-rounded-box" > }
+TOKEN: { < TEXTCIRCLE        : "text-circle" > }
 TOKEN: { < TEXTDIAMOND       : "text-diamond" > }
 TOKEN: { < TEXTPARAGRAPH     : "text-paragraph" > }
 TOKEN: { < BOX               : "box" > }
+TOKEN: { < ROUNDEDBOX        : "rounded-box" > }
 TOKEN: { < CROSS             : "cross" > }
 TOKEN: { < DIAMOND           : "diamond" > }
 TOKEN: { < POLYGON           : "polygon" > }
@@ -610,27 +612,29 @@ Style.Shape shape():
 	Style.Shape s;
 }
 {
-	( ( <CIRCLE>        { s = Style.Shape.CIRCLE;         } )
-	| ( <BOX>           { s = Style.Shape.BOX;            } )
-	| ( <TRIANGLE>      { s = Style.Shape.TRIANGLE;       } )
-	| ( <CROSS>         { s = Style.Shape.CROSS;          } )
-	| ( <DIAMOND>       { s = Style.Shape.DIAMOND;        } )
-	| ( <POLYGON>       { s = Style.Shape.POLYGON;        } )
-	| ( <TEXTBOX>       { s = Style.Shape.TEXT_BOX;       } )
-	| ( <TEXTELLIPSE>   { s = Style.Shape.TEXT_ELLIPSE;   } )
-	| ( <TEXTDIAMOND>   { s = Style.Shape.TEXT_DIAMOND;   } )
-	| ( <TEXTPARAGRAPH> { s = Style.Shape.TEXT_PARAGRAPH; } )
-	| ( <JCOMPONENT>    { s = Style.Shape.JCOMPONENT;     } )
+	( ( <CIRCLE>         { s = Style.Shape.CIRCLE;           } )
+	| ( <BOX>            { s = Style.Shape.BOX;              } )
+	| ( <ROUNDEDBOX>     { s = Style.Shape.ROUNDED_BOX;      } )
+	| ( <TRIANGLE>       { s = Style.Shape.TRIANGLE;         } )
+	| ( <CROSS>          { s = Style.Shape.CROSS;            } )
+	| ( <DIAMOND>        { s = Style.Shape.DIAMOND;          } )
+	| ( <POLYGON>        { s = Style.Shape.POLYGON;          } )
+	| ( <TEXTBOX>        { s = Style.Shape.TEXT_BOX;         } )
+	| ( <TEXTROUNDEDBOX> { s = Style.Shape.TEXT_ROUNDED_BOX; } )
+	| ( <TEXTCIRCLE>     { s = Style.Shape.TEXT_CIRCLE;      } )
+	| ( <TEXTDIAMOND>    { s = Style.Shape.TEXT_DIAMOND;     } )
+	| ( <TEXTPARAGRAPH>  { s = Style.Shape.TEXT_PARAGRAPH;   } )
+	| ( <JCOMPONENT>     { s = Style.Shape.JCOMPONENT;       } )
 
-	| ( <PIECHART>      { s = Style.Shape.PIE_CHART;      } )
-	| ( <FLOW>          { s = Style.Shape.FLOW;           } )
-	| ( <ARROW>         { s = Style.Shape.ARROW;          } )
+	| ( <PIECHART>       { s = Style.Shape.PIE_CHART;        } )
+	| ( <FLOW>           { s = Style.Shape.FLOW;             } )
+	| ( <ARROW>          { s = Style.Shape.ARROW;            } )
 
-	| ( <LINE>          { s = Style.Shape.LINE;           } )
-	| ( <ANGLE>         { s = Style.Shape.ANGLE;          } )
-	| ( <CUBICCURVE>    { s = Style.Shape.CUBIC_CURVE;    } )
-	| ( <POLYLINE>      { s = Style.Shape.POLYLINE;       } )
-	| ( <BLOB>          { s = Style.Shape.BLOB;           } )
+	| ( <LINE>           { s = Style.Shape.LINE;             } )
+	| ( <ANGLE>          { s = Style.Shape.ANGLE;            } )
+	| ( <CUBICCURVE>     { s = Style.Shape.CUBIC_CURVE;      } )
+	| ( <POLYLINE>       { s = Style.Shape.POLYLINE;         } )
+	| ( <BLOB>           { s = Style.Shape.BLOB;             } )
 	)
 	{ return s; }
 }
