@@ -95,6 +95,11 @@ public abstract class GraphicElement extends AbstractElement
 	
 // Access
 	
+	public GraphicGraph myGraph()
+	{
+		return mygraph;
+	}
+	
 	@Override
 	protected String myGraphId()	// XXX
 	{

@@ -126,6 +126,13 @@ public class ViewerPipe extends SourceBase implements ProxyPipe
 	
 			sendGraphAttributeRemoved( id, attribute );
 		}
+		else if( attribute.equals( "ui.clicked" ) && value instanceof String )
+		{
+			for( ViewerListener listener: viewerListeners )
+				listener.buttonPushed( (String)value );
+			
+			sendGraphAttributeRemoved( id, attribute );
+		}
     }
 
 	public void graphAttributeChanged( String sourceId, long timeId, String attribute,
