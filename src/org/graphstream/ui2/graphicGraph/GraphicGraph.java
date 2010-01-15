@@ -1009,7 +1009,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 					sprite.attachToEdge( (GraphicEdge)element );
 			}
 			
-			if( value != null )
+			if( value != null && ( ! ( value instanceof Boolean ) ) )
 				positionSprite( sprite, value );
 		}
 		else if( event == AttributeChangeEvent.REMOVE )
@@ -1074,8 +1074,10 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	
 	protected void positionSprite( GraphicSprite sprite, Object value )
 	{
+//System.err.printf( "GG.positionSprite(%s, %s) =>", sprite.getId(), value );
 		if( value instanceof Object[] )
 		{
+//System.err.printf( " object[]%n" );
 			Object[] values = (Object[]) value;
 			
 			if( values.length == 4 )
@@ -1128,14 +1130,17 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		}
 		else if( value instanceof Number )
 		{
+//System.err.printf( " Number %f%n", ((Number)value).floatValue() );
 			sprite.setPosition( ((Number)value).floatValue() );
 		}
 		else if( value instanceof Value )
 		{
+//System.err.printf( " Value %s%n", ((Value)value).value );
 			sprite.setPosition( ((Value)value).value );
 		}
 		else if( value instanceof Values )
 		{
+//System.err.printf( " Values %s%n", ((Values)value) );
 			sprite.setPosition( (Values)value );
 		}
 		else if( value == null )
