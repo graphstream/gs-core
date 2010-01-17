@@ -728,7 +728,9 @@ public class DefaultGraph extends AbstractElement implements Graph
 		throws IOException
 	{
 		FileSink output = FileSinkFactory.sinkFor( filename );
-		write( output, filename );
+		if( output != null )
+			write( output, filename );
+		else throw new IOException( String.format( "no file output factory for file %s", filename ) );
 	}
 
 	public GraphViewerRemote display()

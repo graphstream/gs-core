@@ -48,13 +48,15 @@ public class FileSinkFactory
 		if( filename.endsWith( ".dgs" ) )
 			return new FileSinkDGS();
 		
-//		if( filename.endsWith( ".dot" ) )
-//			return new FileOutputDOT();
-		// TODO
+//		if( filename.endsWith( ".gml" ) )
+//			return new FileSinkGML();
+		// TODO XXX
 		
-//		if( filename.endsWith( ".svg" ) )
-//			return new FileOutputSVG();
-		// TODO
+		if( filename.endsWith( ".dot" ) )
+			return new FileSinkDOT();
+		
+		if( filename.endsWith( ".svg" ) )
+			return new FileSinkSVG();
 		
 		return null;
 	}

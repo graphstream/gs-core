@@ -337,6 +337,7 @@ public class SpringBox extends SourceBase implements Layout, ParticleBoxListener
 				viewZone = 10*k;
 				break;
 			case 4:
+				System.err.printf( "viewZone = -1%n" );
 				viewZone = -1;
 				break;
 			default:
