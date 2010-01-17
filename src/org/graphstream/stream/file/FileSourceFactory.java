@@ -91,8 +91,7 @@ public class FileSourceFactory
 			{
 				if( b[5] == '1' || b[5] == '2' )
 				{
-//					return new FileInputDGS1And2();
-					// TODO
+					return new FileSourceDGS1And2();
 				}
 				else if( b[5] == '3' || b[5] == '4' )
 				{
