@@ -246,7 +246,7 @@ public class NodeParticle extends Particle
 				delta.set( node.pos.x - pos.x, node.pos.y - pos.y, box.is3D ? node.pos.z - pos.z : 0 );
 				
 				float len    = delta.normalize();
-				float factor = len != 0 ? ( box.K2 / ( len * len ) ) : 0.00001f;
+				float factor = len != 0 ? ( ( box.K2 / ( len * len ) ) * node.weight ) : 0.00001f;
 								
 				delta.scalarMult( -factor );
 				disp.add( delta );
@@ -320,7 +320,7 @@ public class NodeParticle extends Particle
 						if( len > 0 )// && len < ( box.k * box.viewZone ) )
 						{
 							if( len < box.k ) len = box.k;	// XXX NEW To prevent infinite repulsion.
-							float factor = len != 0 ? ( box.K2 / ( len * len ) ) : 0.00001f;
+							float factor = len != 0 ? ( ( box.K2 / ( len * len ) ) * node.weight ) : 0.00001f;
 							box.energies.accumulateEnergy( factor );	// TODO check this
 							repE   += factor;
 							delta.scalarMult( -factor );
@@ -369,7 +369,6 @@ public class NodeParticle extends Particle
 						{
 							if( len < box.k ) len = box.k;	// XXX NEW To prevent infinite repulsion.
 							float factor = len != 0 ? ( ( box.K2 / ( len * len ) ) * (bary.weight) ) : 0.00001f;
-								
 							box.energies.accumulateEnergy( factor );
 							delta.scalarMult( -factor );
 							repE   += factor;
@@ -393,12 +392,12 @@ public class NodeParticle extends Particle
 				delta.set( other.pos.x - pos.x, other.pos.y - pos.y, box.is3D ? other.pos.z - pos.z : 0 );
 
 				float len = delta.normalize();
-				float k   = box.k;
+				float k   = box.k * edge.weight;
 
 				float factor = box.K1 * ( len - k );
 
 //				delta.scalarMult( factor );
-				delta.scalarMult( factor * ( 1f/(neighbours.size()*0.1f) ) * edge.weight );	// XXX NEW inertia based on the node degree.
+				delta.scalarMult( factor * ( 1f/(neighbours.size()*0.1f) ) );	// XXX NEW inertia based on the node degree.
 				disp.add( delta );
 				attE += factor;
 				

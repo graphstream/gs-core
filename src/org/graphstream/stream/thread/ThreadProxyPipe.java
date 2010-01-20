@@ -103,7 +103,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe, MBoxListen
 	 */
 	public ThreadProxyPipe( Source input )
 	{
-		this( input, null );
+		this( input, new MBoxStandalone() );
 	}
 	
 	/**
