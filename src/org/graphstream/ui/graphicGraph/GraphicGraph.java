@@ -1434,6 +1434,8 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
     {
 		throw new RuntimeException( "not implemented !" );
     }
+	
+	public org.graphstream.ui2.swingViewer.Viewer display2() { throw new RuntimeException( "not implemented !" ); }
 
 	public EdgeFactory edgeFactory()
     {

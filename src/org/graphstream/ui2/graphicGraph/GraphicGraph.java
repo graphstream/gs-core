@@ -704,6 +704,8 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
     {
 		throw new RuntimeException( "not implemented !" );
     }
+	
+	public org.graphstream.ui2.swingViewer.Viewer display2() { throw new RuntimeException( "not implemented !" ); }
 
 	public void stepBegins( double step )
 	{

@@ -419,7 +419,9 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 *         viewer often run in another thread).
 	 */
 	GraphViewerRemote display();
-
+	
+	org.graphstream.ui2.swingViewer.Viewer display2();
+	
 	/**
 	 * Utility method that create a new graph viewer, and register the graph in
 	 * it. Notice that this method is a quick way to see a graph, and only this.
