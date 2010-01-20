@@ -398,7 +398,7 @@ public class NodeParticle extends Particle
 				float factor = box.K1 * ( len - k );
 
 //				delta.scalarMult( factor );
-				delta.scalarMult( factor * ( 1f/(neighbours.size()*0.1f) ) );	// XXX NEW inertia based on the node degree.
+				delta.scalarMult( factor * ( 1f/(neighbours.size()*0.1f) ) * edge.weight );	// XXX NEW inertia based on the node degree.
 				disp.add( delta );
 				attE += factor;
 				
