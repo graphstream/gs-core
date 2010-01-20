@@ -421,6 +421,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	GraphViewerRemote display();
 	
 	org.graphstream.ui2.swingViewer.Viewer display2();
+	org.graphstream.ui2.swingViewer.Viewer display2( boolean autoLayout );
 	
 	/**
 	 * Utility method that create a new graph viewer, and register the graph in

@@ -217,7 +217,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe, MBoxListen
 	 * Ask the proxy to unregister from the event input source (stop receive events) as soon as
 	 * possible (when the next event will occur in the graph).
 	 */
-	public void unregisterFromGraph()
+	public void unregisterFromSource()
 	{
 		unregisterWhenPossible = true;
 	}

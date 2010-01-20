@@ -45,7 +45,7 @@ public class LayoutRunner extends Thread
 	 * The meaning of life.
 	 */
 	protected boolean loop = true;
-	
+
 	/**
 	 * New layout runner that listen at the given source and compute a layout on its graph structure
 	 * in a distinct thread. 
@@ -86,12 +86,26 @@ public class LayoutRunner extends Thread
 	@Override
 	public void run()
 	{
+		String layoutName = layout.getLayoutAlgorithmName();
+		
 		while( loop )
 		{
 			pumpPipe.pump();
 			layout.compute();
 			nap( 10 );
 		}
+		
+		System.out.printf( "Layout '%s' process stopped.%n", layoutName );
+		System.out.flush();
+	}
+	
+	public void release()
+	{
+		pumpPipe.unregisterFromSource();
+		pumpPipe.removeSink( layout );
+		pumpPipe = null;
+		layout = null;
+		loop = false;
 	}
 	
 	protected void nap( long ms )

@@ -32,6 +32,8 @@ import org.graphstream.graph.Graph;
 import org.graphstream.stream.ProxyPipe;
 import org.graphstream.stream.thread.ThreadProxyPipe;
 import org.graphstream.ui2.graphicGraph.GraphicGraph;
+import org.graphstream.ui2.layout.Layout;
+import org.graphstream.ui2.layout.LayoutRunner;
 import org.graphstream.ui2.swingViewer.basicRenderer.SwingBasicGraphRenderer;
 import org.graphstream.ui2.swingViewer.util.FontCache;
 import org.graphstream.ui2.swingViewer.util.ImageCache;
@@ -138,6 +140,12 @@ public class Viewer implements ActionListener
 	 * Set of fonts.
 	 */
 	protected FontCache fonts;
+	
+// Attribute
+	
+	protected LayoutRunner optLayout = null;
+	
+	protected ProxyPipe layoutPipeIn = null;
 
 // Construction
 	
@@ -385,6 +393,9 @@ public class Viewer implements ActionListener
 		if( pumpPipe != null )
 			pumpPipe.pump();
 
+		if( layoutPipeIn != null )
+			layoutPipeIn.pump();
+		
 		boolean changed = graph.graphChangedFlag();
 	
 		if( changed )
@@ -416,6 +427,30 @@ public class Viewer implements ActionListener
 			
 			for( View view: views.values() )
 				view.setBounds( lo.x, lo.y, lo.z, hi.x, hi.y, hi.z );
+		}
+	}
+	
+// Optional layout algorithm
+	
+	public void enableAutoLayout( Layout layoutAlgorithm )
+	{
+		if( optLayout == null )
+		{
+			optLayout = new LayoutRunner( graph, layoutAlgorithm );
+			layoutPipeIn = optLayout.newLayoutPipe();
+			layoutPipeIn.addAttributeSink( graph );
+		}
+	}
+	
+	public void disableAutoLayout()
+	{
+		if( optLayout != null )
+		{
+			((ThreadProxyPipe)layoutPipeIn).unregisterFromSource();
+			layoutPipeIn.removeSink( graph );
+			layoutPipeIn = null;
+			optLayout.release();
+			optLayout = null;
 		}
 	}
 }

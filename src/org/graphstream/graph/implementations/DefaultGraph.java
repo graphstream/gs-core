@@ -49,9 +49,9 @@ import org.graphstream.stream.file.FileSourceFactory;
 import org.graphstream.stream.sync.SinkTime;
 import org.graphstream.ui.GraphViewer;
 import org.graphstream.ui.GraphViewerRemote;
+import org.graphstream.ui2.layout.Layout;
 import org.graphstream.ui2.swingViewer.GraphRenderer;
 import org.graphstream.ui2.swingViewer.Viewer;
-import org.graphstream.ui2.swingViewer.ViewerPipe;
 import org.graphstream.ui2.swingViewer.basicRenderer.SwingBasicGraphRenderer;
 
 /**
@@ -782,18 +782,69 @@ public class DefaultGraph extends AbstractElement implements Graph
         
         return null;
 	}
-	
+
 	public Viewer display2()
+	{
+		return display2( true );
+	}
+	
+	public Viewer display2( boolean autoLayout )
 	{
 		Viewer        viewer   = new Viewer( this, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD );
 		GraphRenderer renderer = newGraphRenderer();
 		
-		viewer.addView( "view1", renderer );
+		viewer.addView( String.format( "defaultView_%d", (long)(Math.random()*10000) ), renderer );
+	
+		if( autoLayout )
+		{
+			Layout layout = newLayoutAlgorithm();
+			viewer.enableAutoLayout( layout );
+		}
 		
 		return viewer;
 	}
 	
-	protected GraphRenderer newGraphRenderer()
+	protected static Layout newLayoutAlgorithm()
+	{
+		String layoutClassName = System.getProperty( "gs.ui.layout" );
+		
+		if( layoutClassName == null )
+			return new org.graphstream.ui2.layout.springbox.SpringBox( false );
+		
+		try
+        {
+	        Class<?> c      = Class.forName( layoutClassName );
+	        Object   object = c.newInstance();
+	        
+	        if( object instanceof Layout )
+	        {
+	        	return (Layout) object;
+	        }
+	        else
+	        {
+	        	System.err.printf( "class '%s' is not a 'GraphRenderer'%n", object );
+	        }
+        }
+        catch( ClassNotFoundException e )
+        {
+	        e.printStackTrace();
+        	System.err.printf( "Cannot create layout, 'GraphRenderer' class not found : " + e.getMessage() );
+        }
+        catch( InstantiationException e )
+        {
+            e.printStackTrace();
+        	System.err.printf( "Cannot create layout, class '"+layoutClassName+"' error : " + e.getMessage() );
+        }
+        catch( IllegalAccessException e )
+        {
+            e.printStackTrace();
+        	System.err.printf( "Cannot create layout, class '"+layoutClassName+"' illegal access : " + e.getMessage() );
+        }
+
+		return new org.graphstream.ui2.layout.springbox.SpringBox( false );
+	}
+	
+	protected static GraphRenderer newGraphRenderer()
 	{
 		String rendererClassName = System.getProperty( "gs.ui.renderer" );
 		
