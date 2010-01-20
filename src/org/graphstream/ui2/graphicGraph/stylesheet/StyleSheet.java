@@ -33,6 +33,7 @@ import org.graphstream.graph.Element;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.ui2.graphicGraph.GraphicSprite;
+import org.graphstream.ui2.graphicGraph.stylesheet.StyleConstants.StrokeMode;
 import org.graphstream.ui2.graphicGraph.stylesheet.parser.ParseException;
 import org.graphstream.ui2.graphicGraph.stylesheet.parser.StyleSheetParser;
 
@@ -322,6 +323,7 @@ public class StyleSheet
 		colors.add( Color.WHITE );
 		
 		graphRules.defaultRule.getStyle().setValue( "fill-color", colors );
+		graphRules.defaultRule.getStyle().setValue( "stroke-mode", StrokeMode.NONE );
 		
 		for( StyleSheetListener listener: listeners )
 			listener.styleAdded( defaultRule, defaultRule );
