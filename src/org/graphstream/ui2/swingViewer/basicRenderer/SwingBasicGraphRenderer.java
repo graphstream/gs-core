@@ -26,6 +26,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -37,6 +38,7 @@ import org.graphstream.ui2.graphicGraph.GraphicElement;
 import org.graphstream.ui2.graphicGraph.GraphicGraph;
 import org.graphstream.ui2.graphicGraph.StyleGroup;
 import org.graphstream.ui2.graphicGraph.StyleGroupSet;
+import org.graphstream.ui2.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui2.graphicGraph.stylesheet.Value;
 import org.graphstream.ui2.swingViewer.GraphRendererBase;
 import org.graphstream.ui2.swingViewer.util.Camera;
@@ -188,11 +190,12 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 		float        px1     = metrics.px1;
 		Value        stroke  = style.getShadowWidth();
 
+		setupGraphics( g );
 		renderGraphBackground( g );
 		camera.pushView( g );
 		renderGraphElements( g );
 		
-		if( style.getStrokeWidth().value != 0 )
+		if( style.getStrokeMode() != StyleConstants.StrokeMode.NONE && style.getStrokeWidth().value != 0 )
 		{
 			rect.setFrame( metrics.lo.x, metrics.lo.y+px1, metrics.size.data[0]-px1, metrics.size.data[1]-px1 );
 			g.setStroke( new BasicStroke( metrics.lengthToGu( stroke ) ) );
@@ -201,6 +204,31 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 		}
 
 		camera.popView( g );
+	}
+	
+	protected void setupGraphics( Graphics2D g )
+	{
+	   g.setRenderingHint( RenderingHints.KEY_STROKE_CONTROL,      RenderingHints.VALUE_STROKE_PURE );
+	   
+	   if( graph.hasAttribute( "ui.antialias" ) ) {
+		   g.setRenderingHint( RenderingHints.KEY_TEXT_ANTIALIASING,   RenderingHints.VALUE_TEXT_ANTIALIAS_ON );
+		   g.setRenderingHint( RenderingHints.KEY_ANTIALIASING,        RenderingHints.VALUE_ANTIALIAS_ON );
+	   } else {
+		   g.setRenderingHint( RenderingHints.KEY_TEXT_ANTIALIASING,   RenderingHints.VALUE_TEXT_ANTIALIAS_OFF );
+		   g.setRenderingHint( RenderingHints.KEY_ANTIALIASING,        RenderingHints.VALUE_ANTIALIAS_OFF );
+	   }
+    
+	   if( graph.hasAttribute( "ui.quality" ) ) {
+		   g.setRenderingHint( RenderingHints.KEY_RENDERING,           RenderingHints.VALUE_RENDER_SPEED );
+		   g.setRenderingHint( RenderingHints.KEY_INTERPOLATION,       RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR );
+		   g.setRenderingHint( RenderingHints.KEY_COLOR_RENDERING,     RenderingHints.VALUE_COLOR_RENDER_SPEED );
+		   g.setRenderingHint( RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED );
+	   } else {
+		   g.setRenderingHint( RenderingHints.KEY_RENDERING,           RenderingHints.VALUE_RENDER_QUALITY );
+		   g.setRenderingHint( RenderingHints.KEY_INTERPOLATION,       RenderingHints.VALUE_INTERPOLATION_BICUBIC );
+		   g.setRenderingHint( RenderingHints.KEY_COLOR_RENDERING,     RenderingHints.VALUE_COLOR_RENDER_QUALITY );
+		   g.setRenderingHint( RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY );
+	   }
 	}
 	
 	/**
@@ -289,7 +317,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 	
 // Utility | Debug
 
-	/**
+	/** 
 	 * Show the centre, the low and high points of the graph, and the visible area (that should
 	 * always map to the window borders).
 	 */
