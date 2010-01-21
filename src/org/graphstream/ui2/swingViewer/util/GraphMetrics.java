@@ -143,6 +143,11 @@ public class GraphMetrics
 		return hi;
 	}
 	
+  	public float graphWidthGU() { return hi.x - lo.x; }
+  	public float graphHeightGU() { return hi.y - lo.y; }
+    public float graphDepthGU() { return hi.z - lo.z; }
+
+	
 // Access -- Convert values
 	
 	/**

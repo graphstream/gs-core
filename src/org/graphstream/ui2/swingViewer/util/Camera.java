@@ -624,9 +624,9 @@ public class Camera
 			Values        size = sprite.getStyle().getSize();
 			float         w2   = metrics.lengthToPx( size, 0 ) / 2;
 			float         h2   = size.size() > 1 ? metrics.lengthToPx( size, 1 )/2 : w2;
-			Point2D.Float src  = new Point2D.Float( sprite.getX(), sprite.getY() );
+			Point2D.Float src  = spritePositionPx( sprite );//new Point2D.Float( sprite.getX(), sprite.getY() );
 	
-			Tx.transform( src, src );
+			//Tx.transform( src, src );
 	
 			float x1 = src.x - w2;
 			float x2 = src.x + w2;
@@ -641,6 +641,23 @@ public class Camera
 			return true;
 		}
 	}
+	   
+  	protected Point2D.Float spritePositionPx( GraphicSprite sprite)
+  	{
+  		if( sprite.getUnits() == Units.PX )
+  		{
+  			return new Point2D.Float( sprite.getX(), sprite.getY() );
+  		}
+  		else if( sprite.getUnits() == Units.GU )
+  		{
+  			Point2D.Float pos = new Point2D.Float( sprite.getX(), sprite.getY() );
+  			return (Point2D.Float) Tx.transform( pos, pos );	
+  		}
+  		else// if( sprite.getUnits() == Units.PERCENTS )
+  		{
+  			return new Point2D.Float( (sprite.getX()/100f)*metrics.viewport.data[0], (sprite.getY()/100f)*metrics.viewport.data[1] );
+  		}
+  	}
 
 	/**
 	 * Check if a node or sprite contains the given point (x,y).
@@ -703,7 +720,17 @@ public class Camera
 		
 			Tx.transform( pos, pos );
 		}
-		else
+		else if( units == Units.GU && sprite.getUnits() == Units.PERCENTS )
+		{
+  			pos.x = metrics.lo.x + (sprite.getX()/100f) * metrics.graphWidthGU();
+  			pos.y = metrics.lo.y + (sprite.getY()/100f) * metrics.graphHeightGU();
+  		}
+		else if( units == Units.PX && sprite.getUnits() == Units.PERCENTS )
+		{
+  			pos.x = (sprite.getX()/100f) * metrics.viewport.data[0];
+  			pos.y = (sprite.getY()/100f) * metrics.viewport.data[1];
+  		}
+  		else
 		{
 			throw new RuntimeException( "Unhandled yet sprite positioning." );
 		}
