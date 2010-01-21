@@ -47,12 +47,12 @@ import org.graphstream.stream.file.FileSinkFactory;
 import org.graphstream.stream.file.FileSource;
 import org.graphstream.stream.file.FileSourceFactory;
 import org.graphstream.stream.sync.SinkTime;
-import org.graphstream.ui2.layout.Layout;
-import org.graphstream.ui2.old.GraphViewer;
-import org.graphstream.ui2.old.GraphViewerRemote;
-import org.graphstream.ui2.swingViewer.GraphRenderer;
-import org.graphstream.ui2.swingViewer.Viewer;
-import org.graphstream.ui2.swingViewer.basicRenderer.SwingBasicGraphRenderer;
+import org.graphstream.ui.layout.Layout;
+import org.graphstream.ui.old.GraphViewer;
+import org.graphstream.ui.old.GraphViewerRemote;
+import org.graphstream.ui.swingViewer.GraphRenderer;
+import org.graphstream.ui.swingViewer.Viewer;
+import org.graphstream.ui.swingViewer.basicRenderer.SwingBasicGraphRenderer;
 
 /**
  * Default implementation for the Graph interface.
@@ -811,7 +811,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 		String layoutClassName = System.getProperty( "gs.ui.layout" );
 		
 		if( layoutClassName == null )
-			return new org.graphstream.ui2.layout.springbox.SpringBox( false );
+			return new org.graphstream.ui.layout.springbox.SpringBox( false );
 		
 		try
         {
@@ -843,7 +843,7 @@ public class DefaultGraph extends AbstractElement implements Graph
         	System.err.printf( "Cannot create layout, class '"+layoutClassName+"' illegal access : " + e.getMessage() );
         }
 
-		return new org.graphstream.ui2.layout.springbox.SpringBox( false );
+		return new org.graphstream.ui.layout.springbox.SpringBox( false );
 	}
 	
 	protected static GraphRenderer newGraphRenderer()
