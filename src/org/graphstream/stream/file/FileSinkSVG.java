@@ -27,9 +27,9 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.graphstream.oldUi.graphicGraph.stylesheet.Rule;
-import org.graphstream.oldUi.graphicGraph.stylesheet.StyleSheet;
 import org.graphstream.ui2.geom.Point3;
+import org.graphstream.ui2.old.graphicGraph.stylesheet.Rule;
+import org.graphstream.ui2.old.graphicGraph.stylesheet.StyleSheet;
 
 /**
  * Transforms a graph into a SVG description.

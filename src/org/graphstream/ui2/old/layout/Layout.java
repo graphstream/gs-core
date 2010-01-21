@@ -21,9 +21,9 @@
  * 	Guilhelm Savin
  */
 
-package org.graphstream.ui2.layout;
+package org.graphstream.ui2.old.layout;
 
-import org.graphstream.stream.Pipe;
+import org.graphstream.stream.Sink;
 import org.graphstream.ui2.geom.Point3;
 
 /**
@@ -80,7 +80,7 @@ import org.graphstream.ui2.geom.Point3;
  * 
  * @since 20050706
  */
-public interface Layout extends Pipe
+public interface Layout extends Sink
 {
 // Access
 
@@ -96,7 +96,7 @@ public interface Layout extends Pipe
 	int getNodeMoved();
 
 	/**
-	 * How close to stabilisation the layout algorithm is.
+	 * Percent of nodes moving (between [0..1]).
 	 */
 	double getStabilization();
 
@@ -141,12 +141,12 @@ public interface Layout extends Pipe
 	void clear();
 
 	/**
-	 * Add a listener for specific layout events.
+	 * Add a listener for layout events.
 	 */
 	void addListener( LayoutListener listener );
 
 	/**
-	 * Remove a listener for specific layout events.
+	 * Remove a listener for layout events.
 	 */
 	void removeListener( LayoutListener listener );
 

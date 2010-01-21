@@ -695,12 +695,12 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	    return removeNode( getId(), newEvent(), id );
     }
 
-	public org.graphstream.oldUi.GraphViewerRemote oldDisplay()
+	public org.graphstream.ui2.old.GraphViewerRemote oldDisplay()
     {
 		throw new RuntimeException( "not implemented !" );
     }
 
-	public org.graphstream.oldUi.GraphViewerRemote oldDisplay( boolean autoLayout )
+	public org.graphstream.ui2.old.GraphViewerRemote oldDisplay( boolean autoLayout )
     {
 		throw new RuntimeException( "not implemented !" );
     }
