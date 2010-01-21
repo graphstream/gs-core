@@ -1425,18 +1425,18 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleSheetLi
     {
     }
 
-	public GraphViewerRemote display()
+	public GraphViewerRemote oldDisplay()
     {
 		throw new RuntimeException( "not implemented !" );
     }
 
-	public GraphViewerRemote display( boolean autoLayout )
+	public GraphViewerRemote oldDisplay( boolean autoLayout )
     {
 		throw new RuntimeException( "not implemented !" );
     }
 	
-	public org.graphstream.ui2.swingViewer.Viewer display2() { throw new RuntimeException( "not implemented !" ); }
-	public org.graphstream.ui2.swingViewer.Viewer display2( boolean autoLayout ) { throw new RuntimeException( "not implemented !" ); }
+	public org.graphstream.ui2.swingViewer.Viewer display() { throw new RuntimeException( "not implemented !" ); }
+	public org.graphstream.ui2.swingViewer.Viewer display( boolean autoLayout ) { throw new RuntimeException( "not implemented !" ); }
 
 	public EdgeFactory edgeFactory()
     {

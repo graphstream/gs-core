@@ -34,7 +34,7 @@ import org.graphstream.ui.layout.LayoutRunner;
  * Interface to viewers that display the graph.
  * 
  * <p>
- * The {@link Graph#display()} method returns an instance of the default implementation of
+ * The {@link Graph#oldDisplay()} method returns an instance of the default implementation of
  * GraphViewer that allows to control the view, and to listen at it. You can also create
  * your own instances of specific graph viewers.
  * </p>

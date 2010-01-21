@@ -414,14 +414,11 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * automatically launch a graph layout algorithm in its own thread to
 	 * compute best node positions.
 	 * @see org.graphstream.ui.GraphViewerRemote
-	 * @see #display(boolean)
+	 * @see #oldDisplay(boolean)
 	 * @return a graph viewer remote that allows to command the viewer (it is a remote since the
 	 *         viewer often run in another thread).
 	 */
-	GraphViewerRemote display();
-	
-	org.graphstream.ui2.swingViewer.Viewer display2();
-	org.graphstream.ui2.swingViewer.Viewer display2( boolean autoLayout );
+	GraphViewerRemote oldDisplay();
 	
 	/**
 	 * Utility method that create a new graph viewer, and register the graph in
@@ -430,9 +427,12 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @param autoLayout If true a layout algorithm is launched in its own
 	 *        thread to compute best node positions.
 	 * @see org.graphstream.ui.GraphViewerRemote
-	 * @see #display()
+	 * @see #oldDisplay()
 	 * @return a graph viewer remote that allows to command the viewer (it is a remote since the
 	 *         viewer often run in another thread).
 	 */
-	GraphViewerRemote display( boolean autoLayout );
+	GraphViewerRemote oldDisplay( boolean autoLayout );
+	
+	org.graphstream.ui2.swingViewer.Viewer display();
+	org.graphstream.ui2.swingViewer.Viewer display( boolean autoLayout );
 }

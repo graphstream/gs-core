@@ -36,7 +36,7 @@ public class TestMultiGraph
 	{
 		Graph graph = new MultiGraph( "multi-graph!", false, true );
 		
-		graph.display();
+		graph.oldDisplay();
 		
 		graph.addNode( "A" );
 		graph.addNode( "B" );

@@ -739,12 +739,12 @@ public class DefaultGraph extends AbstractElement implements Graph
 		else throw new IOException( String.format( "no file output factory for file %s", filename ) );
 	}
 
-	public GraphViewerRemote display()
+	public GraphViewerRemote oldDisplay()
 	{
-		return display( true );
+		return oldDisplay( true );
 	}
 
-	public GraphViewerRemote display( boolean autoLayout )
+	public GraphViewerRemote oldDisplay( boolean autoLayout )
 	{
 		String viewerClass = "org.graphstream.ui.swing.SwingGraphViewer";
 		
@@ -785,12 +785,12 @@ public class DefaultGraph extends AbstractElement implements Graph
         return null;
 	}
 
-	public Viewer display2()
+	public Viewer display()
 	{
-		return display2( true );
+		return display( true );
 	}
 	
-	public Viewer display2( boolean autoLayout )
+	public Viewer display( boolean autoLayout )
 	{
 		Viewer        viewer   = new Viewer( this, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD );
 		GraphRenderer renderer = newGraphRenderer();
