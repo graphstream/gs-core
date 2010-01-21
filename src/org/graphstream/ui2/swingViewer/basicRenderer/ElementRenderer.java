@@ -191,31 +191,25 @@ public abstract class ElementRenderer
 			
 			if( label != null )
 			{
-				
 				Point2D.Float p = null;
+				GraphicSprite s = null;
 				
-				if( element instanceof GraphicSprite ) {
-					GraphicSprite s = (GraphicSprite) element;
-					if( s.getUnits() == Units.PX ) {
-						float w = camera.getMetrics().lengthToPx( group.getSize(), 0 );
-						p = new Point2D.Float();
-						p.x = element.getX() + ( w  / 2 );
-						p.y = element.getY();
-					} else if( s.getUnits() == Units.PERCENTS ) {
-						// XXX TOOD
-					} else {
-						float w = camera.getMetrics().lengthToGu( group.getSize(), 0 );
-						float x = element.getX() + ( w / 2 );
-						float y = element.getY();
-						
-						p = camera.transform( x, y );
-					}
+				if( element instanceof GraphicSprite )
+					s = (GraphicSprite) element;
+				
+				if( s != null && s.getUnits() == Units.PX ) {
+					float w = camera.getMetrics().lengthToPx( group.getSize(), 0 );
+					p   = new Point2D.Float();
+					p.x = element.getX() + ( w  / 2 );
+					p.y = element.getY();
+				} else if( s != null && s.getUnits() == Units.PERCENTS ) {
+					float w = camera.getMetrics().lengthToPx( group.getSize(), 0 );
+					p   = new Point2D.Float();
+					p.x = camera.getMetrics().viewport.data[1] * element.getX() + ( w / 2 );
+					p.y = camera.getMetrics().viewport.data[2] * element.getY();
 				} else {
 					float w = camera.getMetrics().lengthToGu( group.getSize(), 0 );
-					float x = element.getX() + ( w / 2 );
-					float y = element.getY();
-
-					p = camera.transform( x, y );
+					p = camera.transform( element.getX() + (w / 2), element.getY() );
 				}
 
 				AffineTransform Tx = g.getTransform();
