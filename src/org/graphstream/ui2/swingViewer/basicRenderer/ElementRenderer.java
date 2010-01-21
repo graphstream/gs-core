@@ -30,9 +30,11 @@ import java.awt.geom.Point2D;
 
 import org.graphstream.graph.Element;
 import org.graphstream.ui2.graphicGraph.GraphicElement;
+import org.graphstream.ui2.graphicGraph.GraphicSprite;
 import org.graphstream.ui2.graphicGraph.StyleGroup;
 import org.graphstream.ui2.graphicGraph.StyleGroup.ElementEvents;
 import org.graphstream.ui2.graphicGraph.stylesheet.StyleConstants;
+import org.graphstream.ui2.graphicGraph.stylesheet.StyleConstants.Units;
 import org.graphstream.ui2.swingViewer.util.Camera;
 import org.graphstream.ui2.swingViewer.util.FontCache;
 
@@ -189,11 +191,33 @@ public abstract class ElementRenderer
 			
 			if( label != null )
 			{
-				float w = camera.getMetrics().lengthToGu( group.getSize(), 0 );
-				float x = element.getX() + ( w / 2 );
-				float y = element.getY();
 				
-				Point2D.Float   p  = camera.transform( x, y );
+				Point2D.Float p = null;
+				
+				if( element instanceof GraphicSprite ) {
+					GraphicSprite s = (GraphicSprite) element;
+					if( s.getUnits() == Units.PX ) {
+						float w = camera.getMetrics().lengthToPx( group.getSize(), 0 );
+						p = new Point2D.Float();
+						p.x = element.getX() + ( w  / 2 );
+						p.y = element.getY();
+					} else if( s.getUnits() == Units.PERCENTS ) {
+						// XXX TOOD
+					} else {
+						float w = camera.getMetrics().lengthToGu( group.getSize(), 0 );
+						float x = element.getX() + ( w / 2 );
+						float y = element.getY();
+						
+						p = camera.transform( x, y );
+					}
+				} else {
+					float w = camera.getMetrics().lengthToGu( group.getSize(), 0 );
+					float x = element.getX() + ( w / 2 );
+					float y = element.getY();
+
+					p = camera.transform( x, y );
+				}
+
 				AffineTransform Tx = g.getTransform();
 				Color           c  = g.getColor();
 				
