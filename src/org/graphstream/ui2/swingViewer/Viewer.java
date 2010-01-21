@@ -29,9 +29,9 @@ import java.util.HashMap;
 import javax.swing.Timer;
 
 import org.graphstream.graph.Graph;
-import org.graphstream.oldUi.geom.Point3;
 import org.graphstream.stream.ProxyPipe;
 import org.graphstream.stream.thread.ThreadProxyPipe;
+import org.graphstream.ui2.geom.Point3;
 import org.graphstream.ui2.graphicGraph.GraphicGraph;
 import org.graphstream.ui2.layout.Layout;
 import org.graphstream.ui2.layout.LayoutRunner;

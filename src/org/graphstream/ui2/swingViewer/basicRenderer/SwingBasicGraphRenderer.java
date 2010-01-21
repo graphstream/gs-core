@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.graphstream.graph.Element;
-import org.graphstream.oldUi.geom.Point3;
+import org.graphstream.ui2.geom.Point3;
 import org.graphstream.ui2.graphicGraph.GraphicElement;
 import org.graphstream.ui2.graphicGraph.GraphicGraph;
 import org.graphstream.ui2.graphicGraph.StyleGroup;

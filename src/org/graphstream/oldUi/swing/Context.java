@@ -34,13 +34,13 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 
-import org.graphstream.oldUi.geom.InterpolatedFloat;
 import org.graphstream.oldUi.graphicGraph.GraphicEdge;
 import org.graphstream.oldUi.graphicGraph.GraphicElement;
 import org.graphstream.oldUi.graphicGraph.GraphicNode;
 import org.graphstream.oldUi.graphicGraph.stylesheet.Style;
 import org.graphstream.oldUi.graphicGraph.stylesheet.Value;
 import org.graphstream.oldUi.swing.FontCache;
+import org.graphstream.ui2.geom.InterpolatedFloat;
 
 /**
  * Shared settings used during graph rendering.

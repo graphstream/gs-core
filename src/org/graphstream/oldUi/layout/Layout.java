@@ -23,8 +23,8 @@
 
 package org.graphstream.oldUi.layout;
 
-import org.graphstream.oldUi.geom.Point3;
 import org.graphstream.stream.Sink;
+import org.graphstream.ui2.geom.Point3;
 
 /**
  * Layout algorithm interface.

@@ -33,9 +33,9 @@ import java.util.Random;
 
 import org.graphstream.graph.ElementNotFoundException;
 import org.graphstream.graph.IdAlreadyInUseException;
-import org.graphstream.oldUi.geom.Point3;
 import org.graphstream.oldUi.layout.Layout;
 import org.graphstream.oldUi.layout.LayoutListener;
+import org.graphstream.ui2.geom.Point3;
 import org.miv.pherd.ParticleBox;
 import org.miv.pherd.ParticleBoxListener;
 import org.miv.pherd.ntree.Anchor;

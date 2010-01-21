@@ -24,10 +24,10 @@
 options { JDK_VERSION = "1.5"; STATIC = false; }
 
 PARSER_BEGIN(StyleSheetParser)
-package org.graphstream.ui.graphicGraph.stylesheet.parser;
+package org.graphstream.oldUi.graphicGraph.stylesheet.parser;
 
-import org.graphstream.ui.graphicGraph.stylesheet.*;
-import org.graphstream.ui.graphicGraph.GraphicGraph;
+import org.graphstream.oldUi.graphicGraph.stylesheet.*;
+import org.graphstream.oldUi.graphicGraph.GraphicGraph;
 import java.awt.Color;
 import java.io.InputStream;
 import java.io.Reader;

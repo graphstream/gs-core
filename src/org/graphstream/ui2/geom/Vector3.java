@@ -1,17 +1,18 @@
-package org.graphstream.oldUi.geom;
+package org.graphstream.ui2.geom;
 
 
-public class Vector2
-		implements java.io.Serializable
+/**
+ * A three component vector made of floats.
+ *
+ * @author Antoine Dutot
+ * @since 20000613
+ * @version 0.1
+ */
+public class Vector3 extends Vector2
 {
-// Attributes
+// Attributes:
 	
 	private static final long serialVersionUID = 8839258036865851454L;
-
-	/**
-	 * Sequence of 3 coefficients.
-	 */
-	public float data[];
 
 // Constructors
 	
@@ -19,31 +20,33 @@ public class Vector2
 	 * New zero vector.
 	 */
 	public
-	Vector2()
+	Vector3()
 	{
-		data    = new float[2];
+		data    = new float[3];
 		data[0] = 0;
 		data[1] = 0;
+		data[2] = 0;
 	}
 	
 	/**
-	 * New (<code>x</code>,<code>y</code>) vector.
+	 * New (<code>x</code>,<code>y</code>,<code>z</code>) vector.
 	 */
 	public
-	Vector2( float x, float y )
+	Vector3( float x, float y, float z )
 	{
-		data    = new float[2];
+		data    = new float[3];
 		data[0] = x;
 		data[1] = y;
+		data[2] = z;
 	}
 	
 	/**
 	 * New vector copy of <code>other</code>.
 	 */
 	public
-	Vector2( Vector2 other )
+	Vector3( Vector3 other )
 	{
-		data = new float[2];
+		data = new float[3];
 		copy( other );
 	}
 	
@@ -51,9 +54,9 @@ public class Vector2
 	 * New vector copy of <code>point</code>.
 	 */
 	public
-	Vector2( Point2 point )
+	Vector3( Point3 point )
 	{
-		data = new float[2];
+		data = new float[3];
 		copy( point );
 	}
 
@@ -62,10 +65,11 @@ public class Vector2
 	/**
 	 * Are all components to zero?.
 	 */
+	@Override
 	public boolean
 	isZero()
 	{
-		return( data[0] == 0 && data[1] == 0 );
+		return( data[0] == 0 && data[1] == 0 && data[2] == 0 );
 	}
 	
 	/**
@@ -75,27 +79,29 @@ public class Vector2
 	public boolean
 	equals( Object other ) 
 	{
-		Vector2 v;
+		Vector3 v;
 
-		if( ! ( other instanceof Vector2 ) )
+		if( ! ( other instanceof Vector3 ) )
 		{
 			return false;
 		}
 
-		v = (Vector2) other;
+		v = (Vector3) other;
 	
 		return( data[0] == v.data[0]
-			&&  data[1] == v.data[1] );
+			&&  data[1] == v.data[1]
+			&&  data[2] == v.data[2] );
 	}
 	
 	/**
 	 * Is this equal to other ?
 	 */
 	public boolean
-	equals( Vector2 other ) 
+	equals( Vector3 other ) 
 	{
 		return( data[0] == other.data[0]
-			&&  data[1] == other.data[1] );
+			&&  data[1] == other.data[1]
+			&&  data[2] == other.data[2] );
 	}
 	
 	/**
@@ -103,48 +109,41 @@ public class Vector2
 	 *
 	 * In other words, is i &gt;= 0 &amp;&amp; &lt; than #count() ?
 	 */
+	@Override
 	public boolean
 	validComponent( int i ) 
 	{
-		return( i >= 0 && i < 2 );
+		return( i >= 0 && i < 3 );
 	}
 
-// Accessors:
+// Access
 	
-	/**
-	 * i-th element.
-	 */
-	public float
-	at( int i )
-	{
-		return data[i];
-	}
-
 	@Override
 	public Object
 	clone()
 	{
-		return new Vector2( this );
+		return new Vector3( this );
 	}
 
-// Accessors
+// Access
 	
 	/**
 	 * Dot product of this and other.
 	 */
 	public float
-	dotProduct( Vector2 other ) 
+	dotProduct( Vector3 other ) 
 	{
-		return( ( data[0] * other.data[0] ) + ( data[1] * other.data[1] ) );
+		return( ( data[0] * other.data[0] ) + ( data[1] * other.data[1] ) + ( data[2] * other.data[2] ) );
 	}
 	
 	/**
 	 * Cartesian length.
 	 */
+	@Override
 	public float
 	length() 
 	{
-		return (float) Math.sqrt( ( data[0] * data[0] ) + ( data[1] * data[1] ) );
+		return (float) Math.sqrt( ( data[0] * data[0] ) + ( data[1] * data[1] ) + ( data[2] * data[2] ) );
 	}
 
 // Commands
@@ -152,15 +151,17 @@ public class Vector2
 	/**
 	 * Assign value to all elements.
 	 */
+	@Override
 	public void
 	fill( float value )
 	{
-		data[0] = data[1] = value;
+		data[0] = data[1] = data[2] = value;
 	}
 
 	/**
 	 * Explicitly set the i-th component to value.
 	 */
+	@Override
 	public void
 	set( int i, float value )
 	{
@@ -171,86 +172,126 @@ public class Vector2
 	 * Explicitly set the three components.
 	 */
 	public void
-	set( float x, float y )
+	set( float x, float y, float z )
 	{
 		data[0] = x;
 		data[1] = y;
+		data[2] = z;
 	}
 	
 	/**
 	 * Add each element of other to the corresponding element of this.
 	 */
 	public void
-	add( Vector2 other )
+	add( Vector3 other )
 	{
 		data[0] += other.data[0];
 		data[1] += other.data[1];
+		data[2] += other.data[2];
 	}
 	
 	/**
 	 * Substract each element of other to the corresponding element of this.
 	 */
 	public void
-	sub( Vector2 other )
+	sub( Vector3 other )
 	{
 		data[0] -= other.data[0];
 		data[1] -= other.data[1];
+		data[2] -= other.data[2];
 	}
 	
 	/**
 	 * Multiply each element of this by the corresponding element of other.
 	 */
 	public void
-	mult( Vector2 other )
+	mult( Vector3 other )
 	{
 		data[0] *= other.data[0];
 		data[1] *= other.data[1];
+		data[2] *= other.data[2];
 	}
 	
 	/**
 	 * Add value to each element.
 	 */
+	@Override
 	public void
 	scalarAdd( float value )
 	{
 		data[0] += value;
 		data[1] += value;
+		data[2] += value;
 	}
 	
 	/**
 	 * Substract value to each element.
 	 */
+	@Override
 	public void
 	scalarSub( float value )
 	{
 		data[0] -= value;
 		data[1] -= value;
+		data[2] -= value;
 	}
 	
 	/**
 	 * Multiply each element by value.
 	 */
+	@Override
 	public void
 	scalarMult( float value )
 	{
 		data[0] *= value;
 		data[1] *= value;
+		data[2] *= value;
 	}
 	
 	/**
 	 * Divide each element by value.
 	 */
+	@Override
 	public void
 	scalarDiv( float value )
 	{
 		data[0] /= value;
 		data[1] /= value;
+		data[2] /= value;
+	}
+	
+	/**
+	 * Set this to the cross product of this and other.
+	 */
+	public void
+	crossProduct( Vector3 other )
+	{
+		float x;
+		float y;
+
+		x       = ( data[1] * other.data[2] ) - ( data[2] * other.data[1] );
+		y       = ( data[2] * other.data[0] ) - ( data[0] * other.data[2] );
+		data[2] = ( data[0] * other.data[1] ) - ( data[1] * other.data[0] );
+		data[0] = x;
+		data[1] = y;
+	}
+	
+	/**
+	 * Set this to the cross product of A and B.
+	 */
+	public void
+	crossProduct( Vector3 A,  Vector3 B )
+	{
+		data[0] = ( A.data[1] * B.data[2] ) - ( A.data[2] * B.data[1] );
+		data[1] = ( A.data[2] * B.data[0] ) - ( A.data[0] * B.data[2] );
+		data[2] = ( A.data[0] * B.data[1] ) - ( A.data[1] * B.data[0] );
 	}
 	
 	/**
 	 * Transform this into an unit vector.
 	 * @return the vector length.
 	 */
+	@Override
 	public float
 	normalize()
 	{
@@ -260,6 +301,7 @@ public class Vector2
 		{
 			data[0] /= len;
 			data[1] /= len;
+			data[2] /= len;
 		}
 		
 		return len;
@@ -271,20 +313,22 @@ public class Vector2
 	 * Make this a copy of other.
 	 */
 	public void
-	copy(  Vector2 other )
+	copy(  Vector3 other )
 	{
 		data[0] = other.data[0];
 		data[1] = other.data[1];
+		data[2] = other.data[2];
 	}
 
 	/**
 	 * Make this a copy of <code>point</code>.
 	 */
 	public void
-	copy( Point2 point )
+	copy( Point3 point )
 	{
 		data[0] = point.x;
 		data[1] = point.y;
+		data[2] = point.z;
 	}
 
 // Misc.
@@ -298,6 +342,8 @@ public class Vector2
 		sb.append( data[0] );
 		sb.append( '|' );
 		sb.append( data[1] );
+		sb.append( '|' );
+		sb.append( data[2] );
 		sb.append( ']' );
 
 		return sb.toString();

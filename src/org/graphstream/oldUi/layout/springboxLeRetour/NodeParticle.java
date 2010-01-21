@@ -30,8 +30,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
 
-import org.graphstream.oldUi.geom.Vector3;
 import org.graphstream.oldUi.layout.LayoutListener;
+import org.graphstream.ui2.geom.Vector3;
 import org.miv.pherd.Particle;
 import org.miv.pherd.ntree.BarycenterCellData;
 import org.miv.pherd.ntree.Cell;

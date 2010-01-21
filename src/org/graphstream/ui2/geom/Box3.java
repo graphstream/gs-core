@@ -1,4 +1,4 @@
-package org.graphstream.oldUi.geom;
+package org.graphstream.ui2.geom;
 
 //import org.util.InvalidArgumentException;
 

@@ -34,9 +34,9 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Random;
 
-import org.graphstream.oldUi.geom.*;
 import org.graphstream.oldUi.layout.Layout;
 import org.graphstream.oldUi.layout.LayoutListener;
+import org.graphstream.ui2.geom.*;
 import org.miv.pherd.Particle;
 import org.miv.pherd.ParticleBox;
 import org.miv.pherd.ParticleBoxListener;

@@ -26,7 +26,7 @@ import java.awt.Container;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-import org.graphstream.oldUi.geom.Point3;
+import org.graphstream.ui2.geom.Point3;
 import org.graphstream.ui2.graphicGraph.GraphicElement;
 import org.graphstream.ui2.graphicGraph.GraphicGraph;
 

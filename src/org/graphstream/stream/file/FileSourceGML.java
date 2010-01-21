@@ -31,7 +31,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.graphstream.oldUi.geom.Point3;
+import org.graphstream.ui2.geom.Point3;
 
 
 /**
@@ -1184,11 +1184,11 @@ public class FileSourceGML extends FileSourceBase
 					{
 						fields[i].set( obj, value );
 					}
-					else if( c.equals( org.graphstream.oldUi.geom.Point3.class ) )
+					else if( c.equals( org.graphstream.ui2.geom.Point3.class ) )
 					{
 						fields[i].set( obj, getPoint3( value ) );
 					}
-					else if( c.equals( org.graphstream.oldUi.geom.Bounds3.class ) )
+					else if( c.equals( org.graphstream.ui2.geom.Bounds3.class ) )
 					{
 						fields[i].set( obj, getBounds3( value ) );
 					}

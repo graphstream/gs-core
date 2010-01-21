@@ -34,11 +34,11 @@ import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Map;
 
-import org.graphstream.oldUi.geom.Point3;
 import org.graphstream.oldUi.graphicGraph.GraphicEdge;
 import org.graphstream.oldUi.graphicGraph.GraphicGraph;
 import org.graphstream.oldUi.graphicGraph.GraphicNode;
 import org.graphstream.oldUi.graphicGraph.stylesheet.Style;
+import org.graphstream.ui2.geom.Point3;
 
 /**
  * Swing EdgeRenderer.

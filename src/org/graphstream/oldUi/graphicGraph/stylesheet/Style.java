@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.graphstream.oldUi.geom.Point3;
+import org.graphstream.ui2.geom.Point3;
 
 /**
  * A style is a whole set of settings for a graphic element.

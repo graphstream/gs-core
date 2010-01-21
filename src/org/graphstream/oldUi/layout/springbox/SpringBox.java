@@ -43,11 +43,11 @@ import java.util.Scanner;
 
 import org.graphstream.graph.ElementNotFoundException;
 import org.graphstream.graph.IdAlreadyInUseException;
-import org.graphstream.oldUi.geom.Locator;
-import org.graphstream.oldUi.geom.Point3;
 import org.graphstream.oldUi.layout.Layout;
 import org.graphstream.oldUi.layout.LayoutListener;
 //import org.util.Environment;
+import org.graphstream.ui2.geom.Locator;
+import org.graphstream.ui2.geom.Point3;
 
 /**
  * Spring and electric forces based layout algorithm.
