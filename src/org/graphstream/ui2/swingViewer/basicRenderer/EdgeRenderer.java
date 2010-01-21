@@ -41,6 +41,7 @@ public class EdgeRenderer extends ElementRenderer
 	@Override
 	protected void setupRenderingPass( StyleGroup group, Graphics2D g, Camera camera )
 	{
+		configureText( group, camera );
 	}
 
 	@Override
@@ -80,5 +81,6 @@ public class EdgeRenderer extends ElementRenderer
 		
 		shape.setLine( node0.x, node0.y, node1.x, node1.y );
 		g.draw( shape );
+		renderText( group, g, camera, element );
 	}
 }

@@ -118,19 +118,19 @@ public class GraphicEdge extends GraphicElement implements Edge
 	@Override
 	public float getX()
 	{
-		return from.x; 
+		return from.x + ( ( to.x - from.x ) / 2 ); 
 	}
 
 	@Override
 	public float getY()
 	{
-		return from.y;
+		return from.y + ( ( to.y - from.y ) / 2 );
 	}
 	
 	@Override
 	public float getZ()
 	{
-		return from.z;
+		return from.z + ( ( to.z - from.z ) / 2 );
 	}
 	
 	/**
