@@ -630,10 +630,10 @@ public class DefaultGraph extends AbstractElement implements Graph
 				// when the nodes that is linked by them disappear.
 				//		beforeEdgeRemoveEvent( edge );
 
-				edges.remove( ( (AbstractElement) edge ).getId() );
-				((DefaultEdge)edge).unbind( sourceId, timeId );
+				((DefaultEdge) edge).unbind(sourceId, timeId);
+				edges.remove(((AbstractElement) edge).getId());
 
-				return edge;
+		return edge;
 			}
 		}
 		catch( IllegalStateException e )
@@ -663,15 +663,13 @@ public class DefaultGraph extends AbstractElement implements Graph
 	{
 		try
 		{
-			DefaultEdge edge = null;
-			
-			if( fromEdgeIterator )
-			     edge = (DefaultEdge) edges.get( edgeId );
-			else edge = (DefaultEdge) edges.remove( edgeId );
-
+			DefaultEdge edge = (DefaultEdge) edges.get( edgeId );
+				
 			if( edge != null )
 			{
 				edge.unbind( sourceId, timeId );
+				if( ! fromEdgeIterator )
+					edge = (DefaultEdge) edges.remove( edgeId );
 				return edge;
 			}
 		}
