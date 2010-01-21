@@ -48,6 +48,7 @@ public class NodeRenderer extends ElementRenderer
     protected void setupRenderingPass( StyleGroup group, Graphics2D g, Camera camera )
     {
 		metrics = camera.getMetrics();
+		configureText( group, camera );
     }
 
 	@Override
@@ -91,5 +92,6 @@ public class NodeRenderer extends ElementRenderer
 		
 		shape.setFrame( node.x-w2, node.y-h2, width, height );
 		g.fill( shape );
+		renderText( group, g, camera, element );
     }
 }

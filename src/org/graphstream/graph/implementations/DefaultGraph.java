@@ -719,8 +719,12 @@ public class DefaultGraph extends AbstractElement implements Graph
 		throws IOException, GraphParseException, ElementNotFoundException
 	{
 		FileSource input = FileSourceFactory.sourceFor( filename );
-		input.addSink( this );
-		read( input, filename );
+		
+		if( input != null ) {
+			input.addSink( this );
+			read( input, filename );
+			input.removeSink( this );
+		}
 	}
 
 	public void write( FileSink output, String filename ) throws IOException

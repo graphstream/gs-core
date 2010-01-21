@@ -50,6 +50,7 @@ public class SpriteRenderer extends ElementRenderer
     protected void setupRenderingPass( StyleGroup group, Graphics2D g, Camera camera )
     {
 		metrics = camera.getMetrics();
+		configureText( group, camera );
     }
 
 	@Override
@@ -62,6 +63,7 @@ public class SpriteRenderer extends ElementRenderer
 			color = interpolateColor( group, element );
 		
 		g.setColor( color );
+		renderText( group, g, camera, element );
     }
 
 	@Override

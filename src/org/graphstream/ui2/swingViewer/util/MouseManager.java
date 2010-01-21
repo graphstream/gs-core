@@ -93,7 +93,9 @@ public class MouseManager implements MouseInputListener
 	
 	protected void mouseButtonPressOnElement( GraphicElement element, MouseEvent event )
 	{
-		element.addAttribute( "ui.clicked" );
+		if( event.getButton() == 3 )
+		     element.addAttribute( "ui.selected" );
+		else element.addAttribute( "ui.clicked" );
 	}
 	
 	protected void elementMoving( GraphicElement element, MouseEvent event )
@@ -103,7 +105,8 @@ public class MouseManager implements MouseInputListener
 	
 	protected void mouseButtonReleaseOffElement( GraphicElement element, MouseEvent event )
 	{
-		element.removeAttribute( "ui.clicked" );
+		if( event.getButton() != 3 )
+			element.removeAttribute( "ui.clicked" );
 	}
 	
 // Mouse Listener

@@ -149,7 +149,7 @@ public class ViewerPipe extends SourceBase implements ProxyPipe
 	public void nodeAttributeAdded( String sourceId, long timeId, String nodeId, String attribute,
             Object value )
     {
-		sendNodeAdded( sourceId, timeId, nodeId );
+		sendNodeAttributeAdded( sourceId, timeId, nodeId, attribute, value );
     }
 
 	public void nodeAttributeChanged( String sourceId, long timeId, String nodeId,

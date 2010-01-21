@@ -23,13 +23,18 @@
 package org.graphstream.ui2.swingViewer.basicRenderer;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 
 import org.graphstream.graph.Element;
 import org.graphstream.ui2.graphicGraph.GraphicElement;
 import org.graphstream.ui2.graphicGraph.StyleGroup;
 import org.graphstream.ui2.graphicGraph.StyleGroup.ElementEvents;
+import org.graphstream.ui2.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui2.swingViewer.util.Camera;
+import org.graphstream.ui2.swingViewer.util.FontCache;
 
 public abstract class ElementRenderer
 {
@@ -39,6 +44,12 @@ public abstract class ElementRenderer
 	 * Allow to know if an event began or ended.
 	 */
 	protected boolean hadEvents = false;
+	
+	protected Font textFont;
+	
+	protected Color textColor;
+	
+	protected int textSize;
 	
 // Constructor
 	
@@ -159,6 +170,42 @@ public abstract class ElementRenderer
 	protected abstract void elementInvisible( StyleGroup group, Graphics2D g, Camera camera, GraphicElement element );
 	
 // Utility
+	
+	protected void configureText( StyleGroup group, Camera camera )
+	{
+		String                   fontName  = group.getTextFont();
+		StyleConstants.TextStyle textStyle = group.getTextStyle();
+		
+		textSize  = (int) group.getTextSize().value;
+		textColor = group.getTextColor( 0 );
+		textFont  = FontCache.defaultFontCache().getFont( fontName, textStyle, textSize );
+	}
+	
+	protected void renderText( StyleGroup group, Graphics2D g, Camera camera, GraphicElement element )
+	{
+		if( group.getTextMode() != StyleConstants.TextMode.HIDDEN )
+		{
+			String label = element.getLabel();
+			
+			if( label != null )
+			{
+				float w = camera.getMetrics().lengthToGu( group.getSize(), 0 );
+				float x = element.getX() + ( w / 2 );
+				float y = element.getY();
+				
+				Point2D.Float   p  = camera.transform( x, y );
+				AffineTransform Tx = g.getTransform();
+				Color           c  = g.getColor();
+				
+				g.setColor( textColor );
+				g.setFont( textFont );
+				g.setTransform( new AffineTransform() );
+				g.drawString( label, p.x, p.y + textSize/3 );	// approximation to gain time.
+				g.setTransform( Tx );
+				g.setColor( c );
+			}
+		}
+	}
 	
 	protected Color interpolateColor( StyleGroup group, GraphicElement element )
 	{
