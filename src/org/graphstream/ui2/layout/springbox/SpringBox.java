@@ -43,6 +43,43 @@ import org.miv.pherd.ntree.OctreeCellSpace;
 import org.miv.pherd.ntree.QuadtreeCellSpace;
 import org.graphstream.ui.geom.Point3;
 
+/**
+ * An implementation of spring algorithms to layout a graph.
+ * 
+ * <p>
+ * This spring method use repulsive forces (electric field) between each nodes and attractive forces
+ * (springs) between each node connected by an edge. To speed up the algorithm, a n-tree is used to
+ * divide space. A Barnes-Hut like algorithm is used to speed up repulsion force influence when
+ * nodes are far away.
+ * </p>
+ * 
+ * <p>
+ * This algorithm can be configured using several attributes put on the graph :
+ * <ul>
+ * 		<li>layout.force : a floating point number (default 0.5f), that allows to define the
+ * 			importance of movement of each node at each computation step. The larger the value
+ * 			the quicker nodes move to their position of lowest energy. However too high values
+ * 			can generate non stable layouts and oscillations.</li>
+ * 		<li>layout.quality : an integer between 0 and 4. With value 0 the layout is faster but
+ * 			it also can be farther from equilibrium. With value 4 the algorithm tries to be as
+ * 			close as possible from equilibrium (the n-tree and Barnes-Hut algorithms are disabled),
+ * 			but the computation can take a lot of time (the algorithm becomes O(n^2)).</li>
+ * </ul>
+ * You can also put the following attributes on nodes :
+ * <ul>
+ * 		<li>layout.weight : The force of repulsion of a node. The larger the value, the more
+ * 			the node repulses its neighbours.</li>
+ * </ul>
+ * And on edges :
+ * <ul>
+ * 		<li>layout.weight : the multiplier for the desired edge length. By default the algorithm
+ * 			tries to make each edge of length one. This is the position of lowest energy for
+ * 			a spring. This coefficient allows to modify this target spring length. Value larger
+ * 			than one will make the edge longer. Values between 0 and 1 will make the edge
+ * 			smaller.</li>
+ * </ul>
+ * </p>
+ */
 public class SpringBox extends SourceBase implements Layout, ParticleBoxListener
 {
 // Attributes -- Data
