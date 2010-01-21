@@ -30,11 +30,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
 
+import org.graphstream.oldUi.geom.Vector3;
 import org.graphstream.ui2.layout.LayoutListener;
 import org.miv.pherd.Particle;
 import org.miv.pherd.ntree.BarycenterCellData;
 import org.miv.pherd.ntree.Cell;
-import org.graphstream.ui.geom.Vector3;
 
 public class NodeParticle extends Particle
 {

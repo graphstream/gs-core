@@ -31,6 +31,7 @@ import org.graphstream.graph.NodeFactory;
 import org.graphstream.graph.ElementNotFoundException;
 import org.graphstream.graph.IdAlreadyInUseException;
 import org.graphstream.graph.implementations.AbstractElement;
+import org.graphstream.oldUi.geom.Point3;
 import org.graphstream.stream.AttributeSink;
 import org.graphstream.stream.ElementSink;
 import org.graphstream.stream.Sink;
@@ -45,7 +46,6 @@ import org.graphstream.ui2.graphicGraph.stylesheet.StyleSheet;
 import org.graphstream.ui2.graphicGraph.stylesheet.Value;
 import org.graphstream.ui2.graphicGraph.stylesheet.Values;
 import org.graphstream.ui2.graphicGraph.stylesheet.StyleConstants.Units;
-import org.graphstream.ui.geom.Point3;
 
 /**
  * Graph representation used in display classes.
@@ -695,12 +695,12 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	    return removeNode( getId(), newEvent(), id );
     }
 
-	public org.graphstream.ui.GraphViewerRemote oldDisplay()
+	public org.graphstream.oldUi.GraphViewerRemote oldDisplay()
     {
 		throw new RuntimeException( "not implemented !" );
     }
 
-	public org.graphstream.ui.GraphViewerRemote oldDisplay( boolean autoLayout )
+	public org.graphstream.oldUi.GraphViewerRemote oldDisplay( boolean autoLayout )
     {
 		throw new RuntimeException( "not implemented !" );
     }

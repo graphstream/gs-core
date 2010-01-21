@@ -33,11 +33,11 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
+import org.graphstream.oldUi.geom.Point3;
 import org.graphstream.ui2.graphicGraph.GraphicElement;
 import org.graphstream.ui2.graphicGraph.GraphicGraph;
 import org.graphstream.ui2.swingViewer.util.MouseManager;
 import org.graphstream.ui2.swingViewer.util.ShortcutManager;
-import org.graphstream.ui.geom.Point3;
 
 /**
  * Base for constructing views.

@@ -16,11 +16,11 @@
 
 package org.graphstream.ui2.swingViewer.util;
 
+import org.graphstream.oldUi.geom.Point3;
+import org.graphstream.oldUi.geom.Vector3;
 import org.graphstream.ui2.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui2.graphicGraph.stylesheet.Value;
 import org.graphstream.ui2.graphicGraph.stylesheet.Values;
-import org.graphstream.ui.geom.Point3;
-import org.graphstream.ui.geom.Vector3;
 
 /**p
  * Various geometric informations on the graphic graph.

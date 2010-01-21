@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.graphstream.graph.Element;
+import org.graphstream.oldUi.geom.Point3;
 import org.graphstream.ui2.graphicGraph.GraphicElement;
 import org.graphstream.ui2.graphicGraph.GraphicGraph;
 import org.graphstream.ui2.graphicGraph.StyleGroup;
@@ -43,7 +44,6 @@ import org.graphstream.ui2.graphicGraph.stylesheet.Value;
 import org.graphstream.ui2.swingViewer.GraphRendererBase;
 import org.graphstream.ui2.swingViewer.util.Camera;
 import org.graphstream.ui2.swingViewer.util.GraphMetrics;
-import org.graphstream.ui.geom.Point3;
 
 /**
  * A very simple view of the graph that respect only a subset of CSS.

@@ -29,6 +29,7 @@ import java.util.HashMap;
 import javax.swing.Timer;
 
 import org.graphstream.graph.Graph;
+import org.graphstream.oldUi.geom.Point3;
 import org.graphstream.stream.ProxyPipe;
 import org.graphstream.stream.thread.ThreadProxyPipe;
 import org.graphstream.ui2.graphicGraph.GraphicGraph;
@@ -37,7 +38,6 @@ import org.graphstream.ui2.layout.LayoutRunner;
 import org.graphstream.ui2.swingViewer.basicRenderer.SwingBasicGraphRenderer;
 import org.graphstream.ui2.swingViewer.util.FontCache;
 import org.graphstream.ui2.swingViewer.util.ImageCache;
-import org.graphstream.ui.geom.Point3;
 
 /**
  * Set of views on a graphic graph.

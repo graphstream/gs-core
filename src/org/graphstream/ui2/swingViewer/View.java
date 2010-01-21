@@ -26,9 +26,9 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
+import org.graphstream.oldUi.geom.Point3;
 import org.graphstream.ui2.graphicGraph.GraphicElement;
 import org.graphstream.ui2.graphicGraph.GraphicGraph;
-import org.graphstream.ui.geom.Point3;
 
 /**
  * A view on a graphic graph.

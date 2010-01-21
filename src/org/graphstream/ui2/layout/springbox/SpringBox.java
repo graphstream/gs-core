@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Random;
 
+import org.graphstream.oldUi.geom.Point3;
 import org.graphstream.stream.SourceBase;
 import org.graphstream.ui2.layout.Layout;
 import org.graphstream.ui2.layout.LayoutListener;
@@ -41,7 +42,6 @@ import org.miv.pherd.ntree.BarycenterCellData;
 import org.miv.pherd.ntree.CellSpace;
 import org.miv.pherd.ntree.OctreeCellSpace;
 import org.miv.pherd.ntree.QuadtreeCellSpace;
-import org.graphstream.ui.geom.Point3;
 
 /**
  * An implementation of spring algorithms to layout a graph.

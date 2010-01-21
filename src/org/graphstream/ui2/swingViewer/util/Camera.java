@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.graphstream.graph.Node;
+import org.graphstream.oldUi.geom.Point3;
 import org.graphstream.ui2.graphicGraph.GraphicEdge;
 import org.graphstream.ui2.graphicGraph.GraphicElement;
 import org.graphstream.ui2.graphicGraph.GraphicGraph;
@@ -32,7 +33,6 @@ import org.graphstream.ui2.graphicGraph.GraphicSprite;
 import org.graphstream.ui2.graphicGraph.stylesheet.Style;
 import org.graphstream.ui2.graphicGraph.stylesheet.Values;
 import org.graphstream.ui2.graphicGraph.stylesheet.StyleConstants.Units;
-import org.graphstream.ui.geom.Point3;
 
 /**
  * Define how the graph is viewed.

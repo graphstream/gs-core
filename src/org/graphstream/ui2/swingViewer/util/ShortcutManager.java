@@ -19,8 +19,8 @@ package org.graphstream.ui2.swingViewer.util;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import org.graphstream.oldUi.geom.Point3;
 import org.graphstream.ui2.swingViewer.View;
-import org.graphstream.ui.geom.Point3;
 
 /**
  * Utility to centralise the shortcuts and actions for all view instances.
