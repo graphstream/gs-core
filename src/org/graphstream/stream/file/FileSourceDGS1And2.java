@@ -562,10 +562,19 @@ public class FileSourceDGS1And2 extends FileSourceBase
 		stepCountAnnounced = (int)getNumber();//Integer.parseInt( getWord() );
 		eventCountAnnounced = (int)getNumber();//Integer.parseInt( getWord() );
 		eatEol();
-		attributes.clear();
-		attributes.put( "label", graphName );
 		
-		sendGraphAttributeAdded( graphName, "label", graphName );
+		if( graphName != null ) {
+			attributes.clear();
+			attributes.put( "label", graphName );
+			sendGraphAttributeAdded( graphName, "label", graphName );
+		}
+		else
+		{
+			graphName = "DGS_";
+		}
+		
+		graphName = String.format( "%s_%d", graphName, System.currentTimeMillis()+((long)Math.random()*10) );
+		
 		readAttributeFormat();
 	}
 	

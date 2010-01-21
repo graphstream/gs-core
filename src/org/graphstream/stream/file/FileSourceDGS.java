@@ -500,9 +500,10 @@ public class FileSourceDGS extends FileSourceBase
 		eatEol();
 		
 		if(  graphName != null )
-		{
-			sendGraphAttributeAdded( graphName, "label", graphName );
-		}
+		     sendGraphAttributeAdded( graphName, "label", graphName );
+		else graphName = "DGS_";
+		
+		graphName = String.format( "%s_%d", graphName, System.currentTimeMillis()+((long)Math.random()*10) );
 	}
 	
 	@Override

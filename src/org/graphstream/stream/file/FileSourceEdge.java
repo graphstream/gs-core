@@ -85,6 +85,8 @@ public class FileSourceEdge extends FileSourceBase
 	 */
 	protected HashSet<String> nodes;
 	
+	protected String graphName = "EDGE_";
+	
 // Construction
 
 	/**
@@ -149,7 +151,7 @@ public class FileSourceEdge extends FileSourceBase
 					String edgeId = Integer.toString( edgeid++ );
 
 					declareNode( id2 );
-					sendEdgeAdded( "", edgeId, id1, id2, directed );
+					sendEdgeAdded( graphName, edgeId, id1, id2, directed );
 				}
 				
 				id2 = getWordOrNumberOrStringOrEolOrEof();
@@ -165,7 +167,7 @@ public class FileSourceEdge extends FileSourceBase
 		{
 			if( ! nodes.contains( id ) )
 			{
-				sendNodeAdded( "", id );
+				sendNodeAdded( graphName, id );
 				nodes.add( id );
 			}
 		}
@@ -203,6 +205,8 @@ public class FileSourceEdge extends FileSourceBase
 	{
 		st.eolIsSignificant( true );
 		st.commentChar( '#' );
+		
+		graphName = String.format( "%s_%d", graphName, System.currentTimeMillis()+((long)Math.random()*10) );
 	}
 
 	public boolean nextStep() throws IOException

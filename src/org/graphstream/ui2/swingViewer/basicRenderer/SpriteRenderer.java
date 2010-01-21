@@ -63,7 +63,6 @@ public class SpriteRenderer extends ElementRenderer
 			color = interpolateColor( group, element );
 		
 		g.setColor( color );
-		renderText( group, g, camera, element );
     }
 
 	@Override
@@ -96,5 +95,6 @@ public class SpriteRenderer extends ElementRenderer
 		
 		shape.setFrame( pos.x-w2, pos.y-h2, width, height );
 		g.fill( shape );
+		renderText( group, g, camera, element );
     }
 }

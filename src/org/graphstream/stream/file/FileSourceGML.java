@@ -90,7 +90,7 @@ public class FileSourceGML extends FileSourceBase
 	/**
 	 * The graph name.
 	 */
-	protected String graphName = "";
+	protected String graphName = "GML_";
 	
 // Construction
 
@@ -160,6 +160,8 @@ public class FileSourceGML extends FileSourceBase
 		
 		eatWord( "graph" );
 		eatSymbol( '[' );
+		
+		graphName = String.format( "%s_%d", graphName, System.currentTimeMillis()+((long)Math.random()*10) );
 	}
 
 	@Override
@@ -199,6 +201,8 @@ public class FileSourceGML extends FileSourceBase
 				graphName = parseId();
 				CG.attrs.put( "label", graphName );
 				sendGraphAttributeAdded( graphName, "label", graphName );
+				
+				graphName = String.format( "%s_%d", graphName, System.currentTimeMillis()+((long)Math.random()*10) );
 			}
 			else if( w.equals( "map" ) )
 			{

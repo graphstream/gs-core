@@ -80,7 +80,7 @@ public class FileSourceDOT extends FileSourceBase
 	/**
 	 * Name of the graph (set as soon as known, if known).
 	 */
-	protected String graphName = "";
+	protected String graphName = "DOT_";
 	
 // Construction
 	
@@ -239,6 +239,8 @@ public class FileSourceDOT extends FileSourceBase
 			
 			w = getWordOrSymbol();
 		}
+		
+		graphName = String.format( "%s_%d", graphName, System.currentTimeMillis()+((long)Math.random()*10) );
 
 		if( ! w.equals( "{" ) )
 			parseError( "waiting '{' here" );
