@@ -169,4 +169,6 @@ public interface GraphRenderer
 	 * @param y The requested position ordinate in pixels.
 	 */
 	public abstract void moveElementAtPx( GraphicElement element, float x, float y );
+	
+	public abstract void screenshot( String filename, int width, int height );
 }

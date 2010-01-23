@@ -222,6 +222,13 @@ public class DefaultView extends View implements ComponentListener, WindowListen
 	{
 		setBackground( graph.getStyle().getFillColor( 0 ) );
 		renderer.render( g, getWidth(), getHeight() );
+		
+		String screenshot = (String) graph.getLabel( "ui.screenshot" );
+		
+		if( screenshot != null ) {
+			graph.removeAttribute( "ui.screenshot" );
+			renderer.screenshot( screenshot, getWidth(), getHeight() );
+		}
 	}
 
 // Selection

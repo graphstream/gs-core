@@ -30,9 +30,22 @@ import java.awt.RenderingHints;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import javax.imageio.ImageIO;
+
+import org.apache.batik.dom.GenericDOMImplementation;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.batik.svggen.SVGGraphics2DIOException;
 import org.graphstream.graph.Element;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicElement;
@@ -44,6 +57,8 @@ import org.graphstream.ui.graphicGraph.stylesheet.Value;
 import org.graphstream.ui.swingViewer.GraphRendererBase;
 import org.graphstream.ui.swingViewer.util.Camera;
 import org.graphstream.ui.swingViewer.util.GraphMetrics;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
 
 /**
  * A very simple view of the graph that respect only a subset of CSS.
@@ -347,6 +362,55 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 		g.fill( ellipse );
 	}
 	
+	public void screenshot( String filename, int width, int height )
+	{
+		if( filename.endsWith( "png" ) || filename.endsWith( "PNG" ) )
+		{
+			BufferedImage img = new BufferedImage( width, height, BufferedImage.TYPE_INT_ARGB );
+			renderGraph( img.createGraphics() );
+
+			File file = new File( filename );
+			try
+			{
+				ImageIO.write( img, "png", file );
+			}
+			catch( IOException e )
+			{
+				e.printStackTrace();
+			}
+		}
+		else if( filename.endsWith( "bmp" ) || filename.endsWith( "BMP" ) )
+		{
+			BufferedImage img = new BufferedImage( width, height, BufferedImage.TYPE_INT_RGB );
+			renderGraph( img.createGraphics() );
+
+			File file = new File( filename );
+			try
+			{
+				ImageIO.write( img, "bmp", file );
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
+		}
+		else if( filename.endsWith( "jpg" ) || filename.endsWith( "JPG" ) || filename.endsWith( "jpeg" ) || filename.endsWith( "JPEG" ) )
+		{
+			BufferedImage img = new BufferedImage( width, height, BufferedImage.TYPE_INT_RGB );
+			renderGraph( img.createGraphics() );
+
+			File file = new File( filename );
+			try
+			{
+				ImageIO.write( img, "jpg", file );
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+
 // Style Group Listener
 
     public void elementStyleChanged( Element element, StyleGroup oldStyle, StyleGroup style )
