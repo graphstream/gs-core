@@ -74,9 +74,9 @@ fill-mode:
 	gradient-vertical
 	gradient-diagonal1
 	gradient-diagonal2
-	image-tiled
-	image-scaled
-	image-scaled-ratio
+	image-tiled				(todo)
+	image-scaled			(todo)
+	image-scaled-ratio		(todo)
 	
 	The fill is the main color, gradient, or image pattern that fills the surface of the element
 	(graph, node, sprite, or edge background).
@@ -88,15 +88,15 @@ fill-color:
 	you must give at least two colors.
 
 fill-image:
-	<url>
+	<url>					(todo)
 	
 	If the fill mode is an image, this specifies the image to use.
 
 stroke-mode:
 	none
 	plain
-	dashes
-	dots
+	dashes					(todo)
+	dots					(todo)
 
 	Specifies how to draw the border or contour of the element. Graphs can also have a stroke. In
 	this case this defines a box around all the elements.
@@ -141,13 +141,13 @@ shadow-offset:
 	Offset of the shadow shape according to the element shape.
 
 padding:
-	<number(1)>
+	<number(1)>				(todo for nodes/sprites)
 
 	Space added between the contour of the element and its content (text, image or other). 
 
 text-mode:
 	normal
-	truncated
+	truncated				(todo)
 	hidden
 	
 text-visibility-mode:
@@ -188,8 +188,8 @@ text-alignment:
 	at_right
 	under
 	above
-	justify
-	along
+	justify						(todo)
+	along						(todo)
 
 text-font:
 	<string>
@@ -202,7 +202,7 @@ text-size:
 	Size of the font in points only.
 
 ?text-offset:
-?	<number(1,3)[px,gu,%]>
+?	<number(1,3)[px,gu,%]>		(todo)
 
 icon-mode:
 	none,
@@ -234,14 +234,14 @@ Properties common to nodes, edges and sprites
 
 size-mode:
 	normal
-	fit
+	fit								(todo)
 	dyn-size(ui.size)
 
 size:
 	<number(3)[px,gu,%]>
 	
 shape-points:
-	<number(1,n)[%]>
+	<number(1,n)[%]>				(todo)
 	
 text-alignment:
 	center
@@ -259,25 +259,26 @@ Properties common to nodes and sprites
 shape:
 	circle
 	box
-	rounded-box ? (todo)
-	diamond
-	triangle
-	cross
-	polygon
+	rounded-box
+	diamond							(todo)
+	triangle						(todo)
+	cross							(todo)
+	polygon							(todo)
 	text-box
-	text-rounded-box ? (todo)
-	text-paragraph
-	text-ellipse
-	text-diamond
+	text-rounded-box ? 				(todo)
+	text-paragraph					(todo)
+	text-ellipse					(todo)
+	text-diamond					(todo)
 	jcomponent
 	
-round-corner:		? (todo)
-	<number(1)[%]>	? (todo)
+round-corner:		? 				(todo)
+	<number(1)[%]>	? 				(todo)
 
 jcomponent:
 	button
 	text-field
-	panel
+	panel							(todo)
+	slider ?						(todo)
 
 Properties for nodes
 ====================
@@ -286,12 +287,12 @@ Properties for sprites
 ======================
 
 shape:
-	pie-chart
-	flow
-	arrow
+	pie-chart						(todo)
+	flow							(todo)
+	arrow							(todo)
 
-sprite-orientation:
-	none
+sprite-orientation:					(todo)
+	none				
 	from, node0
 	to, node1
 	projection
@@ -301,33 +302,33 @@ Properties for edges
 
 shape:
 	line
-	angle
-	cubic-curve
-	cubic-angle-curve ?	(todo)
-	polyline
+	angle							(todo)
+	cubic-curve						(todo)
+	cubic-angle-curve ?				(todo)
+	polyline						(todo)
 	blob
 	
 text-alignment:
-	along
+	along							(todo)
 
 arrow-shape:
-	none
+	none							(todo ?)
 	arrow
-	circle
-	diamond
-	image
+	circle							(todo)
+	diamond							(todo)
+	image							(todo)
 
 arrow-image:
-	<url>
+	<url>							(todo)
 	
 arrow-size:
-	<number(1,3)[px,gu,%]>
+	<number(1,3)[px,gu,%]>			(todo)
 
 Properties for graphs
 =====================
 
 canvas-color:
-	<color>
+	<color>							(todo ?)
 	
 	Color of all the viewer area that is not covered by the graph.
 	

@@ -33,8 +33,8 @@
  * </p>
  * 
  * <p>
- * In addition, a sprite manager ({@link org.graphstream.ui.graphicGraph.SpriteManager})
- * and {@link org.graphstream.ui.Sprite} implementation
+ * In addition, a sprite manager ({@link org.graphstream.ui.old.graphicGraph.SpriteManager})
+ * and {@link org.graphstream.ui.old.Sprite} implementation
  * ({@link org.graphstream.ui.graphicGraph.GraphicSprite}) is provided. Sprites are
  * visual or textual elements that can be attached to the graph display to visualise
  * data on the graph.

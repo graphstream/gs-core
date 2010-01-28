@@ -346,7 +346,7 @@ public class Style extends StyleConstants
 	/**
 	 * Visibility values if the text visibility changes.
 	 */
-	public Values getTextVisiblity()
+	public Values getTextVisibility()
 	{
 		return (Values) getValue( "text-visibility" );
 	}

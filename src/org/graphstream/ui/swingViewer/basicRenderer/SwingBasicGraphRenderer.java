@@ -32,20 +32,12 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashSet;
 
 import javax.imageio.ImageIO;
 
-import org.apache.batik.dom.GenericDOMImplementation;
-import org.apache.batik.svggen.SVGGraphics2D;
-import org.apache.batik.svggen.SVGGraphics2DIOException;
 import org.graphstream.graph.Element;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicElement;
@@ -57,8 +49,6 @@ import org.graphstream.ui.graphicGraph.stylesheet.Value;
 import org.graphstream.ui.swingViewer.GraphRendererBase;
 import org.graphstream.ui.swingViewer.util.Camera;
 import org.graphstream.ui.swingViewer.util.GraphMetrics;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
 
 /**
  * A very simple view of the graph that respect only a subset of CSS.

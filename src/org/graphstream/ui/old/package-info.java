@@ -44,7 +44,7 @@
  * </ul>
  *
  * <p>
- * The {@link org.graphstream.ui.GraphViewer} class defines the services proposed
+ * The {@link org.graphstream.ui.old.GraphViewer} class defines the services proposed
  * by a graph viewer. A graph viewer is a graphical component that renders a graph to
  * visualise it. The graph viewer is made to run in a separate thread so that the viewer
  * can draw the graph in parallel with your code (which creates and modifies the graph).
@@ -54,7 +54,7 @@
  * 
  * <p>
  * A default base (incomplete abstract class) implementation is given by the
- * {@link org.graphstream.ui.GraphViewerBase} class. This implementations creates a
+ * {@link org.graphstream.ui.old.GraphViewerBase} class. This implementations creates a
  * graphic graph in the viewer thread that copies your graph and provides graphic attributes
  * like positions and CSS style. Lets call the graph in the user thread the "user graph" and the
  * graph in the "viewer thread" the "graphic graph". The graphic graph is created automatically
@@ -69,7 +69,7 @@
  * </p>
  * 
  * <p>
- * A {@link org.graphstream.ui.GraphViewerRemote} is provided to manipulate the graph viewer
+ * A {@link org.graphstream.ui.old.GraphViewerRemote} is provided to manipulate the graph viewer
  * from the user thread.
  * </p>
  * 

@@ -19,7 +19,7 @@
  * 
  * <p>
  * The graphic graph is a {@link org.graphstream.graph.Graph} implementation
- * named {@link org.graphstream.ui2.graphicGraph.GraphicGraph} that also defines
+ * named {@link org.graphstream.ui.graphicGraph.GraphicGraph} that also defines
  * attributes for visual representation.
  * </p>
  * 
@@ -29,12 +29,12 @@
  * style properties and values for these properties) and rules to define to which
  * graph elements the style applies. A rule may allow to apply a style to several
  * graph elements at once, to all nodes, to elements having a given class, or identifier,
- * etc. See the {@link org.graphstream.ui2.graphicGraph.stylesheet}
+ * etc. See the {@link org.graphstream.ui.graphicGraph.stylesheet}
  * package for more informations.
  * </p>
  * 
  * <p>
- * The graphic graph uses a set of {@link org.graphstream.ui2.graphicGraph.StyleGroup}s
+ * The graphic graph uses a set of {@link org.graphstream.ui.graphicGraph.StyleGroup}s
  * to aggregate the style rules and the elements they apply to. A style group both
  * contains a set of graph elements (nodes, edges, sprites, graphs) and the rules
  * that define the styles for these elements.
@@ -42,7 +42,7 @@
  * 
  * <p>
  * Inside the graphic graph, the style groups are organised inside a
- * {@link org.graphstream.ui2.graphicGraph.StyleGroupSet} that listens at the style
+ * {@link org.graphstream.ui.graphicGraph.StyleGroupSet} that listens at the style
  * sheet and at the graph and creates the style groups for elements, call the graphic
  * graph each time the style changes, etc.
  * </p>
@@ -71,22 +71,22 @@
  * 
  * <p>
  * Inside the graphic graph, the graph elements are special implementations for
- * nodes and edges : {@link org.graphstream.ui2.graphicGraph.GraphicNode} and
- * {@link org.graphstream.ui2.graphicGraph.GraphicEdge}. In addition the notion
- * of sprite is added with the {@link org.graphstream.ui2.graphicGraph.GraphicSprite}. The
+ * nodes and edges : {@link org.graphstream.ui.graphicGraph.GraphicNode} and
+ * {@link org.graphstream.ui.graphicGraph.GraphicEdge}. In addition the notion
+ * of sprite is added with the {@link org.graphstream.ui.graphicGraph.GraphicSprite}. The
  * sprites are not really graph elements, but are treated the same in the graphic
  * graph. They can have attributes as well.
  * </p>
  * 
  * <p>
- * All this graph elements inherit the {@link org.graphstream.ui2.graphicGraph.GraphicElement}
+ * All this graph elements inherit the {@link org.graphstream.ui.graphicGraph.GraphicElement}
  * class that in turn implements {@link org.graphstream.graph.Element}. The graphic element
  * is a base class that defines the basic properties for the graphical representations of
  * graph elements. All elements will have a position, bounds, a label and a style group.
  * </p>
  * 
  * <p>
- * This package and the main class {@link org.graphstream.ui2.graphicGraph.GraphicGraph}
+ * This package and the main class {@link org.graphstream.ui.graphicGraph.GraphicGraph}
  * provide a large level of automatism. You should not have to worry about the internals of
  * the graphic graph as it is maintained automatically. Use the "stylesheet" or "ui.stylesheet"
  * attributes to provide the style sheet (or accumulate them as the cascade is implemented).

@@ -746,7 +746,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 
 	public GraphViewerRemote oldDisplay( boolean autoLayout )
 	{
-		String viewerClass = "org.graphstream.ui.swing.SwingGraphViewer";
+		String viewerClass = "org.graphstream.ui.old.swing.SwingGraphViewer";
 		
 		try
         {

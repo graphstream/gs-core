@@ -301,18 +301,20 @@ public class Sprite implements Element
 	
 	protected void setPosition( Values values )
 	{
-		int n = values.values.size();
-		
-		if( n > 2 )
-		{
-			setPosition( values.units,
-				values.get( 0 ),
-				values.get( 1 ),
-				values.get( 2 ) );
-		}
-		else if( n > 0 )
-		{
-			setPosition( values.get( 0 ) );
+		if( values != null ) {
+			int n = values.values.size();
+			
+			if( n > 2 )
+			{
+				setPosition( values.units,
+					values.get( 0 ),
+					values.get( 1 ),
+					values.get( 2 ) );
+			}
+			else if( n > 0 )
+			{
+				setPosition( values.get( 0 ) );
+			}
 		}
 	}
 	
