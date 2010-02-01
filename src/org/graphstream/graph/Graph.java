@@ -307,55 +307,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	void stepBegins( double time );
 
 // Source
-	// XXX these methods are already in Source, do we remove them definitively from Graph ?
 	// XXX do we put the iterable attributeSinks and elementSinks in Source ? 
-	
-	/*
-	 * Add a listener for all events concerning this graph.
-	 * @param listener The listener to register.
-	 * @see #addAttributeSink(AttributeSink)
-	 * @see #addElementSink(ElementSink)
-	void addSink( Sink listener );
-	 */
-
-	/*
-	 * Remove the given listener from the list of object interested in all events on
-	 * this graph. This method fails silently if listener is not registered in
-	 * this graph.
-	 * @param listener The listener to remove.
-	 * @see #addAttributeSink(AttributeSink)
-	 * @see #addElementSink(ElementSink)
-	void removeSink( Sink listener );
-	 */
-
-	/*
-	 * Add a listener only on the attributes (variables stored on the graph, nodes and edges) of
-	 * the graph. 
-	 * @param listener The listener to register.
-	 * @see #addElementSink(ElementSink)
-	void addAttributeSink( AttributeSink listener );
-	 */
-	
-	/*
-	 * Add a listener only on the elements (nodes and edges) of the graph. 
-	 * @param listener The listener to register.
-	 * @see #addAttributeSink(AttributeSink)
-	void addElementSink( ElementSink listener );
-	 */
-	
-	/*
-	 * Remove the given listener from the list of objects interested in attributes events on this
-	 * graph. This method fails silently if listener is not registered in this graph.
-	 * @param listener The listener to remove.
-	void removeAttributeSink( AttributeSink listener);
-	 */
-	
-	/*
-	 * Remove the given listener from the list of objects interested in elements events on this
-	 * graph. This method fails silently if listener is not registered in this graph.
-	 * @param listener The listener to remove.
-	void removeElementSink( ElementSink listener );
-	 */
 	
 	/**
 	 * Returns an "iterable" of {@link AttributeSink} objects registered to this graph.
@@ -369,7 +321,8 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 */
 	Iterable<ElementSink> elementSinks();
 	
-// Utility shortcuts
+// Utility shortcuts (should be mixins or traits, what are you doing Mr Java ?)
+	// XXX use a Readable/Writable/Displayable interface for this ?
 	
 	/**
 	 * Utility method to read a graph. This method tries to identify the graph

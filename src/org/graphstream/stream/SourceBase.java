@@ -94,7 +94,7 @@ public abstract class SourceBase implements Source
 	
 	protected SourceBase()
 	{
-		this( String.format("sourceOnThread#%d",Thread.currentThread().getId()) );
+		this( String.format("sourceOnThread#%d_%d",Thread.currentThread().getId(),System.currentTimeMillis()+((int)(Math.random()*1000))) );
 	}
 	
 	protected SourceBase( String sourceId )

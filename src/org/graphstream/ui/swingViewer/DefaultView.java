@@ -163,6 +163,8 @@ public class DefaultView extends View implements ComponentListener, WindowListen
 	{
 		if( graphChanged || canvasChanged )
 		{
+			checkTitle();
+			
 			Graphics2D g2 = (Graphics2D) g;
 
 //			super.paint( g );
@@ -172,6 +174,21 @@ public class DefaultView extends View implements ComponentListener, WindowListen
 			graphChanged = canvasChanged = false;
 		}
     }
+	
+	protected void checkTitle()
+	{
+		if( frame != null )
+		{
+			String titleAttr = String.format( "ui.%s.title", getId() ); 
+			String title     = (String) graph.getLabel( titleAttr );
+
+			if( title == null )
+				title = (String) graph.getLabel( "ui.default.title" );
+			
+			if( title != null )
+				frame.setTitle( title );
+		}
+	}
 
 	@Override
     public void close( GraphicGraph graph )
@@ -296,8 +313,10 @@ public class DefaultView extends View implements ComponentListener, WindowListen
 				break;
 			case HIDE_ONLY:
 				if( frame != null )
-					frame.setVisible( true );
+					frame.setVisible( false );
 				break;
+			case EXIT:
+				System.exit( 0 );
 			default:
 				throw new RuntimeException(
 					String.format( "The %s view is not up to date, do not know %s CloseFramePolicy.",

@@ -30,14 +30,13 @@ import javax.swing.Timer;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.stream.ProxyPipe;
+import org.graphstream.stream.Source;
 import org.graphstream.stream.thread.ThreadProxyPipe;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.layout.LayoutRunner;
 import org.graphstream.ui.swingViewer.basicRenderer.SwingBasicGraphRenderer;
-import org.graphstream.ui.swingViewer.util.FontCache;
-import org.graphstream.ui.swingViewer.util.ImageCache;
 
 /**
  * Set of views on a graphic graph.
@@ -84,7 +83,7 @@ public class Viewer implements ActionListener
 	/**
 	 * What to do when a view frame is closed.
 	 */
-	public static enum CloseFramePolicy { CLOSE_VIEWER, HIDE_ONLY };
+	public static enum CloseFramePolicy { CLOSE_VIEWER, HIDE_ONLY, EXIT };
 	
 	/**
 	 * How does the viewer synchronise its internal graphic graph with the graph displayed. The
@@ -112,6 +111,11 @@ public class Viewer implements ActionListener
 	protected ProxyPipe pumpPipe;
 	
 	/**
+	 * If we take graph events from a source in this thread.
+	 */
+	protected Source sourceInSameThread;
+	
+	/**
 	 * Timer in the Swing thread.
 	 */
 	protected Timer timer;
@@ -131,51 +135,48 @@ public class Viewer implements ActionListener
 	 */
 	protected CloseFramePolicy closeFramePolicy = CloseFramePolicy.HIDE_ONLY;
 	
-	/**
-	 * Set of images.
-	 */
-	protected ImageCache images;
-	
-	/**
-	 * Set of fonts.
-	 */
-	protected FontCache fonts;
-	
 // Attribute
 	
+	/**
+	 * Optional layout algorithm running in another thread.
+	 */
 	protected LayoutRunner optLayout = null;
 	
+	/**
+	 * If there is a layout in another thread, this is the pipe coming from it.
+	 */
 	protected ProxyPipe layoutPipeIn = null;
 
 // Construction
 	
 	/**
-	 * The graph is in another thread or machine, but the pipe already exists. The graphic graph 
-	 * displayed by this viewer is created.
+	 * The graph or source of graph events is in another thread or on another machine, but the pipe
+	 * already exists. The graphic graph displayed by this viewer is created.
 	 * @param source The source of graph events.
 	 */
 	public Viewer( ProxyPipe source )
 	{
 		graphInAnotherThread = true;
-		init( new GraphicGraph( String.format( "GraphicGraph_%d", (int)(Math.random()*10000) ) ), source );
+		init( new GraphicGraph( newGGId() ), source, (Source)null );
 	}
 	
 	/**
-	 * We draw a pre-existing graphic graph.
+	 * We draw a pre-existing graphic graph. The graphic graph is maintained by its creator.
 	 * @param graph THe graph to draw.
 	 */
 	public Viewer( GraphicGraph graph )
 	{
 		graphInAnotherThread = false;
-		init( graph, (ProxyPipe)null );
+		init( graph, (ProxyPipe)null, (Source)null );
 	}
 	
 	/**
-	 * New viewer on a graph. The viewer always run in the Swing thread, therefore, you must specify
-	 * how it will take graph events from the graph you give. If the graph you give will be accessed
-	 * only from the Swing thread use ThreadingModel.GRAPH_IN_SWING_THREAD. If the graph you use
-	 * is accessed in another thread use ThreadingModel.GRAPH_IN_SWING_THREAD. This last scheme is
-	 * more powerful since it allows to run algorithms on the graph in parallel with the viewer.
+	 * New viewer on an existing graph. The viewer always run in the Swing thread, therefore, you
+	 * must specify how it will take graph events from the graph you give. If the graph you give
+	 * will be accessed only from the Swing thread use ThreadingModel.GRAPH_IN_SWING_THREAD. If the
+	 * graph you use is accessed in another thread use ThreadingModel.GRAPH_IN_ANOTHER_THREAD. This
+	 * last scheme is more powerful since it allows to run algorithms on the graph in parallel with
+	 * the viewer.
 	 * @param graph The graph to render.
 	 * @param threadingModel The threading model.
 	 */
@@ -185,27 +186,45 @@ public class Viewer implements ActionListener
 		{
 			case GRAPH_IN_SWING_THREAD:
 				graphInAnotherThread = false;
-				init( new GraphicGraph( String.format( "GraphicGraph_%d", (int)(Math.random()*10000) ) ), (ProxyPipe)null );
+				init( new GraphicGraph( newGGId() ), (ProxyPipe)null, graph );
 				break;
 			case GRAPH_IN_ANOTHER_THREAD:
 				graphInAnotherThread = true;
-				init( new GraphicGraph( String.format( "GraphicGraph_%d", (int)(Math.random()*10000) ) ), new ThreadProxyPipe( graph, true ) );
+				init( new GraphicGraph( newGGId() ), new ThreadProxyPipe( graph, true ), (Source)null );
 				break;
 			case GRAPH_ON_NETWORK:
 				throw new RuntimeException( "TO DO, sorry !:-)" );
 		}
 	}
 	
-	protected void init( GraphicGraph graph, ProxyPipe source )
+	/**
+	 * Create a new unique identifier for a graph.
+	 * @return The new identifier.
+	 */
+	protected String newGGId()
 	{
-		this.graph    = graph;
-		this.pumpPipe = source;
-		this.timer    = new Timer( delay, this );
-		this.images   = ImageCache.defaultImageCache();
-		this.fonts    = FontCache.defaultFontCache();
+		return String.format( "GraphicGraph_%d", (int)(Math.random()*10000) );
+	}
+	
+	/**
+	 * Initialise the viewer.
+	 * @param graph The graphic graph.
+	 * @param ppipe The source of events from another thread or machine (null if source != null).
+	 * @param source The source of events from this thread (null if ppipe != null).
+	 */
+	protected void init( GraphicGraph graph, ProxyPipe ppipe, Source source )
+	{
+		this.graph              = graph;
+		this.pumpPipe           = ppipe;
+		this.sourceInSameThread = source;
+		this.timer              = new Timer( delay, this );
 		
-		if( source != null )
-			source.addSink( graph );
+		assert( ( ppipe != null && source == null ) || ( ppipe == null && source != null ) );
+		
+		if( pumpPipe != null )
+			pumpPipe.addSink( graph );
+		if( sourceInSameThread != null )
+			sourceInSameThread.addSink( graph );
 
 		timer.setCoalesce( true );
 		timer.setRepeats( true );
@@ -219,15 +238,22 @@ public class Viewer implements ActionListener
 	{
 		synchronized( views )
 		{
+			disableAutoLayout();
 			timer.stop();
-			pumpPipe.removeSink( graph );
+			timer.removeActionListener( this );
+			
+			if( pumpPipe != null )
+				pumpPipe.removeSink( graph );
+			if( sourceInSameThread != null )
+				sourceInSameThread.removeSink( graph );
 		
 			for( View view: views.values() )
 				view.close( graph );
 
-			graph    = null;
-			pumpPipe = null;
-			timer    = null;
+			graph              = null;
+			pumpPipe           = null;
+			sourceInSameThread = null;
+			timer              = null;
 		}
 	}
 	
@@ -280,22 +306,6 @@ public class Viewer implements ActionListener
 		}
 	}
 	
-	/**
-	 * Set of fonts.
-	 */
-	public FontCache getFontCache()
-	{
-		return fonts;
-	}
-
-	/**
-	 * Set of images.
-	 */
-	public ImageCache getImageCache()
-	{
-		return images;
-	}
-
 // Command
 
 	/**
@@ -308,8 +318,7 @@ public class Viewer implements ActionListener
 	{
 		synchronized( views )
 		{
-			View view = new DefaultView( this, DEFAULT_VIEW_ID, new SwingBasicGraphRenderer() ); // new SwingBasicGraphView( this, DEFAULT_VIEW_ID );
-//			View view = new DefaultView( this, DEFAULT_VIEW_ID, new SwingGraphRenderer() );
+			View view = new DefaultView( this, DEFAULT_VIEW_ID, new SwingBasicGraphRenderer() );
 			addView( view );
 		
 			if( openInAFrame )
@@ -428,6 +437,15 @@ public class Viewer implements ActionListener
 			for( View view: views.values() )
 				view.setBounds( lo.x, lo.y, lo.z, hi.x, hi.y, hi.z );
 		}
+	}
+	
+	/**
+	 * What to do when the frame containing one or more views is closed.
+	 * @param policy The close frame policy.
+	 */
+	public void setCloseFramePolicy( CloseFramePolicy policy )
+	{
+		closeFramePolicy = policy;
 	}
 	
 // Optional layout algorithm

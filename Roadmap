@@ -14,8 +14,8 @@ Legend:
 	= Started.
 	- To do.
 	~ To figure out.
-	
-	
+
+
 - Future:
 ---------
 	~ Add organisation/community detection methods (in tools ?).
@@ -37,7 +37,7 @@ Legend:
 	  	- Important algorithms
 			* Min/Max spanning tree.
 			- Cliques (sous-graphes denses maximaux).
-			- Inverse d'un graphes (on prend le graphe complet et on enleve les arcs déjà présents).
+			- Inverse d'un graphes (on prend le graphe complet et on enleve les arcs dï¿½jï¿½ prï¿½sents).
 			- Coloration, nombre chromatique, etc.
 			- ??
 		- Add more metrics in tools:

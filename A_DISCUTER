@@ -3,3 +3,8 @@ Sujet restant à fixer :
 
 * Les factories ?
 * Les algorithmes ayant une référence Graph ou étant des Pipe ? Ou les deux ?
+* Sorties Gnuplot toute faites  pour certains algos.
+* Sorties Ptolemee pour certains algos.
+* Une interface "GraphConstruction" pas Source, mais qqchose qui permet de construire un graphe
+  à la main. Graph hérite de Pipe et GraphConstruction.	
+* Dans graph => edgeSet, mais dans Node => getEdgeSet ??? 
