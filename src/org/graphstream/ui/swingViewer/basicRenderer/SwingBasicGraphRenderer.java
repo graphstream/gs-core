@@ -140,18 +140,21 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 
 	public void render( Graphics2D g, int width, int height )
 	{
-		if( camera.getMetrics().diagonal == 0 | ( graph.getNodeCount() == 0 && graph.getSpriteCount() == 0 ) )
+		if( graph != null )	// If not closed, one or two renders can occur after closed.
 		{
-			displayNothingToDo( g, width, height );
-		}
-		else
-		{
-			camera.setPadding( graph );
-			camera.setViewport( width, height );
-//			System.err.printf( "%s", camera );
-//			debugVisibleArea( g );
-			renderGraph( g );
-			renderSelection( g );
+			if( camera.getMetrics().diagonal == 0 | ( graph.getNodeCount() == 0 && graph.getSpriteCount() == 0 ) )
+			{
+				displayNothingToDo( g, width, height );
+			}
+			else
+			{
+				camera.setPadding( graph );
+				camera.setViewport( width, height );
+	//			System.err.printf( "%s", camera );
+	//			debugVisibleArea( g );
+				renderGraph( g );
+				renderSelection( g );
+			}
 		}
 	}
 	
