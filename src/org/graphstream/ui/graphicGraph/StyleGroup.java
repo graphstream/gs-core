@@ -373,6 +373,17 @@ public class StyleGroup extends Style implements Iterable<Element>
 		
 		return null;
 	}
+	
+	/**
+	 * Test if an element is pushed as dynamic.
+	 */
+	public boolean isElementDynamic( Element element )
+	{
+		if( dynamicOnes != null )
+			return dynamicOnes.contains( element );
+		
+		return false;
+	}
 
 // Command
 

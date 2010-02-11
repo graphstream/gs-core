@@ -667,11 +667,16 @@ public class StyleGroupSet implements StyleSheetListener
 	 * 
 	 * @param element The element to move.
 	 */
-	public void checkElementStyleGroup( Element element )	// TODO rename into "checkElementStyleGroup()"
+	public void checkElementStyleGroup( Element element )
 	{
+		StyleGroup oldGroup = getGroup( getElementGroup( element ) );
+
+		// Get the old element "dynamic" status.
+
+		boolean isDyn = oldGroup.isElementDynamic( element );
+		
 		// Get the old event set for the given element.
 		
-		StyleGroup oldGroup = getGroup( getElementGroup( element ) );
 		StyleGroup.ElementEvents events = null;
 		
 		if( oldGroup != null )
@@ -694,6 +699,11 @@ public class StyleGroupSet implements StyleSheetListener
 		
 		for( StyleGroupListener listener: listeners )
 			listener.elementStyleChanged( element, oldGroup, newGroup );
+		
+		// Eventually set the element as dynamic, if it was.
+		
+		if( newGroup != null && isDyn )
+			newGroup.pushElementAsDynamic( element );
 	}
 	
 	protected void addElementToReverseSearch( Element element, String groupId )
