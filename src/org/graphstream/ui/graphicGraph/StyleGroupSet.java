@@ -912,13 +912,13 @@ public class StyleGroupSet implements StyleSheetListener
 				// We may accelerate things a bit when a class or id style is modified,
 				// since only the groups listed in the style are concerned (we are at the
 				// bottom of the inheritance tree).
-				
-				for( String s: oldRule.getGroups() )
-				{
-					StyleGroup group = groups.get( s );
-					zIndex.groupChanged( group );
-					shadow.groupChanged( group );
-				}
+				if ( oldRule.getGroups() != null )
+					for (String s : oldRule.getGroups())
+					{
+						StyleGroup group = groups.get(s);
+						zIndex.groupChanged(group);
+						shadow.groupChanged(group);
+					}
 			}
 			else
 			{
