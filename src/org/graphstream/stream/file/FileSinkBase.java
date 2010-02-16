@@ -121,7 +121,7 @@ public abstract class FileSinkBase
 			
 			if( edge.getAttributeCount() > 0 )
 				for( String key: edge.getAttributeKeySet() )
-					nodeAttributeAdded( graphId, timeId++, edgeId, key, edge.getAttribute( key ) );
+					edgeAttributeAdded( graphId, timeId++, edgeId, key, edge.getAttribute( key ) );
 		}
 	}
 	
