@@ -175,7 +175,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 	{
 		camera.setAutoFitView( false );
 		camera.setCenter( minx + ( maxx - minx ), miny + ( maxy - miny ) );
-		// TODO add the graphViewport in the camera.
+		camera.setGraphViewport( minx, miny, maxx, maxy );
 		camera.setZoom( 1 );
 	}
 

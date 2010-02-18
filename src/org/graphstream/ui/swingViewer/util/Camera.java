@@ -106,6 +106,13 @@ public class Camera
 	 */
 	protected HashSet<String> nodeInvisible = new HashSet<String>();
 	
+  	/**
+  	 * The graph view port, if any. The graph view port is a view inside the graph space. It allows
+  	 * to compute the view according to a specified area of the graph space instead of the graph
+  	 * dimensions.
+  	 */
+	protected float gviewport[] = null;
+	
 // Construction
 	
 	/**
@@ -312,9 +319,25 @@ public class Camera
 		else if( sprite.isAttachedToEdge() ) return getSpritePositionEdge( sprite, pos, units );
 		else                                 return getSpritePositionFree( sprite, pos, units );
 	}
+	
+	public float[] getGraphViewport() { return gviewport; }
 
 // Command
 
+  	public void setGraphViewport( float minx, float miny, float maxx, float maxy )
+  	{
+  		gviewport = new float[4];
+  		gviewport[0] = minx;
+  		gviewport[1] = miny;
+  		gviewport[2] = maxx;
+  		gviewport[3] = maxy;
+  	}
+  	
+  	public void removeGraphViewport()
+  	{
+  		gviewport = null;
+  	}
+	
 	/**
 	 * Set the camera view in the given graphics and backup the previous transform of the graphics.
 	 * Call {@link #popView(Graphics2D)} to restore the saved transform. You can only push one time
@@ -409,12 +432,14 @@ public class Camera
 		float padYgu = getPaddingYgu() * 2;
 		float padXpx = getPaddingXpx() * 2;
 		float padYpx = getPaddingYpx() * 2;
+		float gw     = gviewport != null ? gviewport[2]-gviewport[0] : metrics.size.data[0];
+		float gh     = gviewport != null ? gviewport[3]-gviewport[1] : metrics.size.data[1];
 //		float diag   = ((float)Math.max( metrics.size.data[0]+padXgu, metrics.size.data[1]+padYgu )) * zoom; 
 //		
 //		sx = ( metrics.viewport.data[0] - padXpx ) / diag; 
 //		sy = ( metrics.viewport.data[1] - padYpx ) / diag;
-		sx = ( metrics.viewport.data[0] - padXpx ) / (( metrics.size.data[0] + padXgu )*zoom); 
-		sy = ( metrics.viewport.data[1] - padYpx ) / (( metrics.size.data[1] + padYgu )*zoom);
+		sx = ( metrics.viewport.data[0] - padXpx ) / (( gw + padXgu )*zoom); 
+		sy = ( metrics.viewport.data[1] - padYpx ) / (( gh + padYgu )*zoom);
 		tx = center.x;
 		ty = center.y;
 		
