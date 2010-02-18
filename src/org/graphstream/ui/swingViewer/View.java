@@ -213,4 +213,18 @@ public abstract class View extends JPanel
 	 * @param y The requested position ordinate in pixels.
 	 */
 	public abstract void moveElementAtPx( GraphicElement element, float x, float y );
+	
+	/**
+	 * Set a layer renderer that will be called each time the graph needs to be redrawn before the
+	 * graph is rendered. Pass "null" to remove the layer renderer. 
+	 * @param renderer The renderer (or null to remove it).
+	 */
+	public abstract void setBackLayerRenderer( LayerRenderer renderer );
+	
+	/**
+	 * Set a layer renderer that will be called each time the graph needs to be redrawn after the
+	 * graph is rendered. Pass "null" to remove the layer renderer. 
+	 * @param renderer The renderer (or null to remove it).
+	 */
+	public abstract void setForeLayoutRenderer( LayerRenderer renderer );
 }

@@ -47,6 +47,7 @@ import org.graphstream.ui.graphicGraph.StyleGroupSet;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.graphicGraph.stylesheet.Value;
 import org.graphstream.ui.swingViewer.GraphRendererBase;
+import org.graphstream.ui.swingViewer.LayerRenderer;
 import org.graphstream.ui.swingViewer.util.Camera;
 import org.graphstream.ui.swingViewer.util.GraphMetrics;
 
@@ -64,7 +65,6 @@ import org.graphstream.ui.swingViewer.util.GraphMetrics;
  * </p>
  * 
  * TODO
- * 	- Le texte.
  * 	- Les sprites.
  * 	- Les bordures.
  */
@@ -82,6 +82,10 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 	protected EdgeRenderer edgeRenderer = new EdgeRenderer();
 	
 	protected SpriteRenderer spriteRenderer = new SpriteRenderer();
+	
+	protected LayerRenderer backRenderer = null;
+	
+	protected LayerRenderer foreRenderer = null;
 	
 // Construction
 	
@@ -142,7 +146,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 	{
 		if( graph != null )	// If not closed, one or two renders can occur after closed.
 		{
-			if( camera.getMetrics().diagonal == 0 | ( graph.getNodeCount() == 0 && graph.getSpriteCount() == 0 ) )
+			if( camera.getGraphViewport() == null && camera.getMetrics().diagonal == 0 && ( graph.getNodeCount() == 0 && graph.getSpriteCount() == 0 ) )
 			{
 				displayNothingToDo( g, width, height );
 			}
@@ -181,7 +185,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 
 	public void removeGraphViewport()
 	{
-		// TODO
+		camera.removeGraphViewport();
 		resetView();
 	}
 	
@@ -214,6 +218,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 
 		setupGraphics( g );
 		renderGraphBackground( g );
+		renderBackLayer( g );
 		camera.pushView( g );
 		renderGraphElements( g );
 		
@@ -226,6 +231,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 		}
 
 		camera.popView( g );
+		renderForeLayer( g );
 	}
 	
 	protected void setupGraphics( Graphics2D g )
@@ -337,6 +343,31 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 		}
 	}
 	
+	protected void renderBackLayer( Graphics2D g )
+	{
+		if( backRenderer != null )
+			renderLayer( g, backRenderer );
+	}
+	
+	protected void renderForeLayer( Graphics2D g )
+	{
+		if( foreRenderer != null )
+			renderLayer( g, foreRenderer );
+	}
+	
+	protected void renderLayer( Graphics2D g, LayerRenderer renderer )
+	{
+		GraphMetrics metrics = camera.getMetrics();
+		
+		renderer.render( g, graph, metrics.ratioPx2Gu,
+			(int)metrics.viewport.data[0],
+			(int)metrics.viewport.data[1],
+			metrics.loVisible.x,
+			metrics.loVisible.y,
+			metrics.hiVisible.x,
+			metrics.hiVisible.y );
+	}
+	
 // Utility | Debug
 
 	/** 
@@ -418,6 +449,16 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 		}
 	}
 
+	public void setBackLayerRenderer( LayerRenderer renderer )
+    {
+		backRenderer = renderer;
+    }
+
+	public void setForeLayoutRenderer( LayerRenderer renderer )
+    {
+		foreRenderer = renderer;
+    }
+	
 // Style Group Listener
 
     public void elementStyleChanged( Element element, StyleGroup oldStyle, StyleGroup style )

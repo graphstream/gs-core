@@ -434,4 +434,18 @@ public class DefaultView extends View implements ComponentListener, WindowListen
 		renderer.setViewRotation( theta );
 		canvasChanged = true;
     }
+
+	@Override
+    public void setBackLayerRenderer( LayerRenderer renderer )
+    {
+		this.renderer.setBackLayerRenderer( renderer );
+		canvasChanged = true;
+    }
+
+	@Override
+    public void setForeLayoutRenderer( LayerRenderer renderer )
+    {
+		this.renderer.setForeLayoutRenderer( renderer );
+		canvasChanged = true;
+    }
 }
