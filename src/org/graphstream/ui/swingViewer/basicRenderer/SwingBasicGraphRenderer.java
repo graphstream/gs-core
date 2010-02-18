@@ -171,6 +171,20 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 		camera.setCenter( x, y /* ignore Z */ );
 	}
 
+	public void setGraphViewport( float minx, float miny, float maxx, float maxy )
+	{
+		camera.setAutoFitView( false );
+		camera.setCenter( minx + ( maxx - minx ), miny + ( maxy - miny ) );
+		// TODO add the graphViewport in the camera.
+		camera.setZoom( 1 );
+	}
+
+	public void removeGraphViewport()
+	{
+		// TODO
+		resetView();
+	}
+	
 	public void setViewPercent( float percent )
 	{
 		camera.setAutoFitView( false );

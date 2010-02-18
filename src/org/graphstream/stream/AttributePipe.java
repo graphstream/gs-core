@@ -39,13 +39,13 @@ package org.graphstream.stream;
  */
 public class AttributePipe extends PipeBase
 {
-	protected AttributePredicate globalPredicate = null;
+	protected AttributePredicate globalPredicate = new FalsePredicate();
 	
-	protected AttributePredicate graphPredicate = null;
+	protected AttributePredicate graphPredicate = new FalsePredicate();
 	
-	protected AttributePredicate nodePredicate = null;
+	protected AttributePredicate nodePredicate = new FalsePredicate();
 	
-	protected AttributePredicate edgePredicate = null;
+	protected AttributePredicate edgePredicate = new FalsePredicate();
 	
 	/**
 	 * Set an attribute filter for graph, node and edge attributes. If the filter is null,
@@ -54,7 +54,9 @@ public class AttributePipe extends PipeBase
 	 */
 	public void setGlobalAttributeFilter( AttributePredicate filter )
 	{
-		globalPredicate = filter;
+		if( filter == null )
+		     globalPredicate = new FalsePredicate();
+		else globalPredicate = filter;
 	}
 	
 	/**
@@ -64,7 +66,9 @@ public class AttributePipe extends PipeBase
 	 */
 	public void setGraphAttributeFilter( AttributePredicate filter )
 	{
-		graphPredicate = filter;
+		if( filter == null )
+		     graphPredicate = new FalsePredicate();
+		else graphPredicate = filter;
 	}
 	
 	/**
@@ -74,7 +78,9 @@ public class AttributePipe extends PipeBase
 	 */
 	public void setNodeAttributeFilter( AttributePredicate filter )
 	{
-		nodePredicate = filter;
+		if( filter == null )
+		     nodePredicate = new FalsePredicate();
+		else nodePredicate = filter;
 	}
 	
 	/**
@@ -84,7 +90,9 @@ public class AttributePipe extends PipeBase
 	 */
 	public void setEdgeAttributeFilter( AttributePredicate filter )
 	{
-		edgePredicate = filter;
+		if( filter == null )
+		     edgePredicate = new FalsePredicate();
+		else edgePredicate = filter;
 	}
 
 	/**
@@ -235,4 +243,13 @@ public class AttributePipe extends PipeBase
 			}
 		}
     }
+	
+	protected class FalsePredicate implements AttributePredicate
+	{
+		public boolean matches( String attributeName, Object attributeValue )
+        {
+	        return false;
+        }
+	
+	}
 }

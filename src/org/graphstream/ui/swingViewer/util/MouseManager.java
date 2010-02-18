@@ -69,16 +69,19 @@ public class MouseManager implements MouseInputListener
 	{
 		view.requestFocus();
 		
-		for( Node node: graph )
+		if( ! event.isShiftDown() )
 		{
-			if( node.hasAttribute( "ui.selected" ) )
-				node.removeAttribute( "ui.selected" );
-		}
-
-		for( GraphicSprite sprite: graph.spriteSet() )
-		{
-			if( sprite.hasAttribute( "ui.selected" ) )
-				sprite.removeAttribute( "ui.selected" );
+			for( Node node: graph )
+			{
+				if( node.hasAttribute( "ui.selected" ) )
+					node.removeAttribute( "ui.selected" );
+			}
+	
+			for( GraphicSprite sprite: graph.spriteSet() )
+			{
+				if( sprite.hasAttribute( "ui.selected" ) )
+					sprite.removeAttribute( "ui.selected" );
+			}
 		}
 	}
 	

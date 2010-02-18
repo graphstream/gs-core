@@ -130,6 +130,23 @@ public interface GraphRenderer
 	public abstract void setViewCenter( float x, float y, float z );
 
 	/**
+	 * Specify exactly the minimum and maximum points in GU that are visible (more points may be
+	 * visible due to aspect-ratio constraints).
+	 * @param minx The minimum abscissa visible.
+	 * @param miny The minimum ordinate visible.
+	 * @param maxx The maximum abscissa visible.
+	 * @param maxy The maximum abscissa visible.
+	 * @see #removeGraphViewport()
+	 */
+	public abstract void setGraphViewport( float minx, float miny, float maxx, float maxy );
+	
+	/**
+	 * Remove the specified graph view port.
+	 * @see #setGraphViewport(float, float, float, float)
+	 */
+	public abstract void removeGraphViewport();
+
+	/**
 	 * Zoom the view.
 	 * @param percent Percent of the graph visible.
 	 */

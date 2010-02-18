@@ -260,6 +260,52 @@ public class Viewer implements ActionListener
 // Access
 	
 	/**
+	 * Create a new instance of the default graph renderer.
+	 * The default graph renderer class is given by the "gs.ui.renderer" system property. If the
+	 * class indicated by this property is not usable (not in the class path, not of the correct
+	 * type, etc.) or if the property is not present a SwingBasicGraphRenderer is returned.
+	 */
+	public static GraphRenderer newGraphRenderer()
+	{
+		String rendererClassName = System.getProperty( "gs.ui.renderer" );
+		
+		if( rendererClassName == null )
+			return new SwingBasicGraphRenderer();
+		
+		try
+        {
+	        Class<?> c      = Class.forName( rendererClassName );
+	        Object   object = c.newInstance();
+	        
+	        if( object instanceof GraphRenderer )
+	        {
+	        	return (GraphRenderer) object;
+	        }
+	        else
+	        {
+	        	System.err.printf( "class '%s' is not a 'GraphRenderer'%n", object );
+	        }
+        }
+        catch( ClassNotFoundException e )
+        {
+	        e.printStackTrace();
+        	System.err.printf( "Cannot create graph renderer, 'GraphRenderer' class not found : " + e.getMessage() );
+        }
+        catch( InstantiationException e )
+        {
+            e.printStackTrace();
+        	System.err.printf( "Cannot create graph renderer, class '"+rendererClassName+"' error : " + e.getMessage() );
+        }
+        catch( IllegalAccessException e )
+        {
+            e.printStackTrace();
+        	System.err.printf( "Cannot create graph renderer, class '"+rendererClassName+"' illegal access : " + e.getMessage() );
+        }
+
+    	return new SwingBasicGraphRenderer();
+	}
+	
+	/**
 	 * What to do when a frame is closed.
 	 */
 	public CloseFramePolicy getCloseFramePolicy()
@@ -318,7 +364,7 @@ public class Viewer implements ActionListener
 	{
 		synchronized( views )
 		{
-			View view = new DefaultView( this, DEFAULT_VIEW_ID, new SwingBasicGraphRenderer() );
+			View view = new DefaultView( this, DEFAULT_VIEW_ID, newGraphRenderer() );
 			addView( view );
 		
 			if( openInAFrame )

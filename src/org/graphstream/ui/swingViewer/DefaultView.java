@@ -408,6 +408,20 @@ public class DefaultView extends View implements ComponentListener, WindowListen
     }
 
 	@Override
+	public void setGraphViewport( float minx, float miny, float maxx, float maxy )
+	{
+		renderer.setGraphViewport( minx, miny, maxx, maxy );
+		canvasChanged = true;
+	}
+	
+	@Override
+	public void removeGraphViewport()
+	{
+		renderer.removeGraphViewport();
+		canvasChanged = true;
+	}
+
+	@Override
     public void setViewPercent( float percent )
     {
 	    renderer.setViewPercent( percent );

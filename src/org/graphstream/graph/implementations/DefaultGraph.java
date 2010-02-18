@@ -52,7 +52,6 @@ import org.graphstream.ui.old.GraphViewer;
 import org.graphstream.ui.old.GraphViewerRemote;
 import org.graphstream.ui.swingViewer.GraphRenderer;
 import org.graphstream.ui.swingViewer.Viewer;
-import org.graphstream.ui.swingViewer.basicRenderer.SwingBasicGraphRenderer;
 
 /**
  * Default implementation for the Graph interface.
@@ -793,7 +792,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	public Viewer display( boolean autoLayout )
 	{
 		Viewer        viewer   = new Viewer( this, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD );
-		GraphRenderer renderer = newGraphRenderer();
+		GraphRenderer renderer = Viewer.newGraphRenderer();
 		
 		viewer.addView( String.format( "defaultView_%d", (long)(Math.random()*10000) ), renderer );
 	
@@ -844,46 +843,6 @@ public class DefaultGraph extends AbstractElement implements Graph
         }
 
 		return new org.graphstream.ui.layout.springbox.SpringBox( false );
-	}
-	
-	protected static GraphRenderer newGraphRenderer()
-	{
-		String rendererClassName = System.getProperty( "gs.ui.renderer" );
-		
-		if( rendererClassName == null )
-			return new SwingBasicGraphRenderer();
-		
-		try
-        {
-	        Class<?> c      = Class.forName( rendererClassName );
-	        Object   object = c.newInstance();
-	        
-	        if( object instanceof GraphRenderer )
-	        {
-	        	return (GraphRenderer) object;
-	        }
-	        else
-	        {
-	        	System.err.printf( "class '%s' is not a 'GraphRenderer'%n", object );
-	        }
-        }
-        catch( ClassNotFoundException e )
-        {
-	        e.printStackTrace();
-        	System.err.printf( "Cannot create graph renderer, 'GraphRenderer' class not found : " + e.getMessage() );
-        }
-        catch( InstantiationException e )
-        {
-            e.printStackTrace();
-        	System.err.printf( "Cannot create graph renderer, class '"+rendererClassName+"' error : " + e.getMessage() );
-        }
-        catch( IllegalAccessException e )
-        {
-            e.printStackTrace();
-        	System.err.printf( "Cannot create graph renderer, class '"+rendererClassName+"' illegal access : " + e.getMessage() );
-        }
-
-    	return new SwingBasicGraphRenderer();
 	}
 	
 	@Override

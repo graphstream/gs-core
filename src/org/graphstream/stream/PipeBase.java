@@ -23,15 +23,15 @@
 package org.graphstream.stream;
 
 /**
- * A base filter that do not filter anything.
+ * A base pipe that merely let all events pass.
  *
  * <p>
- * This filter does nothing and let all events pass. It can be used as a base
+ * This pipe does nothing and let all events pass. It can be used as a base
  * to implement more specific filters by refining some of its methods.
  * </p>
  * 
  * <p>
- * Another use of this filter is to duplicate a stream of events from one
+ * Another use of this pipe is to duplicate a stream of events from one
  * input toward several outputs.
  * </p>
  */
