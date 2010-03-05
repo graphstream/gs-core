@@ -24,7 +24,6 @@
 package org.graphstream.graph.implementations;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -33,280 +32,323 @@ import org.graphstream.graph.DepthFirstIterator;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
+import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
+import org.graphstream.stream.SourceBase.ElementType;
 
 /**
  * <p>
- * A thread-safe node to use with ConcurrentGraph.
+ * A light node class intended to allow the construction of big graphs
+ * (millions of elements).
+ * </p>
+ * <p>
+ * The main purpose here is to minimize memory consumption even if the
+ * management of such a graph implies more CPU consuming. See the
+ * <code>complexity</code> tags on each method so as to figure out the impact
+ * on the CPU.
  * </p>
  * 
- * @since 2009008
+ * @since July 12 2007
   * 
  */
-public class ConcurrentNode
-	extends AbstractConcurrentElement
-	implements Node
+public class ConcurrentNode extends AbstractConcurrentElement implements Node
 {
-	Graph graph;
-	ConcurrentLinkedQueue<Edge> leavingEdges;
-	ConcurrentLinkedQueue<Edge> enteringEdges;
+	public class NeighborNodeIterator implements Iterator<Node>
+	{
+		Node node;
+		Iterator<Edge>	ite;
+		
+		public NeighborNodeIterator( Node node )
+		{
+			this.node = node;
+			ite = ((ConcurrentNode)node).edges.iterator();
+		}
+
+		public boolean hasNext()
+		{
+			return ite.hasNext();
+		}
+
+		public Node next()
+		{
+			if( hasNext() )
+				return ite.next().getOpposite( node );
+			
+			return null;
+		}
+
+		public void remove()
+		{
+			throw new UnsupportedOperationException( "this iterator does not allow removing" );
+		}
+	}
 	
+	public class EdgeIterable implements Iterable<Edge>
+	{
+		protected Iterator<Edge> iterator;
+		
+		public EdgeIterable( Iterator<Edge> iterator )
+		{
+			this.iterator = iterator;
+		}
+		
+		public Iterator<Edge> iterator()
+		{
+			return iterator;
+		}
+	}
+
+	ConcurrentLinkedQueue<Edge> edges;
+
+	Graph graph;
+
 	public ConcurrentNode( Graph graph, String id )
 	{
 		super( id );
-		
-		if( graph != null && ! ( graph instanceof ConcurrentGraph ) )
-			throw new ClassCastException( "ConcurrentNode needs an " +
-					"extended class of ConcurrentGraph" );
-		
 		this.graph = graph;
-		
-		leavingEdges	= new ConcurrentLinkedQueue<Edge>();
-		enteringEdges	= new ConcurrentLinkedQueue<Edge>();
-	}
-	
-	void registerEdge( Edge e )
-	{
-		if( e.getSourceNode() == this )
-		{
-			leavingEdges.add(e);
-		}
-		else if( e.getTargetNode() == this )
-		{
-			enteringEdges.add(e);
-		}
-	}
-	
-	void unregisterEdge( Edge e )
-	{
-		if( e.getSourceNode() == this )
-		{
-			leavingEdges.remove(e);
-		}
-		else if( e.getTargetNode() == this )
-		{
-			enteringEdges.remove(e);
-		}
+		edges = new ConcurrentLinkedQueue<Edge>();
 	}
 
-// --- AbstractConcurrentElement implementation --- //
-	
-	/* @see org.miv.graphstream.graph.Element */
 	@Override
-	protected void attributeChanged(String attribute, Object oldValue,
-			Object newValue)
+	protected String myGraphId()	// XXX
 	{
-		if( graph != null && graph instanceof ConcurrentGraph )
-		{
-			((ConcurrentGraph) graph).nodeAttributeChangedEvent( this, attribute, oldValue, newValue );
-		}
+		return graph.getId();
 	}
 	
 	@Override
-	protected void attributeAdded( String attribute, Object value )
+	protected long newEvent()		// XXX
 	{
-		if( graph != null && graph instanceof ConcurrentGraph )
-		{
-			((ConcurrentGraph) graph).nodeAttributeAddedEvent( this, attribute, value );
-		}
+		return ((ConcurrentGraph)graph).newEvent();
 	}
 	
-	@Override
-	protected void attributeRemoved( String attribute )
-	{
-		if( graph != null && graph instanceof ConcurrentGraph )
-		{
-			((ConcurrentGraph) graph).nodeAttributeRemovedEvent( this, attribute );
-		}
-	}
-
-// --- //
-// --- Node implementation --- //
-	
-	/* @see org.miv.graphstream.graph.Node */
-	public Iterator<? extends Node> getBreadthFirstIterator()
+	public Iterator<Node> getBreadthFirstIterator()
 	{
 		return new BreadthFirstIterator( this );
 	}
 
-	/* @see org.miv.graphstream.graph.Node */
-	public Iterator<? extends Node> getBreadthFirstIterator(boolean directed)
+	public Iterator<Node> getBreadthFirstIterator( boolean directed )
 	{
 		return new BreadthFirstIterator( this, directed );
 	}
 
-	/* @see org.miv.graphstream.graph.Node */
 	public int getDegree()
 	{
-		return getInDegree() + getOutDegree();
+		return edges.size();
 	}
 
-	/* @see org.miv.graphstream.graph.Node */
-	public Iterator<? extends Node> getDepthFirstIterator()
+	public Iterator<Node> getDepthFirstIterator()
 	{
 		return new DepthFirstIterator( this );
 	}
 
-	/* @see org.miv.graphstream.graph.Node */
-	public Iterator<? extends Node> getDepthFirstIterator(boolean directed)
+	public Iterator<Node> getDepthFirstIterator( boolean directed )
 	{
 		return new DepthFirstIterator( this, directed );
 	}
 
-	/* @see org.miv.graphstream.graph.Node */
-	public Edge getEdge(int i)
+	public Edge getEdge( int i )
 	{
-		Iterator<Edge> ite = new FullEdgeIterator();
+		int j = 0;
+		Iterator<Edge> ite = edges.iterator();
 		
-		while( ite.hasNext() && --i > 0 ) ite.next();
-		if( ite.hasNext() ) return ite.next();
-		
-		return null;
-	}
-
-	/* @see org.miv.graphstream.graph.Node */
-	public Edge getEdgeFrom(String id)
-	{
-		Node n = graph.getNode(id);
-		Iterator<Edge> ite = leavingEdges.iterator();
-		Edge e;
-		
-		
-		while( ite.hasNext() ) 
+		while( ite.hasNext() )
 		{
-			e = ite.next();
-			if( e.getTargetNode() == n ) return e;
+			if( i == j )
+				return ite.next();
+			
+			j++;
+			ite.next();
 		}
 		
 		return null;
 	}
 
-	/* @see org.miv.graphstream.graph.Node */
-	public Iterator<? extends Edge> getEdgeIterator()
+	/**
+	 * @complexity 0(n+d) with d the degree of the node and n the number nodes
+	 *             in the graph.
+	 */
+	public Edge getEdgeFrom( String id )
 	{
-		return new FullEdgeIterator();
+		Node n = ( (ConcurrentGraph) graph ).lookForNode( id );
+		if( n != null )
+		{
+			for( Edge e: edges )
+			{
+				if( e.getSourceNode() == n )
+				{
+					return e;
+				}
+				if( !e.isDirected() && e.getTargetNode() == n )
+				{
+					return e;
+				}
+			}
+		}
+		return null;
+	}
+
+	public Iterator<Edge> getEdgeIterator()
+	{
+		return edges.iterator();//new EdgeIterator();
 	}
 	
 	public Iterator<Edge> iterator()
 	{
-		return new FullEdgeIterator();
+		return getEdgeIterator();
 	}
 
-	/* @see org.miv.graphstream.graph.Node */
-	public Collection<? extends Edge> getEdgeSet()
+	public Collection<Edge> getEdgeSet()
 	{
-		throw new UnsupportedOperationException( "deprecated operation : Node#getEdgeSet()" );
+		return edges;
 	}
 
-	/* @see org.miv.graphstream.graph.Node */
-	public Edge getEdgeToward(String id)
+	public Edge getEdgeToward( String id )
 	{
-		Node n = graph.getNode(id);
-		Iterator<Edge> ite = enteringEdges.iterator();
-		Edge e;
-		
-		while( ite.hasNext() ) 
-			if( ( e = ite.next() ).getSourceNode() == n ) return e;
-		
+		Node n = ( (ConcurrentGraph) graph ).lookForNode( id );
+		if( n != null )
+		{
+			for( Edge e: edges )
+			{
+				if( e.getTargetNode() == n )
+				{
+					return e;
+				}
+				if( !e.isDirected() && e.getSourceNode() == n )
+				{
+					return e;
+				}
+			}
+		}
 		return null;
 	}
 
-	/* @see org.miv.graphstream.graph.Node */
-	public Iterator<? extends Edge> getEnteringEdgeIterator()
+	public Iterator<Edge> getEnteringEdgeIterator()
 	{
-		return enteringEdges.iterator();
+		throw new UnsupportedOperationException( "unsupported entering edge iterator" );
 	}
 
-	/* @see org.miv.graphstream.graph.Node */
-	public Collection<? extends Edge> getEnteringEdgeSet()
+	public Iterable<Edge> getEnteringEdgeSet()
 	{
-		return Collections.unmodifiableCollection(enteringEdges);
+		return new EdgeIterable( getEnteringEdgeIterator() );
 	}
 
-	/* @see org.miv.graphstream.graph.Node */
 	public Graph getGraph()
 	{
 		return graph;
 	}
 
-	/* @see org.miv.graphstream.graph.Node */
 	public int getInDegree()
 	{
-		return enteringEdges.size();
+		Iterator<Edge> ite = edges.iterator();
+		
+		int d = 0;
+		Edge e;
+		while(ite.hasNext()) {
+			e = ite.next();
+			if( e.getSourceNode()==this || ! e.isDirected() )
+				d++;
+		}
+		
+		return d;
 	}
 
-	/* @see org.miv.graphstream.graph.Node */
-	public Iterator<? extends Edge> getLeavingEdgeIterator()
+	public Iterator<Edge> getLeavingEdgeIterator()
 	{
-		return leavingEdges.iterator();
+		throw new UnsupportedOperationException( "unsupported leaving edge iterator" );
 	}
 
-	/* @see org.miv.graphstream.graph.Node */
-	public Collection<? extends Edge> getLeavingEdgeSet()
+	public Iterable<Edge> getLeavingEdgeSet()
 	{
-		return Collections.unmodifiableCollection(leavingEdges);
+		return new EdgeIterable( getLeavingEdgeIterator() );
 	}
 
-	/* @see org.miv.graphstream.graph.Node */
-	public Iterator<? extends Node> getNeighborNodeIterator()
+	public Iterator<Node> getNeighborNodeIterator()
 	{
-		throw new UnsupportedOperationException( "Method not implemented." );
+		return new NeighborNodeIterator( this );
 	}
 
-	/* @see org.miv.graphstream.graph.Node */
 	public int getOutDegree()
 	{
-		return leavingEdges.size();
-	}
-
-	/* @see org.miv.graphstream.graph.Node */
-	public boolean hasEdgeFrom(String id)
-	{
-		return getEdgeFrom(id) != null;
-	}
-
-	/* @see org.miv.graphstream.graph.Node */
-	public boolean hasEdgeToward(String id)
-	{
-		return getEdgeToward(id) != null;
-	}
-
-// --- //
-
-	class FullEdgeIterator implements Iterator<Edge>
-	{
-		Iterator<Edge> current = null;
-		boolean remaining = true;
+		Iterator<Edge> ite = edges.iterator();
 		
-		public FullEdgeIterator()
-		{
-			current = leavingEdges.iterator();
+		int d = 0;
+		Edge e;
+		while(ite.hasNext()) {
+			e = ite.next();
+			if( e.getTargetNode()==this || ! e.isDirected() )
+				d++;
 		}
 		
-		public Edge next()
+		return d;
+	}
+
+	public boolean hasEdgeFrom( String id )
+	{
+		Node n = ( (ConcurrentGraph) graph ).lookForNode( id );
+		return hasEdgeFrom(n)==null?false:true;
+	}
+	
+	public Edge hasEdgeFrom( Node n )
+	{
+		if( n != null )
 		{
-			if( current == null && remaining )
-			{
-				remaining = false;
-				current = enteringEdges.iterator();
-			}
+			Iterator<Edge> it = edges.iterator();
 			
-			return current != null && current.hasNext() ? current.next() : null;
-		}
-		
-		public boolean hasNext()
-		{
-			if( current == null && remaining )
+			while( it.hasNext() )
 			{
-				remaining = false;
-				current = enteringEdges.iterator();
+				Edge e = it.next();
+				
+				if( e.isDirected() )
+				{
+					if( e.getSourceNode() == n )
+						return e;
+				}
+				else
+					return e;
 			}
-			
-			return current != null && current.hasNext();
 		}
-		
-		public void remove()
+		return null;
+	}
+	
+	public boolean hasEdgeToward( String id )
+	{
+		Node n = ( (ConcurrentGraph) graph ).lookForNode( id );
+		return hasEdgeToward(n)==null?false:true;
+	}
+
+	/**
+	 * @return an edge is there is one, else null.
+	 */
+	public Edge hasEdgeToward( Node n )
+	{
+		if( n != null )
 		{
-			throw new UnsupportedOperationException( "this iterator does not allow removing" );
+			Iterator<Edge> it = edges.iterator();
+			
+			while( it.hasNext() )
+			{
+				Edge e = it.next();
+				
+				if( e.isDirected() )
+				{
+					if( e.getTargetNode() == n )
+						return e;
+				}
+				else
+				{
+					if( e.getTargetNode() == n || e.getSourceNode() == n )
+						return e;
+				}
+			}
 		}
+		return null;
+	}
+
+	@Override
+	protected void attributeChanged( String sourceId, long timeId, String attribute,
+			AttributeChangeEvent event, Object oldValue, Object newValue )
+	{
+		if( graph != null )
+			((ConcurrentGraph)graph).listeners.sendAttributeChangedEvent(
+					sourceId, timeId, getId(), ElementType.NODE, attribute, event, oldValue, newValue );
 	}
 }

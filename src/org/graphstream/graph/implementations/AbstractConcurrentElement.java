@@ -23,7 +23,6 @@
 package org.graphstream.graph.implementations;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -31,155 +30,83 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.graphstream.graph.CompoundAttribute;
 import org.graphstream.graph.Element;
+import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
 
 /**
- * A base implementation of a thread-safe element.
+ * A base implementation of an element.
  * 
- * @see org.graphstream.graph.Element
- * @see org.graphstream.graph.Graph
- * @see org.graphstream.graph.Node
- * @see org.graphstream.graph.Edge
+ * <p>
+ * This class is thebBase class for {@link org.graphstream.graph.Node},
+ * {@link org.graphstream.graph.Edge} and {@link org.graphstream.graph.Graph}.
+ * An element is made of an unique and arbitrary identifier that identifies it, and a
+ * set of attributes.
+ * </p>
  * 
- * @since 20090108
+ * @since 20040910
  */
-public abstract class AbstractConcurrentElement 
-	implements Element
+public abstract class AbstractConcurrentElement implements Element
 {
-	protected ConcurrentHashMap<String,Object> attributes;
-	protected String id;
+// Attribute
+
+	/**
+	 * Tag of this element.
+	 */
+	private String id;
+
+	/**
+	 * Attributes map. This map is created only when needed. It contains pairs
+	 * (key,value) where the key is the attribute name and the value an Object.
+	 */
+	protected ConcurrentHashMap<String,Object> attributes = null;
 	
-	private AbstractConcurrentElement()
+//	/**
+//	 * View of the internal hash map that only allows to browse element but not
+//	 * to change them.
+//	 */
+//	protected ConstMap<String,Object> constMap = null;
+
+// Construction
+
+	/**
+	 * New element.
+	 * @param id The unique identifier of this element.
+	 */
+	public AbstractConcurrentElement( String id )
 	{
-		attributes = new ConcurrentHashMap<String,Object>();
-	}
-	
-	protected AbstractConcurrentElement( String id )
-	{
-		this();
-		
+		assert id != null : "Graph elements cannot have a null identifier";
 		this.id = id;
 	}
+
+// Access
+
+	public String getId()
+	{
+		return id;
+	}
 	
-// --- Element implementation --- //
-	
-	/* @Override */
-	public void addAttribute(String attribute, Object... values)
+	// XXX UGLY. how to create events in the abstract element ?
+	// XXX The various methods that add and remove attributes will propagate an event
+	// XXX sometimes this is in response to another event and the sourceId/timeId is given
+	// XXX sometimes this comes from a direct call to add/change/removeAttribute() methods
+	// XXX in which case we need to generate a new event (sourceId/timeId) using the graph
+	// XXX id and a new time. These methods allow access to this.
+	protected abstract String myGraphId();		// XXX
+	protected abstract long newEvent();			// XXX
+
+	public Object getAttribute( String key )
 	{
-		Object old_value = attributes.get( attribute );
-		Object value;
+		if( attributes != null )
+			return attributes.get( key );
 
-		if( values.length == 0 )
-		     value = true;
-		else if( values.length == 1 )
-		     value = values[0];
-		else value = values;
-		
-		if( old_value != null )
-		{
-			attributeChanged( attribute, old_value, value );
-			attributes.put( attribute, value );
-		}
-		else
-		{
-			attributes.put( attribute, value );
-			attributeChanged( attribute, old_value, value );
-		}
-	}
-
-	/* @Override */
-	public void addAttributes(Map<String, Object> attributes)
-	{
-		Iterator<String> i = attributes.keySet().iterator();
-		Iterator<Object> j = attributes.values().iterator();
-
-		while( i.hasNext() && j.hasNext() )
-			addAttribute( i.next(), j.next() );
-	}
-
-	/* @Override */
-	public void changeAttribute(String attribute, Object... values)
-	{
-		addAttribute( attribute, values );
-	}
-
-	/* @Override */
-	public void clearAttributes()
-	{
-		Iterator<String> keys = attributes.keySet().iterator();
-		Iterator<Object> vals = attributes.values().iterator();
-
-		while( keys.hasNext() && vals.hasNext() )
-		{
-			String key = keys.next();
-			Object val = vals.next();
-
-			attributeChanged( key, val, null );
-		}
-
-		attributes.clear();
-	}
-
-	/* @Override */
-	public Object[] getArray(String key)
-	{
-		Object o = attributes.get( key );
-		
-		if( o != null && o instanceof Object[] )
-			return ((Object[])o);
-		
 		return null;
 	}
-
-	/* @Override */
-	public Object getAttribute(String key)
-	{
-		return attributes.get(key);
-	}
-
-	/* @Override */
-	public Object getAttribute(String key, Class<?> clazz)
-	{
-		Object o = attributes.get( key );
-		
-		if( o != null && clazz.isInstance( o ) )
-			return o;
-		
-		return null;
-	}
-
-	/* @Override */
-	public int getAttributeCount()
-	{
-		return attributes.size();
-	}
-
-	/* @Override */
-	public Iterator<String> getAttributeKeyIterator()
-	{
-		return attributes.keySet().iterator();
-	}
-
-	public Iterable<String> getAttributeKeySet()
-	{
-		return new Iterable<String>()
-		{
-			public Iterator<String> iterator()
-			{
-				return attributes.keySet().iterator();
-			}
-		};
-	}
-
-	/* @Override */
-	public Map<String, Object> getAttributeMap()
-	{
-		return Collections.unmodifiableMap( attributes );
-	}
-
-	/* @Override */
-	public Object getFirstAttributeOf(String... keys)
+	
+	public Object getFirstAttributeOf( String ... keys )
 	{
 		Object o = null;
+		
+		if( attributes == null )
+			return null;
 		
 		for( String key: keys )
 		{
@@ -192,10 +119,25 @@ public abstract class AbstractConcurrentElement
 		return o;
 	}
 
-	/* @Override */
-	public Object getFirstAttributeOf(Class<?> clazz, String... keys)
+	public Object getAttribute( String key, Class<?> clazz )
+	{
+		if( attributes != null )
+		{
+			Object o = attributes.get( key );
+			
+			if( o != null && clazz.isInstance( o ) )
+				return o;
+		}
+		
+		return null;
+	}
+	
+	public Object getFirstAttributeOf( Class<?> clazz, String ... keys )
 	{
 		Object o = null;
+		
+		if( attributes == null )
+			return null;
 		
 		for( String key: keys )
 		{
@@ -208,169 +150,328 @@ public abstract class AbstractConcurrentElement
 		return null;
 	}
 
-	/* @Override */
-	public HashMap<?, ?> getHash(String key)
+	public CharSequence getLabel( String key )
 	{
-		Object o = attributes.get( key );
-		
-		if( o != null )
+		if( attributes != null )
 		{
-			if( o instanceof HashMap<?,?> )
-				return ((HashMap<?,?>)o);
-			if( o instanceof CompoundAttribute )
-				return ((CompoundAttribute)o).toHashMap();
+			Object o = attributes.get( key );
+
+			if( o != null && o instanceof CharSequence )
+				return (CharSequence) o;
+		}
+
+		return null;
+	}
+
+	public double getNumber( String key )
+	{
+		if( attributes != null )
+		{
+			Object o = attributes.get( key );
+
+			if( o != null && o instanceof Number )
+				return ((Number)o).doubleValue();
+		}
+
+		return Double.NaN;
+	}
+	
+	@SuppressWarnings("unchecked")
+    public ArrayList<? extends Number> getVector( String key )
+	{
+		if( attributes != null )
+		{
+			Object o = attributes.get( key );
+			
+			if( o != null && o instanceof ArrayList )
+				return ((ArrayList<? extends Number>)o);
+		}
+		
+		return null;
+	}
+	
+	public Object[] getArray( String key )
+	{
+		if( attributes != null )
+		{
+			Object o = attributes.get( key );
+			
+			if( o != null && o instanceof Object[] )
+				return ((Object[])o);
+		}
+
+		return null;
+	}
+	
+	public HashMap<?,?> getHash( String key )
+	{
+		if( attributes != null )
+		{
+			Object o = attributes.get( key );
+			
+			if( o != null )
+			{
+				if( o instanceof HashMap<?,?> )
+					return ((HashMap<?,?>)o);
+				if( o instanceof CompoundAttribute )
+					return ((CompoundAttribute)o).toHashMap();
+			}
 		}
 		
 		return null;
 	}
 
-	/* @Override */
-	public String getId()
+	public boolean hasAttribute( String key )
+	{
+		if( attributes != null )
+			return attributes.containsKey( key );
+
+		return false;
+	}
+
+	public boolean hasAttribute( String key, Class<?> clazz )
+	{
+		if( attributes != null )
+		{
+			Object o = attributes.get( key );
+
+			if( o != null )
+				return( clazz.isInstance( o ) );
+		}
+
+		return false;
+	}
+
+	public boolean hasLabel( String key )
+	{
+		if( attributes != null )
+		{
+			Object o = attributes.get( key );
+
+			if( o != null )
+				return( o instanceof CharSequence );
+		}
+
+		return false;
+	}
+	
+	public boolean hasNumber( String key )
+	{
+		if( attributes != null )
+		{
+			Object o = attributes.get( key );
+
+			if( o != null )
+				return( o instanceof Number );
+		}
+
+		return false;
+	}
+	
+	public boolean hasVector( String key )
+	{
+		if( attributes != null )
+		{
+			Object o = attributes.get( key );
+			
+			if( o != null && o instanceof ArrayList<?> )
+				return  true;
+		}
+		
+		return false;
+	}
+	
+	public boolean hasArray( String key )
+	{
+		if( attributes != null )
+		{
+			Object o = attributes.get( key );
+			
+			if( o != null && o instanceof Object[] )
+				return  true;
+		}
+		
+		return false;
+	}
+	
+	public boolean hasHash( String key )
+	{
+		if( attributes != null )
+		{
+			Object o = attributes.get( key );
+			
+			if( o != null && ( o instanceof HashMap<?,?> || o instanceof CompoundAttribute ) )
+				return  true;
+		}
+		
+		return false;
+	}
+
+	public Iterator<String> getAttributeKeyIterator()
+	{
+		if( attributes != null )
+			return attributes.keySet().iterator();
+
+		return null;
+	}
+	
+	public Iterable<String> getAttributeKeySet()
+	{
+		if( attributes != null )
+			return attributes.keySet();
+		
+		return null;
+	}
+	
+//	public Map<String,Object> getAttributeMap()
+//	{
+//		if( attributes != null )
+//		{
+//			if( constMap == null )
+//				constMap = new ConstMap<String,Object>( attributes );
+//
+//			return constMap;
+//		}
+//	
+//		return null;
+//	}
+	
+	/**
+	 * Override the Object method
+	 */
+	@Override
+	public String toString()
 	{
 		return id;
 	}
-
-	/* @Override */
-	public CharSequence getLabel(String key)
-	{
-		Object o = attributes.get( key );
-
-		if( o != null && o instanceof CharSequence )
-			return (CharSequence) o;
-		
-		return null;
-	}
-
-	/* @Override */
-	public double getNumber(String key)
-	{
-		Object o = attributes.get( key );
-
-		if( o != null && o instanceof Number )
-			return ((Number)o).doubleValue();
-		
-		return Double.NaN;
-	}
-
-	@SuppressWarnings("all")
-	/* @Override */
-	public ArrayList<? extends Number> getVector(String key)
-	{
-		Object o = attributes.get( key );
-		
-		if( o != null && o instanceof ArrayList )
-			return ((ArrayList<? extends Number>)o);
-		
-		return null;
-	}
-
-	/* @Override */
-	public boolean hasArray(String key)
-	{
-		Object o = attributes.get( key );
-		
-		if( o != null && o instanceof Object[] )
-			return  true;
-		
-		return false;
-	}
-
-	/* @Override */
-	public boolean hasAttribute(String key)
-	{
-		return attributes.containsKey(key);
-	}
-
-	/* @Override */
-	public boolean hasAttribute(String key, Class<?> clazz)
-	{
-		Object o = attributes.get( key );
-
-		if( o != null )
-			return( clazz.isInstance( o ) );
-		
-		return false;
-	}
-
-	/* @Override */
-	public boolean hasHash(String key)
-	{
-		Object o = attributes.get( key );
-		
-		if( o != null && ( o instanceof HashMap<?,?> || o instanceof CompoundAttribute ) )
-			return  true;
-		
-		return false;
-	}
-
-	/* @Override */
-	public boolean hasLabel(String key)
-	{
-		Object o = attributes.get( key );
-
-		if( o != null )
-			return( o instanceof CharSequence );
-		
-		return false;
-	}
-
-	/* @Override */
-	public boolean hasNumber(String key)
-	{
-		Object o = attributes.get( key );
-
-		if( o != null )
-			return( o instanceof Number );
 	
-		return false;
+	public int getAttributeCount()
+	{
+		if( attributes != null )
+			return attributes.size();
+		
+		return 0;
 	}
 
-	/* @Override */
-	public boolean hasVector(String key)
+// Command
+	
+	public void clearAttributes()
 	{
-		Object o = attributes.get( key );
-		
-		if( o != null && o instanceof ArrayList<?> )
-			return  true;
-		
-		return false;
+		clearAttributes_( myGraphId(), newEvent() );
 	}
-
-	/* @Override */
-	public void removeAttribute(String attribute)
+	
+	protected void clearAttributes_( String sourceId, long timeId )
 	{
-		if( attributes.containsKey( attribute ) )
+		if( attributes != null )
 		{
-			attributeChanged( attribute, attributes.get( attribute ), null );
-			attributes.remove( attribute );
+			Iterator<String> keys = attributes.keySet().iterator();
+			Iterator<Object> vals = attributes.values().iterator();
+
+			while( keys.hasNext() && vals.hasNext() )
+			{
+				String key = keys.next();
+				Object val = vals.next();
+
+				attributeChanged( sourceId, timeId, key, AttributeChangeEvent.REMOVE, val, null );
+			}
+
+			attributes.clear();
 		}
 	}
 
-	/* @Override */
-	public void setAttribute(String attribute, Object... values)
+	public void addAttribute( String attribute, Object ... values )
 	{
-		addAttribute( attribute, values );
+		addAttribute_( myGraphId(), newEvent(), attribute, values );
 	}
-
-	/* @Override *//*
-	public void setId(String id)
-	{
-		this.id = id;
-	}*/
 	
-// --- //
+	protected void addAttribute_( String sourceId, long timeId, String attribute, Object ... values )
+	{
+		if( attributes == null )
+			attributes = new ConcurrentHashMap<String,Object>(1);
+
+		Object old_value = attributes.get( attribute );
+		Object value;
+
+		if( values.length == 0 )
+		     value = true;
+		else if( values.length == 1 )
+		     value = values[0];
+		else value = values;
+		
+		AttributeChangeEvent event = AttributeChangeEvent.ADD;
+			
+		if( attributes.containsKey( attribute ) )	// In case the value is null,
+			event = AttributeChangeEvent.CHANGE;	// but the attribute exists.
+		
+		attributes.put( attribute, value );
+		attributeChanged( sourceId, timeId, attribute, event, old_value, value );
+	}
+	
+	public void changeAttribute( String attribute, Object ... values )
+	{
+		changeAttribute_( myGraphId(), newEvent(), attribute, values );
+	}
+	
+	protected void changeAttribute_( String sourceId, long timeId, String attribute, Object ... values )
+	{
+		addAttribute_( sourceId, timeId, attribute, values );
+	}
+	
+	public void setAttribute( String attribute, Object ... values )
+	{
+		setAttribute_( myGraphId(), newEvent(), attribute, values );
+	}
+	
+	protected void setAttribute_( String sourceId, long timeId, String attribute, Object ...values )
+	{
+		addAttribute_( sourceId, timeId, attribute, values );
+	}
+	
+	public void addAttributes( Map<String,Object> attributes )
+	{
+		addAttributes_( myGraphId(), newEvent(), attributes );
+	}
+	
+	protected void addAttributes_( String sourceId, long timeId, Map<String,Object> attributes )
+	{
+		if( this.attributes == null )
+			this.attributes = new ConcurrentHashMap<String,Object>(1);
+
+		Iterator<String> i = attributes.keySet().iterator();
+		Iterator<Object> j = attributes.values().iterator();
+
+		while( i.hasNext() && j.hasNext() )
+			addAttribute_( sourceId, timeId, i.next(), j.next() );
+	}
+	
+	public void removeAttribute( String attribute )
+	{
+		removeAttribute_( myGraphId(), newEvent(), attribute );
+	}
+	
+	protected void removeAttribute_( String sourceId, long timeId, String attribute )
+	{
+		if( attributes != null )
+		{
+			if( attributes.containsKey( attribute ) )	// Avoid recursive calls when synchronising graphs.
+			{
+				attributes.remove( attribute );
+				attributeChanged( sourceId, timeId, attribute, AttributeChangeEvent.REMOVE, attributes.get( attribute ), null );
+			}
+		}
+	}
 	
 	/**
 	 * Called for each change in the attribute set. This method must be
 	 * implemented by sub-elements in order to send events to the graph
 	 * listeners.
+	 * @param sourceId The source of the change.
+	 * @param timeId The source time of the change, for synchronisation.
 	 * @param attribute The attribute name that changed.
 	 * @param oldValue The old value of the attribute, null if the attribute was
 	 *        added.
 	 * @param newValue The new value of the attribute, null if the attribute is
 	 *        about to be removed.
 	 */
-	protected abstract void attributeChanged( String attribute, Object oldValue, Object newValue );
-	protected abstract void attributeAdded( String attribute, Object value );
-	protected abstract void attributeRemoved( String attribute );
+	protected abstract void attributeChanged( String sourceId, long timeId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue );
 }

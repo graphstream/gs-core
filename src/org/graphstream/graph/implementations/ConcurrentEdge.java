@@ -25,24 +25,36 @@ package org.graphstream.graph.implementations;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
+import org.graphstream.stream.SourceBase.ElementType;
 
 /**
+  * <p>
+ * A light edge class intended to allow the construction of big graphs
+ * (millions of elements).
+ * </p>
  * <p>
-* A thread-safe edge to use with ConcurrentGraph.
-* </p>
-* 
-* @since 20090108
-* 
-*/
+ * The main purpose here is to minimize memory consumption even if the
+ * management of such a graph implies more CPU consuming. See the
+ * <code>complexity</code> tags on each method so as to figure out the impact
+ * on the CPU.
+ * </p>
+ * 
+ * @since July 12 2007
+ * 
+ */
 public class ConcurrentEdge
-	extends AbstractConcurrentElement 
-	implements Edge
+	extends AbstractElement implements Edge
 {
-	ConcurrentNode source;
-	ConcurrentNode target;
-	
+
+	ConcurrentNode n0;
+
+	ConcurrentNode n1;
+
 	boolean directed = false;
 	
+	/**
+	 * @param id
+	 */
 	protected ConcurrentEdge( String id, Node src, Node dst, boolean directed )
 	{
 		super( id );
@@ -50,114 +62,121 @@ public class ConcurrentEdge
 		if( ( src != null && ! ( src instanceof ConcurrentNode ) ) ||
 			( dst != null && ! ( dst instanceof ConcurrentNode ) ) )
 			throw new ClassCastException( "ConcurrentEdge needs an " +
-				"extended class ConcurrentNode" );
+					"extended class ConcurrentNode" );
 		
+		this.n0 = (ConcurrentNode) src;
+		this.n1 = (ConcurrentNode) dst;
 		this.directed = directed;
-
-		source = (ConcurrentNode) src;
-		target = (ConcurrentNode) dst;
-
-		source.registerEdge(this);
-		target.registerEdge(this);
-	}
-	
-// --- AbstractConcurrentElement --- //
-	
-	@Override
-	protected void attributeChanged(String attribute, Object oldValue,
-			Object newValue)
-	{
-		if( source != null && source.getGraph() instanceof ConcurrentGraph )
-		{
-			((ConcurrentGraph) source.getGraph()).edgeAttributeChangedEvent( this, attribute, oldValue, newValue );
-		}
 	}
 	
 	@Override
-	protected void attributeAdded( String attribute, Object value )
+	protected String myGraphId()
 	{
-		if( source != null && source.getGraph() instanceof ConcurrentGraph )
-		{
-			((ConcurrentGraph) source.getGraph()).edgeAttributeAddedEvent( this, attribute, value );
-		}
+		return n0.graph.getId();
 	}
 	
 	@Override
-	protected void attributeRemoved( String attribute )
+	protected long newEvent()
 	{
-		if( source != null && source.getGraph() instanceof ConcurrentGraph )
-		{
-			((ConcurrentGraph) source.getGraph()).edgeAttributeRemovedEvent( this, attribute );
-		}
+		return ((ConcurrentGraph)n0.graph).newEvent();
 	}
-	
-// --- //
-// --- Edge implementation --- //
 
-	/* @Override */
+	/*
+	 * (non-Javadoc)
+	 * @see org.miv.graphstream.graph.EdgeInterface#getNode0()
+	 */
 	public Node getNode0()
 	{
-		return source;
+		return n0;
 	}
-
-	/* @Override */
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.miv.graphstream.graph.EdgeInterface#getNode1()
+	 */
 	public Node getNode1()
 	{
-		return target;
+		return n1;
 	}
 
-	/* @Override */
-	public Node getOpposite(Node node)
+	/*
+	 * (non-Javadoc)
+	 * @see org.miv.graphstream.graph.EdgeInterface#getOpposite(org.miv.graphstream.graph.NodeInterface)
+	 */
+	public Node getOpposite( Node node )
 	{
-		if( node == source ) return target;
-		if( node == target ) return source;
-		
-		return null;
+		if( node == n0 )
+			return n1;
+		else if( node == n1 )
+			return n0;
+		else
+			return null;
 	}
 
-	/* @Override */
+	/*
+	 * (non-Javadoc)
+	 * @see org.miv.graphstream.graph.EdgeInterface#getSourceNode()
+	 */
 	public Node getSourceNode()
 	{
-		return source;
+		return n0;
 	}
 
-	/* @Override */
+	/*
+	 * (non-Javadoc)
+	 * @see org.miv.graphstream.graph.EdgeInterface#getTargetNode()
+	 */
 	public Node getTargetNode()
 	{
-		return target;
+		return n1;
 	}
 
-	/* @Override */
+	/*
+	 * (non-Javadoc)
+	 * @see org.miv.graphstream.graph.EdgeInterface#isDirected()
+	 */
 	public boolean isDirected()
 	{
 		return directed;
 	}
 
-	/* @Override */
-	public void setDirected(boolean on)
+	/*
+	 * (non-Javadoc)
+	 * @see org.miv.graphstream.graph.EdgeInterface#setDirected(boolean)
+	 */
+	public void setDirected( boolean on )
 	{
-		if( source != null && source.getGraph() instanceof ConcurrentGraph )
-			( (ConcurrentGraph) source.getGraph() ).edgeRemovedEvent( this );
-		directed = on;
-		if( source != null && source.getGraph() instanceof ConcurrentGraph )
-			( (ConcurrentGraph) source.getGraph() ).edgeAddedEvent( this );
+		// XXX Bug, the new edge created in the event stream will loose all its attributes.
+		((ConcurrentGraph)n0.graph).listeners.sendEdgeRemoved( myGraphId(), newEvent(), getId() );
+		this.directed = on;
+		((ConcurrentGraph)n0.graph).listeners.sendEdgeAdded( myGraphId(), newEvent(), getId(), n0.getId(), n1.getId(), directed );
 	}
 
-	/* @Override */
+	/*
+	 * (non-Javadoc)
+	 * @see org.miv.graphstream.graph.EdgeInterface#switchDirection()
+	 */
 	public void switchDirection()
 	{
-		if( source != null && source.getGraph() instanceof ConcurrentGraph )
-			( (ConcurrentGraph) source.getGraph() ).edgeRemovedEvent( this );
+		// XXX Bug, the new edge create in the event stream will loose all its attributes.
+		((ConcurrentGraph)n0.graph).listeners.sendEdgeRemoved( myGraphId(), newEvent(), getId() );
 		
-		ConcurrentNode tmp = source;
-		
-		source = target;
-		target = tmp;
-		
-		if( source != null && source.getGraph() instanceof ConcurrentGraph )
-			( (ConcurrentGraph) source.getGraph() ).edgeAddedEvent( this );
+		ConcurrentNode n = n0;
+		n0 = n1;
+		n1 = n;
+		((ConcurrentGraph)n0.graph).listeners.sendEdgeAdded( myGraphId(), newEvent(), getId(), n0.getId(), n1.getId(), directed );
 	}
 
-// --- //
-	
+
+
+	/* (non-Javadoc)
+	 * @see org.miv.graphstream.graph.Element#attributeChanged(java.lang.String, java.lang.Object, java.lang.Object)
+	 */
+	@Override
+	protected void attributeChanged( String sourceId, long timeId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+	{
+		if( n0 != null )
+			((ConcurrentGraph)n0.graph).listeners.sendAttributeChangedEvent(
+				sourceId, timeId, getId(), ElementType.EDGE, attribute, event, oldValue, newValue );
+	}
 }

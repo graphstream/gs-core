@@ -24,76 +24,203 @@
 package org.graphstream.graph.implementations;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeFactory;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.GraphAttributesListener;
-import org.graphstream.graph.GraphElementsListener;
-import org.graphstream.graph.GraphListener;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.NodeFactory;
-import org.graphstream.io.GraphParseException;
-import org.graphstream.io.file.FileSink;
-import org.graphstream.io.file.FileSinkFactory;
-import org.graphstream.io.file.FileSource;
-import org.graphstream.io.file.FileSourceFactory;
-import org.graphstream.ui.GraphViewer;
-import org.graphstream.ui.GraphViewerRemote;
-import org.util.NotFoundException;
-import org.util.SingletonException;
+import org.graphstream.graph.ElementNotFoundException;
+import org.graphstream.graph.IdAlreadyInUseException;
+import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
+import org.graphstream.stream.AttributeSink;
+import org.graphstream.stream.ElementSink;
+import org.graphstream.stream.Sink;
+import org.graphstream.stream.GraphParseException;
+import org.graphstream.stream.Pipe;
+import org.graphstream.stream.SourceBase;
+import org.graphstream.stream.SourceBase.ElementType;
+import org.graphstream.stream.file.FileSink;
+import org.graphstream.stream.file.FileSinkFactory;
+import org.graphstream.stream.file.FileSource;
+import org.graphstream.stream.file.FileSourceFactory;
+import org.graphstream.stream.sync.SinkTime;
+import org.graphstream.ui.layout.Layout;
+import org.graphstream.ui.old.GraphViewer;
+import org.graphstream.ui.old.GraphViewerRemote;
+import org.graphstream.ui.swingViewer.GraphRenderer;
+import org.graphstream.ui.swingViewer.Viewer;
 
-public class ConcurrentGraph 
-	extends AbstractConcurrentElement 
-	implements Graph
+/**
+ * <p>
+ * A light graph class intended to allow the construction of big graphs
+ * (millions of elements).
+ * </p>
+ * 
+ * <p>
+ * The main purpose here is to minimise memory consumption even if the
+ * management of such a graph implies more CPU consuming. See the
+ * <code>complexity</code> tags on each method so as to figure out the impact
+ * on the CPU.
+ * </p>
+ */
+public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 {
+	public class EdgeIterator implements Iterator<Edge>
+	{
+		Iterator<Edge> edgeIterator;
+		
+		public EdgeIterator()
+		{
+			edgeIterator = edges.values().iterator();
+		}
+		
+		public boolean hasNext()
+		{
+			return edgeIterator.hasNext();
+		}
 
-	protected ConcurrentHashMap<String,Node> nodes;
-	protected ConcurrentHashMap<String,Edge> edges;
+		public Edge next()
+		{
+			return edgeIterator.next();
+		}
+
+		public void remove()
+		{
+			throw new UnsupportedOperationException( "this iterator does not allow removing" );
+		}
+	}
+
 	
-	protected ConcurrentLinkedQueue<GraphEvent> eventQueue;
-	protected boolean processEvent = false;
+	public class NodeIterator implements Iterator<Node>
+	{
+		Iterator<Node> nodeIterator;
+		
+		public NodeIterator()
+		{
+			nodeIterator = nodes.values().iterator();
+		}
+
+		public boolean hasNext()
+		{
+			return (nodeIterator.hasNext());
+		}
+
+		public Node next()
+		{
+			return  nodeIterator.next();
+		}
+
+		public void remove()
+		{
+			throw new UnsupportedOperationException( "this iterator does not allow removing" );
+		}
+	}
+
+	/**
+	 * All the nodes.
+	 */
+	protected ConcurrentHashMap<String,Node> nodes = new ConcurrentHashMap<String, Node>();
+
+	/**
+	 * All the edges.
+	 */
+	protected ConcurrentHashMap<String,Edge> edges = new ConcurrentHashMap<String, Edge>();
 	
+	/**
+	 * Verify name space conflicts, removal of non-existing elements, use of
+	 * non-existing elements.
+	 */
+	protected boolean strictChecking = true;
+
+	/**
+	 * Automatically create missing elements. For example, if an edge is created
+	 * between two non-existing nodes, create the nodes.
+	 */
+	protected boolean autoCreate = false;
+
+	
+	/**
+	 *  Help full class that dynamically instantiate nodes according to a given class name.
+	 */
 	protected NodeFactory nodeFactory;
+	
+	/**
+	 *  Help full class that dynamically instantiate edges according to a given class name.
+	 */
 	protected EdgeFactory edgeFactory;
 	
-	protected boolean strictChecking;
-	protected boolean autoCreate;
-	
-	protected ConcurrentLinkedQueue<GraphAttributesListener> alisteners;
-	protected ConcurrentLinkedQueue<GraphElementsListener> elisteners;
-
+	/**
+	 * The current step.
+	 */
 	protected double step;
+
+	/**
+	 * The set of listeners.
+	 */
+	protected GraphListeners listeners;
 	
+// Constructors
+
+	/**
+	 * New empty graph, with the empty string as default identifier.
+	 * @see #AdjacencyListGraph(String)
+	 * @see #AdjacencyListGraph(boolean, boolean)
+	 * @see #AdjacencyListGraph(String, boolean, boolean) 
+	 */
+	@Deprecated
 	public ConcurrentGraph()
 	{
-		this( "" );
+		this( "AdjListGraph" );
 	}
 	
+	/**
+	 * New empty graph.
+	 * @param id Unique identifier of the graph.
+	 * @see #AdjacencyListGraph(boolean, boolean)
+	 * @see #AdjacencyListGraph(String, boolean, boolean)
+	 */
 	public ConcurrentGraph( String id )
 	{
 		this( id, true, false );
 	}
-	
+
+	/**
+	 * New empty graph, with the empty string as default identifier.
+	 * @param strictChecking If true any non-fatal error throws an exception.
+	 * @param autoCreate If true (and strict checking is false), nodes are
+	 *        automatically created when referenced when creating a edge, even
+	 *        if not yet inserted in the graph.
+	 * @see #AdjacencyListGraph(String, boolean, boolean)
+	 * @see #setStrict(boolean)
+	 * @see #setAutoCreate(boolean)
+	 */
+	@Deprecated
 	public ConcurrentGraph( boolean strictChecking, boolean autoCreate )
 	{
 		this( "", strictChecking, autoCreate );
 	}
 	
+	/**
+	 * New empty graph.
+	 * @param id Unique identifier of this graph.
+	 * @param strictChecking If true any non-fatal error throws an exception.
+	 * @param autoCreate If true (and strict checking is false), nodes are
+	 *        automatically created when referenced when creating a edge, even
+	 *        if not yet inserted in the graph.
+	 * @see #setStrict(boolean)
+	 * @see #setAutoCreate(boolean)
+	 */
 	public ConcurrentGraph( String id, boolean strictChecking, boolean autoCreate )
 	{
 		super( id );
+		setStrict( strictChecking );
+		setAutoCreate( autoCreate );
 		
-		this.strictChecking = strictChecking;
-		this.autoCreate = autoCreate;
+		listeners  = new GraphListeners();
 		
-		nodes = new ConcurrentHashMap<String,Node>();
-		edges = new ConcurrentHashMap<String,Edge>();
 		nodeFactory = new NodeFactory()
 		{
 			public Node newInstance( String id, Graph graph )
@@ -108,183 +235,540 @@ public class ConcurrentGraph
 				return new ConcurrentEdge(id,src,trg,directed);
 			}
 		};
-		
-		eventQueue = new ConcurrentLinkedQueue<GraphEvent>();
-		
-		alisteners = new ConcurrentLinkedQueue<GraphAttributesListener>();
-		elisteners = new ConcurrentLinkedQueue<GraphElementsListener>();
 	}
-	
-	protected Edge createEdge( String id, Node source, Node target, boolean directed )
-		throws SingletonException
-	{
-		if( edges.containsKey(id) && strictChecking )
-			throw new SingletonException( String.format( "edge \"%s\" already exists", id ) );
-		
-		Edge e = edgeFactory.newInstance(id,source,target,directed);
-		//e.setDirected(directed);
-		
-		edges.put( id, e );
-		edgeAddedEvent( e );
-		
-		return e;
-	}
-	
-	protected Node createNode( String id )
-	{
-		Node n = nodeFactory.newInstance(id,this);
-		
-		nodes.put( id, n );
-		nodeAddedEvent(n);
-		
-		return n;
-	}
-	
-	protected void checkNodes( String ... ids )
-	{
-		if( ids != null ) for( String id : ids ) checkNode(id);
-	}
-	
-	protected void checkNode( String id )
-		throws NotFoundException
-	{
-		if( ! nodes.containsKey(id) )
-		{
-			if( strictChecking )
-				throw new NotFoundException( String.format( "node \"%s\" not found (strict checking enable", id ) );
-			else if( autoCreate )
-				createNode(id);
-		}
-	}
-	
-	protected Node removeNode( Node n )
-	{
-		if( n != null && nodes.contains(n) )
-		{
-			disconnectNode(n);
-			
-			nodeRemovedEvent(n);
-			nodes.remove(n.getId());
-			
-			return n;
-		}
-		
-		return null;
-	}
-	
-	protected void disconnectNode( Node n )
-	{
-		Iterator<? extends Edge> ite = n.getEdgeIterator();
-		while( ite.hasNext() ) removeEdge( ite.next() );
-	}
-	
-	protected Edge removeEdge( Edge e )
-	{
-		if( edges.contains(e) )
-		{
-			edgeRemovedEvent(e);
-			
-			if( e.getSourceNode() instanceof ConcurrentNode )
-				((ConcurrentNode)e.getSourceNode()).unregisterEdge(e);
-			if( e.getTargetNode() instanceof ConcurrentNode )
-				((ConcurrentNode)e.getTargetNode()).unregisterEdge(e);
-			
-			edges.remove(e.getId());
-			
-			return e;
-		}
-		
-		return null;
-	}
-	
-// --- AbstractConcurrentElement implementation --- //
 	
 	@Override
-	protected void attributeChanged( String attribute, Object oldValue,
-			Object newValue )
+	protected String myGraphId()		// XXX
 	{
-		
+		return getId();
+	}
+	
+	@Override
+	protected long newEvent()			// XXX
+	{
+		return listeners.newEvent();
 	}
 
-	@Override
-	protected void attributeAdded( String attribute, Object value )
+	public EdgeFactory edgeFactory()
 	{
-		
+		return edgeFactory;
 	}
 	
-	@Override
-	protected void attributeRemoved( String attribute )
+	public void setEdgeFactory( EdgeFactory ef )
 	{
-		
+		this.edgeFactory = ef;
 	}
-	
-// --- //
-	
-// --- Graph implementation --- //
 
-	public Edge addEdge(String id, String node1, String node2)
-			throws SingletonException, NotFoundException
+	public NodeFactory nodeFactory()
+	{
+		return nodeFactory;
+	}
+	
+	public void setNodeFactory( NodeFactory nf )
+	{
+		this.nodeFactory = nf;
+	}
+
+	public Edge addEdge( String id, String node1, String node2 ) throws IdAlreadyInUseException, ElementNotFoundException
 	{
 		return addEdge( id, node1, node2, false );
 	}
 
-	public Edge addEdge(String id, String from, String to, boolean directed)
-			throws SingletonException, NotFoundException
+	protected Edge addEdge_( String sourceId, long timeId, String edgeId, String from, String to, boolean directed ) throws IdAlreadyInUseException, ElementNotFoundException
 	{
-		checkNodes(from,to);
-		
-		Node n0 = nodes.get(from);
-		Node n1 = nodes.get(to);
-		
-		if( n0 == null || n1 == null )
-			throw new NotFoundException( String.format( "node \"%s\" or \"%s\" not found", from, to ) );
-		
-		return createEdge( id, n0, n1, directed );
+		Node src;
+		Node trg;
+
+		src =  lookForNode( from );
+		trg =  lookForNode( to );
+
+		if( src == null )
+		{
+			if( strictChecking )
+			{
+				throw new ElementNotFoundException( "cannot make edge from '" + from + "' to '" + to + "' since node '" + from
+						+ "' is not part of this graph" );
+			}
+			else if( autoCreate )
+			{
+				src = addNode( from );
+			}
+		}
+
+		if( trg == null )
+		{
+			if( strictChecking )
+			{
+				throw new ElementNotFoundException( "cannot make edge from '" + from + "' to '" + to + "' since node '" + to
+						+ "' is not part of this graph" );
+			}
+			else if( autoCreate )
+			{
+				trg = addNode( to );
+			}
+		}
+
+		if( src != null && trg != null )
+		{
+			Edge edge = null;
+			Edge old = lookForEdge( edgeId );
+			if( old != null )
+			{
+				if( strictChecking )
+				{
+					throw new IdAlreadyInUseException( "id '" + edgeId + "' already used, cannot add edge" );
+				}
+				else
+				{
+					edge = old;
+				}
+			}
+			else
+			{
+				if( ( (AdjacencyListNode) src ).hasEdgeToward( trg ) != null )
+				{
+					throw new IdAlreadyInUseException( "Cannot add edge between " + from + " and " + to + ". A link already exists." );
+				}
+				else
+				{
+					edge = edgeFactory.newInstance(edgeId,src,trg,directed);
+					//edge.setDirected( directed );
+					
+					edges.put( edgeId,edge );
+					((AdjacencyListNode)src).edges.add( edge );
+					((AdjacencyListNode)trg).edges.add( edge );
+					listeners.sendEdgeAdded( sourceId, timeId, edgeId, from, to, directed );
+				}
+			}
+			return edge;
+		}
+
+		return null;
 	}
 
-	public void addGraphListener(GraphListener listener)
+	/**
+	 * @complexity O(log(n)) with n be the number of edges in the graph.
+	 */
+	public Edge addEdge( String id, String from, String to, boolean directed ) throws IdAlreadyInUseException, ElementNotFoundException
 	{
-		addGraphAttributesListener(listener);
-		addGraphElementsListener(listener);
-	}
-	
-	public void addGraphAttributesListener( GraphAttributesListener listener )
-	{
-		alisteners.add(listener);
-	}
-	
-	public void addGraphElementsListener( GraphElementsListener listener )
-	{
-		elisteners.add(listener);
+		Edge e = addEdge_( getId(), newEvent(), id, from, to, directed );
+		return e;
 	}
 
-	public Node addNode(String id)
-		throws SingletonException
+	/**
+	 * @complexity O(log(n)) with n be the number of nodes in the graph.
+	 */
+	public Node addNode( String id ) throws IdAlreadyInUseException
 	{
-		if( nodes.containsKey(id) && strictChecking )
-			throw new SingletonException( String.format( "node \"%s\" already exists", id ) );
+		Node n = addNode_( getId(), newEvent(), id );
 		
-		return createNode(id);
+		return n;
 	}
 
+	protected Node addNode_( String sourceId, long timeId, String nodeId ) throws IdAlreadyInUseException
+	{
+		Node node;
+		Node old = lookForNode( nodeId );
+		if( old != null )
+		{
+			if( strictChecking )
+			{
+				throw new IdAlreadyInUseException( "id '" + nodeId + "' already used, cannot add node" );
+			}
+			else
+			{
+				node = old;
+			}
+		}
+		else
+		{
+			node = nodeFactory.newInstance(nodeId,this);
+			
+			nodes.put(nodeId, node );
+			listeners.sendNodeAdded( sourceId, timeId, nodeId );
+		}
+
+		return node;
+	}
+
+	/**
+	 * @complexity O(1).
+	 */
 	public void clear()
 	{
-		graphClearedEvent();
-		for( Node n : nodes.values() ) removeNode(n);
+		clear_( getId(), newEvent() );
 	}
-
-	public void clearListeners()
+	
+	protected void clear_( String sourceId, long timeId )
 	{
-		alisteners.clear();
-		elisteners.clear();
+		listeners.sendGraphCleared( sourceId, timeId );
+		nodes.clear();
+		edges.clear();
 	}
 
-	public GraphViewerRemote display()
+	/**
+	 * @complexity O(1).
+	 */
+	public void clearSinks()
 	{
-		return display(true);
+		listeners.clearSinks();
+	}
+	
+	public void clearAttributeSinks()
+	{
+		listeners.clearAttributeSinks();
+	}
+	
+	public void clearElementSinks()
+	{
+		listeners.clearElementSinks();
 	}
 
-	public GraphViewerRemote display(boolean autoLayout)
+	/**
+	 * @complexity O(log(n)) with n be the number of edges in the graph.
+	 */
+	public Edge getEdge( String id )
+	{
+		return lookForEdge(id);
+	}
+
+	/**
+	 * @complexity constant
+	 */
+	public int getEdgeCount()
+	{
+		return edges.size();
+	}
+
+	/**
+	 * @complexity constant
+	 */
+	public Iterator<Edge> getEdgeIterator()
+	{
+		return new EdgeIterator();
+	}
+
+	/**
+	 * @complexity Constant.
+	 */
+	public Iterable<Edge> edgeSet()
+	{
+		return edges.values();
+	}
+
+	/**
+	 * @complexity O(log(n)) with n be the number of nodes in the graph.
+	 */
+	public Node getNode( String id )
+	{
+		return lookForNode( id );
+	}
+
+	/**
+	 * @complexity Constant.
+	 */
+	public int getNodeCount()
+	{
+		return nodes.size();
+	}
+
+	/**
+	 * @complexity Constant.
+	 */
+	public Iterator<Node> getNodeIterator()
+	{
+		return new NodeIterator();
+	}
+	
+	public Iterator<Node> iterator()
+	{
+		return new NodeIterator();
+	}
+
+	/**
+	 * @complexity Constant.
+	 */
+	public Iterable<Node> nodeSet()
+	{
+		return nodes.values();
+	}
+
+	public boolean isAutoCreationEnabled()
+	{
+		return autoCreate;
+	}
+
+	public boolean isStrict()
+	{
+		return strictChecking;
+	}
+
+	public Iterable<AttributeSink> attributeSinks()
+	{
+		return listeners.attributeSinks();
+	}
+	
+	public Iterable<ElementSink> elementSinks()
+	{
+		return listeners.elementSinks();
+	}
+	
+	public double getStep()
+	{
+		return step;
+	}
+
+	/**
+	 * @complexity O( 2*log(n)+log(m) ) with n the number of nodes and m the number of edges in the graph.
+	 */
+	public Edge removeEdge( String from, String to ) throws ElementNotFoundException
+	{
+		return removeEdge_( getId(), newEvent(), from, to );
+	}
+	
+	protected Edge removeEdge_( String sourceId, long timeId, String from, String to )
+	{
+		Node n0 = lookForNode( from );
+		Node n1 = lookForNode( to );
+
+		if( n0 != null && n1 != null )
+		{
+			Edge e = ( (AdjacencyListNode) n0 ).hasEdgeToward( n1 );
+			if( e != null )
+			{
+				return removeEdge_( sourceId, timeId, e);
+			}
+			else
+			{
+				e = ( (AdjacencyListNode) n0 ).hasEdgeToward( n1 );
+				if( e != null )
+				{
+					return removeEdge_( sourceId, timeId, e);
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @complexity O( 2*log(m) ) with  m the number of edges in the graph.
+	 */
+	public Edge removeEdge( String id ) throws ElementNotFoundException
+	{
+		Edge edge = lookForEdge( id );
+		
+		if( edge != null )
+			removeEdge_( getId(), newEvent(), edge );
+		
+		return edge;
+	}
+
+	/**
+	 * Removes an edge from a given reference to it.
+	 * @param edge The reference of the edge to remove.
+	 * @complexity O( log(m) ) with  m the number of edges in the graph.
+	 */
+	public Edge removeEdge( Edge edge ) throws ElementNotFoundException
+	{
+		return removeEdge_( getId(), newEvent(), edge );
+	}
+	
+	protected Edge removeEdge_( String sourceId, long timeId, Edge edge )
+	{
+		listeners.sendEdgeRemoved( sourceId, timeId, edge.getId() );
+		
+		Node n0 = edge.getSourceNode();
+		Node n1 = edge.getTargetNode();
+		
+		( (AdjacencyListNode) n0 ).edges.remove( edge );
+		( (AdjacencyListNode) n1 ).edges.remove( edge );
+		edges.remove( edge.getId() );
+	
+		return edge;
+	}
+
+	/**
+	 * @complexity 0( 2*log(n) ) with n the number of nodes in the graph.
+	 */
+	public Node removeNode( String id ) throws ElementNotFoundException
+	{
+		Node node = lookForNode( id );
+		if( node != null )
+		{
+//System.err.printf( "%s.removeNode( %s )%n", getId(), id );
+			return removeNode_( getId(), newEvent(), node );
+		}
+		return null;
+	}
+
+	/**
+	 * Remove a node form a given reference of it.
+	 * @param node The reference of the node to be removed.
+	 * @complexity 0( log(n) ) with n the number of nodes in the graph.
+	 */
+	public Node removeNode( Node node ) throws ElementNotFoundException
+	{
+		return removeNode_( getId(), newEvent(), node );
+	}
+	
+	protected Node removeNode_( String sourceId, long timeId, Node node )
+	{
+		if( node != null )
+		{
+//System.err.printf( "%s.removeNode_(%s, %d, %s)%n", getId(), sourceId, timeId, node.getId() );
+			listeners.sendNodeRemoved( sourceId, timeId, node.getId() );
+			disconnectEdges( node );
+			nodes.remove( node.getId() );
+
+			return node;
+		}
+
+		if( strictChecking )
+			throw new ElementNotFoundException( "node not found, cannot remove" );
+
+		return null;
+	}
+
+	public void stepBegins( double step )
+	{
+		stepBegins_( getId(), newEvent(), step );
+	}
+	
+	protected void stepBegins_( String sourceId, long timeId, double step )
+	{
+		this.step = step;
+		
+		listeners.sendStepBegins( sourceId, timeId, step );
+	}
+	
+	/**
+	 * When a node is unregistered from a graph, it must not keep edges
+	 * connected to nodes still in the graph. This methods unbind all edges
+	 * connected to this node (this also unregister them from the graph).
+	 */
+	protected void disconnectEdges( Node node ) throws IllegalStateException
+	{
+		int n = node.getDegree();
+
+		// We cannot use a "for" since unbinding an edge removes this edge from
+		// the node. The number of edges will change continuously.
+
+		while( n > 0 )
+		{
+			Edge e = ((AdjacencyListNode)node).edges.get( 0 );
+			removeEdge( e );
+			n = node.getDegree(); //edges.size(); ???
+		}
+	}
+
+	public void setAutoCreate( boolean on )
+	{
+		autoCreate = on;
+	}
+
+	public void setStrict( boolean on )
+	{
+		strictChecking = on;
+	}
+
+	/**
+	 * Tries to retrieve a node in the internal structure identified by the given string.
+	 * @param id The string identifier of the seek node.
+	 * @complexity 0( log(n) ), with n the number of nodes;
+	 */
+	protected Node lookForNode( String id )
+	{
+		return nodes.get( id );
+	}
+
+	/**
+	 * 
+	 * Tries to retrieve an edge in the internal structure identified by the given string.
+	 * @param id The string identifier of the seek edges.
+	 * @complexity 0( log(m) ), with m the number of edges;
+	 */
+	protected Edge lookForEdge( String id )
+	{
+		return edges.get( id );
+	}
+
+	
+// Events
+
+	public void addSink( Sink listener )
+	{
+		listeners.addSink( listener );
+	}
+	
+	public void addAttributeSink( AttributeSink listener )
+	{
+		listeners.addAttributeSink( listener );
+	}
+	
+	public void addElementSink( ElementSink listener )
+	{
+		listeners.addElementSink( listener );
+	}
+	
+	public void removeSink( Sink listener )
+	{
+		listeners.removeSink( listener );
+	}
+	
+	public void removeAttributeSink( AttributeSink listener )
+	{
+		listeners.removeAttributeSink( listener );
+	}
+	
+	public void removeElementSink( ElementSink listener )
+	{
+		listeners.removeElementSink( listener );
+	}
+
+	protected void attributeChanged( String sourceId, long timeId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
+	{
+		listeners.sendAttributeChangedEvent( sourceId, timeId, getId(),
+				ElementType.GRAPH, attribute, event, oldValue, newValue );
+	}
+/*
+	public void graphCleared()
+    {
+		clear_( getId(), newEvent() );
+    }
+*/
+// Commands -- Utility
+
+	public void read( FileSource input, String filename ) throws IOException, GraphParseException
+    {
+		input.readAll( filename );
+    }
+
+	public void read( String filename )
+		throws IOException, GraphParseException, ElementNotFoundException
+	{
+		FileSource input = FileSourceFactory.sourceFor( filename );
+		input.addSink( this );
+		read( input, filename );
+	}
+	
+	public void write( FileSink output, String filename ) throws IOException
+    {
+		output.writeAll( this, filename );
+    }
+	
+	public void write( String filename )
+		throws IOException
+	{
+		FileSink output = FileSinkFactory.sinkFor( filename );
+		write( output, filename );
+	}	
+
+	public GraphViewerRemote oldDisplay()
+	{
+		return oldDisplay( true );
+	}
+
+	public GraphViewerRemote oldDisplay( boolean autoLayout )
 	{
 		try
         {
@@ -321,799 +805,313 @@ public class ConcurrentGraph
         return null;
 	}
 
-	/* @Override */
-	public EdgeFactory edgeFactory()
+	public Viewer display()
 	{
-		return edgeFactory;
+		return display( true );
 	}
 	
-	public void setEdgeFactory( EdgeFactory ef )
+	public Viewer display( boolean autoLayout )
 	{
-		this.edgeFactory = ef;
-	}
-
-	public Edge getEdge(String id)
-	{
-		return edges.get(id);
-	}
-
-	public int getEdgeCount()
-	{
-		return edges.size();
-	}
-
-	public Iterator<? extends Edge> getEdgeIterator()
-	{
-		return Collections.unmodifiableCollection(edges.values()).iterator();
-	}
-
-	public Iterable<Edge> edgeSet()
-	{
-		return Collections.unmodifiableCollection(edges.values());
-	}
-
-	public List<GraphListener> getGraphListeners()
-	{
-		throw new UnsupportedOperationException( "Method not implemented." );
-	}
-
-	public List<GraphAttributesListener> getGraphAttributesListeners()
-	{
-		throw new UnsupportedOperationException( "Method not implemented." );
-	}
-
-	public List<GraphElementsListener> getGraphElementsListeners()
-	{
-		throw new UnsupportedOperationException( "Method not implemented." );
-	}
-
-	public Node getNode(String id)
-	{
-		return nodes.get(id);
-	}
-
-	public int getNodeCount()
-	{
-		return nodes.size();
-	}
-
-	public Iterator<? extends Node> getNodeIterator()
-	{
-		return Collections.unmodifiableCollection(nodes.values()).iterator();
+		Viewer        viewer   = new Viewer( this, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD );
+		GraphRenderer renderer = Viewer.newGraphRenderer();
+		
+		viewer.addView( String.format( "defaultView_%d", (long)(Math.random()*10000) ), renderer );
+	
+		if( autoLayout )
+		{
+			Layout layout = newLayoutAlgorithm();
+			viewer.enableAutoLayout( layout );
+		}
+		
+		return viewer;
 	}
 	
-	public Iterator<Node> iterator()
+	protected static Layout newLayoutAlgorithm()
 	{
-		return Collections.unmodifiableCollection(nodes.values()).iterator();
-	}
-
-	public Iterable<Node> nodeSet()
-	{
-		return Collections.unmodifiableCollection(nodes.values());
-	}
-
-	public boolean isAutoCreationEnabled()
-	{
-		return autoCreate;
-	}
-
-	public boolean isStrict()
-	{
-		return strictChecking;
-	}
-
-	public NodeFactory nodeFactory()
-	{
-		return nodeFactory;
-	}
-	
-	public void setNodeFactory( NodeFactory nf )
-	{
-		this.nodeFactory = nf;
-	}
-	
-	public double getStep()
-	{
-		return step;
-	}
-/*
-	public void read(String filename) 
-		throws IOException, GraphParseException, NotFoundException
-	{
-		GraphReaderListenerHelper listener = new GraphReaderListenerHelper( this );
-		GraphReader reader = GraphReaderFactory.readerFor( filename );
-		reader.addGraphReaderListener( listener );
-		reader.read( filename );
-	}
-
-	public void read(GraphReader reader, String filename) 
-		throws IOException, GraphParseException
-	{
-		GraphReaderListenerHelper listener = new GraphReaderListenerHelper( this );
-		reader.addGraphReaderListener( listener );
-		reader.read( filename );
-	}
-
-	public int readPositionFile(String posFileName)
-		throws IOException
-	{
-		if( posFileName == null )
-			throw new IOException( "no filename given" );
-
-		Scanner scanner = new Scanner( new BufferedInputStream( new FileInputStream( posFileName ) ) );
-		int ignored = 0;
-		int mapped = 0;
-		int line = 1;
-		String id = null;
-		float x = 0, y = 0, z = 0;
-
-		scanner.useLocale( Locale.US );
-		scanner.useDelimiter( "\\s|\\n|:" );
-
+		String layoutClassName = System.getProperty( "gs.ui.layout" );
+		
+		if( layoutClassName == null )
+			return new org.graphstream.ui.layout.springbox.SpringBox( false );
+		
 		try
-		{
-			while( scanner.hasNext() )
-			{
-				id = scanner.next();
+        {
+	        Class<?> c      = Class.forName( layoutClassName );
+	        Object   object = c.newInstance();
+	        
+	        if( object instanceof Layout )
+	        {
+	        	return (Layout) object;
+	        }
+	        else
+	        {
+	        	System.err.printf( "class '%s' is not a 'GraphRenderer'%n", object );
+	        }
+        }
+        catch( ClassNotFoundException e )
+        {
+	        e.printStackTrace();
+        	System.err.printf( "Cannot create layout, 'GraphRenderer' class not found : " + e.getMessage() );
+        }
+        catch( InstantiationException e )
+        {
+            e.printStackTrace();
+        	System.err.printf( "Cannot create layout, class '"+layoutClassName+"' error : " + e.getMessage() );
+        }
+        catch( IllegalAccessException e )
+        {
+            e.printStackTrace();
+        	System.err.printf( "Cannot create layout, class '"+layoutClassName+"' illegal access : " + e.getMessage() );
+        }
 
-				x = scanner.nextFloat();
-				y = scanner.nextFloat();
-				z = scanner.nextFloat();
-
-				line++;
-
-				Node node = nodes.get( id );
-
-				if( node != null )
-				{
-					node.addAttribute( "x", x );
-					node.addAttribute( "y", y );
-					node.addAttribute( "z", z );
-					mapped++;
-				}
-				else
-				{
-					ignored++;
-				}
-			}
-		}
-		catch( InputMismatchException e )
-		{
-			e.printStackTrace();
-			throw new IOException( "parse error '" + posFileName + "':" + line + ": " + e.getMessage() );
-		}
-		catch( NoSuchElementException e )
-		{
-			throw new IOException( "unexpected end of file '" + posFileName + "':" + line + ": " + e.getMessage() );
-		}
-		catch( IllegalStateException e )
-		{
-			throw new IOException( "scanner error '" + posFileName + "':" + line + ": " + e.getMessage() );
-		}
-
-		scanner.close();
-
-		return ignored;
-	}
-*/
-	public Edge removeEdge(String from, String to)
-		throws NotFoundException
-	{
-		Node source = nodes.get(from);
-		
-		if( source == null )
-			throw new NotFoundException( String.format( "node \"%s\" does not exist", from ) );
-		if( ! nodes.containsKey(to) )
-			throw new NotFoundException( String.format( "node \"%s\" does not exist", to ) );
-		
-		Edge e = removeEdge(source.getEdgeToward(to));
-		
-		if( e == null )
-			throw new NotFoundException( String.format( "edge from \"%s\" to \"%s\" does not exist", from, to ) );
-		
-		return e;
+		return new org.graphstream.ui.layout.springbox.SpringBox( false );
 	}
 
-	public Edge removeEdge(String id)
-		throws NotFoundException
-	{
-		Edge e = removeEdge(edges.get(id));
-		
-		if( e == null )
-			throw new NotFoundException( String.format( "edge \"%s\" does not exist", id ) );
-		
-		return e;
-	}
+// Sink
 
-	public void removeGraphListener(GraphListener listener)
-	{
-		removeGraphAttributesListener(listener);
-		removeGraphElementsListener(listener);
-	}
-
-	public void removeGraphAttributesListener(GraphAttributesListener listener)
-	{
-		alisteners.remove(listener);
-	}
-
-	public void removeGraphElementsListener(GraphElementsListener listener)
-	{
-		elisteners.remove(listener);
-	}
-
-	public Node removeNode(String id)
-		throws NotFoundException
-	{
-		Node n = removeNode(nodes.get(id));
-		
-		if( n == null )
-			throw new NotFoundException( String.format( "node \"%s\" does not exist", id ) );
-		
-		return n;
-	}
-
-	public void setAutoCreate(boolean on)
-	{
-		autoCreate = on;
-	}
-
-	public void setStrict(boolean on)
-	{
-		strictChecking = on;
-	}
-
-	public void stepBegins(double time)
-	{
-		step = time;
-		
-		for(GraphElementsListener l : elisteners)
-			l.stepBegins( getId(), time );
-	}
-/*
-	public void write(String filename) 
-		throws IOException
-	{
-		GraphWriterHelper gwh = new GraphWriterHelper( this );
-		gwh.write( filename );
-	}
-
-	public void write(GraphWriter writer, String filename) 
-		throws IOException
-	{
-		GraphWriterHelper gwh = new GraphWriterHelper( this );
-		gwh.write( filename, writer );
-	}
-*/
-
-	public void read( FileSource input, String filename ) throws IOException, GraphParseException
-    {
-		input.readAll( filename );
-    }
-
-	public void read( String filename )
-		throws IOException, GraphParseException, NotFoundException
-	{
-		FileSource input = FileSourceFactory.inputFor( filename );
-		input.addGraphListener( this );
-		read( input, filename );
-	}
-
-	public void write( FileSink output, String filename ) throws IOException
-    {
-		output.writeAll( this, filename );
-    }
-	
-	public void write( String filename )
-		throws IOException
-	{
-		FileSink output = FileSinkFactory.outputFor( filename );
-		write( output, filename );
-	}
-	
-// --- //
-/*
-	protected void attributeChangedEvent( Element elt, String key, Object oldValue, Object newValue )
-	{
-		GraphEvent ev = new AttributeChangedEvent(elt,key,oldValue,newValue);
-		processEvent(ev);
-	}
-	*/
-	
-	protected void nodeAddedEvent( Node n )
-	{
-		GraphEvent ev = new AfterNodeAddEvent(n);
-		processEvent(ev);
-	}
-	
-	protected void nodeAttributeAddedEvent( Node n, String key, Object value )
-	{
-		GraphEvent ev = new NodeAttributeAddedEvent(n.getId(),key,value);
-		processEvent(ev);
-	}
-	
-	protected void nodeAttributeChangedEvent( Node n, String key, Object oldValue, Object newValue )
-	{
-		GraphEvent ev = new NodeAttributeChangedEvent(n.getId(),key,oldValue,newValue);
-		processEvent(ev);
-	}
-	
-	protected void nodeAttributeRemovedEvent( Node n, String key )
-	{
-		GraphEvent ev = new NodeAttributeRemovedEvent(n.getId(),key);
-		processEvent(ev);
-	}
-	
-	protected void nodeRemovedEvent( Node n )
-	{
-		GraphEvent ev = new BeforeNodeRemoveEvent(n);
-		processEvent(ev);
-	}
-	
-	protected void edgeAttributeAddedEvent( Edge e, String key, Object value )
-	{
-		GraphEvent ev = new EdgeAttributeAddedEvent(e.getId(),key,value);
-		processEvent(ev);
-	}
-	
-	protected void edgeAttributeChangedEvent( Edge e, String key, Object oldValue, Object newValue )
-	{
-		GraphEvent ev = new EdgeAttributeChangedEvent(e.getId(),key,oldValue,newValue);
-		processEvent(ev);
-	}
-	
-	protected void edgeAttributeRemovedEvent( Edge e, String key )
-	{
-		GraphEvent ev = new EdgeAttributeRemovedEvent(e.getId(),key);
-		processEvent(ev);
-	}
-	
-	protected void edgeRemovedEvent( Edge e )
-	{
-		GraphEvent ev = new BeforeEdgeRemoveEvent(e);
-		processEvent(ev);
-	}
-	
-	protected void edgeAddedEvent( Edge e )
-	{
-		GraphEvent ev = new AfterEdgeAddEvent(e);
-		processEvent(ev);
-	}
-	
-	protected void graphClearedEvent()
-	{
-		GraphEvent ev = new GraphClearedEvent();
-		processEvent(ev);
-	}
-	
-	protected void processEvent( GraphEvent ... add )
-	{
-		if( ! processEvent )
-		{
-			processEvent = true;
-		
-			if( add != null && add.length > 0 )
-				for( GraphEvent event : add ) eventQueue.add(event);
-		
-			while( eventQueue.size() > 0 )
-				eventQueue.poll().fire();
-		
-			processEvent = false;
-		}
-		else
-		{
-			if( add != null && add.length > 0 )
-				for( GraphEvent event : add ) eventQueue.add(event);
-		}
-	}
-	
-	/**
-	 * Interface that provide general purpose classification for evens involved
-	 * in graph modifications
-	 * @author Yoann Pigné
-	 * @author Guilhelm Savin
-	 * 
-	 */
-	interface GraphEvent
-	{
-		void fire();
-	}
-
-	class AfterEdgeAddEvent 
-		implements GraphEvent
-	{
-		Edge edge;
-
-		AfterEdgeAddEvent( Edge edge )
-		{
-			this.edge = edge;
-		}
-		
-		public void fire()
-		{
-			for( GraphElementsListener l : elisteners )
-				l.edgeAdded(getId(),edge.getId(),edge.getSourceNode().getId(),edge.getTargetNode().getId(),edge.isDirected());
-		}
-	}
-
-	class BeforeEdgeRemoveEvent 
-		implements GraphEvent
-	{
-		Edge edge;
-
-		BeforeEdgeRemoveEvent( Edge edge )
-		{
-			this.edge = edge;
-		}
-		
-		public void fire()
-		{
-			for( GraphElementsListener l : elisteners )
-				l.edgeRemoved(ConcurrentGraph.this.getId(), edge.getId());
-		}
-	}
-
-	class AfterNodeAddEvent 
-		implements GraphEvent
-	{
-		Node node;
-
-		AfterNodeAddEvent( Node node )
-		{
-			this.node = node;
-		}
-		
-		public void fire()
-		{
-			for( GraphElementsListener l : elisteners )
-				l.nodeAdded(ConcurrentGraph.this.getId(), node.getId());
-		}
-	}
-
-	class BeforeNodeRemoveEvent 
-		implements GraphEvent
-	{
-		Node node;
-
-		BeforeNodeRemoveEvent( Node node )
-		{
-			this.node = node;
-		}
-		
-		public void fire()
-		{
-			for( GraphElementsListener l : elisteners )
-				l.nodeRemoved(ConcurrentGraph.this.getId(), node.getId());
-		}
-	}
-	
-	class GraphClearedEvent 
-		implements GraphEvent
-	{
-		public void fire()
-		{
-			for( GraphElementsListener l : elisteners )
-				l.graphCleared(ConcurrentGraph.this.getId());
-		}
-	}
-	/*
-	class AttributeChangedEvent 
-		implements GraphEvent
-	{
-		Element element;
-
-		String attribute;
-
-		Object oldValue;
-		Object newValue;
-
-		AttributeChangedEvent( Element element, String attribute, Object oldValue, Object newValue )
-		{
-			this.element = element;
-			this.attribute = attribute;
-			this.oldValue = oldValue;
-			this.newValue = newValue;
-		}
-		
-		public void fire()
-		{
-			for( GraphAttributesListener l : alisteners )
-			{
-				//l.attributeChanged(element, attribute, oldValue, newValue);
-				
-			}
-		}
-	}
-	*/
-	class NodeAttributeAddedEvent
-		implements GraphEvent
-	{
-		String id;
-		String key;
-		
-		Object value;
-		
-		public NodeAttributeAddedEvent( String id, String key, Object value )
-		{
-			this.id = id;
-			this.key = key;
-			this.value = value;
-		}
-		
-		public void fire()
-		{
-			for( GraphAttributesListener l : alisteners )
-				l.nodeAttributeAdded(ConcurrentGraph.this.getId(), id, key, value);
-		}
-	}
-	
-	class NodeAttributeRemovedEvent
-		implements GraphEvent
-	{
-		String id;
-		String key;
-		
-		public NodeAttributeRemovedEvent( String id, String key )
-		{
-			this.id = id;
-			this.key = key;
-		}
-		
-		public void fire()
-		{
-			for( GraphAttributesListener l : alisteners )
-				l.nodeAttributeRemoved(ConcurrentGraph.this.getId(), id, key);
-		}
-	}
-	
-	class NodeAttributeChangedEvent
-		implements GraphEvent
-	{
-		String id;
-		String key;
-		
-		Object oldValue;
-		Object newValue;
-		
-		public NodeAttributeChangedEvent( String id, String key, Object oldValue, Object newValue )
-		{
-			this.id = id;
-			this.key = key;
-			this.oldValue = oldValue;
-			this.newValue = newValue;
-		}
-		
-		public void fire()
-		{
-			for( GraphAttributesListener l : alisteners )
-				l.nodeAttributeChanged(ConcurrentGraph.this.getId(), id, key, oldValue, newValue);
-		}
-	}
-	
-	class EdgeAttributeAddedEvent
-		implements GraphEvent
-	{
-		String id;
-		String key;
-		
-		Object value;
-		
-		public EdgeAttributeAddedEvent( String id, String key, Object value )
-		{
-			this.id = id;
-			this.key = key;
-			this.value = value;
-		}
-		
-		public void fire()
-		{
-			for( GraphAttributesListener l : alisteners )
-				l.edgeAttributeAdded(ConcurrentGraph.this.getId(), id, key, value);
-		}
-	}
-	
-	class EdgeAttributeRemovedEvent
-		implements GraphEvent
-	{
-		String id;
-		String key;
-		
-		public EdgeAttributeRemovedEvent( String id, String key )
-		{
-			this.id = id;
-			this.key = key;
-		}
-		
-		public void fire()
-		{
-			for( GraphAttributesListener l : alisteners )
-				l.edgeAttributeRemoved(ConcurrentGraph.this.getId(), id, key);
-		}
-	}
-	
-	class EdgeAttributeChangedEvent
-		implements GraphEvent
-	{
-		String id;
-		String key;
-		
-		Object oldValue;
-		Object newValue;
-		
-		public EdgeAttributeChangedEvent( String id, String key, Object oldValue, Object newValue )
-		{
-			this.id = id;
-			this.key = key;
-			this.oldValue = oldValue;
-			this.newValue = newValue;
-		}
-		
-		public void fire()
-		{
-			for( GraphAttributesListener l : alisteners )
-				l.edgeAttributeChanged(ConcurrentGraph.this.getId(), id, key, oldValue, newValue);
-		}
-	}
-	
-	class GraphAttributeAddedEvent
-		implements GraphEvent
-	{
-		String key;
-		
-		Object value;
-		
-		public GraphAttributeAddedEvent( String key, Object value )
-		{
-			this.key = key;
-			this.value = value;
-		}
-		
-		public void fire()
-		{
-			for( GraphAttributesListener l : alisteners )
-				l.graphAttributeAdded(ConcurrentGraph.this.getId(), key, value);
-		}
-	}
-	
-	class GraphAttributeRemovedEvent
-		implements GraphEvent
-	{
-		String key;
-		
-		public GraphAttributeRemovedEvent( String key )
-		{
-			this.key = key;
-		}
-		
-		public void fire()
-		{
-			for( GraphAttributesListener l : alisteners )
-				l.graphAttributeRemoved(ConcurrentGraph.this.getId(), key);
-		}
-	}
-	
-	class GraphAttributeChangedEvent
-		implements GraphEvent
-	{
-		String key;
-		
-		Object oldValue;
-		Object newValue;
-		
-		public GraphAttributeChangedEvent( String key, Object oldValue, Object newValue )
-		{
-			this.key = key;
-			this.oldValue = oldValue;
-			this.newValue = newValue;
-		}
-		
-		public void fire()
-		{
-			for( GraphAttributesListener l : alisteners )
-				l.graphAttributeChanged(ConcurrentGraph.this.getId(), key, oldValue, newValue);
-		}
-	}
-
-// Output
-
-	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId,
+	public void edgeAdded( String sourceId, long timeId, String edgeId, String fromNodeId, String toNodeId,
             boolean directed )
     {
-		addEdge( edgeId, fromNodeId, toNodeId, directed );
+		listeners.edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId, directed);
     }
 
-	public void edgeRemoved( String graphId, String edgeId )
+	public void edgeRemoved( String sourceId, long timeId, String edgeId )
     {
-		removeEdge( edgeId );
+		listeners.edgeRemoved(sourceId, timeId, edgeId);
     }
 
-	public void graphCleared()
+	public void graphCleared( String sourceId, long timeId )
     {
-		clear();
+		listeners.graphCleared(sourceId, timeId);
     }
 
-	public void nodeAdded( String graphId, String nodeId )
+	public void nodeAdded( String sourceId, long timeId, String nodeId )
     {
-		addNode( nodeId );
+		listeners.nodeAdded(sourceId, timeId, nodeId);
     }
 
-	public void nodeRemoved( String graphId, String nodeId )
+	public void nodeRemoved( String sourceId, long timeId, String nodeId )
     {
-		removeNode( nodeId );
+		listeners.nodeRemoved(sourceId, timeId, nodeId);
     }
 
-	public void stepBegins( String graphId, double time )
+	public void stepBegins( String sourceId, long timeId, double step )
     {
-		stepBegins( time );
+		listeners.stepBegins(sourceId, timeId, step);
     }
 
-	public void graphCleared( String graphId )
+	public void edgeAttributeAdded( String sourceId, long timeId, String edgeId, String attribute, Object value )
     {
-		clear();
+		listeners.edgeAttributeAdded(sourceId, timeId, edgeId, attribute, value);
     }
 
-	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
-    {
-		Edge edge = getEdge( edgeId );
-		
-		if( edge != null )
-			edge.addAttribute( attribute, value );
-    }
-
-	public void edgeAttributeChanged( String graphId, String edgeId, String attribute,
+	public void edgeAttributeChanged( String sourceId, long timeId, String edgeId, String attribute,
             Object oldValue, Object newValue )
     {
-		Edge edge = getEdge( edgeId );
-		
-		if( edge != null )
-			edge.changeAttribute( attribute, newValue );
+		listeners.edgeAttributeChanged(sourceId, timeId, edgeId, attribute, oldValue, newValue);
     }
 
-	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+	public void edgeAttributeRemoved( String sourceId, long timeId, String edgeId, String attribute )
     {
-		Edge edge = getEdge( edgeId );
-		
-		if( edge != null )
-			edge.removeAttribute( attribute );
+		listeners.edgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
     }
 
-	public void graphAttributeAdded( String graphId, String attribute, Object value )
+	public void graphAttributeAdded( String sourceId, long timeId, String attribute, Object value )
     {
-		addAttribute( attribute, value );
+		listeners.graphAttributeAdded(sourceId, timeId, attribute, value);
     }
 
-	public void graphAttributeChanged( String graphId, String attribute, Object oldValue,
+	public void graphAttributeChanged( String sourceId, long timeId, String attribute, Object oldValue,
             Object newValue )
     {
-		changeAttribute( attribute, newValue );
+		listeners.graphAttributeChanged(sourceId, timeId, attribute, oldValue, newValue);
     }
 
-	public void graphAttributeRemoved( String graphId, String attribute )
+	public void graphAttributeRemoved( String sourceId, long timeId, String attribute )
     {
-		removeAttribute( attribute );
+		listeners.graphAttributeRemoved(sourceId, timeId, attribute);
     }
 
-	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+	public void nodeAttributeAdded( String sourceId, long timeId, String nodeId, String attribute, Object value )
     {
-		Node node = getNode( nodeId );
-		
-		if( node != null )
-			node.addAttribute( attribute, value );
+		listeners.nodeAttributeAdded(sourceId, timeId, nodeId, attribute, value);
     }
 
-	public void nodeAttributeChanged( String graphId, String nodeId, String attribute,
+	public void nodeAttributeChanged( String sourceId, long timeId, String nodeId, String attribute,
             Object oldValue, Object newValue )
     {
-		Node node = getNode( nodeId );
-		
-		if( node != null )
-			node.changeAttribute( attribute, newValue );
+		listeners.nodeAttributeChanged(sourceId, timeId, nodeId, attribute, oldValue, newValue);
     }
 
-	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+	public void nodeAttributeRemoved( String sourceId, long timeId, String nodeId, String attribute )
     {
-		Node node = getNode( nodeId );
-		
-		if( node != null )
-			node.removeAttribute( attribute );
+		listeners.nodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
     }
+
+	// Handling the listeners -- We use the IO2 InputBase for this.
+		
+	class GraphListeners
+		extends SourceBase
+		implements Pipe
+	{
+		SinkTime sinkTime;
+
+		public GraphListeners()
+		{
+			super( getId() );
+
+			sinkTime = new SinkTime();
+			sourceTime.setSinkTime(sinkTime);
+		}
+		
+		protected long newEvent()
+		{
+			return sourceTime.newEvent();
+		}
+
+		public void edgeAttributeAdded(String sourceId, long timeId,
+				String edgeId, String attribute, Object value) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				Edge edge = getEdge( edgeId );
+				
+				if( edge != null )
+					((AdjacencyListEdge)edge).addAttribute_( sourceId, timeId, attribute, value );
+			}
+		}
+
+		public void edgeAttributeChanged(String sourceId, long timeId,
+				String edgeId, String attribute, Object oldValue,
+				Object newValue) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				Edge edge = getEdge( edgeId );
+				
+				if( edge != null )
+					((AdjacencyListEdge)edge).changeAttribute_( sourceId, timeId, attribute, newValue );
+			}
+		}
+
+		public void edgeAttributeRemoved(String sourceId, long timeId,
+				String edgeId, String attribute) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				Edge edge = getEdge( edgeId );
+				
+				if( edge != null )
+					((AdjacencyListEdge)edge).removeAttribute_( sourceId, timeId, attribute );
+			}
+		}
+
+		public void graphAttributeAdded(String sourceId, long timeId,
+				String attribute, Object value) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				addAttribute_( sourceId, timeId, attribute, value );
+			}
+		}
+
+		public void graphAttributeChanged(String sourceId, long timeId,
+				String attribute, Object oldValue, Object newValue) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				changeAttribute_( sourceId, timeId, attribute, newValue );
+			}
+		}
+
+		public void graphAttributeRemoved(String sourceId, long timeId,
+				String attribute) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				removeAttribute_( sourceId, timeId, attribute );
+			}
+		}
+
+		public void nodeAttributeAdded(String sourceId, long timeId,
+				String nodeId, String attribute, Object value) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				Node node = getNode( nodeId );
+				
+				if( node != null )
+					((AdjacencyListNode)node).addAttribute_( sourceId, timeId, attribute, value );
+			}
+		}
+
+		public void nodeAttributeChanged(String sourceId, long timeId,
+				String nodeId, String attribute, Object oldValue,
+				Object newValue) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				Node node = getNode( nodeId );
+				
+				if( node != null )
+					((AdjacencyListNode)node).changeAttribute_( sourceId, timeId, attribute, newValue );
+			}
+		}
+
+		public void nodeAttributeRemoved(String sourceId, long timeId,
+				String nodeId, String attribute) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				Node node = getNode( nodeId );
+
+				if( node != null )
+					((AdjacencyListNode)node).removeAttribute_( sourceId, timeId, attribute );
+			}
+		}
+
+		public void edgeAdded(String sourceId, long timeId, String edgeId,
+				String fromNodeId, String toNodeId, boolean directed) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				addEdge_( sourceId, timeId, edgeId, fromNodeId, toNodeId, directed );
+			}
+		}
+
+		public void edgeRemoved(String sourceId, long timeId, String edgeId) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				Edge e = getEdge( edgeId );
+				
+				if( e != null )
+					removeEdge_( sourceId, timeId, getEdge( edgeId ) );
+			}
+		}
+
+		public void graphCleared(String sourceId, long timeId) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				clear_( sourceId, timeId );
+			}
+		}
+
+		public void nodeAdded(String sourceId, long timeId, String nodeId) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				addNode_( sourceId, timeId, nodeId );
+			}
+		}
+
+		public void nodeRemoved(String sourceId, long timeId, String nodeId) {
+//System.err.printf( "%s.nodeRemoved( %s, %d, %s ) => ", getId(), sourceId, timeId, nodeId );
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				Node n = getNode( nodeId );
+				
+				if( n != null )
+				{
+//System.err.printf( "=> removed%n" );
+					removeNode_( sourceId, timeId, n );
+				}
+			}
+//else System.err.printf( "=> ignored%n" );
+		}
+
+		public void stepBegins(String sourceId, long timeId, double step) {
+			if( sinkTime.isNewEvent(sourceId, timeId) )
+			{
+				stepBegins_( sourceId, timeId, step );
+			}
+		}
+	}
 }
