@@ -36,6 +36,7 @@ import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.layout.LayoutRunner;
+import org.graphstream.ui.layout.Layouts;
 import org.graphstream.ui.swingViewer.basicRenderer.SwingBasicGraphRenderer;
 
 /**
@@ -496,6 +497,28 @@ public class Viewer implements ActionListener
 	
 // Optional layout algorithm
 	
+	/**
+	 * Enable or disable the "xyz" attribute change when a node is moved in the views. By default
+	 * the "xyz" attribute is changed.
+	 */
+	public void enableXYZfeedback( boolean on )
+	{
+		graph.feedbackXYZ( on );
+	}
+	
+	/**
+	 * Launch an automatic layout process that will position nodes in the background.
+	 */
+	public void enableAutoLayout()
+	{
+		enableAutoLayout( Layouts.newLayoutAlgorithm() );
+	}
+	
+	/**
+	 * Launch an automatic layout process that will position nodes in the background.
+	 * @param layoutAlgorithm The algorithm to use (see Layouts.newLayoutAlgorithm() for the
+	 * default algorithm).
+	 */
 	public void enableAutoLayout( Layout layoutAlgorithm )
 	{
 		if( optLayout == null )
@@ -505,7 +528,10 @@ public class Viewer implements ActionListener
 			layoutPipeIn.addAttributeSink( graph );
 		}
 	}
-	
+
+	/**
+	 * Disable the running automatic layout process, if any.
+	 */
 	public void disableAutoLayout()
 	{
 		if( optLayout != null )

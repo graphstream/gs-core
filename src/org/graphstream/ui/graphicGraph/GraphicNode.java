@@ -56,7 +56,7 @@ public class GraphicNode extends GraphicElement implements Node
 	{
 		super( id, graph );
 		
-		move( x, y, z );
+//		move( x, y, z );
 		
 		if( attributes != null )
 			addAttributes( attributes );
@@ -86,15 +86,23 @@ public class GraphicNode extends GraphicElement implements Node
 		return z;
 	}
 	
-	@Override
-    public void move( float x, float y, float z )
-    {
+	protected void moveFromEvent( float x, float y, float z ) 
+	{
     	this.x = x;
     	this.y = y;
     	this.z = z;
     	
     	mygraph.graphChanged  = true;
     	mygraph.boundsChanged = true;
+	}
+	
+	@Override
+    public void move( float x, float y, float z )
+    {
+		moveFromEvent( x, y, z );
+    	
+    	if( mygraph.feedbackXYZ )
+    		setAttribute( "xyz", x, y, z );
     }
 
 	@Override
@@ -110,21 +118,21 @@ public class GraphicNode extends GraphicElement implements Node
 		{
 			if( attribute.equals( "x" ) )
 			{
-				move( numberAttribute( newValue ), y, z );
+				moveFromEvent( numberAttribute( newValue ), y, z );
 			}
 			else if( attribute.equals( "y" ) )
 			{
-				move( x, numberAttribute( newValue ), z );
+				moveFromEvent( x, numberAttribute( newValue ), z );
 			}
 			else if( attribute.equals( "z" ) )
 			{
-				move( x, y, numberAttribute( newValue ) );
+				moveFromEvent( x, y, numberAttribute( newValue ) );
 			}
 			else if( attribute.equals( "xy" ) || attribute.equals( "xyz" ) )
 			{
 				float pos[] = nodePosition( this );
 				
-				move( pos[0], pos[1], pos[2] );
+				moveFromEvent( pos[0], pos[1], pos[2] );
 			}
 		}
 		

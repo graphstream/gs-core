@@ -155,6 +155,11 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		public long newEvent() { return sourceTime.newEvent(); }
 	};
 
+	/**
+	 * Report back the XYZ events on nodes and sprites.
+	 */
+	protected boolean feedbackXYZ = true;
+	
 // Construction
 
 	/**
@@ -269,8 +274,26 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		return lo;
 	}
 	
+	/**
+	 * Does the graphic graph publish via attribute changes the XYZ changes on nodes and sprites
+	 * when changed ?.
+	 */
+	public boolean feedbackXYZ()
+	{
+		return feedbackXYZ;
+	}
+	
 // Command
 
+	/**
+	 * Should the graphic graph publish via attribute changes the XYZ changes on nodes and sprites
+	 * when changed ?.
+	 */
+	public void feedbackXYZ( boolean on )
+	{
+		feedbackXYZ = on;
+	}
+	
 	/**
 	 * Compute the overall bounds of the graphic graph according to the nodes and sprites positions.
 	 * We can only compute the graph bounds from the nodes and sprites centres since the node and

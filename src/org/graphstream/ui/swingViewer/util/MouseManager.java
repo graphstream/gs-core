@@ -69,6 +69,8 @@ public class MouseManager implements MouseInputListener
 	{
 		view.requestFocus();
 		
+		// Unselect all.
+		
 		if( ! event.isShiftDown() )
 		{
 			for( Node node: graph )

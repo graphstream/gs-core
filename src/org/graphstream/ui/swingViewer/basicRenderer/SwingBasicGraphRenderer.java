@@ -154,8 +154,8 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 			{
 				camera.setPadding( graph );
 				camera.setViewport( width, height );
-	//			System.err.printf( "%s", camera );
-	//			debugVisibleArea( g );
+//				System.err.printf( "%s", camera );
+//				debugVisibleArea( g );
 				renderGraph( g );
 				renderSelection( g );
 			}
