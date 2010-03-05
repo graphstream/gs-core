@@ -385,13 +385,13 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		return edge;
 	}
 
-	protected GraphicNode addNode( String sourceId, long timeId, String id, float x, float y, float z, HashMap<String, Object> attributes )
+	protected GraphicNode addNode( String sourceId, long timeId, String id, HashMap<String, Object> attributes )
 	{
 		GraphicNode node = (GraphicNode) styleGroups.getNode( id );
 		
 		if( node == null )
 		{
-			node = new GraphicNode( this, id, x, y, z, attributes );
+			node = new GraphicNode( this, id, attributes );
 
 			styleGroups.addElement( node );
 		
@@ -695,7 +695,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 
 	public Node addNode( String id ) throws IdAlreadyInUseException
     {
-		return addNode( getId(), newEvent(), id, 0, 0, 0, null );
+		return addNode( getId(), newEvent(), id, null );
     }
 
 	public void clear()
@@ -952,7 +952,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	public void nodeAdded( String sourceId, long timeId, String nodeId )
     {
 		if( sinkTime.isNewEvent( sourceId, timeId ) )
-			addNode( sourceId, timeId, nodeId, 0, 0, 0, null );
+			addNode( sourceId, timeId, nodeId, null );
     }
 
 	public void nodeRemoved( String sourceId, long timeId, String nodeId )

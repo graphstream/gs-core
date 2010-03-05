@@ -47,16 +47,11 @@ public class GraphicNode extends GraphicElement implements Node
 	/**
 	 * New graphic node.
 	 * @param id The node identifier.
-	 * @param x The node X position.
-	 * @param y The node Y position.
-	 * @param z The node Z position.
 	 * @param attributes The node attribute set (can be null).
 	 */
-	public GraphicNode( GraphicGraph graph, String id, Float x, Float y, Float z, HashMap<String, Object> attributes )
+	public GraphicNode( GraphicGraph graph, String id, HashMap<String, Object> attributes )
 	{
 		super( id, graph );
-		
-//		move( x, y, z );
 		
 		if( attributes != null )
 			addAttributes( attributes );
