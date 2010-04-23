@@ -230,33 +230,36 @@ public abstract class ElementRenderer
 		Color color = group.getFillColor( 0 );
 		
 		int n = group.getFillColorCount();
-		
-		if( element.hasNumber( "ui.color" ) && n > 1 )
-		{
-			float value = (float) element.getNumber( "ui.color" );
-			
-			if( value < 0 ) value = 0; else if( value > 1 ) value = 1;
-			
-			if( value == 1 )
-			{
-				color = group.getFillColor( n-1 );	// Simplification, faster.
-			}
-			else if( value != 0 )	// If value == 0, color is already set above.
-			{
-				float div = 1f / (n-1);
-				int   col = (int) ( value / div );
 
-				div = ( value - (div*col) ) / div;
-//				div = value / div - col;
+		if( n > 1 ) 
+		{
+			if( element.hasNumber( "ui.color" ) && n > 1 )
+			{
+				float value = (float) element.getNumber( "ui.color" );
 				
-				Color color0 = group.getFillColor( col );
-				Color color1 = group.getFillColor( col + 1 );
-				float red    = ( (color0.getRed()  *(1-div)) + (color1.getRed()  *div) ) / 255f;
-				float green  = ( (color0.getGreen()*(1-div)) + (color1.getGreen()*div) ) / 255f;
-				float blue   = ( (color0.getBlue() *(1-div)) + (color1.getBlue() *div) ) / 255f;
-				float alpha  = ( (color0.getAlpha()*(1-div)) + (color1.getAlpha()*div) ) / 255f;
+				if( value < 0 ) value = 0; else if( value > 1 ) value = 1;
+				
+				if( value == 1 )
+				{
+					color = group.getFillColor( n-1 );	// Simplification, faster.
+				}
+				else if( value != 0 )	// If value == 0, color is already set above.
+				{
+					float div = 1f / (n-1);
+					int   col = (int) ( value / div );
+	
+					div = ( value - (div*col) ) / div;
+	//				div = value / div - col;
 					
-				color = new Color( red, green, blue, alpha );
+					Color color0 = group.getFillColor( col );
+					Color color1 = group.getFillColor( col + 1 );
+					float red    = ( (color0.getRed()  *(1-div)) + (color1.getRed()  *div) ) / 255f;
+					float green  = ( (color0.getGreen()*(1-div)) + (color1.getGreen()*div) ) / 255f;
+					float blue   = ( (color0.getBlue() *(1-div)) + (color1.getBlue() *div) ) / 255f;
+					float alpha  = ( (color0.getAlpha()*(1-div)) + (color1.getAlpha()*div) ) / 255f;
+						
+					color = new Color( red, green, blue, alpha );
+				}
 			}
 		}
 		
