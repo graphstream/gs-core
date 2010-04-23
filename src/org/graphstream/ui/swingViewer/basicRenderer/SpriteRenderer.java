@@ -34,6 +34,7 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.graphicGraph.stylesheet.Values;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.FillMode;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.SizeMode;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
 import org.graphstream.ui.swingViewer.util.Camera;
 import org.graphstream.ui.swingViewer.util.GraphMetrics;
 
@@ -67,7 +68,7 @@ public class SpriteRenderer extends ElementRenderer
 		
 		if( group.getSizeMode() == SizeMode.DYN_SIZE )
 		{
-			width  = (float) element.getNumber( "ui.size" );
+			width  = metrics.lengthToGu( (float) element.getNumber( "ui.size" ), Units.PX );
 			height = width;
 			w2     = width / 2;
 			h2     = height / 2;
