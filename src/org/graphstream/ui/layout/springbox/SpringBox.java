@@ -405,7 +405,7 @@ public class SpringBox extends SourceBase implements Layout, ParticleBoxListener
 			edge.attraction();
 */		
 		nodes.step();
-		
+
 		if( nodeMoveCount > 0 )
 			avgLength /= nodeMoveCount;
 		
@@ -598,7 +598,7 @@ public class SpringBox extends SourceBase implements Layout, ParticleBoxListener
 			
 			Object xyz[] = new Object[3];
 			xyz[0] = x; xyz[1] = y; xyz[2] = z;
-			
+
 			sendNodeAttributeChanged( getLayoutAlgorithmName(), (String)id, "xyz", xyz, xyz );
 		}
 	}

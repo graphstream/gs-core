@@ -3,7 +3,6 @@
 package org.graphstream.ui.graphicGraph.stylesheet.parser;
 
 /** Token Manager Error. */
-@SuppressWarnings("all")
 public class TokenMgrError extends Error
 {
 

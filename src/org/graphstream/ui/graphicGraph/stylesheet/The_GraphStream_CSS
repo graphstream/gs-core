@@ -33,7 +33,7 @@ Here is the syntax for events :
 	node.myClassName:selected
 
 The selectors tell to what elements the style applies. The combination of identifiers, classes
-and events allows to select specific elements, and event specific elements at a given condition
+and events allows to select specific elements, and even specific elements at a given condition
 during time.
 
 The style properties
@@ -74,9 +74,10 @@ fill-mode:
 	gradient-vertical
 	gradient-diagonal1
 	gradient-diagonal2
-	image-tiled				(todo)
-	image-scaled			(todo)
-	image-scaled-ratio		(todo)
+	image-tiled
+	image-scaled
+	image-scaled-ratio-max
+	image-scaled-ratio-min
 	
 	The fill is the main color, gradient, or image pattern that fills the surface of the element
 	(graph, node, sprite, or edge background).
@@ -88,7 +89,7 @@ fill-color:
 	you must give at least two colors.
 
 fill-image:
-	<url>					(todo)
+	<url>
 	
 	If the fill mode is an image, this specifies the image to use.
 
@@ -188,6 +189,7 @@ text-alignment:
 	at_right
 	under
 	above
+	line_breaks					(todo)
 	justify						(todo)
 	along						(todo)
 
@@ -234,7 +236,6 @@ Properties common to nodes, edges and sprites
 
 size-mode:
 	normal
-	fit								(todo)
 	dyn-size(ui.size)
 
 size:
@@ -260,15 +261,11 @@ shape:
 	circle
 	box
 	rounded-box
-	diamond							(todo)
-	triangle						(todo)
-	cross							(todo)
+	diamond
+	triangle
+	cross
 	polygon							(todo)
-	text-box
-	text-rounded-box ? 				(todo)
-	text-paragraph					(todo)
-	text-ellipse					(todo)
-	text-diamond					(todo)
+	underlined						(todo)
 	jcomponent
 	
 round-corner:		? 				(todo)
@@ -302,8 +299,8 @@ Properties for edges
 
 shape:
 	line
-	angle							(todo)
-	cubic-curve						(todo)
+	angle
+	cubic-curve
 	cubic-angle-curve ?				(todo)
 	polyline						(todo)
 	blob
@@ -314,8 +311,8 @@ text-alignment:
 arrow-shape:
 	none							(todo ?)
 	arrow
-	circle							(todo)
-	diamond							(todo)
+	circle
+	diamond
 	image							(todo)
 
 arrow-image:

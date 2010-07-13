@@ -27,6 +27,7 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -331,6 +332,9 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 			if( x1 > x2 ) { t = x1; x1 = x2; x2 = t; }
 			if( y1 > y2 ) { t = y1; y1 = y2; y2 = t; }
 	
+			Stroke s = g.getStroke();
+			g.setStroke( new BasicStroke( 1 ) );
+			
 			g.setColor( new Color( 50, 50, 200, 128 ) );
 			g.fillRect( (int)x1, (int)y1, (int)(x2-x1), (int)(y2-y1) );
 			g.setColor( new Color( 0, 0, 0, 128 ) );
@@ -340,6 +344,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 			g.drawLine( (int)x2, 0, (int)x2, (int)h );
 			g.setColor( new Color( 50, 50, 200, 64 ) );
 			g.drawRect( (int)x1, (int)y1, (int)(x2-x1), (int)(y2-y1) );
+			g.setStroke( s );
 		}
 	}
 	

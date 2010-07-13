@@ -103,13 +103,18 @@ public class Values implements Iterable<Float>
 	}
 	
 	/**
-	 * The i-th value of this set.
+	 * The i-th value of this set. If the index is less than zero, the first value is given,
+	 * if the index if greater or equal to the number of values, the last value is given.
 	 * @param i The value index.
 	 * @return The corresponding value.
 	 */
 	public float get( int i )
 	{
-		return values.get( i );
+		if( i < 0 )
+		     return values.get( 0 );
+		else if( i >= values.size() )
+		     return values.get( values.size()-1 );
+		else return values.get( i );
 	}
 	
 	/**

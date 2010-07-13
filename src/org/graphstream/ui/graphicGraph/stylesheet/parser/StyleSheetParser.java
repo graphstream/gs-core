@@ -6,7 +6,6 @@ import java.awt.Color;
 import java.io.InputStream;
 import java.io.Reader;
 
-@SuppressWarnings("all")
 public class StyleSheetParser implements StyleSheetParserConstants {
         /**
 	 * The style sheet.
@@ -665,35 +664,51 @@ public class StyleSheetParser implements StyleSheetParserConstants {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case NONE:
       jj_consume_token(NONE);
-                                   m = Style.FillMode.NONE;
+                                    m = Style.FillMode.NONE;
       break;
     case PLAIN:
       jj_consume_token(PLAIN);
-                                   m = Style.FillMode.PLAIN;
+                                    m = Style.FillMode.PLAIN;
       break;
     case DYNPLAIN:
       jj_consume_token(DYNPLAIN);
-                                   m = Style.FillMode.DYN_PLAIN;
+                                    m = Style.FillMode.DYN_PLAIN;
       break;
     case GRADIENTRADIAL:
       jj_consume_token(GRADIENTRADIAL);
-                                   m = Style.FillMode.GRADIENT_RADIAL;
+                                    m = Style.FillMode.GRADIENT_RADIAL;
       break;
     case GRADIENTVERTICAL:
       jj_consume_token(GRADIENTVERTICAL);
-                                   m = Style.FillMode.GRADIENT_VERTICAL;
+                                    m = Style.FillMode.GRADIENT_VERTICAL;
       break;
     case GRADIENTHORIZONTAL:
       jj_consume_token(GRADIENTHORIZONTAL);
-                                   m = Style.FillMode.GRADIENT_HORIZONTAL;
+                                    m = Style.FillMode.GRADIENT_HORIZONTAL;
       break;
     case GRADIENTDIAGONAL1:
       jj_consume_token(GRADIENTDIAGONAL1);
-                                   m = Style.FillMode.GRADIENT_DIAGONAL1;
+                                    m = Style.FillMode.GRADIENT_DIAGONAL1;
       break;
     case GRADIENTDIAGONAL2:
       jj_consume_token(GRADIENTDIAGONAL2);
-                                   m = Style.FillMode.GRADIENT_DIAGONAL2;
+                                    m = Style.FillMode.GRADIENT_DIAGONAL2;
+      break;
+    case IMAGETILED:
+      jj_consume_token(IMAGETILED);
+                                    m = Style.FillMode.IMAGE_TILED;
+      break;
+    case IMAGESCALED:
+      jj_consume_token(IMAGESCALED);
+                                    m = Style.FillMode.IMAGE_SCALED;
+      break;
+    case IMAGESCALEDRATIOMAX:
+      jj_consume_token(IMAGESCALEDRATIOMAX);
+                                    m = Style.FillMode.IMAGE_SCALED_RATIO_MAX;
+      break;
+    case IMAGESCALEDRATIOMIN:
+      jj_consume_token(IMAGESCALEDRATIOMIN);
+                                    m = Style.FillMode.IMAGE_SCALED_RATIO_MIN;
       break;
     default:
       jj_la1[15] = jj_gen;
@@ -1039,6 +1054,10 @@ public class StyleSheetParser implements StyleSheetParserConstants {
       jj_consume_token(POLYGON);
                                s = Style.Shape.POLYGON;
       break;
+    case UNDERLINED:
+      jj_consume_token(UNDERLINED);
+                               s = Style.Shape.UNDERLINED;
+      break;
     case TEXTBOX:
       jj_consume_token(TEXTBOX);
                                s = Style.Shape.TEXT_BOX;
@@ -1225,13 +1244,13 @@ public class StyleSheetParser implements StyleSheetParserConstants {
       jj_la1_1 = new int[] {0x0,0x0,0x3fffffff,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3fffffff,0x0,0x0,0x0,0x0,0xc0000000,0x40000000,0x40000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1000000,0x0,0x0,0x0,};
    }
    private static void jj_la1_init_2() {
-      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x10f8,0x1006,0x10f8,0x6100,0xfa100,0xe02000,0x102001,0xff000000,0xc6001000,0xfa100,0x0,0x1000,0x0,0x1000,};
+      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3ef8,0x2006,0x20f8,0xc100,0x1f4100,0x1c04000,0x204001,0xfe000000,0x8c002000,0x1f4100,0x0,0x2000,0x0,0x2000,};
    }
    private static void jj_la1_init_3() {
-      jj_la1_3 = new int[] {0x0,0x0,0x0,0x0,0x0,0x80000000,0x0,0x0,0x80000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x0,0x0,0xff1ffe,0x1200802,0xe000,0x7c000000,};
+      jj_la1_3 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3,0x1,0x0,0x3fc7ffc,0x4802004,0x38000,0xf0000000,};
    }
    private static void jj_la1_init_4() {
-      jj_la1_4 = new int[] {0x4,0x4,0x4,0x0,0x2,0x3,0x0,0x0,0x3,0x0,0x4,0x0,0x2,0x2,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_4 = new int[] {0x10,0x10,0x10,0x0,0x8,0xe,0x0,0x0,0xe,0x0,0x10,0x0,0x8,0x8,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,};
    }
 
   /** Constructor with InputStream. */
@@ -1348,7 +1367,7 @@ public class StyleSheetParser implements StyleSheetParserConstants {
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[131];
+    boolean[] la1tokens = new boolean[133];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -1374,7 +1393,7 @@ public class StyleSheetParser implements StyleSheetParserConstants {
         }
       }
     }
-    for (int i = 0; i < 131; i++) {
+    for (int i = 0; i < 133; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

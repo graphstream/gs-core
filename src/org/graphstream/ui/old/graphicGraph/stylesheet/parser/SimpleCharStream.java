@@ -7,7 +7,6 @@ package org.graphstream.ui.old.graphicGraph.stylesheet.parser;
  * contain only ASCII characters (without unicode processing).
  */
 
-@SuppressWarnings("all")
 public class SimpleCharStream
 {
 /** Whether parser is static. */

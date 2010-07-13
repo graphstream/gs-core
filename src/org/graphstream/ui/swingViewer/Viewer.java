@@ -329,7 +329,7 @@ public class Viewer implements ActionListener
 	 */
 	public ViewerPipe newViewerPipe()
 	{
-		return new ViewerPipe( String.format( "viewer_%d", (int)(Math.random()*10000) ), new ThreadProxyPipe( graph ) );
+		return new ViewerPipe( String.format( "viewer_%d", (int)(Math.random()*10000) ), new ThreadProxyPipe( graph, false ) );
 	}
 	
 	/**
@@ -523,7 +523,7 @@ public class Viewer implements ActionListener
 	{
 		if( optLayout == null )
 		{
-			optLayout = new LayoutRunner( graph, layoutAlgorithm );
+			optLayout = new LayoutRunner( graph, layoutAlgorithm, true, true );
 			layoutPipeIn = optLayout.newLayoutPipe();
 			layoutPipeIn.addAttributeSink( graph );
 		}
