@@ -722,6 +722,8 @@ public class DefaultGraph extends AbstractElement implements Graph
 			input.addSink( this );
 			read( input, filename );
 			input.removeSink( this );
+		} else {
+			throw new ElementNotFoundException( String.format( "no reader for unknown format of file '%s'", filename ) );
 		}
 	}
 
@@ -736,7 +738,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 		FileSink output = FileSinkFactory.sinkFor( filename );
 		if( output != null )
 			write( output, filename );
-		else throw new IOException( String.format( "no file output factory for file %s", filename ) );
+		else throw new IOException( String.format( "no file output factory for unknown format of file %s", filename ) );
 	}
 
 	public GraphViewerRemote oldDisplay()

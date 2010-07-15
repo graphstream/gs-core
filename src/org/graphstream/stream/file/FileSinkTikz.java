@@ -85,104 +85,88 @@ public class FileSinkTikz extends FileSinkBase
 		edges = new HashMap<String,EdgeStyle>();
 	}
 
-	@Override
 	public void edgeAttributeAdded(String graphId, long timeId, String edgeId,
 			String attribute, Object value) {
 		
 	}
 
-	@Override
 	public void edgeAttributeChanged(String graphId, long timeId, String edgeId,
 			String attribute, Object oldValue, Object newValue) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void edgeAttributeRemoved(String graphId, long timeId, String edgeId,
 			String attribute) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void graphAttributeAdded(String graphId, long timeId, String attribute,
 			Object value) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void graphAttributeChanged(String graphId, long timeId, String attribute,
 			Object oldValue, Object newValue) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void graphAttributeRemoved(String graphId, long timeId, String attribute) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void nodeAttributeAdded(String graphId, long timeId, String nodeId,
 			String attribute, Object value) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void nodeAttributeChanged(String graphId, long timeId, String nodeId,
 			String attribute, Object oldValue, Object newValue) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void nodeAttributeRemoved(String graphId, long timeId, String nodeId,
 			String attribute) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void edgeAdded(String graphId, long timeId, String edgeId, String fromNodeId,
 			String toNodeId, boolean directed) {
 		if( ! edges.containsKey(edgeId) )
 			edges.put(edgeId, new EdgeStyle(fromNodeId,toNodeId,directed));
 	}
 
-	@Override
 	public void edgeRemoved(String graphId, long timeId, String edgeId) {
 		if( edges.containsKey(edgeId) )
 			edges.remove(edgeId);
 	}
 
-	@Override
 	public void graphCleared(String graphId, long timeId) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void nodeAdded(String graphId, long timeId, String nodeId)
 	{
 		if( ! nodes.containsKey(nodeId) )
 			nodes.put(nodeId, new NodeStyle());
 	}
 
-	@Override
 	public void nodeRemoved(String graphId, long timeId, String nodeId)
 	{
 		if( nodes.containsKey(nodeId) )
 			nodes.remove(nodeId);
 	}
 
-	@Override
 	public void stepBegins(String graphId, long timeId, double time) {
 		// TODO Auto-generated method stub
 
 	}
-
 }
