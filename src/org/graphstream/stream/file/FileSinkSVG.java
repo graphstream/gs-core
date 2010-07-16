@@ -16,7 +16,7 @@
  * Copyright 2006 - 2009
  * 	Julien Baudry
  * 	Antoine Dutot
- * 	Yoann PignÃ©
+ * 	Yoann Pigné
  * 	Guilhelm Savin
  */
 

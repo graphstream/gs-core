@@ -48,9 +48,8 @@ public class FileSinkFactory
 		if( filename.endsWith( ".dgs" ) )
 			return new FileSinkDGS();
 		
-//		if( filename.endsWith( ".gml" ) )
-//			return new FileSinkGML();
-		// TODO XXX
+		if( filename.endsWith( ".gml" ) )
+			return new FileSinkGML();
 		
 		if( filename.endsWith( ".dot" ) )
 			return new FileSinkDOT();
