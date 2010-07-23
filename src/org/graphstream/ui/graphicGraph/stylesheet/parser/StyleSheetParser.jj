@@ -164,7 +164,8 @@ TOKEN: { < HIDDEN            : "hidden" > }
 
 TOKEN: { < IMAGETILED        : "image-tiled" > }
 TOKEN: { < IMAGESCALED       : "image-scaled" > }
-TOKEN: { < IMAGESCALEDRATIO  : "image-scaled-ratio" > }
+TOKEN: { < IMAGESCALEDRATIOMAX : "image-scaled-ratio-max" > }
+TOKEN: { < IMAGESCALEDRATIOMIN : "image-scaled-ratio-min" > }
 
 TOKEN: { < NONE              : "none" > }
 TOKEN: { < NORMAL            : "normal" > }
@@ -192,6 +193,7 @@ TOKEN: { < JUSTIFY           : "justify" > }
 
 TOKEN: { < CIRCLE            : "circle" > }
 TOKEN: { < TRIANGLE          : "triangle" > }
+TOKEN: { < UNDERLINED        : "underlined" > }
 TOKEN: { < TEXTBOX           : "text-box" > }
 TOKEN: { < TEXTROUNDEDBOX    : "text-rounded-box" > }
 TOKEN: { < TEXTCIRCLE        : "text-circle" > }
@@ -464,14 +466,17 @@ Style.FillMode fillMode():
 	Style.FillMode m;
 }
 {
-	( ( <NONE>               { m = Style.FillMode.NONE;                } )
-	| ( <PLAIN>              { m = Style.FillMode.PLAIN;               } )
-	| ( <DYNPLAIN>           { m = Style.FillMode.DYN_PLAIN;           } )
-	| ( <GRADIENTRADIAL>     { m = Style.FillMode.GRADIENT_RADIAL;     } )
-	| ( <GRADIENTVERTICAL>   { m = Style.FillMode.GRADIENT_VERTICAL;   } )
-	| ( <GRADIENTHORIZONTAL> { m = Style.FillMode.GRADIENT_HORIZONTAL; } )
-	| ( <GRADIENTDIAGONAL1>  { m = Style.FillMode.GRADIENT_DIAGONAL1;  } )
-	| ( <GRADIENTDIAGONAL2>  { m = Style.FillMode.GRADIENT_DIAGONAL2;  } )
+	( ( <NONE>                { m = Style.FillMode.NONE;                   } )
+	| ( <PLAIN>               { m = Style.FillMode.PLAIN;                  } )
+	| ( <DYNPLAIN>            { m = Style.FillMode.DYN_PLAIN;              } )
+	| ( <GRADIENTRADIAL>      { m = Style.FillMode.GRADIENT_RADIAL;        } )
+	| ( <GRADIENTVERTICAL>    { m = Style.FillMode.GRADIENT_VERTICAL;      } )
+	| ( <GRADIENTHORIZONTAL>  { m = Style.FillMode.GRADIENT_HORIZONTAL;    } )
+	| ( <GRADIENTDIAGONAL1>   { m = Style.FillMode.GRADIENT_DIAGONAL1;     } )
+	| ( <GRADIENTDIAGONAL2>   { m = Style.FillMode.GRADIENT_DIAGONAL2;     } )
+	| ( <IMAGETILED>          { m = Style.FillMode.IMAGE_TILED;            } )	| ( <IMAGESCALED>         { m = Style.FillMode.IMAGE_SCALED;           } )
+	| ( <IMAGESCALEDRATIOMAX> { m = Style.FillMode.IMAGE_SCALED_RATIO_MAX; } )
+	| ( <IMAGESCALEDRATIOMIN> { m = Style.FillMode.IMAGE_SCALED_RATIO_MIN; } )
 	)
 	{ return m; }	
 }
@@ -618,6 +623,7 @@ Style.Shape shape():
 	| ( <CROSS>          { s = Style.Shape.CROSS;            } )
 	| ( <DIAMOND>        { s = Style.Shape.DIAMOND;          } )
 	| ( <POLYGON>        { s = Style.Shape.POLYGON;          } )
+	| ( <UNDERLINED>     { s = Style.Shape.UNDERLINED;       } )
 	| ( <TEXTBOX>        { s = Style.Shape.TEXT_BOX;         } )
 	| ( <TEXTROUNDEDBOX> { s = Style.Shape.TEXT_ROUNDED_BOX; } )
 	| ( <TEXTCIRCLE>     { s = Style.Shape.TEXT_CIRCLE;      } )

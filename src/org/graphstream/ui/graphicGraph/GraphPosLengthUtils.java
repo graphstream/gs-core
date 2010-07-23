@@ -129,8 +129,10 @@ public class GraphPosLengthUtils
 	 */
 	public static void nodePosition( Node node, float xyz[] )
 	{
-		if( xyz.length < 3 )
+		if( xyz.length < 3 ) {
+			System.err.println( "xyz[] argument must be at least 3 cells in size." );
 			return;
+		}
 		
 		if( node.hasAttribute( "xyz" ) || node.hasAttribute( "xy" ) )
 		{

@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.Reader;
 
 /** Token Manager. */
-@SuppressWarnings("all")
 public class StyleSheetParserTokenManager implements StyleSheetParserConstants
 {
 

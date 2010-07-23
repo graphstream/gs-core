@@ -22,6 +22,7 @@
 
 package org.graphstream.ui.layout;
 
+import org.graphstream.graph.Graph;
 import org.graphstream.stream.ProxyPipe;
 import org.graphstream.stream.Source;
 import org.graphstream.stream.thread.ThreadProxyPipe;
@@ -68,6 +69,16 @@ public class LayoutRunner extends Thread
 	{
 		this.layout   = layout;
 		this.pumpPipe = new ThreadProxyPipe( source );
+		this.pumpPipe.addSink( layout );
+		
+		if( start )
+			start();
+	}
+	
+	public LayoutRunner( Graph graph, Layout layout, boolean start, boolean replay ) 
+	{
+		this.layout   = layout;
+		this.pumpPipe = new ThreadProxyPipe( graph, true );
 		this.pumpPipe.addSink( layout );
 		
 		if( start )

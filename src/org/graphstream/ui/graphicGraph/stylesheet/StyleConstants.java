@@ -46,7 +46,8 @@ public class StyleConstants
 		GRADIENT_DIAGONAL1,
 		GRADIENT_DIAGONAL2,
 		IMAGE_TILED, IMAGE_SCALED,
-		IMAGE_SCALED_RATIO };
+		IMAGE_SCALED_RATIO_MAX,
+		IMAGE_SCALED_RATIO_MIN };
 	
 	/**
 	 * How to draw the contour of the element.
@@ -125,7 +126,7 @@ public class StyleConstants
 	 * Possible shapes for elements.
 	 */
 	public static enum Shape {
-		CIRCLE, BOX, ROUNDED_BOX, DIAMOND, POLYGON, TRIANGLE, CROSS,
+		CIRCLE, BOX, ROUNDED_BOX, DIAMOND, POLYGON, TRIANGLE, CROSS, UNDERLINED,
 		TEXT_BOX, TEXT_ROUNDED_BOX, TEXT_PARAGRAPH, TEXT_CIRCLE, TEXT_DIAMOND,
 		JCOMPONENT,
 		

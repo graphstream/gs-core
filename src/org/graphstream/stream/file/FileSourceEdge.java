@@ -84,7 +84,7 @@ public class FileSourceEdge extends FileSourceBase
 	 * Set of existing nodes (if nodes are declared).
 	 */
 	protected HashSet<String> nodes;
-	
+
 	protected String graphName = "EDGE_";
 	
 // Construction
