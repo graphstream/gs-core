@@ -265,7 +265,7 @@ shape:
 	triangle
 	cross
 	polygon							(todo)
-	underlined						(todo)
+	freeplane
 	jcomponent
 	
 round-corner:		? 				(todo)
@@ -304,6 +304,7 @@ shape:
 	cubic-angle-curve ?				(todo)
 	polyline						(todo)
 	blob
+	freeplane
 	
 text-alignment:
 	along							(todo)

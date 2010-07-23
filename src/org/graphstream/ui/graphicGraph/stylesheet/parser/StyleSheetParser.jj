@@ -193,7 +193,7 @@ TOKEN: { < JUSTIFY           : "justify" > }
 
 TOKEN: { < CIRCLE            : "circle" > }
 TOKEN: { < TRIANGLE          : "triangle" > }
-TOKEN: { < UNDERLINED        : "underlined" > }
+TOKEN: { < FREEPLANE         : "freeplane" > }
 TOKEN: { < TEXTBOX           : "text-box" > }
 TOKEN: { < TEXTROUNDEDBOX    : "text-rounded-box" > }
 TOKEN: { < TEXTCIRCLE        : "text-circle" > }
@@ -623,7 +623,7 @@ Style.Shape shape():
 	| ( <CROSS>          { s = Style.Shape.CROSS;            } )
 	| ( <DIAMOND>        { s = Style.Shape.DIAMOND;          } )
 	| ( <POLYGON>        { s = Style.Shape.POLYGON;          } )
-	| ( <UNDERLINED>     { s = Style.Shape.UNDERLINED;       } )
+	| ( <FREEPLANE>      { s = Style.Shape.FREEPLANE;        } )
 	| ( <TEXTBOX>        { s = Style.Shape.TEXT_BOX;         } )
 	| ( <TEXTROUNDEDBOX> { s = Style.Shape.TEXT_ROUNDED_BOX; } )
 	| ( <TEXTCIRCLE>     { s = Style.Shape.TEXT_CIRCLE;      } )

@@ -201,7 +201,7 @@ public interface StyleSheetParserConstants {
   /** RegularExpression Id. */
   int TRIANGLE = 99;
   /** RegularExpression Id. */
-  int UNDERLINED = 100;
+  int FREEPLANE = 100;
   /** RegularExpression Id. */
   int TEXTBOX = 101;
   /** RegularExpression Id. */
@@ -372,7 +372,7 @@ public interface StyleSheetParserConstants {
     "\"justify\"",
     "\"circle\"",
     "\"triangle\"",
-    "\"underlined\"",
+    "\"freeplane\"",
     "\"text-box\"",
     "\"text-rounded-box\"",
     "\"text-circle\"",

@@ -9,10 +9,6 @@ Sujet restant à fixer :
 * Une interface "GraphConstruction" (le nom importe peu) pas Source, mais qqchose qui permet de
   construire un graphe à la main. Graph hérite de Pipe et GraphConstruction.
 
-* La structure du projet sur LaunchPad
-	* Comment fait on les series / milestones / releases ? (comme Gnome impair=dev, pair=Release ?)
-	* Y a t'il des rôles ?
-
 Bugs d'API :
 ============
 	

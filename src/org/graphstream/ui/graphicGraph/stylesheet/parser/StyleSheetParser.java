@@ -1054,9 +1054,9 @@ public class StyleSheetParser implements StyleSheetParserConstants {
       jj_consume_token(POLYGON);
                                s = Style.Shape.POLYGON;
       break;
-    case UNDERLINED:
-      jj_consume_token(UNDERLINED);
-                               s = Style.Shape.UNDERLINED;
+    case FREEPLANE:
+      jj_consume_token(FREEPLANE);
+                               s = Style.Shape.FREEPLANE;
       break;
     case TEXTBOX:
       jj_consume_token(TEXTBOX);
