@@ -239,6 +239,9 @@ size-mode:
 	dyn-size(ui.size)
 	fit								(todo)
 
+	The "ui.size" attribute takes values that can be numbers (in which case the units are PX),
+	or a string. The string can contain only a number or a number with units "px", "gu" or "%".
+
 size:
 	<number(3)[px,gu,%]>
 	

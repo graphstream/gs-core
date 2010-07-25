@@ -264,13 +264,13 @@ public class Camera
 		{
 			GraphicNode node = (GraphicNode) n;
 			
-			if( nodeOrSpriteContains( node, x, y ) )
+			if( nodeContains( node, x, y ) )
 				return node;
 		}
 		
 		for( GraphicSprite sprite: graph.spriteSet() )
 		{
-			if( nodeOrSpriteContains( sprite, x, y ) )
+			if( spriteContains( sprite, x, y ) )
 				return sprite;
 		}
 		
@@ -636,13 +636,13 @@ public class Camera
 	 */
 	protected boolean isSpriteIn( GraphicSprite sprite, float X1, float Y1, float X2, float Y2 )
 	{
-		if( sprite.isAttachedToNode() )
+		if( sprite.isAttachedToNode() && nodeInvisible.contains( sprite.getNodeAttachment().getId() ) )
 		{
-			return ( ! nodeInvisible.contains( sprite.getNodeAttachment().getId() ) );
+			return false;
 		}
-		else if( sprite.isAttachedToEdge() )
+		else if( sprite.isAttachedToEdge() && ! isEdgeVisible( sprite.getEdgeAttachment() ) )
 		{
-			return isEdgeVisible( sprite.getEdgeAttachment() );
+			return false;
 		}
 		else
 		{
@@ -669,29 +669,32 @@ public class Camera
 	   
   	protected Point2D.Float spritePositionPx( GraphicSprite sprite)
   	{
-  		if( sprite.getUnits() == Units.PX )
-  		{
-  			return new Point2D.Float( sprite.getX(), sprite.getY() );
-  		}
-  		else if( sprite.getUnits() == Units.GU )
-  		{
-  			Point2D.Float pos = new Point2D.Float( sprite.getX(), sprite.getY() );
-  			return (Point2D.Float) Tx.transform( pos, pos );	
-  		}
-  		else// if( sprite.getUnits() == Units.PERCENTS )
-  		{
-  			return new Point2D.Float( (sprite.getX()/100f)*metrics.viewport.data[0], (sprite.getY()/100f)*metrics.viewport.data[1] );
-  		}
+ 		Point2D.Float pos = new Point2D.Float();
+  		
+  		return getSpritePosition( sprite, pos, Units.PX );
+//  		if( sprite.getUnits() == Units.PX )
+//  		{
+//  			return new Point2D.Float( sprite.getX(), sprite.getY() );
+//  		}
+//  		else if( sprite.getUnits() == Units.GU )
+//  		{
+//  			Point2D.Float pos = new Point2D.Float( sprite.getX(), sprite.getY() );
+//  			return (Point2D.Float) Tx.transform( pos, pos );	
+//  		}
+//  		else// if( sprite.getUnits() == Units.PERCENTS )
+//  		{
+//  			return new Point2D.Float( (sprite.getX()/100f)*metrics.viewport.data[0], (sprite.getY()/100f)*metrics.viewport.data[1] );
+//  		}
   	}
 
 	/**
-	 * Check if a node or sprite contains the given point (x,y).
-	 * @param elt The node or sprite.
+	 * Check if a node contains the given point (x,y).
+	 * @param elt The node.
 	 * @param x The point abscissa.
 	 * @param y The point ordinate.
 	 * @return True if (x,y) is in the given element.
 	 */
-	protected boolean nodeOrSpriteContains( GraphicElement elt, float x, float y )
+	protected boolean nodeContains( GraphicElement elt, float x, float y )
 	{
 		Values        size = elt.getStyle().getSize();
 		float         w2   = metrics.lengthToPx( size, 0 ) / 2;
@@ -700,6 +703,36 @@ public class Camera
 		Point2D.Float dst  = new Point2D.Float();
 		
 		Tx.transform( src, dst );
+
+		float x1 = dst.x - w2;
+		float x2 = dst.x + w2;
+		float y1 = dst.y - h2;
+		float y2 = dst.y + h2;
+		
+		if( x < x1 ) return false;
+		if( y < y1 ) return false;
+		if( x > x2 ) return false;
+		if( y > y2 ) return false;
+		
+		return true;		
+	}
+
+	/**
+	 * Check if a sprite contains the given point (x,y).
+	 * @param elt The sprite.
+	 * @param x The point abscissa.
+	 * @param y The point ordinate.
+	 * @return True if (x,y) is in the given element.
+	 */
+	protected boolean spriteContains( GraphicElement elt, float x, float y )
+	{
+		Values        size = elt.getStyle().getSize();
+		float         w2   = metrics.lengthToPx( size, 0 ) / 2;
+		float         h2   = size.size() > 1 ? metrics.lengthToPx( size, 1 )/2 : w2;
+		Point2D.Float dst  = spritePositionPx( (GraphicSprite)elt ); //new Point2D.Float( elt.getX(), elt.getY() );
+//		Point2D.Float dst  = new Point2D.Float();
+		
+//		Tx.transform( src, dst );
 
 		float x1 = dst.x - w2;
 		float x2 = dst.x + w2;

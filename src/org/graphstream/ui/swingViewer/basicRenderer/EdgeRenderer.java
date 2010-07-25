@@ -31,13 +31,17 @@ import org.graphstream.ui.graphicGraph.GraphicEdge;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicNode;
 import org.graphstream.ui.graphicGraph.StyleGroup;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.FillMode;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.SizeMode;
 import org.graphstream.ui.swingViewer.util.Camera;
 
 public class EdgeRenderer extends ElementRenderer
 {
 	protected Line2D shape = new Line2D.Float();
 
+	protected float width = 1;
+	
 	@Override
 	protected void setupRenderingPass( StyleGroup group, Graphics2D g, Camera camera )
 	{
@@ -54,15 +58,23 @@ public class EdgeRenderer extends ElementRenderer
 			color = interpolateColor( group, element );
 		
 		g.setColor( color );
+		
+		if( group.getSizeMode() == SizeMode.DYN_SIZE )
+		{
+			width  = camera.getMetrics().lengthToGu( StyleConstants.convertValue( element.getAttribute( "ui.size" ) ) );
+//			width = camera.getMetrics().lengthToGu( (float) element.getNumber( "ui.size" ), Units.PX );
+			
+			g.setStroke( new BasicStroke( width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL ) );
+		}
 	}
 
 	@Override
 	protected void pushStyle( StyleGroup group, Graphics2D g, Camera camera )
 	{
-		float width = camera.getMetrics().lengthToGu( group.getSize(), 0 );
+		width = camera.getMetrics().lengthToGu( group.getSize(), 0 );
 
 		g.setColor( group.getFillColor( 0 ) );
-		g.setStroke( new BasicStroke( width ) );
+		g.setStroke( new BasicStroke( width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL ) );
 	}
 
 	@Override

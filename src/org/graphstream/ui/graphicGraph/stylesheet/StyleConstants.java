@@ -158,46 +158,41 @@ public class StyleConstants
 	
 // Static
 
-	/**
-	 * A set of colour names mapped to real AWT Colour objects.
-	 */
+	/** A set of colour names mapped to real AWT Colour objects. */
 	protected static HashMap<String, Color> colorMap;
 
-	/**
-	 * Pattern to ensure a "#FFFFFF" colour is recognised.
-	 */
-	protected static Pattern sharpColor;
+	/** Pattern to ensure a "#FFFFFF" colour is recognised. */
+	protected static Pattern sharpColor1, sharpColor2;
 
-	/**
-	 * Pattern to ensure a CSS style "rgb(1,2,3)" colour is recognised.
-	 */
+	/** Pattern to ensure a CSS style "rgb(1,2,3)" colour is recognised. */
 	protected static Pattern cssColor;
 
-	/**
-	 * Pattern to ensure a CSS style "rgba(1,2,3,4)" colour is recognised.
-	 */
+	/** Pattern to ensure a CSS style "rgba(1,2,3,4)" colour is recognised. */
 	protected static Pattern cssColorA;
 
-	/**
-	 * Pattern to ensure that java.awt.Color.toString() strings are recognised as colour.
-	 */
+	/** Pattern to ensure that java.awt.Color.toString() strings are recognised as colour. */
 	protected static Pattern awtColor;
 
-	/**
-	 * Pattern to ensure an hexadecimal number is a recognised colour.
-	 */
+	/** Pattern to ensure an hexadecimal number is a recognised colour. */
 	protected static Pattern hexaColor;
+	
+	/** Pattern to ensure a string is a Value in various units. */
+	protected static Pattern numberUnit, number;
 
 	static
 	{
 		// Prepare some pattern matchers.
 
-		sharpColor = Pattern.compile( "#(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})((\\p{XDigit}\\p{XDigit})?)" );
-		hexaColor  = Pattern.compile( "0[xX](\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})((\\p{XDigit}\\p{XDigit})?)" );
-		cssColor   = Pattern.compile( "rgb\\s*\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)" );
-		cssColorA  = Pattern.compile( "rgba\\s*\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)" );
-		awtColor   = Pattern.compile( "java.awt.Color\\[r=([0-9]+),g=([0-9]+),b=([0-9]+)\\]" );
-		colorMap   = new HashMap<String, Color>();
+		number     = Pattern.compile( "\\s*(\\p{Digit}+(.\\p{Digit})?)\\s*" );
+		numberUnit = Pattern.compile( "\\s*(\\p{Digit}+(.\\p{Digit})?)\\s*(gu|px|%)\\s*" );
+		
+		sharpColor1 = Pattern.compile( "#(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})((\\p{XDigit}\\p{XDigit})?)" );
+		sharpColor2 = Pattern.compile( "#(\\p{XDigit})(\\p{XDigit})(\\p{XDigit})((\\p{XDigit})?)" );
+		hexaColor   = Pattern.compile( "0[xX](\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})((\\p{XDigit}\\p{XDigit})?)" );
+		cssColor    = Pattern.compile( "rgb\\s*\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)" );
+		cssColorA   = Pattern.compile( "rgba\\s*\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)" );
+		awtColor    = Pattern.compile( "java.awt.Color\\[r=([0-9]+),g=([0-9]+),b=([0-9]+)\\]" );
+		colorMap    = new HashMap<String, Color>();
 
 		// Load all the X11 predefined colour names and their RGB definition
 		// from a file stored in the graphstream.jar. This allows the DOT
@@ -254,7 +249,7 @@ public class StyleConstants
 
 			if( value.startsWith( "#" ) )
 			{
-				Matcher m = sharpColor.matcher( value );
+				Matcher m = sharpColor1.matcher( value );
 
 				if( m.matches() )
 				{
@@ -273,15 +268,30 @@ public class StyleConstants
 					}
 					else if( value.length() == 9 )
 					{
-						String r = m.group( 1 );
-						String g = m.group( 2 );
-						String b = m.group( 3 );
-						String a = m.group( 4 );
+						int r = Integer.parseInt( m.group( 1 ), 16 );
+						int g = Integer.parseInt( m.group( 2 ), 16 );
+						int b = Integer.parseInt( m.group( 3 ), 16 );
+						int a = Integer.parseInt( m.group( 4 ), 16 );
 
-						c = new Color( Integer.parseInt( r, 16 ), Integer.parseInt( g, 16 ), Integer.parseInt( b, 16 ), Integer.parseInt(
-								a, 16 ) );
+						return new Color( r, g, b, a );
+					}
+				}
+				
+				m = sharpColor2.matcher( value );
+					
+				if( m.matches() )
+				{
+					if( value.length() >= 4 )
+					{
+						int r = Integer.parseInt( m.group( 1 ), 16 ) * 16;
+						int g = Integer.parseInt( m.group( 2 ), 16 ) * 16;
+						int b = Integer.parseInt( m.group( 3 ), 16 ) * 16;
+						int a = 255;
+							
+						if( value.length() == 5 )
+							a = Integer.parseInt( m.group( 4 ), 16 ) * 16;
 
-						return c;
+						return new Color( r, g, b, a );
 					}
 				}
 			}
@@ -296,9 +306,7 @@ public class StyleConstants
 					int b = Integer.parseInt( m.group( 3 ) );
 					int a = Integer.parseInt( m.group( 4 ) );
 
-					c = new Color( r, g, b, a );
-
-					return c;
+					return new Color( r, g, b, a );
 				}
 
 				m = cssColor.matcher( value );
@@ -309,9 +317,7 @@ public class StyleConstants
 					int g = Integer.parseInt( m.group( 2 ) );
 					int b = Integer.parseInt( m.group( 3 ) );
 
-					c = new Color( r, g, b );
-
-					return c;
+					return new Color( r, g, b );
 				}
 			}
 			else if( value.startsWith( "0x" ) || value.startsWith( "0X" ) )
@@ -324,9 +330,7 @@ public class StyleConstants
 					{
 						try
 						{
-							c = Color.decode( value );
-
-							return c;
+							return Color.decode( value );
 						}
 						catch( NumberFormatException e )
 						{
@@ -340,10 +344,8 @@ public class StyleConstants
 						String b = m.group( 3 );
 						String a = m.group( 4 );
 
-						c = new Color( Integer.parseInt( r, 16 ), Integer.parseInt( g, 16 ), Integer.parseInt( b, 16 ), Integer.parseInt(
+						return new Color( Integer.parseInt( r, 16 ), Integer.parseInt( g, 16 ), Integer.parseInt( b, 16 ), Integer.parseInt(
 								a, 16 ) );
-
-						return c;
 					}
 				}
 			}
@@ -357,17 +359,14 @@ public class StyleConstants
 					int g = Integer.parseInt( m.group( 2 ) );
 					int b = Integer.parseInt( m.group( 3 ) );
 
-					c = new Color( r, g, b );
-
-					return c;
+					return new Color( r, g, b );
 				}
 			}
 
-			c = colorMap.get( value.toLowerCase() );
-
-			return c;
+			return colorMap.get( value.toLowerCase() );
 		}
 
+		// TODO throw an exception instead ??
 		return null;
 	}
 
@@ -406,6 +405,7 @@ public class StyleConstants
 	 * return value is -1.
 	 * @param value The input to convert.
 	 * @return The value or -1 if the conversion failed.
+	 * TODO should be named convertNumber
 	 */
 	public static float convertWidth( Object value )
 	{
@@ -429,7 +429,59 @@ public class StyleConstants
 
 		return -1;
 	}
-
+	
+	/**
+	 * Convert an object to a value with units. The object can be a number, in which case the
+	 * value returned contains this number in pixel units. The object can be a string. In this
+	 * case the strings understood by this method are of the form
+	 * (spaces, number, spaces, unit, spaces). For example "3px", "45gu", "5.5%", " 25.3  gu ", "4",
+	 * "   28.1  ".
+	 * @param value A Number or a CharSequence.
+	 * @return A value.
+	 */
+	public static Value convertValue( Object value )
+	{
+		if( value instanceof CharSequence ) {
+			CharSequence string = (CharSequence) value;
+			
+			if( string == null )
+				throw new RuntimeException( "null size string ..." );
+			
+			if( string.length() < 0 )
+				throw new RuntimeException( "empty size string ..." );
+			
+			Matcher m = numberUnit.matcher( string );
+			
+			if( m.matches() )
+				return new Value( convertUnit( m.group(2) ), Float.parseFloat( m.group(1) ) );
+			
+			m = number.matcher( string );
+			
+			if( m.matches() ) 
+				return new Value( Units.PX, Float.parseFloat( m.group(1) ) );
+			
+			throw new RuntimeException( String.format( "string is not convertible to a value (%s)", string ) );
+		}
+		else if( value instanceof Number ) {
+			return new Value( Units.PX, ((Number)value).floatValue() );
+		}
+		
+		if( value == null )
+			throw new RuntimeException( "cannot convert null value" );
+		
+		throw new RuntimeException( String.format( "value is of class %s%n", value.getClass().getName() ) );
+	}
+	
+	/** Convert "gu", "px" and "%" to Units.GU, Units.PX, Units.PERCENTS. */
+	protected static Units convertUnit( String unit )
+	{
+		if(       unit.equals( "gu" ) ) return Units.GU;
+		else if( unit.equals( "px" ) ) return Units.PX;
+		else if( unit.equals( "%"  ) ) return Units.PERCENTS;
+		
+		return Units.PX;
+	}
+	
 	/*
 	 * Try to convert an arbitrary value to a EdgeStyle. If the value is a
 	 * descendant of CharSequence, it is used and parsed to see if it maps to
