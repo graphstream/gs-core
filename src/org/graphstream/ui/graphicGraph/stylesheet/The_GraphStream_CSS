@@ -41,7 +41,7 @@ The style properties
 
 Given a selector the style is described by a set of style properties, given between curly braces
 and separated by semicolons.
-
+ 
 Here is an example of style definition :
 
 node.foo:selected { fill-color: red; }
@@ -237,6 +237,7 @@ Properties common to nodes, edges and sprites
 size-mode:
 	normal
 	dyn-size(ui.size)
+	fit								(todo)
 
 size:
 	<number(3)[px,gu,%]>
