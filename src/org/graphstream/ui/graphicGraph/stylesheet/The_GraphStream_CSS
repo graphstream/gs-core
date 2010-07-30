@@ -81,6 +81,22 @@ fill-mode:
 	
 	The fill is the main color, gradient, or image pattern that fills the surface of the element
 	(graph, node, sprite, or edge background).
+	
+	radial gradients start fromt the center of the element.
+	
+	diagonal1 is a diagonal going from top-left to bottom-right, diagonal2 goes from top-right
+	to bottom-left.
+	
+	image-tiled keeps the size of the original image in pixels and repeats it, centered in the
+	element.
+	
+	image-scaled can deform the image to perfectly fit the element.
+	
+	image-scaled-ratio-min, keeps the image ratio and may not cover the complete element surface
+	if the ratio of the element is not the same as the one of the image. The -max version always
+	fill the element, but some parts of the image may not show if the ratios differs.
+
+	default is plain.
 
 fill-color:
 	<color(1,n)>
@@ -142,7 +158,7 @@ shadow-offset:
 	Offset of the shadow shape according to the element shape.
 
 padding:
-	<number(1)>				(todo for nodes/sprites)
+	<number(1,3)>
 
 	Space added between the contour of the element and its content (text, image or other). 
 
@@ -208,11 +224,18 @@ text-size:
 
 icon-mode:
 	none,
-	at-left, at-right,
-	above, under
+	at-left,
+	at-right,					(todo)
+	above,						(todo)
+	under						(todo)
 	
 icon:
 	<url>
+	dyn-icon(ui.icon)
+	
+	This contains either the url of an icon or the string "dyn-icon". In the later case, you can use
+	the "ui.icon" attribute on elements to specify the icon to use. For static icons using CSS
+	is encouraged. However if you must vary often the icon of an element, ui.icon can be useful.
 
 visibility-mode:
 	normal
@@ -237,7 +260,7 @@ Properties common to nodes, edges and sprites
 size-mode:
 	normal
 	dyn-size(ui.size)
-	fit								(todo)
+	fit
 
 	The "ui.size" attribute takes values that can be numbers (in which case the units are PX),
 	or a string. The string can contain only a number or a number with units "px", "gu" or "%".

@@ -256,6 +256,10 @@ public abstract class GraphicElement extends AbstractElement
 				style.pushElementAsDynamic( this );
 				mygraph.graphChanged = true;
 			}
+			else if( attribute.equals( "ui.icon" ) )
+			{
+				mygraph.graphChanged = true;
+			}
 //			else if( attribute.equals( "ui.state" ) )
 //			{
 //				if( newValue == null )

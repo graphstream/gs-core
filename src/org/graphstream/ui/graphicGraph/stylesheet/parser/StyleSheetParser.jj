@@ -150,6 +150,7 @@ TOKEN: { < CANVASCOLOR       : "canvas-color" > }
 TOKEN: { < PLAIN             : "plain" > }
 TOKEN: { < DYNPLAIN          : "dyn-plain" > }
 TOKEN: { < DYNSIZE           : "dyn-size" > }
+TOKEN: { < DYNICON           : "dyn-icon" > }
 
 TOKEN: { < DASHES            : "dashes" > }
 TOKEN: { < DOTS              : "dots" > }
@@ -350,7 +351,7 @@ void style( Style style ):
 	| ( <TEXTSIZE>           <COLON> value         = value()             <SEMICOLON> { style.setValue( "text-size",            value          ); } )
 	| ( <TEXTALIGNMENT>      <COLON> textAlignment = textAlign()         <SEMICOLON> { style.setValue( "text-alignment",       textAlignment  ); } )
 	| ( <ICONMODE>           <COLON> iconMode      = iconMode()          <SEMICOLON> { style.setValue( "icon-mode",            iconMode       ); } )
-	| ( <ICON>               <COLON> url           = url()               <SEMICOLON> { style.setValue( "icon",                 url            ); } )
+	| ( <ICON>               <COLON> url           = icon()              <SEMICOLON> { style.setValue( "icon",                 url            ); } )
 	| ( <JCOMPONENT>         <COLON> component     = jcomponent()        <SEMICOLON> { style.setValue( "jcomponent",           component      ); } )
 	| ( <VISIBILITYMODE>     <COLON> visMode       = visMode()           <SEMICOLON> { style.setValue( "visibility-mode",      visMode        ); } )
 	| ( <VISIBILITY>         <COLON> values        = values()            <SEMICOLON> { style.setValue( "visibility",           values         ); } )
@@ -417,6 +418,14 @@ String url():
 {
 	<URL> <LPAREN> t=<STRING> <RPAREN>
 	{ return t.image.substring( 1, t.image.length()-1 ); }
+}
+
+String icon():
+{
+  String s;}
+{	( <DYNICON > { return "dynamic"; }
+	| s = url()   { return s; }
+	) 
 }
 
 String font():
