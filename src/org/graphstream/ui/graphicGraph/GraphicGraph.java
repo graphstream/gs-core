@@ -325,7 +325,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 			
 			for( GraphicSprite sprite: spriteSet() )
 			{
-				if( sprite.getUnits() == StyleConstants.Units.GU )
+				if( ! sprite.isAttached() && sprite.getUnits() == StyleConstants.Units.GU )
 				{
 					float x = sprite.getX();
 					float y = sprite.getY();

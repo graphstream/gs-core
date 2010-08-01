@@ -24,7 +24,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.graphstream.graph.Node;
+import org.graphstream.ui.geom.Point2;
 import org.graphstream.ui.geom.Point3;
+import org.graphstream.ui.geom.Vector2;
 import org.graphstream.ui.graphicGraph.GraphicEdge;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
@@ -837,9 +839,19 @@ public class Camera
 		
 		if( edge.isCurve() )
 		{
-			//renderSpriteAttachedToCubicEdge( ce, sprite, camera );
-			// TODO XXX
-			throw new RuntimeException( "Edge on curve not yet supported." );
+			float  ctrl[] = edge.getControlPoints();
+  			Point2  p0     = new Point2( edge.from.getX(), edge.from.getY() );
+  			Point2  p1     = new Point2( ctrl[0], ctrl[1] );
+  			Point2  p2     = new Point2( ctrl[1], ctrl[2] );
+  			Point2  p3     = new Point2( edge.to.getX(), edge.to.getY() );
+  			Vector2 perp   = CubicCurve.perpendicular( p0, p1, p2, p3, sprite.getX() );
+  			float  y      = metrics.lengthToGu( sprite.getY(), sprite.getUnits() );
+  			
+  			perp.normalize();
+  			perp.scalarMult( y );
+  			
+  			pos.x = CubicCurve.eval( p0.x, p1.x, p2.x, p3.x, sprite.getX() ) - perp.data[0];
+  			pos.y = CubicCurve.eval( p0.y, p1.y, p2.y, p3.y, sprite.getX() ) - perp.data[1];
 		}
 		else
 		{
@@ -848,7 +860,8 @@ public class Camera
 			float dx = ((GraphicNode)edge.getTargetNode()).x - x;
 			float dy = ((GraphicNode)edge.getTargetNode()).y - y;
 			float d  = sprite.getX();						// Percent on the edge.
-			float o  = sprite.getY();						// Offset from the position given by percent, perpendicular to the edge.
+			float o  = metrics.lengthToGu( sprite.getY(), sprite.getUnits() );	
+															// Offset from the position given by percent, perpendicular to the edge.
 			
 			d = d > 1 ? 1 : d;
 			d = d < 0 ? 0 : d;
