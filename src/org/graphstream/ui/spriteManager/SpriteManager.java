@@ -47,7 +47,10 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
  * 
  * <p>
  * In case you need to refine the Sprite class, you can change the {@link SpriteFactory} of this
- * manager so that it creates specific instances of sprites instead of the default ones.
+ * manager so that it creates specific instances of sprites instead of the default ones. This is
+ * mostly useful when all sprites will pertain to the same subclass. If you need to create several
+ * sprites of distinct subclasses, you can use the {@link #addSprite(String, Class)} and
+ * {@link #addSprite(String, Class, Values)} methods.
  * </p>
  */
 public class SpriteManager implements Iterable<Sprite>, AttributeSink
@@ -216,7 +219,7 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink
 	 */
 	public Sprite addSprite( String identifier )
 	{
-		return addSprite( identifier, null );
+		return addSprite( identifier, (Values)null );
 	}
 	
 	/**
@@ -246,6 +249,46 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink
 		}
 		
 		return sprite;		
+	}
+	
+	/**
+	 * Add a sprite of a given subclass of Sprite with the given identifier. If the sprite already
+	 * exists, nothing is done. This method allows to add a sprite of a chosen subclass of Sprite,
+	 * without using a {@link SpriteFactory}. Most often you use a sprite factory when all sprites
+	 * will pertain to the same subclass. If some sprites pertain to distinct subclasses, you can
+	 * use this method.
+	 * @param identifier The identifier of the new sprite to add.
+	 * @param spriteClass The class of the new sprite to add.
+	 * @return The created sprite. 
+	 */
+	public <T extends Sprite> T addSprite( String identifier, Class<T> spriteClass ) {
+		return addSprite( identifier, spriteClass, null );
+	}
+	
+	/**
+	 * Same as {@link #addSprite(String, Class)} but also allows to specify an initial position.
+	 * @param identifier The identifier of the new sprite to add.
+	 * @param spriteClass The class of the new sprite to add.
+	 * @param position The sprite position, or null for position (0, 0, 0).
+	 * @return The created sprite. 
+	 */
+	public <T extends Sprite> T addSprite( String identifier, Class<T> spriteClass, Values position ) {
+        try
+        {
+	        T sprite = spriteClass.newInstance();
+			sprite.init( identifier, this, position );
+			return sprite;
+        }
+        catch( InstantiationException e )
+        {
+        	System.err.printf( "Error while trying to instantiate class %s : %s", spriteClass.getName(), e.getMessage() );
+	        e.printStackTrace();
+        }
+        catch( IllegalAccessException e )
+        {
+	        e.printStackTrace();
+        }
+        return null;
 	}
 	
 	/**

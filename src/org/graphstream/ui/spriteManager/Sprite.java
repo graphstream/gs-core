@@ -41,10 +41,10 @@ import org.graphstream.ui.graphicGraph.stylesheet.Values;
  * around the node at any given radius and angle around it.</p>
  * 
  * <p>Sprites can have many shapes. Most of the CSS nodes shapes are available for sprites, but
- * more are possible. Some shapes follow the form of the element (node or edge) they are attched
+ * more are possible. Some shapes follow the form of the element (node or edge) they are attached
  * to.</p>
  * 
- * <p>Sprites can be moved and animated easily along edges, around nodes, or any where on the graph
+ * <p>Sprites can be moved and animated easily along edges, around nodes, or anywhere on the graph
  * surface. Their shape can change. Some sprites allows to draw pie charts or statistics,
  * or images.</p>
  * 
@@ -62,7 +62,19 @@ import org.graphstream.ui.graphicGraph.stylesheet.Values;
  * format supports attributes. If this is a dynamic graph format, like DGS, the whole sprite
  * history is remembered : when it moved, when it changed, etc.
  * </p>
+ * 
+ * <p>
+ * Second implementation node : often you will need to extend the sprite class. This is easily
+ * possible, but you must remember that you cannot create sprites yourself, you must use the
+ * {@link SpriteManager}. In order to create a sprite of a special kind, you can either use a
+ * {@link SpriteFactory} with the SpriteManager or the special
+ * {@link SpriteManager#addSprite(String, Class)} method of the SpriteManager. In both cases, the
+ * {@link #init(String, SpriteManager, Values)} method of the sprite will be called. Override this
+ * method to initialise your sprite.
+ * </p>
+ *
  * @see SpriteManager
+ * @see SpriteFactory
  */
 public class Sprite implements Element
 {
@@ -95,6 +107,9 @@ public class Sprite implements Element
 	
 // Construction
 
+	/** For the use with {@link #init(String, SpriteManager, Values)}. */
+	protected Sprite() {}
+	
 	/**
 	 * New sprite with a given identifier.
 	 * 
@@ -110,7 +125,19 @@ public class Sprite implements Element
 	 * 
 	 * You cannot build sprites yourself, they are created by the sprite manager.
 	 */
-	protected Sprite( String id, SpriteManager manager, Values position )
+	protected Sprite( String id, SpriteManager manager, Values position ) {
+		init( id, manager, position );
+	}
+	
+	/**
+	 * New sprite with a given identifier.
+	 * 
+	 * You cannot build sprites yourself, they are created by the sprite managern. This method
+	 * is used by the manager when creating instances of sprites that inherit this class. If you
+	 * derive the sprite class you can override this method to initialise your sprite. It is always
+	 * called when creating the sprite.
+	 */
+	protected void init( String id, SpriteManager manager, Values position )
 	{
 		this.id         = id;
 		this.completeId = String.format( "ui.sprite.%s", id );

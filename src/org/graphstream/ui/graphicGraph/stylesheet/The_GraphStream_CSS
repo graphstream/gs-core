@@ -311,11 +311,11 @@ Properties for sprites
 ======================
 
 shape:
-	pie-chart						(todo)
-	flow							(todo)
-	arrow							(todo)
+	pie-chart
+	flow
+	arrow
 
-sprite-orientation:					(todo)
+sprite-orientation:
 	none				
 	from, node0
 	to, node1
@@ -337,17 +337,20 @@ text-alignment:
 	along							(todo)
 
 arrow-shape:
-	none							(todo ?)
+	none
 	arrow
 	circle
 	diamond
-	image							(todo)
+	image
 
 arrow-image:
-	<url>							(todo)
+	<url>
+	dynamic
+	
+	If the url is the keyword "dynamic" the image is taken from the attribute "ui.arrow-image".
 	
 arrow-size:
-	<number(1,3)[px,gu,%]>			(todo)
+	<number(1,3)[px,gu,%]>
 
 Properties for graphs
 =====================

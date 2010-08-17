@@ -127,6 +127,12 @@ public class Vector3 extends Vector2
 
 // Access
 	
+	public float
+	dotProduct( float ox, float oy, float oz )
+	{
+		return( ( data[0] * ox ) + ( data[1] * oy ) + ( data[2] * oz ) );
+	}
+
 	/**
 	 * Dot product of this and other.
 	 */

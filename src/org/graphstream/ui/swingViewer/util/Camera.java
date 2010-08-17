@@ -812,7 +812,7 @@ public class Camera
 		
 		GraphicNode node    = sprite.getNodeAttachment();
 		float       radius  = metrics.lengthToGu( sprite.getX(), sprite.getUnits() );
-		float       z       = sprite.getZ();
+		float       z       = (float)( sprite.getZ() * ( Math.PI / 180f ) );
 		
 		pos.x = node.x + ( (float)Math.cos( z ) * radius );
 		pos.y = node.y + ( (float)Math.sin( z ) * radius );
