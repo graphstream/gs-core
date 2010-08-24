@@ -32,7 +32,6 @@ import org.graphstream.stream.GraphParseException;
 import org.graphstream.stream.Pipe;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSource;
-import org.graphstream.ui.old.GraphViewerRemote;
 
 /**
  * An Interface that advises general purpose methods for handling graphs.
@@ -366,12 +365,11 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * It can be used to prototype a program, but may be limited. This method
 	 * automatically launch a graph layout algorithm in its own thread to
 	 * compute best node positions.
-	 * @see org.graphstream.ui.old.GraphViewerRemote
-	 * @see #oldDisplay(boolean)
-	 * @return a graph viewer remote that allows to command the viewer (it is a remote since the
-	 *         viewer often run in another thread).
+	 * @see org.graphstream.ui.swingViewer.Viewer
+	 * @see #display( boolean )
+	 * @return a graph viewer that allows to command the viewer (it often run in another thread).
 	 */
-	GraphViewerRemote oldDisplay();
+	org.graphstream.ui.swingViewer.Viewer display();
 	
 	/**
 	 * Utility method that create a new graph viewer, and register the graph in
@@ -379,13 +377,10 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * It can be used to prototype a program, but is very limited.
 	 * @param autoLayout If true a layout algorithm is launched in its own
 	 *        thread to compute best node positions.
-	 * @see org.graphstream.ui.old.GraphViewerRemote
-	 * @see #oldDisplay()
-	 * @return a graph viewer remote that allows to command the viewer (it is a remote since the
-	 *         viewer often run in another thread).
+	 * @see org.graphstream.ui.swingViewer.Viewer
+	 * @see #display()
+	 * @return a graph viewer that allows to command the viewer (it often run in another thread).
 	 */
-	GraphViewerRemote oldDisplay( boolean autoLayout );
-	
-	org.graphstream.ui.swingViewer.Viewer display();
 	org.graphstream.ui.swingViewer.Viewer display( boolean autoLayout );
+	
 }

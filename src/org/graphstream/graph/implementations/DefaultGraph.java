@@ -49,8 +49,6 @@ import org.graphstream.stream.file.FileSourceFactory;
 import org.graphstream.stream.sync.SinkTime;
 import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.layout.Layouts;
-import org.graphstream.ui.old.GraphViewer;
-import org.graphstream.ui.old.GraphViewerRemote;
 import org.graphstream.ui.swingViewer.GraphRenderer;
 import org.graphstream.ui.swingViewer.Viewer;
 
@@ -739,52 +737,6 @@ public class DefaultGraph extends AbstractElement implements Graph
 		if( output != null )
 			write( output, filename );
 		else throw new IOException( String.format( "no file output factory for unknown format of file %s", filename ) );
-	}
-
-	public GraphViewerRemote oldDisplay()
-	{
-		return oldDisplay( true );
-	}
-
-	public GraphViewerRemote oldDisplay( boolean autoLayout )
-	{
-		String viewerClass = "org.graphstream.ui.old.swing.SwingGraphViewer";
-		
-		try
-        {
-	        Class<?> c      = Class.forName( viewerClass );
-	        Object   object = c.newInstance();
-	        
-	        if( object instanceof GraphViewer )
-	        {
-	        	GraphViewer gv = (GraphViewer) object;
-	        	
-	        	gv.open(  this, autoLayout );
-	        	
-	        	return gv.newViewerRemote();
-	        }
-	        else
-	        {
-	        	System.err.printf( "Viewer class '%s' is not a 'GraphViewer'%n", object );
-	        }
-        }
-        catch( ClassNotFoundException e )
-        {
-	        e.printStackTrace();
-        	System.err.printf( "Cannot display graph, 'GraphViewer' class not found : " + e.getMessage() );
-        }
-        catch( InstantiationException e )
-        {
-            e.printStackTrace();
-        	System.err.printf( "Cannot display graph, class '"+viewerClass+"' error : " + e.getMessage() );
-        }
-        catch( IllegalAccessException e )
-        {
-            e.printStackTrace();
-        	System.err.printf( "Cannot display graph, class '"+viewerClass+"' illegal access : " + e.getMessage() );
-        }
-        
-        return null;
 	}
 
 	public Viewer display()
