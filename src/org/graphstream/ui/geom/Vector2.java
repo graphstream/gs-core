@@ -129,6 +129,12 @@ public class Vector2
 
 // Accessors
 	
+	public float
+	dotProduct( float ox, float oy )
+	{
+		return( ( data[0] * ox ) + ( data[1] * oy ) );
+	}
+	
 	/**
 	 * Dot product of this and other.
 	 */

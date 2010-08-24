@@ -239,12 +239,12 @@ public class GraphicSprite extends GraphicElement
 	 */
 	public void setPosition( float x, float y, float z, Style.Units units )
 	{
-		if( node != null )
+/*		if( node != null )
 		{
 			y = checkAngle( y );
 			z = checkAngle( z );
 		}
-		else if( edge != null )
+		else*/ if( edge != null )
 		{
 			if( x < 0 ) x = 0;
 			else if( x > 1 ) x = 1;

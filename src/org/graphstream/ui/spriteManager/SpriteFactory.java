@@ -26,6 +26,11 @@ import org.graphstream.ui.graphicGraph.stylesheet.Values;
 
 /**
  * Factory for sprites.
+ * 
+ * <p>Use the sprite factory in the sprite manager so that the manager produce instance of a chosen
+ * subclass of {@link Sprite}. This is useful if you intend to have each sprite pertain to the same
+ * subclass. If you intend to have different kinds of sprites at the same time in the same manager,
+ * use {@link SpriteManager#addSprite(String, Class)} instead.</p>
  */
 public class SpriteFactory
 {
