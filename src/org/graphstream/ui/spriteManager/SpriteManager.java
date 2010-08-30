@@ -99,15 +99,18 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink
 	
 	protected void lookForExistingSprites()
 	{
-		for( String attr: graph.getAttributeKeySet() )
+		if( graph.getAttributeCount() > 0 )
 		{
-			if( attr.startsWith( "ui.sprite." ) )
+			for( String attr: graph.getAttributeKeySet() )
 			{
-				String id = attr.substring( 10 );
-				
-				if( id.indexOf( '.' ) < 0 )
+				if( attr.startsWith( "ui.sprite." ) )
 				{
-					addSprite( id );
+					String id = attr.substring( 10 );
+					
+					if( id.indexOf( '.' ) < 0 )
+					{
+						addSprite( id );
+					}
 				}
 			}
 		}
