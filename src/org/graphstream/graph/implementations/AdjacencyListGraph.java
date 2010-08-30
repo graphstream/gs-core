@@ -48,8 +48,6 @@ import org.graphstream.stream.file.FileSourceFactory;
 import org.graphstream.stream.sync.SinkTime;
 import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.layout.Layouts;
-import org.graphstream.ui.old.GraphViewer;
-import org.graphstream.ui.old.GraphViewerRemote;
 import org.graphstream.ui.swingViewer.GraphRenderer;
 import org.graphstream.ui.swingViewer.Viewer;
 
@@ -763,48 +761,6 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		FileSink output = FileSinkFactory.sinkFor( filename );
 		write( output, filename );
 	}	
-
-	public GraphViewerRemote oldDisplay()
-	{
-		return oldDisplay( true );
-	}
-
-	public GraphViewerRemote oldDisplay( boolean autoLayout )
-	{
-		try
-        {
-			Class<?> clazz = Class.forName( "org.miv.graphstream.ui.swing.SwingGraphViewer" );
-	        Object object = clazz.newInstance();
-	        
-	        if( object instanceof GraphViewer )
-	        {
-	        	GraphViewer gv = (GraphViewer) object;
-	        	
-	        	gv.open(  this, autoLayout );
-	        	
-	        	return gv.newViewerRemote();
-	        }
-	        else
-	        {
-	        	System.err.printf( "not a GraphViewer\n", object == null ? "" : object.getClass().getName() );
-	        }
-        }
-        catch( ClassNotFoundException e )
-        {
-	        e.printStackTrace();
-        	System.err.printf( "Cannot display graph, GraphViewer class not found : " + e.getMessage() );
-        }
-        catch( IllegalAccessException e )
-        {
-        	e.printStackTrace();
-        }
-        catch( InstantiationException e )
-        {
-        	e.printStackTrace();
-        }
-        
-        return null;
-	}
 
 	public Viewer display()
 	{

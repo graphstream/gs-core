@@ -16,7 +16,7 @@
  * Copyright 2006 - 2009
  * 	Julien Baudry
  * 	Antoine Dutot
- * 	Yoann Pigné
+ * 	Yoann Pignï¿½
  * 	Guilhelm Savin
  */
 
@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.graphstream.ui.geom.Point3;
-import org.graphstream.ui.old.graphicGraph.stylesheet.Rule;
-import org.graphstream.ui.old.graphicGraph.stylesheet.StyleSheet;
+import org.graphstream.ui.graphicGraph.stylesheet.Rule;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleSheet;
 
 /**
  * Transforms a graph into a SVG description.
