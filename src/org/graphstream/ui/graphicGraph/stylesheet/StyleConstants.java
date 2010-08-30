@@ -121,6 +121,10 @@ public class StyleConstants
 		
 		ALONG
 	}
+	
+	public static enum TextBackgroundMode {
+		NONE, PLAIN
+	}
 
 	public static enum ShapeKind {
 		ELLIPSOID, RECTANGULAR, LINEAR, CURVE

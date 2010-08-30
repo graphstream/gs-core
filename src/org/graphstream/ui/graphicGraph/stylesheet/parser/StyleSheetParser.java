@@ -106,6 +106,8 @@ public class StyleSheetParser implements StyleSheetParserConstants {
       case TEXTSIZE:
       case TEXTVISIBILITYMODE:
       case TEXTVISIBILITY:
+      case TEXTBACKGROUNDMODE:
+      case TEXTBACKGROUNDCOLOR:
       case ICONMODE:
       case ICON:
       case PADDING:
@@ -260,6 +262,7 @@ public class StyleSheetParser implements StyleSheetParserConstants {
         Style.ShadowMode         shadowMode;
         Style.TextMode           textMode;
         Style.TextVisibilityMode textVisMode;
+        Style.TextBackgroundMode textBgMode;
         Style.TextStyle          textStyle;
         Style.TextAlignment      textAlignment;
         Style.IconMode           iconMode;
@@ -378,12 +381,26 @@ public class StyleSheetParser implements StyleSheetParserConstants {
       jj_consume_token(SEMICOLON);
                                                                                            style.setValue( "text-visibility",      values         );
       break;
+    case TEXTBACKGROUNDMODE:
+      jj_consume_token(TEXTBACKGROUNDMODE);
+      jj_consume_token(COLON);
+      textBgMode = textBgMode();
+      jj_consume_token(SEMICOLON);
+                                                                                           style.setValue( "text-background-mode", textBgMode     );
+      break;
     case TEXTCOLOR:
       jj_consume_token(TEXTCOLOR);
       jj_consume_token(COLON);
       colors = colors();
       jj_consume_token(SEMICOLON);
                                                                                            style.setValue( "text-color",           colors         );
+      break;
+    case TEXTBACKGROUNDCOLOR:
+      jj_consume_token(TEXTBACKGROUNDCOLOR);
+      jj_consume_token(COLON);
+      colors = colors();
+      jj_consume_token(SEMICOLON);
+                                                                                           style.setValue( "text-background-color", colors        );
       break;
     case TEXTSTYLE:
       jj_consume_token(TEXTSTYLE);
@@ -870,6 +887,26 @@ public class StyleSheetParser implements StyleSheetParserConstants {
     throw new Error("Missing return statement in function");
   }
 
+  final public Style.TextBackgroundMode textBgMode() throws ParseException {
+        Style.TextBackgroundMode m;
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case NONE:
+      jj_consume_token(NONE);
+                      m = Style.TextBackgroundMode.NONE;
+      break;
+    case PLAIN:
+      jj_consume_token(PLAIN);
+                      m = Style.TextBackgroundMode.PLAIN;
+      break;
+    default:
+      jj_la1[21] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+          {if (true) return m;}
+    throw new Error("Missing return statement in function");
+  }
+
   final public Style.TextStyle textStyle() throws ParseException {
         Style.TextStyle t;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -890,7 +927,7 @@ public class StyleSheetParser implements StyleSheetParserConstants {
                             t = Style.TextStyle.BOLD_ITALIC;
       break;
     default:
-      jj_la1[21] = jj_gen;
+      jj_la1[22] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -914,7 +951,7 @@ public class StyleSheetParser implements StyleSheetParserConstants {
                         m = Style.SizeMode.DYN_SIZE;
       break;
     default:
-      jj_la1[22] = jj_gen;
+      jj_la1[23] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -962,7 +999,7 @@ public class StyleSheetParser implements StyleSheetParserConstants {
                          t = Style.TextAlignment.ALONG;
       break;
     default:
-      jj_la1[23] = jj_gen;
+      jj_la1[24] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -994,7 +1031,7 @@ public class StyleSheetParser implements StyleSheetParserConstants {
                         i = Style.IconMode.UNDER;
       break;
     default:
-      jj_la1[24] = jj_gen;
+      jj_la1[25] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1034,7 +1071,7 @@ public class StyleSheetParser implements StyleSheetParserConstants {
                           m = Style.VisibilityMode.ZOOMS;
       break;
     default:
-      jj_la1[25] = jj_gen;
+      jj_la1[26] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1134,7 +1171,7 @@ public class StyleSheetParser implements StyleSheetParserConstants {
                                s = Style.Shape.BLOB;
       break;
     default:
-      jj_la1[26] = jj_gen;
+      jj_la1[27] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1166,7 +1203,7 @@ public class StyleSheetParser implements StyleSheetParserConstants {
                         s = Style.ArrowShape.IMAGE;
       break;
     default:
-      jj_la1[27] = jj_gen;
+      jj_la1[28] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1190,7 +1227,7 @@ public class StyleSheetParser implements StyleSheetParserConstants {
                           c = Style.JComponents.PANEL;
       break;
     default:
-      jj_la1[28] = jj_gen;
+      jj_la1[29] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1226,7 +1263,7 @@ public class StyleSheetParser implements StyleSheetParserConstants {
                            s = Style.SpriteOrientation.PROJECTION;
       break;
     default:
-      jj_la1[29] = jj_gen;
+      jj_la1[30] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1243,7 +1280,7 @@ public class StyleSheetParser implements StyleSheetParserConstants {
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[30];
+  final private int[] jj_la1 = new int[31];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static private int[] jj_la1_2;
@@ -1257,19 +1294,19 @@ public class StyleSheetParser implements StyleSheetParserConstants {
       jj_la1_init_4();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0xf000000,0xf000000,0xf0000000,0xf000000,0x400000,0x400000,0x4200,0x4200,0x400000,0x8000,0xf0000000,0x20000,0x800000,0x400000,0x5c0000,0x20000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_0 = new int[] {0xf000000,0xf000000,0xf0000000,0xf000000,0x400000,0x400000,0x4200,0x4200,0x400000,0x8000,0xf0000000,0x20000,0x800000,0x400000,0x5c0000,0x20000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x3fffffff,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3fffffff,0x0,0x0,0x0,0x0,0x0,0xc0000000,0x40000000,0x40000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1000000,0x0,0x0,0x0,};
+      jj_la1_1 = new int[] {0x0,0x0,0xffffffff,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xffffffff,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x4000000,0x0,0x0,0x0,};
    }
    private static void jj_la1_init_2() {
-      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2,0x0,0x0,0x0,0x7df0,0x400c,0x41f0,0x18200,0x3e8200,0x3808000,0x408001,0xfc000000,0x18004000,0x3e8200,0x0,0x4000,0x0,0x4000,};
+      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x8,0x0,0x0,0x0,0x1f7c3,0x10031,0x107c1,0x60800,0xfa0800,0x10001,0xe020000,0x1020004,0xf0000000,0x60010000,0xfa0800,0x0,0x10000,0x0,0x10000,};
    }
    private static void jj_la1_init_3() {
-      jj_la1_3 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x7,0x3,0x0,0x7f8fff8,0x9004008,0x70000,0xe0000000,};
+      jj_la1_3 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1f,0xc,0x0,0x1fe3ffe0,0x24010020,0x1c0000,0x80000000,};
    }
    private static void jj_la1_init_4() {
-      jj_la1_4 = new int[] {0x20,0x20,0x20,0x0,0x10,0x1c,0x0,0x0,0x1c,0x0,0x20,0x0,0x0,0x10,0x10,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3,};
+      jj_la1_4 = new int[] {0x80,0x80,0x80,0x0,0x40,0x70,0x0,0x0,0x70,0x0,0x80,0x0,0x0,0x40,0x40,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xf,};
    }
 
   /** Constructor with InputStream. */
@@ -1283,7 +1320,7 @@ public class StyleSheetParser implements StyleSheetParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 30; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -1297,7 +1334,7 @@ public class StyleSheetParser implements StyleSheetParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 30; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -1307,7 +1344,7 @@ public class StyleSheetParser implements StyleSheetParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 30; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -1317,7 +1354,7 @@ public class StyleSheetParser implements StyleSheetParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 30; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -1326,7 +1363,7 @@ public class StyleSheetParser implements StyleSheetParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 30; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -1335,7 +1372,7 @@ public class StyleSheetParser implements StyleSheetParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 30; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -1386,12 +1423,12 @@ public class StyleSheetParser implements StyleSheetParserConstants {
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[134];
+    boolean[] la1tokens = new boolean[136];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 31; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -1412,7 +1449,7 @@ public class StyleSheetParser implements StyleSheetParserConstants {
         }
       }
     }
-    for (int i = 0; i < 134; i++) {
+    for (int i = 0; i < 136; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

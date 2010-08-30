@@ -207,7 +207,7 @@ text-alignment:
 	above
 	line_breaks					(todo)
 	justify						(todo)
-	along						(todo)
+	along
 
 text-font:
 	<string>
@@ -221,6 +221,13 @@ text-size:
 
 ?text-offset:
 ?	<number(1,3)[px,gu,%]>		(todo)
+
+text-background-mode:
+	none,
+	plain
+	
+text-background-color:
+	<color>
 
 icon-mode:
 	none,

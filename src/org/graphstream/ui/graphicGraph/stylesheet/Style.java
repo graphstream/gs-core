@@ -466,6 +466,26 @@ public class Style extends StyleConstants
 	{
 		return (TextAlignment) getValue( "text-alignment" );
 	}
+	
+	public TextBackgroundMode getTextBackgroundMode()
+	{
+		return (TextBackgroundMode) getValue( "text-background-mode" );
+	}
+	
+	public Colors getTextBackgroundColor() 
+	{
+		return (Colors) getValue( "text-background-color" );
+	}
+	
+	public Color getTextBackgroundColor( int i )
+	{
+    	Colors colors = (Colors)getValue( "text-background-color" );
+    	
+    	if( colors != null )
+    		return colors.get( i );
+    	
+    	return null;    			
+	}
 
 	/**
 	 * The element shape.
@@ -560,59 +580,63 @@ public class Style extends StyleConstants
     	Colors shadowColor   = new Colors();
     	Colors textColor     = new Colors();
     	Colors canvasColor   = new Colors();
+    	Colors textBgColor   = new Colors();
     	
     	fillColor.add(   Color.BLACK );
     	strokeColor.add( Color.BLACK );
     	shadowColor.add( Color.GRAY  );
     	textColor.add(   Color.BLACK );
     	canvasColor.add( Color.WHITE );
+    	textBgColor.add( Color.WHITE );
     	
-    	values.put( "z-index"             , new Integer( 0 ) );
+    	values.put( "z-index"             		, new Integer( 0 ) );
     	
-    	values.put( "fill-mode"           , FillMode.PLAIN );
-    	values.put( "fill-color"          , fillColor );
-    	values.put( "fill-image"          , null );
+    	values.put( "fill-mode"           		, FillMode.PLAIN );
+    	values.put( "fill-color"          		, fillColor );
+    	values.put( "fill-image"          		, null );
     	
-    	values.put( "stroke-mode"         , StrokeMode.NONE );
-    	values.put( "stroke-color"        , strokeColor );
-    	values.put( "stroke-width"        , new Value( Units.PX, 1 ) );
+    	values.put( "stroke-mode"         	, StrokeMode.NONE );
+    	values.put( "stroke-color"        	, strokeColor );
+    	values.put( "stroke-width"        	, new Value( Units.PX, 1 ) );
 
-    	values.put( "shadow-mode"         , ShadowMode.NONE );
-    	values.put( "shadow-color"        , shadowColor );
-    	values.put( "shadow-width"        , new Value( Units.PX, 3 ) );
-    	values.put( "shadow-offset"       , new Values( Units.PX, 3, 3 ) );
+    	values.put( "shadow-mode"         	, ShadowMode.NONE );
+    	values.put( "shadow-color"        	, shadowColor );
+    	values.put( "shadow-width"        	, new Value( Units.PX, 3 ) );
+    	values.put( "shadow-offset"       	, new Values( Units.PX, 3, 3 ) );
 
-    	values.put( "padding"             , new Values( Units.PX, 0, 0, 0 ) );
+    	values.put( "padding"             	 	, new Values( Units.PX, 0, 0, 0 ) );
     	
-    	values.put( "text-mode"           , TextMode.NORMAL );
-    	values.put( "text-visibility-mode", TextVisibilityMode.NORMAL );
-    	values.put( "text-visibility"     , null );
-    	values.put( "text-color"          , textColor );
-    	values.put( "text-style"          , TextStyle.NORMAL );
-    	values.put( "text-font"           , "default" );
-    	values.put( "text-size"           , new Value( Units.PX, 10 ) );
-    	values.put( "text-alignment"      , TextAlignment.CENTER );
+    	values.put( "text-mode"            	, TextMode.NORMAL );
+    	values.put( "text-visibility-mode"	, TextVisibilityMode.NORMAL );
+    	values.put( "text-visibility"     	, null );
+    	values.put( "text-color"           	, textColor );
+    	values.put( "text-style"           	, TextStyle.NORMAL );
+    	values.put( "text-font"            	, "default" );
+    	values.put( "text-size"            	, new Value( Units.PX, 10 ) );
+    	values.put( "text-alignment"       	, TextAlignment.CENTER );
+    	values.put( "text-background-mode"	, TextBackgroundMode.NONE );
+    	values.put( "text-background-color"	, textBgColor );
     	
-    	values.put( "icon-mode"           , IconMode.NONE );
-    	values.put( "icon"                , null );
+    	values.put( "icon-mode"           		, IconMode.NONE );
+    	values.put( "icon"                 	, null );
     	
-    	values.put( "visibility-mode"     , VisibilityMode.NORMAL );
-    	values.put( "visibility"          , null );
+    	values.put( "visibility-mode"     	, VisibilityMode.NORMAL );
+    	values.put( "visibility"           	, null );
     	
-    	values.put( "size-mode"           , SizeMode.NORMAL );
-    	values.put( "size"                , new Values( Units.PX, 10, 10, 10 ) );
+    	values.put( "size-mode"           		, SizeMode.NORMAL );
+    	values.put( "size"                 	, new Values( Units.PX, 10, 10, 10 ) );
     	
-    	values.put( "shape"               , Shape.CIRCLE );
-    	values.put( "shape-points"        , null );
-    	values.put( "jcomponent"          , null );
+    	values.put( "shape"                	, Shape.CIRCLE );
+    	values.put( "shape-points"        	, null );
+    	values.put( "jcomponent"           	, null );
     	
-    	values.put( "sprite-orientation"  , SpriteOrientation.NONE );
+    	values.put( "sprite-orientation"  	, SpriteOrientation.NONE );
     	
-    	values.put( "arrow-shape"         , ArrowShape.ARROW );
-    	values.put( "arrow-size"          , new Values( Units.PX, 8, 4 ) );
-    	values.put( "arrow-image"         , null );
+    	values.put( "arrow-shape"         	, ArrowShape.ARROW );
+    	values.put( "arrow-size"          		, new Values( Units.PX, 8, 4 ) );
+    	values.put( "arrow-image"         	, null );
     	
-    	values.put( "canvas-color"        , canvasColor );
+    	values.put( "canvas-color"        	, canvasColor );
     	
     }
     
@@ -626,51 +650,53 @@ public class Style extends StyleConstants
     {
     	if( other != this )
     	{
-        	augmentField( "z-index",              other );
-        	augmentField( "fill-mode",            other );
-        	augmentField( "fill-color",           other );
-        	augmentField( "fill-image",           other );
+        	augmentField( "z-index",					other );
+        	augmentField( "fill-mode",           		other );
+        	augmentField( "fill-color",           		other );
+        	augmentField( "fill-image",           		other );
         	
-        	augmentField( "stroke-mode",          other );
-        	augmentField( "stroke-color",         other );
-        	augmentField( "stroke-width",         other );
+        	augmentField( "stroke-mode",          	other );
+        	augmentField( "stroke-color",         	other );
+        	augmentField( "stroke-width",         	other );
 
-        	augmentField( "shadow-mode",          other );
-        	augmentField( "shadow-color",         other );
-        	augmentField( "shadow-width",         other );
-        	augmentField( "shadow-offset",        other );
+        	augmentField( "shadow-mode",          	other );
+        	augmentField( "shadow-color",         	other );
+        	augmentField( "shadow-width",         	other );
+        	augmentField( "shadow-offset",        	other );
 
-        	augmentField( "padding",              other );
+        	augmentField( "padding",              		other );
 
-        	augmentField( "text-mode",            other );
-        	augmentField( "text-visibility-mode", other );
-        	augmentField( "text-visibility",      other );
-        	augmentField( "text-color",           other );
-        	augmentField( "text-style",           other );
-        	augmentField( "text-font",            other );
-        	augmentField( "text-size",            other );
-        	augmentField( "text-alignment",       other );
+        	augmentField( "text-mode",            		other );
+        	augmentField( "text-visibility-mode", 	other );
+        	augmentField( "text-visibility",      	other );
+        	augmentField( "text-color",           		other );
+        	augmentField( "text-style",           		other );
+        	augmentField( "text-font",            		other );
+        	augmentField( "text-size",            		other );
+        	augmentField( "text-alignment",       	other );
+        	augmentField( "text-background-mode", 	other );
+        	augmentField( "text-background-color", 	other );
 
-        	augmentField( "icon-mode",            other );
-        	augmentField( "icon",                 other );
+        	augmentField( "icon-mode",            		other );
+        	augmentField( "icon",                 		other );
         	
-        	augmentField( "visibility-mode",      other );
-        	augmentField( "visibility",           other );
+        	augmentField( "visibility-mode",      	other );
+        	augmentField( "visibility",           		other );
 
-        	augmentField( "size-mode",            other );
-        	augmentField( "size",                 other );
+        	augmentField( "size-mode",            		other );
+        	augmentField( "size",                 		other );
 
-        	augmentField( "shape",                other );
-        	augmentField( "shape-points",         other );
-        	augmentField( "jcomponent",           other );
+        	augmentField( "shape",                		other );
+        	augmentField( "shape-points",         	other );
+        	augmentField( "jcomponent",           		other );
 
-        	augmentField( "sprite-orientation",   other );
+        	augmentField( "sprite-orientation",   	other );
         	
-        	augmentField( "arrow-shape",          other );
-        	augmentField( "arrow-size",           other );
-        	augmentField( "arrow-image",          other );
+        	augmentField( "arrow-shape",          	other );
+        	augmentField( "arrow-size",           		other );
+        	augmentField( "arrow-image",          	other );
 
-        	augmentField( "canvas-color",         other );
+        	augmentField( "canvas-color",         	other );
     	}
     }
     

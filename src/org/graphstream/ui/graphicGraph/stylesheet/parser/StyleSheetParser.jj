@@ -112,6 +112,7 @@ TOKEN: { < TEXTFONT          : "text-font" > }
 TOKEN: { < TEXTSIZE          : "text-size" > }
 TOKEN: { < TEXTVISIBILITYMODE: "text-visibility-mode" > }
 TOKEN: { < TEXTVISIBILITY    : "text-visibility" > }
+TOKEN: { < TEXTBACKGROUNDMODE: "text-background-mode" > }TOKEN: { < TEXTBACKGROUNDCOLOR: "text-background-color" > }
 
 TOKEN: { < ICONMODE          : "icon-mode" > }
 TOKEN: { < ICON              : "icon" > }
@@ -318,6 +319,7 @@ void style( Style style ):
 	Style.ShadowMode         shadowMode;
 	Style.TextMode           textMode;
 	Style.TextVisibilityMode textVisMode;
+	Style.TextBackgroundMode textBgMode;
 	Style.TextStyle          textStyle;
 	Style.TextAlignment      textAlignment;
 	Style.IconMode           iconMode;
@@ -345,7 +347,9 @@ void style( Style style ):
 	| ( <TEXTMODE>           <COLON> textMode      = textMode()          <SEMICOLON> { style.setValue( "text-mode",            textMode       ); } )
 	| ( <TEXTVISIBILITYMODE> <COLON> textVisMode   = textVisMode()       <SEMICOLON> { style.setValue( "text-visibility-mode", textVisMode    ); } )
 	| ( <TEXTVISIBILITY>     <COLON> values        = values()            <SEMICOLON> { style.setValue( "text-visibility",      values         ); } )
+	| ( <TEXTBACKGROUNDMODE> <COLON> textBgMode    = textBgMode()        <SEMICOLON> { style.setValue( "text-background-mode", textBgMode     ); } )
 	| ( <TEXTCOLOR>          <COLON> colors        = colors()            <SEMICOLON> { style.setValue( "text-color",           colors         ); } )
+	| ( <TEXTBACKGROUNDCOLOR><COLON> colors        = colors()            <SEMICOLON> { style.setValue( "text-background-color", colors        ); } )
 	| ( <TEXTSTYLE>          <COLON> textStyle     = textStyle()         <SEMICOLON> { style.setValue( "text-style",           textStyle      ); } )
 	| ( <TEXTFONT>           <COLON> url           = font()              <SEMICOLON> { style.setValue( "text-font",            url            ); } )
 	| ( <TEXTSIZE>           <COLON> value         = value()             <SEMICOLON> { style.setValue( "text-size",            value          ); } )
@@ -546,6 +550,16 @@ Style.TextVisibilityMode textVisMode():
 	)
 	{ return m; }
 }
+
+Style.TextBackgroundMode textBgMode():
+{
+  	Style.TextBackgroundMode m;
+}
+{
+	( ( <NONE>  { m = Style.TextBackgroundMode.NONE;  } )
+	| ( <PLAIN> { m = Style.TextBackgroundMode.PLAIN; } )
+	)
+	{ return m; } }
 
 Style.TextStyle textStyle():
 {

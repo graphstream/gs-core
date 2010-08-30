@@ -240,7 +240,8 @@ public abstract class DefaultNode extends AbstractElement implements Node
 	@Override
 	public String toString()
 	{
-		return String.format( "[node %s (%d edges)]", getId(), edges.size() );
+	//	return String.format( "[node %s (%d edges)]", getId(), edges.size() );
+		return getId();
 	}
 
 // Nested classes
