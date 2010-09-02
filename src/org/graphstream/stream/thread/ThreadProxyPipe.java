@@ -270,7 +270,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe, MBoxListen
 
 			// Replay all edges and their attributes.
 
-			for( Edge edge: graph.edgeSet() )
+			for( Edge edge: graph.getEachEdge() )
 			{
 				events.post( from, GraphEvents.ADD_EDGE, graphId, sourceTime.newEvent(), edge.getId(),
 						edge.getSourceNode().getId(),

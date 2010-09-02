@@ -82,7 +82,7 @@ public class GraphReplay extends SourceBase implements Source
 					sendNodeAttributeAdded( sourceId, nodeId, key, node.getAttribute( key ) );
 		}
 		
-		for( Edge edge: graph.edgeSet() )
+		for( Edge edge: graph.getEachEdge() )
 		{
 			String edgeId = edge.getId();
 			sendEdgeAdded( sourceId, edgeId, edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );

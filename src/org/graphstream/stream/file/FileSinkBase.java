@@ -114,7 +114,7 @@ public abstract class FileSinkBase
 					nodeAttributeAdded( graphId, timeId++, nodeId, key, node.getAttribute( key ) );
 		}
 		
-		for( Edge edge: graph.edgeSet() )
+		for( Edge edge: graph.getEachEdge() )
 		{
 			String edgeId = edge.getId();
 			edgeAdded( graphId, timeId++, edgeId, edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected() );

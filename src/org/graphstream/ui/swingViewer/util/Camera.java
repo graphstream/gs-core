@@ -243,7 +243,7 @@ public class Camera
 		
 		nodeInvisible.clear();
 		
-		for( Node node: graph.nodeSet() )
+		for( Node node: graph )
 		{
 			boolean visible = isNodeIn( (GraphicNode)node, 0, 0, W, H );
 			

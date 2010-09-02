@@ -24,6 +24,8 @@
 package org.graphstream.graph.implementations;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -449,9 +451,19 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	/**
 	 * @complexity Constant.
 	 */
-	public Iterable<Edge> edgeSet()
+	public Iterable<Edge> getEachEdge()
 	{
 		return edges.values();
+	}
+	
+	public Collection<Edge> getEdgeSet()
+	{
+		return Collections.unmodifiableCollection( edges.values() );
+	}
+	
+	public Collection<Node> getNodeSet()
+	{
+		return Collections.unmodifiableCollection( nodes.values() );
 	}
 
 	/**
@@ -486,7 +498,7 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	/**
 	 * @complexity Constant.
 	 */
-	public Iterable<Node> nodeSet()
+	public Iterable<Node> getEachNode()
 	{
 		return nodes.values();
 	}

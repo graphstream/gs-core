@@ -24,10 +24,10 @@ package org.graphstream.graph;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Collection;
 
 import org.graphstream.stream.AttributeSink;
 import org.graphstream.stream.ElementSink;
-//import org.graphstream.stream.Sink;		// Not needed any more XXX
 import org.graphstream.stream.GraphParseException;
 import org.graphstream.stream.Pipe;
 import org.graphstream.stream.file.FileSink;
@@ -44,14 +44,15 @@ import org.graphstream.stream.file.FileSource;
  *
  * <p>
  * With {@link org.graphstream.stream.Source}, {@link org.graphstream.stream.Sink}
- * and {@link org.graphstream.stream.Sink}, this interface is one of the
+ * and {@link org.graphstream.stream.Pipe}, this interface is one of the
  * most important. A graph is a {@link org.graphstream.stream.Pipe} that buffers
  * the graph events an present the graph structure as it is actually.
  * </p> 
  * 
  * <p>
  * In other words, it allows to browse the graph structure, to explore it, to
- * modify it, and to implement algorithms on it.
+ * modify it, and to implement algorithms on it. This class can be seen as a
+ * snapshot of a stream of event at current time.
  * </p>
  */
 public interface Graph extends Element, Pipe, Iterable<Node>
@@ -100,15 +101,33 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * Set of nodes usable in a for-each instruction.
 	 * @return An "iterable" view of the set of nodes.
 	 * @see #getNodeIterator()
+	 * @see #getEachNode()
 	 */
-	Iterable<? extends Node> nodeSet();
+	Iterable<? extends Node>getEachNode();
 
 	/**
 	 * Set of edges usable in a for-each instruction.
 	 * @return An "iterable" view of the set of edges.
 	 * @see #getEdgeIterator()
+	 * @see #getEdgeSet()
 	 */
-	Iterable<? extends Edge> edgeSet();
+	Iterable<? extends Edge>getEachEdge();
+	
+	/**
+	 * Unmodifiable view of the set of nodes.
+	 * @return A set of nodes that can only be read, not changed.
+	 * @see #getNodeIterator()
+	 * @see #getEachNode()
+	 */
+	Collection<? extends Node> getNodeSet();
+	
+	/**
+	 * Unmodifiable view of the set of edges.
+	 * @return A set of edges that can only be read, not changed.
+	 * @see #getEdgeIterator()
+	 * @see #getEachEdge()
+	 */
+	Collection<? extends Edge> getEdgeSet();
 
 	/**
 	 * The factory used to create node instances.

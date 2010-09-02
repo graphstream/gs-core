@@ -25,6 +25,8 @@ package org.graphstream.graph.implementations;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -291,7 +293,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity O(1)
 	 */
-	public Iterable<Node> nodeSet()
+	public Iterable<Node> getEachNode()
 	{
 		return nodes.values();
 	}
@@ -299,9 +301,19 @@ public class DefaultGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity O(1)
 	 */
-	public Iterable<Edge> edgeSet()
+	public Iterable<Edge> getEachEdge()
 	{
 		return edges.values();
+	}
+	
+	public Collection<Edge> getEdgeSet()
+	{
+		return Collections.unmodifiableCollection( edges.values() );
+	}
+	
+	public Collection<Node> getNodeSet()
+	{
+		return Collections.unmodifiableCollection( nodes.values() );
 	}
 
 	public EdgeFactory edgeFactory()

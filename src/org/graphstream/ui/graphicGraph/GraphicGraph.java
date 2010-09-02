@@ -18,6 +18,8 @@ package org.graphstream.ui.graphicGraph;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.regex.Matcher;
@@ -314,7 +316,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 			lo.x = lo.y = lo.z =  10000000;	// A bug with Float.MAX_VALUE during comparisons ?
 			hi.x = hi.y = hi.z = -10000000;	// A bug with Float.MIN_VALUE during comparisons ?
 			
-			for( Node n: nodeSet() )
+			for( Node n: getEachNode() )
 			{
 				GraphicNode node = (GraphicNode) n;
 				
@@ -625,15 +627,25 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 
 // Graph interface
 
-	public Iterable<? extends Edge> edgeSet()
+	public Iterable<? extends Edge> getEachEdge()
     {
 		return styleGroups.edges();
     }
 
-	public Iterable<? extends Node> nodeSet()
+	public Iterable<? extends Node> getEachNode()
     {
 	    return styleGroups.nodes();
     }
+	
+	public Collection<? extends Node> getNodeSet() 
+	{
+		throw new RuntimeException( "Not yet implemented" );
+	}
+	
+	public Collection<? extends Edge> getEdgeSet()
+	{
+		throw new RuntimeException( "Not yet implemented" );
+	}
 	
 	@SuppressWarnings( "unchecked" )
     public Iterator<Node> iterator()
