@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -113,31 +113,49 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 		throw new RuntimeException( "WTF ?" );
 	}
 	
+	/**
+	 * @complexity Constant.
+	 */
 	public boolean isDirected()
 	{
 		return directed;
 	}
 
+	/**
+	 * @complexity Constant.
+	 */
 	public Node getNode0()
 	{
 		return src;
 	}
 
+	/**
+	 * @complexity Constant.
+	 */
 	public Node getNode1()
 	{
 		return trg;
 	}
 	
+	/**
+	 * @complexity Constant.
+	 */
 	public Node getSourceNode()
 	{
 		return src;
 	}
 
+	/**
+	 * @complexity Constant.
+	 */
 	public Node getTargetNode()
 	{
 		return trg;
 	}
 
+	/**
+	 * @complexity Constant.
+	 */
 	public Node getOpposite( Node node )
 	{
 		if( src == node )return trg;
@@ -157,6 +175,9 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 
 // Commands
 
+	/**
+	 * @complexity Constant.
+	 */
 	public void setDirected( boolean on )
 	{
 		if( directed != on )
@@ -175,6 +196,9 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 		}
 	}
 	
+	/**
+	 * @complexity Constant.
+	 */
 	public void switchDirection()
 	{
 		src.G.listeners.sendEdgeRemoved( myGraphId(), newEvent(), getId() );
@@ -204,6 +228,9 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 	 * graph, or if the edge has no ID yet.
 	 * @throws IdAlreadyInUseException if source or target already register an edge
 	 * with the same name.
+	 * @param source The source node.
+	 * @param taget The target node.
+	 * @param directed Is this edge directed?
 	 */
 	@Deprecated
 	protected void bind( DefaultNode source, DefaultNode target, boolean directed )

@@ -1,17 +1,37 @@
+/*
+ * This file is part of GraphStream.
+ * 
+ * GraphStream is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * GraphStream is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright 2006 - 2010
+ * 	Julien Baudry
+ * 	Antoine Dutot
+ * 	Yoann PignÃ©
+ * 	Guilhelm Savin
+ */
+
 package org.graphstream.graph;
 
 /**
  * Singleton exception.
  *
  * <p>This exception can be raised when a class instance should be unique in one
- * context, but was instanciated several times. This can be used in a
+ * context, but was instantiated several times. This can be used in a
  * "singleton" pattern, but also in set classes (containers) when the same
  * element has been inserted multiple times but should not.</p>
  *
- * @author Antoine Dutot
- * @author Yoann Pigné
  * @since 19990811
- * @version 0.1
  */
 public class IdAlreadyInUseException
 	extends RuntimeException

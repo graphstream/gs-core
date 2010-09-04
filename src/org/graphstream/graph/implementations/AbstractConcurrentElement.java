@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -33,16 +33,11 @@ import org.graphstream.graph.Element;
 import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
 
 /**
- * A base implementation of an element.
+ * A base implementation of an element with multi-thread capabilities. 
  * 
- * <p>
- * This class is thebBase class for {@link org.graphstream.graph.Node},
- * {@link org.graphstream.graph.Edge} and {@link org.graphstream.graph.Graph}.
- * An element is made of an unique and arbitrary identifier that identifies it, and a
- * set of attributes.
- * </p>
+ * It is similar to the  {@link org.graphstream.graph.implementations.AbstractElement} class, but with thread-safe data structures. 
  * 
- * @since 20040910
+ * @see org.graphstream.graph.implementations.AbstractElement
  */
 public abstract class AbstractConcurrentElement implements Element
 {
@@ -59,11 +54,6 @@ public abstract class AbstractConcurrentElement implements Element
 	 */
 	protected ConcurrentHashMap<String,Object> attributes = null;
 	
-//	/**
-//	 * View of the internal hash map that only allows to browse element but not
-//	 * to change them.
-//	 */
-//	protected ConstMap<String,Object> constMap = null;
 
 // Construction
 
@@ -336,9 +326,7 @@ public abstract class AbstractConcurrentElement implements Element
 //		return null;
 //	}
 	
-	/**
-	 * Override the Object method
-	 */
+
 	@Override
 	public String toString()
 	{
@@ -466,8 +454,9 @@ public abstract class AbstractConcurrentElement implements Element
 	 * implemented by sub-elements in order to send events to the graph
 	 * listeners.
 	 * @param sourceId The source of the change.
-	 * @param timeId The source time of the change, for synchronisation.
+	 * @param timeId The source time of the change, for synchronization.
 	 * @param attribute The attribute name that changed.
+	 * @param event The type of event among ADD, CHANGE and REMOVE.
 	 * @param oldValue The old value of the attribute, null if the attribute was
 	 *        added.
 	 * @param newValue The new value of the attribute, null if the attribute is

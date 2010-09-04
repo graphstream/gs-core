@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -53,7 +53,7 @@ import java.util.Stack;
  *
  * <p>
  * The normal use with this class is to first use the {@link #setRoot(Node)}
- * method to initialise the path; then to use the {@link #add(Edge)} method to
+ * method to initialize the path; then to use the {@link #add(Edge)} method to
  * grow it and the {@link #popEdge()} or {@link #popNode()}.
  * 
  */
@@ -118,6 +118,7 @@ public class Path
 	/**
 	 * Says whether the path contains this node or not.
 	 * 
+	 * @param node The node tested for existence in the path.
 	 * @return <code>true</code> if the path contains the node.
 	 */
 	public boolean contains( Node node )
@@ -128,6 +129,7 @@ public class Path
 	/**
 	 * Says whether the path contains this edge or not.
 	 * 
+	 * @param edge The edge tested for existence in the path. 
 	 * @return <code>true</code> if the path contains the edge.
 	 */
 	public boolean contains( Edge edge )
@@ -155,6 +157,7 @@ public class Path
 
 	/**
 	 * Returns the size of the path. Identical to {@link #size()}.
+	 * @return The size of the path.
 	 */
 	public int getNodeCount()
 	{
@@ -298,10 +301,23 @@ public class Path
 		return nodePath.pop();
 	}
 
+	/**
+	 * Looks at the node at the top of the stack without removing it
+   * from the stack.
+   * 
+	 * @return The node at the top of the stack.
+	 */
 	public Node peekNode()
 	{
 		return nodePath.peek();
 	}
+	
+	/**
+	 * Looks at the edge at the top of the stack without removing it
+   * from the stack.
+   * 
+	 * @return The edge at the top of the stack.
+	 */
 
 	public Edge peekEdge()
 	{
@@ -321,6 +337,7 @@ public class Path
 
 	/**
 	 * Get a copy of this path
+	 * @return A copy of this path.
 	 */
 	@SuppressWarnings( "unchecked" )
 	public Path getACopy()
@@ -383,7 +400,9 @@ public class Path
 
 	/**
 	 * Compare the content of the current path and the specified path to decide
-	 * weather they are equal or not
+	 * weather they are equal or not.
+	 * @param p A path to compare to the curent one.
+	 * @return True if both paths are equal.
 	 */
 	public boolean equals( Path p )
 	{
@@ -404,7 +423,7 @@ public class Path
 		return true;
 	}
 
-	// ------------ USEFUL METHODS ------------
+	// ------------ UTILITY METHODS ------------
 
 	/**
 	 * Returns a String description of the path.

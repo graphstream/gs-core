@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -62,7 +62,7 @@ public interface Element
 	String getId();
 
 	/**
-	 * Get the attribute object bound to the given key. The returned value maybe
+	 * Get the attribute object bound to the given key. The returned value may be
 	 * null to indicate the attribute does not exists or is not supported.
 	 * @param key Name of the attribute to search.
 	 * @return The object bound to the given key or null if no object match this
@@ -124,7 +124,6 @@ public interface Element
 	 * same name exists but is not a vector of number, null is returned.
 	 * @param key The name of the number to search.
 	 * @return The vector of numbers or null if not found.
-	 * @complexity O(1)
 	 */
 	ArrayList<? extends Number> getVector( String key );
 	
@@ -134,7 +133,6 @@ public interface Element
 	 * is returned.
 	 * @param key The name of the array to search.
 	 * @return The array of objects or null if not found.
-	 * @complexity O(1)
 	 */
 	Object[] getArray( String key );
 	
@@ -146,20 +144,19 @@ public interface Element
 	 * the key. It is considered a string and you should use "Object.toString()" to get it.
 	 * @param key The name of the hash to search.
 	 * @return The hash or null if not found.
-	 * @complexity O(1)
 	 */
 	HashMap<?,?> getHash( String key );
 
 	/**
-	 * Does this element stores a value for the given attribute key.
+	 * Does this element store a value for the given attribute key?
 	 * @param key The name of the attribute to search.
 	 * @return True if a value is present for this attribute.
 	 */
 	boolean hasAttribute( String key );
 
 	/**
-	 * Does this element stores a value for the given attribute key and this value is an
-	 * instance of the given class.
+	 * Does this element store a value for the given attribute key and this value is an
+	 * instance of the given class?
 	 * @param key The name of the attribute to search.
 	 * @param clazz The expected class of the attribute value.
 	 * @return True if a value is present for this attribute.
@@ -167,7 +164,7 @@ public interface Element
 	boolean hasAttribute( String key, Class<?> clazz );
 
 	/**
-	 * Does this element stores a label value for the given key. A label is an attribute
+	 * Does this element store a label value for the given key? A label is an attribute
 	 * whose value is a string.
 	 * @param key The name of the label.
 	 * @return True if a value is present for this attribute and implements
@@ -176,7 +173,7 @@ public interface Element
 	boolean hasLabel( String key );
 
 	/**
-	 * Does this element stores a number for the given key. A number is an attribute
+	 * Does this element store a number for the given key? A number is an attribute
 	 * whose value is an instance of Number.
 	 * @param key The name of the number.
 	 * @return True if a value is present for this attribute and can contain a
@@ -185,7 +182,7 @@ public interface Element
 	boolean hasNumber( String key );
 
 	/**
-	 * Does this element stores a vector value for the given key. A vector is an attribute
+	 * Does this element store a vector value for the given key? A vector is an attribute
 	 * whose value is a sequence of numbers.
 	 * @param key The name of the vector.
 	 * @return True if a value is present for this attribute and can contain a
@@ -194,7 +191,7 @@ public interface Element
 	boolean hasVector( String key );
 
 	/**
-	 * Does this element stores a array value for the given key. A vector is an attribute
+	 * Does this element store an array value for the given key? A vector is an attribute
 	 * whose value is an array of objects.
 	 * @param key The name of the array.
 	 * @return True if a value is present for this attribute and can contain an array object.
@@ -202,7 +199,7 @@ public interface Element
 	boolean hasArray( String key );
 
 	/**
-	 * Does this element stores a hash value for the given key. A hash is a set of pairs
+	 * Does this element store a hash value for the given key? A hash is a set of pairs
 	 * (key,value) or objects that implement the {@link org.graphstream.graph.CompoundAttribute} class.
 	 * @param key The name of the hash.
 	 * @return True if a value is present for this attribute and can contain a hash.

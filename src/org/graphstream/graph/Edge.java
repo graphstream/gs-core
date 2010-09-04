@@ -38,7 +38,6 @@ public interface Edge extends Element
 	/**
 	 * Is the edge directed ?.
 	 * @return True if the edge is directed.
-	 * @complexity O(1)
 	 */
 	boolean isDirected();
 
@@ -49,7 +48,6 @@ public interface Edge extends Element
 	 * @see #getNode1()
 	 * @see #getSourceNode()
 	 * @return The first node of the edge.
-	 * @complexity O(1)
 	 */
 	Node getNode0();
 
@@ -60,7 +58,6 @@ public interface Edge extends Element
 	 * @see #getNode0()
 	 * @see #getTargetNode()
 	 * @return The second node of the edge.
-	 * @complexity O(1)
 	 */
 	Node getNode1();
 
@@ -72,7 +69,6 @@ public interface Edge extends Element
 	 * @see #getNode0()
 	 * @see #getTargetNode()
 	 * @return The origin node of the edge.
-	 * @complexity O(1)
 	 */
 	Node getSourceNode();
 
@@ -84,7 +80,6 @@ public interface Edge extends Element
 	 * @see #getNode1()
 	 * @see #getSourceNode()
 	 * @return The destination node of the edge.
-	 * @complexity O(1)
 	 */
 	Node getTargetNode();
 
@@ -94,17 +89,15 @@ public interface Edge extends Element
 	 * at any end of the edge.
 	 * @param node The node we search the opposite of.
 	 * @return the opposite node of the given node.
-	 * @complexity O(1)
 	 */
 	Node getOpposite( Node node );
 
 	/**
-	 * Direct or undirect the edge. You make this edge directed, it will be
+	 * Have an edge directed or non-directed. You make this edge directed, it will be
 	 * oriented from its {@link #getSourceNode()} node toward its {@link #getTargetNode()}
 	 * node. You can swap these nodes using {@link #switchDirection()}.
 	 * @param on If true the edge becomes directed, else it becomes
-	 * bidirectionnal.
-	 * @complexity O(1)
+	 * bidirectional.
 	 */
 	@Deprecated 
 	void setDirected( boolean on );
@@ -113,7 +106,6 @@ public interface Edge extends Element
 	 * Swap the source and target nodes. This allows to redirect an edge.
 	 * However, if the edge was not directed, this method does not direct it,
 	 * see the {@link #setDirected(boolean)} method.
-	 * @complexity O(1)
 	 */
 	@Deprecated
 	void switchDirection();	

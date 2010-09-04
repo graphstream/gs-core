@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -37,19 +37,18 @@ import org.graphstream.stream.SourceBase.ElementType;
 
 /**
  * <p>
- * A light node class intended to allow the construction of big graphs
- * (millions of elements).
+ * An implementation of an Edge with multi-thread capabilities. 
  * </p>
  * <p>
- * The main purpose here is to minimize memory consumption even if the
- * management of such a graph implies more CPU consuming. See the
- * <code>complexity</code> tags on each method so as to figure out the impact
- * on the CPU.
+ * It is similar to the  {@link org.graphstream.graph.implementations.AdjacencyListNode} class, but with thread-safe data structures. 
  * </p>
- * 
- * @since July 12 2007
-  * 
+ * <p>
+ * Time and memory complexity is comparable to the values given in {@link org.graphstream.graph.implementations.AdjacencyListNode}. 
+ * Consider some time overhead due to the thread synchronization machinery.
+ * </p>
+ * @see org.graphstream.graph.implementations.AdjacencyListNode
  */
+
 public class ConcurrentNode extends AbstractConcurrentElement implements Node
 {
 	public class NeighborNodeIterator implements Iterator<Node>
@@ -286,7 +285,12 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node
 		Node n = ( (ConcurrentGraph) graph ).lookForNode( id );
 		return hasEdgeFrom(n)==null?false:true;
 	}
-	
+
+	/**
+	 * Tries to find in the edges of this node the one that links the given node to the current one.
+	 * @return An reference to the edge coming from the given node if there is one, null otherwise.
+	 * @param n The node we look for an edge towards. 
+	 */
 	public Edge hasEdgeFrom( Node n )
 	{
 		if( n != null )
@@ -316,7 +320,9 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node
 	}
 
 	/**
-	 * @return an edge is there is one, else null.
+	 * Tries to find in the edges of this node the one that links the current node to the given one.
+	 * @return An reference to the edge leading to the given node if there is one, null otherwise.
+	 * @param n The node we look for an edge towards. 
 	 */
 	public Edge hasEdgeToward( Node n )
 	{

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -36,7 +36,7 @@ import org.graphstream.stream.SourceBase.ElementType;
 
 /**
  * <p>
- * A light node class intended to allow the construction of big graphs
+ * A lightweight node class intended to allow the construction of big graphs
  * (millions of elements).
  * </p>
  * <p>
@@ -245,6 +245,11 @@ public class AdjacencyListNode extends AbstractElement implements Node
 
 	Graph graph;
 
+	/**
+	 * Constructs a node for the given graph with the given identifier.
+	 * @param graph The graph this node will be added to.
+	 * @param id This node's unique identifier.
+	 */
 	public AdjacencyListNode( Graph graph, String id )
 	{
 		super( id );
@@ -295,7 +300,7 @@ public class AdjacencyListNode extends AbstractElement implements Node
 	}
 
 	/**
-	 * @complexity 0(n+d) with d the degree of the node and n the number nodes
+	 * @complexity 0(n+d) with d being the degree of the node and n the number nodes
 	 *             in the graph.
 	 */
 	public Edge getEdgeFrom( String id )
@@ -400,7 +405,11 @@ public class AdjacencyListNode extends AbstractElement implements Node
 		Node n = ( (AdjacencyListGraph) graph ).lookForNode( id );
 		return hasEdgeFrom(n)==null?false:true;
 	}
-	
+	/**
+	 * Tries to find in the edges of this node the one that links the given node to the current one.
+	 * @return An reference to the edge coming from the given node if there is one, null otherwise.
+	 * @param n The node we look for an edge towards. 
+	 */
 	public Edge hasEdgeFrom( Node n )
 	{
 		if( n != null )
@@ -428,7 +437,9 @@ public class AdjacencyListNode extends AbstractElement implements Node
 	}
 
 	/**
-	 * @return an edge is there is one, else null.
+	 * Tries to find in the edges of this node the one that links the current node to the given one.
+	 * @return An reference to the edge leading to the given node if there is one, null otherwise.
+	 * @param n The node we look for an edge towards. 
 	 */
 	public Edge hasEdgeToward( Node n )
 	{

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -55,12 +55,12 @@ import org.graphstream.ui.swingViewer.Viewer;
 
 /**
  * <p>
- * A light graph class intended to allow the construction of big graphs
+ * A lightweight graph class intended to allow the construction of big graphs
  * (millions of elements).
  * </p>
  * 
  * <p>
- * The main purpose here is to minimise memory consumption even if the
+ * The main purpose here is to minimize memory consumption even if the
  * management of such a graph implies more CPU consuming. See the
  * <code>complexity</code> tags on each method so as to figure out the impact
  * on the CPU.
@@ -165,7 +165,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 // Constructors
 
 	/**
-	 * New empty graph, with the empty string as default identifier.
+	 * New empty graph, with a default string as an identifier.
 	 * @see #AdjacencyListGraph(String)
 	 * @see #AdjacencyListGraph(boolean, boolean)
 	 * @see #AdjacencyListGraph(String, boolean, boolean) 
@@ -173,7 +173,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	@Deprecated
 	public AdjacencyListGraph()
 	{
-		this( "AdjListGraph" );
+		this( "AdjacencyListGraph" );
 	}
 	
 	/**
@@ -188,7 +188,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * New empty graph, with the empty string as default identifier.
+	 * New empty graph, with a default string as an identifier.
 	 * @param strictChecking If true any non-fatal error throws an exception.
 	 * @param autoCreate If true (and strict checking is false), nodes are
 	 *        automatically created when referenced when creating a edge, even
@@ -200,7 +200,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	@Deprecated
 	public AdjacencyListGraph( boolean strictChecking, boolean autoCreate )
 	{
-		this( "", strictChecking, autoCreate );
+		this( "AdjacencyListGraph", strictChecking, autoCreate );
 	}
 	
 	/**
@@ -268,7 +268,10 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	{
 		this.nodeFactory = nf;
 	}
-
+	
+	/**
+	 * @complexity O(log(n)) with n being the number of edges in the graph.
+	 */
 	public Edge addEdge( String id, String node1, String node2 ) throws IdAlreadyInUseException, ElementNotFoundException
 	{
 		return addEdge( id, node1, node2, false );
@@ -347,7 +350,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity O(log(n)) with n be the number of edges in the graph.
+	 * @complexity O(log(n)) with n being the number of edges in the graph.
 	 */
 	public Edge addEdge( String id, String from, String to, boolean directed ) throws IdAlreadyInUseException, ElementNotFoundException
 	{
@@ -356,7 +359,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity O(log(n)) with n be the number of nodes in the graph.
+	 * @complexity O(log(n)) with n being the number of nodes in the graph.
 	 */
 	public Node addNode( String id ) throws IdAlreadyInUseException
 	{
@@ -392,7 +395,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity O(1).
+	 * @complexity constant.
 	 */
 	public void clear()
 	{
@@ -407,7 +410,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity O(1).
+	 * @complexity constant.
 	 */
 	public void clearSinks()
 	{
@@ -425,7 +428,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity O(log(n)) with n be the number of edges in the graph.
+	 * @complexity O(log(n)) with n being the number of edges in the graph.
 	 */
 	public Edge getEdge( String id )
 	{
@@ -433,7 +436,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity constant
+	 * @complexity constant.
 	 */
 	public int getEdgeCount()
 	{
@@ -449,7 +452,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity Constant.
+	 * @complexity constant.
 	 */
 	public Iterable<Edge> getEachEdge()
 	{
@@ -467,7 +470,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity O(log(n)) with n be the number of nodes in the graph.
+	 * @complexity O(log(n)) with n being the number of nodes in the graph.
 	 */
 	public Node getNode( String id )
 	{
@@ -475,7 +478,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity Constant.
+	 * @complexity constant.
 	 */
 	public int getNodeCount()
 	{
@@ -483,7 +486,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity Constant.
+	 * @complexity constant.
 	 */
 	public Iterator<Node> getNodeIterator()
 	{
@@ -496,7 +499,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity Constant.
+	 * @complexity constant.
 	 */
 	public Iterable<Node> getEachNode()
 	{
@@ -529,7 +532,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity O( 2*log(n)+log(m) ) with n the number of nodes and m the number of edges in the graph.
+	 * @complexity O( 2*log(n)+log(m) ) with n being the number of nodes and m the number of edges in the graph.
 	 */
 	public Edge removeEdge( String from, String to ) throws ElementNotFoundException
 	{
@@ -561,7 +564,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity O( 2*log(m) ) with  m the number of edges in the graph.
+	 * @complexity O( 2*log(m) ) with  m being the number of edges in the graph.
 	 */
 	public Edge removeEdge( String id ) throws ElementNotFoundException
 	{
@@ -576,7 +579,8 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	/**
 	 * Removes an edge from a given reference to it.
 	 * @param edge The reference of the edge to remove.
-	 * @complexity O( log(m) ) with  m the number of edges in the graph.
+	 * @complexity O( log(m) ) with  m being the number of edges in the graph.
+	 * @return A reference to this edge or null.
 	 */
 	public Edge removeEdge( Edge edge ) throws ElementNotFoundException
 	{
@@ -598,14 +602,13 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity 0( 2*log(n) ) with n the number of nodes in the graph.
+	 * @complexity 0( 2*log(n) ) with n being the number of nodes in the graph.
 	 */
 	public Node removeNode( String id ) throws ElementNotFoundException
 	{
 		Node node = lookForNode( id );
 		if( node != null )
 		{
-//System.err.printf( "%s.removeNode( %s )%n", getId(), id );
 			return removeNode_( getId(), newEvent(), node );
 		}
 		return null;
@@ -614,7 +617,8 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	/**
 	 * Remove a node form a given reference of it.
 	 * @param node The reference of the node to be removed.
-	 * @complexity 0( log(n) ) with n the number of nodes in the graph.
+	 * @complexity 0( log(n) ) with n being the number of nodes in the graph.
+	 * @return A reference to the removed node or null.
 	 */
 	public Node removeNode( Node node ) throws ElementNotFoundException
 	{
@@ -625,7 +629,6 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	{
 		if( node != null )
 		{
-//System.err.printf( "%s.removeNode_(%s, %d, %s)%n", getId(), sourceId, timeId, node.getId() );
 			listeners.sendNodeRemoved( sourceId, timeId, node.getId() );
 			disconnectEdges( node );
 			nodes.remove( node.getId() );
@@ -653,8 +656,9 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	
 	/**
 	 * When a node is unregistered from a graph, it must not keep edges
-	 * connected to nodes still in the graph. This methods unbind all edges
-	 * connected to this node (this also unregister them from the graph).
+	 * connected to nodes still in the graph. This method unbinds all edges
+	 * connected to this node and also unregister them from the graph.
+	 * @param node A reference to the nod which edges are to be removed.
 	 */
 	protected void disconnectEdges( Node node ) throws IllegalStateException
 	{
@@ -667,7 +671,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		{
 			Edge e = ((AdjacencyListNode)node).edges.get( 0 );
 			removeEdge( e );
-			n = node.getDegree(); //edges.size(); ???
+			n = node.getDegree();
 		}
 	}
 
@@ -684,7 +688,8 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	/**
 	 * Tries to retrieve a node in the internal structure identified by the given string.
 	 * @param id The string identifier of the seek node.
-	 * @complexity 0( log(n) ), with n the number of nodes;
+	 * @complexity 0( log(n) ), with n being the number of nodes;
+	 * @return A reference to the node if found, or null if not. 
 	 */
 	protected Node lookForNode( String id )
 	{
@@ -692,10 +697,10 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * 
 	 * Tries to retrieve an edge in the internal structure identified by the given string.
 	 * @param id The string identifier of the seek edges.
-	 * @complexity 0( log(m) ), with m the number of edges;
+	 * @complexity 0( log(m) ), with m being the number of edges;
+	 * @return A reference to the edge if found, or null if not. 
 	 */
 	protected Edge lookForEdge( String id )
 	{
@@ -741,12 +746,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		listeners.sendAttributeChangedEvent( sourceId, timeId, getId(),
 				ElementType.GRAPH, attribute, event, oldValue, newValue );
 	}
-/*
-	public void graphCleared()
-    {
-		clear_( getId(), newEvent() );
-    }
-*/
+
 // Commands -- Utility
 
 	public void read( FileSource input, String filename ) throws IOException, GraphParseException

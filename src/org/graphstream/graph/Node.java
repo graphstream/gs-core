@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -84,7 +84,6 @@ public interface Node extends Element, Iterable<Edge>
 	 * @param id Identifier of the target node.
 	 * @return Directed edge going from this node to 'id', or
 	 * undirected edge if it exists, else null.
-	 * @complexity O(1)
 	 */
 	Edge getEdgeToward( String id );
 
@@ -189,14 +188,12 @@ public interface Node extends Element, Iterable<Edge>
 	/**
 	 * Set of all leaving edges.
 	 * @return A collection of only edges that leave this node plus all undirected edges.
-	 * @complexity O(1)
 	 */
 	Iterable<? extends Edge> getLeavingEdgeSet();
 
 	/**
 	 * Set of all entering edges.
 	 * @return A collection of only edges that enter this node plus all undirected edges.
-	 * @complexity O(1)
 	 */
 	Iterable<? extends Edge> getEnteringEdgeSet();
 

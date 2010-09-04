@@ -28,19 +28,17 @@ import org.graphstream.graph.Node;
 import org.graphstream.stream.SourceBase.ElementType;
 
 /**
-  * <p>
- * A light edge class intended to allow the construction of big graphs
- * (millions of elements).
+ * <p>
+ * An implementation of an Edge with multi-thread capabilities. 
  * </p>
  * <p>
- * The main purpose here is to minimize memory consumption even if the
- * management of such a graph implies more CPU consuming. See the
- * <code>complexity</code> tags on each method so as to figure out the impact
- * on the CPU.
+ * It is similar to the  {@link org.graphstream.graph.implementations.AdjacencyListEdge} class, but with thread-safe data structures. 
  * </p>
- * 
- * @since July 12 2007
- * 
+ * <p>
+ * Time and memory complexity is comparable to the values given in {@link org.graphstream.graph.implementations.AdjacencyListEdge}. 
+ * Consider some time overhead due to the thread synchronization machinery.
+ * </p>
+ * @see org.graphstream.graph.implementations.AdjacencyListEdge
  */
 public class ConcurrentEdge
 	extends AbstractElement implements Edge
@@ -53,7 +51,11 @@ public class ConcurrentEdge
 	boolean directed = false;
 	
 	/**
-	 * @param id
+	 * Constructor for a ConcurrentEdge with specified id nodes and information about the direction.
+	 * @param id Unique identifier.
+	 * @param src Source node.
+	 * @param dst Target Node.
+	 * @param directed Say whether the edge is directed or not.
 	 */
 	protected ConcurrentEdge( String id, Node src, Node dst, boolean directed )
 	{
@@ -81,28 +83,16 @@ public class ConcurrentEdge
 		return ((ConcurrentGraph)n0.graph).newEvent();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.EdgeInterface#getNode0()
-	 */
 	public Node getNode0()
 	{
 		return n0;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.EdgeInterface#getNode1()
-	 */
 	public Node getNode1()
 	{
 		return n1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.EdgeInterface#getOpposite(org.miv.graphstream.graph.NodeInterface)
-	 */
 	public Node getOpposite( Node node )
 	{
 		if( node == n0 )
@@ -113,37 +103,21 @@ public class ConcurrentEdge
 			return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.EdgeInterface#getSourceNode()
-	 */
 	public Node getSourceNode()
 	{
 		return n0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.EdgeInterface#getTargetNode()
-	 */
 	public Node getTargetNode()
 	{
 		return n1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.EdgeInterface#isDirected()
-	 */
 	public boolean isDirected()
 	{
 		return directed;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.EdgeInterface#setDirected(boolean)
-	 */
 	public void setDirected( boolean on )
 	{
 		// XXX Bug, the new edge created in the event stream will loose all its attributes.
@@ -152,10 +126,6 @@ public class ConcurrentEdge
 		((ConcurrentGraph)n0.graph).listeners.sendEdgeAdded( myGraphId(), newEvent(), getId(), n0.getId(), n1.getId(), directed );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.EdgeInterface#switchDirection()
-	 */
 	public void switchDirection()
 	{
 		// XXX Bug, the new edge create in the event stream will loose all its attributes.
@@ -168,10 +138,6 @@ public class ConcurrentEdge
 	}
 
 
-
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.Element#attributeChanged(java.lang.String, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	protected void attributeChanged( String sourceId, long timeId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{

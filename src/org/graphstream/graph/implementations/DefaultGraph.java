@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -143,15 +143,11 @@ public class DefaultGraph extends AbstractElement implements Graph
 	 * The set of listeners of this graph.
 	 */
 	protected GraphListeners listeners;
-	/*
-	protected SourceTime time;
-	protected SinkTime otherTimes;
-	*/
 	
 // Constructors
 
 	/**
-	 * New empty graph, with the empty string as default identifier.
+	 * New empty graph, with a default identifier.
 	 * @see #DefaultGraph(String)
 	 * @see #DefaultGraph(boolean, boolean)
 	 * @see #DefaultGraph(String, boolean, boolean) 
@@ -174,7 +170,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * New empty graph, with the empty string as default identifier.
+	 * New empty graph, with a default identifier.
 	 * @param strictChecking If true any non-fatal error throws an exception.
 	 * @param autoCreate If true (and strict checking is false), nodes are
 	 *        automatically created when referenced when creating a edge, even
@@ -238,7 +234,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	protected long newEvent() { return listeners.newEvent(); }	// XXX how to avoid this ?
 	
 	/**
-	 * @complexity O(1).
+	 * @complexity O(log(n)) with n being the number of nodes.
 	 */
 	public Node getNode( String id )
 	{
@@ -246,7 +242,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	}
 	
 	/**
-	 * @complexity O(1)
+	 * @complexity O(log(m)) with m being the number of edges.
 	 */
 	public Edge getEdge( String id )
 	{
@@ -254,7 +250,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity O(1)
+	 * @complexity Constant.
 	 */
 	public int getNodeCount()
 	{
@@ -262,7 +258,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity O(1)
+	 * @complexity Constant.
 	 */
 	public int getEdgeCount()
 	{
@@ -270,7 +266,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity O(1)
+	 * @complexity Constant.
 	 */
 	public Iterator<Node> getNodeIterator()
 	{
@@ -283,7 +279,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity O(1)
+	 * @complexity Constant.
 	 */
 	public Iterator<Edge> getEdgeIterator()
 	{
@@ -291,7 +287,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	}
 	
 	/**
-	 * @complexity O(1)
+	 * @complexity Constant.
 	 */
 	public Iterable<Node> getEachNode()
 	{
@@ -299,7 +295,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity O(1)
+	 * @complexity Constant.
 	 */
 	public Iterable<Edge> getEachEdge()
 	{
@@ -364,7 +360,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 // Commands
 	
 	/**
-	 * @complexity O(1)
+	 * @complexity Constant.
 	 */
 	public void clearSinks()
 	{
@@ -382,7 +378,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity O(1)
+	 * @complexity Constant.
 	 */
 	public void clear()
 	{
@@ -460,7 +456,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	}
 	
 	/**
-	 * @complexity O(1)
+	 * @complexity O(log(n)) with n being the number of nodes.
 	 */
 	public Node addNode( String id ) throws IdAlreadyInUseException
 	{
@@ -498,7 +494,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity O(1)
+	 * @complexity O(log(n)) with n being the number of nodes.
 	 */
 	public Node removeNode( String id ) throws ElementNotFoundException
 	{
@@ -567,7 +563,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity O(1)
+	 * @complexity O(log(n+m)) with n being the number of nodes and m the number of edges.
 	 */
 	public Edge addEdge( String id, String node1, String node2 )
 		throws IdAlreadyInUseException, ElementNotFoundException
@@ -576,7 +572,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	}
 	
 	/**
-	 * @complexity O(1)
+	 * @complexity O(log(n+m)) with n being the number of nodes and m the number of edges.
 	 */
 	public Edge addEdge( String id, String from, String to, boolean directed )
 		throws IdAlreadyInUseException, ElementNotFoundException
@@ -597,7 +593,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity O(1)
+	 * @complexity O(log(n+m)) with n being the number of nodes and m the number of edges.
 	 */
 	public Edge removeEdge( String from, String to )
 		throws ElementNotFoundException
@@ -662,7 +658,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	}
 
 	/**
-	 * @complexity O(1)
+	 * @complexity O(log(n+m)) with n being the number of nodes and m the number of edges.
 	 */
 	public Edge removeEdge( String id ) throws ElementNotFoundException
 	{

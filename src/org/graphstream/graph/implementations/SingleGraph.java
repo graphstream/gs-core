@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -42,7 +42,7 @@ import org.graphstream.graph.NodeFactory;
 public class SingleGraph extends DefaultGraph
 {
 	/**
-	 * New empty graph, with the empty string as default identifier.
+	 * New empty graph, with a default identifier.
 	 * @see #SingleGraph(String)
 	 * @see #SingleGraph(boolean, boolean)
 	 * @see #SingleGraph(String, boolean, boolean) 
@@ -50,7 +50,7 @@ public class SingleGraph extends DefaultGraph
 	@Deprecated
 	public SingleGraph()
 	{
-		this( "" );
+		this( "SingleGraph" );
 	}
 	
 	/**
@@ -65,7 +65,7 @@ public class SingleGraph extends DefaultGraph
 	}
 
 	/**
-	 * New empty graph, with the empty string as default identifier.
+	 * New empty graph, with a default identifier.
 	 * @param strictChecking If true any non-fatal error throws an exception.
 	 * @param autoCreate If true (and strict checking is false), nodes are
 	 *        automatically created when referenced when creating a edge, even
@@ -77,7 +77,7 @@ public class SingleGraph extends DefaultGraph
 	@Deprecated
 	public SingleGraph( boolean strictChecking, boolean autoCreate )
 	{
-		this( "", strictChecking, autoCreate );
+		this( "SingleGraph", strictChecking, autoCreate );
 	}
 	
 	/**

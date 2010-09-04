@@ -13,7 +13,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -46,7 +46,7 @@ import org.graphstream.stream.file.FileSource;
  * With {@link org.graphstream.stream.Source}, {@link org.graphstream.stream.Sink}
  * and {@link org.graphstream.stream.Pipe}, this interface is one of the
  * most important. A graph is a {@link org.graphstream.stream.Pipe} that buffers
- * the graph events an present the graph structure as it is actually.
+ * the graph events and present the graph structure as it is actually.
  * </p> 
  * 
  * <p>
@@ -86,13 +86,13 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	int getEdgeCount();
 
 	/**
-	 * Iterator on the set of node, in random order.
+	 * Iterator on the set of nodes, in an undefined order.
 	 * @return The iterator.
 	 */
 	Iterator<? extends Node> getNodeIterator();
 
 	/**
-	 * Iterator on the set of edges, in random order.
+	 * Iterator on the set of edges, in an undefined order.
 	 * @return The iterator.
 	 */
 	Iterator<? extends Edge> getEdgeIterator();
@@ -146,7 +146,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	EdgeFactory edgeFactory();
 
 	/**
-	 * Is strict checking enabled?. If strict checking is enabled the graph
+	 * Is strict checking enabled? If strict checking is enabled the graph
 	 * checks for name space conflicts (e.g. insertion of two nodes with the
 	 * same name), removal of non-existing elements, use of non existing
 	 * elements (create an edge between two non existing nodes). Graph implementations
@@ -200,7 +200,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 // Graph construction
 	
 	/**
-	 * Empties the graph completely by removing any references to nodes or edges.
+	 * Empty the graph completely by removing any references to nodes or edges.
 	 * Every attribute is also removed. However, listeners are kept.
 	 * @see #clearSinks()
 	 */
@@ -278,7 +278,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	/**
 	 * Remove an edge given the identifier of its two linked nodes. If the edge
 	 * is directed it is removed only if its source and destination nodes are
-	 * identified by 'from' and 'to' respectively. If the graph is a multi graph
+	 * identified by 'from' and 'to' respectively. If the graph is a multi-graph
 	 * and there are several edges between the two nodes, one of the edge at
 	 * random is removed. An event is sent toward the
 	 * listeners. If strict checking is enabled and at least one of the two
@@ -347,7 +347,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * format by itself and instantiates the corresponding reader automatically.
 	 * If this process fails, a NotFoundException is raised.
 	 * @param filename The graph filename (or URL).
-	 * @throws ElementNotFoundException If the file cannot be found or if the format is not recognised.
+	 * @throws ElementNotFoundException If the file cannot be found or if the format is not recognized.
 	 * @throws GraphParseException If there is a parsing error while reading the file.
 	 * @throws IOException If an input output error occurs during the graph reading.
 	 */
@@ -379,7 +379,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	void write( FileSink output, String filename ) throws IOException;
 
 	/**
-	 * Utility method that create a new graph viewer, and register the graph in
+	 * Utility method that creates a new graph viewer, and register the graph in
 	 * it. Notice that this method is a quick way to see a graph, and only this.
 	 * It can be used to prototype a program, but may be limited. This method
 	 * automatically launch a graph layout algorithm in its own thread to
@@ -391,7 +391,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	org.graphstream.ui.swingViewer.Viewer display();
 	
 	/**
-	 * Utility method that create a new graph viewer, and register the graph in
+	 * Utility method that creates a new graph viewer, and register the graph in
 	 * it. Notice that this method is a quick way to see a graph, and only this.
 	 * It can be used to prototype a program, but is very limited.
 	 * @param autoLayout If true a layout algorithm is launched in its own

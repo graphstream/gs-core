@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="org/graphstream/stream/old/" kind="src" path="src"/>
-	<classpathentry kind="lib" path="lib/batik-awt-util.jar"/>
-	<classpathentry kind="lib" path="lib/batik-dom.jar"/>
-	<classpathentry kind="lib" path="lib/batik-svggen.jar"/>
-	<classpathentry kind="lib" path="lib/batik-util.jar"/>
-	<classpathentry kind="lib" path="lib/batik-xml.jar"/>
 	<classpathentry kind="lib" path="lib/mbox2.jar"/>
 	<classpathentry kind="lib" path="lib/pherd.jar"/>
 	<classpathentry kind="lib" path="lib/util.jar"/>

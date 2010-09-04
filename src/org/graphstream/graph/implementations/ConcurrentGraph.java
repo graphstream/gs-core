@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -55,17 +55,20 @@ import org.graphstream.ui.swingViewer.Viewer;
 
 /**
  * <p>
- * A light graph class intended to allow the construction of big graphs
- * (millions of elements).
+ * An implementation of an Edge with multi-thread capabilities. 
  * </p>
- * 
  * <p>
- * The main purpose here is to minimise memory consumption even if the
- * management of such a graph implies more CPU consuming. See the
- * <code>complexity</code> tags on each method so as to figure out the impact
- * on the CPU.
+ * It is similar to the  {@link org.graphstream.graph.implementations.AdjacencyListGraph} class, 
+ * but with thread-safe data structures. 
  * </p>
+ * <p>
+ * Time and memory complexity is comparable to the values given in 
+ * {@link org.graphstream.graph.implementations.AdjacencyListGraph}. 
+ * Consider some time overhead due to the thread synchronization machinery.
+ * </p>
+ * @see org.graphstream.graph.implementations.AdjacencyListGraph
  */
+
 public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 {
 	public class EdgeIterator implements Iterator<Edge>
@@ -165,22 +168,22 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 // Constructors
 
 	/**
-	 * New empty graph, with the empty string as default identifier.
-	 * @see #AdjacencyListGraph(String)
-	 * @see #AdjacencyListGraph(boolean, boolean)
-	 * @see #AdjacencyListGraph(String, boolean, boolean) 
+	 * New empty graph, with a default string as an identifier.
+	 * @see #ConcurrentGraph(String)
+	 * @see #ConcurrentGraph(boolean, boolean)
+	 * @see #ConcurrentGraph(String, boolean, boolean) 
 	 */
 	@Deprecated
 	public ConcurrentGraph()
 	{
-		this( "AdjListGraph" );
+		this( "ConcurentGraph" );
 	}
 	
 	/**
 	 * New empty graph.
 	 * @param id Unique identifier of the graph.
-	 * @see #AdjacencyListGraph(boolean, boolean)
-	 * @see #AdjacencyListGraph(String, boolean, boolean)
+	 * @see #ConcurrentGraph(boolean, boolean)
+	 * @see #ConcurrentGraph(String, boolean, boolean)
 	 */
 	public ConcurrentGraph( String id )
 	{
@@ -188,19 +191,19 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	}
 
 	/**
-	 * New empty graph, with the empty string as default identifier.
+	 * New empty graph, with a default string as an identifier.
 	 * @param strictChecking If true any non-fatal error throws an exception.
 	 * @param autoCreate If true (and strict checking is false), nodes are
 	 *        automatically created when referenced when creating a edge, even
 	 *        if not yet inserted in the graph.
-	 * @see #AdjacencyListGraph(String, boolean, boolean)
+	 * @see #ConcurrentGraph(String, boolean, boolean)
 	 * @see #setStrict(boolean)
 	 * @see #setAutoCreate(boolean)
 	 */
 	@Deprecated
 	public ConcurrentGraph( boolean strictChecking, boolean autoCreate )
 	{
-		this( "", strictChecking, autoCreate );
+		this( "ConcurentGraph", strictChecking, autoCreate );
 	}
 	
 	/**
@@ -347,7 +350,7 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	}
 
 	/**
-	 * @complexity O(log(n)) with n be the number of edges in the graph.
+	 * @complexity O(log(n)) with n being the number of edges in the graph, plus overhead due to thread synchronization.
 	 */
 	public Edge addEdge( String id, String from, String to, boolean directed ) throws IdAlreadyInUseException, ElementNotFoundException
 	{
@@ -356,7 +359,7 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	}
 
 	/**
-	 * @complexity O(log(n)) with n be the number of nodes in the graph.
+	 * @complexity O(log(n)) with n being the number of nodes in the graph, plus overhead due to thread synchronization.
 	 */
 	public Node addNode( String id ) throws IdAlreadyInUseException
 	{
@@ -392,7 +395,7 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	}
 
 	/**
-	 * @complexity O(1).
+	 * @complexity Constant.
 	 */
 	public void clear()
 	{
@@ -407,7 +410,7 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	}
 
 	/**
-	 * @complexity O(1).
+	 * @complexity Constant.
 	 */
 	public void clearSinks()
 	{
@@ -425,7 +428,7 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	}
 
 	/**
-	 * @complexity O(log(n)) with n be the number of edges in the graph.
+	 * @complexity O(log(n)) with n being the number of edges in the graph, plus overhead due to thread synchronization.
 	 */
 	public Edge getEdge( String id )
 	{
@@ -433,7 +436,7 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	}
 
 	/**
-	 * @complexity constant
+	 * @complexity Constant.
 	 */
 	public int getEdgeCount()
 	{
@@ -441,7 +444,7 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	}
 
 	/**
-	 * @complexity constant
+	 * @complexity Constant.
 	 */
 	public Iterator<Edge> getEdgeIterator()
 	{
@@ -467,7 +470,7 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	}
 
 	/**
-	 * @complexity O(log(n)) with n be the number of nodes in the graph.
+	 * @complexity O(log(n)) with n being the number of nodes in the graph, plus overhead due to thread synchronization.
 	 */
 	public Node getNode( String id )
 	{
@@ -529,7 +532,8 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	}
 
 	/**
-	 * @complexity O( 2*log(n)+log(m) ) with n the number of nodes and m the number of edges in the graph.
+	 * @complexity O( 2*log(n)+log(m) ) with n being the number of nodes and m the number of edges in the graph, 
+	 * plus overhead due to thread synchronization.
 	 */
 	public Edge removeEdge( String from, String to ) throws ElementNotFoundException
 	{
@@ -561,7 +565,8 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	}
 
 	/**
-	 * @complexity O( 2*log(m) ) with  m the number of edges in the graph.
+	 * @complexity O( 2*log(m) ) with  m being the number of edges in the graph, 
+	 * plus overhead due to thread synchronization.
 	 */
 	public Edge removeEdge( String id ) throws ElementNotFoundException
 	{
@@ -576,7 +581,8 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	/**
 	 * Removes an edge from a given reference to it.
 	 * @param edge The reference of the edge to remove.
-	 * @complexity O( log(m) ) with  m the number of edges in the graph.
+	 * @complexity O( log(m) ) with  m the number of edges in the graph, 
+	 * plus overhead due to thread synchronization.
 	 */
 	public Edge removeEdge( Edge edge ) throws ElementNotFoundException
 	{
@@ -598,7 +604,8 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	}
 
 	/**
-	 * @complexity 0( 2*log(n) ) with n the number of nodes in the graph.
+	 * @complexity 0( 2*log(n) ) with n the number of nodes in the graph, 
+	 * plus overhead due to thread synchronization.
 	 */
 	public Node removeNode( String id ) throws ElementNotFoundException
 	{
@@ -614,7 +621,8 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	/**
 	 * Remove a node form a given reference of it.
 	 * @param node The reference of the node to be removed.
-	 * @complexity 0( log(n) ) with n the number of nodes in the graph.
+	 * @complexity 0( log(n) ) with n the number of nodes in the graph, 
+	 * plus overhead due to thread synchronization.
 	 */
 	public Node removeNode( Node node ) throws ElementNotFoundException
 	{
@@ -653,8 +661,9 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	
 	/**
 	 * When a node is unregistered from a graph, it must not keep edges
-	 * connected to nodes still in the graph. This methods unbind all edges
-	 * connected to this node (this also unregister them from the graph).
+	 * connected to nodes still in the graph. This method unbinds all edges
+	 * connected to this node and also unregister them from the graph.
+	 * @param node A reference to the nod which edges are to be removed.
 	 */
 	protected void disconnectEdges( Node node ) throws IllegalStateException
 	{
@@ -684,19 +693,22 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	/**
 	 * Tries to retrieve a node in the internal structure identified by the given string.
 	 * @param id The string identifier of the seek node.
-	 * @complexity 0( log(n) ), with n the number of nodes;
+	 * @complexity 0( log(n) ), with n being the number of nodes, 
+	 * plus overhead due to thread synchronization.
+	 * @return A reference to the node if found, or null if not. 
 	 */
-	protected Node lookForNode( String id )
+protected Node lookForNode( String id )
 	{
 		return nodes.get( id );
 	}
 
-	/**
-	 * 
-	 * Tries to retrieve an edge in the internal structure identified by the given string.
-	 * @param id The string identifier of the seek edges.
-	 * @complexity 0( log(m) ), with m the number of edges;
-	 */
+/**
+ * Tries to retrieve an edge in the internal structure identified by the given string.
+ * @param id The string identifier of the seek edges.
+ * @complexity 0( log(m) ), with m being the number of edges, 
+	 * plus overhead due to thread synchronization.
+ * @return A reference to the edge if found, or null if not. 
+ */
 	protected Edge lookForEdge( String id )
 	{
 		return edges.get( id );

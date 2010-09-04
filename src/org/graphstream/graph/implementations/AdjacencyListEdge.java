@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -29,7 +29,7 @@ import org.graphstream.stream.SourceBase.ElementType;
 
 /**
   * <p>
- * A light edge class intended to allow the construction of big graphs
+ * A lightweight edge class intended to allow the construction of big graphs
  * (millions of elements).
  * </p>
  * <p>
@@ -46,14 +46,30 @@ public class AdjacencyListEdge
 	extends AbstractElement implements Edge
 {
 
+	/**
+	 * The source node of this link.
+	 */
 	AdjacencyListNode n0;
 
+	/**
+	 * The destination node of this link.
+	 */
 	AdjacencyListNode n1;
 
+	/**
+	 * Decides either the edge is directed or not. 
+	 */
 	boolean directed = false;
 	
 	/**
-	 * @param id
+	 * Construct a new edge with an unique identifier, a source node, 
+	 * a destination node and a boolean value deciding whether or not 
+	 * the edge is directed.
+	 *  
+	 * @param id Unique identifier of this edge.
+	 * @param src Source node of this edge.
+	 * @param dst Destination node of this edge.
+	 * @param directed Boolean indicating whether or not the edge is directed.
 	 */
 	protected AdjacencyListEdge( String id, Node src, Node dst, boolean directed )
 	{
@@ -81,28 +97,16 @@ public class AdjacencyListEdge
 		return ((AdjacencyListGraph)n0.graph).newEvent();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.EdgeInterface#getNode0()
-	 */
 	public Node getNode0()
 	{
 		return n0;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.EdgeInterface#getNode1()
-	 */
 	public Node getNode1()
 	{
 		return n1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.EdgeInterface#getOpposite(org.miv.graphstream.graph.NodeInterface)
-	 */
 	public Node getOpposite( Node node )
 	{
 		if( node == n0 )
@@ -113,37 +117,21 @@ public class AdjacencyListEdge
 			return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.EdgeInterface#getSourceNode()
-	 */
 	public Node getSourceNode()
 	{
 		return n0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.EdgeInterface#getTargetNode()
-	 */
 	public Node getTargetNode()
 	{
 		return n1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.EdgeInterface#isDirected()
-	 */
 	public boolean isDirected()
 	{
 		return directed;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.EdgeInterface#setDirected(boolean)
-	 */
 	public void setDirected( boolean on )
 	{
 		// XXX Bug, the new edge created in the event stream will loose all its attributes.
@@ -152,15 +140,10 @@ public class AdjacencyListEdge
 		((AdjacencyListGraph)n0.graph).listeners.sendEdgeAdded( myGraphId(), newEvent(), getId(), n0.getId(), n1.getId(), directed );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.miv.graphstream.graph.EdgeInterface#switchDirection()
-	 */
 	public void switchDirection()
 	{
 		// XXX Bug, the new edge create in the event stream will loose all its attributes.
 		((AdjacencyListGraph)n0.graph).listeners.sendEdgeRemoved( myGraphId(), newEvent(), getId() );
-		
 		AdjacencyListNode n = n0;
 		n0 = n1;
 		n1 = n;
@@ -169,9 +152,6 @@ public class AdjacencyListEdge
 
 
 
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.Element#attributeChanged(java.lang.String, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	protected void attributeChanged( String sourceId, long timeId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue )
 	{

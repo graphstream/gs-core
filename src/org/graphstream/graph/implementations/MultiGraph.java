@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -41,7 +41,7 @@ import org.graphstream.graph.NodeFactory;
 public class MultiGraph extends DefaultGraph
 {
 	/**
-	 * New empty graph, with the empty string as default identifier.
+	 * New empty graph, with a default identifier.
 	 * @see #MultiGraph(String)
 	 * @see #MultiGraph(boolean, boolean)
 	 * @see #MultiGraph(String, boolean, boolean) 
@@ -49,7 +49,7 @@ public class MultiGraph extends DefaultGraph
 	@Deprecated
 	public MultiGraph()
 	{
-		this( "" );
+		this( "MultiGraph" );
 	}
 	
 	/**
@@ -64,7 +64,7 @@ public class MultiGraph extends DefaultGraph
 	}
 
 	/**
-	 * New empty graph, with the empty string as default identifier.
+	 * New empty graph, with a default identifier.
 	 * @param strictChecking If true any non-fatal error throws an exception.
 	 * @param autoCreate If true (and strict checking is false), nodes are
 	 *        automatically created when referenced when creating a edge, even
@@ -76,7 +76,7 @@ public class MultiGraph extends DefaultGraph
 	@Deprecated
 	public MultiGraph( boolean strictChecking, boolean autoCreate )
 	{
-		this( "", strictChecking, autoCreate );
+		this( "MultiGraph", strictChecking, autoCreate );
 	}
 	
 	/**

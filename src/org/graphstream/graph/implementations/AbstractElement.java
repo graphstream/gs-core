@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -34,7 +34,7 @@ import org.graphstream.graph.Element;
  * A base implementation of an element.
  * 
  * <p>
- * This class is thebBase class for {@link org.graphstream.graph.Node},
+ * This class is the Base class for {@link org.graphstream.graph.Node},
  * {@link org.graphstream.graph.Edge} and {@link org.graphstream.graph.Graph}.
  * An element is made of an unique and arbitrary identifier that identifies it, and a
  * set of attributes.
@@ -56,12 +56,6 @@ public abstract class AbstractElement implements Element
 	 * (key,value) where the key is the attribute name and the value an Object.
 	 */
 	protected HashMap<String,Object> attributes = null;
-	
-//	/**
-//	 * View of the internal hash map that only allows to browse element but not
-//	 * to change them.
-//	 */
-//	protected ConstMap<String,Object> constMap = null;
 
 // Construction
 
@@ -91,6 +85,9 @@ public abstract class AbstractElement implements Element
 	protected abstract String myGraphId();		// XXX
 	protected abstract long newEvent();			// XXX
 
+	/**
+	 * @complexity O(log(n)) with n being the number of attributes of this element. 
+	 */
 	public Object getAttribute( String key )
 	{
 		if( attributes != null )
@@ -99,6 +96,9 @@ public abstract class AbstractElement implements Element
 		return null;
 	}
 	
+	/**
+	 * @complexity O(log(n*m)) with n being the number of attributes of this element and m the number of keys given. 
+	 */
 	public Object getFirstAttributeOf( String ... keys )
 	{
 		Object o = null;
@@ -117,6 +117,9 @@ public abstract class AbstractElement implements Element
 		return o;
 	}
 
+	/**
+	 * @complexity O(log(n)) with n being the number of attributes of this element. 
+	 */
 	public Object getAttribute( String key, Class<?> clazz )
 	{
 		if( attributes != null )
@@ -130,6 +133,9 @@ public abstract class AbstractElement implements Element
 		return null;
 	}
 	
+	/**
+	 * @complexity O(log(n*m)) with n being the number of attributes of this element and m the number of keys given. 
+	 */
 	public Object getFirstAttributeOf( Class<?> clazz, String ... keys )
 	{
 		Object o = null;
@@ -148,6 +154,9 @@ public abstract class AbstractElement implements Element
 		return null;
 	}
 
+	/**
+	 * @complexity O(log(n)) with n being the number of attributes of this element. 
+	 */
 	public CharSequence getLabel( String key )
 	{
 		if( attributes != null )
@@ -161,6 +170,9 @@ public abstract class AbstractElement implements Element
 		return null;
 	}
 
+	/**
+	 * @complexity O(log(n)) with n being the number of attributes of this element. 
+	 */
 	public double getNumber( String key )
 	{
 		if( attributes != null )
@@ -174,6 +186,9 @@ public abstract class AbstractElement implements Element
 		return Double.NaN;
 	}
 	
+	/**
+	 * @complexity O(log(n)) with n being the number of attributes of this element. 
+	 */
 	@SuppressWarnings("unchecked")
     public ArrayList<? extends Number> getVector( String key )
 	{
@@ -188,6 +203,9 @@ public abstract class AbstractElement implements Element
 		return null;
 	}
 	
+	/**
+	 * @complexity O(log(n)) with n being the number of attributes of this element. 
+	 */
 	public Object[] getArray( String key )
 	{
 		if( attributes != null )
@@ -201,6 +219,9 @@ public abstract class AbstractElement implements Element
 		return null;
 	}
 	
+	/**
+	 * @complexity O(log(n)) with n being the number of attributes of this element. 
+	 */
 	public HashMap<?,?> getHash( String key )
 	{
 		if( attributes != null )
@@ -219,6 +240,9 @@ public abstract class AbstractElement implements Element
 		return null;
 	}
 
+	/**
+	 * @complexity O(log(n)) with n being the number of attributes of this element. 
+	 */
 	public boolean hasAttribute( String key )
 	{
 		if( attributes != null )
@@ -227,6 +251,9 @@ public abstract class AbstractElement implements Element
 		return false;
 	}
 
+	/**
+	 * @complexity O(log(n)) with n being the number of attributes of this element. 
+	 */
 	public boolean hasAttribute( String key, Class<?> clazz )
 	{
 		if( attributes != null )
@@ -240,6 +267,9 @@ public abstract class AbstractElement implements Element
 		return false;
 	}
 
+	/**
+	 * @complexity O(log(n)) with n being the number of attributes of this element. 
+	 */
 	public boolean hasLabel( String key )
 	{
 		if( attributes != null )
@@ -253,6 +283,9 @@ public abstract class AbstractElement implements Element
 		return false;
 	}
 	
+	/**
+	 * @complexity O(log(n)) with n being the number of attributes of this element. 
+	 */
 	public boolean hasNumber( String key )
 	{
 		if( attributes != null )
@@ -266,6 +299,9 @@ public abstract class AbstractElement implements Element
 		return false;
 	}
 	
+	/**
+	 * @complexity O(log(n)) with n being the number of attributes of this element. 
+	 */
 	public boolean hasVector( String key )
 	{
 		if( attributes != null )
@@ -279,6 +315,9 @@ public abstract class AbstractElement implements Element
 		return false;
 	}
 	
+	/**
+	 * @complexity O(log(n)) with n being the number of attributes of this element. 
+	 */
 	public boolean hasArray( String key )
 	{
 		if( attributes != null )
@@ -292,6 +331,9 @@ public abstract class AbstractElement implements Element
 		return false;
 	}
 	
+	/**
+	 * @complexity O(log(n)) with n being the number of attributes of this element. 
+	 */
 	public boolean hasHash( String key )
 	{
 		if( attributes != null )
@@ -377,6 +419,9 @@ public abstract class AbstractElement implements Element
 		}
 	}
 
+	/**
+	 * @complexity O(log(n)) with n being the number of attributes of this element. 
+	 */
 	public void addAttribute( String attribute, Object ... values )
 	{
 		addAttribute_( myGraphId(), newEvent(), attribute, values );
@@ -405,6 +450,9 @@ public abstract class AbstractElement implements Element
 		attributeChanged( sourceId, timeId, attribute, event, old_value, value );
 	}
 	
+	/**
+	 * @complexity O(log(n)) with n being the number of attributes of this element. 
+	 */
 	public void changeAttribute( String attribute, Object ... values )
 	{
 		changeAttribute_( myGraphId(), newEvent(), attribute, values );
@@ -415,6 +463,9 @@ public abstract class AbstractElement implements Element
 		addAttribute_( sourceId, timeId, attribute, values );
 	}
 	
+	/**
+	 * @complexity O(log(n)) with n being the number of attributes of this element. 
+	 */
 	public void setAttribute( String attribute, Object ... values )
 	{
 		setAttribute_( myGraphId(), newEvent(), attribute, values );
@@ -425,6 +476,9 @@ public abstract class AbstractElement implements Element
 		addAttribute_( sourceId, timeId, attribute, values );
 	}
 	
+	/**
+	 * @complexity O(log(n)) with n being the number of attributes of this element. 
+	 */
 	public void addAttributes( Map<String,Object> attributes )
 	{
 		addAttributes_( myGraphId(), newEvent(), attributes );
@@ -442,6 +496,9 @@ public abstract class AbstractElement implements Element
 			addAttribute_( sourceId, timeId, i.next(), j.next() );
 	}
 	
+	/**
+	 * @complexity O(log(n)) with n being the number of attributes of this element. 
+	 */
 	public void removeAttribute( String attribute )
 	{
 		removeAttribute_( myGraphId(), newEvent(), attribute );
@@ -466,8 +523,9 @@ public abstract class AbstractElement implements Element
 	 * implemented by sub-elements in order to send events to the graph
 	 * listeners.
 	 * @param sourceId The source of the change.
-	 * @param timeId The source time of the change, for synchronisation.
+	 * @param timeId The source time of the change, for synchronization.
 	 * @param attribute The attribute name that changed.
+	 * @param event The type of event among ADD, CHANGE and REMOVE.
 	 * @param oldValue The old value of the attribute, null if the attribute was
 	 *        added.
 	 * @param newValue The new value of the attribute, null if the attribute is

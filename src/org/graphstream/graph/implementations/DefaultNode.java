@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -138,7 +138,7 @@ public abstract class DefaultNode extends AbstractElement implements Node
 	}
 	
 	/**
-	 * @complexity of the breath first iterator O(n+m) with n the number of
+	 * @complexity Same as the breath first iterator: O(n+m) with n the number of
 	 *             nodes and m the number of edges.
 	 */
 	public Iterator<Node> getBreadthFirstIterator()
@@ -147,7 +147,7 @@ public abstract class DefaultNode extends AbstractElement implements Node
 	}
 	
 	/**
-	 * @complexity of the breath first iterator O(n+m) with n the number of
+	 * @complexity Same as the breath first iterator: O(n+m) with n the number of
 	 *             nodes and m the number of edges.
 	 */
 	public Iterator<Node> getBreadthFirstIterator( boolean directed )
@@ -156,7 +156,7 @@ public abstract class DefaultNode extends AbstractElement implements Node
 	}
 	
 	/**
-	 * @complexity of the depth first iterator O(n+m) with n the number of nodes
+	 * @complexity Same as the depth first iterator: O(n+m) with n the number of nodes
 	 *             and m the number of edges.
 	 */
 	public Iterator<Node> getDepthFirstIterator()
@@ -165,7 +165,7 @@ public abstract class DefaultNode extends AbstractElement implements Node
 	}
 	
 	/**
-	 * @complexity of the depth first iterator O(n+m) with n the number of nodes
+	 * @complexity Same as the depth first iterator: O(n+m) with n the number of nodes
 	 *             and m the number of edges.
 	 */
 	public Iterator<Node> getDepthFirstIterator( boolean directed )
@@ -209,6 +209,7 @@ public abstract class DefaultNode extends AbstractElement implements Node
 	 * @param tag Tag of the edge.
 	 * @param target Target node.
 	 * @param directed If the edge is directed only from this node to the target.
+	 * @return A reference to the created edge.
 	 */
 	protected abstract Edge addEdgeToward( String tag, DefaultNode target, boolean directed )
 		throws IllegalArgumentException;

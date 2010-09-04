@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -28,29 +28,14 @@ import java.util.Map;
 
 import org.graphstream.graph.Element;
 
+
 /**
- * Any element of the graph (node, edge or graph).
+ * An implementation of an {@ link org.graphstream.graph.Element}.
  * 
  * <p>
- * Base class for {@link org.graphstream.graph.Node},
- * {@link org.graphstream.graph.Edge} and
- * {@link org.graphstream.graph.Graph}. An element is made of an unique and
- * arbitrary identifier that identifies it, and a set of attributes.
+ * It allows only one attribute and has no internal map structure. <b>It is not used and may be removed.</b>
  * </p>
  * 
- * <p>
- * Attributes can be any object and are identified by arbitrary strings. Some
- * attributes are stored as numbers or strings and are in this case named
- * number, label or vector. There are utility methods to handle these attributes
- * ({@link #getNumber(String)}, {@link #getLabel(String)}) or
- * {@link #getVector(String)}, however they are  also accessible through the
- * more general method {@link #getAttribute(String)}.
- * </p>
- * 
- * @see org.graphstream.graph.Graph
- * @see org.graphstream.graph.Node
- * @see org.graphstream.graph.Edge
- * @since 20040910
  */
 public abstract class OneAttributeElement implements Element
 {
@@ -82,49 +67,31 @@ public abstract class OneAttributeElement implements Element
 
 // Accessors
 
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.lementInterface#getId()
-	 */
 	public String getId()
 	{
 		return id;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.lementInterface#getAttribute(java.lang.String)
-	 */
 	public Object getAttribute( String key )
 	{
 		return attribute;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.lementInterface#getFirstAttributeOf(java.lang.String)
-	 */
 	public Object getFirstAttributeOf( String ... keys )
 	{
 		return attribute;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.lementInterface#getAttribute(java.lang.String, java.lang.Class)
-	 */
-	public Object getAttribute( String key, Class<?> clazz )
+		public Object getAttribute( String key, Class<?> clazz )
 	{
 		return attribute;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.lementInterface#getFirstAttributeOf(java.lang.Class, java.lang.String)
-	 */
 	public Object getFirstAttributeOf( Class<?> clazz, String ... keys )
 	{
 		return attribute;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.lementInterface#getLabel(java.lang.String)
-	 */
 	public CharSequence getLabel( String key )
 	{
 			if( attribute != null && attribute instanceof CharSequence )
@@ -132,9 +99,6 @@ public abstract class OneAttributeElement implements Element
 			return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.lementInterface#getNumber(java.lang.String)
-	 */
 	public double getNumber( String key )
 	{
 					if( attribute != null && attribute instanceof Number )
@@ -144,11 +108,8 @@ public abstract class OneAttributeElement implements Element
 		return Double.NaN;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.lementInterface#getVector(java.lang.String)
-	 */
 	@SuppressWarnings("unchecked")
-    public ArrayList<? extends Number> getVector( String key )
+	public ArrayList<? extends Number> getVector( String key )
 	{
 			if( attribute != null && attribute instanceof ArrayList )
 				return ((ArrayList<? extends Number>)attribute);
@@ -156,18 +117,12 @@ public abstract class OneAttributeElement implements Element
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.lementInterface#hasAttribute(java.lang.String)
-	 */
 	public boolean hasAttribute( String key )
 	{
 		
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.lementInterface#hasAttribute(java.lang.String, java.lang.Class)
-	 */
 	public boolean hasAttribute( String key, Class<?> clazz )
 	{
 			if( attribute != null )
@@ -175,9 +130,6 @@ public abstract class OneAttributeElement implements Element
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.lementInterface#hasLabel(java.lang.String)
-	 */
 	public boolean hasLabel( String key )
 	{
 			if( attribute != null )
@@ -187,9 +139,6 @@ public abstract class OneAttributeElement implements Element
 		return false;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.lementInterface#hasNumber(java.lang.String)
-	 */
 	public boolean hasNumber( String key )
 	{
 			if( attribute != null )
@@ -199,9 +148,6 @@ public abstract class OneAttributeElement implements Element
 		return false;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.lementInterface#hasVector(java.lang.String)
-	 */
 	public boolean hasVector( String key )
 	{
 			if( attribute != null && attribute instanceof ArrayList<?> )
@@ -211,17 +157,11 @@ public abstract class OneAttributeElement implements Element
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.lementInterface#getAttributeKeyIterator()
-	 */
 	public Iterator<String> getAttributeKeyIterator()
 	{
 				return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.lementInterface#getAttributeMap()
-	 */
 	public Map<String,Object> getAttributeMap()
 	{
 				return null;
@@ -238,26 +178,17 @@ public abstract class OneAttributeElement implements Element
 
 // Commands
 	
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.lementInterface#clearAttributes()
-	 */
 	public void clearAttributes()
 	{
 		attribute = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.lementInterface#addAttribute(java.lang.String, java.lang.Object)
-	 */
 	public void addAttribute( String attribute, Object value )
 	{
 		this.attribute= value;
 //		System.out.println(attribute+" = "+value.toString());
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.lementInterface#changeAttribute(java.lang.String, java.lang.Object)
-	 */
 	public void changeAttribute( String attribute, Object value )
 	{
 		addAttribute( attribute, value );
@@ -265,9 +196,6 @@ public abstract class OneAttributeElement implements Element
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.lementInterface#addAttributes(java.util.Map)
-	 */
 	public void addAttributes( Map<String,Object> attributes )
 	{
 //		System.out.println(attributes.toString());
@@ -276,23 +204,25 @@ public abstract class OneAttributeElement implements Element
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.miv.graphstream.graph.lementInterface#removeAttribute(java.lang.String)
-	 */
 	public void removeAttribute( String attribute )
 	{
 		this.attribute=null;
 	}
 
+	public static enum AttributeChangeEvent { ADD, CHANGE, REMOVE };
+	
 	/**
 	 * Called for each change in the attribute set. This method must be
-	 * implemented by subelements in order to send events to the graph
+	 * implemented by sub-elements in order to send events to the graph
 	 * listeners.
+	 * @param sourceId The source of the change.
+	 * @param timeId The source time of the change, for synchronization.
 	 * @param attribute The attribute name that changed.
+	 * @param event The type of event among ADD, CHANGE and REMOVE.
 	 * @param oldValue The old value of the attribute, null if the attribute was
 	 *        added.
 	 * @param newValue The new value of the attribute, null if the attribute is
 	 *        about to be removed.
 	 */
-	protected abstract void attributeChanged( String attribute, Object oldValue, Object newValue );
+	protected abstract void attributeChanged( String sourceId, long timeId, String attribute, AttributeChangeEvent event, Object oldValue, Object newValue );
 }
