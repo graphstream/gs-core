@@ -133,7 +133,7 @@ public interface FileSource extends Source
 	 * For this method to work, you must have called {@link #begin(InputStream)} or
 	 * {@link #begin(String)} before. This method return true while there are still events to
 	 * read.
-	 * @returns true if there are still events to read, false as soon as the file is finished.
+	 * @return true if there are still events to read, false as soon as the file is finished.
 	 * @throws IOException If an I/O error occurs while reading.
 	 */
 	boolean nextEvents() throws IOException;
@@ -143,7 +143,7 @@ public interface FileSource extends Source
 	 * a group of events that are considered occurring at the same time. Most file formats do not
 	 * have this notion of step. The DGS format designed for GraphStream handles steps. This method
 	 * return true while there are still events to read.
-	 * @returns true if there are still events to read, false as soon as the file is finished.
+	 * @return true if there are still events to read, false as soon as the file is finished.
 	 * @throws IOException If an I/O error occurs while reading.
 	 */
 	boolean nextStep() throws IOException;

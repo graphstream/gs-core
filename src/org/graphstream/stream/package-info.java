@@ -31,20 +31,21 @@
  * </p>
  * 
  * <p>
- * Streams are produced form an outside source of events. See the {@link Source} Interface for more information 
+ * Streams are produced form an outside source of events. See the {@link org.graphstream.stream.Source} Interface for more information 
  * about event producers. It can be a file (with it's own description of a graph format) or any file descriptor 
  * like an url. See the {@link org.graphstream.stream.file.FileSource} interface for more information about 
  * file-based event producers. It can also be originated from another program running in another thread (see 
- * {@link ProxyPipe} and {@link org.graphstream.stream.thread.ThreadProxyPipe}).
+ * {@link org.graphstream.stream.ProxyPipe} and {@link org.graphstream.stream.thread.ThreadProxyPipe}).
  * </p>
  * 
  * <p>
- * Objects responsible for receiving streams of events and dealing with it are {@like Sink}s. Sinks can produce 
- * output files (see {@link org.graphstream.stream.file.FileSink})or being used to display the graph on a screen.
+ * Objects responsible for receiving streams of events and dealing with it are {@link org.graphstream.stream.Sink}s. 
+ * Sinks can produce output files (see {@link org.graphstream.stream.file.FileSink})or being used to display the graph on a screen.
  * </p>
  * 
- * <p> Some objects are both {@link Source} and {@link Sink}, they receive events but also send some events. 
- * They are {@link Pipe}s. The {@link org.graphstream.graph.Graph} interface is a famous {@link Pipe}.      
+ * <p> Some objects are both {@link org.graphstream.stream.Source} and {@link org.graphstream.stream.Sink}, 
+ * they receive events but also send some events. They are {@link org.graphstream.stream.Pipe}s. The 
+ * {@link org.graphstream.graph.Graph} interface is a famous {@link org.graphstream.stream.Pipe}.      
  * 
  */
 package org.graphstream.stream;

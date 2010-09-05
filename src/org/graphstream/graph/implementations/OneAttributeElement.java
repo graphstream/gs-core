@@ -30,7 +30,7 @@ import org.graphstream.graph.Element;
 
 
 /**
- * An implementation of an {@ link org.graphstream.graph.Element}.
+ * An implementation of an {@link org.graphstream.graph.Element}.
  * 
  * <p>
  * It allows only one attribute and has no internal map structure. <b>It is not used and may be removed.</b>

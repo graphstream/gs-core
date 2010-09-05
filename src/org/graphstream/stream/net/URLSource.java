@@ -53,7 +53,7 @@ public interface URLSource extends Source
 	 * Try to process one graph event, or as few as possible, if more must be read at once.
 	 * For this method to work, you must have called {@link #begin(URL)}. 
 	 * This method return true while there are still events to read.
-	 * @returns true if there are still events to read, false as soon as the file is finished.
+	 * @return true if there are still events to read, false as soon as the file is finished.
 	 * @throws IOException If an I/O error occurs while reading.
 	 */
 	boolean nextEvents() throws IOException;
