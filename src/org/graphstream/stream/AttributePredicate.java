@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -24,12 +24,12 @@
 package org.graphstream.stream;
 
 /**
- * Tell if an attribute is recognised.
+ * Tell if an attribute is recognized.
  */
 public interface AttributePredicate
 {
 	/**
-	 * Tell if an attribute is recognised or not. The
+	 * Tell if an attribute is recognized or not. The
 	 * predicate can work on the name of the attribute, on its value or on both.
 	 * @param attributeName The name of the attribute.
 	 * @param attributeValue The value of the attribute.

@@ -13,7 +13,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 20010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -46,7 +46,7 @@ import org.graphstream.graph.Node;
  * </p>
  * 
  * <p>
- * In order to implement an output you have to :
+ * In order to implement an output you have to:
  * <ul>
  * 		<li>Eventually override {@link #createOutputStream(OutputStream)} or
  * 			{@link #createOutputStream(String)} to replace the default instance of

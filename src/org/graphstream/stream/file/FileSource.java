@@ -13,7 +13,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -40,7 +40,7 @@ import org.graphstream.stream.Source;
  * </p>
  * 
  * <p>
- * The file package is designed under the idea that is provides graph inputs from files that
+ * The file package is designed under the idea that it provides graph inputs from files that
  * store the graph under a given file format and encoding. The package provides decoders for
  * all these formats.
  * </p>

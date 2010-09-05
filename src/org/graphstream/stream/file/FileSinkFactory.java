@@ -13,7 +13,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -28,14 +28,14 @@ package org.graphstream.stream.file;
  * 
  * <p>
  * This class tries to instantiate a writer given a filename.
- * Actually it purely tries to analyse the extension and propose
+ * Actually it purely tries to analyze the extension and propose
  * the writer according to this extension.
  * </p>
  */
 public class FileSinkFactory
 {
 	/**
-	 * Look at the file name given and its extension and propose a file output for the format
+	 * Looks at the file name given and its extension and propose a file output for the format
 	 * that match this extension.
 	 * @param filename The file name where the graph will be written.
 	 * @return A file sink or null.

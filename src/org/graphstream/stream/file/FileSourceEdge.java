@@ -13,7 +13,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -33,12 +33,12 @@ import java.util.HashSet;
  *
  * <p>
  * The edge graph format is a very simple and lightweight format where
- * each line describe an edge by giving two node names. The nodes are
+ * each line describes an edge by giving two node names. The nodes are
  * created implicitly.
  * </p>
  * 
  * <p>
- * This reader also understand the derivative format where a line contains
+ * This reader also understands the derivative format where a line contains
  * a first node name, followed by several node names separated by spaces.
  * In this case it links the first node with all other node name following on the line.
  * </p>

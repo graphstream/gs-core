@@ -13,10 +13,10 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
- * 	Yoann Pign�
+ * 	Yoann Pigné
  * 	Guilhelm Savin
  */
 
@@ -37,6 +37,7 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleSheet;
  * <p>Do not confuse this with the SVG export capabilities of the graph viewer. The SVG export
  * of the viewer provides the most exact copy of what you see on screen. This class is made
  * to export only nodes and edges without styling to SVG.</p>
+ * 
  * 
  * <p>Although there is no styling, each node and edge is put in a SVG group with the
  * identifier of the corresponding element in the graph. A minimal CSS style sheet is included

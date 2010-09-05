@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -40,13 +40,16 @@ import org.graphstream.ui.swingViewer.GraphRenderer;
 
 /**
  * Output graph in image files.
+ * 
+ * <p>
  * Given a prefix "dir/prefix_" and an output policy, this sink will output
  * graph in an image file which name is prefix + a growing counter.
- * 
+ * </p>
+ * <p>
  * Then images can be processed to produce a movie.
  * For example, with mencoder, the following produce high quality movie :
- * 
- * <script type='bash'>
+ * </p>
+ * <pre>
  * 
  * #!/bin/bash
  *
@@ -60,7 +63,7 @@ import org.graphstream.ui.swingViewer.GraphRenderer;
  * 
  * mencoder "mf://$PREFIX*.$EXT" -mf fps=$FPS:type=$EXT -ovc lavc -lavcopts $OPTS -o $OUTPUT -nosound -vf scale 
  *
- * </script>
+ * </pre>
  */
 public class FileSinkImages
 	extends FileSinkBase

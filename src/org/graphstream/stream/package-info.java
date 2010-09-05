@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -22,6 +22,29 @@
  */
 
 /**
- * TODO
+ * A major package responsible for the production and management of streams of events. 
+ * 
+ * <p>
+ * GraphStream deal with dynamic graphs. The idea of dynamics is handled by the general idea that elements 
+ * of the dynamics are events thats occur at given dates. this events are produced by producers (or sources) 
+ * and a aimed at target (sinks). A set of events moving from a source to a sink it a stream of events. 
+ * </p>
+ * 
+ * <p>
+ * Streams are produced form an outside source of events. See the {@link Source} Interface for more information 
+ * about event producers. It can be a file (with it's own description of a graph format) or any file descriptor 
+ * like an url. See the {@link org.graphstream.stream.file.FileSource} interface for more information about 
+ * file-based event producers. It can also be originated from another program running in another thread (see 
+ * {@link ProxyPipe} and {@link org.graphstream.stream.thread.ThreadProxyPipe}).
+ * </p>
+ * 
+ * <p>
+ * Objects responsible for receiving streams of events and dealing with it are {@like Sink}s. Sinks can produce 
+ * output files (see {@link org.graphstream.stream.file.FileSink})or being used to display the graph on a screen.
+ * </p>
+ * 
+ * <p> Some objects are both {@link Source} and {@link Sink}, they receive events but also send some events. 
+ * They are {@link Pipe}s. The {@link org.graphstream.graph.Graph} interface is a famous {@link Pipe}.      
+ * 
  */
 package org.graphstream.stream;

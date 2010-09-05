@@ -13,7 +13,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -34,6 +34,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
 
+/**
+ * Class responsible for parsing files in the DGS format (old versions of the format). 
+ * 
+ * <p>
+ * The DGS file format is especially designed for storing dynamic graph definitions into a file. 
+ * More information about the DGS file format will be found on the GraphStream web site:
+ * <a href="http://graphstream-project.org/">http://graphstream-project.org/</a>
+ * </p>
+ * 
+ * @see FileSourceDGS
+ * @see FileSource
+ */
 public class FileSourceDGS1And2 extends FileSourceBase
 {
 // Constants

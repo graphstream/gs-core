@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -27,17 +27,17 @@ package org.graphstream.stream;
  * Sink of graph events.
  * 
  * <p>An output is something that can receive graph events. The output will send or transform
- * the graph events in another form: a file, a network stream, a visualisation, an algorithm,
+ * the graph events in another form: a file, a network stream, a visualization, an algorithm,
  * a metric, etc.</p>
  * 
  * <p>The output can filter the stream of attribute events using {@link AttributePredicate}s.</p>
  * 
  * 
- * <p>This listener is in fact the grouping of two specialised listeners.
+ * <p>This listener is in fact the grouping of two specialized listeners.
  * The first one listens only at structural changes in the graph (node and edge
  * addition and removal). It is the {@link org.graphstream.stream.ElementSink}.
  * The second one listens only at attributes values changes on elements of the
- * graph (attribute addition, removal and changement of values). It is the
+ * graph (attribute addition, removal and change of values). It is the
  * {@link org.graphstream.stream.AttributeSink}.</p>
  * 
  * <p>It is possible to listen only at elements or attributes changes with these

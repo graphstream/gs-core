@@ -13,7 +13,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -50,7 +50,7 @@ import org.graphstream.ui.geom.Point3;
  * This class provides parsing utilities to help the creation of new graph
  * readers/parsers. It handles a stack of input files that allow to easily
  * implements "includes" (that is interrupting the parsing of a file to input
- * another one). It wraps stream tokenisers allowing to eat or get specific
+ * another one). It wraps stream tokenizers allowing to eat or get specific
  * token types easily.
  * </p>
  *
@@ -203,7 +203,7 @@ abstract class FileSourceBase extends SourceBase implements FileSource
 
 	/**
 	 * Declare that when <code>attribute</code> is found, the corresponding
-	 * <code>attribute_class</code> must be instanciated and inserted in the
+	 * <code>attribute_class</code> must be instantiated and inserted in the
 	 * current element being parsed. This is equivalent to the "map" keyword of
 	 * the GML file. An attribute appears in a GML file as a name followed by a
 	 * "[...]" block. The contents of this block defines sub-attributes that
@@ -1284,8 +1284,6 @@ abstract class FileSourceBase extends SourceBase implements FileSource
 	 * of files.
 	 * </p>
 	 * 
-	 * @author Antoine Dutot
-	 * @author Yoann Pign�
 	 */
 	protected static class CurrentFile
 	{

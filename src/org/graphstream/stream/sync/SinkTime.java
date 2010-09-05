@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -30,7 +30,7 @@ public class SinkTime
 	 * Key used to disable synchro.
 	 * Just run : java -DSYNC_DISABLE_KEY ...
 	 */
-	public static final String SYNC_DISABLE_KEY = "org.graphstream.io.sync.disable";
+	public static final String SYNC_DISABLE_KEY = "org.graphstream.stream.sync.disable";
 	/**
 	 * Flag used to disable sync.
 	 */

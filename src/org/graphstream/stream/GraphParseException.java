@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright 2006 - 2009
+ * Copyright 2006 - 2010
  * 	Julien Baudry
  * 	Antoine Dutot
  * 	Yoann Pigné
@@ -24,7 +24,7 @@
 package org.graphstream.stream;
 
 /**
- * Raised when a parse error occured while reading a graph file.
+ * Raised when a parse error occurred while reading a graph file.
  *
  * @since 19 Sept. 2004
  */

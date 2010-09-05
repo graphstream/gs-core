@@ -202,7 +202,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe, MBoxListen
 // Command
 
 	/**
-	 * Allow filter/filter synchronisation through two thread proxy filters in the two opposite
+	 * Allow filter/filter synchronization through two thread proxy filters in the two opposite
 	 * directions.
 	 * @param other The other thread proxy filter going in the reverse direction.
 	 * @param onThis one of the outputs of this proxy thread filter, source of events for the
