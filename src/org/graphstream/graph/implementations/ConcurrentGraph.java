@@ -55,7 +55,7 @@ import org.graphstream.ui.swingViewer.Viewer;
 
 /**
  * <p>
- * An implementation of an Edge with multi-thread capabilities. 
+ * An implementation of a Graph with multi-thread capabilities. 
  * </p>
  * <p>
  * It is similar to the  {@link org.graphstream.graph.implementations.AdjacencyListGraph} class, 

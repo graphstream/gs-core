@@ -37,7 +37,7 @@ import org.graphstream.stream.SourceBase.ElementType;
 
 /**
  * <p>
- * An implementation of an Edge with multi-thread capabilities. 
+ * An implementation of a Node with multi-thread capabilities. 
  * </p>
  * <p>
  * It is similar to the  {@link org.graphstream.graph.implementations.AdjacencyListNode} class, but with thread-safe data structures. 
