@@ -138,8 +138,8 @@ public class SingleNode extends DefaultNode
 	 * @param directed If the edge is directed only from this node to the target.
 	 */
 	@Override
-	@SuppressWarnings("deprecation")
-	protected Edge addEdgeToward( String tag, DefaultNode target, boolean directed )
+	@SuppressWarnings({"deprecation","unchecked"})
+	protected <T extends Edge> T addEdgeToward( String tag, DefaultNode target, boolean directed )
 		throws IllegalArgumentException
 	{
 		// Some checks.
@@ -171,11 +171,11 @@ public class SingleNode extends DefaultNode
 				
 			edge.setDirected( false );
 			
-			return edge;
+			return (T) edge;
 		}
 		else
 		{
-			DefaultEdge e = (DefaultEdge) G.edgeFactory.newInstance(tag,this,target,directed);
+			T e = (T) G.edgeFactory.newInstance(tag,this,target,directed);
 //			e.setDirected(directed);
 //			return new CheckedEdge( tag, this, target, directed );
 			return e;

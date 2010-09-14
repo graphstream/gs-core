@@ -154,7 +154,8 @@ public class MultiNode extends DefaultNode
 	 * @param directed If the edge is directed only from this node to the target.
 	 */
 	@Override
-	protected Edge addEdgeToward( String tag, DefaultNode target, boolean directed )
+	@SuppressWarnings("unchecked")
+	protected <T extends Edge> T addEdgeToward( String tag, DefaultNode target, boolean directed )
 		throws IllegalArgumentException
 	{
 		// Some checks.
@@ -182,14 +183,14 @@ public class MultiNode extends DefaultNode
 		{
 			// There exist yet an edge from the target to this node.
 
-			MultiEdge e = (MultiEdge) G.edgeFactory.newInstance(tag,this,target,directed);
+			T e = (T) G.edgeFactory.newInstance(tag,this,target,directed);
 			//e.bind( this, target, directed );
 			//e.setDirected(directed);
 			return e;
 		}
 		else
 		{
-			MultiEdge e = (MultiEdge) G.edgeFactory.newInstance(tag,this,target,directed);
+			T e = (T) G.edgeFactory.newInstance(tag,this,target,directed);
 			//e.bind( this, target, directed );
 			//e.setDirected(directed);
 			return e;

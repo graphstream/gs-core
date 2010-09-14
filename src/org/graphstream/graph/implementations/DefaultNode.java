@@ -211,7 +211,7 @@ public abstract class DefaultNode extends AbstractElement implements Node
 	 * @param directed If the edge is directed only from this node to the target.
 	 * @return A reference to the created edge.
 	 */
-	protected abstract Edge addEdgeToward( String tag, DefaultNode target, boolean directed )
+	protected abstract <T extends Edge> T addEdgeToward( String tag, DefaultNode target, boolean directed )
 		throws IllegalArgumentException;
 
 	/**

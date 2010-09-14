@@ -105,12 +105,12 @@ public class DefaultGraph extends AbstractElement implements Graph
 	/**
 	 * Set of nodes indexed by their id.
 	 */
-	protected HashMap<String,Node> nodes = new HashMap<String,Node>();
+	protected HashMap<String,? extends Node> nodes = new HashMap<String,Node>();
 
 	/**
 	 * Set of edges indexed by their id.
 	 */
-	protected HashMap<String,Edge> edges = new HashMap<String,Edge>();
+	protected HashMap<String,? extends Edge> edges = new HashMap<String,Edge>();
 
 	/**
 	 * Verify name space conflicts, removal of non-existing elements, use of
@@ -127,12 +127,12 @@ public class DefaultGraph extends AbstractElement implements Graph
 	/**
 	 *  Helpful class that dynamically instantiate nodes according to a given class name.
 	 */
-	protected NodeFactory nodeFactory;
+	protected NodeFactory<? extends DefaultNode> nodeFactory;
 	
 	/**
 	 *  Helpful class that dynamically instantiate edges according to a given class name.
 	 */
-	protected EdgeFactory edgeFactory;
+	protected EdgeFactory<? extends DefaultEdge> edgeFactory;
 
 	/**
 	 * Current time step.
@@ -208,17 +208,17 @@ public class DefaultGraph extends AbstractElement implements Graph
 		
 		// Factories that dynamically create nodes and edges.
 
-		nodeFactory = new NodeFactory()
+		nodeFactory = new NodeFactory<SingleNode>()
 		{
-			public Node newInstance( String id, Graph graph )
+			public SingleNode newInstance( String id, Graph graph )
 			{
 				return new SingleNode(graph,id);
 			}
 		};
 
-		edgeFactory = new EdgeFactory()
+		edgeFactory = new EdgeFactory<SingleEdge>()
 		{
-			public Edge newInstance( String id, Node src, Node trg, boolean  directed )
+			public SingleEdge newInstance( String id, Node src, Node trg, boolean  directed )
 			{
 				return new SingleEdge(id,src,trg, directed);
 			}
@@ -236,17 +236,43 @@ public class DefaultGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity O(log(n)) with n being the number of nodes.
 	 */
-	public Node getNode( String id )
+	@SuppressWarnings("unchecked")
+	public <T extends Node> T getNode( String id )
 	{
-		return nodes.get( id );
+		try
+		{
+			return (T) nodes.get( id );
+		}
+		catch( ClassCastException e )
+		{
+			StackTraceElement elt = e.getStackTrace()[0];
+			
+			System.err.printf("%s:%s:%d incompatible node type%n",
+					elt.getFileName(),elt.getMethodName(),elt.getLineNumber());
+		}
+		
+		return null;
 	}
 	
 	/**
 	 * @complexity O(log(m)) with m being the number of edges.
 	 */
-	public Edge getEdge( String id )
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T getEdge( String id )
 	{
-		return edges.get( id );
+		try
+		{
+			return (T) edges.get( id );
+		}
+		catch( ClassCastException e )
+		{
+			StackTraceElement elt = e.getStackTrace()[0];
+			
+			System.err.printf("%s:%s:%d incompatible edge type%n",
+					elt.getFileName(),elt.getMethodName(),elt.getLineNumber());
+		}
+		
+		return null;
 	}
 
 	/**
@@ -289,17 +315,19 @@ public class DefaultGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity Constant.
 	 */
-	public Iterable<Node> getEachNode()
+	@SuppressWarnings("unchecked")
+	public <T extends Node> Iterable<? extends T> getEachNode()
 	{
-		return nodes.values();
+		return (Iterable<T>) nodes.values();
 	}
 
 	/**
 	 * @complexity Constant.
 	 */
-	public Iterable<Edge> getEachEdge()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterable<? extends T> getEachEdge()
 	{
-		return edges.values();
+		return (Iterable<T>) edges.values();
 	}
 	
 	public Collection<Edge> getEdgeSet()
@@ -312,24 +340,42 @@ public class DefaultGraph extends AbstractElement implements Graph
 		return Collections.unmodifiableCollection( nodes.values() );
 	}
 
-	public EdgeFactory edgeFactory()
+	public EdgeFactory<? extends Edge> edgeFactory()
 	{
 		return edgeFactory;
 	}
-	
-	public void setEdgeFactory( EdgeFactory ef )
+
+	@SuppressWarnings("unchecked")
+	public void setEdgeFactory( EdgeFactory<? extends Edge> ef )
 	{
-		this.edgeFactory = ef;
+		try
+		{
+			this.edgeFactory = 
+				(EdgeFactory<? extends DefaultEdge>) ef;
+		}
+		catch( ClassCastException e )
+		{
+			System.err.printf("need an EdgeFactory<? extends DefaultEdge>%n");
+		}
 	}
 
-	public NodeFactory nodeFactory()
+	public NodeFactory<? extends Node> nodeFactory()
 	{
 		return nodeFactory;
 	}
 	
-	public void setNodeFactory( NodeFactory nf )
+	@SuppressWarnings("unchecked")
+	public void setNodeFactory( NodeFactory<? extends Node> nf )
 	{
-		this.nodeFactory = nf;
+		try
+		{
+			this.nodeFactory =
+				(NodeFactory<? extends DefaultNode>) nf;
+		}
+		catch( ClassCastException e )
+		{
+			System.err.printf("need an NodeFactory<? extends DefaultNode>%n");
+		}
 	}
 	
 	public double getStep()
@@ -405,21 +451,23 @@ public class DefaultGraph extends AbstractElement implements Graph
 		autoCreate = on;
 	}
 	
-	protected Node addNode_( String sourceId, long timeId, String nodeId ) throws IdAlreadyInUseException
+	@SuppressWarnings("unchecked")
+	protected <T extends Node> T addNode_( String sourceId, long timeId, String nodeId )
+		throws IdAlreadyInUseException
 	{
 //System.err.printf( "%s.addNode_(%s, %d, %s)%n", getId(), sourceId, timeId, nodeId );
-		Node n = nodes.get( nodeId );
+		T n = (T) nodes.get( nodeId );
 		
 		if( n == null )
 		{
-			DefaultNode node = (DefaultNode) nodeFactory.newInstance(nodeId,this);
-			DefaultNode old  = (DefaultNode) nodes.put( nodeId, node );
+			T node = (T) nodeFactory.newInstance(nodeId,this);
+			T old  = ( (HashMap<String,T>) nodes ).put( nodeId, node );
 			
 			n = node;
 
 			assert( old == null );
 			
-			nodes.put( nodeId, node );
+			( (HashMap<String,T>) nodes ).put( nodeId, node );
 		}
 		else if( strictChecking )
 		{
@@ -458,12 +506,13 @@ public class DefaultGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity O(log(n)) with n being the number of nodes.
 	 */
-	public Node addNode( String id ) throws IdAlreadyInUseException
+	public <T extends Node> T addNode( String id ) throws IdAlreadyInUseException
 	{
 		return addNode_( getId(), listeners.newEvent(), id ) ; 
 	}
 	
-	protected Node removeNode_( String sourceId, long timeId, String nodeId, boolean fromNodeIterator ) throws ElementNotFoundException
+	@SuppressWarnings("unchecked")
+	protected <T extends Node> T removeNode_( String sourceId, long timeId, String nodeId, boolean fromNodeIterator ) throws ElementNotFoundException
 	{
 		// The fromNodeIterator flag allows to know if this remove node call was
 		// made from inside a node iterator or not. If from a node iterator,
@@ -480,7 +529,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 			if( ! fromNodeIterator )
 				nodes.remove( nodeId );
 			
-			return node;
+			return (T) node;
 		}
 		else
 		{
@@ -496,19 +545,22 @@ public class DefaultGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity O(log(n)) with n being the number of nodes.
 	 */
-	public Node removeNode( String id ) throws ElementNotFoundException
+	public <T extends Node> T removeNode( String id )
+		throws ElementNotFoundException
 	{
 		return removeNode_( getId(), listeners.newEvent(), id, false );
 	}
 
-	protected Edge addEdge_( String sourceId, long timeId, String edgeId, String from, String to, boolean directed )
+	@SuppressWarnings("unchecked")
+	protected <T extends Edge> T addEdge_( String sourceId, long timeId,
+			String edgeId, String from, String to, boolean directed )
 		throws IdAlreadyInUseException, ElementNotFoundException
 	{
-		Node src;
-		Node trg;
+		DefaultNode src;
+		DefaultNode trg;
 
-		src = nodes.get( from );
-		trg = nodes.get( to );
+		src = (DefaultNode) nodes.get( from );
+		trg = (DefaultNode) nodes.get( to );
 
 		if( src == null )
 		{
@@ -540,12 +592,12 @@ public class DefaultGraph extends AbstractElement implements Graph
 
 		if( src != null && trg != null )
 		{
-			Edge e = edges.get( edgeId );
+			T e = (T) edges.get( edgeId );
 			
 			if( e == null )	// Avoid recursive calls when synchronising graphs.
 			{
-				DefaultEdge edge = (DefaultEdge) ((DefaultNode)src).addEdgeToward( edgeId, (DefaultNode)trg, directed );
-				edges.put( edge.getId(), (DefaultEdge) edge );
+				T edge = (T) src.addEdgeToward( edgeId, (DefaultNode)trg, directed );
+				( (HashMap<String,T>) edges ).put( edge.getId(), edge );
 				e = edge;
 				
 				if( edge.getId().equals( edgeId ) )
@@ -565,7 +617,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity O(log(n+m)) with n being the number of nodes and m the number of edges.
 	 */
-	public Edge addEdge( String id, String node1, String node2 )
+	public <T extends Edge> T addEdge( String id, String node1, String node2 )
 		throws IdAlreadyInUseException, ElementNotFoundException
 	{
 		return addEdge( id, node1, node2, false );
@@ -574,10 +626,10 @@ public class DefaultGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity O(log(n+m)) with n being the number of nodes and m the number of edges.
 	 */
-	public Edge addEdge( String id, String from, String to, boolean directed )
+	public <T extends Edge> T addEdge( String id, String from, String to, boolean directed )
 		throws IdAlreadyInUseException, ElementNotFoundException
 	{
-		Edge edge = addEdge_( getId(), listeners.newEvent(), id, from, to, directed );
+		T edge = addEdge_( getId(), listeners.newEvent(), id, from, to, directed );
 		// An explanation for this strange "if": in the SingleGraph implementation
 		// when a directed edge between A and B is added with id AB, if a second
 		// directed edge between B and A is added with id BA, the second edge is
@@ -595,13 +647,14 @@ public class DefaultGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity O(log(n+m)) with n being the number of nodes and m the number of edges.
 	 */
-	public Edge removeEdge( String from, String to )
+	public <T extends Edge> T removeEdge( String from, String to )
 		throws ElementNotFoundException
 	{
 		return removeEdge_( getId(), listeners.newEvent(), from, to );
 	}
 	
-	protected Edge removeEdge_( String sourceId, long timeId, String from, String to )
+	@SuppressWarnings("unchecked")
+	protected <T extends Edge> T removeEdge_( String sourceId, long timeId, String from, String to )
 	{
 		try
 		{
@@ -639,7 +692,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 				((DefaultEdge) edge).unbind(sourceId, timeId);
 				edges.remove(((AbstractElement) edge).getId());
 
-		return edge;
+				return (T) edge;
 			}
 		}
 		catch( IllegalStateException e )
@@ -660,12 +713,14 @@ public class DefaultGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity O(log(n+m)) with n being the number of nodes and m the number of edges.
 	 */
-	public Edge removeEdge( String id ) throws ElementNotFoundException
+	public <T extends Edge> T removeEdge( String id )
+		throws ElementNotFoundException
 	{
 		return removeEdge_( getId(), listeners.newEvent(), id, false );
 	}
 	
-	protected Edge removeEdge_( String sourceId, long timeId, String edgeId, boolean fromEdgeIterator )
+	@SuppressWarnings("unchecked")
+	protected <T extends Edge> T removeEdge_( String sourceId, long timeId, String edgeId, boolean fromEdgeIterator )
 	{
 		try
 		{
@@ -676,7 +731,7 @@ public class DefaultGraph extends AbstractElement implements Graph
 				edge.unbind( sourceId, timeId );
 				if( ! fromEdgeIterator )
 					edge = (DefaultEdge) edges.remove( edgeId );
-				return edge;
+				return (T) edge;
 			}
 		}
 		catch( IllegalStateException e )

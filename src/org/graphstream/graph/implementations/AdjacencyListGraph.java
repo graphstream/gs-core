@@ -66,15 +66,29 @@ import org.graphstream.ui.swingViewer.Viewer;
  * on the CPU.
  * </p>
  */
-public class AdjacencyListGraph extends AbstractElement implements Graph
+public class AdjacencyListGraph
+	extends AbstractElement implements Graph
 {
+	public static void main( String ... args )
+	{
+		Graph g = new AdjacencyListGraph("g");
+		
+		g.addNode("n1");
+		g.addNode("n2");
+		
+		g.addEdge("e1","n1","n2");
+		
+		for( AdjacencyListNode n :  g.<AdjacencyListNode>getEachNode() )
+			System.out.println(n);
+	}
+	
 	public class EdgeIterator implements Iterator<Edge>
 	{
 		Iterator<Edge> edgeIterator;
 		
 		public EdgeIterator()
 		{
-			edgeIterator = edges.values().iterator();
+			edgeIterator = (Iterator<Edge>) edges.values().iterator();
 		}
 		
 		public boolean hasNext()
@@ -100,7 +114,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		
 		public NodeIterator()
 		{
-			nodeIterator = nodes.values().iterator();
+			nodeIterator = (Iterator<Node>) nodes.values().iterator();
 		}
 
 		public boolean hasNext()
@@ -122,12 +136,12 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	/**
 	 * All the nodes.
 	 */
-	protected HashMap<String,Node> nodes = new HashMap<String, Node>();
+	protected HashMap<String,? extends Node> nodes = new HashMap<String, Node>();
 
 	/**
 	 * All the edges.
 	 */
-	protected HashMap<String,Edge> edges = new HashMap<String, Edge>();
+	protected HashMap<String,? extends Edge> edges = new HashMap<String, Edge>();
 	
 	/**
 	 * Verify name space conflicts, removal of non-existing elements, use of
@@ -145,12 +159,12 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	/**
 	 *  Help full class that dynamically instantiate nodes according to a given class name.
 	 */
-	protected NodeFactory nodeFactory;
+	protected NodeFactory<? extends AdjacencyListNode> nodeFactory;
 	
 	/**
 	 *  Help full class that dynamically instantiate edges according to a given class name.
 	 */
-	protected EdgeFactory edgeFactory;
+	protected EdgeFactory<? extends AdjacencyListEdge> edgeFactory;
 	
 	/**
 	 * The current step.
@@ -221,16 +235,16 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		
 		listeners  = new GraphListeners();
 		
-		nodeFactory = new NodeFactory()
+		nodeFactory = new NodeFactory<AdjacencyListNode>()
 		{
-			public Node newInstance( String id, Graph graph )
+			public AdjacencyListNode newInstance( String id, Graph graph )
 			{
 				return new AdjacencyListNode(graph,id);
 			}
 		};
-		edgeFactory = new EdgeFactory()
+		edgeFactory = new EdgeFactory<AdjacencyListEdge>()
 		{
-			public Edge newInstance( String id, Node src, Node trg, boolean directed )
+			public AdjacencyListEdge newInstance( String id, Node src, Node trg, boolean directed )
 			{
 				return new AdjacencyListEdge(id,src,trg,directed);
 			}
@@ -249,38 +263,60 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 		return listeners.newEvent();
 	}
 
-	public EdgeFactory edgeFactory()
+	public EdgeFactory<? extends Edge> edgeFactory()
 	{
 		return edgeFactory;
 	}
 	
-	public void setEdgeFactory( EdgeFactory ef )
+	@SuppressWarnings("unchecked")
+	public void setEdgeFactory( EdgeFactory<? extends Edge> ef )
 	{
-		this.edgeFactory = ef;
+		try
+		{
+			this.edgeFactory =
+				(EdgeFactory<? extends AdjacencyListEdge>) ef;
+		}
+		catch( ClassCastException e )
+		{
+			System.err.printf("need an EdgeFactory<? extends AdjacencyListEdge>%n");
+		}
 	}
 
-	public NodeFactory nodeFactory()
+	public NodeFactory<? extends Node> nodeFactory()
 	{
 		return nodeFactory;
 	}
 	
-	public void setNodeFactory( NodeFactory nf )
+	@SuppressWarnings("unchecked")
+	public void setNodeFactory( NodeFactory<? extends Node> nf )
 	{
-		this.nodeFactory = nf;
+		try
+		{
+			this.nodeFactory = 
+				(NodeFactory<? extends AdjacencyListNode>) nf;
+		}
+		catch( ClassCastException e )
+		{
+			System.err.printf("need an NodeFactory<? extends AdjacencyListNode>%n");
+		}
 	}
 	
 	/**
 	 * @complexity O(log(n)) with n being the number of edges in the graph.
 	 */
-	public Edge addEdge( String id, String node1, String node2 ) throws IdAlreadyInUseException, ElementNotFoundException
+	public <T extends Edge> T addEdge( String id, String node1, String node2 )
+		throws IdAlreadyInUseException, ElementNotFoundException
 	{
 		return addEdge( id, node1, node2, false );
 	}
 
-	protected Edge addEdge_( String sourceId, long timeId, String edgeId, String from, String to, boolean directed ) throws IdAlreadyInUseException, ElementNotFoundException
+	@SuppressWarnings("unchecked")
+	protected <T extends Edge> T addEdge_( String sourceId, long timeId,
+			String edgeId, String from, String to, boolean directed ) 
+		throws IdAlreadyInUseException, ElementNotFoundException
 	{
-		Node src;
-		Node trg;
+		AdjacencyListNode src;
+		AdjacencyListNode trg;
 
 		src =  lookForNode( from );
 		trg =  lookForNode( to );
@@ -313,8 +349,9 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 
 		if( src != null && trg != null )
 		{
-			Edge edge = null;
-			Edge old = lookForEdge( edgeId );
+			T edge = null;
+			T old = lookForEdge( edgeId );
+			
 			if( old != null )
 			{
 				if( strictChecking )
@@ -328,18 +365,20 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 			}
 			else
 			{
-				if( ( (AdjacencyListNode) src ).hasEdgeToward( trg ) != null )
+				if( src.hasEdgeToward( trg ) != null )
 				{
 					throw new IdAlreadyInUseException( "Cannot add edge between " + from + " and " + to + ". A link already exists." );
 				}
 				else
 				{
-					edge = edgeFactory.newInstance(edgeId,src,trg,directed);
+					EdgeFactory<T> factory = (EdgeFactory<T>) edgeFactory;
+					edge = factory.newInstance(edgeId,src,trg,directed);
 					//edge.setDirected( directed );
 					
-					edges.put( edgeId,edge );
-					((AdjacencyListNode)src).edges.add( edge );
-					((AdjacencyListNode)trg).edges.add( edge );
+					( (HashMap<String,T>) edges ).put( edgeId, edge );
+					
+					src.edges.add( edge );
+					trg.edges.add( edge );
 					listeners.sendEdgeAdded( sourceId, timeId, edgeId, from, to, directed );
 				}
 			}
@@ -352,26 +391,29 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity O(log(n)) with n being the number of edges in the graph.
 	 */
-	public Edge addEdge( String id, String from, String to, boolean directed ) throws IdAlreadyInUseException, ElementNotFoundException
+	public <T extends Edge> T addEdge( String id, String from, String to, boolean directed ) throws IdAlreadyInUseException, ElementNotFoundException
 	{
-		Edge e = addEdge_( getId(), newEvent(), id, from, to, directed );
+		T e = addEdge_( getId(), newEvent(), id, from, to, directed );
 		return e;
 	}
 
 	/**
 	 * @complexity O(log(n)) with n being the number of nodes in the graph.
 	 */
-	public Node addNode( String id ) throws IdAlreadyInUseException
+	public <T extends Node> T addNode( String id ) throws IdAlreadyInUseException
 	{
-		Node n = addNode_( getId(), newEvent(), id );
+		T n = addNode_( getId(), newEvent(), id );
 		
 		return n;
 	}
 
-	protected Node addNode_( String sourceId, long timeId, String nodeId ) throws IdAlreadyInUseException
+	@SuppressWarnings("unchecked")
+	protected <T extends Node> T addNode_( String sourceId, long timeId, String nodeId )
+		throws IdAlreadyInUseException
 	{
-		Node node;
+		T node;
 		Node old = lookForNode( nodeId );
+		
 		if( old != null )
 		{
 			if( strictChecking )
@@ -380,14 +422,15 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 			}
 			else
 			{
-				node = old;
+				node = (T) old;
 			}
 		}
 		else
 		{
-			node = nodeFactory.newInstance(nodeId,this);
+			NodeFactory<T> factory = (NodeFactory<T>) nodeFactory;
+			node = factory.newInstance(nodeId,this);
 			
-			nodes.put(nodeId, node );
+			( (HashMap<String,T>) nodes ).put(nodeId, node );
 			listeners.sendNodeAdded( sourceId, timeId, nodeId );
 		}
 
@@ -454,9 +497,10 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity constant.
 	 */
-	public Iterable<Edge> getEachEdge()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterable<? extends T> getEachEdge()
 	{
-		return edges.values();
+		return (Iterable<T>) edges.values();
 	}
 	
 	public Collection<Edge> getEdgeSet()
@@ -472,7 +516,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity O(log(n)) with n being the number of nodes in the graph.
 	 */
-	public Node getNode( String id )
+	public <T extends Node> T getNode( String id )
 	{
 		return lookForNode( id );
 	}
@@ -501,9 +545,10 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity constant.
 	 */
-	public Iterable<Node> getEachNode()
+	@SuppressWarnings("unchecked")
+	public <T extends Node> Iterable<? extends T> getEachNode()
 	{
-		return nodes.values();
+		return (Iterable<T>) nodes.values();
 	}
 
 	public boolean isAutoCreationEnabled()
@@ -691,9 +736,24 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 * @complexity 0( log(n) ), with n being the number of nodes;
 	 * @return A reference to the node if found, or null if not. 
 	 */
-	protected Node lookForNode( String id )
+	@SuppressWarnings("unchecked")
+	protected <T extends Node> T lookForNode( String id )
 	{
-		return nodes.get( id );
+		T node = null;
+		
+		try
+		{
+			node = (T) nodes.get( id );
+		}
+		catch( ClassCastException e )
+		{
+			StackTraceElement elt = e.getStackTrace()[0];
+			
+			System.err.printf("%s:%s:%d invalid node type%n",
+					elt.getFileName(),elt.getMethodName(),elt.getLineNumber());
+		}
+		
+		return node;
 	}
 
 	/**
@@ -702,9 +762,24 @@ public class AdjacencyListGraph extends AbstractElement implements Graph
 	 * @complexity 0( log(m) ), with m being the number of edges;
 	 * @return A reference to the edge if found, or null if not. 
 	 */
-	protected Edge lookForEdge( String id )
+	@SuppressWarnings("unchecked")
+	protected <T extends Edge> T lookForEdge( String id )
 	{
-		return edges.get( id );
+		T edge = null;
+		
+		try
+		{
+			edge = (T) edges.get( id );
+		}
+		catch( ClassCastException e )
+		{
+			StackTraceElement elt = e.getStackTrace()[0];
+			
+			System.err.printf("%s:%s:%d invalid edge type%n",
+					elt.getFileName(),elt.getMethodName(),elt.getLineNumber());
+		}
+		
+		return edge;
 	}
 
 	

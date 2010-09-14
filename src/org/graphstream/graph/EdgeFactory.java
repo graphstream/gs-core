@@ -28,7 +28,7 @@ package org.graphstream.graph;
  * 
  * @since September 2007
  */
-public interface EdgeFactory
+public interface EdgeFactory <T extends Edge>
 {
 	/**
 	 * Create a new instance of edge.
@@ -38,5 +38,5 @@ public interface EdgeFactory
 	 * @param directed Is the edge directed (in the direction source toward target).
 	 * @return The newly created edge.
 	 */
-	Edge newInstance( String id, Node src, Node dst, boolean directed );
+	T newInstance( String id, Node src, Node dst, boolean directed );
 }
