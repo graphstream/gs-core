@@ -45,7 +45,7 @@ import org.graphstream.ui.graphicGraph.GraphicGraph;
 public interface GraphRenderer
 {
 // Initialisation
-	
+
 	void open( GraphicGraph graph, Container drawingSurface );
 	
 	void close();

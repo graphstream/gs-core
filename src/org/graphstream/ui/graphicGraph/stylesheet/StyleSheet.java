@@ -313,6 +313,7 @@ public class StyleSheet
 		edgeRules.defaultRule   = new Rule( new Selector( Selector.Type.EDGE ),   defaultRule );
 		spriteRules.defaultRule = new Rule( new Selector( Selector.Type.SPRITE ), defaultRule );
 	
+		graphRules.defaultRule.getStyle().setValue( "padding", new Values( Style.Units.PX, 30 ) );
 		edgeRules.defaultRule.getStyle().setValue( "shape", StyleConstants.Shape.LINE );
 		edgeRules.defaultRule.getStyle().setValue( "size", new Values( Style.Units.PX, 1 ) );
 		edgeRules.defaultRule.getStyle().setValue( "z-index", new Integer( 1 ) );

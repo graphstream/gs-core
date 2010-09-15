@@ -134,7 +134,7 @@ public class Viewer implements ActionListener
 	/**
 	 * What to do when a view frame is closed.
 	 */
-	protected CloseFramePolicy closeFramePolicy = CloseFramePolicy.HIDE_ONLY;
+	protected CloseFramePolicy closeFramePolicy = CloseFramePolicy.EXIT;
 	
 // Attribute
 	

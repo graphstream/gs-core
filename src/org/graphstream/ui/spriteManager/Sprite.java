@@ -37,8 +37,8 @@ import org.graphstream.ui.graphicGraph.stylesheet.Values;
  * <p>Sprite objects allow to add data representations in a graphic display of a graph. A sprite
  * is a graphical representation that can float anywhere in the graph drawing surface, or be
  * "attached" to nodes or edges. When attached to an edge, a sprite can be positioned easily at
- * any point along the edge (or perpendicular to it). When attached to a node, a sprite "orbits"
- * around the node at any given radius and angle around it.</p>
+ * any point along the edge, or perpendicular to it with one or two coordinates. When attached to a
+ * node, a sprite "orbits" around the node at any given radius and angle around it.</p>
  * 
  * <p>Sprites can have many shapes. Most of the CSS nodes shapes are available for sprites, but
  * more are possible. Some shapes follow the form of the element (node or edge) they are attached
@@ -53,25 +53,21 @@ import org.graphstream.ui.graphicGraph.stylesheet.Values;
  * {@link SpriteManager} which is always associated to a graph and is in charge of handling the
  * whole set of sprites, creating them, enumerating them, and destroying them.</p>
  *
- * <p>
- * Implementation note : sprites do not exist ! In fact the sprite class only handles a set of
+ * <p>Implementation note: sprites do not exist ! In fact the sprite class only handles a set of
  * attributes that are stored in the graph (the one associated with the sprite manager that
  * created the sprite). These special attributes are handled for you by the sprite class. This
  * technique allows to pass sprites informations through the I/O system of GraphStream. Indeed
  * sprites appearing in a graph can therefore be stored in files and retrieved if the graph file
  * format supports attributes. If this is a dynamic graph format, like DGS, the whole sprite
- * history is remembered : when it moved, when it changed, etc.
- * </p>
+ * history is remembered: when it moved, when it changed, etc.</p>
  * 
- * <p>
- * Second implementation node : often you will need to extend the sprite class. This is easily
+ * <p>Second implementation node : often you will need to extend the sprite class. This is easily
  * possible, but you must remember that you cannot create sprites yourself, you must use the
  * {@link SpriteManager}. In order to create a sprite of a special kind, you can either use a
  * {@link SpriteFactory} with the SpriteManager or the special
  * {@link SpriteManager#addSprite(String, Class)} method of the SpriteManager. In both cases, the
  * {@link #init(String, SpriteManager, Values)} method of the sprite will be called. Override this
- * method to initialise your sprite.
- * </p>
+ * method to initialise your sprite.</p>
  *
  * @see SpriteManager
  * @see SpriteFactory
