@@ -85,7 +85,7 @@ public interface Node extends Element, Iterable<Edge>
 	 * @return Directed edge going from this node to 'id', or
 	 * undirected edge if it exists, else null.
 	 */
-	Edge getEdgeToward( String id );
+	<T extends Edge> T getEdgeToward( String id );
 
 	/**
 	 * Retrieve an edge that leaves node 'id' toward this node. This method 
@@ -95,7 +95,7 @@ public interface Node extends Element, Iterable<Edge>
 	 * @return Directed edge going from node 'id' to this node, or undirected
 	 * edge if it exists, else null.
 	 */
-	Edge getEdgeFrom( String id );
+	<T extends Edge> T getEdgeFrom( String id );
 
 	/**
 	 * Iterator on the set of connected edges. This iterator iterates on all
@@ -103,7 +103,7 @@ public interface Node extends Element, Iterable<Edge>
 	 * and a non-directed edge is only iterated once).
 	 * @return The iterator, edges are iterated in arbitrary order.
 	 */
-	Iterator<? extends Edge> getEdgeIterator();
+	<T extends Edge> Iterator<? extends T> getEdgeIterator();
 
 	/**
 	 * Iterator only on leaving edges. This iterator iterates only on directed
@@ -111,7 +111,7 @@ public interface Node extends Element, Iterable<Edge>
 	 * in the iteration).
 	 * @return The iterator, edges are iterated in arbitrary order.
 	 */
-	Iterator<? extends Edge> getEnteringEdgeIterator();
+	<T extends Edge> Iterator<? extends T> getEnteringEdgeIterator();
 
 	/**
 	 * Iterator only on entering edges. This iterator iterates only on directed
@@ -119,7 +119,7 @@ public interface Node extends Element, Iterable<Edge>
 	 * included in the iteration).
 	 * @return The iterator, edges are iterated in arbitrary order.
 	 */
-	Iterator<? extends Edge> getLeavingEdgeIterator();
+	<T extends Edge> Iterator<? extends T> getLeavingEdgeIterator();
 
 	/**
 	 * Iterator on the set of neighbour nodes connected to this node via one or
@@ -128,7 +128,7 @@ public interface Node extends Element, Iterable<Edge>
 	 * from them toward this node).
 	 * @return The iterator, neighbour are iterated in arbitrary order.
 	 */
-	Iterator<? extends Node> getNeighborNodeIterator();
+	<T extends Node> Iterator<? extends T> getNeighborNodeIterator();
 
 	/**
 	 * I-th edge. Edges are stored in no given order. However this method
@@ -137,7 +137,7 @@ public interface Node extends Element, Iterable<Edge>
 	 * @param i Index of the edge.
 	 * @return The i-th edge.
 	 */
-	Edge getEdge( int i );
+	<T extends Edge> T getEdge( int i );
 
 	/**
 	 * Iterator for breadth first exploration of the graph, starting at this
@@ -146,7 +146,7 @@ public interface Node extends Element, Iterable<Edge>
 	 * @return An iterator able to explore the graph in a breadth first way
 	 *         starting at this node.
 	 */
-	Iterator<? extends Node> getBreadthFirstIterator();
+	<T extends Node> Iterator<? extends T> getBreadthFirstIterator();
 
 	/**
 	 * Iterator for breadth first exploration of the graph, starting at this
@@ -156,7 +156,7 @@ public interface Node extends Element, Iterable<Edge>
 	 * @return An iterator able to explore the graph in a breadth first way
 	 *         starting at this node.
 	 */
-	Iterator<? extends Node> getBreadthFirstIterator( boolean directed );
+	<T extends Node> Iterator<? extends T> getBreadthFirstIterator( boolean directed );
 
 	/**
 	 * Iterator for depth first exploration of the graph, starting at this
@@ -167,7 +167,7 @@ public interface Node extends Element, Iterable<Edge>
 	 * @complexity of the depth first iterator O(n+m) with n the number of
 	 *             nodes and m the number of edges.
 	 */
-	Iterator<? extends Node> getDepthFirstIterator();
+	<T extends Node> Iterator<? extends T> getDepthFirstIterator();
 
 	/**
 	 * Iterator for depth first exploration of the graph, starting at this
@@ -177,25 +177,25 @@ public interface Node extends Element, Iterable<Edge>
 	 * @return An iterator able to explore the graph in a depth first way
 	 *         starting at this node.
 	 */
-	Iterator<? extends Node> getDepthFirstIterator( boolean directed );
+	<T extends Node> Iterator<? extends T> getDepthFirstIterator( boolean directed );
 
 	/**
 	 * Set of all entering and leaving edges.
 	 * @return A collection containing all directed and undirected edges, leaving or entering.
 	 */
-	Iterable<? extends Edge> getEdgeSet();
+	<T extends Edge> Iterable<? extends T> getEdgeSet();
 
 	/**
 	 * Set of all leaving edges.
 	 * @return A collection of only edges that leave this node plus all undirected edges.
 	 */
-	Iterable<? extends Edge> getLeavingEdgeSet();
+	<T extends Edge> Iterable<? extends T> getLeavingEdgeSet();
 
 	/**
 	 * Set of all entering edges.
 	 * @return A collection of only edges that enter this node plus all undirected edges.
 	 */
-	Iterable<? extends Edge> getEnteringEdgeSet();
+	<T extends Edge> Iterable<? extends T> getEnteringEdgeSet();
 
 	/**
 	 * Override the Object.toString() method.

@@ -34,7 +34,8 @@ import java.util.NoSuchElementException;
  * @complexity O(n+m) with n the number of nodes and m the number of edges.
  * @since 20040730
  */
-public class DepthFirstIterator implements Iterator<Node>
+public class DepthFirstIterator<T extends Node>
+	implements Iterator<T>
 {
 //	 Attributes
 
@@ -46,13 +47,13 @@ public class DepthFirstIterator implements Iterator<Node>
 	/**
 	 * Set of already explored nodes.
 	 */
-	protected HashSet<Node> closed = new HashSet<Node>();
+	protected HashSet<T> closed = new HashSet<T>();
 
 	/**
 	 * Nodes remaining to process. The iteration continues as long
 	 * as this array is not empty.
 	 */
-	protected LinkedList<Node> lifo = new LinkedList<Node>();
+	protected LinkedList<T> lifo = new LinkedList<T>();
 
 // Constructors
 
@@ -60,7 +61,7 @@ public class DepthFirstIterator implements Iterator<Node>
 	 * New breadth-first iterator starting at the given start node.
 	 * @param startNode The node where the graph exploration begins.
 	 */
-	public DepthFirstIterator( Node startNode )
+	public DepthFirstIterator( T startNode )
 	{
 		this( startNode, true );
 	}
@@ -71,7 +72,7 @@ public class DepthFirstIterator implements Iterator<Node>
 	 * @param directed If true the iterator respects the edge direction (the
 	 *        default).
 	 */
-	public DepthFirstIterator( Node startNode, boolean directed )
+	public DepthFirstIterator( T startNode, boolean directed )
 	{
 		lifo.add( startNode );
 		closed.add( startNode );
@@ -94,7 +95,7 @@ public class DepthFirstIterator implements Iterator<Node>
 	 * @param node The node to test.
 	 * @return True if tabu.
 	 */
-	protected boolean tabu( Node node )
+	protected boolean tabu( T node )
 	{
 		return( closed.contains( node )  );
 	}
@@ -112,12 +113,12 @@ public class DepthFirstIterator implements Iterator<Node>
 	 * Next node to process.
 	 * @return The next node.
 	 */
-	public Node next()
+	public T next()
 		throws NoSuchElementException
 	{
 		if( lifo.size() > 0 )
 		{
-			Node next = lifo.removeLast();
+			T next = lifo.removeLast();
 
 			closed.add(next);
 			while(lifo.remove(next));
@@ -137,7 +138,7 @@ public class DepthFirstIterator implements Iterator<Node>
 	 * processed) in the list of nodes to process next.
 	 * @param node The nodes the neighbors are to be processed.
 	 */
-	protected void addNeighborsOf( Node node )
+	protected void addNeighborsOf( T node )
 	{
 		Iterator<? extends Edge> k;
 		
@@ -148,7 +149,7 @@ public class DepthFirstIterator implements Iterator<Node>
 		while( k.hasNext() )
 		{
 			Edge edge = k.next();
-			Node adj  = edge.getOpposite( node );
+			T adj  = (T) edge.getOpposite( node );
 
 			if( ! tabu( adj ) )
 			{

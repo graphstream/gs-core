@@ -33,7 +33,8 @@ import org.graphstream.stream.SourceBase;
  *
  * @since 20020709
  */
-public abstract class DefaultEdge extends AbstractElement implements Edge
+public abstract class DefaultEdge
+	extends AbstractElement implements Edge
 {
 // Attributes
 
@@ -124,42 +125,47 @@ public abstract class DefaultEdge extends AbstractElement implements Edge
 	/**
 	 * @complexity Constant.
 	 */
-	public Node getNode0()
+	@SuppressWarnings("unchecked")
+	public <T extends Node> T getNode0()
 	{
-		return src;
+		return (T) src;
 	}
 
 	/**
 	 * @complexity Constant.
 	 */
-	public Node getNode1()
+	@SuppressWarnings("unchecked")
+	public <T extends Node> T getNode1()
 	{
-		return trg;
+		return (T) trg;
 	}
 	
 	/**
 	 * @complexity Constant.
 	 */
-	public Node getSourceNode()
+	@SuppressWarnings("unchecked")
+	public <T extends Node> T getSourceNode()
 	{
-		return src;
+		return (T) src;
 	}
 
 	/**
 	 * @complexity Constant.
 	 */
-	public Node getTargetNode()
+	@SuppressWarnings("unchecked")
+	public <T extends Node> T getTargetNode()
 	{
-		return trg;
+		return (T) trg;
 	}
 
 	/**
 	 * @complexity Constant.
 	 */
-	public Node getOpposite( Node node )
+	@SuppressWarnings("unchecked")
+	public <T extends Node> T getOpposite( T node )
 	{
-		if( src == node )return trg;
-		else if( trg == node ) return src;
+		if( src == node )return (T) trg;
+		else if( trg == node ) return (T) src;
 		
 		return null;
 	}

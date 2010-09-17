@@ -24,7 +24,6 @@
 package org.graphstream.graph.implementations;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 
 import org.graphstream.graph.BreadthFirstIterator;
@@ -51,7 +50,8 @@ import org.graphstream.stream.SourceBase.ElementType;
  */
 public class AdjacencyListNode extends AbstractElement implements Node
 {
-	private class EnteringEdgeIterator implements Iterator<Edge>
+	private class EnteringEdgeIterator<T extends Edge>
+		implements Iterator<T>
 	{
 		public AdjacencyListNode n;
 		
@@ -86,7 +86,8 @@ public class AdjacencyListNode extends AbstractElement implements Node
 			return( index < edges.size() && nb < nbEntering );
 		}
 
-		public Edge next()
+		@SuppressWarnings("unchecked")
+		public T next()
 		{
 			if( hasNext() )
 			{
@@ -95,7 +96,7 @@ public class AdjacencyListNode extends AbstractElement implements Node
 					index++;
 				}
 				nb++;
-				return edges.get( index++ );
+				return (T) edges.get( index++ );
 			}
 			return null;
 		}
@@ -107,7 +108,8 @@ public class AdjacencyListNode extends AbstractElement implements Node
 		}
 	}
 
-	public class LeavingEdgeIterator implements Iterator<Edge>
+	public class LeavingEdgeIterator<T extends Edge>
+		implements Iterator<T>
 	{
 		public AdjacencyListNode n;
 		
@@ -141,7 +143,8 @@ public class AdjacencyListNode extends AbstractElement implements Node
 			return( index < edges.size() && nb < nbLeaving );
 		}
 
-		public Edge next()
+		@SuppressWarnings("unchecked")
+		public T next()
 		{
 			if( hasNext() )
 			{
@@ -150,7 +153,7 @@ public class AdjacencyListNode extends AbstractElement implements Node
 					index++;
 				}
 				nb++;
-				return edges.get( index++ );
+				return (T) edges.get( index++ );
 			}
 			return null;
 		}
@@ -162,7 +165,8 @@ public class AdjacencyListNode extends AbstractElement implements Node
 		}
 	}
 
-	public class EdgeIterator implements Iterator<Edge>
+	public class EdgeIterator<T extends Edge>
+		implements Iterator<T>
 	{
 		int index = 0;
 
@@ -175,11 +179,12 @@ public class AdjacencyListNode extends AbstractElement implements Node
 			return false;
 		}
 
-		public Edge next()
+		@SuppressWarnings("unchecked")
+		public T next()
 		{
 			if( hasNext() )
 			{
-				return edges.get( index++ );
+				return (T) edges.get( index++ );
 			}
 			return null;
 		}
@@ -190,7 +195,8 @@ public class AdjacencyListNode extends AbstractElement implements Node
 		}
 	}
 
-	public class NeighborNodeIterator implements Iterator<Node>
+	public class NeighborNodeIterator<T extends Node>
+		implements Iterator<T>
 	{
 		int index = 0;
 		Node node;
@@ -209,14 +215,16 @@ public class AdjacencyListNode extends AbstractElement implements Node
 			return false;
 		}
 
-		public Node next()
+		@SuppressWarnings("unchecked")
+		public T next()
 		{
 			if( hasNext() )
 			{
 				Edge edge = edges.get( index++ );
 				
-				return edge.getOpposite( node );
+				return (T) edge.getOpposite( node );
 			}
+			
 			return null;
 		}
 
@@ -226,18 +234,20 @@ public class AdjacencyListNode extends AbstractElement implements Node
 		}
 	}
 	
-	public class EdgeIterable implements Iterable<Edge>
+	public class EdgeIterable<T extends Edge>
+		implements Iterable<T>
 	{
-		protected Iterator<Edge> iterator;
+		protected Iterator<? extends T> iterator;
 		
-		public EdgeIterable( Iterator<Edge> iterator )
+		public EdgeIterable( Iterator<? extends T> iterator )
 		{
 			this.iterator = iterator;
 		}
 		
-		public Iterator<Edge> iterator()
+		@SuppressWarnings("unchecked")
+		public Iterator<T> iterator()
 		{
-			return iterator;
+			return (Iterator<T>) iterator;
 		}
 	}
 
@@ -269,14 +279,16 @@ public class AdjacencyListNode extends AbstractElement implements Node
 		return ((AdjacencyListGraph)graph).newEvent();
 	}
 	
-	public Iterator<Node> getBreadthFirstIterator()
+	@SuppressWarnings("unchecked")
+	public <T extends Node> Iterator<T> getBreadthFirstIterator()
 	{
-		return new BreadthFirstIterator( this );
+		return new BreadthFirstIterator<T>( (T) this );
 	}
 
-	public Iterator<Node> getBreadthFirstIterator( boolean directed )
+	@SuppressWarnings("unchecked")
+	public <T extends Node> Iterator<T> getBreadthFirstIterator( boolean directed )
 	{
-		return new BreadthFirstIterator( this, directed );
+		return new BreadthFirstIterator<T>( (T) this, directed );
 	}
 
 	public int getDegree()
@@ -284,61 +296,69 @@ public class AdjacencyListNode extends AbstractElement implements Node
 		return edges.size();
 	}
 
-	public Iterator<Node> getDepthFirstIterator()
+	@SuppressWarnings("unchecked")
+	public <T extends Node> Iterator<T> getDepthFirstIterator()
 	{
-		return new DepthFirstIterator( this );
+		return new DepthFirstIterator<T>( (T) this );
 	}
 
-	public Iterator<Node> getDepthFirstIterator( boolean directed )
+	@SuppressWarnings("unchecked")
+	public <T extends Node> Iterator<T> getDepthFirstIterator( boolean directed )
 	{
-		return new DepthFirstIterator( this, directed );
+		return new DepthFirstIterator<T>( (T) this, directed );
 	}
-
-	public Edge getEdge( int i )
+	
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T getEdge( int i )
 	{
-		return edges.get( i );
+		return (T) edges.get( i );
 	}
 
 	/**
 	 * @complexity 0(n+d) with d being the degree of the node and n the number nodes
 	 *             in the graph.
 	 */
-	public Edge getEdgeFrom( String id )
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T getEdgeFrom( String id )
 	{
 		Node n = ( (AdjacencyListGraph) graph ).lookForNode( id );
+		
 		if( n != null )
 		{
 			for( Edge e: edges )
 			{
 				if( e.getSourceNode() == n )
 				{
-					return e;
+					return (T) e;
 				}
 				if( !e.isDirected() && e.getTargetNode() == n )
 				{
-					return e;
+					return (T) e;
 				}
 			}
 		}
 		return null;
 	}
 
-	public Iterator<Edge> getEdgeIterator()
+	public <T extends Edge> Iterator<? extends T> getEdgeIterator()
 	{
-		return new EdgeIterator();
+		return new EdgeIterator<T>();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Iterator<Edge> iterator()
 	{
-		return getEdgeIterator();
+		return (Iterator<Edge>) getEdgeIterator();
 	}
 
-	public Collection<Edge> getEdgeSet()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterable<? extends T> getEdgeSet()
 	{
-		return edges;
+		return (Iterable<? extends T>) edges;
 	}
 
-	public Edge getEdgeToward( String id )
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T getEdgeToward( String id )
 	{
 		Node n = ( (AdjacencyListGraph) graph ).lookForNode( id );
 		if( n != null )
@@ -347,25 +367,26 @@ public class AdjacencyListNode extends AbstractElement implements Node
 			{
 				if( e.getTargetNode() == n )
 				{
-					return e;
+					return (T) e;
 				}
 				if( !e.isDirected() && e.getSourceNode() == n )
 				{
-					return e;
+					return (T) e;
 				}
 			}
 		}
 		return null;
 	}
 
-	public Iterator<Edge> getEnteringEdgeIterator()
+	public <T extends Edge> Iterator<? extends T> getEnteringEdgeIterator()
 	{
-		return new EnteringEdgeIterator(this);
+		return new EnteringEdgeIterator<T>(this);
 	}
 
-	public Iterable<Edge> getEnteringEdgeSet()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterable<? extends T> getEnteringEdgeSet()
 	{
-		return new EdgeIterable( getEnteringEdgeIterator() );
+		return new EdgeIterable<T>( (Iterator<T>) getEnteringEdgeIterator() );
 	}
 
 	public Graph getGraph()
@@ -375,28 +396,29 @@ public class AdjacencyListNode extends AbstractElement implements Node
 
 	public int getInDegree()
 	{
-		EnteringEdgeIterator it = new EnteringEdgeIterator(this);
+		EnteringEdgeIterator<?> it = new EnteringEdgeIterator<Edge>(this);
 		return it.nbEntering;
 	}
 
-	public Iterator<Edge> getLeavingEdgeIterator()
+	public <T extends Edge> Iterator<? extends T> getLeavingEdgeIterator()
 	{
-		return new LeavingEdgeIterator(this);
+		return new LeavingEdgeIterator<T>(this);
 	}
 
-	public Iterable<Edge> getLeavingEdgeSet()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterable<? extends T> getLeavingEdgeSet()
 	{
-		return new EdgeIterable( getLeavingEdgeIterator() );
+		return new EdgeIterable<T>( (Iterator<T>) getLeavingEdgeIterator() );
 	}
 
-	public Iterator<Node> getNeighborNodeIterator()
+	public <T extends Node> Iterator<? extends T> getNeighborNodeIterator()
 	{
-		return new NeighborNodeIterator( this );
+		return new NeighborNodeIterator<T>( this );
 	}
 
 	public int getOutDegree()
 	{
-		LeavingEdgeIterator it = new LeavingEdgeIterator(this);
+		LeavingEdgeIterator<?> it = new LeavingEdgeIterator<Edge>(this);
 		return it.nbLeaving;
 	}
 
@@ -410,14 +432,15 @@ public class AdjacencyListNode extends AbstractElement implements Node
 	 * @return An reference to the edge coming from the given node if there is one, null otherwise.
 	 * @param n The node we look for an edge towards. 
 	 */
-	public Edge hasEdgeFrom( Node n )
+	public <T extends Edge> T hasEdgeFrom( Node n )
 	{
 		if( n != null )
 		{
-			Iterator<Edge> it = new EnteringEdgeIterator(this);
+			Iterator<T> it = new EnteringEdgeIterator<T>(this);
+			
 			while( it.hasNext() )
 			{
-				Edge e = it.next();
+				T e = it.next();
 				if( e.isDirected() )
 				{
 					if( e.getSourceNode() == n )
@@ -427,6 +450,7 @@ public class AdjacencyListNode extends AbstractElement implements Node
 					return e;
 			}
 		}
+		
 		return null;
 	}
 	
@@ -441,14 +465,15 @@ public class AdjacencyListNode extends AbstractElement implements Node
 	 * @return An reference to the edge leading to the given node if there is one, null otherwise.
 	 * @param n The node we look for an edge towards. 
 	 */
-	public Edge hasEdgeToward( Node n )
+	public <T extends Edge> T hasEdgeToward( Node n )
 	{
 		if( n != null )
 		{
-			Iterator<Edge> it = new LeavingEdgeIterator(this);
+			Iterator<T> it = new LeavingEdgeIterator<T>(this);
+			
 			while( it.hasNext() )
 			{
-				Edge e = it.next();
+				T e = it.next();
 				if( e.isDirected() )
 				{
 					if( e.getTargetNode() == n )

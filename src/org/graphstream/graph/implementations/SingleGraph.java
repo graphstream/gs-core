@@ -23,7 +23,6 @@
 
 package org.graphstream.graph.implementations;
 
-import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeFactory;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -94,16 +93,16 @@ public class SingleGraph extends DefaultGraph
 	{
 		super( id, strictChecking, autoCreate );
 		
-		nodeFactory = new NodeFactory()
+		nodeFactory = new NodeFactory<SingleNode>()
 		{
-			public Node newInstance( String id, Graph graph )
+			public SingleNode newInstance( String id, Graph graph )
 			{
 				return new SingleNode(graph,id);
 			}
 		};
-		edgeFactory = new EdgeFactory()
+		edgeFactory = new EdgeFactory<SingleEdge>()
 		{
-			public Edge newInstance( String id, Node src, Node dst, boolean directed )
+			public SingleEdge newInstance( String id, Node src, Node dst, boolean directed )
 			{
 				return new SingleEdge(id,src,dst,directed);
 			}

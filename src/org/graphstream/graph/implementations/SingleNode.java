@@ -92,41 +92,47 @@ public class SingleNode extends DefaultNode
 	}
 
 	@Override
-	public Edge getEdgeToward( String id )
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T getEdgeToward( String id )
 	{
-		return to.get( id );
+		return (T) to.get( id );
 	}
 
 	@Override
-	public Edge getEdgeFrom( String id )
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T getEdgeFrom( String id )
 	{
-		return from.get( id );
+		return (T) from.get( id );
 	}
 
 	@Override
-	public Iterator<Edge> getEnteringEdgeIterator()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterator<? extends T> getEnteringEdgeIterator()
 	{
-		return new ElementIterator<Edge>( from );
+		return new ElementIterator<T>( (HashMap<String,T>) from );
 	}
 	
 	@Override
-	public Iterator<Edge> getLeavingEdgeIterator()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterator<? extends T> getLeavingEdgeIterator()
 	{
-		return new ElementIterator<Edge>( to );
+		return new ElementIterator<T>( (HashMap<String,T>) to );
 	}
 
 // Access -- Not in Node interface
 
 	@Override
-	public Iterable<Edge> getLeavingEdgeSet()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterable<? extends T> getLeavingEdgeSet()
 	{
-		return to.values();
+		return (Iterable<? extends T>) to.values();
 	}
 
 	@Override
-	public Iterable<Edge> getEnteringEdgeSet()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterable<? extends T> getEnteringEdgeSet()
 	{
-		return from.values();
+		return (Iterable<? extends T>) from.values();
 	}
 
 // Command

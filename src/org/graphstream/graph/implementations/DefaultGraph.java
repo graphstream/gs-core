@@ -330,14 +330,18 @@ public class DefaultGraph extends AbstractElement implements Graph
 		return (Iterable<T>) edges.values();
 	}
 	
-	public Collection<Edge> getEdgeSet()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Collection<? extends T> getEdgeSet()
 	{
-		return Collections.unmodifiableCollection( edges.values() );
+		return (Collection<? extends T>)
+			Collections.unmodifiableCollection( edges.values() );
 	}
 	
-	public Collection<Node> getNodeSet()
+	@SuppressWarnings("unchecked")
+	public <T extends Node> Collection<? extends T> getNodeSet()
 	{
-		return Collections.unmodifiableCollection( nodes.values() );
+		return (Collection<? extends T>)
+			Collections.unmodifiableCollection( nodes.values() );
 	}
 
 	public EdgeFactory<? extends Edge> edgeFactory()

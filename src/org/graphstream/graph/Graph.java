@@ -89,13 +89,13 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * Iterator on the set of nodes, in an undefined order.
 	 * @return The iterator.
 	 */
-	Iterator<? extends Node> getNodeIterator();
+	<T extends Node> Iterator<? extends T> getNodeIterator();
 
 	/**
 	 * Iterator on the set of edges, in an undefined order.
 	 * @return The iterator.
 	 */
-	Iterator<? extends Edge> getEdgeIterator();
+	<T extends Edge> Iterator<? extends T> getEdgeIterator();
 
 	/**
 	 * Set of nodes usable in a for-each instruction.
@@ -119,7 +119,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @see #getNodeIterator()
 	 * @see #getEachNode()
 	 */
-	Collection<? extends Node> getNodeSet();
+	<T extends Node> Collection<? extends T> getNodeSet();
 	
 	/**
 	 * Unmodifiable view of the set of edges.
@@ -127,7 +127,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @see #getEdgeIterator()
 	 * @see #getEachEdge()
 	 */
-	Collection<? extends Edge> getEdgeSet();
+	<T extends Edge> Collection<? extends T> getEdgeSet();
 
 	/**
 	 * The factory used to create node instances.
@@ -253,7 +253,8 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @throws ElementNotFoundException If strict checking is enabled, and the 'from'
 	 *         or 'to' node is not registered in the graph.
 	 */
-	<T extends Edge> T addEdge( String id, String node1, String node2 ) throws IdAlreadyInUseException, ElementNotFoundException;
+	<T extends Edge> T addEdge( String id, String node1, String node2 ) 
+		throws IdAlreadyInUseException, ElementNotFoundException;
 
 	/**
 	 * Like {@link #addEdge(String, String, String)}, but this edge can be
@@ -273,7 +274,8 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @throws ElementNotFoundException If strict checking is enabled, and the 'from'
 	 *         or 'to' node is not registered in the graph.
 	 */
-	<T extends Edge> T addEdge( String id, String from, String to, boolean directed ) throws IdAlreadyInUseException, ElementNotFoundException;
+	<T extends Edge> T addEdge( String id, String from, String to, boolean directed )
+		throws IdAlreadyInUseException, ElementNotFoundException;
 
 	/**
 	 * Remove an edge given the identifier of its two linked nodes. If the edge
@@ -291,7 +293,8 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @throws ElementNotFoundException If the 'from' or 'to' node is not registered in
 	 *         the graph and strict checking is enabled.
 	 */
-	<T extends Edge> T removeEdge( String from, String to ) throws ElementNotFoundException;
+	<T extends Edge> T removeEdge( String from, String to ) 
+		throws ElementNotFoundException;
 
 	/**
 	 * Remove the edge knowing its identifier. An event is sent toward the
