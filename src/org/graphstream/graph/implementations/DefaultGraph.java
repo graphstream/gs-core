@@ -294,9 +294,10 @@ public class DefaultGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity Constant.
 	 */
-	public Iterator<Node> getNodeIterator()
+	@SuppressWarnings("unchecked")
+	public <T extends Node> Iterator<T> getNodeIterator()
 	{
-		return new ElementIterator<Node>( this, nodes, true );
+		return new ElementIterator<T>( this, (HashMap<String,T>) nodes, true );
 	}
 	
 	public Iterator<Node> iterator()
@@ -307,9 +308,10 @@ public class DefaultGraph extends AbstractElement implements Graph
 	/**
 	 * @complexity Constant.
 	 */
-	public Iterator<Edge> getEdgeIterator()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterator<T> getEdgeIterator()
 	{
-		return new ElementIterator<Edge>( this, edges, false );
+		return new ElementIterator<T>( this, (HashMap<String,T>) edges, false );
 	}
 	
 	/**
@@ -331,16 +333,16 @@ public class DefaultGraph extends AbstractElement implements Graph
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Collection<? extends T> getEdgeSet()
+	public <T extends Edge> Collection<T> getEdgeSet()
 	{
-		return (Collection<? extends T>)
+		return (Collection<T>)
 			Collections.unmodifiableCollection( edges.values() );
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T extends Node> Collection<? extends T> getNodeSet()
+	public <T extends Node> Collection<T> getNodeSet()
 	{
-		return (Collection<? extends T>)
+		return (Collection<T>)
 			Collections.unmodifiableCollection( nodes.values() );
 	}
 

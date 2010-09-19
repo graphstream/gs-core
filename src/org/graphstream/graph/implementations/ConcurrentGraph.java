@@ -493,7 +493,7 @@ public class ConcurrentGraph
 	/**
 	 * @complexity Constant.
 	 */
-	public <T extends Edge> Iterator<? extends T> getEdgeIterator()
+	public <T extends Edge> Iterator<T> getEdgeIterator()
 	{
 		return new EdgeIterator<T>();
 	}
@@ -508,16 +508,16 @@ public class ConcurrentGraph
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Collection<? extends T> getEdgeSet()
+	public <T extends Edge> Collection<T> getEdgeSet()
 	{
-		return (Collection<? extends T>)
+		return (Collection<T>)
 			Collections.unmodifiableCollection( edges.values() );
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T extends Node> Collection<? extends T> getNodeSet()
+	public <T extends Node> Collection<T> getNodeSet()
 	{
-		return (Collection<? extends T>)
+		return (Collection<T>)
 			Collections.unmodifiableCollection( nodes.values() );
 	}
 
@@ -541,7 +541,7 @@ public class ConcurrentGraph
 	/**
 	 * @complexity Constant.
 	 */
-	public <T extends Node> Iterator<? extends T> getNodeIterator()
+	public <T extends Node> Iterator<T> getNodeIterator()
 	{
 		return new NodeIterator<T>();
 	}

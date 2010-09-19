@@ -125,30 +125,30 @@ public class MultiNode extends DefaultNode
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterator<? extends T> getEnteringEdgeIterator()
+	public <T extends Edge> Iterator<T> getEnteringEdgeIterator()
 	{
 		return new MultiElementIterator<T>( (MultiEdgeMap<T>) from );
 	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterator<? extends T> getLeavingEdgeIterator()
+	public <T extends Edge> Iterator<T> getLeavingEdgeIterator()
 	{
 		return new MultiElementIterator<T>( (MultiEdgeMap<T>) to );
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<? extends T> getEnteringEdgeSet()
+	public <T extends Edge> Iterable<T> getEnteringEdgeSet()
     {
-		return (Iterable<? extends T>) from;
+		return (Iterable<T>) from;
     }
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<? extends T> getLeavingEdgeSet()
+	public <T extends Edge> Iterable<T> getLeavingEdgeSet()
     {
-		return (Iterable<? extends T>) to;
+		return (Iterable<T>) to;
     }
 
 // Commands

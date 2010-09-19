@@ -107,14 +107,14 @@ public class SingleNode extends DefaultNode
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterator<? extends T> getEnteringEdgeIterator()
+	public <T extends Edge> Iterator<T> getEnteringEdgeIterator()
 	{
 		return new ElementIterator<T>( (HashMap<String,T>) from );
 	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterator<? extends T> getLeavingEdgeIterator()
+	public <T extends Edge> Iterator<T> getLeavingEdgeIterator()
 	{
 		return new ElementIterator<T>( (HashMap<String,T>) to );
 	}
@@ -123,16 +123,16 @@ public class SingleNode extends DefaultNode
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<? extends T> getLeavingEdgeSet()
+	public <T extends Edge> Iterable<T> getLeavingEdgeSet()
 	{
-		return (Iterable<? extends T>) to.values();
+		return (Iterable<T>) to.values();
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<? extends T> getEnteringEdgeSet()
+	public <T extends Edge> Iterable<T> getEnteringEdgeSet()
 	{
-		return (Iterable<? extends T>) from.values();
+		return (Iterable<T>) from.values();
 	}
 
 // Command

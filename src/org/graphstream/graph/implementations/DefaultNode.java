@@ -115,23 +115,22 @@ public abstract class DefaultNode
 	public abstract <T extends Edge> T getEdgeFrom( String id );
 
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterator<? extends T> getEdgeIterator()
+	public <T extends Edge> Iterator<T> getEdgeIterator()
 	{
-		return (Iterator<? extends T>)
+		return (Iterator<T>)
 			new ElementIterator<Edge>( edges );
 	}
 	
-	public abstract <T extends Edge> Iterator<? extends T> getEnteringEdgeIterator();
+	public abstract <T extends Edge> Iterator<T> getEnteringEdgeIterator();
 	
-	public abstract <T extends Edge> Iterator<? extends T> getLeavingEdgeIterator();
+	public abstract <T extends Edge> Iterator<T> getLeavingEdgeIterator();
 
 	@SuppressWarnings("unchecked")
-	public <T extends Node> Iterator<? extends T> getNeighborNodeIterator()
+	public <T extends Node> Iterator<T> getNeighborNodeIterator()
 	{
 		return new NeighborNodeIterator<T>( (T) this );
 	}
 	
-	@SuppressWarnings("unchecked")
 	public Iterator<Edge> iterator()
 	{
 		return (Iterator<Edge>) getEdgeIterator();
@@ -204,14 +203,14 @@ public abstract class DefaultNode
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<? extends T> getEdgeSet()
+	public <T extends Edge> Iterable<T> getEdgeSet()
 	{
-		return (Iterable<? extends T>) edges;
+		return (Iterable<T>) edges;
 	}
 	
-	public abstract <T extends Edge> Iterable<? extends T> getLeavingEdgeSet();
+	public abstract <T extends Edge> Iterable<T> getLeavingEdgeSet();
 
-	public abstract <T extends Edge> Iterable<? extends T> getEnteringEdgeSet();
+	public abstract <T extends Edge> Iterable<T> getEnteringEdgeSet();
 
 // Command
 

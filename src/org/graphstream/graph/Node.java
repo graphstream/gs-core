@@ -103,7 +103,7 @@ public interface Node extends Element, Iterable<Edge>
 	 * and a non-directed edge is only iterated once).
 	 * @return The iterator, edges are iterated in arbitrary order.
 	 */
-	<T extends Edge> Iterator<? extends T> getEdgeIterator();
+	<T extends Edge> Iterator<T> getEdgeIterator();
 
 	/**
 	 * Iterator only on leaving edges. This iterator iterates only on directed
@@ -111,7 +111,7 @@ public interface Node extends Element, Iterable<Edge>
 	 * in the iteration).
 	 * @return The iterator, edges are iterated in arbitrary order.
 	 */
-	<T extends Edge> Iterator<? extends T> getEnteringEdgeIterator();
+	<T extends Edge> Iterator<T> getEnteringEdgeIterator();
 
 	/**
 	 * Iterator only on entering edges. This iterator iterates only on directed
@@ -119,7 +119,7 @@ public interface Node extends Element, Iterable<Edge>
 	 * included in the iteration).
 	 * @return The iterator, edges are iterated in arbitrary order.
 	 */
-	<T extends Edge> Iterator<? extends T> getLeavingEdgeIterator();
+	<T extends Edge> Iterator<T> getLeavingEdgeIterator();
 
 	/**
 	 * Iterator on the set of neighbour nodes connected to this node via one or
@@ -128,7 +128,7 @@ public interface Node extends Element, Iterable<Edge>
 	 * from them toward this node).
 	 * @return The iterator, neighbour are iterated in arbitrary order.
 	 */
-	<T extends Node> Iterator<? extends T> getNeighborNodeIterator();
+	<T extends Node> Iterator<T> getNeighborNodeIterator();
 
 	/**
 	 * I-th edge. Edges are stored in no given order. However this method
@@ -146,7 +146,7 @@ public interface Node extends Element, Iterable<Edge>
 	 * @return An iterator able to explore the graph in a breadth first way
 	 *         starting at this node.
 	 */
-	<T extends Node> Iterator<? extends T> getBreadthFirstIterator();
+	<T extends Node> Iterator<T> getBreadthFirstIterator();
 
 	/**
 	 * Iterator for breadth first exploration of the graph, starting at this
@@ -156,7 +156,7 @@ public interface Node extends Element, Iterable<Edge>
 	 * @return An iterator able to explore the graph in a breadth first way
 	 *         starting at this node.
 	 */
-	<T extends Node> Iterator<? extends T> getBreadthFirstIterator( boolean directed );
+	<T extends Node> Iterator<T> getBreadthFirstIterator( boolean directed );
 
 	/**
 	 * Iterator for depth first exploration of the graph, starting at this
@@ -167,7 +167,7 @@ public interface Node extends Element, Iterable<Edge>
 	 * @complexity of the depth first iterator O(n+m) with n the number of
 	 *             nodes and m the number of edges.
 	 */
-	<T extends Node> Iterator<? extends T> getDepthFirstIterator();
+	<T extends Node> Iterator<T> getDepthFirstIterator();
 
 	/**
 	 * Iterator for depth first exploration of the graph, starting at this
@@ -177,25 +177,25 @@ public interface Node extends Element, Iterable<Edge>
 	 * @return An iterator able to explore the graph in a depth first way
 	 *         starting at this node.
 	 */
-	<T extends Node> Iterator<? extends T> getDepthFirstIterator( boolean directed );
+	<T extends Node> Iterator<T> getDepthFirstIterator( boolean directed );
 
 	/**
 	 * Set of all entering and leaving edges.
 	 * @return A collection containing all directed and undirected edges, leaving or entering.
 	 */
-	<T extends Edge> Iterable<? extends T> getEdgeSet();
+	<T extends Edge> Iterable<T> getEdgeSet();
 
 	/**
 	 * Set of all leaving edges.
 	 * @return A collection of only edges that leave this node plus all undirected edges.
 	 */
-	<T extends Edge> Iterable<? extends T> getLeavingEdgeSet();
+	<T extends Edge> Iterable<T> getLeavingEdgeSet();
 
 	/**
 	 * Set of all entering edges.
 	 * @return A collection of only edges that enter this node plus all undirected edges.
 	 */
-	<T extends Edge> Iterable<? extends T> getEnteringEdgeSet();
+	<T extends Edge> Iterable<T> getEnteringEdgeSet();
 
 	/**
 	 * Override the Object.toString() method.

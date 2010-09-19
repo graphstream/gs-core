@@ -89,13 +89,13 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * Iterator on the set of nodes, in an undefined order.
 	 * @return The iterator.
 	 */
-	<T extends Node> Iterator<? extends T> getNodeIterator();
+	<T extends Node> Iterator<T> getNodeIterator();
 
 	/**
 	 * Iterator on the set of edges, in an undefined order.
 	 * @return The iterator.
 	 */
-	<T extends Edge> Iterator<? extends T> getEdgeIterator();
+	<T extends Edge> Iterator<T> getEdgeIterator();
 
 	/**
 	 * Set of nodes usable in a for-each instruction.
@@ -119,7 +119,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @see #getNodeIterator()
 	 * @see #getEachNode()
 	 */
-	<T extends Node> Collection<? extends T> getNodeSet();
+	<T extends Node> Collection<T> getNodeSet();
 	
 	/**
 	 * Unmodifiable view of the set of edges.
@@ -127,7 +127,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @see #getEdgeIterator()
 	 * @see #getEachEdge()
 	 */
-	<T extends Edge> Collection<? extends T> getEdgeSet();
+	<T extends Edge> Collection<T> getEdgeSet();
 
 	/**
 	 * The factory used to create node instances.

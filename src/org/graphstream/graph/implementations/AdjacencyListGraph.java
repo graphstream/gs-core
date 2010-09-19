@@ -525,7 +525,7 @@ public class AdjacencyListGraph
 	/**
 	 * @complexity constant
 	 */
-	public <T extends Edge> Iterator<? extends T> getEdgeIterator()
+	public <T extends Edge> Iterator<T> getEdgeIterator()
 	{
 		return new EdgeIterator<T>();
 	}
@@ -549,11 +549,11 @@ public class AdjacencyListGraph
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Collection<? extends T> getEdgeSet()
+	public <T extends Edge> Collection<T> getEdgeSet()
 	{
 		try
 		{
-			return (Collection<? extends T>)
+			return (Collection<T>)
 				Collections.unmodifiableCollection( edges.values() );
 		}
 		catch( ClassCastException e )
@@ -565,12 +565,12 @@ public class AdjacencyListGraph
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T extends Node> Collection<? extends T> getNodeSet()
+	public <T extends Node> Collection<T> getNodeSet()
 	{
 		try
 		{
-			return (Collection<? extends T>)
-				Collections.unmodifiableCollection( nodes.values() );
+			return Collections.unmodifiableCollection( 
+					(Collection<T>) nodes.values() );
 		}
 		catch( ClassCastException e )
 		{
@@ -599,7 +599,7 @@ public class AdjacencyListGraph
 	/**
 	 * @complexity constant.
 	 */
-	public <T extends Node> Iterator<? extends T> getNodeIterator()
+	public <T extends Node> Iterator<T> getNodeIterator()
 	{
 		return new NodeIterator<T>();
 	}

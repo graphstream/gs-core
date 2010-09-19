@@ -123,13 +123,13 @@ public class ConcurrentNode
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T extends Node> Iterator<? extends T> getBreadthFirstIterator()
+	public <T extends Node> Iterator<T> getBreadthFirstIterator()
 	{
 		return new BreadthFirstIterator<T>( (T) this );
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Node> Iterator<? extends T> getBreadthFirstIterator( boolean directed )
+	public <T extends Node> Iterator<T> getBreadthFirstIterator( boolean directed )
 	{
 		return new BreadthFirstIterator<T>( (T) this, directed );
 	}
@@ -140,13 +140,13 @@ public class ConcurrentNode
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Node> Iterator<? extends T> getDepthFirstIterator()
+	public <T extends Node> Iterator<T> getDepthFirstIterator()
 	{
 		return new DepthFirstIterator<T>( (T) this );
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Node> Iterator<? extends T> getDepthFirstIterator( boolean directed )
+	public <T extends Node> Iterator<T> getDepthFirstIterator( boolean directed )
 	{
 		return new DepthFirstIterator<T>( (T) this, directed );
 	}
@@ -196,22 +196,20 @@ public class ConcurrentNode
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterator<? extends T> getEdgeIterator()
+	public <T extends Edge> Iterator<T> getEdgeIterator()
 	{
-		return (Iterator<? extends T>) edges.iterator();
-		//new EdgeIterator();
+		return (Iterator<T>) edges.iterator();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public Iterator<Edge> iterator()
 	{
 		return (Iterator<Edge>) getEdgeIterator();
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Collection<? extends T> getEdgeSet()
+	public <T extends Edge> Collection<T> getEdgeSet()
 	{
-		return (Collection<? extends T>) edges;
+		return (Collection<T>) edges;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -235,13 +233,13 @@ public class ConcurrentNode
 		return null;
 	}
 
-	public <T extends Edge> Iterator<? extends T> getEnteringEdgeIterator()
+	public <T extends Edge> Iterator<T> getEnteringEdgeIterator()
 	{
 		throw new UnsupportedOperationException( "unsupported entering edge iterator" );
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<? extends T> getEnteringEdgeSet()
+	public <T extends Edge> Iterable<T> getEnteringEdgeSet()
 	{
 		return new EdgeIterable<T>( (Iterator<T>) getEnteringEdgeIterator() );
 	}
@@ -266,19 +264,19 @@ public class ConcurrentNode
 		return d;
 	}
 
-	public <T extends Edge> Iterator<? extends T> getLeavingEdgeIterator()
+	public <T extends Edge> Iterator<T> getLeavingEdgeIterator()
 	{
 		throw new UnsupportedOperationException( "unsupported leaving edge iterator" );
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<? extends T> getLeavingEdgeSet()
+	public <T extends Edge> Iterable<T> getLeavingEdgeSet()
 	{
 		return new EdgeIterable<T>( (Iterator<T>) getLeavingEdgeIterator() );
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Node> Iterator<? extends T> getNeighborNodeIterator()
+	public <T extends Node> Iterator<T> getNeighborNodeIterator()
 	{
 		return new NeighborNodeIterator<T>( (T) this );
 	}

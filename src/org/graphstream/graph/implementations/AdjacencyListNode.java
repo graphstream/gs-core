@@ -340,21 +340,20 @@ public class AdjacencyListNode extends AbstractElement implements Node
 		return null;
 	}
 
-	public <T extends Edge> Iterator<? extends T> getEdgeIterator()
+	public <T extends Edge> Iterator<T> getEdgeIterator()
 	{
 		return new EdgeIterator<T>();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public Iterator<Edge> iterator()
 	{
 		return (Iterator<Edge>) getEdgeIterator();
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<? extends T> getEdgeSet()
+	public <T extends Edge> Iterable<T> getEdgeSet()
 	{
-		return (Iterable<? extends T>) edges;
+		return (Iterable<T>) edges;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -378,13 +377,13 @@ public class AdjacencyListNode extends AbstractElement implements Node
 		return null;
 	}
 
-	public <T extends Edge> Iterator<? extends T> getEnteringEdgeIterator()
+	public <T extends Edge> Iterator<T> getEnteringEdgeIterator()
 	{
 		return new EnteringEdgeIterator<T>(this);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<? extends T> getEnteringEdgeSet()
+	public <T extends Edge> Iterable<T> getEnteringEdgeSet()
 	{
 		return new EdgeIterable<T>( (Iterator<T>) getEnteringEdgeIterator() );
 	}
@@ -400,18 +399,18 @@ public class AdjacencyListNode extends AbstractElement implements Node
 		return it.nbEntering;
 	}
 
-	public <T extends Edge> Iterator<? extends T> getLeavingEdgeIterator()
+	public <T extends Edge> Iterator<T> getLeavingEdgeIterator()
 	{
 		return new LeavingEdgeIterator<T>(this);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<? extends T> getLeavingEdgeSet()
+	public <T extends Edge> Iterable<T> getLeavingEdgeSet()
 	{
 		return new EdgeIterable<T>( (Iterator<T>) getLeavingEdgeIterator() );
 	}
 
-	public <T extends Node> Iterator<? extends T> getNeighborNodeIterator()
+	public <T extends Node> Iterator<T> getNeighborNodeIterator()
 	{
 		return new NeighborNodeIterator<T>( this );
 	}
