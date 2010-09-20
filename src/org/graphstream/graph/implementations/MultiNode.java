@@ -47,7 +47,7 @@ public class MultiNode extends DefaultNode
 	 * following a leaving edge, and the value is a set of all leaving edges
 	 * toward this node.
 	 */
-	protected MultiEdgeMap to = new MultiEdgeMap();
+	protected MultiEdgeMap<? extends Edge> to = new MultiEdgeMap<Edge>();
 
 	/**
 	 * Map of entering edges from nodes. Each element of the map is a pair
@@ -55,7 +55,7 @@ public class MultiNode extends DefaultNode
 	 * following an entering edge, and the value is a set of all entering edges
 	 * from this node.
 	 */
-	protected MultiEdgeMap from = new MultiEdgeMap();
+	protected MultiEdgeMap<? extends Edge> from = new MultiEdgeMap<Edge>();
 	
 	protected int inDegree = 0;
 	
@@ -100,49 +100,55 @@ public class MultiNode extends DefaultNode
 	}
 
 	@Override
-	public Edge getEdgeToward( String id )
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T getEdgeToward( String id )
 	{
-		ArrayList<Edge> edges = to.get( id );
+		ArrayList<Edge> edges = (ArrayList<Edge>) to.get( id );
 		
 		if( edges != null )
-			return edges.get( 0 );
+			return (T) edges.get( 0 );
 		
 		return null;
 	}
 
 	@Override
-	public Edge getEdgeFrom( String id )
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T getEdgeFrom( String id )
 	{
-		ArrayList<Edge> edges = from.get( id );
+		ArrayList<Edge> edges = (ArrayList<Edge>) from.get( id );
 		
 		if( edges != null )
-			return edges.get( 0 );
+			return (T) edges.get( 0 );
 		
 		return null;
 	}
 
 	@Override
-	public Iterator<Edge> getEnteringEdgeIterator()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterator<T> getEnteringEdgeIterator()
 	{
-		return new MultiElementIterator<Edge>( from );
+		return new MultiElementIterator<T>( (MultiEdgeMap<T>) from );
 	}
 	
 	@Override
-	public Iterator<Edge> getLeavingEdgeIterator()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterator<T> getLeavingEdgeIterator()
 	{
-		return new MultiElementIterator<Edge>( to );
+		return new MultiElementIterator<T>( (MultiEdgeMap<T>) to );
 	}
 
 	@Override
-	public Iterable<? extends Edge> getEnteringEdgeSet()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterable<T> getEnteringEdgeSet()
     {
-		return from;
+		return (Iterable<T>) from;
     }
 
 	@Override
-	public Iterable<? extends Edge> getLeavingEdgeSet()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterable<T> getLeavingEdgeSet()
     {
-		return to;
+		return (Iterable<T>) to;
     }
 
 // Commands
@@ -154,7 +160,8 @@ public class MultiNode extends DefaultNode
 	 * @param directed If the edge is directed only from this node to the target.
 	 */
 	@Override
-	protected Edge addEdgeToward( String tag, DefaultNode target, boolean directed )
+	@SuppressWarnings("unchecked")
+	protected <T extends Edge> T addEdgeToward( String tag, DefaultNode target, boolean directed )
 		throws IllegalArgumentException
 	{
 		// Some checks.
@@ -176,20 +183,20 @@ public class MultiNode extends DefaultNode
 
 		// Register the edge.
 
-		ArrayList<Edge> toward = to.get( getId() );
+		ArrayList<Edge> toward = (ArrayList<Edge>) to.get( getId() );
 		
 		if( toward != null )
 		{
 			// There exist yet an edge from the target to this node.
 
-			MultiEdge e = (MultiEdge) G.edgeFactory.newInstance(tag,this,target,directed);
+			T e = (T) G.edgeFactory.newInstance(tag,this,target,directed);
 			//e.bind( this, target, directed );
 			//e.setDirected(directed);
 			return e;
 		}
 		else
 		{
-			MultiEdge e = (MultiEdge) G.edgeFactory.newInstance(tag,this,target,directed);
+			T e = (T) G.edgeFactory.newInstance(tag,this,target,directed);
 			//e.bind( this, target, directed );
 			//e.setDirected(directed);
 			return e;
@@ -200,6 +207,7 @@ public class MultiNode extends DefaultNode
 	 * Called by an edge to bind it.
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	protected void registerEdge( Edge edge )
 		throws IllegalArgumentException, IdAlreadyInUseException
 	{
@@ -213,16 +221,16 @@ public class MultiNode extends DefaultNode
 
 		if( edge.isDirected() )
 		{
-			HashMap<String,ArrayList<Edge>> map;
+			MultiEdgeMap<Edge> map;
 			
 			if( edge.getSourceNode() == this )
 			{
-			     map = to;
+			     map = (MultiEdgeMap<Edge>) to;
 			     outDegree++;
 			}
 			else
 			{
-				map = from;
+				map = (MultiEdgeMap<Edge>) from;
 				inDegree++;
 			}
 				
@@ -238,18 +246,18 @@ public class MultiNode extends DefaultNode
 		}
 		else
 		{
-			ArrayList<Edge> listTo   = to.get( other.getId() );
-			ArrayList<Edge> listFrom = from.get( other.getId() );
+			ArrayList<Edge> listTo   = (ArrayList<Edge>) to.get( other.getId() );
+			ArrayList<Edge> listFrom = (ArrayList<Edge>) from.get( other.getId() );
 			
 			if( listTo == null )
 			{
 				listTo = new ArrayList<Edge>();
-				to.put( other.getId(), listTo );
+				( (MultiEdgeMap<Edge>) to ).put( other.getId(), listTo );
 			}
 			if( listFrom == null )
 			{
 				listFrom = new ArrayList<Edge>();
-				from.put( other.getId(), listFrom );
+				( (MultiEdgeMap<Edge>) from ).put( other.getId(), listFrom );
 			}
 			
 			inDegree++;
@@ -260,6 +268,7 @@ public class MultiNode extends DefaultNode
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	protected void unregisterEdge( Edge edge )
 	{
 		Node other = edge.getOpposite( this );
@@ -267,8 +276,8 @@ public class MultiNode extends DefaultNode
 		ArrayList<Edge> fromList;
 		int pos;
 		
-		toList   = to.get( other.getId() );
-		fromList = from.get( other.getId() );
+		toList   = (ArrayList<Edge>) to.get( other.getId() );
+		fromList = (ArrayList<Edge>) from.get( other.getId() );
 		
 		if( toList != null )
 		{
@@ -328,7 +337,8 @@ public class MultiNode extends DefaultNode
 
 // Nested classes
 
-	static class MultiElementIterator<T extends Element> implements Iterator<T>
+	static class MultiElementIterator<T extends Element>
+		implements Iterator<T>
 	{
 		Iterator<ArrayList<T>> iterator;
 		
@@ -372,13 +382,14 @@ public class MultiNode extends DefaultNode
 		}
 	}
 	
-	protected class MultiEdgeMap extends HashMap<String,ArrayList<Edge>> implements Iterable<Edge>
+	protected class MultiEdgeMap<T extends Edge>
+		extends HashMap<String,ArrayList<T>> implements Iterable<T>
 	{
         private static final long serialVersionUID = 1L;
 
-		public Iterator<Edge> iterator()
+		public Iterator<T> iterator()
 		{
-			return new MultiElementIterator<Edge>( this );
+			return new MultiElementIterator<T>( this );
 		}
 	}
 }

@@ -34,8 +34,8 @@ import java.util.NoSuchElementException;
  * @complexity O(n+m) with n the number of nodes and m the number of edges.
  * @since 20040730
  */
-public class BreadthFirstIterator
-	implements Iterator<Node>
+public class BreadthFirstIterator<T extends Node>
+	implements Iterator<T>
 {
 // Attributes
 
@@ -47,13 +47,13 @@ public class BreadthFirstIterator
 	/**
 	 * Already processed nodes.
 	 */
-	protected HashSet<Node> closed = new HashSet<Node>();
+	protected HashSet<T> closed = new HashSet<T>();
 
 	/**
 	 * Nodes remaining to process. The iteration continues as long
 	 * as this array is not empty.
 	 */
-	protected LinkedList<Node> open = new LinkedList<Node>();
+	protected LinkedList<T> open = new LinkedList<T>();
 
 // Constructors
 
@@ -61,7 +61,7 @@ public class BreadthFirstIterator
 	 * New breadth-first iterator starting at the given start node.
 	 * @param startNode The node where the graph exploration begins.
 	 */
-	public BreadthFirstIterator( Node startNode )
+	public BreadthFirstIterator( T startNode )
 	{
 		this( startNode, true );
 	}
@@ -72,7 +72,7 @@ public class BreadthFirstIterator
 	 * @param directed If true the iterator respects the edge direction (the
 	 *        default).
 	 */
-	public BreadthFirstIterator( Node startNode, boolean directed )
+	public BreadthFirstIterator( T startNode, boolean directed )
 	{
 		open.add( startNode );
 		this.directed = directed;
@@ -94,7 +94,7 @@ public class BreadthFirstIterator
 	 * @param node The node to test.
 	 * @return True if tabu.
 	 */
-	protected boolean tabu( Node node )
+	protected boolean tabu( T node )
 	{
 		return( closed.contains( node ) || open.contains( node ) );
 	}
@@ -112,12 +112,12 @@ public class BreadthFirstIterator
 	 * Next node to process.
 	 * @return The next node.
 	 */
-	public Node next()
+	public T next()
 		throws NoSuchElementException
 	{
 		if( open.size() > 0 )
 		{
-			Node next = open.removeFirst();
+			T next = open.removeFirst();
 
 			addNeighborsOf( next );
 			closed.add( next );
@@ -135,7 +135,8 @@ public class BreadthFirstIterator
 	 * processed) in the list of nodes to process next.
 	 * @param node The nodes the neighbors are to be processed.
 	 */
-	protected void addNeighborsOf( Node node )
+	@SuppressWarnings("unchecked")
+	protected void addNeighborsOf( T node )
 	{
 		Iterator<? extends Edge> k;
 		
@@ -146,7 +147,7 @@ public class BreadthFirstIterator
 		while( k.hasNext() )
 		{
 			Edge edge = k.next();
-			Node adj  = edge.getOpposite( node );
+			T adj  = (T) edge.getOpposite( node );
 
 			if( ! tabu( adj ) )
 				open.add( adj );

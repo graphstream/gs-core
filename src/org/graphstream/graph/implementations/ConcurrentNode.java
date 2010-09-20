@@ -49,14 +49,16 @@ import org.graphstream.stream.SourceBase.ElementType;
  * @see org.graphstream.graph.implementations.AdjacencyListNode
  */
 
-public class ConcurrentNode extends AbstractConcurrentElement implements Node
+public class ConcurrentNode
+	extends AbstractConcurrentElement implements Node
 {
-	public class NeighborNodeIterator implements Iterator<Node>
+	public class NeighborNodeIterator<T extends Node>
+		implements Iterator<T>
 	{
-		Node node;
+		T node;
 		Iterator<Edge>	ite;
 		
-		public NeighborNodeIterator( Node node )
+		public NeighborNodeIterator( T node )
 		{
 			this.node = node;
 			ite = ((ConcurrentNode)node).edges.iterator();
@@ -67,7 +69,7 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node
 			return ite.hasNext();
 		}
 
-		public Node next()
+		public T next()
 		{
 			if( hasNext() )
 				return ite.next().getOpposite( node );
@@ -81,16 +83,17 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node
 		}
 	}
 	
-	public class EdgeIterable implements Iterable<Edge>
+	public class EdgeIterable<T extends Edge>
+		implements Iterable<T>
 	{
-		protected Iterator<Edge> iterator;
+		protected Iterator<T> iterator;
 		
-		public EdgeIterable( Iterator<Edge> iterator )
+		public EdgeIterable( Iterator<T> iterator )
 		{
 			this.iterator = iterator;
 		}
 		
-		public Iterator<Edge> iterator()
+		public Iterator<T> iterator()
 		{
 			return iterator;
 		}
@@ -119,14 +122,16 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node
 		return ((ConcurrentGraph)graph).newEvent();
 	}
 	
-	public Iterator<Node> getBreadthFirstIterator()
+	@SuppressWarnings("unchecked")
+	public <T extends Node> Iterator<T> getBreadthFirstIterator()
 	{
-		return new BreadthFirstIterator( this );
+		return new BreadthFirstIterator<T>( (T) this );
 	}
 
-	public Iterator<Node> getBreadthFirstIterator( boolean directed )
+	@SuppressWarnings("unchecked")
+	public <T extends Node> Iterator<T> getBreadthFirstIterator( boolean directed )
 	{
-		return new BreadthFirstIterator( this, directed );
+		return new BreadthFirstIterator<T>( (T) this, directed );
 	}
 
 	public int getDegree()
@@ -134,17 +139,20 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node
 		return edges.size();
 	}
 
-	public Iterator<Node> getDepthFirstIterator()
+	@SuppressWarnings("unchecked")
+	public <T extends Node> Iterator<T> getDepthFirstIterator()
 	{
-		return new DepthFirstIterator( this );
+		return new DepthFirstIterator<T>( (T) this );
 	}
 
-	public Iterator<Node> getDepthFirstIterator( boolean directed )
+	@SuppressWarnings("unchecked")
+	public <T extends Node> Iterator<T> getDepthFirstIterator( boolean directed )
 	{
-		return new DepthFirstIterator( this, directed );
+		return new DepthFirstIterator<T>( (T) this, directed );
 	}
 
-	public Edge getEdge( int i )
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T getEdge( int i )
 	{
 		int j = 0;
 		Iterator<Edge> ite = edges.iterator();
@@ -152,7 +160,7 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node
 		while( ite.hasNext() )
 		{
 			if( i == j )
-				return ite.next();
+				return (T) ite.next();
 			
 			j++;
 			ite.next();
@@ -165,42 +173,47 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node
 	 * @complexity 0(n+d) with d the degree of the node and n the number nodes
 	 *             in the graph.
 	 */
-	public Edge getEdgeFrom( String id )
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T getEdgeFrom( String id )
 	{
 		Node n = ( (ConcurrentGraph) graph ).lookForNode( id );
+		
 		if( n != null )
 		{
 			for( Edge e: edges )
 			{
 				if( e.getSourceNode() == n )
 				{
-					return e;
+					return (T) e;
 				}
 				if( !e.isDirected() && e.getTargetNode() == n )
 				{
-					return e;
+					return (T) e;
 				}
 			}
 		}
 		return null;
 	}
 
-	public Iterator<Edge> getEdgeIterator()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterator<T> getEdgeIterator()
 	{
-		return edges.iterator();//new EdgeIterator();
+		return (Iterator<T>) edges.iterator();
 	}
 	
 	public Iterator<Edge> iterator()
 	{
-		return getEdgeIterator();
+		return (Iterator<Edge>) getEdgeIterator();
 	}
 
-	public Collection<Edge> getEdgeSet()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Collection<T> getEdgeSet()
 	{
-		return edges;
+		return (Collection<T>) edges;
 	}
 
-	public Edge getEdgeToward( String id )
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T getEdgeToward( String id )
 	{
 		Node n = ( (ConcurrentGraph) graph ).lookForNode( id );
 		if( n != null )
@@ -209,25 +222,26 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node
 			{
 				if( e.getTargetNode() == n )
 				{
-					return e;
+					return (T) e;
 				}
 				if( !e.isDirected() && e.getSourceNode() == n )
 				{
-					return e;
+					return (T) e;
 				}
 			}
 		}
 		return null;
 	}
 
-	public Iterator<Edge> getEnteringEdgeIterator()
+	public <T extends Edge> Iterator<T> getEnteringEdgeIterator()
 	{
 		throw new UnsupportedOperationException( "unsupported entering edge iterator" );
 	}
 
-	public Iterable<Edge> getEnteringEdgeSet()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterable<T> getEnteringEdgeSet()
 	{
-		return new EdgeIterable( getEnteringEdgeIterator() );
+		return new EdgeIterable<T>( (Iterator<T>) getEnteringEdgeIterator() );
 	}
 
 	public Graph getGraph()
@@ -250,19 +264,21 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node
 		return d;
 	}
 
-	public Iterator<Edge> getLeavingEdgeIterator()
+	public <T extends Edge> Iterator<T> getLeavingEdgeIterator()
 	{
 		throw new UnsupportedOperationException( "unsupported leaving edge iterator" );
 	}
 
-	public Iterable<Edge> getLeavingEdgeSet()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterable<T> getLeavingEdgeSet()
 	{
-		return new EdgeIterable( getLeavingEdgeIterator() );
+		return new EdgeIterable<T>( (Iterator<T>) getLeavingEdgeIterator() );
 	}
 
-	public Iterator<Node> getNeighborNodeIterator()
+	@SuppressWarnings("unchecked")
+	public <T extends Node> Iterator<T> getNeighborNodeIterator()
 	{
-		return new NeighborNodeIterator( this );
+		return new NeighborNodeIterator<T>( (T) this );
 	}
 
 	public int getOutDegree()
@@ -291,7 +307,8 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node
 	 * @return An reference to the edge coming from the given node if there is one, null otherwise.
 	 * @param n The node we look for an edge towards. 
 	 */
-	public Edge hasEdgeFrom( Node n )
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T hasEdgeFrom( Node n )
 	{
 		if( n != null )
 		{
@@ -304,10 +321,10 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node
 				if( e.isDirected() )
 				{
 					if( e.getSourceNode() == n )
-						return e;
+						return (T) e;
 				}
 				else
-					return e;
+					return (T) e;
 			}
 		}
 		return null;
@@ -324,7 +341,8 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node
 	 * @return An reference to the edge leading to the given node if there is one, null otherwise.
 	 * @param n The node we look for an edge towards. 
 	 */
-	public Edge hasEdgeToward( Node n )
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T hasEdgeToward( Node n )
 	{
 		if( n != null )
 		{
@@ -337,12 +355,12 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node
 				if( e.isDirected() )
 				{
 					if( e.getTargetNode() == n )
-						return e;
+						return (T) e;
 				}
 				else
 				{
 					if( e.getTargetNode() == n || e.getSourceNode() == n )
-						return e;
+						return (T) e;
 				}
 			}
 		}

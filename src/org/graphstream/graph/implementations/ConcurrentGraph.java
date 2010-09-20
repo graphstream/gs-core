@@ -69,15 +69,18 @@ import org.graphstream.ui.swingViewer.Viewer;
  * @see org.graphstream.graph.implementations.AdjacencyListGraph
  */
 
-public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
+public class ConcurrentGraph
+	extends AbstractConcurrentElement implements Graph
 {
-	public class EdgeIterator implements Iterator<Edge>
+	public class EdgeIterator<T extends Edge>
+		implements Iterator<T>
 	{
-		Iterator<Edge> edgeIterator;
+		Iterator<T> edgeIterator;
 		
+		@SuppressWarnings("unchecked")
 		public EdgeIterator()
 		{
-			edgeIterator = edges.values().iterator();
+			edgeIterator = (Iterator<T>) edges.values().iterator();
 		}
 		
 		public boolean hasNext()
@@ -85,7 +88,7 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 			return edgeIterator.hasNext();
 		}
 
-		public Edge next()
+		public T next()
 		{
 			return edgeIterator.next();
 		}
@@ -97,13 +100,15 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	}
 
 	
-	public class NodeIterator implements Iterator<Node>
+	public class NodeIterator<T extends Node>
+		implements Iterator<T>
 	{
-		Iterator<Node> nodeIterator;
+		Iterator<T> nodeIterator;
 		
+		@SuppressWarnings("unchecked")
 		public NodeIterator()
 		{
-			nodeIterator = nodes.values().iterator();
+			nodeIterator = (Iterator<T>) nodes.values().iterator();
 		}
 
 		public boolean hasNext()
@@ -111,7 +116,7 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 			return (nodeIterator.hasNext());
 		}
 
-		public Node next()
+		public T next()
 		{
 			return  nodeIterator.next();
 		}
@@ -125,12 +130,14 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	/**
 	 * All the nodes.
 	 */
-	protected ConcurrentHashMap<String,Node> nodes = new ConcurrentHashMap<String, Node>();
+	protected ConcurrentHashMap<String,? extends Node> nodes = 
+		new ConcurrentHashMap<String, Node>();
 
 	/**
 	 * All the edges.
 	 */
-	protected ConcurrentHashMap<String,Edge> edges = new ConcurrentHashMap<String, Edge>();
+	protected ConcurrentHashMap<String,? extends Edge> edges = 
+		new ConcurrentHashMap<String, Edge>();
 	
 	/**
 	 * Verify name space conflicts, removal of non-existing elements, use of
@@ -148,12 +155,12 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	/**
 	 *  Help full class that dynamically instantiate nodes according to a given class name.
 	 */
-	protected NodeFactory nodeFactory;
+	protected NodeFactory<? extends ConcurrentNode> nodeFactory;
 	
 	/**
 	 *  Help full class that dynamically instantiate edges according to a given class name.
 	 */
-	protected EdgeFactory edgeFactory;
+	protected EdgeFactory<? extends ConcurrentEdge> edgeFactory;
 	
 	/**
 	 * The current step.
@@ -224,16 +231,16 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 		
 		listeners  = new GraphListeners();
 		
-		nodeFactory = new NodeFactory()
+		nodeFactory = new NodeFactory<ConcurrentNode>()
 		{
-			public Node newInstance( String id, Graph graph )
+			public ConcurrentNode newInstance( String id, Graph graph )
 			{
 				return new ConcurrentNode(graph,id);
 			}
 		};
-		edgeFactory = new EdgeFactory()
+		edgeFactory = new EdgeFactory<ConcurrentEdge>()
 		{
-			public Edge newInstance( String id, Node src, Node trg, boolean directed )
+			public ConcurrentEdge newInstance( String id, Node src, Node trg, boolean directed )
 			{
 				return new ConcurrentEdge(id,src,trg,directed);
 			}
@@ -252,35 +259,57 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 		return listeners.newEvent();
 	}
 
-	public EdgeFactory edgeFactory()
+	public EdgeFactory<? extends Edge> edgeFactory()
 	{
 		return edgeFactory;
 	}
 	
-	public void setEdgeFactory( EdgeFactory ef )
+	@SuppressWarnings("unchecked")
+	public void setEdgeFactory( EdgeFactory<? extends Edge> ef )
 	{
-		this.edgeFactory = ef;
+		try
+		{
+			this.edgeFactory = 
+				(EdgeFactory<? extends ConcurrentEdge>) ef;
+		}
+		catch( ClassCastException e )
+		{
+			System.err.printf("need an EdgeFactory<? extends ConcurrentEdge>%n");
+		}
 	}
 
-	public NodeFactory nodeFactory()
+	public NodeFactory<? extends Node> nodeFactory()
 	{
 		return nodeFactory;
 	}
 	
-	public void setNodeFactory( NodeFactory nf )
+	@SuppressWarnings("unchecked")
+	public void setNodeFactory( NodeFactory<? extends Node> nf )
 	{
-		this.nodeFactory = nf;
+		try
+		{
+			this.nodeFactory = 
+				(NodeFactory<? extends ConcurrentNode>) nf;
+		}
+		catch( ClassCastException e )
+		{
+			System.err.printf("need an NodeFactory<? extends ConcurrentNode>%n");
+		}
 	}
 
-	public Edge addEdge( String id, String node1, String node2 ) throws IdAlreadyInUseException, ElementNotFoundException
+	public <T extends Edge> T addEdge( String id, String node1, String node2 )
+		throws IdAlreadyInUseException, ElementNotFoundException
 	{
 		return addEdge( id, node1, node2, false );
 	}
 
-	protected Edge addEdge_( String sourceId, long timeId, String edgeId, String from, String to, boolean directed ) throws IdAlreadyInUseException, ElementNotFoundException
+	@SuppressWarnings("unchecked")
+	protected <T extends Edge> T addEdge_( String sourceId, long timeId, String edgeId, 
+			String from, String to, boolean directed )
+		throws IdAlreadyInUseException, ElementNotFoundException
 	{
-		Node src;
-		Node trg;
+		ConcurrentNode src;
+		ConcurrentNode trg;
 
 		src =  lookForNode( from );
 		trg =  lookForNode( to );
@@ -313,8 +342,8 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 
 		if( src != null && trg != null )
 		{
-			Edge edge = null;
-			Edge old = lookForEdge( edgeId );
+			T edge = null;
+			ConcurrentEdge old = lookForEdge( edgeId );
 			if( old != null )
 			{
 				if( strictChecking )
@@ -323,26 +352,34 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 				}
 				else
 				{
-					edge = old;
+					//
+					// If fails, old edge is not of type T.
+					//
+					edge = (T) old;
 				}
 			}
 			else
 			{
-				if( ( (AdjacencyListNode) src ).hasEdgeToward( trg ) != null )
+				if( src.hasEdgeToward( trg ) != null )
 				{
 					throw new IdAlreadyInUseException( "Cannot add edge between " + from + " and " + to + ". A link already exists." );
 				}
 				else
 				{
-					edge = edgeFactory.newInstance(edgeId,src,trg,directed);
-					//edge.setDirected( directed );
+					//
+					// If fails, edgeFactory does not provide edge of type T.
+					//
+					edge = (T) edgeFactory.newInstance(edgeId,src,trg,directed);
 					
-					edges.put( edgeId,edge );
-					((AdjacencyListNode)src).edges.add( edge );
-					((AdjacencyListNode)trg).edges.add( edge );
+					( (ConcurrentHashMap<String,T>) edges ).put( edgeId,edge );
+					
+					src.edges.add( edge );
+					trg.edges.add( edge );
+					
 					listeners.sendEdgeAdded( sourceId, timeId, edgeId, from, to, directed );
 				}
 			}
+			
 			return edge;
 		}
 
@@ -352,26 +389,29 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	/**
 	 * @complexity O(log(n)) with n being the number of edges in the graph, plus overhead due to thread synchronization.
 	 */
-	public Edge addEdge( String id, String from, String to, boolean directed ) throws IdAlreadyInUseException, ElementNotFoundException
+	public <T extends Edge> T addEdge( String id, String from, String to, boolean directed )
+		throws IdAlreadyInUseException, ElementNotFoundException
 	{
-		Edge e = addEdge_( getId(), newEvent(), id, from, to, directed );
+		T e = addEdge_( getId(), newEvent(), id, from, to, directed );
 		return e;
 	}
 
 	/**
 	 * @complexity O(log(n)) with n being the number of nodes in the graph, plus overhead due to thread synchronization.
 	 */
-	public Node addNode( String id ) throws IdAlreadyInUseException
+	public <T extends Node> T addNode( String id ) throws IdAlreadyInUseException
 	{
-		Node n = addNode_( getId(), newEvent(), id );
-		
+		T n = addNode_( getId(), newEvent(), id );
 		return n;
 	}
 
-	protected Node addNode_( String sourceId, long timeId, String nodeId ) throws IdAlreadyInUseException
+	@SuppressWarnings("unchecked")
+	protected <T extends Node> T addNode_( String sourceId, long timeId, String nodeId )
+		throws IdAlreadyInUseException
 	{
-		Node node;
-		Node old = lookForNode( nodeId );
+		T node;
+		ConcurrentNode old = lookForNode( nodeId );
+		
 		if( old != null )
 		{
 			if( strictChecking )
@@ -380,14 +420,20 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 			}
 			else
 			{
-				node = old;
+				//
+				// If fails, old node is not of type T.
+				//
+				node = (T) old;
 			}
 		}
 		else
 		{
-			node = nodeFactory.newInstance(nodeId,this);
+			//
+			// If fails, nodeFactory does not provide node of type T.
+			//
+			node = (T) nodeFactory.newInstance(nodeId,this);
 			
-			nodes.put(nodeId, node );
+			( (ConcurrentHashMap<String,T>) nodes ).put(nodeId, node );
 			listeners.sendNodeAdded( sourceId, timeId, nodeId );
 		}
 
@@ -428,9 +474,10 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	}
 
 	/**
-	 * @complexity O(log(n)) with n being the number of edges in the graph, plus overhead due to thread synchronization.
+	 * @complexity O(log(n)) with n being the number of edges in the graph, plus
+	 *             overhead due to thread synchronization.
 	 */
-	public Edge getEdge( String id )
+	public <T extends Edge> T getEdge( String id )
 	{
 		return lookForEdge(id);
 	}
@@ -446,33 +493,39 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	/**
 	 * @complexity Constant.
 	 */
-	public Iterator<Edge> getEdgeIterator()
+	public <T extends Edge> Iterator<T> getEdgeIterator()
 	{
-		return new EdgeIterator();
+		return new EdgeIterator<T>();
 	}
 
 	/**
 	 * @complexity Constant.
 	 */
-	public Iterable<Edge> getEachEdge()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterable<? extends T> getEachEdge()
 	{
-		return edges.values();
+		return (Iterable<T>) edges.values();
 	}
 	
-	public Collection<Edge> getEdgeSet()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Collection<T> getEdgeSet()
 	{
-		return Collections.unmodifiableCollection( edges.values() );
+		return (Collection<T>)
+			Collections.unmodifiableCollection( edges.values() );
 	}
 	
-	public Collection<Node> getNodeSet()
+	@SuppressWarnings("unchecked")
+	public <T extends Node> Collection<T> getNodeSet()
 	{
-		return Collections.unmodifiableCollection( nodes.values() );
+		return (Collection<T>)
+			Collections.unmodifiableCollection( nodes.values() );
 	}
 
 	/**
-	 * @complexity O(log(n)) with n being the number of nodes in the graph, plus overhead due to thread synchronization.
+	 * @complexity O(log(n)) with n being the number of nodes in the graph, plus
+	 *             overhead due to thread synchronization.
 	 */
-	public Node getNode( String id )
+	public <T extends Node> T getNode( String id )
 	{
 		return lookForNode( id );
 	}
@@ -488,22 +541,23 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	/**
 	 * @complexity Constant.
 	 */
-	public Iterator<Node> getNodeIterator()
+	public <T extends Node> Iterator<T> getNodeIterator()
 	{
-		return new NodeIterator();
+		return new NodeIterator<T>();
 	}
 	
 	public Iterator<Node> iterator()
 	{
-		return new NodeIterator();
+		return new NodeIterator<Node>();
 	}
 
 	/**
 	 * @complexity Constant.
 	 */
-	public Iterable<Node> getEachNode()
+	@SuppressWarnings("unchecked")
+	public <T extends Node> Iterable<? extends T> getEachNode()
 	{
-		return nodes.values();
+		return (Iterable<? extends T>) nodes.values();
 	}
 
 	public boolean isAutoCreationEnabled()
@@ -532,29 +586,41 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	}
 
 	/**
-	 * @complexity O( 2*log(n)+log(m) ) with n being the number of nodes and m the number of edges in the graph, 
-	 * plus overhead due to thread synchronization.
+	 * @complexity O( 2*log(n)+log(m) ) with n being the number of nodes and m
+	 *             the number of edges in the graph, plus overhead due to thread
+	 *             synchronization.
 	 */
-	public Edge removeEdge( String from, String to ) throws ElementNotFoundException
+	public <T extends Edge> T removeEdge( String from, String to )
+		throws ElementNotFoundException
 	{
 		return removeEdge_( getId(), newEvent(), from, to );
 	}
 	
-	protected Edge removeEdge_( String sourceId, long timeId, String from, String to )
+	@SuppressWarnings("unchecked")
+	protected <T extends Edge> T removeEdge_( String sourceId, long timeId,
+			String from, String to )
 	{
-		Node n0 = lookForNode( from );
-		Node n1 = lookForNode( to );
+		ConcurrentNode n0 = lookForNode( from );
+		ConcurrentNode n1 = lookForNode( to );
 
 		if( n0 != null && n1 != null )
 		{
-			Edge e = ( (AdjacencyListNode) n0 ).hasEdgeToward( n1 );
+			//
+			// If fails, n0 does not register an edge of type T.
+			//
+			T e = (T) n0.hasEdgeToward( n1 );
+			
 			if( e != null )
 			{
 				return removeEdge_( sourceId, timeId, e);
 			}
 			else
 			{
-				e = ( (AdjacencyListNode) n0 ).hasEdgeToward( n1 );
+				//
+				// If fails, n0 does not register an edge of type T.
+				//
+				e = (T) n0.hasEdgeToward( n1 );
+				
 				if( e != null )
 				{
 					return removeEdge_( sourceId, timeId, e);
@@ -568,9 +634,9 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	 * @complexity O( 2*log(m) ) with  m being the number of edges in the graph, 
 	 * plus overhead due to thread synchronization.
 	 */
-	public Edge removeEdge( String id ) throws ElementNotFoundException
+	public <T extends Edge> T removeEdge( String id ) throws ElementNotFoundException
 	{
-		Edge edge = lookForEdge( id );
+		T edge = lookForEdge( id );
 		
 		if( edge != null )
 			removeEdge_( getId(), newEvent(), edge );
@@ -584,20 +650,21 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	 * @complexity O( log(m) ) with  m the number of edges in the graph, 
 	 * plus overhead due to thread synchronization.
 	 */
-	public Edge removeEdge( Edge edge ) throws ElementNotFoundException
+	public <T extends Edge> T removeEdge( T edge ) 
+		throws ElementNotFoundException
 	{
 		return removeEdge_( getId(), newEvent(), edge );
 	}
 	
-	protected Edge removeEdge_( String sourceId, long timeId, Edge edge )
+	protected <T extends Edge> T removeEdge_( String sourceId, long timeId, T edge )
 	{
 		listeners.sendEdgeRemoved( sourceId, timeId, edge.getId() );
 		
 		Node n0 = edge.getSourceNode();
 		Node n1 = edge.getTargetNode();
 		
-		( (AdjacencyListNode) n0 ).edges.remove( edge );
-		( (AdjacencyListNode) n1 ).edges.remove( edge );
+		( (ConcurrentNode) n0 ).edges.remove( edge );
+		( (ConcurrentNode) n1 ).edges.remove( edge );
 		edges.remove( edge.getId() );
 	
 		return edge;
@@ -607,14 +674,13 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	 * @complexity 0( 2*log(n) ) with n the number of nodes in the graph, 
 	 * plus overhead due to thread synchronization.
 	 */
-	public Node removeNode( String id ) throws ElementNotFoundException
+	public <T extends Node> T removeNode( String id ) throws ElementNotFoundException
 	{
-		Node node = lookForNode( id );
+		T node = lookForNode( id );
+		
 		if( node != null )
-		{
-//System.err.printf( "%s.removeNode( %s )%n", getId(), id );
 			return removeNode_( getId(), newEvent(), node );
-		}
+		
 		return null;
 	}
 
@@ -624,16 +690,15 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	 * @complexity 0( log(n) ) with n the number of nodes in the graph, 
 	 * plus overhead due to thread synchronization.
 	 */
-	public Node removeNode( Node node ) throws ElementNotFoundException
+	public <T extends Node> T removeNode( T node ) throws ElementNotFoundException
 	{
 		return removeNode_( getId(), newEvent(), node );
 	}
 	
-	protected Node removeNode_( String sourceId, long timeId, Node node )
+	protected <T extends Node> T removeNode_( String sourceId, long timeId, T node )
 	{
 		if( node != null )
 		{
-//System.err.printf( "%s.removeNode_(%s, %d, %s)%n", getId(), sourceId, timeId, node.getId() );
 			listeners.sendNodeRemoved( sourceId, timeId, node.getId() );
 			disconnectEdges( node );
 			nodes.remove( node.getId() );
@@ -697,21 +762,51 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph
 	 * plus overhead due to thread synchronization.
 	 * @return A reference to the node if found, or null if not. 
 	 */
-protected Node lookForNode( String id )
+	@SuppressWarnings("unchecked")
+	protected <T extends Node> T lookForNode( String id )
 	{
-		return nodes.get( id );
+		T node = null;
+		
+		try
+		{
+			node = (T) nodes.get( id );
+		}
+		catch( ClassCastException e )
+		{
+			StackTraceElement elt = e.getStackTrace()[0];
+			
+			System.err.printf("%s:%s:%d invalid node type%n",
+					elt.getFileName(),elt.getMethodName(),elt.getLineNumber());
+		}
+		
+		return node;
 	}
 
-/**
- * Tries to retrieve an edge in the internal structure identified by the given string.
- * @param id The string identifier of the seek edges.
- * @complexity 0( log(m) ), with m being the number of edges, 
+	/**
+	 * Tries to retrieve an edge in the internal structure identified by the given string.
+	 * @param id The string identifier of the seek edges.
+	 * @complexity 0( log(m) ), with m being the number of edges, 
 	 * plus overhead due to thread synchronization.
- * @return A reference to the edge if found, or null if not. 
- */
-	protected Edge lookForEdge( String id )
+	 * @return A reference to the edge if found, or null if not. 
+	 */
+	@SuppressWarnings("unchecked")
+	protected <T extends Edge> T lookForEdge( String id )
 	{
-		return edges.get( id );
+		T edge = null;
+		
+		try
+		{
+			edge = (T) edges.get( id );
+		}
+		catch( ClassCastException e )
+		{
+			StackTraceElement elt = e.getStackTrace()[0];
+			
+			System.err.printf("%s:%s:%d invalid edge type%n",
+					elt.getFileName(),elt.getMethodName(),elt.getLineNumber());
+		}
+		
+		return edge;
 	}
 
 	

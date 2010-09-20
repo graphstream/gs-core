@@ -54,7 +54,8 @@ import org.graphstream.stream.SourceBase;
  *
  * @since 20020709
  */
-public abstract class DefaultNode extends AbstractElement implements Node
+public abstract class DefaultNode
+	extends AbstractElement implements Node
 {
 // Constant
 
@@ -109,68 +110,76 @@ public abstract class DefaultNode extends AbstractElement implements Node
 	
 	public abstract boolean hasEdgeFrom( String id );
 
-	public abstract Edge getEdgeToward( String id );
+	public abstract <T extends Edge> T getEdgeToward( String id );
 
-	public abstract Edge getEdgeFrom( String id );
+	public abstract <T extends Edge> T getEdgeFrom( String id );
 
-	public Iterator<Edge> getEdgeIterator()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterator<T> getEdgeIterator()
 	{
-		return new ElementIterator<Edge>( edges );
+		return (Iterator<T>)
+			new ElementIterator<Edge>( edges );
 	}
 	
-	public abstract Iterator<Edge> getEnteringEdgeIterator();
+	public abstract <T extends Edge> Iterator<T> getEnteringEdgeIterator();
 	
-	public abstract Iterator<Edge> getLeavingEdgeIterator();
+	public abstract <T extends Edge> Iterator<T> getLeavingEdgeIterator();
 
-	public Iterator<Node> getNeighborNodeIterator()
+	@SuppressWarnings("unchecked")
+	public <T extends Node> Iterator<T> getNeighborNodeIterator()
 	{
-		return new NeighborNodeIterator( this );
+		return new NeighborNodeIterator<T>( (T) this );
 	}
 	
 	public Iterator<Edge> iterator()
 	{
-		return getEdgeIterator();
+		return (Iterator<Edge>) getEdgeIterator();
 	}
 	
-	public Edge getEdge( int i )
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T getEdge( int i )
 	{
-		return edges.get( i );
-	}
-	
-	/**
-	 * @complexity Same as the breath first iterator: O(n+m) with n the number of
-	 *             nodes and m the number of edges.
-	 */
-	public Iterator<Node> getBreadthFirstIterator()
-	{
-		return new BreadthFirstIterator( this );
+		return (T) edges.get( i );
 	}
 	
 	/**
 	 * @complexity Same as the breath first iterator: O(n+m) with n the number of
 	 *             nodes and m the number of edges.
 	 */
-	public Iterator<Node> getBreadthFirstIterator( boolean directed )
+	@SuppressWarnings("unchecked")
+	public <T extends Node> Iterator<T> getBreadthFirstIterator()
 	{
-		return new BreadthFirstIterator( this );
+		return new BreadthFirstIterator<T>( (T) this );
+	}
+	
+	/**
+	 * @complexity Same as the breath first iterator: O(n+m) with n the number of
+	 *             nodes and m the number of edges.
+	 */
+	@SuppressWarnings("unchecked")
+	public <T extends Node> Iterator<T> getBreadthFirstIterator( boolean directed )
+	{
+		return new BreadthFirstIterator<T>( (T) this );
 	}
 	
 	/**
 	 * @complexity Same as the depth first iterator: O(n+m) with n the number of nodes
 	 *             and m the number of edges.
 	 */
-	public Iterator<Node> getDepthFirstIterator()
+	@SuppressWarnings("unchecked")
+	public <T extends Node> Iterator<T> getDepthFirstIterator()
 	{
-		return new DepthFirstIterator( this );
+		return new DepthFirstIterator<T>( (T) this );
 	}
 	
 	/**
 	 * @complexity Same as the depth first iterator: O(n+m) with n the number of nodes
 	 *             and m the number of edges.
 	 */
-	public Iterator<Node> getDepthFirstIterator( boolean directed )
+	@SuppressWarnings("unchecked")
+	public <T extends Node> Iterator<T> getDepthFirstIterator( boolean directed )
 	{
-		return new DepthFirstIterator( this );
+		return new DepthFirstIterator<T>( (T) this );
 	}
 
 // Access -- Not in Node interface
@@ -193,14 +202,15 @@ public abstract class DefaultNode extends AbstractElement implements Node
 		throw new RuntimeException( "WTF ?" );
 	}
 	
-	public Iterable<? extends Edge> getEdgeSet()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterable<T> getEdgeSet()
 	{
-		return edges;
+		return (Iterable<T>) edges;
 	}
 	
-	public abstract Iterable<? extends Edge> getLeavingEdgeSet();
+	public abstract <T extends Edge> Iterable<T> getLeavingEdgeSet();
 
-	public abstract Iterable<? extends Edge> getEnteringEdgeSet();
+	public abstract <T extends Edge> Iterable<T> getEnteringEdgeSet();
 
 // Command
 
@@ -211,7 +221,7 @@ public abstract class DefaultNode extends AbstractElement implements Node
 	 * @param directed If the edge is directed only from this node to the target.
 	 * @return A reference to the created edge.
 	 */
-	protected abstract Edge addEdgeToward( String tag, DefaultNode target, boolean directed )
+	protected abstract <T extends Edge> T addEdgeToward( String tag, DefaultNode target, boolean directed )
 		throws IllegalArgumentException;
 
 	/**
@@ -247,14 +257,14 @@ public abstract class DefaultNode extends AbstractElement implements Node
 
 // Nested classes
 
-protected class NeighborNodeIterator
-	implements Iterator<Node>
+protected class NeighborNodeIterator<T extends Node>
+	implements Iterator<T>
 {
 	protected int i;
 
-	protected Node n;
+	protected T n;
 
-	protected NeighborNodeIterator( Node node )
+	protected NeighborNodeIterator( T node )
 	{
 		i = 0;
 		n = node;
@@ -265,7 +275,7 @@ protected class NeighborNodeIterator
 		return( i < edges.size() );
 	}
 
-	public Node next()
+	public T next()
 		throws NoSuchElementException
 	{
 		Edge e = edges.get( i++ );
@@ -280,7 +290,8 @@ protected class NeighborNodeIterator
 	
 }
 
-static class ElementIterator<T extends Element> implements Iterator<T>
+static class ElementIterator<T extends Element>
+	implements Iterator<T>
 {
 	Iterator<? extends T> iterator;
 	

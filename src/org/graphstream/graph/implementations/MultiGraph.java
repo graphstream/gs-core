@@ -23,7 +23,6 @@
 
 package org.graphstream.graph.implementations;
 
-import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeFactory;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -38,7 +37,7 @@ import org.graphstream.graph.NodeFactory;
  * use the {@link MultiNode} and {@link MultiEdge} classes.
  * </p>
  */
-public class MultiGraph extends DefaultGraph
+public class MultiGraph	extends DefaultGraph
 {
 	/**
 	 * New empty graph, with a default identifier.
@@ -93,16 +92,16 @@ public class MultiGraph extends DefaultGraph
 	{
 		super( id, strictChecking, autoCreate );
 		
-		nodeFactory = new NodeFactory()
+		nodeFactory = new NodeFactory<MultiNode>()
 		{
-			public Node newInstance( String id, Graph graph )
+			public MultiNode newInstance( String id, Graph graph )
 			{
 				return new MultiNode(graph,id);
 			}
 		};
-		edgeFactory = new EdgeFactory()
+		edgeFactory = new EdgeFactory<MultiEdge>()
 		{
-			public Edge newInstance( String id, Node src, Node dst, boolean directed )
+			public MultiEdge newInstance( String id, Node src, Node dst, boolean directed )
 			{
 				return new MultiEdge(id,src,dst,directed);
 			}

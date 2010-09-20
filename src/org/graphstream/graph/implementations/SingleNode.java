@@ -92,41 +92,47 @@ public class SingleNode extends DefaultNode
 	}
 
 	@Override
-	public Edge getEdgeToward( String id )
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T getEdgeToward( String id )
 	{
-		return to.get( id );
+		return (T) to.get( id );
 	}
 
 	@Override
-	public Edge getEdgeFrom( String id )
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T getEdgeFrom( String id )
 	{
-		return from.get( id );
+		return (T) from.get( id );
 	}
 
 	@Override
-	public Iterator<Edge> getEnteringEdgeIterator()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterator<T> getEnteringEdgeIterator()
 	{
-		return new ElementIterator<Edge>( from );
+		return new ElementIterator<T>( (HashMap<String,T>) from );
 	}
 	
 	@Override
-	public Iterator<Edge> getLeavingEdgeIterator()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterator<T> getLeavingEdgeIterator()
 	{
-		return new ElementIterator<Edge>( to );
+		return new ElementIterator<T>( (HashMap<String,T>) to );
 	}
 
 // Access -- Not in Node interface
 
 	@Override
-	public Iterable<Edge> getLeavingEdgeSet()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterable<T> getLeavingEdgeSet()
 	{
-		return to.values();
+		return (Iterable<T>) to.values();
 	}
 
 	@Override
-	public Iterable<Edge> getEnteringEdgeSet()
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterable<T> getEnteringEdgeSet()
 	{
-		return from.values();
+		return (Iterable<T>) from.values();
 	}
 
 // Command
@@ -138,8 +144,8 @@ public class SingleNode extends DefaultNode
 	 * @param directed If the edge is directed only from this node to the target.
 	 */
 	@Override
-	@SuppressWarnings("deprecation")
-	protected Edge addEdgeToward( String tag, DefaultNode target, boolean directed )
+	@SuppressWarnings({"deprecation","unchecked"})
+	protected <T extends Edge> T addEdgeToward( String tag, DefaultNode target, boolean directed )
 		throws IllegalArgumentException
 	{
 		// Some checks.
@@ -171,11 +177,11 @@ public class SingleNode extends DefaultNode
 				
 			edge.setDirected( false );
 			
-			return edge;
+			return (T) edge;
 		}
 		else
 		{
-			DefaultEdge e = (DefaultEdge) G.edgeFactory.newInstance(tag,this,target,directed);
+			T e = (T) G.edgeFactory.newInstance(tag,this,target,directed);
 //			e.setDirected(directed);
 //			return new CheckedEdge( tag, this, target, directed );
 			return e;

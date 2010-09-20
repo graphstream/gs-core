@@ -27,10 +27,11 @@ import org.graphstream.graph.Node;
 import org.graphstream.graph.IdAlreadyInUseException;
 
 /**
- * Full implementation of {@link org.graphstream.graph.Edge} that allows multiple edges
- * between two nodes.
+ * Full implementation of {@link org.graphstream.graph.Edge} that allows
+ * multiple edges between two nodes.
  */
-public class MultiEdge extends DefaultEdge
+public class MultiEdge
+	extends DefaultEdge
 {
 // Constructors
 

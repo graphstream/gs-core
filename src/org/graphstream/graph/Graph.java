@@ -64,14 +64,14 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @param id Identifier of the node to find.
 	 * @return The searched node or null if not found.
 	 */
-	Node getNode( String id );
+	<T extends Node> T getNode( String id );
 
 	/**
 	 * Get an edge by its identifier.
 	 * @param id Identifier of the edge to find.
 	 * @return The searched edge or null if not found.
 	 */
-	Edge getEdge( String id );
+	<T extends Edge> T getEdge( String id );
 
 	/**
 	 * Number of nodes in this graph.
@@ -89,13 +89,13 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * Iterator on the set of nodes, in an undefined order.
 	 * @return The iterator.
 	 */
-	Iterator<? extends Node> getNodeIterator();
+	<T extends Node> Iterator<T> getNodeIterator();
 
 	/**
 	 * Iterator on the set of edges, in an undefined order.
 	 * @return The iterator.
 	 */
-	Iterator<? extends Edge> getEdgeIterator();
+	<T extends Edge> Iterator<T> getEdgeIterator();
 
 	/**
 	 * Set of nodes usable in a for-each instruction.
@@ -103,7 +103,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @see #getNodeIterator()
 	 * @see #getEachNode()
 	 */
-	Iterable<? extends Node>getEachNode();
+	<T extends Node> Iterable<? extends T> getEachNode();
 
 	/**
 	 * Set of edges usable in a for-each instruction.
@@ -111,7 +111,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @see #getEdgeIterator()
 	 * @see #getEdgeSet()
 	 */
-	Iterable<? extends Edge>getEachEdge();
+	<T extends Edge> Iterable<? extends T> getEachEdge();
 	
 	/**
 	 * Unmodifiable view of the set of nodes.
@@ -119,7 +119,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @see #getNodeIterator()
 	 * @see #getEachNode()
 	 */
-	Collection<? extends Node> getNodeSet();
+	<T extends Node> Collection<T> getNodeSet();
 	
 	/**
 	 * Unmodifiable view of the set of edges.
@@ -127,7 +127,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @see #getEdgeIterator()
 	 * @see #getEachEdge()
 	 */
-	Collection<? extends Edge> getEdgeSet();
+	<T extends Edge> Collection<T> getEdgeSet();
 
 	/**
 	 * The factory used to create node instances.
@@ -135,7 +135,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @see #setNodeFactory(NodeFactory)
 	 * @see #edgeFactory()
 	 */
-	NodeFactory nodeFactory();
+	NodeFactory<? extends Node> nodeFactory();
 	
 	/**
 	 * The factory used to create edge instances.
@@ -143,7 +143,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @see #setEdgeFactory(EdgeFactory)
 	 * @see #nodeFactory()
 	 */
-	EdgeFactory edgeFactory();
+	EdgeFactory<? extends Edge> edgeFactory();
 
 	/**
 	 * Is strict checking enabled? If strict checking is enabled the graph
@@ -175,13 +175,13 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * Set the node factory used to create nodes.
 	 * @param nf the new NodeFactory
 	 */
-	void setNodeFactory( NodeFactory nf );
+	void setNodeFactory( NodeFactory<? extends Node> nf );
 	
 	/**
 	 * Set the edge factory used to create edges.
 	 * @param ef the new EdgeFactory
 	 */
-	void setEdgeFactory( EdgeFactory ef );
+	void setEdgeFactory( EdgeFactory<? extends Edge> ef );
 
 	/**
 	 * Enable or disable strict checking.
@@ -217,7 +217,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @return The created node (or the already existing node).
 	 * @throws IdAlreadyInUseException If the identifier is already used.
 	 */
-	Node addNode( String id ) throws IdAlreadyInUseException;
+	<T extends Node> T addNode( String id ) throws IdAlreadyInUseException;
 
 	/**
 	 * Remove the node using its identifier. An event is generated toward the
@@ -230,7 +230,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @complexity O(1)
 	 * @throws ElementNotFoundException If no node matches the given identifier.
 	 */
-	Node removeNode( String id ) throws ElementNotFoundException;
+	<T extends Node> T removeNode( String id ) throws ElementNotFoundException;
 
 	/**
 	 * Add an undirected edge between nodes. An event is sent toward the
@@ -253,7 +253,8 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @throws ElementNotFoundException If strict checking is enabled, and the 'from'
 	 *         or 'to' node is not registered in the graph.
 	 */
-	Edge addEdge( String id, String node1, String node2 ) throws IdAlreadyInUseException, ElementNotFoundException;
+	<T extends Edge> T addEdge( String id, String node1, String node2 ) 
+		throws IdAlreadyInUseException, ElementNotFoundException;
 
 	/**
 	 * Like {@link #addEdge(String, String, String)}, but this edge can be
@@ -273,7 +274,8 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @throws ElementNotFoundException If strict checking is enabled, and the 'from'
 	 *         or 'to' node is not registered in the graph.
 	 */
-	Edge addEdge( String id, String from, String to, boolean directed ) throws IdAlreadyInUseException, ElementNotFoundException;
+	<T extends Edge> T addEdge( String id, String from, String to, boolean directed )
+		throws IdAlreadyInUseException, ElementNotFoundException;
 
 	/**
 	 * Remove an edge given the identifier of its two linked nodes. If the edge
@@ -291,7 +293,8 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @throws ElementNotFoundException If the 'from' or 'to' node is not registered in
 	 *         the graph and strict checking is enabled.
 	 */
-	Edge removeEdge( String from, String to ) throws ElementNotFoundException;
+	<T extends Edge> T removeEdge( String from, String to ) 
+		throws ElementNotFoundException;
 
 	/**
 	 * Remove the edge knowing its identifier. An event is sent toward the
@@ -304,7 +307,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	 * @throws ElementNotFoundException If no edge matches the identifier and strict
 	 *         checking is enabled.
 	 */
-	Edge removeEdge( String id ) throws ElementNotFoundException;
+	<T extends Edge> T removeEdge( String id ) throws ElementNotFoundException;
 
 	/**
 	 * <p>

@@ -97,34 +97,39 @@ public class AdjacencyListEdge
 		return ((AdjacencyListGraph)n0.graph).newEvent();
 	}
 
-	public Node getNode0()
+	@SuppressWarnings("unchecked")
+	public <T extends Node> T getNode0()
 	{
-		return n0;
-	}
-	
-	public Node getNode1()
-	{
-		return n1;
+		return (T) n0;
 	}
 
-	public Node getOpposite( Node node )
+	@SuppressWarnings("unchecked")
+	public <T extends Node> T getNode1()
+	{
+		return (T) n1;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends Node> T getOpposite( T node )
 	{
 		if( node == n0 )
-			return n1;
+			return (T) n1;
 		else if( node == n1 )
-			return n0;
+			return (T) n0;
 		else
 			return null;
 	}
 
-	public Node getSourceNode()
+	@SuppressWarnings("unchecked")
+	public <T extends Node> T getSourceNode()
 	{
-		return n0;
+		return (T) n0;
 	}
 
-	public Node getTargetNode()
+	@SuppressWarnings("unchecked")
+	public <T extends Node> T getTargetNode()
 	{
-		return n1;
+		return (T) n1;
 	}
 
 	public boolean isDirected()

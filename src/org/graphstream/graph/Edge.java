@@ -49,7 +49,7 @@ public interface Edge extends Element
 	 * @see #getSourceNode()
 	 * @return The first node of the edge.
 	 */
-	Node getNode0();
+	<T extends Node> T getNode0();
 
 	/**
 	 * Second node of the edge. This is equivalent to the {@link #getTargetNode()}
@@ -59,7 +59,7 @@ public interface Edge extends Element
 	 * @see #getTargetNode()
 	 * @return The second node of the edge.
 	 */
-	Node getNode1();
+	<T extends Node> T getNode1();
 
 	/**
 	 * Start node. When the edge is directed this is the source node, in this
@@ -70,7 +70,7 @@ public interface Edge extends Element
 	 * @see #getTargetNode()
 	 * @return The origin node of the edge.
 	 */
-	Node getSourceNode();
+	<T extends Node> T getSourceNode();
 
 	/**
 	 * End node. When the edge is directed this is the target node, in this
@@ -81,7 +81,7 @@ public interface Edge extends Element
 	 * @see #getSourceNode()
 	 * @return The destination node of the edge.
 	 */
-	Node getTargetNode();
+	<T extends Node> T getTargetNode();
 
 	/**
 	 * When knowing one node and one edge of this node, this method return the
@@ -90,7 +90,7 @@ public interface Edge extends Element
 	 * @param node The node we search the opposite of.
 	 * @return the opposite node of the given node.
 	 */
-	Node getOpposite( Node node );
+	<T extends Node> T getOpposite( T node );
 
 	/**
 	 * Have an edge directed or non-directed. You make this edge directed, it will be
