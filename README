@@ -5,28 +5,37 @@ Welcome to GraphStream, and thank you for your download, we hope you will find i
 useful and practical.
 
 We are always interested by suggestions on how to make the library more developer
-friendly, see the CONTRIBUTORS file for contacts.
+friendly, see the website (www.graphstream-poject.org) for more information.
 
 Installing GraphStream
 ----------------------
 
-The releases comes with a pre-packaged jar file named graphstream.jar that
-contains the GraphStream classes as well as many of its dependencies. To start
-using GraphStream, simply put it in your class path.
+The release comes with a pre-packaged jar file named gs-core.jar that
+contains the GraphStream classes. To start using GraphStream, 
+simply put it in your class path.
 
 Authors
 -------
 
-This crap is made by :
+This crap is made by:
 
-Yoann Pigné <yoann.pigne@graphstream-project.org> 
-Antoine Dutot <antoine.dutot@graphstream-project.org>
-Guilhelm Savin <guilhelm.savin@graphstream-project.org>
 Julien Baudry <julien.baudry@graphstream-project.org>
+Antoine Dutot <antoine.dutot@graphstream-project.org>
+Yoann Pigné <yoann.pigne@graphstream-project.org> 
+Guilhelm Savin <guilhelm.savin@graphstream-project.org>
+
+Contributor:
+
 Frédéric Guinand <frederic.guinand@univ-lehavre.fr>
 
-You can join all or one of these for questions, remarks and flames. Additionally
-if you want to join the development team, you are welcome.
+
+Help
+----
+
+You may check the documentation on the website (www.graphstream-peoject.org). 
+You may also share your questions on the mailing list at 
+http://sympa.litislab.fr/sympa/subscribe/graphstream-users 
+
 
 Copyright
 ---------
