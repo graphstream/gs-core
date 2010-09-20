@@ -37,38 +37,101 @@ import org.graphstream.stream.file.FileSource;
  * An Interface that advises general purpose methods for handling graphs.
  * 
  * <p>
- * This interface is one of the main interfaces of GraphStream. It defines the services
- * provided by a graph structure. Graphs implementations must at least implement
- * this interface (but are free to provide more services). 
+ * This interface is one of the main interfaces of GraphStream. It defines the
+ * services provided by a graph structure. Graphs implementations must at least
+ * implement this interface (but are free to provide more services).
  * </p>
- *
+ * 
  * <p>
- * With {@link org.graphstream.stream.Source}, {@link org.graphstream.stream.Sink}
- * and {@link org.graphstream.stream.Pipe}, this interface is one of the
- * most important. A graph is a {@link org.graphstream.stream.Pipe} that buffers
- * the graph events and present the graph structure as it is actually.
- * </p> 
+ * With {@link org.graphstream.stream.Source},
+ * {@link org.graphstream.stream.Sink} and {@link org.graphstream.stream.Pipe},
+ * this interface is one of the most important. A graph is a
+ * {@link org.graphstream.stream.Pipe} that buffers the graph events and present
+ * the graph structure as it is actually.
+ * </p>
  * 
  * <p>
  * In other words, it allows to browse the graph structure, to explore it, to
  * modify it, and to implement algorithms on it. This class can be seen as a
  * snapshot of a stream of event at current time.
  * </p>
+ * 
+ * <p>
+ * With factories ({@link org.graphstream.graph.NodeFactory},
+ * {@link org.graphstream.graph.EdgeFactory}), users can define their own models
+ * of nodes or edges. Problem is that when you define such model, you want to
+ * access to elements with the valid type, without cast if possible. To improve
+ * the access to elements in such cases, Graph offers implicit genericity to
+ * access nodes or edges. The following is an example of an access without
+ * genericity :
+ * 
+ * <pre>
+ * 	Graph g = ... ;
+ * 	g.setNodeFactory( new MyNodeFactory() );
+ *  g.addNode("root");
+ *  
+ *  MyNode n = (MyNode) g.getNode("root");
+ *  
+ *  for( Node o : g.getEachNode() )
+ *  {
+ *  	MyNode node = (MyNode) o;
+ *  	// Do something with node
+ *  }
+ * </pre>
+ * 
+ * With implicit genericity offers by Graph, this can be done easier:
+ * 
+ * <pre>
+ *  Graph g = ... ;
+ * 	g.setNodeFactory( new MyNodeFactory() );
+ *  g.addNode("root");
+ *  
+ *  MyNode n = g.getNode("root");
+ *  
+ *  for( MyNode node : g.getEachNode() )
+ *  {
+ *  	// Do something with node
+ *  }
+ * </pre>
+ * 
+ * </p>
  */
 public interface Graph extends Element, Pipe, Iterable<Node>
 {
-// Access	
+// Access
 
 	/**
-	 * Get a node by its identifier.
-	 * @param id Identifier of the node to find.
+	 * Get a node by its identifier. This method is implicitly generic and
+	 * return something which extends Node. The return type is the one of the
+	 * left part of the assignment. For example, in the following call :
+	 * 
+	 * <pre>
+	 * ExtendedNode node = graph.getNode(&quot;...&quot;);
+	 * </pre>
+	 * 
+	 * the method will return an ExtendedNode node. If no left part exists,
+	 * method will just return a Node.
+	 * 
+	 * @param id
+	 *            Identifier of the node to find.
 	 * @return The searched node or null if not found.
 	 */
 	<T extends Node> T getNode( String id );
 
 	/**
-	 * Get an edge by its identifier.
-	 * @param id Identifier of the edge to find.
+	 * Get an edge by its identifier. This method is implicitly generic and
+	 * return something which extends Edge. The return type is the one of the
+	 * left part of the assignment. For example, in the following call :
+	 * 
+	 * <pre>
+	 * ExtendedEdge edge = graph.getEdge(&quot;...&quot;);
+	 * </pre>
+	 * 
+	 * the method will return an ExtendedEdge edge. If no left part exists,
+	 * method will just return an Edge.
+	 * 
+	 * @param id
+	 *            Identifier of the edge to find.
 	 * @return The searched edge or null if not found.
 	 */
 	<T extends Edge> T getEdge( String id );
@@ -86,19 +149,59 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	int getEdgeCount();
 
 	/**
-	 * Iterator on the set of nodes, in an undefined order.
+	 * Iterator on the set of nodes, in an undefined order. This method is
+	 * implicitly generic and return an Iterator over something which extends
+	 * Node. The return type is the one of the left part of the assignment. For
+	 * example, in the following call :
+	 * 
+	 * <pre>
+	 * Iterator&lt;ExtendedNode&gt; ite = graph.getNodeIterator();
+	 * </pre>
+	 * 
+	 * the method will return an Iterator&lt;ExtendedNode&gt;. If no left part
+	 * exists, method will just return an Iterator&lt;Node&gt;.
+	 * 
 	 * @return The iterator.
 	 */
 	<T extends Node> Iterator<T> getNodeIterator();
 
 	/**
-	 * Iterator on the set of edges, in an undefined order.
+	 * Iterator on the set of edges, in an undefined order. This method is
+	 * implicitly generic and return an Iterator over something which extends
+	 * Edge. The return type is the one of the left part of the assignment. For
+	 * example, in the following call :
+	 * 
+	 * <pre>
+	 * Iterator&lt;ExtendedEdge&gt; ite = graph.getEdgeIterator();
+	 * </pre>
+	 * 
+	 * the method will return an Iterator&lt;ExtendedEdge&gt;. If no left part
+	 * exists, method will just return an Iterator&lt;Edge&gt;.
+	 * 
 	 * @return The iterator.
 	 */
 	<T extends Edge> Iterator<T> getEdgeIterator();
 
 	/**
-	 * Set of nodes usable in a for-each instruction.
+	 * Set of nodes usable in a for-each instruction. This method is implicitly
+	 * generic and return an Iterable over something which extends Node. The
+	 * return type is the one of the left part of the assignment. For example,
+	 * in the following call :
+	 * 
+	 * <pre>
+	 * Iterable&lt;ExtendedNode&gt; ite = graph.getEachNode();
+	 * </pre>
+	 * 
+	 * the method will return an Iterable&lt;ExtendedNode&gt;. If no left part
+	 * exists, method will just return an Iterable&lt;Node&gt;. It is possible
+	 * to use it in a for-each loop by giving the parameter :
+	 * 
+	 * <pre>
+	 * for (ExtendedNode n : graph.&lt;ExtendedNode&gt; getEachNode()) {
+	 * 	// ...
+	 * }
+	 * </pre>
+	 * 
 	 * @return An "iterable" view of the set of nodes.
 	 * @see #getNodeIterator()
 	 * @see #getEachNode()
@@ -106,23 +209,63 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	<T extends Node> Iterable<? extends T> getEachNode();
 
 	/**
-	 * Set of edges usable in a for-each instruction.
+	 * Set of edges usable in a for-each instruction. This method is implicitly
+	 * generic and return an Iterable over something which extends Edge. The
+	 * return type is the one of the left part of the assignment. For example,
+	 * in the following call :
+	 * 
+	 * <pre>
+	 * Iterable&lt;ExtendedNEdge&gt; ite = graph.getEachEdge();
+	 * </pre>
+	 * 
+	 * the method will return an Iterable&lt;ExtendedEdge&gt;. If no left part
+	 * exists, method will just return an Iterable&lt;Edge&gt;. It is possible
+	 * to use it in a for-each loop by giving the parameter :
+	 * 
+	 * <pre>
+	 * for (ExtendedEdge e : graph.&lt;ExtendedEdge&gt; getEachEdge()) {
+	 * 	// ...
+	 * }
+	 * </pre>
+	 * 
 	 * @return An "iterable" view of the set of edges.
 	 * @see #getEdgeIterator()
 	 * @see #getEdgeSet()
 	 */
 	<T extends Edge> Iterable<? extends T> getEachEdge();
-	
+
 	/**
-	 * Unmodifiable view of the set of nodes.
+	 * Unmodifiable view of the set of nodes. This method is implicitly generic
+	 * and return a Collection of something which extends Node. The return type
+	 * is the one of the left part of the assignment. For example, in the
+	 * following call :
+	 * 
+	 * <pre>
+	 * Collection&lt;ExtendedNode&gt; c = graph.getNodeSet();
+	 * </pre>
+	 * 
+	 * the method will return a Collection&lt;ExtendedNode&gt;. If no left part
+	 * exists, method will just return a Collection&lt;Node&gt;.
+	 * 
 	 * @return A set of nodes that can only be read, not changed.
 	 * @see #getNodeIterator()
 	 * @see #getEachNode()
 	 */
 	<T extends Node> Collection<T> getNodeSet();
-	
+
 	/**
-	 * Unmodifiable view of the set of edges.
+	 * Unmodifiable view of the set of edges. This method is implicitly generic
+	 * and return a Collection of something which extends Edge. The return type
+	 * is the one of the left part of the assignment. For example, in the
+	 * following call :
+	 * 
+	 * <pre>
+	 * Collection&lt;ExtendedEdge&gt; c = graph.getEdgeSet();
+	 * </pre>
+	 * 
+	 * the method will return a Collection&lt;ExtendedEdge&gt;. If no left part
+	 * exists, method will just return a Collection&lt;Edge&gt;.
+	 * 
 	 * @return A set of edges that can only be read, not changed.
 	 * @see #getEdgeIterator()
 	 * @see #getEachEdge()
@@ -130,8 +273,9 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	<T extends Edge> Collection<T> getEdgeSet();
 
 	/**
-	 * The factory used to create node instances.
-	 * The factory can be changed to refine the node class generated for this graph.
+	 * The factory used to create node instances. The factory can be changed to
+	 * refine the node class generated for this graph.
+	 * 
 	 * @see #setNodeFactory(NodeFactory)
 	 * @see #edgeFactory()
 	 */
@@ -207,51 +351,104 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 	void clear();
 
 	/**
-	 * Add a node in the graph. This acts as a factory, creating the node
-	 * instance automatically (and eventually using the node factory provided).
-	 * An event is generated toward the listeners.
-	 * If strict checking is enabled, and a node already exists with this
-	 * identifier, a singleton exception is raised. Else the error is silently
-	 * ignored and the already existing node is returned.
-	 * @param id Arbitrary and unique string identifying the node.
+	 * Add a node in the graph.
+	 * <p>
+	 * This acts as a factory, creating the node instance automatically (and
+	 * eventually using the node factory provided). An event is generated toward
+	 * the listeners. If strict checking is enabled, and a node already exists
+	 * with this identifier, a singleton exception is raised. Else the error is
+	 * silently ignored and the already existing node is returned.
+	 * </p>
+	 * <p>
+	 * This method is implicitly generic and return something which extends
+	 * Node. The return type is the one of the left part of the assignment. For
+	 * example, in the following call :
+	 * 
+	 * <pre>
+	 * ExtendedNode n = graph.addNode(&quot;...&quot;);
+	 * </pre>
+	 * 
+	 * the method will return an ExtendedNode. If no left part exists, method
+	 * will just return a Node.
+	 * </p>
+	 * 
+	 * @param id
+	 *            Arbitrary and unique string identifying the node.
 	 * @return The created node (or the already existing node).
-	 * @throws IdAlreadyInUseException If the identifier is already used.
+	 * @throws IdAlreadyInUseException
+	 *             If the identifier is already used.
 	 */
 	<T extends Node> T addNode( String id ) throws IdAlreadyInUseException;
 
 	/**
-	 * Remove the node using its identifier. An event is generated toward the
-	 * listeners. Note that removing a node may remove all edges it is connected
-	 * to. In this case corresponding events will also be generated toward the
-	 * listeners.
-	 * @param id The unique identifier of the node to remove.
+	 * Remove the node using its identifier.
+	 * <p>
+	 * An event is generated toward the listeners. Note that removing a node may
+	 * remove all edges it is connected to. In this case corresponding events
+	 * will also be generated toward the listeners.
+	 * </p>
+	 * <p>
+	 * This method is implicitly generic and return something which extends
+	 * Node. The return type is the one of the left part of the assignment. For
+	 * example, in the following call :
+	 * 
+	 * <pre>
+	 * ExtendedNode n = graph.removeNode(&quot;...&quot;);
+	 * </pre>
+	 * 
+	 * the method will return an ExtendedNode. If no left part exists, method
+	 * will just return a Node.
+	 * </p>
+	 * 
+	 * @param id
+	 *            The unique identifier of the node to remove.
 	 * @return The removed node, if strict checking is disabled, it can return
-	 * 	       null if the node to remove does not exist.
+	 *         null if the node to remove does not exist.
 	 * @complexity O(1)
-	 * @throws ElementNotFoundException If no node matches the given identifier.
+	 * @throws ElementNotFoundException
+	 *             If no node matches the given identifier.
 	 */
 	<T extends Node> T removeNode( String id ) throws ElementNotFoundException;
 
 	/**
-	 * Add an undirected edge between nodes. An event is sent toward the
-	 * listeners. If strict checking is enabled and at least one of the two
-	 * given nodes do not exist, a "not found" exception is raised. Else if the
-	 * auto-creation feature is disabled, the error is silently ignored, and
-	 * null is returned. If the auto-creation feature is enabled (see
-	 * {@link #setAutoCreate(boolean)}) and one or two of the given nodes do not
-	 * exist, they are automatically created.
+	 * Add an undirected edge between nodes.
+	 * <p>
+	 * An event is sent toward the listeners. If strict checking is enabled and
+	 * at least one of the two given nodes do not exist, a "not found" exception
+	 * is raised. Else if the auto-creation feature is disabled, the error is
+	 * silently ignored, and null is returned. If the auto-creation feature is
+	 * enabled (see {@link #setAutoCreate(boolean)}) and one or two of the given
+	 * nodes do not exist, they are automatically created.
+	 * </p>
+	 * <p>
+	 * This method is implicitly generic and return something which extends
+	 * Edge. The return type is the one of the left part of the assignment. For
+	 * example, in the following call :
 	 * 
-	 * @param id Unique an arbitrary string identifying the edge.
-	 * @param node1 The first node identifier.
-	 * @param node2 The second node identifier.
+	 * <pre>
+	 * ExtendedEdge e = graph.addEdge(&quot;...&quot;,&quot;...&quot;,&quot;...&quot;);
+	 * </pre>
+	 * 
+	 * the method will return an ExtendedEdge. If no left part exists, method
+	 * will just return an Edge.
+	 * </p>
+	 * 
+	 * @param id
+	 *            Unique an arbitrary string identifying the edge.
+	 * @param node1
+	 *            The first node identifier.
+	 * @param node2
+	 *            The second node identifier.
 	 * 
 	 * @return The newly created edge (this can return null, if strict checking
 	 *         is disabled, auto-creation disabled, and one or two of the given
 	 *         nodes do not exist).
-	 * @throws IdAlreadyInUseException If an edge already exist between 'from' and 'to',
-	 *         strict checking is enabled and the graph is not a multi-graph.
-	 * @throws ElementNotFoundException If strict checking is enabled, and the 'from'
-	 *         or 'to' node is not registered in the graph.
+	 * @throws IdAlreadyInUseException
+	 *             If an edge already exist between 'from' and 'to', strict
+	 *             checking is enabled and the graph is not a multi-graph.
+	 * @throws ElementNotFoundException
+	 *             If strict checking is enabled, and the 'from' or 'to' node is
+	 *             not registered in the graph.
 	 */
 	<T extends Edge> T addEdge( String id, String node1, String node2 ) 
 		throws IdAlreadyInUseException, ElementNotFoundException;
@@ -278,34 +475,67 @@ public interface Graph extends Element, Pipe, Iterable<Node>
 		throws IdAlreadyInUseException, ElementNotFoundException;
 
 	/**
-	 * Remove an edge given the identifier of its two linked nodes. If the edge
-	 * is directed it is removed only if its source and destination nodes are
-	 * identified by 'from' and 'to' respectively. If the graph is a multi-graph
-	 * and there are several edges between the two nodes, one of the edge at
-	 * random is removed. An event is sent toward the
-	 * listeners. If strict checking is enabled and at least one of the two
-	 * given nodes does not exist, a not found exception is raised. Else the
-	 * error is silently ignored, and null is returned.
-	 * @param from The origin node identifier to select the edge.
-	 * @param to The destination node identifier to select the edge.
-	 * @return The removed edge, or null if strict checking is disabled and
-	 *         at least one of the two given nodes does not exist.
-	 * @throws ElementNotFoundException If the 'from' or 'to' node is not registered in
-	 *         the graph and strict checking is enabled.
+	 * Remove an edge given the identifier of its two linked nodes.
+	 * <p>
+	 * If the edge is directed it is removed only if its source and destination
+	 * nodes are identified by 'from' and 'to' respectively. If the graph is a
+	 * multi-graph and there are several edges between the two nodes, one of the
+	 * edge at random is removed. An event is sent toward the listeners. If
+	 * strict checking is enabled and at least one of the two given nodes does
+	 * not exist, a not found exception is raised. Else the error is silently
+	 * ignored, and null is returned.
+	 * </p>
+	 * <p>
+	 * This method is implicitly generic and return something which extends
+	 * Edge. The return type is the one of the left part of the assignment. For
+	 * example, in the following call :
+	 * 
+	 * <pre>
+	 * ExtendedEdge e = graph.removeEdge(&quot;...&quot;,&quot;...&quot;);
+	 * </pre>
+	 * 
+	 * the method will return an ExtendedEdge. If no left part exists, method
+	 * will just return an Edge.
+	 * </p>
+	 * 
+	 * @param from
+	 *            The origin node identifier to select the edge.
+	 * @param to
+	 *            The destination node identifier to select the edge.
+	 * @return The removed edge, or null if strict checking is disabled and at
+	 *         least one of the two given nodes does not exist.
+	 * @throws ElementNotFoundException
+	 *             If the 'from' or 'to' node is not registered in the graph and
+	 *             strict checking is enabled.
 	 */
 	<T extends Edge> T removeEdge( String from, String to ) 
 		throws ElementNotFoundException;
 
 	/**
 	 * Remove the edge knowing its identifier. An event is sent toward the
-	 * listeners. If strict checking is enabled and the edge does not exist,
-	 * a not found exception is raised. Else the error is silently ignored and
+	 * listeners. If strict checking is enabled and the edge does not exist, a
+	 * not found exception is raised. Else the error is silently ignored and
 	 * null is returned.
-	 * @param id Identifier of the edge to remove.
-	 * @return The removed edge, or null if strict checking is disabled and
-	 *         the edge does not exist.
-	 * @throws ElementNotFoundException If no edge matches the identifier and strict
-	 *         checking is enabled.
+	 * <p>
+	 * This method is implicitly generic and return something which extends
+	 * Edge. The return type is the one of the left part of the assignment. For
+	 * example, in the following call :
+	 * 
+	 * <pre>
+	 * ExtendedEdge e = graph.removeEdge(&quot;...&quot;);
+	 * </pre>
+	 * 
+	 * the method will return an ExtendedEdge. If no left part exists, method
+	 * will just return an Edge.
+	 * </p>
+	 * 
+	 * @param id
+	 *            Identifier of the edge to remove.
+	 * @return The removed edge, or null if strict checking is disabled and the
+	 *         edge does not exist.
+	 * @throws ElementNotFoundException
+	 *             If no edge matches the identifier and strict checking is
+	 *             enabled.
 	 */
 	<T extends Edge> T removeEdge( String id ) throws ElementNotFoundException;
 
