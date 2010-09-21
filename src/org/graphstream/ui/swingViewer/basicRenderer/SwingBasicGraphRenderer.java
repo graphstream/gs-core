@@ -279,15 +279,28 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 	 */
 	protected void renderGraphElements( Graphics2D g )
 	{
+	   try
+	   {
 		StyleGroupSet sgs = graph.getStyleGroups();
 		
-		for( HashSet<StyleGroup> groups : sgs.zIndex() )
+		if( sgs != null )
 		{
+		    for( HashSet<StyleGroup> groups : sgs.zIndex() )
+		    {
 			for( StyleGroup group: groups )
 			{
 				renderGroup( g, group );
 			}
+		    }
 		}
+	   }
+	   catch( NullPointerException e )
+	   {
+	       // Mysterious bug, where are you ?
+	       e.printStackTrace();
+	       System.err.printf( "We spotted the mysterious bug ..." );
+	       System.exit( 1 );
+	   }
 	}
 	
 	/**
@@ -407,6 +420,8 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 	
 	public void screenshot( String filename, int width, int height )
 	{
+	    if( graph != null ) 
+	    {
 		if( filename.endsWith( "png" ) || filename.endsWith( "PNG" ) )
 		{
 			BufferedImage img = new BufferedImage( width, height, BufferedImage.TYPE_INT_ARGB );
@@ -452,6 +467,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase
 				e.printStackTrace();
 			}
 		}
+	    }
 	}
 
 	public void setBackLayerRenderer( LayerRenderer renderer )

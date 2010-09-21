@@ -152,11 +152,11 @@ public class DefaultView extends View implements ComponentListener, WindowListen
 
 	@Override
 	public void display( GraphicGraph graph, boolean graphChanged )
-    {
-		this.graphChanged = graphChanged;
-		
+	{
+	    	this.graphChanged = graphChanged;
+
 		repaint();
-    }
+	}
 	
 	@Override
 	public void paint( Graphics g )
