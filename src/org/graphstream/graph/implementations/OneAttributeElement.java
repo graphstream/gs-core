@@ -72,24 +72,28 @@ public abstract class OneAttributeElement implements Element
 		return id;
 	}
 
-	public Object getAttribute( String key )
+	@SuppressWarnings("all")
+	public <T> T getAttribute( String key )
 	{
-		return attribute;
+		return (T)attribute;
 	}
 	
-	public Object getFirstAttributeOf( String ... keys )
+	@SuppressWarnings("all")
+	public <T> T getFirstAttributeOf( String ... keys )
 	{
-		return attribute;
+		return (T)attribute;
 	}
 
-		public Object getAttribute( String key, Class<?> clazz )
+	@SuppressWarnings("all")
+	public <T> T getAttribute( String key, Class<T> clazz )
 	{
-		return attribute;
+		return (T)attribute;
 	}
 	
-	public Object getFirstAttributeOf( Class<?> clazz, String ... keys )
+	@SuppressWarnings("all")
+	public <T> T getFirstAttributeOf( Class<T> clazz, String ... keys )
 	{
-		return attribute;
+		return (T)attribute;
 	}
 
 	public CharSequence getLabel( String key )

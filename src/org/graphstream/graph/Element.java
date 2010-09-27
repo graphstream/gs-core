@@ -68,7 +68,8 @@ public interface Element
 	 * @return The object bound to the given key or null if no object match this
 	 *         attribute name.
 	 */
-	Object getAttribute( String key );
+//	Object getAttribute( String key );
+	<T> T getAttribute( String key );
 
 	/**
 	 * Like {@link #getAttribute(String)}, but returns the first existing
@@ -77,7 +78,8 @@ public interface Element
 	 * @param keys Several strings naming attributes.
 	 * @return The first attribute that exists.
 	 */
-	Object getFirstAttributeOf( String... keys );
+//	Object getFirstAttributeOf( String... keys );
+	<T> T getFirstAttributeOf( String... keys );
 
 	/**
 	 * Get the attribute object bound to the given key if it is an instance of
@@ -88,7 +90,8 @@ public interface Element
 	 * @return The object bound to the given key or null if no object match this
 	 *         attribute.
 	 */
-	Object getAttribute( String key, Class<?> clazz );
+//	Object getAttribute( String key, Class<?> clazz );
+	<T> T getAttribute( String key, Class<T> clazz );
 	
 	/**
 	 * Like {@link #getAttribute(String, Class)}, but returns the first existing
@@ -98,7 +101,8 @@ public interface Element
 	 * @param keys Several string naming attributes.
 	 * @return The first attribute that exists.
 	 */
-	Object getFirstAttributeOf( Class<?> clazz, String... keys );
+//	Object getFirstAttributeOf( Class<?> clazz, String... keys );
+	<T> T getFirstAttributeOf( Class<T> clazz, String... keys );
 
 	/**
 	 * Get the label string bound to the given key key. Labels are special

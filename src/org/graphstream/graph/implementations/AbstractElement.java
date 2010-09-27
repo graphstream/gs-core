@@ -88,10 +88,12 @@ public abstract class AbstractElement implements Element
 	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this element. 
 	 */
-	public Object getAttribute( String key )
+//	public Object getAttribute( String key )
+	@SuppressWarnings("all")
+	public <T> T getAttribute( String key )
 	{
 		if( attributes != null )
-			return attributes.get( key );
+			return (T) attributes.get( key );
 
 		return null;
 	}
@@ -99,7 +101,9 @@ public abstract class AbstractElement implements Element
 	/**
 	 * @complexity O(log(n*m)) with n being the number of attributes of this element and m the number of keys given. 
 	 */
-	public Object getFirstAttributeOf( String ... keys )
+//	public Object getFirstAttributeOf( String ... keys )
+	@SuppressWarnings("all")
+	public <T> T getFirstAttributeOf( String ... keys )
 	{
 		Object o = null;
 		
@@ -111,23 +115,25 @@ public abstract class AbstractElement implements Element
 			o = getAttribute( key );
 			
 			if( o != null )
-				return o;
+			    return (T)o;
 		}
 		
-		return o;
+		return (T)o;
 	}
 
 	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this element. 
 	 */
-	public Object getAttribute( String key, Class<?> clazz )
+//	public Object getAttribute( String key, Class<?> clazz )
+	@SuppressWarnings("all")
+	public <T> T getAttribute( String key, Class<T> clazz )
 	{
 		if( attributes != null )
 		{
 			Object o = attributes.get( key );
 			
 			if( o != null && clazz.isInstance( o ) )
-				return o;
+				return (T)o;
 		}
 		
 		return null;
@@ -136,7 +142,9 @@ public abstract class AbstractElement implements Element
 	/**
 	 * @complexity O(log(n*m)) with n being the number of attributes of this element and m the number of keys given. 
 	 */
-	public Object getFirstAttributeOf( Class<?> clazz, String ... keys )
+//	public Object getFirstAttributeOf( Class<?> clazz, String ... keys )
+	@SuppressWarnings("all")
+	public <T> T getFirstAttributeOf( Class<T> clazz, String ... keys )
 	{
 		Object o = null;
 		
@@ -148,7 +156,7 @@ public abstract class AbstractElement implements Element
 			o = attributes.get( key );
 			
 			if( o != null && clazz.isInstance( o ) )
-				return o;
+				return (T)o;
 		}
 		
 		return null;

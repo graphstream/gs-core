@@ -83,15 +83,17 @@ public abstract class AbstractConcurrentElement implements Element
 	protected abstract String myGraphId();		// XXX
 	protected abstract long newEvent();			// XXX
 
-	public Object getAttribute( String key )
+	@SuppressWarnings("all")
+	public <T> T getAttribute( String key )
 	{
 		if( attributes != null )
-			return attributes.get( key );
+			return (T)attributes.get( key );
 
 		return null;
 	}
 	
-	public Object getFirstAttributeOf( String ... keys )
+	@SuppressWarnings("all")
+	public <T> T getFirstAttributeOf( String ... keys )
 	{
 		Object o = null;
 		
@@ -103,26 +105,28 @@ public abstract class AbstractConcurrentElement implements Element
 			o = getAttribute( key );
 			
 			if( o != null )
-				return o;
+				return (T)o;
 		}
 		
-		return o;
+		return (T)o;
 	}
 
-	public Object getAttribute( String key, Class<?> clazz )
+	@SuppressWarnings("all")
+	public <T> T getAttribute( String key, Class<T> clazz )
 	{
 		if( attributes != null )
 		{
 			Object o = attributes.get( key );
 			
 			if( o != null && clazz.isInstance( o ) )
-				return o;
+				return (T)o;
 		}
 		
 		return null;
 	}
 	
-	public Object getFirstAttributeOf( Class<?> clazz, String ... keys )
+	@SuppressWarnings("all")
+	public <T> T getFirstAttributeOf( Class<T> clazz, String ... keys )
 	{
 		Object o = null;
 		
@@ -134,7 +138,7 @@ public abstract class AbstractConcurrentElement implements Element
 			o = attributes.get( key );
 			
 			if( o != null && clazz.isInstance( o ) )
-				return o;
+				return (T)o;
 		}
 		
 		return null;
