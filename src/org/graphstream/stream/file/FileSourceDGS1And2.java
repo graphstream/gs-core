@@ -215,7 +215,7 @@ public class FileSourceDGS1And2 extends FileSourceBase
 				for( String k: attributes.keySet() )
 				{
 					Object value = attributes.get( k );
-					sendNodeAttributeAdded( graphName, tag, k, value );
+					sendEdgeAttributeAdded( graphName, tag, k, value );
 				}
 			}
 			
