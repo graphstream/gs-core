@@ -37,64 +37,57 @@ import org.graphstream.stream.SourceBase.ElementType;
 
 /**
  * <p>
- * An implementation of a Node with multi-thread capabilities. 
+ * An implementation of a Node with multi-thread capabilities.
  * </p>
  * <p>
- * It is similar to the  {@link org.graphstream.graph.implementations.AdjacencyListNode} class, but with thread-safe data structures. 
+ * It is similar to the
+ * {@link org.graphstream.graph.implementations.AdjacencyListNode} class, but
+ * with thread-safe data structures.
  * </p>
  * <p>
- * Time and memory complexity is comparable to the values given in {@link org.graphstream.graph.implementations.AdjacencyListNode}. 
- * Consider some time overhead due to the thread synchronization machinery.
+ * Time and memory complexity is comparable to the values given in
+ * {@link org.graphstream.graph.implementations.AdjacencyListNode}. Consider
+ * some time overhead due to the thread synchronization machinery.
  * </p>
+ * 
  * @see org.graphstream.graph.implementations.AdjacencyListNode
  */
 
-public class ConcurrentNode
-	extends AbstractConcurrentElement implements Node
-{
-	public class NeighborNodeIterator<T extends Node>
-		implements Iterator<T>
-	{
+public class ConcurrentNode extends AbstractConcurrentElement implements Node {
+	public class NeighborNodeIterator<T extends Node> implements Iterator<T> {
 		T node;
-		Iterator<Edge>	ite;
-		
-		public NeighborNodeIterator( T node )
-		{
+		Iterator<Edge> ite;
+
+		public NeighborNodeIterator(T node) {
 			this.node = node;
-			ite = ((ConcurrentNode)node).edges.iterator();
+			ite = ((ConcurrentNode) node).edges.iterator();
 		}
 
-		public boolean hasNext()
-		{
+		public boolean hasNext() {
 			return ite.hasNext();
 		}
 
-		public T next()
-		{
-			if( hasNext() )
-				return ite.next().getOpposite( node );
-			
+		public T next() {
+			if (hasNext())
+				return ite.next().getOpposite(node);
+
 			return null;
 		}
 
-		public void remove()
-		{
-			throw new UnsupportedOperationException( "this iterator does not allow removing" );
+		public void remove() {
+			throw new UnsupportedOperationException(
+					"this iterator does not allow removing");
 		}
 	}
-	
-	public class EdgeIterable<T extends Edge>
-		implements Iterable<T>
-	{
+
+	public class EdgeIterable<T extends Edge> implements Iterable<T> {
 		protected Iterator<T> iterator;
-		
-		public EdgeIterable( Iterator<T> iterator )
-		{
+
+		public EdgeIterable(Iterator<T> iterator) {
 			this.iterator = iterator;
 		}
-		
-		public Iterator<T> iterator()
-		{
+
+		public Iterator<T> iterator() {
 			return iterator;
 		}
 	}
@@ -103,69 +96,61 @@ public class ConcurrentNode
 
 	Graph graph;
 
-	public ConcurrentNode( Graph graph, String id )
-	{
-		super( id );
+	public ConcurrentNode(Graph graph, String id) {
+		super(id);
 		this.graph = graph;
 		edges = new ConcurrentLinkedQueue<Edge>();
 	}
 
 	@Override
-	protected String myGraphId()	// XXX
+	protected String myGraphId() // XXX
 	{
 		return graph.getId();
 	}
-	
+
 	@Override
-	protected long newEvent()		// XXX
+	protected long newEvent() // XXX
 	{
-		return ((ConcurrentGraph)graph).newEvent();
-	}
-	
-	@SuppressWarnings("unchecked")
-	public <T extends Node> Iterator<T> getBreadthFirstIterator()
-	{
-		return new BreadthFirstIterator<T>( (T) this );
+		return ((ConcurrentGraph) graph).newEvent();
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Node> Iterator<T> getBreadthFirstIterator( boolean directed )
-	{
-		return new BreadthFirstIterator<T>( (T) this, directed );
+	public <T extends Node> Iterator<T> getBreadthFirstIterator() {
+		return new BreadthFirstIterator<T>((T) this);
 	}
 
-	public int getDegree()
-	{
+	@SuppressWarnings("unchecked")
+	public <T extends Node> Iterator<T> getBreadthFirstIterator(boolean directed) {
+		return new BreadthFirstIterator<T>((T) this, directed);
+	}
+
+	public int getDegree() {
 		return edges.size();
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Node> Iterator<T> getDepthFirstIterator()
-	{
-		return new DepthFirstIterator<T>( (T) this );
+	public <T extends Node> Iterator<T> getDepthFirstIterator() {
+		return new DepthFirstIterator<T>((T) this);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Node> Iterator<T> getDepthFirstIterator( boolean directed )
-	{
-		return new DepthFirstIterator<T>( (T) this, directed );
+	public <T extends Node> Iterator<T> getDepthFirstIterator(boolean directed) {
+		return new DepthFirstIterator<T>((T) this, directed);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> T getEdge( int i )
-	{
+	public <T extends Edge> T getEdge(int i) {
 		int j = 0;
 		Iterator<Edge> ite = edges.iterator();
-		
-		while( ite.hasNext() )
-		{
-			if( i == j )
+
+		while (ite.hasNext()) {
+			if (i == j)
 				return (T) ite.next();
-			
+
 			j++;
 			ite.next();
 		}
-		
+
 		return null;
 	}
 
@@ -174,20 +159,15 @@ public class ConcurrentNode
 	 *             in the graph.
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> T getEdgeFrom( String id )
-	{
-		Node n = ( (ConcurrentGraph) graph ).lookForNode( id );
-		
-		if( n != null )
-		{
-			for( Edge e: edges )
-			{
-				if( e.getSourceNode() == n )
-				{
+	public <T extends Edge> T getEdgeFrom(String id) {
+		Node n = ((ConcurrentGraph) graph).lookForNode(id);
+
+		if (n != null) {
+			for (Edge e : edges) {
+				if (e.getSourceNode() == n) {
 					return (T) e;
 				}
-				if( !e.isDirected() && e.getTargetNode() == n )
-				{
+				if (!e.isDirected() && e.getTargetNode() == n) {
 					return (T) e;
 				}
 			}
@@ -196,36 +176,28 @@ public class ConcurrentNode
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterator<T> getEdgeIterator()
-	{
+	public <T extends Edge> Iterator<T> getEdgeIterator() {
 		return (Iterator<T>) edges.iterator();
 	}
-	
-	public Iterator<Edge> iterator()
-	{
+
+	public Iterator<Edge> iterator() {
 		return (Iterator<Edge>) getEdgeIterator();
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Collection<T> getEdgeSet()
-	{
+	public <T extends Edge> Collection<T> getEdgeSet() {
 		return (Collection<T>) edges;
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> T getEdgeToward( String id )
-	{
-		Node n = ( (ConcurrentGraph) graph ).lookForNode( id );
-		if( n != null )
-		{
-			for( Edge e: edges )
-			{
-				if( e.getTargetNode() == n )
-				{
+	public <T extends Edge> T getEdgeToward(String id) {
+		Node n = ((ConcurrentGraph) graph).lookForNode(id);
+		if (n != null) {
+			for (Edge e : edges) {
+				if (e.getTargetNode() == n) {
 					return (T) e;
 				}
-				if( !e.isDirected() && e.getSourceNode() == n )
-				{
+				if (!e.isDirected() && e.getSourceNode() == n) {
 					return (T) e;
 				}
 			}
@@ -233,133 +205,122 @@ public class ConcurrentNode
 		return null;
 	}
 
-	public <T extends Edge> Iterator<T> getEnteringEdgeIterator()
-	{
-		throw new UnsupportedOperationException( "unsupported entering edge iterator" );
+	public <T extends Edge> Iterator<T> getEnteringEdgeIterator() {
+		throw new UnsupportedOperationException(
+				"unsupported entering edge iterator");
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<T> getEnteringEdgeSet()
-	{
-		return new EdgeIterable<T>( (Iterator<T>) getEnteringEdgeIterator() );
+	public <T extends Edge> Iterable<T> getEnteringEdgeSet() {
+		return new EdgeIterable<T>((Iterator<T>) getEnteringEdgeIterator());
 	}
 
-	public Graph getGraph()
-	{
+	public Graph getGraph() {
 		return graph;
 	}
 
-	public int getInDegree()
-	{
+	public int getInDegree() {
 		Iterator<Edge> ite = edges.iterator();
-		
+
 		int d = 0;
 		Edge e;
-		while(ite.hasNext()) {
+		while (ite.hasNext()) {
 			e = ite.next();
-			if( e.getSourceNode()==this || ! e.isDirected() )
+			if (e.getSourceNode() == this || !e.isDirected())
 				d++;
 		}
-		
+
 		return d;
 	}
 
-	public <T extends Edge> Iterator<T> getLeavingEdgeIterator()
-	{
-		throw new UnsupportedOperationException( "unsupported leaving edge iterator" );
+	public <T extends Edge> Iterator<T> getLeavingEdgeIterator() {
+		throw new UnsupportedOperationException(
+				"unsupported leaving edge iterator");
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<T> getLeavingEdgeSet()
-	{
-		return new EdgeIterable<T>( (Iterator<T>) getLeavingEdgeIterator() );
+	public <T extends Edge> Iterable<T> getLeavingEdgeSet() {
+		return new EdgeIterable<T>((Iterator<T>) getLeavingEdgeIterator());
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Node> Iterator<T> getNeighborNodeIterator()
-	{
-		return new NeighborNodeIterator<T>( (T) this );
+	public <T extends Node> Iterator<T> getNeighborNodeIterator() {
+		return new NeighborNodeIterator<T>((T) this);
 	}
 
-	public int getOutDegree()
-	{
+	public int getOutDegree() {
 		Iterator<Edge> ite = edges.iterator();
-		
+
 		int d = 0;
 		Edge e;
-		while(ite.hasNext()) {
+		while (ite.hasNext()) {
 			e = ite.next();
-			if( e.getTargetNode()==this || ! e.isDirected() )
+			if (e.getTargetNode() == this || !e.isDirected())
 				d++;
 		}
-		
+
 		return d;
 	}
 
-	public boolean hasEdgeFrom( String id )
-	{
-		Node n = ( (ConcurrentGraph) graph ).lookForNode( id );
-		return hasEdgeFrom(n)==null?false:true;
+	public boolean hasEdgeFrom(String id) {
+		Node n = ((ConcurrentGraph) graph).lookForNode(id);
+		return hasEdgeFrom(n) == null ? false : true;
 	}
 
 	/**
-	 * Tries to find in the edges of this node the one that links the given node to the current one.
-	 * @return An reference to the edge coming from the given node if there is one, null otherwise.
-	 * @param n The node we look for an edge towards. 
+	 * Tries to find in the edges of this node the one that links the given node
+	 * to the current one.
+	 * 
+	 * @return An reference to the edge coming from the given node if there is
+	 *         one, null otherwise.
+	 * @param n
+	 *            The node we look for an edge towards.
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> T hasEdgeFrom( Node n )
-	{
-		if( n != null )
-		{
+	public <T extends Edge> T hasEdgeFrom(Node n) {
+		if (n != null) {
 			Iterator<Edge> it = edges.iterator();
-			
-			while( it.hasNext() )
-			{
+
+			while (it.hasNext()) {
 				Edge e = it.next();
-				
-				if( e.isDirected() )
-				{
-					if( e.getSourceNode() == n )
+
+				if (e.isDirected()) {
+					if (e.getSourceNode() == n)
 						return (T) e;
-				}
-				else
+				} else
 					return (T) e;
 			}
 		}
 		return null;
 	}
-	
-	public boolean hasEdgeToward( String id )
-	{
-		Node n = ( (ConcurrentGraph) graph ).lookForNode( id );
-		return hasEdgeToward(n)==null?false:true;
+
+	public boolean hasEdgeToward(String id) {
+		Node n = ((ConcurrentGraph) graph).lookForNode(id);
+		return hasEdgeToward(n) == null ? false : true;
 	}
 
 	/**
-	 * Tries to find in the edges of this node the one that links the current node to the given one.
-	 * @return An reference to the edge leading to the given node if there is one, null otherwise.
-	 * @param n The node we look for an edge towards. 
+	 * Tries to find in the edges of this node the one that links the current
+	 * node to the given one.
+	 * 
+	 * @return An reference to the edge leading to the given node if there is
+	 *         one, null otherwise.
+	 * @param n
+	 *            The node we look for an edge towards.
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> T hasEdgeToward( Node n )
-	{
-		if( n != null )
-		{
+	public <T extends Edge> T hasEdgeToward(Node n) {
+		if (n != null) {
 			Iterator<Edge> it = edges.iterator();
-			
-			while( it.hasNext() )
-			{
+
+			while (it.hasNext()) {
 				Edge e = it.next();
-				
-				if( e.isDirected() )
-				{
-					if( e.getTargetNode() == n )
+
+				if (e.isDirected()) {
+					if (e.getTargetNode() == n)
 						return (T) e;
-				}
-				else
-				{
-					if( e.getTargetNode() == n || e.getSourceNode() == n )
+				} else {
+					if (e.getTargetNode() == n || e.getSourceNode() == n)
 						return (T) e;
 				}
 			}
@@ -368,11 +329,12 @@ public class ConcurrentNode
 	}
 
 	@Override
-	protected void attributeChanged( String sourceId, long timeId, String attribute,
-			AttributeChangeEvent event, Object oldValue, Object newValue )
-	{
-		if( graph != null )
-			((ConcurrentGraph)graph).listeners.sendAttributeChangedEvent(
-					sourceId, timeId, getId(), ElementType.NODE, attribute, event, oldValue, newValue );
+	protected void attributeChanged(String sourceId, long timeId,
+			String attribute, AttributeChangeEvent event, Object oldValue,
+			Object newValue) {
+		if (graph != null)
+			((ConcurrentGraph) graph).listeners.sendAttributeChangedEvent(
+					sourceId, timeId, getId(), ElementType.NODE, attribute,
+					event, oldValue, newValue);
 	}
 }

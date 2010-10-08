@@ -29,11 +29,9 @@ import java.util.Map;
 /**
  * Graph writer for the GraphViz DOT format.
  */
-public class FileSinkDOT
-	extends FileSinkBase
-{
-// Attribute
-	
+public class FileSinkDOT extends FileSinkBase {
+	// Attribute
+
 	/**
 	 * The output.
 	 */
@@ -43,153 +41,141 @@ public class FileSinkDOT
 	 * The graph name (set as soon as known).
 	 */
 	protected String graphName = "";
-	
+
 	/**
 	 * What element ?.
 	 */
-	protected enum What { NODE, EDGE, OTHER };
+	protected enum What {
+		NODE, EDGE, OTHER
+	};
 
-// Command
+	// Command
 
 	@Override
-	protected void outputHeader() throws IOException
-	{
+	protected void outputHeader() throws IOException {
 		out = (PrintStream) output;
-		out.printf( "graph {%n" );
-		
-		if( graphName.length() > 0 )
-			out.printf( "\tgraph [label=%s];%n", graphName );
+		out.printf("graph {%n");
+
+		if (graphName.length() > 0)
+			out.printf("\tgraph [label=%s];%n", graphName);
 	}
-	
+
 	@Override
-	protected void outputEndOfFile() throws IOException
-	{
-		out.printf( "}%n" );
+	protected void outputEndOfFile() throws IOException {
+		out.printf("}%n");
 	}
 
-	public void edgeAttributeAdded( String graphId, long timeId, String edgeId, String attribute, Object value )
-	{
+	public void edgeAttributeAdded(String graphId, long timeId, String edgeId,
+			String attribute, Object value) {
 		// NOP
 	}
 
-	public void edgeAttributeChanged( String graphId, long timeId, String edgeId, String attribute,
-	        Object oldValue, Object newValue )
-	{
+	public void edgeAttributeChanged(String graphId, long timeId,
+			String edgeId, String attribute, Object oldValue, Object newValue) {
 		// NOP
 	}
 
-	public void edgeAttributeRemoved( String graphId, long timeId, String edgeId, String attribute )
-	{
+	public void edgeAttributeRemoved(String graphId, long timeId,
+			String edgeId, String attribute) {
 		// NOP
 	}
 
-	public void graphAttributeAdded( String graphId, long timeId, String attribute, Object value )
-	{
+	public void graphAttributeAdded(String graphId, long timeId,
+			String attribute, Object value) {
 		// NOP
 	}
 
-	public void graphAttributeChanged( String graphId, long timeId, String attribute, Object oldValue,
-	        Object newValue )
-	{
+	public void graphAttributeChanged(String graphId, long timeId,
+			String attribute, Object oldValue, Object newValue) {
 		// NOP
 	}
 
-	public void graphAttributeRemoved( String graphId, long timeId, String attribute )
-	{
+	public void graphAttributeRemoved(String graphId, long timeId,
+			String attribute) {
 		// NOP
 	}
 
-	public void nodeAttributeAdded( String graphId, long timeId, String nodeId, String attribute, Object value )
-	{
-		out.printf( "\t%s [ %s ];%n", nodeId, outputAttribute( attribute, value, true ) );
+	public void nodeAttributeAdded(String graphId, long timeId, String nodeId,
+			String attribute, Object value) {
+		out.printf("\t%s [ %s ];%n", nodeId,
+				outputAttribute(attribute, value, true));
 	}
 
-	public void nodeAttributeChanged( String graphId, long timeId, String nodeId, String attribute,
-	        Object oldValue, Object newValue )
-	{
-		out.printf( "\t%s [ %s ];%n", nodeId, outputAttribute( attribute, newValue, true ) );
+	public void nodeAttributeChanged(String graphId, long timeId,
+			String nodeId, String attribute, Object oldValue, Object newValue) {
+		out.printf("\t%s [ %s ];%n", nodeId,
+				outputAttribute(attribute, newValue, true));
 	}
 
-	public void nodeAttributeRemoved( String graphId, long timeId, String nodeId, String attribute )
-	{
+	public void nodeAttributeRemoved(String graphId, long timeId,
+			String nodeId, String attribute) {
 		// NOP
 	}
 
-	public void edgeAdded( String graphId, long timeId, String edgeId, String fromNodeId, String toNodeId,
-	        boolean directed )
-	{
-		if( directed )
-		     out.printf( "\t%s -> %s;%n", fromNodeId, toNodeId );
-		else out.printf( "\t%s -- %s;%n", fromNodeId, toNodeId );
+	public void edgeAdded(String graphId, long timeId, String edgeId,
+			String fromNodeId, String toNodeId, boolean directed) {
+		if (directed)
+			out.printf("\t%s -> %s;%n", fromNodeId, toNodeId);
+		else
+			out.printf("\t%s -- %s;%n", fromNodeId, toNodeId);
 	}
 
-	public void edgeRemoved( String graphId, long timeId, String edgeId )
-	{
+	public void edgeRemoved(String graphId, long timeId, String edgeId) {
 		// NOP
 	}
 
-	public void graphCleared( String graphId, long timeId )
-	{
+	public void graphCleared(String graphId, long timeId) {
 		// NOP
 	}
 
-	public void nodeAdded( String graphId, long timeId, String nodeId )
-	{
-		out.printf( "\t%s;%n", nodeId );
+	public void nodeAdded(String graphId, long timeId, String nodeId) {
+		out.printf("\t%s;%n", nodeId);
 	}
 
-	public void nodeRemoved( String graphId, long timeId, String nodeId )
-	{
+	public void nodeRemoved(String graphId, long timeId, String nodeId) {
 		// NOP
 	}
 
-	public void stepBegins( String graphId, long timeId, double step )
-	{
+	public void stepBegins(String graphId, long timeId, double step) {
 		// NOP
 	}
-	
-// Utility
-	
-	protected void outputAttributes( Map<String,Object> attributes, What what ) throws IOException
-	{
-		out.printf( " [" );
-		
+
+	// Utility
+
+	protected void outputAttributes(Map<String, Object> attributes, What what)
+			throws IOException {
+		out.printf(" [");
+
 		boolean first = true;
-		
-		for( String key: attributes.keySet() )
-		{
-			Object value = attributes.get( key );
 
-			if( what == What.NODE )
-			{
-//				if( ! nodeForbiddenAttrs.contains( key ) )
+		for (String key : attributes.keySet()) {
+			Object value = attributes.get(key);
+
+			if (what == What.NODE) {
+				// if( ! nodeForbiddenAttrs.contains( key ) )
 				{
-					first = outputAttribute( key, value, first );
+					first = outputAttribute(key, value, first);
 				}
-			}
-			else if( what == What.EDGE )
-			{
-//				if( ! edgeForbiddenAttrs.contains( key ) )
+			} else if (what == What.EDGE) {
+				// if( ! edgeForbiddenAttrs.contains( key ) )
 				{
-					first = outputAttribute( key, value, first );
+					first = outputAttribute(key, value, first);
 				}
+			} else {
+				first = outputAttribute(key, value, first);
 			}
-			else
-			{
-				first = outputAttribute( key, value, first );
-			}
-			
+
 		}
-		
-		out.printf( "]" );
+
+		out.printf("]");
 	}
-	
-	protected boolean outputAttribute( String key, Object value, boolean first )
-	{
-		if( first )
-		     out.printf( "\"%s\"=\"%s\"", key, value );
-		else out.printf( ",\"%s\"=\"%s\"", key, value );
-		
+
+	protected boolean outputAttribute(String key, Object value, boolean first) {
+		if (first)
+			out.printf("\"%s\"=\"%s\"", key, value);
+		else
+			out.printf(",\"%s\"=\"%s\"", key, value);
+
 		return false;
 	}
 }

@@ -27,25 +27,31 @@ import org.graphstream.ui.graphicGraph.stylesheet.Values;
 /**
  * Factory for sprites.
  * 
- * <p>Use the sprite factory in the sprite manager so that the manager produce instance of a chosen
- * subclass of {@link Sprite}. This is useful if you intend to have each sprite pertain to the same
- * subclass. If you intend to have different kinds of sprites at the same time in the same manager,
- * use {@link SpriteManager#addSprite(String, Class)} instead.</p>
+ * <p>
+ * Use the sprite factory in the sprite manager so that the manager produce
+ * instance of a chosen subclass of {@link Sprite}. This is useful if you intend
+ * to have each sprite pertain to the same subclass. If you intend to have
+ * different kinds of sprites at the same time in the same manager, use
+ * {@link SpriteManager#addSprite(String, Class)} instead.
+ * </p>
  */
-public class SpriteFactory
-{
+public class SpriteFactory {
 	/**
 	 * Create a new sprite for the given manager with the given identifier.
-	 * @param identifier Identifier of the newly created sprite.
-	 * @param manager The sprite manager this sprite will pertain to.
-	 * @param position The sprite initial position or null for (0,0,0,GU).
+	 * 
+	 * @param identifier
+	 *            Identifier of the newly created sprite.
+	 * @param manager
+	 *            The sprite manager this sprite will pertain to.
+	 * @param position
+	 *            The sprite initial position or null for (0,0,0,GU).
 	 * @return A new sprite.
 	 */
-	public Sprite newSprite( String identifier, SpriteManager manager, Values position )
-	{
-		if( position != null )
-			return new Sprite( identifier, manager, position );
-		
-		return new Sprite( identifier, manager );
+	public Sprite newSprite(String identifier, SpriteManager manager,
+			Values position) {
+		if (position != null)
+			return new Sprite(identifier, manager, position);
+
+		return new Sprite(identifier, manager);
 	}
 }

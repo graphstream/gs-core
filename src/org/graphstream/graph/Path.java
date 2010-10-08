@@ -44,21 +44,20 @@ import java.util.Stack;
  * The two lists (one for nodes, one for edges) may be acceded at any moment in
  * constant time.
  * </p>
- *
+ * 
  * <p>
  * The constraint of this class is that it needs to know the first node of the
- * path (the root). This root can be set with the {@link #setRoot(Node)} method or by
- * using the {@link #add(Node, Edge)} method.
+ * path (the root). This root can be set with the {@link #setRoot(Node)} method
+ * or by using the {@link #add(Node, Edge)} method.
  * </p>
- *
+ * 
  * <p>
  * The normal use with this class is to first use the {@link #setRoot(Node)}
  * method to initialize the path; then to use the {@link #add(Edge)} method to
  * grow it and the {@link #popEdge()} or {@link #popNode()}.
  * 
  */
-public class Path
-{
+public class Path {
 	// ------------- ATTRIBUTES ------------
 
 	/**
@@ -81,8 +80,7 @@ public class Path
 	/**
 	 * New empty path.
 	 */
-	public Path()
-	{
+	public Path() {
 		edgePath = new Stack<Edge>();
 		nodePath = new Stack<Node>();
 	}
@@ -91,50 +89,50 @@ public class Path
 
 	/**
 	 * Get the root (the first node) of the path.
+	 * 
 	 * @return the root of the path.
 	 */
-	public Node getRoot()
-	{
+	public Node getRoot() {
 		return this.root;
 	}
 
 	/**
 	 * Set the root (first node) of the path.
-	 * @param root The root of the path.
+	 * 
+	 * @param root
+	 *            The root of the path.
 	 */
-	public void setRoot( Node root )
-	{
-		if(this.root==null)
-		{
+	public void setRoot(Node root) {
+		if (this.root == null) {
 			this.root = root;
-			nodePath.push( root );
+			nodePath.push(root);
+		} else {
+			System.err
+					.printf("Error in org.miv.graphstream.graph.Path: root is not null. First use the clear method.%n");
 		}
-		else {
-			System.err.printf( "Error in org.miv.graphstream.graph.Path: root is not null. First use the clear method.%n" );
-		}
-		
+
 	}
 
 	/**
 	 * Says whether the path contains this node or not.
 	 * 
-	 * @param node The node tested for existence in the path.
+	 * @param node
+	 *            The node tested for existence in the path.
 	 * @return <code>true</code> if the path contains the node.
 	 */
-	public boolean contains( Node node )
-	{
-		return nodePath.contains( node );
+	public boolean contains(Node node) {
+		return nodePath.contains(node);
 	}
 
 	/**
 	 * Says whether the path contains this edge or not.
 	 * 
-	 * @param edge The edge tested for existence in the path. 
+	 * @param edge
+	 *            The edge tested for existence in the path.
 	 * @return <code>true</code> if the path contains the edge.
 	 */
-	public boolean contains( Edge edge )
-	{
-		return edgePath.contains( edge );
+	public boolean contains(Edge edge) {
+		return edgePath.contains(edge);
 	}
 
 	/**
@@ -142,40 +140,38 @@ public class Path
 	 * 
 	 * @return <code>true</code> if the path is empty.
 	 */
-	public boolean empty()
-	{
+	public boolean empty() {
 		return nodePath.empty();
 	}
 
 	/**
 	 * Returns the size of the path
 	 */
-	public int size()
-	{
+	public int size() {
 		return nodePath.size();
 	}
 
 	/**
 	 * Returns the size of the path. Identical to {@link #size()}.
+	 * 
 	 * @return The size of the path.
 	 */
-	public int getNodeCount()
-	{
+	public int getNodeCount() {
 		return nodePath.size();
 	}
 
 	/**
-	 * It returns the sum of the <code>characteristic</code> given value in
-	 * the Edges of the path.
-	 * @param characteristic The characteristic.
+	 * It returns the sum of the <code>characteristic</code> given value in the
+	 * Edges of the path.
+	 * 
+	 * @param characteristic
+	 *            The characteristic.
 	 * @return Sum of the characteristics.
 	 */
-	public Double getPathWeight( String characteristic )
-	{
+	public Double getPathWeight(String characteristic) {
 		double d = 0;
-		for( Edge l: edgePath )
-		{
-			d += (Double) l.getAttribute( characteristic, Number.class );
+		for (Edge l : edgePath) {
+			d += (Double) l.getAttribute(characteristic, Number.class);
 		}
 		return d;
 	}
@@ -185,8 +181,7 @@ public class Path
 	 * 
 	 * @return The list of edges representing the path.
 	 */
-	public List<Edge> getEdgePath()
-	{
+	public List<Edge> getEdgePath() {
 		return edgePath;
 	}
 
@@ -195,8 +190,7 @@ public class Path
 	 * 
 	 * @return A list of nodes representing the path.
 	 */
-	public List<Node> getNodePath()
-	{
+	public List<Node> getNodePath() {
 		return nodePath;
 	}
 
@@ -207,74 +201,66 @@ public class Path
 	 * start node : the one who already belong to the path or the first one if
 	 * the path is empty. The other parameter is the the new edge to add.
 	 * 
-	 * @param from The start node.
-	 * @param edge The edge used.
+	 * @param from
+	 *            The start node.
+	 * @param edge
+	 *            The edge used.
 	 */
-	public void add( Node from, Edge edge )
-	{
-		if (root==null)
-		{
-			if (from==null)
-			{
-				System.err.print( "Error using org.miv.graphstream.graph.Path: Use setRoot( ) first. %n");
+	public void add(Node from, Edge edge) {
+		if (root == null) {
+			if (from == null) {
+				System.err
+						.print("Error using org.miv.graphstream.graph.Path: Use setRoot( ) first. %n");
 				System.exit(0);
-			}
-			else
-			{
+			} else {
 				setRoot(from);
 			}
 		}
-		
-		if(from==null)
-		{
+
+		if (from == null) {
 			from = nodePath.peek();
 		}
-		
-		if( nodePath.size() ==1  || (( nodePath.peek() == from ) && ( from == edgePath.peek().getSourceNode() || from == edgePath.peek().getTargetNode() )) )
-		{
 
-			nodePath.push( edge.getOpposite( from ) );
-			edgePath.push( edge );
-		}
-		else
-		{
-			System.err.printf( "Path: Cannot add the specified edge, it cannot be part of the path! %n" );
+		if (nodePath.size() == 1
+				|| ((nodePath.peek() == from) && (from == edgePath.peek()
+						.getSourceNode() || from == edgePath.peek()
+						.getTargetNode()))) {
+
+			nodePath.push(edge.getOpposite(from));
+			edgePath.push(edge);
+		} else {
+			System.err
+					.printf("Path: Cannot add the specified edge, it cannot be part of the path! %n");
 		}
 	}
-	
 
 	/**
 	 * Method that adds an edge an a node to the path. The new edge to add is
 	 * given.
 	 * 
-	 * @param edge The edge to add to the path.
+	 * @param edge
+	 *            The edge to add to the path.
 	 */
-	public void add( Edge edge )
-	{
-		if( nodePath.isEmpty() )
-		{
-			add( null, edge );
-		}
-		else
-		{
-			add( nodePath.peek(), edge );
+	public void add(Edge edge) {
+		if (nodePath.isEmpty()) {
+			add(null, edge);
+		} else {
+			add(nodePath.peek(), edge);
 		}
 	}
 
 	/**
 	 * A synonym for {@link #add(Edge)}.
 	 */
-	public void push( Node from, Edge edge )
-	{
-		add( from, edge );
+	public void push(Node from, Edge edge) {
+		add(from, edge);
 	}
 
 	/**
 	 * A synonym for {@link #add(Edge)}.
 	 */
-	public void push( Edge edge )
-	{
-		add( edge );
+	public void push(Edge edge) {
+		add(edge);
 	}
 
 	/**
@@ -283,8 +269,7 @@ public class Path
 	 * 
 	 * @return The edge that have just been removed.
 	 */
-	public Edge popEdge()
-	{
+	public Edge popEdge() {
 		nodePath.pop();
 		return edgePath.pop();
 	}
@@ -295,40 +280,36 @@ public class Path
 	 * 
 	 * @return The node that have just been removed.
 	 */
-	public Node popNode()
-	{
+	public Node popNode() {
 		edgePath.pop();
 		return nodePath.pop();
 	}
 
 	/**
-	 * Looks at the node at the top of the stack without removing it
-   * from the stack.
-   * 
+	 * Looks at the node at the top of the stack without removing it from the
+	 * stack.
+	 * 
 	 * @return The node at the top of the stack.
 	 */
-	public Node peekNode()
-	{
+	public Node peekNode() {
 		return nodePath.peek();
 	}
-	
+
 	/**
-	 * Looks at the edge at the top of the stack without removing it
-   * from the stack.
-   * 
+	 * Looks at the edge at the top of the stack without removing it from the
+	 * stack.
+	 * 
 	 * @return The edge at the top of the stack.
 	 */
 
-	public Edge peekEdge()
-	{
+	public Edge peekEdge() {
 		return edgePath.peek();
 	}
 
 	/**
 	 * Clears the path;
 	 */
-	public void clear()
-	{
+	public void clear() {
 		nodePath.clear();
 		edgePath.clear();
 		// Runtime.getRuntime().gc();
@@ -337,11 +318,11 @@ public class Path
 
 	/**
 	 * Get a copy of this path
+	 * 
 	 * @return A copy of this path.
 	 */
-	@SuppressWarnings( "unchecked" )
-	public Path getACopy()
-	{
+	@SuppressWarnings("unchecked")
+	public Path getACopy() {
 		Path newPath = new Path();
 		newPath.root = this.root;
 		newPath.edgePath = (Stack<Edge>) edgePath.clone();
@@ -349,73 +330,61 @@ public class Path
 
 		return newPath;
 	}
-	
+
 	/**
-	 * Remove all parts of the path that start at a given node and pass a new at this node.
+	 * Remove all parts of the path that start at a given node and pass a new at
+	 * this node.
 	 */
-	public void removeLoops()
-	{
+	public void removeLoops() {
 		int n = nodePath.size();
-/*		
-		System.err.printf( "removeLoop()%n" );
-		System.err.printf( "  path size = %d==%d%n  [ ", n, edgePath.size() );
-		
-		for( int i=0; i<n; i++ )
-		{
-			System.err.printf( "%d=%s ", i, nodePath.get(i).getId() );
-		}
-		System.err.printf( "]%n" );
-*/		
+		/*
+		 * System.err.printf( "removeLoop()%n" ); System.err.printf(
+		 * "  path size = %d==%d%n  [ ", n, edgePath.size() );
+		 * 
+		 * for( int i=0; i<n; i++ ) { System.err.printf( "%d=%s ", i,
+		 * nodePath.get(i).getId() ); } System.err.printf( "]%n" );
+		 */
 		// For each node-edge pair
-		for( int i=0; i<n; i++ )
-		{
+		for (int i = 0; i < n; i++) {
 			// Lookup each other following node. We start
 			// at the end to find the largest loop possible.
-			for( int j=n-1; j>i; j-- )
-			{
+			for (int j = n - 1; j > i; j--) {
 				// If another node match, this is a loop.
-				if( nodePath.get(i) == nodePath.get(j) )
-				{
+				if (nodePath.get(i) == nodePath.get(j)) {
 					// We found a loop between i and j.
 					// Remove ]i,j].
-//					System.err.printf( "removed ]%d,%d]%n", i, j );
-					for( int k=i+1; k<=j; k++ )
-					{
-						nodePath.remove( i+1 );
-						edgePath.remove( i );
+					// System.err.printf( "removed ]%d,%d]%n", i, j );
+					for (int k = i + 1; k <= j; k++) {
+						nodePath.remove(i + 1);
+						edgePath.remove(i);
 					}
-					n -= (j-i);
-					j=i;	// To stop the search.
+					n -= (j - i);
+					j = i; // To stop the search.
 				}
 			}
 		}
-/*		System.err.printf( "  NEW path size = %d==%d%n  NEW [ ", n, edgePath.size() );
-		
-		for( int i=0; i<n; i++ )
-		{
-			System.err.printf( "%d=%s ", i, nodePath.get(i).getId() );
-		}
-		System.err.printf( "]%n" );
-*/	}
+		/*
+		 * System.err.printf( "  NEW path size = %d==%d%n  NEW [ ", n,
+		 * edgePath.size() );
+		 * 
+		 * for( int i=0; i<n; i++ ) { System.err.printf( "%d=%s ", i,
+		 * nodePath.get(i).getId() ); } System.err.printf( "]%n" );
+		 */}
 
 	/**
 	 * Compare the content of the current path and the specified path to decide
 	 * weather they are equal or not.
-	 * @param p A path to compare to the curent one.
+	 * 
+	 * @param p
+	 *            A path to compare to the curent one.
 	 * @return True if both paths are equal.
 	 */
-	public boolean equals( Path p )
-	{
-		if( nodePath.size() != p.nodePath.size() )
-		{
+	public boolean equals(Path p) {
+		if (nodePath.size() != p.nodePath.size()) {
 			return false;
-		}
-		else
-		{
-			for( int i = 0; i < nodePath.size(); i++ )
-			{
-				if( nodePath.get( i ) != p.nodePath.get( i ) )
-				{
+		} else {
+			for (int i = 0; i < nodePath.size(); i++) {
+				if (nodePath.get(i) != p.nodePath.get(i)) {
 					return false;
 				}
 			}
@@ -431,8 +400,7 @@ public class Path
 	 * @return A String representation of the path.
 	 */
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return nodePath.toString();
 	}
 }

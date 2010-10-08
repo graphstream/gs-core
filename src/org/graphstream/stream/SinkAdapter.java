@@ -25,11 +25,11 @@ package org.graphstream.stream;
 /**
  * Adapter for the {@link Sink} interface.
  * 
- * <p>All methods are empty.</p>
+ * <p>
+ * All methods are empty.
+ * </p>
  */
-public class SinkAdapter
-	implements Sink
-{
+public class SinkAdapter implements Sink {
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
 			String attribute, Object value) {
 	}

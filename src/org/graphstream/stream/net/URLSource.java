@@ -30,38 +30,50 @@ import org.graphstream.stream.Source;
 /**
  * Graph event input source from an URL.
  */
-public interface URLSource extends Source
-{
+public interface URLSource extends Source {
 	/**
 	 * Read the whole URL in one big non-interruptible operation.
-	 * @param url The URL to fetch.
-	 * @throws IOException If an I/O error occurs while fetching the URL.
+	 * 
+	 * @param url
+	 *            The URL to fetch.
+	 * @throws IOException
+	 *             If an I/O error occurs while fetching the URL.
 	 */
-	void fetchAll( URL url ) throws IOException;
-	
+	void fetchAll(URL url) throws IOException;
+
 	/**
-	 * Begin fetching the URL stopping as soon as possible. Next graph events from the URL
-	 * will be send by calling {@link #nextEvents()}. Once begin()
-	 * as been called, you must finish the reading process using {@link #end()}. You cannot
-	 * call begin() twice without having called {@link #end()} in between.
-	 * @param url The URL to fetch.
-	 * @throws IOException If an I/O error occurs while reading.
+	 * Begin fetching the URL stopping as soon as possible. Next graph events
+	 * from the URL will be send by calling {@link #nextEvents()}. Once begin()
+	 * as been called, you must finish the reading process using {@link #end()}.
+	 * You cannot call begin() twice without having called {@link #end()} in
+	 * between.
+	 * 
+	 * @param url
+	 *            The URL to fetch.
+	 * @throws IOException
+	 *             If an I/O error occurs while reading.
 	 */
-	void begin( URL url ) throws IOException;
-	
+	void begin(URL url) throws IOException;
+
 	/**
-	 * Try to process one graph event, or as few as possible, if more must be read at once.
-	 * For this method to work, you must have called {@link #begin(URL)}. 
-	 * This method return true while there are still events to read.
-	 * @return true if there are still events to read, false as soon as the file is finished.
-	 * @throws IOException If an I/O error occurs while reading.
+	 * Try to process one graph event, or as few as possible, if more must be
+	 * read at once. For this method to work, you must have called
+	 * {@link #begin(URL)}. This method return true while there are still events
+	 * to read.
+	 * 
+	 * @return true if there are still events to read, false as soon as the file
+	 *         is finished.
+	 * @throws IOException
+	 *             If an I/O error occurs while reading.
 	 */
 	boolean nextEvents() throws IOException;
-	
+
 	/**
 	 * Finish the reading process (even if {@link #nextEvents()} did not
 	 * returned false). You must call this method after reading.
-	 * @throws IOException If an I/O error occurs while closing the file.
+	 * 
+	 * @throws IOException
+	 *             If an I/O error occurs while closing the file.
 	 */
 	void end() throws IOException;
 }

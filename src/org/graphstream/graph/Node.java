@@ -26,56 +26,67 @@ package org.graphstream.graph;
 import java.util.Iterator;
 
 /**
- * An Interface that advises general purpose methods for handling nodes as elements of a graph.
+ * An Interface that advises general purpose methods for handling nodes as
+ * elements of a graph.
  * 
  * <h3>Important</h3>
  * <p>
- * Implementing classes should indicate the complexity of their implementation for each method.
+ * Implementing classes should indicate the complexity of their implementation
+ * for each method.
  * </p>
  * 
  * @since July 12 2007
  */
-public interface Node extends Element, Iterable<Edge>
-{
+public interface Node extends Element, Iterable<Edge> {
 	/**
 	 * Parent graph. Some elements are not able to give their parent graph.
+	 * 
 	 * @return The graph containing this node or null if unknown.
 	 */
 	Graph getGraph();
 
 	/**
 	 * Total number of relations with other nodes or this node.
+	 * 
 	 * @return The number of edges/relations/links.
 	 */
 	int getDegree();
 
 	/**
 	 * Number of leaving edges.
-	 * @return the count of edges that only enter this node plus all undirected edges.
+	 * 
+	 * @return the count of edges that only enter this node plus all undirected
+	 *         edges.
 	 */
 	int getOutDegree();
 
 	/**
 	 * Number of entering edges.
-	 * @return the count of edges that only leave this node plus all undirected edges.
+	 * 
+	 * @return the count of edges that only leave this node plus all undirected
+	 *         edges.
 	 */
 	int getInDegree();
 
 	/**
 	 * True if an edge leaves this node toward node 'id'.
-	 * @param id Identifier of the target node. 
-	 * @return True if a directed edges goes from this node to 'id' or if
-	 * an undirected edge exists. 
+	 * 
+	 * @param id
+	 *            Identifier of the target node.
+	 * @return True if a directed edges goes from this node to 'id' or if an
+	 *         undirected edge exists.
 	 */
-	boolean hasEdgeToward( String id );
+	boolean hasEdgeToward(String id);
 
 	/**
 	 * True if an edge enters this node from node 'id'.
-	 * @param id Identifier of the source node.
+	 * 
+	 * @param id
+	 *            Identifier of the source node.
 	 * @return True if a directed edges goes from this node to 'id' or if an
-	 * undirected edge exists.
+	 *         undirected edge exists.
 	 */
-	boolean hasEdgeFrom( String id );
+	boolean hasEdgeFrom(String id);
 
 	/**
 	 * Retrieve an edge that leaves this node toward 'id'.
@@ -101,7 +112,7 @@ public interface Node extends Element, Iterable<Edge>
 	 * @return Directed edge going from this node to 'id', or undirected edge if
 	 *         it exists, else null.
 	 */
-	<T extends Edge> T getEdgeToward( String id );
+	<T extends Edge> T getEdgeToward(String id);
 
 	/**
 	 * Retrieve an edge that leaves node 'id' toward this node.
@@ -127,7 +138,7 @@ public interface Node extends Element, Iterable<Edge>
 	 * @return Directed edge going from node 'id' to this node, or undirected
 	 *         edge if it exists, else null.
 	 */
-	<T extends Edge> T getEdgeFrom( String id );
+	<T extends Edge> T getEdgeFrom(String id);
 
 	/**
 	 * Iterator on the set of connected edges.
@@ -204,6 +215,7 @@ public interface Node extends Element, Iterable<Edge>
 	 * more edges. This iterator iterate across any leaving, entering and non
 	 * directed edge (nodes are neighbour even if they only have a directed edge
 	 * from them toward this node).
+	 * 
 	 * @return The iterator, neighbour are iterated in arbitrary order.
 	 */
 	<T extends Node> Iterator<T> getNeighborNodeIterator();
@@ -231,7 +243,7 @@ public interface Node extends Element, Iterable<Edge>
 	 *            Index of the edge.
 	 * @return The i-th edge.
 	 */
-	<T extends Edge> T getEdge( int i );
+	<T extends Edge> T getEdge(int i);
 
 	/**
 	 * Iterator for breadth first exploration of the graph, starting at this
@@ -283,7 +295,7 @@ public interface Node extends Element, Iterable<Edge>
 	 * @return An iterator able to explore the graph in a breadth first way
 	 *         starting at this node.
 	 */
-	<T extends Node> Iterator<T> getBreadthFirstIterator( boolean directed );
+	<T extends Node> Iterator<T> getBreadthFirstIterator(boolean directed);
 
 	/**
 	 * Iterator for depth first exploration of the graph, starting at this node.
@@ -335,7 +347,7 @@ public interface Node extends Element, Iterable<Edge>
 	 * @return An iterator able to explore the graph in a depth first way
 	 *         starting at this node.
 	 */
-	<T extends Node> Iterator<T> getDepthFirstIterator( boolean directed );
+	<T extends Node> Iterator<T> getDepthFirstIterator(boolean directed);
 
 	/**
 	 * Set of all entering and leaving edges.

@@ -22,89 +22,78 @@
  */
 package org.graphstream.stream.sync;
 
-public class SourceTime
-{
-	protected String	sourceId;
+public class SourceTime {
+	protected String sourceId;
 	/**
 	 * Current value of the time for this source.
 	 */
-	protected long 		currentTimeId;
+	protected long currentTimeId;
 	/**
 	 * 
 	 */
-	protected SinkTime	sinkTime;
-	
+	protected SinkTime sinkTime;
+
 	/**
-	 * Create a new SourceTime for a given id.
-	 * Current time id is set to 0.
+	 * Create a new SourceTime for a given id. Current time id is set to 0.
 	 */
-	public SourceTime()
-	{
+	public SourceTime() {
 		this(0);
 	}
+
 	/**
 	 * Create a new SourceTime for a given id and a given time.
 	 * 
 	 * @param currentTimeId
 	 */
-	public SourceTime( long currentTimeId )
-	{
-		this(null,currentTimeId,null);
+	public SourceTime(long currentTimeId) {
+		this(null, currentTimeId, null);
 	}
-	
-	public SourceTime( String sourceId )
-	{
-		this(sourceId,0,null);
+
+	public SourceTime(String sourceId) {
+		this(sourceId, 0, null);
 	}
-	
-	public SourceTime( String sourceId, SinkTime sinkTime )
-	{
-		this(sourceId,0,sinkTime);
+
+	public SourceTime(String sourceId, SinkTime sinkTime) {
+		this(sourceId, 0, sinkTime);
 	}
+
 	/**
 	 * Create a new SourceTime for a given id and a given time.
 	 * 
 	 * @param currentTimeId
 	 */
-	public SourceTime( String sourceId, long currentTimeId )
-	{
-		this(sourceId,currentTimeId,null);
+	public SourceTime(String sourceId, long currentTimeId) {
+		this(sourceId, currentTimeId, null);
 	}
-	
-	public SourceTime( String sourceId, long currentTimeId, SinkTime sinkTime )
-	{
-		this.sourceId		= sourceId;
-		this.currentTimeId 	= currentTimeId;
-		this.sinkTime		= sinkTime;
+
+	public SourceTime(String sourceId, long currentTimeId, SinkTime sinkTime) {
+		this.sourceId = sourceId;
+		this.currentTimeId = currentTimeId;
+		this.sinkTime = sinkTime;
 	}
-	
-	public SinkTime getSinkTime()
-	{
+
+	public SinkTime getSinkTime() {
 		return sinkTime;
 	}
-	
-	public String getSourceId()
-	{
+
+	public String getSourceId() {
 		return sourceId;
 	}
-	
-	public void setSourceId( String sourceId )
-	{
+
+	public void setSourceId(String sourceId) {
 		this.sourceId = sourceId;
 	}
-	
-	public void setSinkTime( SinkTime st )
-	{
+
+	public void setSinkTime(SinkTime st) {
 		this.sinkTime = st;
 	}
-	
-	public long newEvent()
-	{
+
+	public long newEvent() {
 		currentTimeId++;
-		
-		if( sinkTime != null )
-			sinkTime.setTimeFor(sourceId,currentTimeId);
-		
+
+		if (sinkTime != null)
+			sinkTime.setTimeFor(sourceId, currentTimeId);
+
 		return currentTimeId;
 	}
 }

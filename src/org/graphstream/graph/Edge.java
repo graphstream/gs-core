@@ -27,16 +27,15 @@ package org.graphstream.graph;
  * A general purpose class that provides methods for the management of edges in
  * a graph.
  * 
- * <h3>Important</h3>
- * Implementing classes may indicate the complexity of their implementation of
- * the methods with the <code>complexity</code> tag.
+ * <h3>Important</h3> Implementing classes may indicate the complexity of their
+ * implementation of the methods with the <code>complexity</code> tag.
  * 
  * @since July 12 2007
  */
-public interface Edge extends Element
-{
+public interface Edge extends Element {
 	/**
 	 * Is the edge directed ?.
+	 * 
 	 * @return True if the edge is directed.
 	 */
 	boolean isDirected();
@@ -168,17 +167,20 @@ public interface Edge extends Element
 	 *            The node we search the opposite of.
 	 * @return the opposite node of the given node.
 	 */
-	<T extends Node> T getOpposite( T node );
+	<T extends Node> T getOpposite(T node);
 
 	/**
-	 * Have an edge directed or non-directed. You make this edge directed, it will be
-	 * oriented from its {@link #getSourceNode()} node toward its {@link #getTargetNode()}
-	 * node. You can swap these nodes using {@link #switchDirection()}.
-	 * @param on If true the edge becomes directed, else it becomes
-	 * bidirectional.
+	 * Have an edge directed or non-directed. You make this edge directed, it
+	 * will be oriented from its {@link #getSourceNode()} node toward its
+	 * {@link #getTargetNode()} node. You can swap these nodes using
+	 * {@link #switchDirection()}.
+	 * 
+	 * @param on
+	 *            If true the edge becomes directed, else it becomes
+	 *            bidirectional.
 	 */
-	@Deprecated 
-	void setDirected( boolean on );
+	@Deprecated
+	void setDirected(boolean on);
 
 	/**
 	 * Swap the source and target nodes. This allows to redirect an edge.
@@ -186,5 +188,5 @@ public interface Edge extends Element
 	 * see the {@link #setDirected(boolean)} method.
 	 */
 	@Deprecated
-	void switchDirection();	
+	void switchDirection();
 }

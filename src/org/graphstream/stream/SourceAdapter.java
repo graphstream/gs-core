@@ -22,28 +22,38 @@
  */
 package org.graphstream.stream;
 
-
 /**
  * Adapter for the input interface.
  * 
- * <p>All methods are empty.</p>
+ * <p>
+ * All methods are empty.
+ * </p>
  */
-public class SourceAdapter
-	implements Source
-{
-	public void addAttributeSink(AttributeSink sink) {}
-	public void addElementSink(ElementSink sink) {}
-	public void addSink(Sink sink) {}
-	public void removeAttributeSink(AttributeSink sink) {}
-	public void removeElementSink(ElementSink sink) {}
-	public void removeSink(Sink sink) {}
-	public void clearAttributeSinks()
-	{
+public class SourceAdapter implements Source {
+	public void addAttributeSink(AttributeSink sink) {
 	}
-	public void clearElementSinks()
-	{
+
+	public void addElementSink(ElementSink sink) {
 	}
-	public void clearSinks()
-	{
+
+	public void addSink(Sink sink) {
+	}
+
+	public void removeAttributeSink(AttributeSink sink) {
+	}
+
+	public void removeElementSink(ElementSink sink) {
+	}
+
+	public void removeSink(Sink sink) {
+	}
+
+	public void clearAttributeSinks() {
+	}
+
+	public void clearElementSinks() {
+	}
+
+	public void clearSinks() {
 	}
 }

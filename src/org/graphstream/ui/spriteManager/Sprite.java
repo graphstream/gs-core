@@ -34,48 +34,64 @@ import org.graphstream.ui.graphicGraph.stylesheet.Values;
 /**
  * A gentle little sprite.
  * 
- * <p>Sprite objects allow to add data representations in a graphic display of a graph. A sprite
- * is a graphical representation that can float anywhere in the graph drawing surface, or be
- * "attached" to nodes or edges. When attached to an edge, a sprite can be positioned easily at
- * any point along the edge, or perpendicular to it with one or two coordinates. When attached to a
- * node, a sprite "orbits" around the node at any given radius and angle around it.</p>
+ * <p>
+ * Sprite objects allow to add data representations in a graphic display of a
+ * graph. A sprite is a graphical representation that can float anywhere in the
+ * graph drawing surface, or be "attached" to nodes or edges. When attached to
+ * an edge, a sprite can be positioned easily at any point along the edge, or
+ * perpendicular to it with one or two coordinates. When attached to a node, a
+ * sprite "orbits" around the node at any given radius and angle around it.
+ * </p>
  * 
- * <p>Sprites can have many shapes. Most of the CSS nodes shapes are available for sprites, but
- * more are possible. Some shapes follow the form of the element (node or edge) they are attached
- * to.</p>
+ * <p>
+ * Sprites can have many shapes. Most of the CSS nodes shapes are available for
+ * sprites, but more are possible. Some shapes follow the form of the element
+ * (node or edge) they are attached to.
+ * </p>
  * 
- * <p>Sprites can be moved and animated easily along edges, around nodes, or anywhere on the graph
- * surface. Their shape can change. Some sprites allows to draw pie charts or statistics,
- * or images.</p>
+ * <p>
+ * Sprites can be moved and animated easily along edges, around nodes, or
+ * anywhere on the graph surface. Their shape can change. Some sprites allows to
+ * draw pie charts or statistics, or images.
+ * </p>
  * 
- * <p>Sprites are not part of a graph so to speak. Furthermore they make sense only when a graph
- * is displayed with a viewer that supports sprites. Therefore they are handled by a
- * {@link SpriteManager} which is always associated to a graph and is in charge of handling the
- * whole set of sprites, creating them, enumerating them, and destroying them.</p>
- *
- * <p>Implementation note: sprites do not exist ! In fact the sprite class only handles a set of
- * attributes that are stored in the graph (the one associated with the sprite manager that
- * created the sprite). These special attributes are handled for you by the sprite class. This
- * technique allows to pass sprites informations through the I/O system of GraphStream. Indeed
- * sprites appearing in a graph can therefore be stored in files and retrieved if the graph file
- * format supports attributes. If this is a dynamic graph format, like DGS, the whole sprite
- * history is remembered: when it moved, when it changed, etc.</p>
+ * <p>
+ * Sprites are not part of a graph so to speak. Furthermore they make sense only
+ * when a graph is displayed with a viewer that supports sprites. Therefore they
+ * are handled by a {@link SpriteManager} which is always associated to a graph
+ * and is in charge of handling the whole set of sprites, creating them,
+ * enumerating them, and destroying them.
+ * </p>
  * 
- * <p>Second implementation node : often you will need to extend the sprite class. This is easily
- * possible, but you must remember that you cannot create sprites yourself, you must use the
- * {@link SpriteManager}. In order to create a sprite of a special kind, you can either use a
- * {@link SpriteFactory} with the SpriteManager or the special
- * {@link SpriteManager#addSprite(String, Class)} method of the SpriteManager. In both cases, the
- * {@link #init(String, SpriteManager, Values)} method of the sprite will be called. Override this
- * method to initialise your sprite.</p>
- *
+ * <p>
+ * Implementation note: sprites do not exist ! In fact the sprite class only
+ * handles a set of attributes that are stored in the graph (the one associated
+ * with the sprite manager that created the sprite). These special attributes
+ * are handled for you by the sprite class. This technique allows to pass
+ * sprites informations through the I/O system of GraphStream. Indeed sprites
+ * appearing in a graph can therefore be stored in files and retrieved if the
+ * graph file format supports attributes. If this is a dynamic graph format,
+ * like DGS, the whole sprite history is remembered: when it moved, when it
+ * changed, etc.
+ * </p>
+ * 
+ * <p>
+ * Second implementation node : often you will need to extend the sprite class.
+ * This is easily possible, but you must remember that you cannot create sprites
+ * yourself, you must use the {@link SpriteManager}. In order to create a sprite
+ * of a special kind, you can either use a {@link SpriteFactory} with the
+ * SpriteManager or the special {@link SpriteManager#addSprite(String, Class)}
+ * method of the SpriteManager. In both cases, the
+ * {@link #init(String, SpriteManager, Values)} method of the sprite will be
+ * called. Override this method to initialise your sprite.
+ * </p>
+ * 
  * @see SpriteManager
  * @see SpriteFactory
  */
-public class Sprite implements Element
-{
-// Attribute
-	
+public class Sprite implements Element {
+	// Attribute
+
 	/**
 	 * The sprite unique identifier.
 	 */
@@ -85,7 +101,7 @@ public class Sprite implements Element
 	 * The identifier prefixed by "ui.sprite.".
 	 */
 	protected String completeId;
-	
+
 	/**
 	 * The boss.
 	 */
@@ -100,424 +116,397 @@ public class Sprite implements Element
 	 * The element this sprite is attached to (or null).
 	 */
 	protected Element attachment;
-	
-// Construction
+
+	// Construction
 
 	/** For the use with {@link #init(String, SpriteManager, Values)}. */
-	protected Sprite() {}
-	
-	/**
-	 * New sprite with a given identifier.
-	 * 
-	 * You cannot build sprites yourself, they are created by the sprite manager.
-	 */
-	protected Sprite( String id, SpriteManager manager )
-	{
-		this( id, manager, null );
+	protected Sprite() {
 	}
 
 	/**
 	 * New sprite with a given identifier.
 	 * 
-	 * You cannot build sprites yourself, they are created by the sprite manager.
+	 * You cannot build sprites yourself, they are created by the sprite
+	 * manager.
 	 */
-	protected Sprite( String id, SpriteManager manager, Values position ) {
-		init( id, manager, position );
+	protected Sprite(String id, SpriteManager manager) {
+		this(id, manager, null);
 	}
-	
+
 	/**
 	 * New sprite with a given identifier.
 	 * 
-	 * You cannot build sprites yourself, they are created by the sprite managern. This method
-	 * is used by the manager when creating instances of sprites that inherit this class. If you
-	 * derive the sprite class you can override this method to initialise your sprite. It is always
-	 * called when creating the sprite.
+	 * You cannot build sprites yourself, they are created by the sprite
+	 * manager.
 	 */
-	protected void init( String id, SpriteManager manager, Values position )
-	{
-		this.id         = id;
-		this.completeId = String.format( "ui.sprite.%s", id );
-		this.manager    = manager;
+	protected Sprite(String id, SpriteManager manager, Values position) {
+		init(id, manager, position);
+	}
 
-		if( ! manager.graph.hasAttribute( completeId ) )
-		{
-			if( position != null )
-			{
-				manager.graph.addAttribute( completeId, position );
+	/**
+	 * New sprite with a given identifier.
+	 * 
+	 * You cannot build sprites yourself, they are created by the sprite
+	 * managern. This method is used by the manager when creating instances of
+	 * sprites that inherit this class. If you derive the sprite class you can
+	 * override this method to initialise your sprite. It is always called when
+	 * creating the sprite.
+	 */
+	protected void init(String id, SpriteManager manager, Values position) {
+		this.id = id;
+		this.completeId = String.format("ui.sprite.%s", id);
+		this.manager = manager;
+
+		if (!manager.graph.hasAttribute(completeId)) {
+			if (position != null) {
+				manager.graph.addAttribute(completeId, position);
 				this.position = position;
+			} else {
+				this.position = new Values(Style.Units.GU, 0f, 0f, 0f);
+				manager.graph.addAttribute(completeId, this.position);
 			}
-			else
-			{
-				this.position = new Values( Style.Units.GU, 0f, 0f, 0f );
-				manager.graph.addAttribute( completeId, this.position );
-			}
-		}
-		else
-		{
-			if( position != null )
-			{
-				manager.graph.setAttribute( completeId, position );
+		} else {
+			if (position != null) {
+				manager.graph.setAttribute(completeId, position);
 				this.position = position;
-			}
-			else
-			{
-				this.position = SpriteManager.getPositionValue( manager.graph.getAttribute( completeId ) );
+			} else {
+				this.position = SpriteManager.getPositionValue(manager.graph
+						.getAttribute(completeId));
 			}
 		}
 	}
-	
+
 	/**
 	 * Called by the manager when the sprite is removed.
 	 */
-	protected void removed()
-	{
-		manager.graph.removeAttribute( completeId );
-		
-		String start = String.format( "%s.", completeId );
+	protected void removed() {
+		manager.graph.removeAttribute(completeId);
 
-		if( attached() )
+		String start = String.format("%s.", completeId);
+
+		if (attached())
 			detach();
-	
+
 		ArrayList<String> keys = new ArrayList<String>();
-		
-		for( String key: manager.graph.getAttributeKeySet() )
-		{
-			if( key.startsWith( start ) )
-				keys.add( key );
+
+		for (String key : manager.graph.getAttributeKeySet()) {
+			if (key.startsWith(start))
+				keys.add(key);
 		}
-			
-		for( String key: keys )
-			manager.graph.removeAttribute( key );
+
+		for (String key : keys)
+			manager.graph.removeAttribute(key);
 	}
-	
-// Access
-	
+
+	// Access
+
 	/**
-	 * The element the sprite is attached to or null if the sprite is not attached.
+	 * The element the sprite is attached to or null if the sprite is not
+	 * attached.
+	 * 
 	 * @return An element the sprite is attached to or null.
 	 */
-	public Element getAttachment()
-	{
+	public Element getAttachment() {
 		return attachment;
 	}
-	
+
 	/**
 	 * True if attached to an edge or node.
+	 * 
 	 * @return False if not attached.
 	 */
-	public boolean attached()
-	{
-		return( attachment != null );
+	public boolean attached() {
+		return (attachment != null);
 	}
-	
+
 	/**
 	 * X position.
+	 * 
 	 * @return The position in abscissa.
 	 */
-	public float getX()
-	{
-		if( position.values.size() > 0 )
-			return position.values.get( 0 );
-		
+	public float getX() {
+		if (position.values.size() > 0)
+			return position.values.get(0);
+
 		return 0;
 	}
-	
+
 	/**
 	 * Y position.
+	 * 
 	 * @return The position in ordinate.
 	 */
-	public float getY()
-	{
-		if( position.values.size() > 1 )
-			return position.values.get( 1 );
-		
-		return 0;		
-	}
-	
-	/**
-	 * Z position.
-	 * @return The position in depth.
-	 */
-	public float getZ()
-	{
-		if( position.values.size() > 2 )
-			return position.values.get( 2 );
-		
+	public float getY() {
+		if (position.values.size() > 1)
+			return position.values.get(1);
+
 		return 0;
 	}
-	
-	public Style.Units getUnits()
-	{
+
+	/**
+	 * Z position.
+	 * 
+	 * @return The position in depth.
+	 */
+	public float getZ() {
+		if (position.values.size() > 2)
+			return position.values.get(2);
+
+		return 0;
+	}
+
+	public Style.Units getUnits() {
 		return position.units;
 	}
-	
-// Command
-	
+
+	// Command
+
 	/**
-	 * Attach the sprite to a node with the given identifier. If needed the sprite is first
-	 * detached. If the given node identifier does not exist, the sprite stays in detached
-	 * state.
-	 * @param id Identifier of the node to attach to.
+	 * Attach the sprite to a node with the given identifier. If needed the
+	 * sprite is first detached. If the given node identifier does not exist,
+	 * the sprite stays in detached state.
+	 * 
+	 * @param id
+	 *            Identifier of the node to attach to.
 	 */
-	public void attachToNode( String id )
-	{
-		if( attachment != null )
+	public void attachToNode(String id) {
+		if (attachment != null)
 			detach();
-		
-		attachment = manager.graph.getNode( id );
-		
-		if( attachment != null )
-			attachment.addAttribute( completeId );
+
+		attachment = manager.graph.getNode(id);
+
+		if (attachment != null)
+			attachment.addAttribute(completeId);
 	}
-	
+
 	/**
-	 * Attach the sprite to an edge with the given identifier. If needed the sprite is first
-	 * detached. If the given edge identifier does not exist, the sprite stays in detached
-	 * state.
-	 * @param id Identifier of the edge to attach to.
+	 * Attach the sprite to an edge with the given identifier. If needed the
+	 * sprite is first detached. If the given edge identifier does not exist,
+	 * the sprite stays in detached state.
+	 * 
+	 * @param id
+	 *            Identifier of the edge to attach to.
 	 */
-	public void attachToEdge( String id )
-	{
-		if( attachment != null )
+	public void attachToEdge(String id) {
+		if (attachment != null)
 			detach();
-		
-		attachment = manager.graph.getEdge( id );
-		
-		if( attachment != null )
-			attachment.addAttribute( completeId );		
+
+		attachment = manager.graph.getEdge(id);
+
+		if (attachment != null)
+			attachment.addAttribute(completeId);
 	}
-	
+
 	/**
 	 * Detach the sprite from the element it is attached to (if any).
 	 */
-	public void detach()
-	{
-		if( attachment != null )
-		{
-			attachment.removeAttribute( completeId );
+	public void detach() {
+		if (attachment != null) {
+			attachment.removeAttribute(completeId);
 			attachment = null;
 		}
 	}
-	
-	public void setPosition( float percent )
-	{
-		setPosition( position.units, percent, 0, 0 );
+
+	public void setPosition(float percent) {
+		setPosition(position.units, percent, 0, 0);
 	}
-	
-	public void setPosition( float x, float y, float z )
-	{
-		setPosition( position.units, x, y, z );
+
+	public void setPosition(float x, float y, float z) {
+		setPosition(position.units, x, y, z);
 	}
-	
-	public void setPosition( Style.Units units, float x, float y, float z )
-	{
+
+	public void setPosition(Style.Units units, float x, float y, float z) {
 		boolean changed = false;
-	
-		if( position.get( 0 ) != x     ) { changed = true; position.setValue( 0 , x ); }
-		if( position.get( 1 ) != y     ) { changed = true; position.setValue( 1 , y ); }
-		if( position.get( 2 ) != z     ) { changed = true; position.setValue( 2 , z ); }
-		if( position.units    != units ) { changed = true; position.setUnits( units ); }
-		
-		if( changed )
-			manager.graph.setAttribute( completeId, new Values( position ) );
+
+		if (position.get(0) != x) {
+			changed = true;
+			position.setValue(0, x);
+		}
+		if (position.get(1) != y) {
+			changed = true;
+			position.setValue(1, y);
+		}
+		if (position.get(2) != z) {
+			changed = true;
+			position.setValue(2, z);
+		}
+		if (position.units != units) {
+			changed = true;
+			position.setUnits(units);
+		}
+
+		if (changed)
+			manager.graph.setAttribute(completeId, new Values(position));
 	}
-	
-	protected void setPosition( Values values )
-	{
-		if( values != null ) {
+
+	protected void setPosition(Values values) {
+		if (values != null) {
 			int n = values.values.size();
-			
-			if( n > 2 )
-			{
-				setPosition( values.units,
-					values.get( 0 ),
-					values.get( 1 ),
-					values.get( 2 ) );
-			}
-			else if( n > 0 )
-			{
-				setPosition( values.get( 0 ) );
+
+			if (n > 2) {
+				setPosition(values.units, values.get(0), values.get(1),
+						values.get(2));
+			} else if (n > 0) {
+				setPosition(values.get(0));
 			}
 		}
 	}
-	
-// Access (Element)
 
-	public String getId()
-    {
-	    return id;
-    }
+	// Access (Element)
 
-	public CharSequence getLabel( String key )
-    {
-		return manager.graph.getLabel( String.format( "%s.%s", completeId, key ) );
-    }
-	
-	public <T> T getAttribute( String key )
-    {
-		return manager.graph.getAttribute( String.format( "%s.%s", completeId, key ) );
-    }
+	public String getId() {
+		return id;
+	}
 
-	public <T> T getAttribute( String key, Class<T> clazz )
-    {
-		return manager.graph.getAttribute( String.format( "%s.%s", completeId, key ), clazz );
-    }
+	public CharSequence getLabel(String key) {
+		return manager.graph.getLabel(String.format("%s.%s", completeId, key));
+	}
+
+	public <T> T getAttribute(String key) {
+		return manager.graph.getAttribute(String.format("%s.%s", completeId,
+				key));
+	}
+
+	public <T> T getAttribute(String key, Class<T> clazz) {
+		return manager.graph.getAttribute(
+				String.format("%s.%s", completeId, key), clazz);
+	}
 
 	/**
 	 * Quite expensive operation !.
 	 */
-	public int getAttributeCount()
-    {
-		String start = String.format( "%s.", completeId );
-		int    count = 0;
-		
-		for( String key: manager.graph.getAttributeKeySet() )
-		{
-			if( key.startsWith( start ) )
+	public int getAttributeCount() {
+		String start = String.format("%s.", completeId);
+		int count = 0;
+
+		for (String key : manager.graph.getAttributeKeySet()) {
+			if (key.startsWith(start))
 				count++;
 		}
-		
+
 		return count;
-    }
+	}
 
-	public Iterator<String> getAttributeKeyIterator()
-    {
-		throw new RuntimeException( "not implemented" );
-    }
+	public Iterator<String> getAttributeKeyIterator() {
+		throw new RuntimeException("not implemented");
+	}
 
-	public Iterable<String> getAttributeKeySet()
-    {
-		throw new RuntimeException( "not implemented" );
-    }
+	public Iterable<String> getAttributeKeySet() {
+		throw new RuntimeException("not implemented");
+	}
 
-	public Map<String,Object> getAttributeMap()
-    {
-		throw new RuntimeException( "not implemented" );
-    }
+	public Map<String, Object> getAttributeMap() {
+		throw new RuntimeException("not implemented");
+	}
 
-	public <T> T getFirstAttributeOf( String ... keys )
-    {
+	public <T> T getFirstAttributeOf(String... keys) {
 		String completeKeys[] = new String[keys.length];
-		int    i = 0;
+		int i = 0;
 
-		for( String key: keys )
-		{
-			completeKeys[i] = String.format( "%s.%s", completeId, key );
+		for (String key : keys) {
+			completeKeys[i] = String.format("%s.%s", completeId, key);
 			i++;
 		}
-		
-		return manager.graph.getFirstAttributeOf( completeKeys );
-    }
 
-	public <T> T getFirstAttributeOf( Class<T> clazz, String ... keys )
-    {
+		return manager.graph.getFirstAttributeOf(completeKeys);
+	}
+
+	public <T> T getFirstAttributeOf(Class<T> clazz, String... keys) {
 		String completeKeys[] = new String[keys.length];
-		int    i = 0;
+		int i = 0;
 
-		for( String key: keys )
-		{
-			completeKeys[i] = String.format( "%s.%s", completeId, key );
+		for (String key : keys) {
+			completeKeys[i] = String.format("%s.%s", completeId, key);
 			i++;
 		}
-		
-		return manager.graph.getFirstAttributeOf( clazz, completeKeys );
-    }
 
-	public Object[] getArray( String key )
-    {
-		return manager.graph.getArray( String.format( "%s.%s", completeId, key ) );
-    }
+		return manager.graph.getFirstAttributeOf(clazz, completeKeys);
+	}
 
-	public HashMap<?,?> getHash( String key )
-    {
-		return manager.graph.getHash( String.format( "%s.%s", completeId, key ) );
-    }
+	public Object[] getArray(String key) {
+		return manager.graph.getArray(String.format("%s.%s", completeId, key));
+	}
 
-	public double getNumber( String key )
-    {
-		return manager.graph.getNumber( String.format( "%s.%s", completeId, key ) );
-    }
+	public HashMap<?, ?> getHash(String key) {
+		return manager.graph.getHash(String.format("%s.%s", completeId, key));
+	}
 
-	public ArrayList<? extends Number> getVector( String key )
-    {
-		return manager.graph.getVector( String.format( "%s.%s", completeId, key ) );
-    }
+	public double getNumber(String key) {
+		return manager.graph.getNumber(String.format("%s.%s", completeId, key));
+	}
 
-	public boolean hasAttribute( String key )
-    {
-		return manager.graph.hasAttribute( String.format( "%s.%s", completeId, key ) );
-    }
+	public ArrayList<? extends Number> getVector(String key) {
+		return manager.graph.getVector(String.format("%s.%s", completeId, key));
+	}
 
-	public boolean hasArray( String key )
-    {
-		return manager.graph.hasArray( String.format( "%s.%s", completeId, key ) );
-    }
+	public boolean hasAttribute(String key) {
+		return manager.graph.hasAttribute(String.format("%s.%s", completeId,
+				key));
+	}
 
-	public boolean hasAttribute( String key, Class<?> clazz )
-    {
-		return manager.graph.hasAttribute( String.format( "%s.%s", completeId, key ), clazz );
-    }
+	public boolean hasArray(String key) {
+		return manager.graph.hasArray(String.format("%s.%s", completeId, key));
+	}
 
-	public boolean hasHash( String key )
-    {
-		return manager.graph.hasHash( String.format( "%s.%s", completeId, key ) );
-    }
+	public boolean hasAttribute(String key, Class<?> clazz) {
+		return manager.graph.hasAttribute(
+				String.format("%s.%s", completeId, key), clazz);
+	}
 
-	public boolean hasLabel( String key )
-    {
-		return manager.graph.hasLabel( String.format( "%s.%s", completeId, key ) );
-    }
+	public boolean hasHash(String key) {
+		return manager.graph.hasHash(String.format("%s.%s", completeId, key));
+	}
 
-	public boolean hasNumber( String key )
-    {
-		return manager.graph.hasNumber( String.format( "%s.%s", completeId, key ) );
-    }
+	public boolean hasLabel(String key) {
+		return manager.graph.hasLabel(String.format("%s.%s", completeId, key));
+	}
 
-	public boolean hasVector( String key )
-    {
-		return manager.graph.hasVector( String.format( "%s.%s", completeId, key ) );
-    }
-	
-// Commands (Element)
+	public boolean hasNumber(String key) {
+		return manager.graph.hasNumber(String.format("%s.%s", completeId, key));
+	}
 
-	public void addAttribute( String attribute, Object ... values )
-    {
-		manager.graph.addAttribute( String.format( "%s.%s", completeId, attribute ), values ); 
-    }
+	public boolean hasVector(String key) {
+		return manager.graph.hasVector(String.format("%s.%s", completeId, key));
+	}
 
-	public void addAttributes( Map<String,Object> attributes )
-    {
-		for( String key: attributes.keySet() )
-			manager.graph.addAttribute( String.format( "%s.%s", completeId, key ), attributes.get( key ) ); 
-    }
+	// Commands (Element)
 
-	public void setAttribute( String attribute, Object ... values )
-    {
-		manager.graph.setAttribute( String.format( "%s.%s", completeId, attribute ), values ); 
-    }
+	public void addAttribute(String attribute, Object... values) {
+		manager.graph.addAttribute(
+				String.format("%s.%s", completeId, attribute), values);
+	}
 
-	public void changeAttribute( String attribute, Object ... values )
-    {
-		manager.graph.changeAttribute( String.format( "%s.%s", completeId, attribute ), values ); 	    
-    }
+	public void addAttributes(Map<String, Object> attributes) {
+		for (String key : attributes.keySet())
+			manager.graph.addAttribute(String.format("%s.%s", completeId, key),
+					attributes.get(key));
+	}
 
-	public void clearAttributes()
-    {
-		String start = String.format( "%s.", completeId );
+	public void setAttribute(String attribute, Object... values) {
+		manager.graph.setAttribute(
+				String.format("%s.%s", completeId, attribute), values);
+	}
+
+	public void changeAttribute(String attribute, Object... values) {
+		manager.graph.changeAttribute(
+				String.format("%s.%s", completeId, attribute), values);
+	}
+
+	public void clearAttributes() {
+		String start = String.format("%s.", completeId);
 		ArrayList<String> keys = new ArrayList<String>();
-		
-		for( String key: manager.graph.getAttributeKeySet() )
-		{
-			if( key.startsWith( start ) )
-				keys.add( key );
+
+		for (String key : manager.graph.getAttributeKeySet()) {
+			if (key.startsWith(start))
+				keys.add(key);
 		}
 
-		for( String key: keys )
-			manager.graph.removeAttribute( key );
-    }
+		for (String key : keys)
+			manager.graph.removeAttribute(key);
+	}
 
-	public void removeAttribute( String attribute )
-    {
-		manager.graph.removeAttribute( String.format( "%s.%s", completeId, attribute ) ); 	    
-    }
+	public void removeAttribute(String attribute) {
+		manager.graph.removeAttribute(String.format("%s.%s", completeId,
+				attribute));
+	}
 }

@@ -24,22 +24,21 @@ package org.graphstream.stream.sync;
 
 import java.util.HashMap;
 
-public class SinkTime
-{
+public class SinkTime {
 	/**
-	 * Key used to disable synchro.
-	 * Just run : java -DSYNC_DISABLE_KEY ...
+	 * Key used to disable synchro. Just run : java -DSYNC_DISABLE_KEY ...
 	 */
 	public static final String SYNC_DISABLE_KEY = "org.graphstream.stream.sync.disable";
 	/**
 	 * Flag used to disable sync.
 	 */
-	protected static final boolean disableSync = System.getProperty(SYNC_DISABLE_KEY) != null;
-	
+	protected static final boolean disableSync = System
+			.getProperty(SYNC_DISABLE_KEY) != null;
+
 	/**
 	 * Map storing times of sources.
 	 */
-	protected HashMap<String,Long> times = new HashMap<String,Long>();
+	protected HashMap<String, Long> times = new HashMap<String, Long>();
 
 	/**
 	 * Update timeId for a source.
@@ -48,33 +47,29 @@ public class SinkTime
 	 * @param timeId
 	 * @return true if time has been updated
 	 */
-	protected boolean setTimeFor( String sourceId, long timeId )
-	{
+	protected boolean setTimeFor(String sourceId, long timeId) {
 		Long knownTimeId = times.get(sourceId);
-		
-		if( knownTimeId == null )
-		{
-			times.put( sourceId, timeId );
+
+		if (knownTimeId == null) {
+			times.put(sourceId, timeId);
+			return true;
+		} else if (timeId > knownTimeId) {
+			times.put(sourceId, timeId);
 			return true;
 		}
-		else if( timeId > knownTimeId )
-		{
-			times.put(sourceId,timeId);
-			return true;
-		}
-		
+
 		return false;
 	}
+
 	/**
-	 * Allow to know if event is new for this source.
-	 * This updates the timeId mapped to the source.
+	 * Allow to know if event is new for this source. This updates the timeId
+	 * mapped to the source.
 	 * 
 	 * @param sourceId
 	 * @param timeId
 	 * @return true if event is new for the source
 	 */
-	public boolean isNewEvent( String sourceId, long timeId )
-	{
-		return disableSync || setTimeFor(sourceId,timeId);
+	public boolean isNewEvent(String sourceId, long timeId) {
+		return disableSync || setTimeFor(sourceId, timeId);
 	}
 }

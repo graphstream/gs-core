@@ -43,11 +43,12 @@ import org.graphstream.ui.swingViewer.util.ShortcutManager;
  * Base for constructing views.
  * 
  * <p>
- * This base view is an abstract class that provides mechanism that are necessary in any view :
+ * This base view is an abstract class that provides mechanism that are
+ * necessary in any view :
  * <ul>
- * 		<li>the painting and repainting mechanism.</li>
- * 		<li>the optional frame handling.</li>
- * 		<li>the frame closing protocol.</li>
+ * <li>the painting and repainting mechanism.</li>
+ * <li>the optional frame handling.</li>
+ * <li>the frame closing protocol.</li>
  * </ul>
  * </p>
  * 
@@ -57,66 +58,81 @@ import org.graphstream.ui.swingViewer.util.ShortcutManager;
  * 
  * <h3>The painting mechanism</h3>
  * 
- * 		<p>This mechanism pushes a repaint query each time the viewer asks us to repaint. Two flags
- * 		are provided to know what to repaint : {@link #graphChanged} allows to know when the graph
- *		needs to be rendered anew because its structure changed and {@link #canvasChanged} allows
- *		to know one must repaint because the rendering canvas was resized, shown, etc.</p>
- *
- *		<p>The main method to implement is {@link #render(Graphics2D)}. This method is called each
- *		time the graph needs to be rendered anew in the canvas.</p>
- *
- *		<p>The {@link #render(Graphics2D)} is called only when a repainting is really needed.</p>
- *
- *		<p>All the painting, by default, is deferred to a {@link GraphRenderer} instance. This
- *		mechanism allows developers that do not want to mess with the viewer/view mechanisms
- *		to render a graph in any Swing surface.</p>
+ * <p>
+ * This mechanism pushes a repaint query each time the viewer asks us to
+ * repaint. Two flags are provided to know what to repaint :
+ * {@link #graphChanged} allows to know when the graph needs to be rendered anew
+ * because its structure changed and {@link #canvasChanged} allows to know one
+ * must repaint because the rendering canvas was resized, shown, etc.
+ * </p>
+ * 
+ * <p>
+ * The main method to implement is {@link #render(Graphics2D)}. This method is
+ * called each time the graph needs to be rendered anew in the canvas.
+ * </p>
+ * 
+ * <p>
+ * The {@link #render(Graphics2D)} is called only when a repainting is really
+ * needed.
+ * </p>
+ * 
+ * <p>
+ * All the painting, by default, is deferred to a {@link GraphRenderer}
+ * instance. This mechanism allows developers that do not want to mess with the
+ * viewer/view mechanisms to render a graph in any Swing surface.
+ * </p>
  * 
  * <h3>The optional frame handling</h3>
  * 
- * 		<p>This abstract view is able to create a frame that is added around this panel (each view
- *		is a JPanel instance). The frame can be removed at any time.</p>
+ * <p>
+ * This abstract view is able to create a frame that is added around this panel
+ * (each view is a JPanel instance). The frame can be removed at any time.
+ * </p>
  * 
  * <h3>The frame closing protocol</h3>
  * 
- * 		<p>This abstract view handles the closing protocol. This means that it will close the view
- * 		if needed, or only hide it to allow reopening it later. Furthermore it adds the "ui.viewClosed"
- * 		attribute to the graph when the view is closed or hidden, and removes it when the view
- * 		is shown. The value of this graph attribute is the identifier of the view.</p>
+ * <p>
+ * This abstract view handles the closing protocol. This means that it will
+ * close the view if needed, or only hide it to allow reopening it later.
+ * Furthermore it adds the "ui.viewClosed" attribute to the graph when the view
+ * is closed or hidden, and removes it when the view is shown. The value of this
+ * graph attribute is the identifier of the view.
+ * </p>
  */
-public class DefaultView extends View implements ComponentListener, WindowListener
-{
-// Attribute
-	
+public class DefaultView extends View implements ComponentListener,
+		WindowListener {
+	// Attribute
+
 	/**
 	 * Parent viewer.
 	 */
 	protected Viewer viewer;
-	
+
 	/**
 	 * The graph to render, shortcut to the viewers reference.
 	 */
 	protected GraphicGraph graph;
-	
+
 	/**
 	 * The (optional) frame.
 	 */
 	protected JFrame frame;
-	
+
 	/**
 	 * The graph changed since the last repaint.
 	 */
 	protected boolean graphChanged;
-	
+
 	/**
 	 * Manager for events with the keyboard.
 	 */
 	protected ShortcutManager shortcuts;
-	
+
 	/**
 	 * Manager for events with the mouse.
 	 */
 	protected MouseManager mouseClicks;
-	
+
 	/**
 	 * The graph renderer.
 	 */
@@ -127,325 +143,281 @@ public class DefaultView extends View implements ComponentListener, WindowListen
 	 */
 	protected boolean canvasChanged = true;
 
-// Construction
-	
-	public DefaultView( Viewer viewer, String identifier, GraphRenderer renderer )
-	{
-		super( identifier );
-		
-		this.viewer   = viewer;
-		this.graph    = viewer.getGraphicGraph();
+	// Construction
+
+	public DefaultView(Viewer viewer, String identifier, GraphRenderer renderer) {
+		super(identifier);
+
+		this.viewer = viewer;
+		this.graph = viewer.getGraphicGraph();
 		this.renderer = renderer;
-		shortcuts     = new ShortcutManager( this );
-		mouseClicks   = new MouseManager( this.graph, this );
-		
-		addComponentListener( this );
-		addKeyListener( shortcuts );
-		addMouseListener( mouseClicks );
-		addMouseMotionListener( mouseClicks );
-		renderer.open( graph, this );
+		shortcuts = new ShortcutManager(this);
+		mouseClicks = new MouseManager(this.graph, this);
+
+		addComponentListener(this);
+		addKeyListener(shortcuts);
+		addMouseListener(mouseClicks);
+		addMouseMotionListener(mouseClicks);
+		renderer.open(graph, this);
 	}
-	
-// Access
-	
-// Command	
+
+	// Access
+
+	// Command
 
 	@Override
-	public void display( GraphicGraph graph, boolean graphChanged )
-	{
-	    	this.graphChanged = graphChanged;
+	public void display(GraphicGraph graph, boolean graphChanged) {
+		this.graphChanged = graphChanged;
 
 		repaint();
 	}
-	
+
 	@Override
-	public void paint( Graphics g )
-	{
-		if( graphChanged || canvasChanged )
-		{
+	public void paint(Graphics g) {
+		if (graphChanged || canvasChanged) {
 			checkTitle();
-			
+
 			Graphics2D g2 = (Graphics2D) g;
 
-//			super.paint( g );
-			render( g2 );
-			paintChildren( g2 );
+			// super.paint( g );
+			render(g2);
+			paintChildren(g2);
 
 			graphChanged = canvasChanged = false;
 		}
-    }
-	
-	protected void checkTitle()
-	{
-		if( frame != null )
-		{
-			String titleAttr = String.format( "ui.%s.title", getId() ); 
-			String title     = (String) graph.getLabel( titleAttr );
+	}
 
-			if( title == null )
-				title = (String) graph.getLabel( "ui.default.title" );
-			
-			if( title != null )
-				frame.setTitle( title );
+	protected void checkTitle() {
+		if (frame != null) {
+			String titleAttr = String.format("ui.%s.title", getId());
+			String title = (String) graph.getLabel(titleAttr);
+
+			if (title == null)
+				title = (String) graph.getLabel("ui.default.title");
+
+			if (title != null)
+				frame.setTitle(title);
 		}
 	}
 
 	@Override
-    public void close( GraphicGraph graph )
-    {
+	public void close(GraphicGraph graph) {
 		renderer.close();
-		graph.addAttribute( "ui.viewClosed", getId() );
-		removeComponentListener( this );
-		removeKeyListener( shortcuts );
-		removeMouseListener( mouseClicks );
-		removeMouseMotionListener( mouseClicks );
-	    openInAFrame( false );
-    }
-	
+		graph.addAttribute("ui.viewClosed", getId());
+		removeComponentListener(this);
+		removeKeyListener(shortcuts);
+		removeMouseListener(mouseClicks);
+		removeMouseMotionListener(mouseClicks);
+		openInAFrame(false);
+	}
+
 	@Override
-	public void openInAFrame( boolean on )
-	{
-		if( on )
-		{
-			if( frame == null )
-			{
-				frame = new JFrame( "GraphStream" );
-				frame.setLayout( new BorderLayout() );
-				frame.add( this, BorderLayout.CENTER );
-				frame.setSize( 800, 600 );
-				frame.setVisible( true );
-				frame.addWindowListener( this );
-				frame.addKeyListener( shortcuts );
+	public void openInAFrame(boolean on) {
+		if (on) {
+			if (frame == null) {
+				frame = new JFrame("GraphStream");
+				frame.setLayout(new BorderLayout());
+				frame.add(this, BorderLayout.CENTER);
+				frame.setSize(800, 600);
+				frame.setVisible(true);
+				frame.addWindowListener(this);
+				frame.addKeyListener(shortcuts);
+			} else {
+				frame.setVisible(true);
 			}
-			else
-			{
-				frame.setVisible( true );
-			}
-		}
-		else
-		{
-			if( frame != null )
-			{
-				frame.removeWindowListener( this );
-				frame.removeKeyListener( shortcuts );
-				frame.remove( this );
-				frame.setVisible( false );
+		} else {
+			if (frame != null) {
+				frame.removeWindowListener(this);
+				frame.removeKeyListener(shortcuts);
+				frame.remove(this);
+				frame.setVisible(false);
 				frame.dispose();
 			}
 		}
 	}
-	
-	public void render( Graphics2D g )
-	{
-		setBackground( graph.getStyle().getFillColor( 0 ) );
-		renderer.render( g, getWidth(), getHeight() );
-		
-		String screenshot = (String) graph.getLabel( "ui.screenshot" );
-		
-		if( screenshot != null ) {
-			graph.removeAttribute( "ui.screenshot" );
-			renderer.screenshot( screenshot, getWidth(), getHeight() );
+
+	public void render(Graphics2D g) {
+		setBackground(graph.getStyle().getFillColor(0));
+		renderer.render(g, getWidth(), getHeight());
+
+		String screenshot = (String) graph.getLabel("ui.screenshot");
+
+		if (screenshot != null) {
+			graph.removeAttribute("ui.screenshot");
+			renderer.screenshot(screenshot, getWidth(), getHeight());
 		}
 	}
 
-// Selection
-		
-	@Override
-    public void beginSelectionAt( float x1, float y1 )
-    {
-		renderer.beginSelectionAt( x1, y1 );
-		canvasChanged = true;
-    }
+	// Selection
 
 	@Override
-    public void selectionGrowsAt( float x, float y )
-    {
-		renderer.selectionGrowsAt( x, y );
+	public void beginSelectionAt(float x1, float y1) {
+		renderer.beginSelectionAt(x1, y1);
 		canvasChanged = true;
-    }
+	}
 
 	@Override
-    public void endSelectionAt( float x2, float y2 )
-    {
-		renderer.endSelectionAt( x2, y2 );
+	public void selectionGrowsAt(float x, float y) {
+		renderer.selectionGrowsAt(x, y);
 		canvasChanged = true;
-    }
-	
-// Component listener
+	}
 
-	public void componentShown( ComponentEvent e )
-    {
+	@Override
+	public void endSelectionAt(float x2, float y2) {
+		renderer.endSelectionAt(x2, y2);
 		canvasChanged = true;
-    }
+	}
 
-	public void componentHidden( ComponentEvent e )
-    {
-    }
+	// Component listener
 
-	public void componentMoved( ComponentEvent e )
-    {
-    }
-
-	public void componentResized( ComponentEvent e )
-    {
+	public void componentShown(ComponentEvent e) {
 		canvasChanged = true;
-    }
+	}
 
-// Window Listener
-	
-	public void windowActivated( WindowEvent e )
-    {
+	public void componentHidden(ComponentEvent e) {
+	}
+
+	public void componentMoved(ComponentEvent e) {
+	}
+
+	public void componentResized(ComponentEvent e) {
 		canvasChanged = true;
-    }
+	}
 
-	public void windowClosed( WindowEvent e )
-    {
-    }
+	// Window Listener
 
-	public void windowClosing( WindowEvent e )
-    {
-		graph.addAttribute( "ui.viewClosed", getId() );
-		
-		switch( viewer.getCloseFramePolicy() )
-		{
-			case CLOSE_VIEWER:
-				viewer.removeView( getId() );
-				break;
-			case HIDE_ONLY:
-				if( frame != null )
-					frame.setVisible( false );
-				break;
-			case EXIT:
-				System.exit( 0 );
-			default:
-				throw new RuntimeException(
-					String.format( "The %s view is not up to date, do not know %s CloseFramePolicy.",
-						getClass().getName(), viewer.getCloseFramePolicy() ) );
+	public void windowActivated(WindowEvent e) {
+		canvasChanged = true;
+	}
+
+	public void windowClosed(WindowEvent e) {
+	}
+
+	public void windowClosing(WindowEvent e) {
+		graph.addAttribute("ui.viewClosed", getId());
+
+		switch (viewer.getCloseFramePolicy()) {
+		case CLOSE_VIEWER:
+			viewer.removeView(getId());
+			break;
+		case HIDE_ONLY:
+			if (frame != null)
+				frame.setVisible(false);
+			break;
+		case EXIT:
+			System.exit(0);
+		default:
+			throw new RuntimeException(
+					String.format(
+							"The %s view is not up to date, do not know %s CloseFramePolicy.",
+							getClass().getName(), viewer.getCloseFramePolicy()));
 		}
-    }
+	}
 
-	public void windowDeactivated( WindowEvent e )
-    {
-    }
+	public void windowDeactivated(WindowEvent e) {
+	}
 
-	public void windowDeiconified( WindowEvent e )
-    {
+	public void windowDeiconified(WindowEvent e) {
 		canvasChanged = true;
-    }
+	}
 
-	public void windowIconified( WindowEvent e )
-    {
-    }
+	public void windowIconified(WindowEvent e) {
+	}
 
-	public void windowOpened( WindowEvent e )
-    {
-		graph.removeAttribute( "ui.viewClosed" );
+	public void windowOpened(WindowEvent e) {
+		graph.removeAttribute("ui.viewClosed");
 		canvasChanged = true;
-    }
-	
-// Methods deferred to the renderer
-	
-	@Override
-    public ArrayList<GraphicElement> allNodesOrSpritesIn( float x1, float y1, float x2, float y2 )
-    {
-		return renderer.allNodesOrSpritesIn( x1, y1, x2, y2 );
-    }
+	}
+
+	// Methods deferred to the renderer
 
 	@Override
-    public GraphicElement findNodeOrSpriteAt( float x, float y )
-    {
-	    return renderer.findNodeOrSpriteAt( x, y );
-    }
+	public ArrayList<GraphicElement> allNodesOrSpritesIn(float x1, float y1,
+			float x2, float y2) {
+		return renderer.allNodesOrSpritesIn(x1, y1, x2, y2);
+	}
 
 	@Override
-    public float getGraphDimension()
-    {
-	    return renderer.getGraphDimension();
-    }
+	public GraphicElement findNodeOrSpriteAt(float x, float y) {
+		return renderer.findNodeOrSpriteAt(x, y);
+	}
 
 	@Override
-    public Point3 getViewCenter()
-    {
-	    return renderer.getViewCenter();
-    }
+	public float getGraphDimension() {
+		return renderer.getGraphDimension();
+	}
 
 	@Override
-    public float getViewPercent()
-    {
-	    return renderer.getViewPercent();
-    }
+	public Point3 getViewCenter() {
+		return renderer.getViewCenter();
+	}
 
 	@Override
-    public float getViewRotation()
-    {
-	    return renderer.getViewRotation();
-    }
+	public float getViewPercent() {
+		return renderer.getViewPercent();
+	}
 
 	@Override
-    public void moveElementAtPx( GraphicElement element, float x, float y )
-    {
-		renderer.moveElementAtPx( element, x, y );
-    }
+	public float getViewRotation() {
+		return renderer.getViewRotation();
+	}
 
 	@Override
-    public void resetView()
-    {
+	public void moveElementAtPx(GraphicElement element, float x, float y) {
+		renderer.moveElementAtPx(element, x, y);
+	}
+
+	@Override
+	public void resetView() {
 		renderer.resetView();
 		canvasChanged = true;
-    }
+	}
 
 	@Override
-    public void setBounds( float minx, float miny, float minz, float maxx, float maxy, float maxz )
-    {
-	    renderer.setBounds( minx, miny, minz, maxx, maxy, maxz );
-    }
+	public void setBounds(float minx, float miny, float minz, float maxx,
+			float maxy, float maxz) {
+		renderer.setBounds(minx, miny, minz, maxx, maxy, maxz);
+	}
 
 	@Override
-    public void setViewCenter( float x, float y, float z )
-    {
-	    renderer.setViewCenter( x, y, z );
-		canvasChanged = true;
-    }
-
-	@Override
-	public void setGraphViewport( float minx, float miny, float maxx, float maxy )
-	{
-		renderer.setGraphViewport( minx, miny, maxx, maxy );
+	public void setViewCenter(float x, float y, float z) {
+		renderer.setViewCenter(x, y, z);
 		canvasChanged = true;
 	}
-	
+
 	@Override
-	public void removeGraphViewport()
-	{
+	public void setGraphViewport(float minx, float miny, float maxx, float maxy) {
+		renderer.setGraphViewport(minx, miny, maxx, maxy);
+		canvasChanged = true;
+	}
+
+	@Override
+	public void removeGraphViewport() {
 		renderer.removeGraphViewport();
 		canvasChanged = true;
 	}
 
 	@Override
-    public void setViewPercent( float percent )
-    {
-	    renderer.setViewPercent( percent );
+	public void setViewPercent(float percent) {
+		renderer.setViewPercent(percent);
 		canvasChanged = true;
-    }
+	}
 
 	@Override
-    public void setViewRotation( float theta )
-    {
-		renderer.setViewRotation( theta );
+	public void setViewRotation(float theta) {
+		renderer.setViewRotation(theta);
 		canvasChanged = true;
-    }
+	}
 
 	@Override
-    public void setBackLayerRenderer( LayerRenderer renderer )
-    {
-		this.renderer.setBackLayerRenderer( renderer );
+	public void setBackLayerRenderer(LayerRenderer renderer) {
+		this.renderer.setBackLayerRenderer(renderer);
 		canvasChanged = true;
-    }
+	}
 
 	@Override
-    public void setForeLayoutRenderer( LayerRenderer renderer )
-    {
-		this.renderer.setForeLayoutRenderer( renderer );
+	public void setForeLayoutRenderer(LayerRenderer renderer) {
+		this.renderer.setForeLayoutRenderer(renderer);
 		canvasChanged = true;
-    }
+	}
 }

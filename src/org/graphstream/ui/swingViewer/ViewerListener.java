@@ -25,11 +25,10 @@ package org.graphstream.ui.swingViewer;
 /**
  * Listener for specific viewer events.
  */
-public interface ViewerListener
-{
-	void viewClosed( String viewName );
-	
-	void buttonPushed( String id );
-	
-	void buttonReleased( String id );
+public interface ViewerListener {
+	void viewClosed(String viewName);
+
+	void buttonPushed(String id);
+
+	void buttonReleased(String id);
 }

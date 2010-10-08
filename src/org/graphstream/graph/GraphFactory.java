@@ -24,64 +24,59 @@
 package org.graphstream.graph;
 
 /**
- * An interface aimed at dynamically creating graph objects based on a class name.
- *
+ * An interface aimed at dynamically creating graph objects based on a class
+ * name.
+ * 
  * @since september 2007
  */
-public class GraphFactory
-{
+public class GraphFactory {
 	/**
 	 * Create a new instance of graph.
 	 */
-	public GraphFactory()
-	{
+	public GraphFactory() {
 	}
 
 	/**
 	 * Instantiate a new graph from the given class name.
+	 * 
 	 * @return A graph instance or null if the graph class was not found.
 	 */
-	public Graph newInstance( String id, String graphClass )
-	{
-		try
-		{
-			String completeGraphClass ;
-			if(graphClass.split("[.]").length < 2) {
-				completeGraphClass = "org.graphstream.graph.implementations."+graphClass ;
+	public Graph newInstance(String id, String graphClass) {
+		try {
+			String completeGraphClass;
+			if (graphClass.split("[.]").length < 2) {
+				completeGraphClass = "org.graphstream.graph.implementations."
+						+ graphClass;
+			} else {
+				completeGraphClass = graphClass;
 			}
-			else {
-				completeGraphClass = graphClass ;
-			}
-			//Graph res = (Graph) Class.forName( completeGraphClass ).newInstance();
-			//res.setId( id );
-			Class<?> clazz = Class.forName( completeGraphClass );
-			Graph res = (Graph) clazz.getConstructor(String.class).newInstance(id);
+			// Graph res = (Graph) Class.forName( completeGraphClass
+			// ).newInstance();
+			// res.setId( id );
+			Class<?> clazz = Class.forName(completeGraphClass);
+			Graph res = (Graph) clazz.getConstructor(String.class).newInstance(
+					id);
 			return res;
-		}
-		catch( InstantiationException e )
-		{
-			System.out.println( "GraphFactory newInstance InstantiationException : "
-			        + e.getMessage() );
-		}
-		catch( ClassNotFoundException e )
-		{
-			System.out.println( "GraphFactory newInstance ClassNotFoundException : "
-			        + e.getMessage() );
-		}
-		catch( IllegalAccessException e )
-		{
-			System.out.println( "GraphFactory newInstance IllegalAccessException : "
-			        + e.getMessage() );
-		}
-		catch( NoSuchMethodException e )
-		{
-			System.out.println( "GraphFactory newInstance NoSuchMethodException : "
-			        + e.getMessage() );
-		}
-		catch( java.lang.reflect.InvocationTargetException e )
-		{
-			System.out.println( "GraphFactory newInstance InvocationTargetException : "
-			        + e.getMessage() );
+		} catch (InstantiationException e) {
+			System.out
+					.println("GraphFactory newInstance InstantiationException : "
+							+ e.getMessage());
+		} catch (ClassNotFoundException e) {
+			System.out
+					.println("GraphFactory newInstance ClassNotFoundException : "
+							+ e.getMessage());
+		} catch (IllegalAccessException e) {
+			System.out
+					.println("GraphFactory newInstance IllegalAccessException : "
+							+ e.getMessage());
+		} catch (NoSuchMethodException e) {
+			System.out
+					.println("GraphFactory newInstance NoSuchMethodException : "
+							+ e.getMessage());
+		} catch (java.lang.reflect.InvocationTargetException e) {
+			System.out
+					.println("GraphFactory newInstance InvocationTargetException : "
+							+ e.getMessage());
 		}
 
 		return null;

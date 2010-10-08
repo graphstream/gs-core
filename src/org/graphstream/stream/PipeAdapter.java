@@ -22,7 +22,6 @@
  */
 package org.graphstream.stream;
 
-
 /**
  * Adapter for the filter interface.
  * 
@@ -30,9 +29,7 @@ package org.graphstream.stream;
  * All methods are empty.
  * </p>
  */
-public class PipeAdapter
-	implements Pipe
-{
+public class PipeAdapter implements Pipe {
 	public void addAttributeSink(AttributeSink listener) {
 	}
 
@@ -106,15 +103,12 @@ public class PipeAdapter
 	public void stepBegins(String sourceId, long timeId, double step) {
 	}
 
-	public void clearAttributeSinks()
-	{
+	public void clearAttributeSinks() {
 	}
 
-	public void clearElementSinks()
-	{
+	public void clearElementSinks() {
 	}
 
-	public void clearSinks()
-	{
+	public void clearSinks() {
 	}
 }

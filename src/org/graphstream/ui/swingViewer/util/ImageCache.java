@@ -35,133 +35,128 @@ import java.util.HashMap;
 import javax.imageio.ImageIO;
 
 /**
- * A simple cache for images to avoid reloading them constantly and to allow sharing.
+ * A simple cache for images to avoid reloading them constantly and to allow
+ * sharing.
  * 
- * TODO have a policy to release images if they have not been used for a given time.
+ * TODO have a policy to release images if they have not been used for a given
+ * time.
  */
-public class ImageCache
-{
+public class ImageCache {
 	/**
 	 * The image cache.
 	 */
-	protected HashMap<String,Image> imageCache = new HashMap<String,Image>();
+	protected HashMap<String, Image> imageCache = new HashMap<String, Image>();
 
 	/**
-	 * The dummy image used to mark a not found image (and avoid trying to reload it again and again).
+	 * The dummy image used to mark a not found image (and avoid trying to
+	 * reload it again and again).
 	 */
 	protected Image dummy;
-	
+
 	/**
 	 * The default singleton image cache instance.
 	 */
 	protected static ImageCache defaultImageCache;
-	
+
 	/**
 	 * New empty image cache.
 	 */
-	public ImageCache()
-	{
-		BufferedImage img = new BufferedImage( 16, 16, BufferedImage.TYPE_INT_RGB );
-		Graphics2D    g2  = img.createGraphics();
-		
-		g2.setColor( Color.RED );
-		g2.drawRect( 0, 0, img.getWidth()-1, img.getHeight()-1 );
-		g2.drawLine( 0, 0, img.getWidth()-1, img.getHeight()-1 );
-		g2.drawLine( 0, img.getHeight()-1, img.getWidth()-1, 0 );
-		
+	public ImageCache() {
+		BufferedImage img = new BufferedImage(16, 16,
+				BufferedImage.TYPE_INT_RGB);
+		Graphics2D g2 = img.createGraphics();
+
+		g2.setColor(Color.RED);
+		g2.drawRect(0, 0, img.getWidth() - 1, img.getHeight() - 1);
+		g2.drawLine(0, 0, img.getWidth() - 1, img.getHeight() - 1);
+		g2.drawLine(0, img.getHeight() - 1, img.getWidth() - 1, 0);
+
 		dummy = img;
 	}
-	
+
 	/**
-	 * Default singleton image cache instance that can be shared. This method and singleton must
-	 * be used only in the Swing thread.
+	 * Default singleton image cache instance that can be shared. This method
+	 * and singleton must be used only in the Swing thread.
+	 * 
 	 * @return The default singleton image cache instance.
 	 */
-	public static ImageCache defaultImageCache()
-	{
-		if( defaultImageCache == null )
+	public static ImageCache defaultImageCache() {
+		if (defaultImageCache == null)
 			defaultImageCache = new ImageCache();
-		
+
 		return defaultImageCache;
 	}
-	
+
 	/**
-	 * Lookup an image based on its name, if found return it, else try to load it. If an image
-	 * is not found once, the cache remembers it and will not try to reload it again if the
-	 * same image is requested anew. Therefore using getImage() is fast and smooth.
-	 * @param fileNameOrUrl A file name or an URL pointing at the image.
+	 * Lookup an image based on its name, if found return it, else try to load
+	 * it. If an image is not found once, the cache remembers it and will not
+	 * try to reload it again if the same image is requested anew. Therefore
+	 * using getImage() is fast and smooth.
+	 * 
+	 * @param fileNameOrUrl
+	 *            A file name or an URL pointing at the image.
 	 * @return An image or null if the image cannot be found.
 	 */
-	public Image getImage( String fileNameOrUrl )
-	{
-		return getImage( fileNameOrUrl, false );
+	public Image getImage(String fileNameOrUrl) {
+		return getImage(fileNameOrUrl, false);
 	}
-	
+
 	/**
-	 * The same as {@link #getImage(String)} but you can force the cache to try to reload
-	 * an image that where not found before.
-	 * @param fileNameOrUrl A file name or an URL pointing at the image.
-	 * @param forceTryReload If true, try to reload an image that where not found before.
+	 * The same as {@link #getImage(String)} but you can force the cache to try
+	 * to reload an image that where not found before.
+	 * 
+	 * @param fileNameOrUrl
+	 *            A file name or an URL pointing at the image.
+	 * @param forceTryReload
+	 *            If true, try to reload an image that where not found before.
 	 * @return An image or null if the image cannot be found.
 	 */
-	public Image getImage( String fileNameOrUrl, boolean forceTryReload )
-	{
-		Image ii = imageCache.get( fileNameOrUrl );
-	
-		if( ii == dummy && ! forceTryReload )
+	public Image getImage(String fileNameOrUrl, boolean forceTryReload) {
+		Image ii = imageCache.get(fileNameOrUrl);
+
+		if (ii == dummy && !forceTryReload)
 			return null;
-		
-		if( ii == null )
-		{
-			URL url = ClassLoader.getSystemClassLoader().getResource( fileNameOrUrl );
-		
-			if( url != null )
-			{
-				try
-				{
-					ii = ImageIO.read( url );
-					imageCache.put( fileNameOrUrl, ii );
-				}
-				catch( IOException e )
-				{
+
+		if (ii == null) {
+			URL url = ClassLoader.getSystemClassLoader().getResource(
+					fileNameOrUrl);
+
+			if (url != null) {
+				try {
+					ii = ImageIO.read(url);
+					imageCache.put(fileNameOrUrl, ii);
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			}
-			else
-			{
-				try
-				{
-					url = new URL( fileNameOrUrl );
-					
-					ii = ImageIO.read( url );
-					imageCache.put( fileNameOrUrl, ii );
-				}
-				catch( Exception e )
-				{
-					try
-					{
-						ii = ImageIO.read( new File( fileNameOrUrl ) );
-						imageCache.put( fileNameOrUrl, ii );
-					}
-					catch( IOException ee )
-					{
-						imageCache.put( fileNameOrUrl, dummy );
-						//ee.printStackTrace();
-						System.err.printf( "Cannot read image '%s'%n", fileNameOrUrl );
+			} else {
+				try {
+					url = new URL(fileNameOrUrl);
+
+					ii = ImageIO.read(url);
+					imageCache.put(fileNameOrUrl, ii);
+				} catch (Exception e) {
+					try {
+						ii = ImageIO.read(new File(fileNameOrUrl));
+						imageCache.put(fileNameOrUrl, ii);
+					} catch (IOException ee) {
+						imageCache.put(fileNameOrUrl, dummy);
+						// ee.printStackTrace();
+						System.err.printf("Cannot read image '%s'%n",
+								fileNameOrUrl);
 					}
 				}
 			}
 		}
-	
+
 		return ii;
 	}
-	
+
 	/**
-	 * A dummy 16x16 image. 
+	 * A dummy 16x16 image.
+	 * 
 	 * @return An image.
 	 */
-	public Image getDummyImage()
-	{
+	public Image getDummyImage() {
 		return dummy;
 	}
 }

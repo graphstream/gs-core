@@ -28,77 +28,67 @@ import java.util.Map;
 import java.util.Random;
 
 /**
- * This class intends to output a graph (a snapshot of it) into a 
- * <a href="http://sourceforge.net/projects/pgf/">TikZ</a> drawing. 
+ * This class intends to output a graph (a snapshot of it) into a <a
+ * href="http://sourceforge.net/projects/pgf/">TikZ</a> drawing.
  * 
  * <p>
- * <b>This is a work in progress, it does not yet work properly. Do not try to use it yet.</b>
+ * <b>This is a work in progress, it does not yet work properly. Do not try to
+ * use it yet.</b>
  * </p>
  */
-public class FileSinkTikz extends FileSinkBase
-{
-	public enum NodeShape
-	{
-		triangle("triangle"),
-		circle("circle"),
-		rectangle("rectangle"),
-		roundedRectangle("rectangle,rounded corners");
+public class FileSinkTikz extends FileSinkBase {
+	public enum NodeShape {
+		triangle("triangle"), circle("circle"), rectangle("rectangle"), roundedRectangle(
+				"rectangle,rounded corners");
 
 		String code;
-		
-		private NodeShape( String code )
-		{
+
+		private NodeShape(String code) {
 			this.code = code;
 		}
-		
-		public String getCode()
-		{
+
+		public String getCode() {
 			return code;
 		}
 	}
-	
-	class TikZColor
-	{
+
+	class TikZColor {
 		float alpha;
 		float red;
 		float green;
 		float blue;
 	}
-	
-	class NodeStyle
-	{
-		NodeShape 	shape;
-		float		width;
-		String		label;
-		float		opacity;
 
-		TikZColor	fillColor;
-		TikZColor	drawColor;
-		TikZColor	textColor;
-		
-		public NodeStyle()
-		{
-			
+	class NodeStyle {
+		NodeShape shape;
+		float width;
+		String label;
+		float opacity;
+
+		TikZColor fillColor;
+		TikZColor drawColor;
+		TikZColor textColor;
+
+		public NodeStyle() {
+
 		}
 	}
-	
-	class EdgeStyle
-	{
-		float		width;
-		TikZColor	color;
-		String		src;
-		String		trg;
-		
-		public EdgeStyle( String src, String trg, boolean directed )
-		{
-			
+
+	class EdgeStyle {
+		float width;
+		TikZColor color;
+		String src;
+		String trg;
+
+		public EdgeStyle(String src, String trg, boolean directed) {
+
 		}
 	}
-	
-	Map<String,NodeStyle>	nodes;
-	Map<String,EdgeStyle>	edges;
-	
-	Random	random;
+
+	Map<String, NodeStyle> nodes;
+	Map<String, EdgeStyle> edges;
+
+	Random random;
 
 	@Override
 	protected void outputEndOfFile() throws IOException {
@@ -107,44 +97,44 @@ public class FileSinkTikz extends FileSinkBase
 	}
 
 	@Override
-	protected void outputHeader() throws IOException
-	{
+	protected void outputHeader() throws IOException {
 		random = new Random();
-		
-		nodes = new HashMap<String,NodeStyle>();
-		edges = new HashMap<String,EdgeStyle>();
+
+		nodes = new HashMap<String, NodeStyle>();
+		edges = new HashMap<String, EdgeStyle>();
 	}
 
 	public void edgeAttributeAdded(String graphId, long timeId, String edgeId,
 			String attribute, Object value) {
-		
+
 	}
 
-	public void edgeAttributeChanged(String graphId, long timeId, String edgeId,
+	public void edgeAttributeChanged(String graphId, long timeId,
+			String edgeId, String attribute, Object oldValue, Object newValue) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void edgeAttributeRemoved(String graphId, long timeId,
+			String edgeId, String attribute) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void graphAttributeAdded(String graphId, long timeId,
+			String attribute, Object value) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void graphAttributeChanged(String graphId, long timeId,
 			String attribute, Object oldValue, Object newValue) {
 		// TODO Auto-generated method stub
 
 	}
 
-	public void edgeAttributeRemoved(String graphId, long timeId, String edgeId,
+	public void graphAttributeRemoved(String graphId, long timeId,
 			String attribute) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void graphAttributeAdded(String graphId, long timeId, String attribute,
-			Object value) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void graphAttributeChanged(String graphId, long timeId, String attribute,
-			Object oldValue, Object newValue) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void graphAttributeRemoved(String graphId, long timeId, String attribute) {
 		// TODO Auto-generated method stub
 
 	}
@@ -155,26 +145,26 @@ public class FileSinkTikz extends FileSinkBase
 
 	}
 
-	public void nodeAttributeChanged(String graphId, long timeId, String nodeId,
-			String attribute, Object oldValue, Object newValue) {
+	public void nodeAttributeChanged(String graphId, long timeId,
+			String nodeId, String attribute, Object oldValue, Object newValue) {
 		// TODO Auto-generated method stub
 
 	}
 
-	public void nodeAttributeRemoved(String graphId, long timeId, String nodeId,
-			String attribute) {
+	public void nodeAttributeRemoved(String graphId, long timeId,
+			String nodeId, String attribute) {
 		// TODO Auto-generated method stub
 
 	}
 
-	public void edgeAdded(String graphId, long timeId, String edgeId, String fromNodeId,
-			String toNodeId, boolean directed) {
-		if( ! edges.containsKey(edgeId) )
-			edges.put(edgeId, new EdgeStyle(fromNodeId,toNodeId,directed));
+	public void edgeAdded(String graphId, long timeId, String edgeId,
+			String fromNodeId, String toNodeId, boolean directed) {
+		if (!edges.containsKey(edgeId))
+			edges.put(edgeId, new EdgeStyle(fromNodeId, toNodeId, directed));
 	}
 
 	public void edgeRemoved(String graphId, long timeId, String edgeId) {
-		if( edges.containsKey(edgeId) )
+		if (edges.containsKey(edgeId))
 			edges.remove(edgeId);
 	}
 
@@ -183,15 +173,13 @@ public class FileSinkTikz extends FileSinkBase
 
 	}
 
-	public void nodeAdded(String graphId, long timeId, String nodeId)
-	{
-		if( ! nodes.containsKey(nodeId) )
+	public void nodeAdded(String graphId, long timeId, String nodeId) {
+		if (!nodes.containsKey(nodeId))
 			nodes.put(nodeId, new NodeStyle());
 	}
 
-	public void nodeRemoved(String graphId, long timeId, String nodeId)
-	{
-		if( nodes.containsKey(nodeId) )
+	public void nodeRemoved(String graphId, long timeId, String nodeId) {
+		if (nodes.containsKey(nodeId))
 			nodes.remove(nodeId);
 	}
 

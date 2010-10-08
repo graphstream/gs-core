@@ -20,16 +20,16 @@ import java.util.HashSet;
 
 /**
  * Style application rule.
- *
+ * 
  * <p>
- * A rule is made of a selector and values. The selector identifies the element(s) this rule applies
- * to, and the values are styles to apply to the matched elements.
+ * A rule is made of a selector and values. The selector identifies the
+ * element(s) this rule applies to, and the values are styles to apply to the
+ * matched elements.
  * </p>
  */
-public class Rule
-{
-// Attributes
-	
+public class Rule {
+	// Attributes
+
 	/**
 	 * The match.
 	 */
@@ -44,113 +44,114 @@ public class Rule
 	 * Optionally, the rule can store all the style groups it participates in.
 	 */
 	public HashSet<String> groups;
-	
-// Constructors
-	
-	protected Rule()
-	{
+
+	// Constructors
+
+	protected Rule() {
 	}
-	
+
 	/**
 	 * New rule with a matcher.
-	 * @param selector The rule selector.
+	 * 
+	 * @param selector
+	 *            The rule selector.
 	 */
-	public Rule( Selector selector )
-	{
+	public Rule(Selector selector) {
 		this.selector = selector;
 	}
-	
-	public Rule( Selector selector, Rule parent )
-	{
+
+	public Rule(Selector selector, Rule parent) {
 		this.selector = selector;
-		this.style    = new Style( parent );
+		this.style = new Style(parent);
 	}
-	
+
 	/**
 	 * This rule style.
+	 * 
 	 * @return The rule style.
 	 */
-	public Style getStyle()
-	{
+	public Style getStyle() {
 		return style;
 	}
-	
+
 	/**
-	 * The group this rule participate in, maybe null if the rule does not participate in any group.
+	 * The group this rule participate in, maybe null if the rule does not
+	 * participate in any group.
+	 * 
 	 * @return The group set or null.
 	 */
-	public HashSet<String> getGroups()
-	{
+	public HashSet<String> getGroups() {
 		return groups;
 	}
-	
+
 	/**
 	 * True if this rule selector match the given identifier.
-	 * @param identifier The identifier to test for the match.
+	 * 
+	 * @param identifier
+	 *            The identifier to test for the match.
 	 * @return True if matching.
 	 */
-	public boolean matchId( String identifier )
-	{
+	public boolean matchId(String identifier) {
 		String ident = selector.getId();
-		
-		if( ident != null )
-			return ident.equals( identifier );
-		
+
+		if (ident != null)
+			return ident.equals(identifier);
+
 		return false;
 	}
-	
+
 	/**
 	 * Change the style.
-	 * @param style A style specification.
+	 * 
+	 * @param style
+	 *            A style specification.
 	 */
-	public void setStyle( Style style )
-	{
+	public void setStyle(Style style) {
 		this.style = style;
 	}
-	
+
 	/**
 	 * Specify that this rule participates in the given style group.
-	 * @param groupId The group unique identifier.
+	 * 
+	 * @param groupId
+	 *            The group unique identifier.
 	 */
-	public void addGroup( String groupId )
-	{
-		if( groups == null )
+	public void addGroup(String groupId) {
+		if (groups == null)
 			groups = new HashSet<String>();
-		
-		groups.add( groupId );
+
+		groups.add(groupId);
 	}
 
 	/**
 	 * Remove this rule from the style group.
-	 * @param groupId The group unique identifier.
+	 * 
+	 * @param groupId
+	 *            The group unique identifier.
 	 */
-	public void removeGroup( String groupId )
-	{
-		if( groups != null )
-			groups.remove( groupId );
+	public void removeGroup(String groupId) {
+		if (groups != null)
+			groups.remove(groupId);
 	}
-	
+
 	@Override
-	public String toString()
-	{
-		return toString( -1 );
+	public String toString() {
+		return toString(-1);
 	}
-	
-	public String toString( int level )
-	{
+
+	public String toString(int level) {
 		StringBuilder builder = new StringBuilder();
 		String prefix = "";
-		
-		if( level > 0 )
-		{
-			for( int i=0; i<level; i++ )
+
+		if (level > 0) {
+			for (int i = 0; i < level; i++)
 				prefix += "    ";
 		}
-		
-		builder.append( prefix );
-		builder.append( selector.toString() );
-		builder.append( style.toString( level + 1 ) );
-		
+
+		builder.append(prefix);
+		builder.append(selector.toString());
+		builder.append(style.toString(level + 1));
+
 		return builder.toString();
 	}
 }

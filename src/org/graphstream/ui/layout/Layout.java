@@ -38,11 +38,10 @@ import org.graphstream.ui.geom.Point3;
  * 
  * <p>
  * The algorithm follows a graph by being a {@link org.graphstream.stream.Sink}.
- * However, at the contrary of several
- * other algorithms, it does not work on the graph itself. It works on a
- * description of the graph and maintains its own vision of this graph. In
- * return, it does not modify the graph, but sends events to listeners telling
- * the new positions of nodes in the graph.
+ * However, at the contrary of several other algorithms, it does not work on the
+ * graph itself. It works on a description of the graph and maintains its own
+ * vision of this graph. In return, it does not modify the graph, but sends
+ * events to listeners telling the new positions of nodes in the graph.
  * </p>
  * 
  * <p>
@@ -57,8 +56,8 @@ import org.graphstream.ui.geom.Point3;
  * This behaviour has been chosen because this algorithm is often run aside the
  * main thread that works on the graph. We want a thread to be able to compute a
  * new layout on its side, without disturbing the main algorithm run on the
- * graph. See the {@link org.graphstream.ui.old.layout.LayoutRunner} for
- * an helper class allowing to create such a thread.
+ * graph. See the {@link org.graphstream.ui.old.layout.LayoutRunner} for an
+ * helper class allowing to create such a thread.
  * </p>
  * 
  * <p>
@@ -80,18 +79,17 @@ import org.graphstream.ui.geom.Point3;
  * 
  * @since 20050706
  */
-public interface Layout extends Pipe
-{
-// Access
+public interface Layout extends Pipe {
+	// Access
 
 	/**
 	 * Name of the layout algorithm.
 	 */
 	String getLayoutAlgorithmName();
-	
+
 	/**
-	 * How many nodes moved during the last step?. When this method returns zero,
-	 * the layout stabilised.
+	 * How many nodes moved during the last step?. When this method returns
+	 * zero, the layout stabilised.
 	 */
 	int getNodeMoved();
 
@@ -119,21 +117,23 @@ public interface Layout extends Pipe
 	 * Time in nanoseconds used by the last call to step().
 	 */
 	long getLastStepTime();
-	
+
 	/**
-	 * The current layout algorithm quality. There are five quality levels. The higher the level,
-	 * the higher the quality.
+	 * The current layout algorithm quality. There are five quality levels. The
+	 * higher the level, the higher the quality.
+	 * 
 	 * @return A number between 0 and 4.
 	 */
 	int getQuality();
-	
+
 	/**
 	 * The current layout force.
+	 * 
 	 * @return A real number.
 	 */
 	float getForce();
 
-// Commands
+	// Commands
 
 	/**
 	 * Clears the whole nodes and edges structures
@@ -143,63 +143,76 @@ public interface Layout extends Pipe
 	/**
 	 * Add a listener for specific layout events.
 	 */
-	void addListener( LayoutListener listener );
+	void addListener(LayoutListener listener);
 
 	/**
 	 * Remove a listener for specific layout events.
 	 */
-	void removeListener( LayoutListener listener );
+	void removeListener(LayoutListener listener);
 
 	/**
 	 * The general "speed" of the algorithm.
-	 * @param value A number in [0..1].
+	 * 
+	 * @param value
+	 *            A number in [0..1].
 	 */
-	void setForce( float value );
-	
+	void setForce(float value);
+
 	/**
 	 * Set the overall quality level. There are five quality levels.
-	 * @param qualityLevel The quality level in [0..4].
+	 * 
+	 * @param qualityLevel
+	 *            The quality level in [0..4].
 	 */
-	void setQuality( int qualityLevel );
-	
+	void setQuality(int qualityLevel);
+
 	/**
-	 * If true, node informations messages are sent for every node. This is mainly for
-	 * debugging and slows down the process a lot.
-	 * @param send If true, send node informations.
+	 * If true, node informations messages are sent for every node. This is
+	 * mainly for debugging and slows down the process a lot.
+	 * 
+	 * @param send
+	 *            If true, send node informations.
 	 */
-	void setSendNodeInfos( boolean send );
-	
+	void setSendNodeInfos(boolean send);
+
 	/**
-	 * Add a random vector whose length is 10% of the size of
-	 * the graph to all node positions.
+	 * Add a random vector whose length is 10% of the size of the graph to all
+	 * node positions.
 	 */
 	void shake();
 
 	/**
 	 * Move a node by force to a new location.
-	 * @param id The node identifier.
-	 * @param x The node new X.
-	 * @param y The node new Y.
-	 * @param z The node new Z.
+	 * 
+	 * @param id
+	 *            The node identifier.
+	 * @param x
+	 *            The node new X.
+	 * @param y
+	 *            The node new Y.
+	 * @param z
+	 *            The node new Z.
 	 */
-	void moveNode( String id, float x, float y, float z );
-	
+	void moveNode(String id, float x, float y, float z);
+
 	/**
 	 * Freeze or un-freeze a node.
-	 * @param id The node identifier.
-	 * @param frozen If true the node is frozen.
+	 * 
+	 * @param id
+	 *            The node identifier.
+	 * @param frozen
+	 *            If true the node is frozen.
 	 */
-	void freezeNode( String id, boolean frozen );
-	
+	void freezeNode(String id, boolean frozen);
+
 	/**
 	 * Method to call repeatedly to compute the layout.
 	 * 
 	 * <p>
-	 * This method implements
-	 * the layout algorithm proper. It must be called in a loop, until the
-	 * layout stabilises. You can know if the layout is stable by using the
-	 * {@link #getNodeMoved()} method that returns the number of node that have
-	 * moved during the last call to step().
+	 * This method implements the layout algorithm proper. It must be called in
+	 * a loop, until the layout stabilises. You can know if the layout is stable
+	 * by using the {@link #getNodeMoved()} method that returns the number of
+	 * node that have moved during the last call to step().
 	 * </p>
 	 * 
 	 * <p>
@@ -212,27 +225,28 @@ public interface Layout extends Pipe
 	 */
 	void compute();
 
-// Output
+	// Output
 
 	/**
 	 * Read the nodes positions from a file. See {@link #outputPos(String)} for
 	 * the file format.
 	 */
-	void inputPos( String filename ) throws java.io.IOException;
+	void inputPos(String filename) throws java.io.IOException;
 
 	/**
 	 * Output the nodes positions to a file. The file format is
 	 * <ul>
-	 * 		<li>each line gives the position of one node.</li>
-	 * 		<li>the list starts with the node identifier (maybe between quotes
-	 * 		    if needed).</li>
-	 * 		<li>a colon.<li>
-	 * 		<li>and a  list of two to three float numbers indicating the
-	 * 		    position of the node in a given space.</li>
-	 * 		<li>Empty lines are ignored.</li>
-	 * 		<li>Lines beginning with an arbitrary number of spaces and then a
-	 *		    sharp sign (#) are ignored.</li>
+	 * <li>each line gives the position of one node.</li>
+	 * <li>the list starts with the node identifier (maybe between quotes if
+	 * needed).</li>
+	 * <li>a colon.
+	 * <li>
+	 * <li>and a list of two to three float numbers indicating the position of
+	 * the node in a given space.</li>
+	 * <li>Empty lines are ignored.</li>
+	 * <li>Lines beginning with an arbitrary number of spaces and then a sharp
+	 * sign (#) are ignored.</li>
 	 * </ul>
 	 */
-	void outputPos( String filename ) throws java.io.IOException;
+	void outputPos(String filename) throws java.io.IOException;
 }

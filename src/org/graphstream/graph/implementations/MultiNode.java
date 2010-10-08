@@ -34,13 +34,12 @@ import org.graphstream.graph.Node;
 import org.graphstream.graph.IdAlreadyInUseException;
 
 /**
- * Full implementation of {@link org.graphstream.graph.Node} that allows multiple
- * edges between two nodes.
+ * Full implementation of {@link org.graphstream.graph.Node} that allows
+ * multiple edges between two nodes.
  */
-public class MultiNode extends DefaultNode
-{
-// Attributes
-	
+public class MultiNode extends DefaultNode {
+	// Attributes
+
 	/**
 	 * Map of leaving edges toward nodes. Each element of the map is a pair
 	 * (key,value) where the key is the id of a node that can be reached
@@ -56,149 +55,140 @@ public class MultiNode extends DefaultNode
 	 * from this node.
 	 */
 	protected MultiEdgeMap<? extends Edge> from = new MultiEdgeMap<Edge>();
-	
+
 	protected int inDegree = 0;
-	
+
 	protected int outDegree = 0;
-	
-// Constructors
-	
+
+	// Constructors
+
 	/**
 	 * New unconnected node.
-	 * @param graph The graph containing the node.
-	 * @param id Tag of the node.
+	 * 
+	 * @param graph
+	 *            The graph containing the node.
+	 * @param id
+	 *            Tag of the node.
 	 */
-	public MultiNode( Graph graph, String id )
-	{
-		super( graph, id );
+	public MultiNode(Graph graph, String id) {
+		super(graph, id);
 	}
 
-// Access
+	// Access
 
 	@Override
-	public int getOutDegree()
-	{
+	public int getOutDegree() {
 		return outDegree;
 	}
 
 	@Override
-	public int getInDegree()
-	{
+	public int getInDegree() {
 		return inDegree;
 	}
 
 	@Override
-	public boolean hasEdgeToward( String id )
-	{
-		return( to.get( id ) != null );
+	public boolean hasEdgeToward(String id) {
+		return (to.get(id) != null);
 	}
-	
+
 	@Override
-	public boolean hasEdgeFrom( String id )
-	{
-		return( from.get( id ) != null );
+	public boolean hasEdgeFrom(String id) {
+		return (from.get(id) != null);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> T getEdgeToward( String id )
-	{
-		ArrayList<Edge> edges = (ArrayList<Edge>) to.get( id );
-		
-		if( edges != null )
-			return (T) edges.get( 0 );
-		
+	public <T extends Edge> T getEdgeToward(String id) {
+		ArrayList<Edge> edges = (ArrayList<Edge>) to.get(id);
+
+		if (edges != null)
+			return (T) edges.get(0);
+
 		return null;
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> T getEdgeFrom( String id )
-	{
-		ArrayList<Edge> edges = (ArrayList<Edge>) from.get( id );
-		
-		if( edges != null )
-			return (T) edges.get( 0 );
-		
+	public <T extends Edge> T getEdgeFrom(String id) {
+		ArrayList<Edge> edges = (ArrayList<Edge>) from.get(id);
+
+		if (edges != null)
+			return (T) edges.get(0);
+
 		return null;
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterator<T> getEnteringEdgeIterator()
-	{
-		return new MultiElementIterator<T>( (MultiEdgeMap<T>) from );
-	}
-	
-	@Override
-	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterator<T> getLeavingEdgeIterator()
-	{
-		return new MultiElementIterator<T>( (MultiEdgeMap<T>) to );
+	public <T extends Edge> Iterator<T> getEnteringEdgeIterator() {
+		return new MultiElementIterator<T>((MultiEdgeMap<T>) from);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<T> getEnteringEdgeSet()
-    {
+	public <T extends Edge> Iterator<T> getLeavingEdgeIterator() {
+		return new MultiElementIterator<T>((MultiEdgeMap<T>) to);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterable<T> getEnteringEdgeSet() {
 		return (Iterable<T>) from;
-    }
+	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<T> getLeavingEdgeSet()
-    {
+	public <T extends Edge> Iterable<T> getLeavingEdgeSet() {
 		return (Iterable<T>) to;
-    }
+	}
 
-// Commands
+	// Commands
 
 	/**
 	 * Add an edge between this node and the given target.
-	 * @param tag Tag of the edge.
-	 * @param target Target node.
-	 * @param directed If the edge is directed only from this node to the target.
+	 * 
+	 * @param tag
+	 *            Tag of the edge.
+	 * @param target
+	 *            Target node.
+	 * @param directed
+	 *            If the edge is directed only from this node to the target.
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	protected <T extends Edge> T addEdgeToward( String tag, DefaultNode target, boolean directed )
-		throws IllegalArgumentException
-	{
+	protected <T extends Edge> T addEdgeToward(String tag, DefaultNode target,
+			boolean directed) throws IllegalArgumentException {
 		// Some checks.
 
-		if( target.G == null )
-			throw new IllegalArgumentException(
-				"cannot add edge to node `" + target.getId()
-				+ "' since this node is not yet part of a graph" );
+		if (target.G == null)
+			throw new IllegalArgumentException("cannot add edge to node `"
+					+ target.getId()
+					+ "' since this node is not yet part of a graph");
 
-		if( G == null )
-			throw new IllegalArgumentException(
-				"cannot add edge to node `" + getId()
-				+ "' since this node is not yet part of a graph" );
+		if (G == null)
+			throw new IllegalArgumentException("cannot add edge to node `"
+					+ getId() + "' since this node is not yet part of a graph");
 
-		if( G != target.G )
-			throw new IllegalArgumentException(
-				"cannot add edge between node `" + getId() + "' and node `"
-				+ target.getId() + "' since they pertain to distinct graphs" );
+		if (G != target.G)
+			throw new IllegalArgumentException("cannot add edge between node `"
+					+ getId() + "' and node `" + target.getId()
+					+ "' since they pertain to distinct graphs");
 
 		// Register the edge.
 
-		ArrayList<Edge> toward = (ArrayList<Edge>) to.get( getId() );
-		
-		if( toward != null )
-		{
+		ArrayList<Edge> toward = (ArrayList<Edge>) to.get(getId());
+
+		if (toward != null) {
 			// There exist yet an edge from the target to this node.
 
-			T e = (T) G.edgeFactory.newInstance(tag,this,target,directed);
-			//e.bind( this, target, directed );
-			//e.setDirected(directed);
+			T e = (T) G.edgeFactory.newInstance(tag, this, target, directed);
+			// e.bind( this, target, directed );
+			// e.setDirected(directed);
 			return e;
-		}
-		else
-		{
-			T e = (T) G.edgeFactory.newInstance(tag,this,target,directed);
-			//e.bind( this, target, directed );
-			//e.setDirected(directed);
+		} else {
+			T e = (T) G.edgeFactory.newInstance(tag, this, target, directed);
+			// e.bind( this, target, directed );
+			// e.setDirected(directed);
 			return e;
 		}
 	}
@@ -208,188 +198,162 @@ public class MultiNode extends DefaultNode
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	protected void registerEdge( Edge edge )
-		throws IllegalArgumentException, IdAlreadyInUseException
-	{
+	protected void registerEdge(Edge edge) throws IllegalArgumentException,
+			IdAlreadyInUseException {
 		// If the edge or an edge with the same id is already registered.
 
-		Node other = edge.getOpposite( this );
+		Node other = edge.getOpposite(this);
 
 		// Add the edge.
 
-		edges.add( edge );
+		edges.add(edge);
 
-		if( edge.isDirected() )
-		{
+		if (edge.isDirected()) {
 			MultiEdgeMap<Edge> map;
-			
-			if( edge.getSourceNode() == this )
-			{
-			     map = (MultiEdgeMap<Edge>) to;
-			     outDegree++;
-			}
-			else
-			{
+
+			if (edge.getSourceNode() == this) {
+				map = (MultiEdgeMap<Edge>) to;
+				outDegree++;
+			} else {
 				map = (MultiEdgeMap<Edge>) from;
 				inDegree++;
 			}
-				
-			ArrayList<Edge> list = map.get( other.getId() );
-				
-			if( list == null )
-			{
+
+			ArrayList<Edge> list = map.get(other.getId());
+
+			if (list == null) {
 				list = new ArrayList<Edge>();
-				map.put( other.getId(), list );
+				map.put(other.getId(), list);
 			}
-				
-			list.add( edge );
-		}
-		else
-		{
-			ArrayList<Edge> listTo   = (ArrayList<Edge>) to.get( other.getId() );
-			ArrayList<Edge> listFrom = (ArrayList<Edge>) from.get( other.getId() );
-			
-			if( listTo == null )
-			{
+
+			list.add(edge);
+		} else {
+			ArrayList<Edge> listTo = (ArrayList<Edge>) to.get(other.getId());
+			ArrayList<Edge> listFrom = (ArrayList<Edge>) from
+					.get(other.getId());
+
+			if (listTo == null) {
 				listTo = new ArrayList<Edge>();
-				( (MultiEdgeMap<Edge>) to ).put( other.getId(), listTo );
+				((MultiEdgeMap<Edge>) to).put(other.getId(), listTo);
 			}
-			if( listFrom == null )
-			{
+			if (listFrom == null) {
 				listFrom = new ArrayList<Edge>();
-				( (MultiEdgeMap<Edge>) from ).put( other.getId(), listFrom );
+				((MultiEdgeMap<Edge>) from).put(other.getId(), listFrom);
 			}
-			
+
 			inDegree++;
 			outDegree++;
-			listTo.add( edge );
-			listFrom.add( edge );
+			listTo.add(edge);
+			listFrom.add(edge);
 		}
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	protected void unregisterEdge( Edge edge )
-	{
-		Node other = edge.getOpposite( this );
+	protected void unregisterEdge(Edge edge) {
+		Node other = edge.getOpposite(this);
 		ArrayList<Edge> toList;
 		ArrayList<Edge> fromList;
 		int pos;
-		
-		toList   = (ArrayList<Edge>) to.get( other.getId() );
-		fromList = (ArrayList<Edge>) from.get( other.getId() );
-		
-		if( toList != null )
-		{
-			pos = toList.indexOf( edge );
-			
-			if( pos >= 0 )
-			{
-				toList.remove( pos );
+
+		toList = (ArrayList<Edge>) to.get(other.getId());
+		fromList = (ArrayList<Edge>) from.get(other.getId());
+
+		if (toList != null) {
+			pos = toList.indexOf(edge);
+
+			if (pos >= 0) {
+				toList.remove(pos);
 				outDegree--;
-				
-				if( toList.isEmpty() )
-					to.remove( other.getId() );
+
+				if (toList.isEmpty())
+					to.remove(other.getId());
 			}
 		}
-		if( fromList != null )
-		{
-			pos = fromList.indexOf( edge );
-			
-			if( pos >= 0 )
-			{
-				fromList.remove( pos );
+		if (fromList != null) {
+			pos = fromList.indexOf(edge);
+
+			if (pos >= 0) {
+				fromList.remove(pos);
 				inDegree--;
-				
-				if( fromList.isEmpty() )
-					from.remove( other.getId() );
+
+				if (fromList.isEmpty())
+					from.remove(other.getId());
 			}
 		}
 
-		pos = edges.indexOf( edge );
+		pos = edges.indexOf(edge);
 
-		if( pos >= 0 )
-			edges.remove( pos );
+		if (pos >= 0)
+			edges.remove(pos);
 	}
-	
+
 	/**
 	 * When a node is unregistered from a graph, it must not keep edges
 	 * connected to nodes still in the graph. This methods untie all edges
 	 * connected to this node (this also unregister them from the graph).
 	 */
 	@Override
-	protected void disconnectAllEdges()
-		throws IllegalStateException
-	{
+	protected void disconnectAllEdges() throws IllegalStateException {
 		int n = edges.size();
 
 		// We cannot use a "for" since untying an edge removes this edge from
 		// the node. The number of edges will change continuously.
 
-		while( n > 0 )
-		{
-			Edge e = edges.get( 0 );
-			G.removeEdge( ( (AbstractElement) e ).getId() );
-			//e.unbind();
+		while (n > 0) {
+			Edge e = edges.get(0);
+			G.removeEdge(((AbstractElement) e).getId());
+			// e.unbind();
 			n = edges.size();
 		}
 	}
 
-// Nested classes
+	// Nested classes
 
-	static class MultiElementIterator<T extends Element>
-		implements Iterator<T>
-	{
+	static class MultiElementIterator<T extends Element> implements Iterator<T> {
 		Iterator<ArrayList<T>> iterator;
-		
+
 		Iterator<T> current;
-		
-		MultiElementIterator( HashMap<String,ArrayList<T>> elements )
-		{
+
+		MultiElementIterator(HashMap<String, ArrayList<T>> elements) {
 			iterator = elements.values().iterator();
-			
-			if( iterator.hasNext() )
+
+			if (iterator.hasNext())
 				current = iterator.next().iterator();
 		}
 
-		public boolean hasNext()
-		{
-			if( current == null )
-				return false;		// Case if iterator is empty.
-			
+		public boolean hasNext() {
+			if (current == null)
+				return false; // Case if iterator is empty.
+
 			return current.hasNext();
 		}
 
-		public T next()
-		{
+		public T next() {
 			T next = current.next();
-			
-			if( ! current.hasNext() )
-			{
-				if( iterator.hasNext() )
-				{
+
+			if (!current.hasNext()) {
+				if (iterator.hasNext()) {
 					current = iterator.next().iterator();
 				}
 			}
-			
+
 			return next;
 		}
 
-		public void remove()
-			throws UnsupportedOperationException, IllegalStateException
-		{
-			throw new UnsupportedOperationException( "this iterator does not allow removing" );
+		public void remove() throws UnsupportedOperationException,
+				IllegalStateException {
+			throw new UnsupportedOperationException(
+					"this iterator does not allow removing");
 		}
 	}
-	
-	protected class MultiEdgeMap<T extends Edge>
-		extends HashMap<String,ArrayList<T>> implements Iterable<T>
-	{
-        private static final long serialVersionUID = 1L;
 
-		public Iterator<T> iterator()
-		{
-			return new MultiElementIterator<T>( this );
+	protected class MultiEdgeMap<T extends Edge> extends
+			HashMap<String, ArrayList<T>> implements Iterable<T> {
+		private static final long serialVersionUID = 1L;
+
+		public Iterator<T> iterator() {
+			return new MultiElementIterator<T>(this);
 		}
 	}
 }

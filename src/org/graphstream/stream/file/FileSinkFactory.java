@@ -22,41 +22,40 @@
 
 package org.graphstream.stream.file;
 
-
 /**
  * Try to instantiate the correct writer given a graph filename.
  * 
  * <p>
- * This class tries to instantiate a writer given a filename.
- * Actually it purely tries to analyze the extension and propose
- * the writer according to this extension.
+ * This class tries to instantiate a writer given a filename. Actually it purely
+ * tries to analyze the extension and propose the writer according to this
+ * extension.
  * </p>
  */
-public class FileSinkFactory
-{
+public class FileSinkFactory {
 	/**
-	 * Looks at the file name given and its extension and propose a file output for the format
-	 * that match this extension.
-	 * @param filename The file name where the graph will be written.
+	 * Looks at the file name given and its extension and propose a file output
+	 * for the format that match this extension.
+	 * 
+	 * @param filename
+	 *            The file name where the graph will be written.
 	 * @return A file sink or null.
-	*/
-	public static FileSink sinkFor( String filename ) 
-	{
-//		String fc = new String( filename );
+	 */
+	public static FileSink sinkFor(String filename) {
+		// String fc = new String( filename );
 		filename = filename.toLowerCase();
-		
-		if( filename.endsWith( ".dgs" ) )
+
+		if (filename.endsWith(".dgs"))
 			return new FileSinkDGS();
-		
-		if( filename.endsWith( ".gml" ) )
+
+		if (filename.endsWith(".gml"))
 			return new FileSinkGML();
-		
-		if( filename.endsWith( ".dot" ) )
+
+		if (filename.endsWith(".dot"))
 			return new FileSinkDOT();
-		
-		if( filename.endsWith( ".svg" ) )
+
+		if (filename.endsWith(".svg"))
 			return new FileSinkSVG();
-		
+
 		return null;
 	}
 }

@@ -25,67 +25,89 @@ package org.graphstream.stream;
 /**
  * Interface to listen at changes in the graph structure.
  * 
- * <p>Graph elements listeners are called each time an element of the graph (node or
- * edge) is added or removed. It is also called for special events like "steps" that
- * introduce the notion of time in graphs.</p>
+ * <p>
+ * Graph elements listeners are called each time an element of the graph (node
+ * or edge) is added or removed. It is also called for special events like
+ * "steps" that introduce the notion of time in graphs.
+ * </p>
  */
-public interface ElementSink
-{
+public interface ElementSink {
 	/**
 	 * A node was inserted in the given graph.
-	 * @param sourceId Identifier of the graph where the node was added.
-	 * @param nodeId Identifier of the added node.
+	 * 
+	 * @param sourceId
+	 *            Identifier of the graph where the node was added.
+	 * @param nodeId
+	 *            Identifier of the added node.
 	 */
-	void nodeAdded( String sourceId, long timeId, String nodeId );
+	void nodeAdded(String sourceId, long timeId, String nodeId);
 
 	/**
 	 * A node was removed from the graph.
-	 * @param sourceId Identifier of the graph where the node will be removed.
-	 * @param nodeId Identifier of the removed node.
+	 * 
+	 * @param sourceId
+	 *            Identifier of the graph where the node will be removed.
+	 * @param nodeId
+	 *            Identifier of the removed node.
 	 */
-	void nodeRemoved( String sourceId, long timeId, String nodeId );
+	void nodeRemoved(String sourceId, long timeId, String nodeId);
 
 	/**
 	 * An edge was inserted in graph.
-	 * @param sourceId Identifier of the graph where the edge was added.
-	 * @param edgeId Identifier of the added edge.
-	 * @param fromNodeId Identifier of the first node of the edge.
-	 * @param toNodeId Identifier of the second node of the edge.
-	 * @param directed If true, the edge is directed.
+	 * 
+	 * @param sourceId
+	 *            Identifier of the graph where the edge was added.
+	 * @param edgeId
+	 *            Identifier of the added edge.
+	 * @param fromNodeId
+	 *            Identifier of the first node of the edge.
+	 * @param toNodeId
+	 *            Identifier of the second node of the edge.
+	 * @param directed
+	 *            If true, the edge is directed.
 	 */
-	void edgeAdded( String sourceId, long timeId, String edgeId, String fromNodeId, String toNodeId, boolean directed );
+	void edgeAdded(String sourceId, long timeId, String edgeId,
+			String fromNodeId, String toNodeId, boolean directed);
 
 	/**
-	 * An edge of graph was removed.The nodes the edge connects may already have been
-	 * removed from the graph.
-	 * @param sourceId The graph where the edge will be removed.
-	 * @param edgeId The edge that will be removed.
+	 * An edge of graph was removed.The nodes the edge connects may already have
+	 * been removed from the graph.
+	 * 
+	 * @param sourceId
+	 *            The graph where the edge will be removed.
+	 * @param edgeId
+	 *            The edge that will be removed.
 	 */
-	void edgeRemoved( String sourceId, long timeId, String edgeId );
-	
+	void edgeRemoved(String sourceId, long timeId, String edgeId);
+
 	/**
 	 * The whole graph was cleared. All the nodes, edges and attributes of the
 	 * graph are removed.
-	 * @param sourceId The graph cleared.
+	 * 
+	 * @param sourceId
+	 *            The graph cleared.
 	 */
-	void graphCleared( String sourceId, long timeId );
-	
+	void graphCleared(String sourceId, long timeId);
+
 	/**
 	 * <p>
-	 * Since dynamic graphs are based on discrete event modifications, the notion of step is defined
-	 * to simulate elapsed time between events. So a step is a event that occurs in the graph, it
-	 * does not modify it but it gives a kind of timestamp that allow the tracking of the progress
-	 * of the graph over the time.
-	 * </p>
-	 *
-	 * <p>
-	 * This kind of event is useful for dynamic algorithms that listen to the dynamic graph and need
-	 * to measure the time in the graph's evolution.
+	 * Since dynamic graphs are based on discrete event modifications, the
+	 * notion of step is defined to simulate elapsed time between events. So a
+	 * step is a event that occurs in the graph, it does not modify it but it
+	 * gives a kind of timestamp that allow the tracking of the progress of the
+	 * graph over the time.
 	 * </p>
 	 * 
-	 * @param sourceId Identifier of the graph where the step starts.
-	 * @param timeId A numerical value that may give a timestamp to track the evolution of the graph
-	 *   over the time.
+	 * <p>
+	 * This kind of event is useful for dynamic algorithms that listen to the
+	 * dynamic graph and need to measure the time in the graph's evolution.
+	 * </p>
+	 * 
+	 * @param sourceId
+	 *            Identifier of the graph where the step starts.
+	 * @param timeId
+	 *            A numerical value that may give a timestamp to track the
+	 *            evolution of the graph over the time.
 	 */
-	void stepBegins( String sourceId, long timeId, double step );
+	void stepBegins(String sourceId, long timeId, double step);
 }

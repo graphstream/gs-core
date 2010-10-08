@@ -26,122 +26,121 @@ package org.graphstream.ui.layout.springbox;
 /**
  * Represent the history of energy values for a layout algorithm.
  */
-public class Energies
-{
-// Attributes
-	
+public class Energies {
+	// Attributes
+
 	/**
 	 * Global current energy (maybe actually updated).
 	 */
 	protected float energy;
-	
+
 	/**
 	 * The last computed energy.
 	 */
 	protected float lastEnergy;
-	
+
 	/**
 	 * The number of energy values remembered.
 	 */
 	protected int energiesBuffer = 256;
-	
+
 	/**
 	 * A circular array of the last values of energy.
 	 */
 	protected float[] energies = new float[energiesBuffer];
-	
+
 	/**
 	 * The current position in the energies array.
 	 */
 	protected int energiesPos = 0;
 
-// Constructor
-	
-	
-// Access
+	// Constructor
+
+	// Access
 
 	/**
 	 * The last computed energy value.
+	 * 
 	 * @return The actual level of energy.
 	 */
-	public float getEnergy()
-	{
+	public float getEnergy() {
 		return lastEnergy;
 	}
-	
+
 	/**
 	 * The number of energy values remembered.
 	 */
-	public int getBufferSize()
-	{
+	public int getBufferSize() {
 		return energiesBuffer;
 	}
-	
+
 	/**
 	 * A number in [0..1] with 1 meaning fully stabilised.
+	 * 
 	 * @return A value that indicates the level of stabilisation in [0-1].
 	 */
-	public float getStabilization()
-	{
-		// The stability is attained when the global energy of the graph do not vary anymore.
-		
-		int   range = 200;
-		float max   = 1;
-		float eprev = getPreviousEnergyValue( range );
-		float diff  = (float) Math.abs( lastEnergy - eprev );
+	public float getStabilization() {
+		// The stability is attained when the global energy of the graph do not
+		// vary anymore.
+
+		int range = 200;
+		float max = 1;
+		float eprev = getPreviousEnergyValue(range);
+		float diff = (float) Math.abs(lastEnergy - eprev);
 
 		diff = diff > max ? max : diff;
-			
-		if( diff < 0 )
+
+		if (diff < 0)
 			diff = 0;
-			
-		return ( diff / max );
+
+		return (diff / max);
 	}
-	
+
 	/**
 	 * A previous energy value.
-	 * @param stepsBack The number of steps back in history.
+	 * 
+	 * @param stepsBack
+	 *            The number of steps back in history.
 	 * @return The energy value at stepsBack in time.
 	 */
-	public float getPreviousEnergyValue( int stepsBack )
-	{
-		if( stepsBack >= energies.length )
+	public float getPreviousEnergyValue(int stepsBack) {
+		if (stepsBack >= energies.length)
 			stepsBack = energies.length - 1;
-		
-		int pos = ( energies.length + ( energiesPos - stepsBack ) ) % energies.length;
-		
-		return energies[pos];
-	}	
 
-// Command
+		int pos = (energies.length + (energiesPos - stepsBack))
+				% energies.length;
+
+		return energies[pos];
+	}
+
+	// Command
 
 	/**
 	 * Accumulate some energy in the current energy.
-	 * @param value The value to accumulate.
+	 * 
+	 * @param value
+	 *            The value to accumulate.
 	 */
-	public void accumulateEnergy( float value )
-	{
+	public void accumulateEnergy(float value) {
 		energy += value;
 	}
-	
+
 	/**
 	 * Add a the current accumulated energy value in the set.
 	 */
-	public void storeEnergy()
-	{
-		energiesPos = ( energiesPos + 1 ) % energies.length;
+	public void storeEnergy() {
+		energiesPos = (energiesPos + 1) % energies.length;
 
 		energies[energiesPos] = energy;
 		lastEnergy = energy;
 		energy = 0;
 	}
-	
+
 	/**
 	 * Randomise the energies array.
 	 */
-	protected void clearEnergies()
-	{
-		for( int i=0; i<energies.length; ++i )
-			energies[i] = (float) ( ( Math.random() * 2000 ) - 1000 );
+	protected void clearEnergies() {
+		for (int i = 0; i < energies.length; ++i)
+			energies[i] = (float) ((Math.random() * 2000) - 1000);
 	}
 }

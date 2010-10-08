@@ -27,170 +27,155 @@ import org.graphstream.stream.ProxyPipe;
 import org.graphstream.stream.SourceBase;
 
 /**
- * Shell around a proxy pipe coming from the viewer allowing to put viewer listeners on a viewer
- * that runs in a distinct thread. 
+ * Shell around a proxy pipe coming from the viewer allowing to put viewer
+ * listeners on a viewer that runs in a distinct thread.
  * 
  * <p>
- * This pipe is a probe that you can place in the event loop between the viewer and the graph.
- * It will transmit all events coming from the viewer to the graph (or any sink you connect to it).
- * But in addition it will monitor standard attribute changes to redistribute them to specify
+ * This pipe is a probe that you can place in the event loop between the viewer
+ * and the graph. It will transmit all events coming from the viewer to the
+ * graph (or any sink you connect to it). But in addition it will monitor
+ * standard attribute changes to redistribute them to specify
  * "viewer listeners".
  * </p>
  * 
  * <p>
- * As any proxy pipe, a viewer pipe must be "pumped" to receive events coming from other threads.
+ * As any proxy pipe, a viewer pipe must be "pumped" to receive events coming
+ * from other threads.
  * </p>
  */
-public class ViewerPipe extends SourceBase implements ProxyPipe
-{
-// Attribute
-	
+public class ViewerPipe extends SourceBase implements ProxyPipe {
+	// Attribute
+
 	private String id;
-	
+
 	/**
 	 * The incoming event stream.
 	 */
 	protected ProxyPipe pipeIn;
-	
+
 	/**
 	 * Listeners on the viewer specific events.
 	 */
 	protected HashSet<ViewerListener> viewerListeners = new HashSet<ViewerListener>();
-	
-// Construction
-	
+
+	// Construction
+
 	/**
 	 * A shell around a pipe coming from a viewer in another thread.
 	 */
-	protected ViewerPipe( String id, ProxyPipe pipeIn )
-	{
-		this.id     = id;
+	protected ViewerPipe(String id, ProxyPipe pipeIn) {
+		this.id = id;
 		this.pipeIn = pipeIn;
-		pipeIn.addSink( this );
+		pipeIn.addSink(this);
 	}
-	
-// Access
-	
-	public String getId()
-	{
+
+	// Access
+
+	public String getId() {
 		return id;
 	}
-	
-// Commands
-	
+
+	// Commands
+
 	/**
 	 * Pump events from the pipe.
 	 */
-	public void pump()
-	{
+	public void pump() {
 		pipeIn.pump();
 	}
-	
-	public void addViewerListener( ViewerListener listener )
-	{
-		viewerListeners.add( listener );
+
+	public void addViewerListener(ViewerListener listener) {
+		viewerListeners.add(listener);
 	}
-	
-	public void removeViewerListener( ViewerListener listener )
-	{
-		viewerListeners.remove( listener );
+
+	public void removeViewerListener(ViewerListener listener) {
+		viewerListeners.remove(listener);
 	}
-	
-// Sink interface
 
-	public void edgeAttributeAdded( String sourceId, long timeId, String edgeId, String attribute,
-            Object value )
-    {
-		sendEdgeAttributeAdded( sourceId, timeId, edgeId, attribute, value );
-    }
+	// Sink interface
 
-	public void edgeAttributeChanged( String sourceId, long timeId, String edgeId,
-            String attribute, Object oldValue, Object newValue )
-    {
-		sendEdgeAttributeChanged( sourceId, timeId, edgeId, attribute, oldValue, newValue );
-    }
+	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
+			String attribute, Object value) {
+		sendEdgeAttributeAdded(sourceId, timeId, edgeId, attribute, value);
+	}
 
-	public void edgeAttributeRemoved( String sourceId, long timeId, String edgeId, String attribute )
-    {
-		sendEdgeAttributeRemoved( sourceId, timeId, edgeId, attribute );
-    }
+	public void edgeAttributeChanged(String sourceId, long timeId,
+			String edgeId, String attribute, Object oldValue, Object newValue) {
+		sendEdgeAttributeChanged(sourceId, timeId, edgeId, attribute, oldValue,
+				newValue);
+	}
 
-	public void graphAttributeAdded( String sourceId, long timeId, String attribute, Object value )
-    {
-		sendGraphAttributeAdded( sourceId, timeId, attribute, value );
+	public void edgeAttributeRemoved(String sourceId, long timeId,
+			String edgeId, String attribute) {
+		sendEdgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
+	}
 
-		if( attribute.equals( "ui.viewClosed" ) && value instanceof String )
-		{
-			for( ViewerListener listener: viewerListeners )
-				listener.viewClosed( (String)value );
-	
-			sendGraphAttributeRemoved( id, attribute );
+	public void graphAttributeAdded(String sourceId, long timeId,
+			String attribute, Object value) {
+		sendGraphAttributeAdded(sourceId, timeId, attribute, value);
+
+		if (attribute.equals("ui.viewClosed") && value instanceof String) {
+			for (ViewerListener listener : viewerListeners)
+				listener.viewClosed((String) value);
+
+			sendGraphAttributeRemoved(id, attribute);
+		} else if (attribute.equals("ui.clicked") && value instanceof String) {
+			for (ViewerListener listener : viewerListeners)
+				listener.buttonPushed((String) value);
+
+			sendGraphAttributeRemoved(id, attribute);
 		}
-		else if( attribute.equals( "ui.clicked" ) && value instanceof String )
-		{
-			for( ViewerListener listener: viewerListeners )
-				listener.buttonPushed( (String)value );
-			
-			sendGraphAttributeRemoved( id, attribute );
-		}
-    }
+	}
 
-	public void graphAttributeChanged( String sourceId, long timeId, String attribute,
-            Object oldValue, Object newValue )
-    {
-		sendGraphAttributeChanged( sourceId, timeId, attribute, oldValue, newValue );
-    }
+	public void graphAttributeChanged(String sourceId, long timeId,
+			String attribute, Object oldValue, Object newValue) {
+		sendGraphAttributeChanged(sourceId, timeId, attribute, oldValue,
+				newValue);
+	}
 
-	public void graphAttributeRemoved( String sourceId, long timeId, String attribute )
-    {
-		sendGraphAttributeRemoved( sourceId, timeId, attribute );
-    }
+	public void graphAttributeRemoved(String sourceId, long timeId,
+			String attribute) {
+		sendGraphAttributeRemoved(sourceId, timeId, attribute);
+	}
 
-	public void nodeAttributeAdded( String sourceId, long timeId, String nodeId, String attribute,
-            Object value )
-    {
-		sendNodeAttributeAdded( sourceId, timeId, nodeId, attribute, value );
-    }
+	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
+			String attribute, Object value) {
+		sendNodeAttributeAdded(sourceId, timeId, nodeId, attribute, value);
+	}
 
-	public void nodeAttributeChanged( String sourceId, long timeId, String nodeId,
-            String attribute, Object oldValue, Object newValue )
-    {
-		sendNodeAttributeChanged( sourceId, timeId, nodeId, attribute, oldValue, newValue );
-    }
+	public void nodeAttributeChanged(String sourceId, long timeId,
+			String nodeId, String attribute, Object oldValue, Object newValue) {
+		sendNodeAttributeChanged(sourceId, timeId, nodeId, attribute, oldValue,
+				newValue);
+	}
 
-	public void nodeAttributeRemoved( String sourceId, long timeId, String nodeId, String attribute )
-    {
-		sendNodeAttributeRemoved( sourceId, timeId, nodeId, attribute );
-    }
+	public void nodeAttributeRemoved(String sourceId, long timeId,
+			String nodeId, String attribute) {
+		sendNodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
+	}
 
-	public void edgeAdded( String sourceId, long timeId, String edgeId, String fromNodeId,
-            String toNodeId, boolean directed )
-    {
-		sendEdgeAdded( sourceId, timeId, edgeId, fromNodeId, toNodeId, directed );
-    }
+	public void edgeAdded(String sourceId, long timeId, String edgeId,
+			String fromNodeId, String toNodeId, boolean directed) {
+		sendEdgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId, directed);
+	}
 
-	public void edgeRemoved( String sourceId, long timeId, String edgeId )
-    {
-		sendEdgeRemoved( sourceId, timeId, edgeId );
-    }
+	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
+		sendEdgeRemoved(sourceId, timeId, edgeId);
+	}
 
-	public void graphCleared( String sourceId, long timeId )
-    {
-		sendGraphCleared( sourceId, timeId );
-    }
+	public void graphCleared(String sourceId, long timeId) {
+		sendGraphCleared(sourceId, timeId);
+	}
 
-	public void nodeAdded( String sourceId, long timeId, String nodeId )
-    {
-		sendNodeAdded( sourceId, timeId, nodeId );
-    }
+	public void nodeAdded(String sourceId, long timeId, String nodeId) {
+		sendNodeAdded(sourceId, timeId, nodeId);
+	}
 
-	public void nodeRemoved( String sourceId, long timeId, String nodeId )
-    {
-		sendNodeRemoved( sourceId, timeId, nodeId );
-    }
+	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
+		sendNodeRemoved(sourceId, timeId, nodeId);
+	}
 
-	public void stepBegins( String sourceId, long timeId, double step )
-    {
-		sendStepBegins( sourceId, timeId, step );
-    }
+	public void stepBegins(String sourceId, long timeId, double step) {
+		sendStepBegins(sourceId, timeId, step);
+	}
 }

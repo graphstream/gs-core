@@ -36,72 +36,67 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.SizeMode;
 import org.graphstream.ui.swingViewer.util.Camera;
 import org.graphstream.ui.swingViewer.util.GraphMetrics;
 
-public class NodeRenderer extends ElementRenderer
-{
+public class NodeRenderer extends ElementRenderer {
 	protected GraphMetrics metrics;
-	
+
 	protected Values size;
-	
+
 	protected Ellipse2D shape;
-	
+
 	protected float width, height, w2, h2;
-	
+
 	@Override
-    protected void setupRenderingPass( StyleGroup group, Graphics2D g, Camera camera )
-    {
+	protected void setupRenderingPass(StyleGroup group, Graphics2D g,
+			Camera camera) {
 		metrics = camera.getMetrics();
-		configureText( group, camera );
-    }
+		configureText(group, camera);
+	}
 
 	@Override
-    protected void pushDynStyle( StyleGroup group, Graphics2D g, Camera camera,
-            GraphicElement element )
-    {
-		Color color = group.getFillColor( 0 );
-		
-		if( element != null && group.getFillMode() == FillMode.DYN_PLAIN )
-			color = interpolateColor( group, element );
-		
-		g.setColor( color );
-		
-		if( group.getSizeMode() == SizeMode.DYN_SIZE )
-		{
-			width  = metrics.lengthToGu( StyleConstants.convertValue( element.getAttribute( "ui.size" ) ) );
+	protected void pushDynStyle(StyleGroup group, Graphics2D g, Camera camera,
+			GraphicElement element) {
+		Color color = group.getFillColor(0);
+
+		if (element != null && group.getFillMode() == FillMode.DYN_PLAIN)
+			color = interpolateColor(group, element);
+
+		g.setColor(color);
+
+		if (group.getSizeMode() == SizeMode.DYN_SIZE) {
+			width = metrics.lengthToGu(StyleConstants.convertValue(element
+					.getAttribute("ui.size")));
 			height = width;
-			w2     = width / 2;
-			h2     = height / 2;
+			w2 = width / 2;
+			h2 = height / 2;
 		}
-    }
+	}
 
 	@Override
-    protected void pushStyle( StyleGroup group, Graphics2D g, Camera camera )
-    {
-		size    = group.getSize();
-		shape   = new Ellipse2D.Float();
-		width   = metrics.lengthToGu( size, 0 );
-		height  = size.size() > 1 ? metrics.lengthToGu( size, 1 ) : width;
-		w2      = width  / 2;
-		h2      = height / 2;
-		
-		Color color = group.getFillColor( 0 );
-		
-		g.setColor( color );
-    }
+	protected void pushStyle(StyleGroup group, Graphics2D g, Camera camera) {
+		size = group.getSize();
+		shape = new Ellipse2D.Float();
+		width = metrics.lengthToGu(size, 0);
+		height = size.size() > 1 ? metrics.lengthToGu(size, 1) : width;
+		w2 = width / 2;
+		h2 = height / 2;
+
+		Color color = group.getFillColor(0);
+
+		g.setColor(color);
+	}
 
 	@Override
-    protected void elementInvisible( StyleGroup group, Graphics2D g, Camera camera,
-            GraphicElement element )
-    {
-    }
+	protected void elementInvisible(StyleGroup group, Graphics2D g,
+			Camera camera, GraphicElement element) {
+	}
 
 	@Override
-    protected void renderElement( StyleGroup group, Graphics2D g, Camera camera,
-            GraphicElement element )
-    {
+	protected void renderElement(StyleGroup group, Graphics2D g, Camera camera,
+			GraphicElement element) {
 		GraphicNode node = (GraphicNode) element;
 
-		shape.setFrame( node.x-w2, node.y-h2, width, height );
-		g.fill( shape );
-		renderText( group, g, camera, element );
-    }
+		shape.setFrame(node.x - w2, node.y - h2, width, height);
+		g.fill(shape);
+		renderText(group, g, camera, element);
+	}
 }

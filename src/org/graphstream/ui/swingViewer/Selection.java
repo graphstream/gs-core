@@ -22,7 +22,6 @@
 
 package org.graphstream.ui.swingViewer;
 
-public class Selection
-{
+public class Selection {
 	public float x1, y1, x2, y2;
 }

@@ -32,233 +32,202 @@ import org.graphstream.graph.CompoundAttribute;
 /**
  * File output for the DGS (Dynamic Graph Stream) file format.
  */
-public class FileSinkDGS
-	extends FileSinkBase
-{
-// Attribute
-	
+public class FileSinkDGS extends FileSinkBase {
+	// Attribute
+
 	/**
 	 * A shortcut to the output.
 	 */
 	protected PrintStream out;
-	
+
 	protected String graphName = "";
-	
-// Command
-	
+
+	// Command
+
 	@Override
-	protected void outputHeader() throws IOException
-	{
+	protected void outputHeader() throws IOException {
 		out = (PrintStream) output;
-		
-		out.printf( "DGS004%n" );
-		
-		if( graphName.length() <= 0 )
-		     out.printf( "null 0 0%n" );
-		else out.printf( "\"%s\" 0 0%n", graphName );
+
+		out.printf("DGS004%n");
+
+		if (graphName.length() <= 0)
+			out.printf("null 0 0%n");
+		else
+			out.printf("\"%s\" 0 0%n", graphName);
 	}
 
 	@Override
-	protected void outputEndOfFile() throws IOException
-	{
+	protected void outputEndOfFile() throws IOException {
 		// NOP
 	}
 
-	public void edgeAttributeAdded( String graphId, long timeId, String edgeId, String attribute, Object value )
-	{
-		edgeAttributeChanged( graphId, timeId, edgeId, attribute, null, value );
+	public void edgeAttributeAdded(String graphId, long timeId, String edgeId,
+			String attribute, Object value) {
+		edgeAttributeChanged(graphId, timeId, edgeId, attribute, null, value);
 	}
 
-	public void edgeAttributeChanged( String graphId, long timeId, String edgeId, String attribute,
-	        Object oldValue, Object newValue )
-	{
-		out.printf( "ce \"%s\" %s%n", edgeId, attributeString( attribute, newValue, false ) );
+	public void edgeAttributeChanged(String graphId, long timeId,
+			String edgeId, String attribute, Object oldValue, Object newValue) {
+		out.printf("ce \"%s\" %s%n", edgeId,
+				attributeString(attribute, newValue, false));
 	}
 
-	public void edgeAttributeRemoved( String graphId, long timeId, String edgeId, String attribute )
-	{
-		out.printf( "ce \"%s\" %s%n", edgeId, attributeString( attribute, null, true ) );
+	public void edgeAttributeRemoved(String graphId, long timeId,
+			String edgeId, String attribute) {
+		out.printf("ce \"%s\" %s%n", edgeId,
+				attributeString(attribute, null, true));
 	}
 
-	public void graphAttributeAdded( String graphId, long timeId, String attribute, Object value )
-	{
-		graphAttributeChanged( graphId, timeId, attribute, null, value );
+	public void graphAttributeAdded(String graphId, long timeId,
+			String attribute, Object value) {
+		graphAttributeChanged(graphId, timeId, attribute, null, value);
 	}
 
-	public void graphAttributeChanged( String graphId, long timeId, String attribute, Object oldValue,
-	        Object newValue )
-	{
-		out.printf( "cg %s%n", attributeString( attribute, newValue, false ) );
+	public void graphAttributeChanged(String graphId, long timeId,
+			String attribute, Object oldValue, Object newValue) {
+		out.printf("cg %s%n", attributeString(attribute, newValue, false));
 	}
 
-	public void graphAttributeRemoved( String graphId, long timeId, String attribute )
-	{
-		out.printf( "cg %s%n", attributeString( attribute, null, true ) );
+	public void graphAttributeRemoved(String graphId, long timeId,
+			String attribute) {
+		out.printf("cg %s%n", attributeString(attribute, null, true));
 	}
 
-	public void nodeAttributeAdded( String graphId, long timeId, String nodeId, String attribute, Object value )
-	{
-		nodeAttributeChanged( graphId, timeId, nodeId, attribute, null, value );
+	public void nodeAttributeAdded(String graphId, long timeId, String nodeId,
+			String attribute, Object value) {
+		nodeAttributeChanged(graphId, timeId, nodeId, attribute, null, value);
 	}
 
-	public void nodeAttributeChanged( String graphId, long timeId, String nodeId, String attribute,
-	        Object oldValue, Object newValue )
-	{
-		out.printf( "cn \"%s\" %s%n", nodeId, attributeString( attribute, newValue, false ) );
+	public void nodeAttributeChanged(String graphId, long timeId,
+			String nodeId, String attribute, Object oldValue, Object newValue) {
+		out.printf("cn \"%s\" %s%n", nodeId,
+				attributeString(attribute, newValue, false));
 	}
 
-	public void nodeAttributeRemoved( String graphId, long timeId, String nodeId, String attribute )
-	{
-		out.printf( "cn \"%s\" %s%n", nodeId, attributeString( attribute, null, true ) );
+	public void nodeAttributeRemoved(String graphId, long timeId,
+			String nodeId, String attribute) {
+		out.printf("cn \"%s\" %s%n", nodeId,
+				attributeString(attribute, null, true));
 	}
 
-	public void edgeAdded( String graphId, long timeId, String edgeId, String fromNodeId, String toNodeId,
-	        boolean directed )
-	{
-		out.printf( "ae \"%s\" \"%s\" %s \"%s\"%n", edgeId, fromNodeId, directed ? ">" : "", toNodeId );
+	public void edgeAdded(String graphId, long timeId, String edgeId,
+			String fromNodeId, String toNodeId, boolean directed) {
+		out.printf("ae \"%s\" \"%s\" %s \"%s\"%n", edgeId, fromNodeId,
+				directed ? ">" : "", toNodeId);
 	}
 
-	public void edgeRemoved( String graphId, long timeId, String edgeId )
-	{
-		out.printf( "de \"%s\"%n", edgeId );
+	public void edgeRemoved(String graphId, long timeId, String edgeId) {
+		out.printf("de \"%s\"%n", edgeId);
 	}
 
-	public void graphCleared( String graphId, long timeId )
-	{
-		out.printf( "clear%n" );
+	public void graphCleared(String graphId, long timeId) {
+		out.printf("clear%n");
 	}
 
-	public void nodeAdded( String graphId, long timeId, String nodeId )
-	{
-		out.printf( "an \"%s\"%n", nodeId );
+	public void nodeAdded(String graphId, long timeId, String nodeId) {
+		out.printf("an \"%s\"%n", nodeId);
 	}
 
-	public void nodeRemoved( String graphId, long timeId, String nodeId )
-	{
-		out.printf( "dn \"%s\"%n", nodeId );
+	public void nodeRemoved(String graphId, long timeId, String nodeId) {
+		out.printf("dn \"%s\"%n", nodeId);
 	}
 
-	public void stepBegins( String graphId, long timeId, double step )
-	{
-		out.printf( Locale.US, "st %f%n", step );
+	public void stepBegins(String graphId, long timeId, double step) {
+		out.printf(Locale.US, "st %f%n", step);
 	}
-	
-// Utility
-	
-	protected String attributeString( String key, Object value, boolean remove )
-	{
-		if( key == null || key.length() == 0 )
+
+	// Utility
+
+	protected String attributeString(String key, Object value, boolean remove) {
+		if (key == null || key.length() == 0)
 			return null;
-		
-		if( remove )
-		{
-			return String.format( " -\"%s\"", key );
-		}
-		else
-		{
-			if( value != null && value.getClass().isArray() )
-			{
+
+		if (remove) {
+			return String.format(" -\"%s\"", key);
+		} else {
+			if (value != null && value.getClass().isArray()) {
 				Object[] values = (Object[]) value;
 				StringBuffer sb = new StringBuffer();
-				
-				sb.append( String.format( " \"%s\":", key ) );
-				
-				if( values.length > 0 )
-				     sb.append( valueString( values[0] ) );
-				else sb.append( "\"\"" );
-				
-				for( int i=1; i<values.length; ++i )
-					sb.append( String.format( ",%s", valueString( values[i] ) ) );
-				
+
+				sb.append(String.format(" \"%s\":", key));
+
+				if (values.length > 0)
+					sb.append(valueString(values[0]));
+				else
+					sb.append("\"\"");
+
+				for (int i = 1; i < values.length; ++i)
+					sb.append(String.format(",%s", valueString(values[i])));
+
 				return sb.toString();
-			}
-			else
-			{
-				return String.format( " \"%s\":%s", key, valueString( value ) );
+			} else {
+				return String.format(" \"%s\":%s", key, valueString(value));
 			}
 		}
 	}
-	
-	protected String valueString( Object value )
-	{
-		if( value instanceof CharSequence )
-		{
-			return String.format( "\"%s\"", (CharSequence)value );
-		}
-		else if( value instanceof Number )
-		{
-			if( value instanceof Integer || value instanceof Short || value instanceof Byte || value instanceof Long )
-			{
-				return String.format( Locale.US, "%d", ((Number)value).longValue() );
+
+	protected String valueString(Object value) {
+		if (value instanceof CharSequence) {
+			return String.format("\"%s\"", (CharSequence) value);
+		} else if (value instanceof Number) {
+			if (value instanceof Integer || value instanceof Short
+					|| value instanceof Byte || value instanceof Long) {
+				return String.format(Locale.US, "%d",
+						((Number) value).longValue());
+			} else if (value instanceof Float || value instanceof Double) {
+				return String.format(Locale.US, "%f",
+						((Number) value).doubleValue());
+			} else if (value instanceof Character) {
+				return String.format("\"%c\"", ((Character) value).charValue());
+			} else if (value instanceof Boolean) {
+				return String.format(Locale.US, "\"%b\"", ((Boolean) value));
+			} else {
+				return String.format(Locale.US, " %f",
+						((Number) value).doubleValue());
 			}
-			else if( value instanceof Float || value instanceof Double )
-			{
-				return String.format( Locale.US, "%f", ((Number)value).doubleValue() );
-			}
-			else if( value instanceof Character )
-			{
-				return String.format( "\"%c\"", ((Character)value).charValue() );
-			}
-			else if( value instanceof Boolean )
-			{
-				return String.format( Locale.US, "\"%b\"", ((Boolean)value) );
-			}
-			else
-			{
-				return String.format( Locale.US, " %f", ((Number)value).doubleValue() );
-			}
-		}
-		else if( value == null )
-		{
+		} else if (value == null) {
 			return "\"\"";
-		}
-		else if( value instanceof Object[] )
-		{
+		} else if (value instanceof Object[]) {
 			Object array[] = (Object[]) value;
-			int    n       = array.length;
+			int n = array.length;
 			StringBuffer sb = new StringBuffer();
-			
-			if( array.length > 0 )
-				sb.append( valueString( array[0] ) );
-			
-			for( int i=1; i<n; i++ )
-			{
-				sb.append( "," );
-				sb.append( valueString( array[i] ) );
+
+			if (array.length > 0)
+				sb.append(valueString(array[0]));
+
+			for (int i = 1; i < n; i++) {
+				sb.append(",");
+				sb.append(valueString(array[i]));
 			}
-				
+
 			return sb.toString();
-		}
-		else if( value instanceof HashMap<?,?> || value instanceof CompoundAttribute )
-		{
-			HashMap<?,?> hash;
-			
-			if( value instanceof CompoundAttribute )
-			     hash = ((CompoundAttribute)value).toHashMap();
-			else hash = (HashMap<?,?>) value;
-			
-			return hashToString( hash );
-		}
-		else
-		{
-			return String.format( "\"%s\"", value.toString());
+		} else if (value instanceof HashMap<?, ?>
+				|| value instanceof CompoundAttribute) {
+			HashMap<?, ?> hash;
+
+			if (value instanceof CompoundAttribute)
+				hash = ((CompoundAttribute) value).toHashMap();
+			else
+				hash = (HashMap<?, ?>) value;
+
+			return hashToString(hash);
+		} else {
+			return String.format("\"%s\"", value.toString());
 		}
 	}
-	
-	protected String hashToString( HashMap<?,?> hash )
-	{
+
+	protected String hashToString(HashMap<?, ?> hash) {
 		StringBuffer sb = new StringBuffer();
-		
-		sb.append( "[ " );
-		
-		for( Object key: hash.keySet() )
-		{
-			sb.append( attributeString( key.toString(), hash.get( key ), false ) );
-			sb.append( " " );
+
+		sb.append("[ ");
+
+		for (Object key : hash.keySet()) {
+			sb.append(attributeString(key.toString(), hash.get(key), false));
+			sb.append(" ");
 		}
-		
-		sb.append( ']' );
-		
+
+		sb.append(']');
+
 		return sb.toString();
 	}
 }

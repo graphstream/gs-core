@@ -19,18 +19,21 @@ package org.graphstream.ui.graphicGraph.stylesheet;
 /**
  * Listener for style events.
  */
-public interface StyleSheetListener
-{
+public interface StyleSheetListener {
 	/**
-	 * A style was changed or added. To differentiate the addition of a new style from a change
-	 * (augmentation) of an existing style, two values are passed, the old style if augmented and
-	 * the new style. The first is set to null if the style is added. The old style is set to a
-	 * value if is was augmented.
-	 * @param oldRule The style that changed.
-	 * @param newRule The style that was added to the style sheet.
+	 * A style was changed or added. To differentiate the addition of a new
+	 * style from a change (augmentation) of an existing style, two values are
+	 * passed, the old style if augmented and the new style. The first is set to
+	 * null if the style is added. The old style is set to a value if is was
+	 * augmented.
+	 * 
+	 * @param oldRule
+	 *            The style that changed.
+	 * @param newRule
+	 *            The style that was added to the style sheet.
 	 */
-	void styleAdded( Rule oldRule, Rule newRule );
-	
+	void styleAdded(Rule oldRule, Rule newRule);
+
 	/**
 	 * The complete style sheet was cleared.
 	 */

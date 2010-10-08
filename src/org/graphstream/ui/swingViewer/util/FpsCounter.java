@@ -21,115 +21,111 @@ package org.graphstream.ui.swingViewer.util;
  * 
  * @author Antoine Dutot
  */
-public class FpsCounter
-{
-// Attribute
+public class FpsCounter {
+	// Attribute
 
 	/**
 	 * Time measure.
 	 */
 	protected double t1, t2;
-	
+
 	/**
 	 * The last frame time.
 	 */
 	protected double time;
-	
+
 	/**
 	 * Counter for the average.
 	 */
 	protected int count = 0;
-	
+
 	/**
 	 * The average time.
 	 */
 	protected double avgTime;
-	
-// Construction
 
-	public FpsCounter()
-	{
+	// Construction
+
+	public FpsCounter() {
 	}
-	
-// Access
-	
+
+	// Access
+
 	/**
-	 * The number of frames per second according to the last measured frame (instantaneous measure).
+	 * The number of frames per second according to the last measured frame
+	 * (instantaneous measure).
+	 * 
 	 * @return The estimated frame-per-second measure of the last frame.
 	 */
-	public double getFramesPerSecond()
-	{
-		return( 1000000000.0 / time );
+	public double getFramesPerSecond() {
+		return (1000000000.0 / time);
 	}
-	
+
 	/**
 	 * The duration in seconds of the last measured frame.
+	 * 
 	 * @return The last frame time in seconds.
 	 */
-	public double getLastFrameTimeInSeconds()
-	{
-		return( time / 1000000000.0 );
+	public double getLastFrameTimeInSeconds() {
+		return (time / 1000000000.0);
 	}
-	
+
 	/**
-	 * The number of frames times used to compute the average frame-per-second and frame time. This
-	 * number augments with the measures until a maximum, where it is reset to 0.
+	 * The number of frames times used to compute the average frame-per-second
+	 * and frame time. This number augments with the measures until a maximum,
+	 * where it is reset to 0.
+	 * 
 	 * @return The number of frames measure.
 	 */
-	public int getAverageMeasureCount()
-	{
+	public int getAverageMeasureCount() {
 		return count;
 	}
-	
+
 	/**
-	 * The average frame-per-second measure. 
+	 * The average frame-per-second measure.
+	 * 
 	 * @return The average number of frames per second.
 	 * @see #getAverageMeasureCount()
 	 */
-	public double getAverageFramesPerSecond()
-	{
-		return( 1000000000.0 / ( avgTime / count ) );
+	public double getAverageFramesPerSecond() {
+		return (1000000000.0 / (avgTime / count));
 	}
-	
+
 	/**
 	 * The average frame time.
+	 * 
 	 * @return The time used by a frame in average.
 	 */
-	public double getAverageFrameTimeInSeconds()
-	{
-		return( ( avgTime / count ) * 1000000000.0 );
+	public double getAverageFrameTimeInSeconds() {
+		return ((avgTime / count) * 1000000000.0);
 	}
-	
-// Command
 
-	public void resetAverages()
-	{
-		count   = 0;
+	// Command
+
+	public void resetAverages() {
+		count = 0;
 		avgTime = 0;
 	}
-	
+
 	/**
 	 * Start a frame measure.
 	 */
-	public void beginFrame()
-	{
+	public void beginFrame() {
 		t1 = System.nanoTime();
 	}
-	
+
 	/**
 	 * End a frame measure.
 	 */
-	public void endFrame()
-	{
-		if( count > 1000000 )
-		{
-			count   = 0;
+	public void endFrame() {
+		if (count > 1000000) {
+			count = 0;
 			avgTime = 0;
 		}
-		
-		t2       = System.nanoTime();
-		time     = ( t2 - t1 );
+
+		t2 = System.nanoTime();
+		time = (t2 - t1);
 		avgTime += time;
-		count   += 1;
+		count += 1;
 	}
 }

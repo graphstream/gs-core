@@ -26,29 +26,37 @@ package org.graphstream.stream;
 /**
  * Sink of graph events.
  * 
- * <p>An output is something that can receive graph events. The output will send or transform
- * the graph events in another form: a file, a network stream, a visualization, an algorithm,
- * a metric, etc.</p>
+ * <p>
+ * An output is something that can receive graph events. The output will send or
+ * transform the graph events in another form: a file, a network stream, a
+ * visualization, an algorithm, a metric, etc.
+ * </p>
  * 
- * <p>The output can filter the stream of attribute events using {@link AttributePredicate}s.</p>
+ * <p>
+ * The output can filter the stream of attribute events using
+ * {@link AttributePredicate}s.
+ * </p>
  * 
  * 
- * <p>This listener is in fact the grouping of two specialized listeners.
- * The first one listens only at structural changes in the graph (node and edge
- * addition and removal). It is the {@link org.graphstream.stream.ElementSink}.
- * The second one listens only at attributes values changes on elements of the
- * graph (attribute addition, removal and change of values). It is the
- * {@link org.graphstream.stream.AttributeSink}.</p>
+ * <p>
+ * This listener is in fact the grouping of two specialized listeners. The first
+ * one listens only at structural changes in the graph (node and edge addition
+ * and removal). It is the {@link org.graphstream.stream.ElementSink}. The
+ * second one listens only at attributes values changes on elements of the graph
+ * (attribute addition, removal and change of values). It is the
+ * {@link org.graphstream.stream.AttributeSink}.
+ * </p>
  * 
- * <p>It is possible to listen only at elements or attributes changes with these
- * two interfaces. Registering a graph listener will allow to listen at the
- * both elements and attributes at the same time.</p>
+ * <p>
+ * It is possible to listen only at elements or attributes changes with these
+ * two interfaces. Registering a graph listener will allow to listen at the both
+ * elements and attributes at the same time.
+ * </p>
  * 
  * @see Source
  * @see Pipe
  * @see AttributeSink
  * @see ElementSink
  */
-public interface Sink extends AttributeSink, ElementSink
-{
+public interface Sink extends AttributeSink, ElementSink {
 }

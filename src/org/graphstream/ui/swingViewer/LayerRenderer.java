@@ -27,23 +27,40 @@ import java.awt.Graphics2D;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 
 /**
- * A specific rendering class that can be plugged in any view and is called to draw under or above the graph.
+ * A specific rendering class that can be plugged in any view and is called to
+ * draw under or above the graph.
+ * 
  * @see View#setForeLayoutRenderer(LayerRenderer)
- * @see View#setBackLayerRenderer(LayerRenderer) 
+ * @see View#setBackLayerRenderer(LayerRenderer)
  */
-public interface LayerRenderer
-{
+public interface LayerRenderer {
 	/**
 	 * Render something under or above the graph.
-	 * @param graphics The Swing graphics.
-	 * @param graph The graphic representation of the graph.
-	 * @param px2Gu The ratio to pass from pixels to graph units.
-	 * @param widthPx The width in pixels of the view port.
-	 * @param heightPx The height in pixels of the view port.
-	 * @param minXGu The minimum visible point abscissa of the graph in graph units.
-	 * @param minYGu The minimum visible point ordinate of the graph in graph units.
-	 * @param maxXGu The maximum visible point abscissa of the graph in graph units.
-	 * @param maxYGu The maximum visible point ordinate of the graph in graph units.
+	 * 
+	 * @param graphics
+	 *            The Swing graphics.
+	 * @param graph
+	 *            The graphic representation of the graph.
+	 * @param px2Gu
+	 *            The ratio to pass from pixels to graph units.
+	 * @param widthPx
+	 *            The width in pixels of the view port.
+	 * @param heightPx
+	 *            The height in pixels of the view port.
+	 * @param minXGu
+	 *            The minimum visible point abscissa of the graph in graph
+	 *            units.
+	 * @param minYGu
+	 *            The minimum visible point ordinate of the graph in graph
+	 *            units.
+	 * @param maxXGu
+	 *            The maximum visible point abscissa of the graph in graph
+	 *            units.
+	 * @param maxYGu
+	 *            The maximum visible point ordinate of the graph in graph
+	 *            units.
 	 */
-	void render( Graphics2D graphics, GraphicGraph graph, float px2Gu, int widthPx, int heightPx, float minXGu, float minYGu, float maxXGu, float maxYGu );
+	void render(Graphics2D graphics, GraphicGraph graph, float px2Gu,
+			int widthPx, int heightPx, float minXGu, float minYGu,
+			float maxXGu, float maxYGu);
 }
