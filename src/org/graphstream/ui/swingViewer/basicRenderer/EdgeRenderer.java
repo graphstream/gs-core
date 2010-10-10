@@ -35,6 +35,7 @@ import org.graphstream.ui.graphicGraph.GraphicNode;
 import org.graphstream.ui.graphicGraph.StyleGroup;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.graphicGraph.stylesheet.Values;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.ArrowShape;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.FillMode;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.SizeMode;
 import org.graphstream.ui.swingViewer.util.Camera;
@@ -110,35 +111,37 @@ public class EdgeRenderer extends ElementRenderer {
 	protected void renderArrow(StyleGroup group, Graphics2D g, Camera camera,
 			GraphicEdge edge) {
 		if (edge.isDirected() && arrowWidth > 0 && arrowLength > 0) {
-			Path2D shape = new Path2D.Float();
-			GraphicNode node0 = (GraphicNode) edge.getNode0();
-			GraphicNode node1 = (GraphicNode) edge.getNode1();
-			float off = evalEllipseRadius(edge, node0, node1, camera);
-			Vector2 theDirection = new Vector2(node1.getX() - node0.getX(),
-					node1.getY() - node0.getY());
-
-			theDirection.normalize();
-
-			float x = node1.x - (theDirection.data[0] * off);
-			float y = node1.y - (theDirection.data[1] * off);
-			Vector2 perp = new Vector2(theDirection.data[1],
-					-theDirection.data[0]);
-
-			perp.normalize();
-			theDirection.scalarMult(arrowLength);
-			perp.scalarMult(arrowWidth);
-
-			// Create a polygon.
-
-			shape.reset();
-			shape.moveTo(x, y);
-			shape.lineTo(x - theDirection.data[0] + perp.data[0], y
-					- theDirection.data[1] + perp.data[1]);
-			shape.lineTo(x - theDirection.data[0] - perp.data[0], y
-					- theDirection.data[1] - perp.data[1]);
-			shape.closePath();
-
-			g.fill(shape);
+			if (group.getArrowShape()!=ArrowShape.NONE) {
+				Path2D shape = new Path2D.Float();
+				GraphicNode node0 = (GraphicNode) edge.getNode0();
+				GraphicNode node1 = (GraphicNode) edge.getNode1();
+				float off = evalEllipseRadius(edge, node0, node1, camera);
+				Vector2 theDirection = new Vector2(node1.getX() - node0.getX(),
+						node1.getY() - node0.getY());
+	
+				theDirection.normalize();
+	
+				float x = node1.x - (theDirection.data[0] * off);
+				float y = node1.y - (theDirection.data[1] * off);
+				Vector2 perp = new Vector2(theDirection.data[1],
+						-theDirection.data[0]);
+	
+				perp.normalize();
+				theDirection.scalarMult(arrowLength);
+				perp.scalarMult(arrowWidth);
+	
+				// Create a polygon.
+	
+				shape.reset();
+				shape.moveTo(x, y);
+				shape.lineTo(x - theDirection.data[0] + perp.data[0], y
+						- theDirection.data[1] + perp.data[1]);
+				shape.lineTo(x - theDirection.data[0] - perp.data[0], y
+						- theDirection.data[1] - perp.data[1]);
+				shape.closePath();
+	
+				g.fill(shape);
+			}
 		}
 	}
 
