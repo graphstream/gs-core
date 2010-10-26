@@ -24,7 +24,9 @@
 package org.graphstream.graph.implementations;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.graphstream.graph.Edge;
@@ -117,6 +119,12 @@ public class MultiNode extends DefaultNode {
 
 		return null;
 	}
+	
+	@Override
+	public <T extends Edge> T getEdgeBetween(String id) {
+		if (hasEdgeToward(id)) return getEdgeToward(id);
+		else return getEdgeFrom(id);
+	}
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -132,14 +140,36 @@ public class MultiNode extends DefaultNode {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<T> getEnteringEdgeSet() {
+	public <T extends Edge> Iterable<T> getEachEnteringEdge() {
 		return (Iterable<T>) from;
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<T> getLeavingEdgeSet() {
+	public <T extends Edge> Iterable<T> getEachLeavingEdge() {
 		return (Iterable<T>) to;
+	}
+	
+	@Override
+	public <T extends Edge> Collection<T> getEnteringEdgeSet() {
+		// Ah ah, this set does not exists, must create it.
+		HashSet<T> set = new HashSet<T>();
+		Iterator<T> k = getEnteringEdgeIterator();
+		while(k.hasNext()) {
+			set.add(k.next());
+		}
+		return set;
+	}
+
+	@Override
+	public <T extends Edge> Collection<T> getLeavingEdgeSet() {
+		// Ah ah, this set does not exists, must create it.
+		HashSet<T> set = new HashSet<T>();
+		Iterator<T> k = getLeavingEdgeIterator();
+		while(k.hasNext()) {
+			set.add(k.next());
+		}
+		return set;
 	}
 
 	// Commands

@@ -195,6 +195,9 @@ public class DefaultView extends View implements ComponentListener,
 			if (title == null)
 				title = (String) graph.getLabel("ui.default.title");
 
+			if (title == null)
+				title = (String) graph.getLabel("ui.title");
+			
 			if (title != null)
 				frame.setTitle(title);
 		}

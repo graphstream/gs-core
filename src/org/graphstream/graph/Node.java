@@ -23,6 +23,7 @@
 
 package org.graphstream.graph;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 /**
@@ -73,7 +74,7 @@ public interface Node extends Element, Iterable<Edge> {
 	 * 
 	 * @param id
 	 *            Identifier of the target node.
-	 * @return True if a directed edges goes from this node to 'id' or if an
+	 * @return True if a directed edge goes from this node to 'id' or if an
 	 *         undirected edge exists.
 	 */
 	boolean hasEdgeToward(String id);
@@ -83,11 +84,20 @@ public interface Node extends Element, Iterable<Edge> {
 	 * 
 	 * @param id
 	 *            Identifier of the source node.
-	 * @return True if a directed edges goes from this node to 'id' or if an
+	 * @return True if a directed edge goes from this node to 'id' or if an
 	 *         undirected edge exists.
 	 */
 	boolean hasEdgeFrom(String id);
 
+	/**
+	 * True if an edge exists between this node and node 'id'.
+	 * 
+	 * @param id
+	 *            Identifier of another node.
+	 * @return True if a  edge exists between this node and node 'id'.
+	 */
+	boolean hasEdgeBetween(String id);
+	
 	/**
 	 * Retrieve an edge that leaves this node toward 'id'.
 	 * <p>
@@ -140,6 +150,31 @@ public interface Node extends Element, Iterable<Edge> {
 	 */
 	<T extends Edge> T getEdgeFrom(String id);
 
+	/**
+	 * Retrieve an edge between this node and the node 'id', if it exits.
+	 * <p>
+	 * This method selects directed or undirected edges. If the edge is directed, its direction
+	 * is not important and leaving or entering edges will be selected.
+	 * </p>
+	 * <p>
+	 * This method is implicitly generic and return something which extends
+	 * Edge. The return type is the one of the left part of the assignment. For
+	 * example, in the following call :
+	 * 
+	 * <pre>
+	 * ExtendedEdge e = node.getEdgeFrom(&quot;...&quot;);
+	 * </pre>
+	 * 
+	 * the method will return an ExtendedEdge. If no left part exists, method
+	 * will just return an Edge.
+	 * </p>
+	 * 
+	 * @param id
+	 *            Identifier of the opposite node.
+	 * @return Edge between node 'id' and this node if it exists, else null.
+	 */
+	<T extends Edge> T getEdgeBetween(String id);
+	
 	/**
 	 * Iterator on the set of connected edges.
 	 * <p>
@@ -368,7 +403,7 @@ public interface Node extends Element, Iterable<Edge> {
 	 * @return A collection containing all directed and undirected edges,
 	 *         leaving or entering.
 	 */
-	<T extends Edge> Iterable<T> getEdgeSet();
+	<T extends Edge> Iterable<T> getEachEdge();
 
 	/**
 	 * Set of all leaving edges.
@@ -388,7 +423,7 @@ public interface Node extends Element, Iterable<Edge> {
 	 * @return A collection of only edges that leave this node plus all
 	 *         undirected edges.
 	 */
-	<T extends Edge> Iterable<T> getLeavingEdgeSet();
+	<T extends Edge> Iterable<T> getEachLeavingEdge();
 
 	/**
 	 * Set of all entering edges.
@@ -408,7 +443,68 @@ public interface Node extends Element, Iterable<Edge> {
 	 * @return A collection of only edges that enter this node plus all
 	 *         undirected edges.
 	 */
-	<T extends Edge> Iterable<T> getEnteringEdgeSet();
+	<T extends Edge> Iterable<T> getEachEnteringEdge();
+
+	/**
+	 * Set of all entering and leaving edges.
+	 * 
+	 * <p>
+	 * This method is implicitly generic and return an Iterable over something
+	 * which extends Edge. The return type is the one of the left part of the
+	 * assignment. For example, in the following call :
+	 * 
+	 * <pre>
+	 * Iterable&lt;ExtendedEdge&gt; ite = node.getEdgeSet();
+	 * </pre>
+	 * 
+	 * the method will return an Iterable&lt;ExtendedEdge&gt;. If no left part
+	 * exists, method will just return an Iterable&lt;Edge&gt;.
+	 * </p>
+	 * 
+	 * @return A collection containing all directed and undirected edges,
+	 *         leaving or entering.
+	 */
+	<T extends Edge> Collection<T> getEdgeSet();
+
+	/**
+	 * Set of all leaving edges.
+	 * <p>
+	 * This method is implicitly generic and return an Iterable over something
+	 * which extends Edge. The return type is the one of the left part of the
+	 * assignment. For example, in the following call :
+	 * 
+	 * <pre>
+	 * Iterable&lt;ExtendedEdge&gt; ite = node.getLeavingEdgeSet();
+	 * </pre>
+	 * 
+	 * the method will return an Iterable&lt;ExtendedEdge&gt;. If no left part
+	 * exists, method will just return an Iterable&lt;Edge&gt;.
+	 * </p>
+	 * 
+	 * @return A collection of only edges that leave this node plus all
+	 *         undirected edges.
+	 */
+	<T extends Edge> Collection<T> getLeavingEdgeSet();
+
+	/**
+	 * Set of all entering edges.
+	 * <p>
+	 * This method is implicitly generic and return an Iterable over something
+	 * which extends Edge. The return type is the one of the left part of the
+	 * assignment. For example, in the following call :
+	 * 
+	 * <pre>
+	 * Iterable&lt;ExtendedEdge&gt; ite = node.getEnteringEdgeSet();
+	 * </pre>
+	 * 
+	 * the method will return an Iterable&lt;ExtendedEdge&gt;. If no left part
+	 * exists, method will just return an Iterable&lt;Edge&gt;.
+	 * </p>
+	 * 
+	 * @return A collection of only edges that enter this node plus all
+	 *         undirected edges.
+	 */
+	<T extends Edge> Collection<T> getEnteringEdgeSet();
 
 	/**
 	 * Override the Object.toString() method.

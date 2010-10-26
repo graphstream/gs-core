@@ -24,6 +24,9 @@
 package org.graphstream.graph.implementations;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.graphstream.graph.BreadthFirstIterator;
@@ -300,8 +303,13 @@ public class AdjacencyListNode extends AbstractElement implements Node {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<T> getEdgeSet() {
+	public <T extends Edge> Iterable<T> getEachEdge() {
 		return (Iterable<T>) edges;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Collection<T> getEdgeSet() {
+		return (Collection<T>) Collections.unmodifiableCollection(edges);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -319,14 +327,29 @@ public class AdjacencyListNode extends AbstractElement implements Node {
 		}
 		return null;
 	}
+	
+	public <T extends Edge> T getEdgeBetween(String id) {
+		if (hasEdgeToward(id)) return getEdgeToward(id);
+		else return getEdgeFrom(id);
+	}
 
 	public <T extends Edge> Iterator<T> getEnteringEdgeIterator() {
 		return new EnteringEdgeIterator<T>(this);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<T> getEnteringEdgeSet() {
+	public <T extends Edge> Iterable<T> getEachEnteringEdge() {
 		return new EdgeIterable<T>((Iterator<T>) getEnteringEdgeIterator());
+	}
+
+	public <T extends Edge> Collection<T> getEnteringEdgeSet() {
+		// Ah ah, this set does not exists, must create it.
+		HashSet<T> set = new HashSet<T>();
+		Iterator<T> k = getEnteringEdgeIterator();
+		while(k.hasNext()) {
+			set.add(k.next());
+		}
+		return set;
 	}
 
 	public Graph getGraph() {
@@ -343,8 +366,18 @@ public class AdjacencyListNode extends AbstractElement implements Node {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<T> getLeavingEdgeSet() {
+	public <T extends Edge> Iterable<T> getEachLeavingEdge() {
 		return new EdgeIterable<T>((Iterator<T>) getLeavingEdgeIterator());
+	}
+
+	public <T extends Edge> Collection<T> getLeavingEdgeSet() {
+		// Ah ah, this set does not exists, must create it.
+		HashSet<T> set = new HashSet<T>();
+		Iterator<T> k = getLeavingEdgeIterator();
+		while(k.hasNext()) {
+			set.add(k.next());
+		}
+		return set;
 	}
 
 	public <T extends Node> Iterator<T> getNeighborNodeIterator() {
@@ -354,6 +387,10 @@ public class AdjacencyListNode extends AbstractElement implements Node {
 	public int getOutDegree() {
 		LeavingEdgeIterator<?> it = new LeavingEdgeIterator<Edge>(this);
 		return it.nbLeaving;
+	}
+
+	public boolean hasEdgeBetween(String id) {
+		return( hasEdgeToward(id) || hasEdgeFrom(id) );
 	}
 
 	public boolean hasEdgeFrom(String id) {

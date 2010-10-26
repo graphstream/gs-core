@@ -24,6 +24,8 @@
 package org.graphstream.graph.implementations;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -185,8 +187,18 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node {
 	}
 
 	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterable<T> getEachEdge() {
+		return (Iterable<T>) edges;
+	}
+
+	@SuppressWarnings("unchecked")
 	public <T extends Edge> Collection<T> getEdgeSet() {
-		return (Collection<T>) edges;
+		return (Collection<T>) Collections.unmodifiableCollection(edges);
+	}
+	
+	public <T extends Edge> T getEdgeBetween(String id) {
+		if (hasEdgeToward(id)) return getEdgeToward(id);
+		else return getEdgeFrom(id);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -211,8 +223,18 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<T> getEnteringEdgeSet() {
+	public <T extends Edge> Iterable<T> getEachEnteringEdge() {
 		return new EdgeIterable<T>((Iterator<T>) getEnteringEdgeIterator());
+	}
+
+	public <T extends Edge> Collection<T> getEnteringEdgeSet() {
+		// Ah ah, this set does not exists, must create it.
+		HashSet<T> set = new HashSet<T>();
+		Iterator<T> k = getEnteringEdgeIterator();
+		while(k.hasNext()) {
+			set.add(k.next());
+		}
+		return set;
 	}
 
 	public Graph getGraph() {
@@ -239,8 +261,18 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<T> getLeavingEdgeSet() {
+	public <T extends Edge> Iterable<T> getEachLeavingEdge() {
 		return new EdgeIterable<T>((Iterator<T>) getLeavingEdgeIterator());
+	}
+
+	public <T extends Edge> Collection<T> getLeavingEdgeSet() {
+		// Ah ah, this set does not exists, must create it.
+		HashSet<T> set = new HashSet<T>();
+		Iterator<T> k = getLeavingEdgeIterator();
+		while(k.hasNext()) {
+			set.add(k.next());
+		}
+		return set;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -260,6 +292,10 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node {
 		}
 
 		return d;
+	}
+	
+	public boolean hasEdgeBetween(String id) {
+		return( hasEdgeToward(id) || hasEdgeFrom(id) );
 	}
 
 	public boolean hasEdgeFrom(String id) {

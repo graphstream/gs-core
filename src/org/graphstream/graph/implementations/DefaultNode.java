@@ -24,6 +24,8 @@
 package org.graphstream.graph.implementations;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -108,11 +110,17 @@ public abstract class DefaultNode extends AbstractElement implements Node {
 	public abstract boolean hasEdgeToward(String id);
 
 	public abstract boolean hasEdgeFrom(String id);
+	
+	public boolean hasEdgeBetween(String id) {
+		return( hasEdgeToward(id) || hasEdgeFrom(id) );
+	}
 
 	public abstract <T extends Edge> T getEdgeToward(String id);
 
 	public abstract <T extends Edge> T getEdgeFrom(String id);
 
+	public abstract <T extends Edge> T getEdgeBetween(String id);
+	
 	@SuppressWarnings("unchecked")
 	public <T extends Edge> Iterator<T> getEdgeIterator() {
 		return (Iterator<T>) new ElementIterator<Edge>(edges);
@@ -191,13 +199,22 @@ public abstract class DefaultNode extends AbstractElement implements Node {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<T> getEdgeSet() {
+	public <T extends Edge> Iterable<T> getEachEdge() {
 		return (Iterable<T>) edges;
 	}
 
-	public abstract <T extends Edge> Iterable<T> getLeavingEdgeSet();
+	public abstract <T extends Edge> Iterable<T> getEachLeavingEdge();
 
-	public abstract <T extends Edge> Iterable<T> getEnteringEdgeSet();
+	public abstract <T extends Edge> Iterable<T> getEachEnteringEdge();
+
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Collection<T> getEdgeSet() {
+		return (Collection<T>) Collections.unmodifiableCollection(edges);
+	}
+
+	public abstract <T extends Edge> Collection<T> getLeavingEdgeSet();
+
+	public abstract <T extends Edge> Collection<T> getEnteringEdgeSet();
 
 	// Command
 

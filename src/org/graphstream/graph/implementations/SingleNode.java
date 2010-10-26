@@ -23,6 +23,8 @@
 
 package org.graphstream.graph.implementations;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -99,6 +101,12 @@ public class SingleNode extends DefaultNode {
 	public <T extends Edge> T getEdgeFrom(String id) {
 		return (T) from.get(id);
 	}
+	
+	@Override
+	public <T extends Edge> T getEdgeBetween(String id) {
+		if (hasEdgeToward(id)) return getEdgeToward(id);
+		else return getEdgeFrom(id);
+	}
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -116,14 +124,26 @@ public class SingleNode extends DefaultNode {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<T> getLeavingEdgeSet() {
+	public <T extends Edge> Iterable<T> getEachLeavingEdge() {
 		return (Iterable<T>) to.values();
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<T> getEnteringEdgeSet() {
+	public <T extends Edge> Iterable<T> getEachEnteringEdge() {
 		return (Iterable<T>) from.values();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Collection<T> getLeavingEdgeSet() {
+		return (Collection<T>) Collections.unmodifiableCollection(to.values());
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Collection<T> getEnteringEdgeSet() {
+		return (Collection<T>) Collections.unmodifiableCollection(from.values());
 	}
 
 	// Command

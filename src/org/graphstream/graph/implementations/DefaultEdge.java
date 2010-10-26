@@ -228,6 +228,12 @@ public abstract class DefaultEdge extends AbstractElement implements Edge {
 	 * true, the edge goes from source to target, else this is a bidirectional
 	 * edge. The edge is also registered in the graph of the two nodes.
 	 * 
+	 * @param source
+	 *            The source node.
+	 * @param target
+	 *            The target node.
+	 * @param directed
+	 *            Is this edge directed?
 	 * @throws IllegalStateException
 	 *             if the edge is already bound, or if source is not part of the
 	 *             same graph than target or one is not part of a graph, or if
@@ -235,12 +241,6 @@ public abstract class DefaultEdge extends AbstractElement implements Edge {
 	 * @throws IdAlreadyInUseException
 	 *             if source or target already register an edge with the same
 	 *             name.
-	 * @param source
-	 *            The source node.
-	 * @param taget
-	 *            The target node.
-	 * @param directed
-	 *            Is this edge directed?
 	 */
 	@Deprecated
 	protected void bind(DefaultNode source, DefaultNode target, boolean directed)

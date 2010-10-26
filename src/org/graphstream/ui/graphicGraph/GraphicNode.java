@@ -19,6 +19,7 @@ import static org.graphstream.ui.graphicGraph.GraphPosLengthUtils.nodePosition;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -199,6 +200,11 @@ public class GraphicNode extends GraphicElement implements Node {
 
 		return null;
 	}
+	
+	public Edge getEdgeBetween(String id) {
+		if(hasEdgeToward(id)) return getEdgeToward(id);
+		else return getEdgeFrom(id);
+	}
 
 	public Edge getEdgeFrom(String id) {
 		return null;
@@ -217,9 +223,13 @@ public class GraphicNode extends GraphicElement implements Node {
 	public Iterator<Edge> iterator() {
 		return (Iterator<Edge>) getEdgeIterator();
 	}
+	
+	public Iterable<? extends Edge> getEachEdge() {
+		return mygraph.connectivity.get(this);
+	}
 
 	public Collection<? extends Edge> getEdgeSet() {
-		return mygraph.connectivity.get(this);
+		return Collections.unmodifiableCollection(mygraph.connectivity.get(this));
 	}
 
 	public Edge getEdgeToward(String id) {
@@ -236,9 +246,13 @@ public class GraphicNode extends GraphicElement implements Node {
 	public Iterator<? extends Edge> getEnteringEdgeIterator() {
 		return getEdgeIterator();
 	}
+	
+	public Iterable<? extends Edge> getEachEnteringEdge() {
+		return getEdgeSet();
+	}
 
 	public Collection<? extends Edge> getEnteringEdgeSet() {
-		return getEdgeSet();
+		return Collections.unmodifiableCollection(getEdgeSet());
 	}
 
 	public Graph getGraph() {
@@ -261,8 +275,12 @@ public class GraphicNode extends GraphicElement implements Node {
 		return getEdgeIterator();
 	}
 
-	public Collection<? extends Edge> getLeavingEdgeSet() {
+	public Iterable<? extends Edge> getEachLeavingEdge() {
 		return getEdgeSet();
+	}
+
+	public Collection<? extends Edge> getLeavingEdgeSet() {
+		return Collections.unmodifiableCollection(getEdgeSet());
 	}
 
 	public Iterator<Node> getNeighborNodeIterator() {
@@ -271,6 +289,10 @@ public class GraphicNode extends GraphicElement implements Node {
 
 	public int getOutDegree() {
 		return getDegree();
+	}
+
+	public boolean hasEdgeBetween(String id) {
+		return( hasEdgeToward(id) || hasEdgeFrom(id) );
 	}
 
 	public boolean hasEdgeFrom(String id) {

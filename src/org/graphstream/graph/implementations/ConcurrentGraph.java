@@ -768,6 +768,7 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph 
 		listeners.removeElementSink(listener);
 	}
 
+	@Override
 	protected void attributeChanged(String sourceId, long timeId,
 			String attribute, AttributeChangeEvent event, Object oldValue,
 			Object newValue) {

@@ -135,7 +135,6 @@ public class BreadthFirstIterator<T extends Node> implements Iterator<T> {
 	 * @param node
 	 *            The nodes the neighbors are to be processed.
 	 */
-	@SuppressWarnings("unchecked")
 	protected void addNeighborsOf(T node) {
 		Iterator<? extends Edge> k;
 

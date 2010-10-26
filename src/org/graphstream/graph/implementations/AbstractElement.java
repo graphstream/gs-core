@@ -23,9 +23,13 @@
 package org.graphstream.graph.implementations;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.graphstream.graph.CompoundAttribute;
 import org.graphstream.graph.Element;
@@ -45,6 +49,8 @@ import org.graphstream.graph.Element;
 public abstract class AbstractElement implements Element {
 	// Attribute
 
+	protected static Set<String> emptySet = new HashSet<String>();
+	
 	/**
 	 * Tag of this element.
 	 */
@@ -352,11 +358,18 @@ public abstract class AbstractElement implements Element {
 		return null;
 	}
 
-	public Iterable<String> getAttributeKeySet() {
+	public Iterable<String> getEachAttributeKey() {
 		if (attributes != null)
 			return attributes.keySet();
 
-		return null;
+		return emptySet;
+	}
+	
+	public Collection<String> getAttributeKeySet() {
+		if (attributes != null)
+			return (Collection<String>) Collections.unmodifiableCollection(attributes.keySet());
+		
+		return (Collection<String>) Collections.unmodifiableCollection(emptySet);
 	}
 
 	// public Map<String,Object> getAttributeMap()
