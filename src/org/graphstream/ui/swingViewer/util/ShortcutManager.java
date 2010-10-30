@@ -72,12 +72,12 @@ public class ShortcutManager implements KeyListener {
 				float delta = 0;
 
 				if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0)
-					delta = view.getGraphDimension() * 0.01f;
-				else
 					delta = view.getGraphDimension() * 0.1f;
+				else
+					delta = view.getGraphDimension() * 0.01f;
 
 				Point3 p = view.getViewCenter();
-				view.setViewCenter(p.x + delta, p.y, 0);
+				view.setViewCenter(p.x - delta, p.y, 0);
 			}
 		} else if (event.getKeyCode() == KeyEvent.VK_RIGHT) {
 			if ((event.getModifiers() & KeyEvent.ALT_MASK) != 0) {
@@ -87,20 +87,20 @@ public class ShortcutManager implements KeyListener {
 				float delta = 0;
 
 				if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0)
-					delta = view.getGraphDimension() * 0.01f;
-				else
 					delta = view.getGraphDimension() * 0.1f;
+				else
+					delta = view.getGraphDimension() * 0.01f;
 
 				Point3 p = view.getViewCenter();
-				view.setViewCenter(p.x - delta, p.y, 0);
+				view.setViewCenter(p.x + delta, p.y, 0);
 			}
 		} else if (event.getKeyCode() == KeyEvent.VK_UP) {
 			float delta = 0;
 
 			if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0)
-				delta = view.getGraphDimension() * 0.01f;
-			else
 				delta = view.getGraphDimension() * 0.1f;
+			else
+				delta = view.getGraphDimension() * 0.01f;
 
 			Point3 p = view.getViewCenter();
 			view.setViewCenter(p.x, p.y + delta, 0);
@@ -108,9 +108,9 @@ public class ShortcutManager implements KeyListener {
 			float delta = 0;
 
 			if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0)
-				delta = view.getGraphDimension() * 0.01f;
-			else
 				delta = view.getGraphDimension() * 0.1f;
+			else
+				delta = view.getGraphDimension() * 0.01f;
 
 			Point3 p = view.getViewCenter();
 			view.setViewCenter(p.x, p.y - delta, 0);

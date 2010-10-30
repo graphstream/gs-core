@@ -4,7 +4,7 @@ The viewer
 This only discuss the architecture of this specific viewer that uses Swing as its toolkit.
 
 The viewer is a layer above the GraphicGraph. The graphic graph knows nothing about it. The viewer
-observe the graphic graph and each time it changes, and if it can, the viewer draws the graph.
+observes the graphic graph and each time it changes, and if it can, the viewer draws the graph.
 
 Planned features :
 	* Have several "views" of an unique graphic graph.
@@ -13,7 +13,7 @@ Planned features :
 	* Provide simple graph view that demonstrate how all this works.
 	* Provide a 3D graph view using Jogl.
 	* Provide a complete Swing/Java2D implementation that is usable everywhere.
-	* Hide a GraphRenderer inside view that allows people wanting to use the low-level rendering
+	* Hide a GraphRenderer inside views that allows people wanting to use the low-level rendering
 	  routines of graph stream without all the viewer/view complexities.
 
 ViewSet
