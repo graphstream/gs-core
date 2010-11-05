@@ -157,6 +157,11 @@ public class GraphicGraph extends AbstractElement implements Graph,
 	 * Time of other known sources.
 	 */
 	protected SinkTime sinkTime = new SinkTime();
+	
+	/**
+	 * Are null attributes access an error ?
+	 */
+	protected boolean nullAttrError = false;
 
 	protected class GraphListeners extends SourceBase {
 		public GraphListeners(String id, SinkTime sinkTime) {
@@ -785,6 +790,15 @@ public class GraphicGraph extends AbstractElement implements Graph,
 		throw new RuntimeException("not implemented !");
 	}
 
+	@Override
+	public boolean nullAttributesAreErrors() {
+		return nullAttrError;
+	}
+	
+	public void setNullAttributesAreErrors(boolean on) {
+		nullAttrError = on;
+	}
+	
 	public void setEdgeFactory(EdgeFactory ef) {
 		throw new RuntimeException(
 				"you cannot change the edge factory for graphic graphs !");

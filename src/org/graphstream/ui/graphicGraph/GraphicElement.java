@@ -108,6 +108,11 @@ public abstract class GraphicElement extends AbstractElement {
 	{
 		return mygraph.newEvent();
 	}
+	
+	@Override
+	protected boolean nullAttributesAreErrors() {
+		return mygraph.nullAttributesAreErrors();
+	}
 
 	/**
 	 * Type of selector for the graphic element (Node, Edge, Sprite ?).
