@@ -33,6 +33,7 @@ import java.util.HashSet;
 
 import org.graphstream.graph.CompoundAttribute;
 import org.graphstream.graph.Element;
+import org.graphstream.graph.NullAttributeException;
 
 /**
  * A base implementation of an element.
@@ -94,6 +95,8 @@ public abstract class AbstractElement implements Element {
 	protected abstract String myGraphId(); // XXX
 
 	protected abstract long newEvent(); // XXX
+	
+	protected abstract boolean nullAttributesAreErrors();	// XXX
 
 	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this
@@ -104,6 +107,9 @@ public abstract class AbstractElement implements Element {
 	public <T> T getAttribute(String key) {
 		if (attributes != null)
 			return (T) attributes.get(key);
+
+		if (nullAttributesAreErrors())
+			throw new NullAttributeException(key);
 
 		return null;
 	}
@@ -127,6 +133,9 @@ public abstract class AbstractElement implements Element {
 				return (T) o;
 		}
 
+		if(o==null && nullAttributesAreErrors())
+			throw new NullAttributeException();
+		
 		return (T) o;
 	}
 
@@ -143,6 +152,9 @@ public abstract class AbstractElement implements Element {
 			if (o != null && clazz.isInstance(o))
 				return (T) o;
 		}
+
+		if (nullAttributesAreErrors())
+			throw new NullAttributeException(key);
 
 		return null;
 	}
@@ -166,6 +178,9 @@ public abstract class AbstractElement implements Element {
 				return (T) o;
 		}
 
+		if (nullAttributesAreErrors())
+			throw new NullAttributeException();
+
 		return null;
 	}
 
@@ -181,6 +196,9 @@ public abstract class AbstractElement implements Element {
 				return (CharSequence) o;
 		}
 
+		if (nullAttributesAreErrors())
+			throw new NullAttributeException(key);
+
 		return null;
 	}
 
@@ -195,6 +213,9 @@ public abstract class AbstractElement implements Element {
 			if (o != null && o instanceof Number)
 				return ((Number) o).doubleValue();
 		}
+
+		if (nullAttributesAreErrors())
+			throw new NullAttributeException(key);
 
 		return Double.NaN;
 	}
@@ -212,6 +233,9 @@ public abstract class AbstractElement implements Element {
 				return ((ArrayList<? extends Number>) o);
 		}
 
+		if (nullAttributesAreErrors())
+			throw new NullAttributeException(key);
+
 		return null;
 	}
 
@@ -226,6 +250,9 @@ public abstract class AbstractElement implements Element {
 			if (o != null && o instanceof Object[])
 				return ((Object[]) o);
 		}
+
+		if (nullAttributesAreErrors())
+			throw new NullAttributeException(key);
 
 		return null;
 	}
@@ -245,6 +272,9 @@ public abstract class AbstractElement implements Element {
 					return ((CompoundAttribute) o).toHashMap();
 			}
 		}
+
+		if (nullAttributesAreErrors())
+			throw new NullAttributeException(key);
 
 		return null;
 	}

@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.graphstream.graph.CompoundAttribute;
 import org.graphstream.graph.Element;
+import org.graphstream.graph.NullAttributeException;
 import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
 
 /**
@@ -87,12 +88,17 @@ public abstract class AbstractConcurrentElement implements Element {
 	protected abstract String myGraphId(); // XXX
 
 	protected abstract long newEvent(); // XXX
+	
+	protected abstract boolean nullAttributesAreErrors();
 
 	@SuppressWarnings("all")
 	public <T> T getAttribute(String key) {
 		if (attributes != null)
 			return (T) attributes.get(key);
 
+		if(nullAttributesAreErrors())
+			throw new NullAttributeException(key);
+		
 		return null;
 	}
 
@@ -110,6 +116,9 @@ public abstract class AbstractConcurrentElement implements Element {
 				return (T) o;
 		}
 
+		if(o==null && nullAttributesAreErrors())
+			throw new NullAttributeException();
+
 		return (T) o;
 	}
 
@@ -121,6 +130,9 @@ public abstract class AbstractConcurrentElement implements Element {
 			if (o != null && clazz.isInstance(o))
 				return (T) o;
 		}
+
+		if(nullAttributesAreErrors())
+			throw new NullAttributeException(key);
 
 		return null;
 	}
@@ -139,6 +151,9 @@ public abstract class AbstractConcurrentElement implements Element {
 				return (T) o;
 		}
 
+		if(nullAttributesAreErrors())
+			throw new NullAttributeException();
+
 		return null;
 	}
 
@@ -150,6 +165,9 @@ public abstract class AbstractConcurrentElement implements Element {
 				return (CharSequence) o;
 		}
 
+		if(nullAttributesAreErrors())
+			throw new NullAttributeException(key);
+
 		return null;
 	}
 
@@ -160,6 +178,9 @@ public abstract class AbstractConcurrentElement implements Element {
 			if (o != null && o instanceof Number)
 				return ((Number) o).doubleValue();
 		}
+
+		if(nullAttributesAreErrors())
+			throw new NullAttributeException(key);
 
 		return Double.NaN;
 	}
@@ -173,6 +194,9 @@ public abstract class AbstractConcurrentElement implements Element {
 				return ((ArrayList<? extends Number>) o);
 		}
 
+		if(nullAttributesAreErrors())
+			throw new NullAttributeException(key);
+
 		return null;
 	}
 
@@ -183,6 +207,9 @@ public abstract class AbstractConcurrentElement implements Element {
 			if (o != null && o instanceof Object[])
 				return ((Object[]) o);
 		}
+
+		if(nullAttributesAreErrors())
+			throw new NullAttributeException(key);
 
 		return null;
 	}
@@ -198,6 +225,9 @@ public abstract class AbstractConcurrentElement implements Element {
 					return ((CompoundAttribute) o).toHashMap();
 			}
 		}
+
+		if(nullAttributesAreErrors())
+			throw new NullAttributeException(key);
 
 		return null;
 	}

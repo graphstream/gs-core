@@ -310,6 +310,14 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 	 * @return True if enabled.
 	 */
 	boolean isAutoCreationEnabled();
+	
+	/**
+	 * If true, when accessing an attribute that does not exist (or is not of the
+	 * expected type), a {@link NullAttributeException} is thrown. Else null is
+	 * returned.
+	 * @return True if exceptions must be thrown when accessing a null attribute.
+	 */
+	boolean nullAttributesAreErrors();
 
 	/**
 	 * The current step.
@@ -320,6 +328,15 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 
 	// Command
 
+	/**
+	 * Should a {@link NullAttributeException} be thrown when one tries to access
+	 * a non existing attribute, or an attribute whose type is not the expected one?.
+	 * 
+	 * @param on
+	 * 			  if true, exceptions will be thrown when accessing a non existing attribute.
+	 */
+	void setNullAttributesAreErrors(boolean on);
+	
 	/**
 	 * Set the node factory used to create nodes.
 	 * 

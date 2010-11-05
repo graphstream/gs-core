@@ -124,6 +124,11 @@ public class DefaultGraph extends AbstractElement implements Graph {
 	 * between two non-existing nodes, create the nodes.
 	 */
 	protected boolean autoCreate = false;
+	
+	/**
+	 * Throw an exception for null attributes access or wrong types ?.
+	 */
+	protected boolean nullAttrErrors = false;
 
 	/**
 	 * Helpful class that dynamically instantiate nodes according to a given
@@ -382,6 +387,11 @@ public class DefaultGraph extends AbstractElement implements Graph {
 	public boolean isAutoCreationEnabled() {
 		return autoCreate;
 	}
+	
+	@Override	// For the AbstractElement.nullAttributesAreErrors()
+	public boolean nullAttributesAreErrors() {
+		return nullAttrErrors;
+	}
 
 	public Iterable<AttributeSink> attributeSinks() {
 		return listeners.attributeSinks();
@@ -430,6 +440,10 @@ public class DefaultGraph extends AbstractElement implements Graph {
 
 	public void setAutoCreate(boolean on) {
 		autoCreate = on;
+	}
+	
+	public void setNullAttributesAreErrors(boolean on) {
+		nullAttrErrors = on;
 	}
 
 	@SuppressWarnings("unchecked")

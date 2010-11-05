@@ -197,6 +197,11 @@ public abstract class DefaultNode extends AbstractElement implements Node {
 
 		throw new RuntimeException("WTF ?");
 	}
+	
+	@Override
+	protected boolean nullAttributesAreErrors() {
+		return G.nullAttributesAreErrors();
+	}
 
 	@SuppressWarnings("unchecked")
 	public <T extends Edge> Iterable<T> getEachEdge() {

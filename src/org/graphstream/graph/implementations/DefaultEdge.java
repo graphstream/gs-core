@@ -118,6 +118,14 @@ public abstract class DefaultEdge extends AbstractElement implements Edge {
 
 		throw new RuntimeException("WTF ?");
 	}
+	
+	@Override
+	protected boolean nullAttributesAreErrors() {	// XXX
+		if (src != null && src.G != null)
+			return src.nullAttributesAreErrors();
+		
+		throw new RuntimeException("WTF ?");
+	}
 
 	/**
 	 * @complexity Constant.

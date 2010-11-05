@@ -115,6 +115,11 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node {
 	{
 		return ((ConcurrentGraph) graph).newEvent();
 	}
+	
+	@Override
+	protected boolean nullAttributesAreErrors() {
+		return graph.nullAttributesAreErrors();
+	}
 
 	@SuppressWarnings("unchecked")
 	public <T extends Node> Iterator<T> getBreadthFirstIterator() {

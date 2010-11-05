@@ -243,6 +243,12 @@ public class AdjacencyListNode extends AbstractElement implements Node {
 	{
 		return ((AdjacencyListGraph) graph).newEvent();
 	}
+	
+	@Override
+	protected boolean nullAttributesAreErrors() {
+		return graph.nullAttributesAreErrors();
+	}
+	
 
 	@SuppressWarnings("unchecked")
 	public <T extends Node> Iterator<T> getBreadthFirstIterator() {

@@ -95,6 +95,11 @@ public class AdjacencyListEdge extends AbstractElement implements Edge {
 	protected long newEvent() {
 		return ((AdjacencyListGraph) n0.graph).newEvent();
 	}
+	
+	@Override
+	protected boolean nullAttributesAreErrors() {
+		return n0.graph.nullAttributesAreErrors();
+	}
 
 	@SuppressWarnings("unchecked")
 	public <T extends Node> T getNode0() {

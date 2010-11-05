@@ -140,6 +140,11 @@ public class AdjacencyListGraph extends AbstractElement implements Graph {
 	 * between two non-existing nodes, create the nodes.
 	 */
 	protected boolean autoCreate = false;
+	
+	/**
+	 * Throw an exception for null attributes access or wrong types ?.
+	 */
+	protected boolean nullAttrErrors = false;
 
 	/**
 	 * Help full class that dynamically instantiate nodes according to a given
@@ -549,6 +554,11 @@ public class AdjacencyListGraph extends AbstractElement implements Graph {
 	public boolean isStrict() {
 		return strictChecking;
 	}
+	
+	@Override	// For the AbstractElement.nullAttributesAreErrors()
+	public boolean nullAttributesAreErrors() {
+		return nullAttrErrors;
+	}
 
 	public Iterable<AttributeSink> attributeSinks() {
 		return listeners.attributeSinks();
@@ -712,6 +722,10 @@ public class AdjacencyListGraph extends AbstractElement implements Graph {
 
 	public void setStrict(boolean on) {
 		strictChecking = on;
+	}
+	
+	public void setNullAttributesAreErrors(boolean on) {
+		nullAttrErrors = on;
 	}
 
 	/**
