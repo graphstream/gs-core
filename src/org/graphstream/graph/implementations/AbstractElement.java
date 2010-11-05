@@ -105,8 +105,12 @@ public abstract class AbstractElement implements Element {
 	// public Object getAttribute( String key )
 	@SuppressWarnings("all")
 	public <T> T getAttribute(String key) {
-		if (attributes != null)
-			return (T) attributes.get(key);
+		if (attributes != null) {
+			T value = (T) attributes.get(key);
+			
+			if (value != null)
+				return value;
+		}
 
 		if (nullAttributesAreErrors())
 			throw new NullAttributeException(key);
@@ -123,14 +127,13 @@ public abstract class AbstractElement implements Element {
 	public <T> T getFirstAttributeOf(String... keys) {
 		Object o = null;
 
-		if (attributes == null)
-			return null;
+		if (attributes != null) {
+			for (String key : keys) {
+				o = attributes.get(key);
 
-		for (String key : keys) {
-			o = getAttribute(key);
-
-			if (o != null)
-				return (T) o;
+				if (o != null)
+					return (T) o;
+			}
 		}
 
 		if(o==null && nullAttributesAreErrors())
@@ -210,8 +213,17 @@ public abstract class AbstractElement implements Element {
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
-			if (o != null && o instanceof Number)
-				return ((Number) o).doubleValue();
+			if (o != null ) {
+				if (o instanceof Number)
+					return ((Number) o).doubleValue();
+				
+				if (o instanceof String) {
+					try {
+						return Double.parseDouble((String)o);
+					} catch(NumberFormatException e) {
+					}
+				}
+			}
 		}
 
 		if (nullAttributesAreErrors())
