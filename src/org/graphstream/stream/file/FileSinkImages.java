@@ -25,8 +25,13 @@ package org.graphstream.stream.file;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
@@ -106,7 +111,7 @@ public class FileSinkImages extends FileSinkBase {
 		}
 
 		public String toString() {
-			return String.format("%dx%d (%s)", width, height, name());
+			return String.format("%s (%dx%d)", name(), width, height);
 		}
 	}
 
@@ -228,6 +233,10 @@ public class FileSinkImages extends FileSinkBase {
 		}
 	}
 
+	public static enum Quality {
+		LOW, MEDIUM, HIGH
+	}
+
 	protected Resolution resolution;
 	protected OutputType outputType;
 	protected GraphRenderer renderer;
@@ -267,9 +276,30 @@ public class FileSinkImages extends FileSinkBase {
 	/**
 	 * Enable high-quality rendering and anti-aliasing.
 	 */
-	public void setHighQuality() {
-		gg.addAttribute("ui.quality");
-		gg.addAttribute("ui.antialias");
+	public void setQuality(Quality q) {
+		switch (q) {
+		case LOW:
+			if (gg.hasAttribute("ui.quality"))
+				gg.removeAttribute("ui.quality");
+			if (gg.hasAttribute("ui.antialias"))
+				gg.removeAttribute("ui.antialias");
+
+			break;
+		case MEDIUM:
+			if (!gg.hasAttribute("ui.quality"))
+				gg.addAttribute("ui.quality");
+			if (gg.hasAttribute("ui.antialias"))
+				gg.removeAttribute("ui.antialias");
+
+			break;
+		case HIGH:
+			if (!gg.hasAttribute("ui.quality"))
+				gg.addAttribute("ui.quality");
+			if (!gg.hasAttribute("ui.antialias"))
+				gg.addAttribute("ui.antialias");
+
+			break;
+		}
 	}
 
 	/**
@@ -726,32 +756,215 @@ public class FileSinkImages extends FileSinkBase {
 		}
 	}
 
+	public static enum Option {
+		IMAGE_PREFIX("image-prefix", 'p', "prefix of outputted images", true,
+				true, "image_"), IMAGE_TYPE("image-type", 't',
+				"image type. one of " + Arrays.toString(OutputType.values()),
+				true, true, "PNG"), IMAGE_RESOLUTION("image-resolution", 'r',
+				"defines images resolution. \"width x height\" or one of "
+						+ Arrays.toString(Resolutions.values()), true, true,
+				"HD720"), OUTPUT_POLICY("output-policy", 'e',
+				"defines when images are outputted. one of "
+						+ Arrays.toString(OutputPolicy.values()), true, true,
+				"ByStepOutput"), LOGO("logo", 'l', "add a logo to images",
+				true, true, null), STYLESHEET("stylesheet", 's',
+				"defines stylesheet of graph. can be a file or a string.",
+				true, true, null), QUALITY("quality", 'q',
+				"defines quality of rendering. one of "
+						+ Arrays.toString(Quality.values()), true, true, "HIGH");
+		String fullopts;
+		char shortopts;
+		String description;
+		boolean optional;
+		boolean valuable;
+		String defaultValue;
+
+		Option(String fullopts, char shortopts, String description,
+				boolean optional, boolean valuable, String defaultValue) {
+			this.fullopts = fullopts;
+			this.shortopts = shortopts;
+			this.description = description;
+			this.optional = optional;
+			this.valuable = valuable;
+			this.defaultValue = defaultValue;
+		}
+	}
+
+	public static void usage() {
+		System.out.printf("usage: java %s [options] fichier.dgs%n",
+				FileSinkImages.class.getName());
+		System.out.printf("where options in:%n");
+		for (Option option : Option.values()) {
+			System.out.printf("%n --%s%s , -%s %s%n%s%n", option.fullopts,
+					option.valuable ? "=..." : "", option.shortopts,
+					option.valuable ? "..." : "", option.description);
+		}
+	}
+
 	public static void main(String... args) throws IOException {
-		if (args == null || args.length < 5) {
-			System.out
-					.printf("usage: java %s fichier.dgs outputPrefix imageType res policy%n",
-							FileSinkImages.class.getName());
+
+		HashMap<Option, String> options = new HashMap<Option, String>();
+		LinkedList<String> others = new LinkedList<String>();
+
+		for (Option option : Option.values())
+			if (option.defaultValue != null)
+				options.put(option, option.defaultValue);
+
+		if (args != null && args.length > 0) {
+			Pattern valueGetter = Pattern
+					.compile("^--\\w[\\w-]*\\w?(?:=(?:\"([^\"]*)\"|([^\\s]*)))$");
+
+			for (int i = 0; i < args.length; i++) {
+
+				if (args[i].matches("^--\\w[\\w-]*\\w?(=(\"[^\"]*\"|[^\\s]*))?$")) {
+					boolean found = false;
+					for (Option option : Option.values()) {
+						if (args[i].startsWith("--" + option.fullopts + "=")) {
+							Matcher m = valueGetter.matcher(args[i]);
+
+							if (m.matches()) {
+								options.put(
+										option,
+										m.group(1) == null ? m.group(2) : m
+												.group(1));
+							}
+
+							found = true;
+							break;
+						}
+					}
+					
+					if( ! found ) {
+						System.err.printf("unknown option: %s%n",args[i].substring(0,args[i].indexOf('=')));
+						System.exit(1);
+					}
+				} else if (args[i].matches("^-\\w$")) {
+					boolean found = false;
+					
+					for (Option option : Option.values()) {
+						if (args[i].equals("-" + option.shortopts)) {
+							options.put(option, args[++i]);
+							break;
+						}
+					}
+					
+					if( ! found ) {
+						System.err.printf("unknown option: %s%n",args[i]);
+						System.exit(1);
+					}
+				} else {
+					others.addLast(args[i]);
+				}
+			}
+		} else {
+			usage();
 			System.exit(0);
 		}
 
+		LinkedList<String> errors = new LinkedList<String>();
+
+		if (others.size() == 0) {
+			errors.add("dgs file name missing.");
+		}
+
+		String imagePrefix;
+		OutputType outputType = null;
+		OutputPolicy outputPolicy = null;
+		Resolution resolution = null;
+		Quality quality = null;
+		String logo;
+		String stylesheet;
+
+		imagePrefix = options.get(Option.IMAGE_PREFIX);
+
+		try {
+			outputType = OutputType.valueOf(options.get(Option.IMAGE_TYPE));
+		} catch (IllegalArgumentException e) {
+			errors.add("bad image type: " + options.get(Option.IMAGE_TYPE));
+		}
+
+		try {
+			outputPolicy = OutputPolicy.valueOf(options
+					.get(Option.OUTPUT_POLICY));
+		} catch (IllegalArgumentException e) {
+			errors.add("bad output policy: "
+					+ options.get(Option.OUTPUT_POLICY));
+		}
+
+		try {
+			quality = Quality.valueOf(options.get(Option.QUALITY));
+		} catch (IllegalArgumentException e) {
+			errors.add("bad quality: " + options.get(Option.QUALITY));
+		}
+
+		logo = options.get(Option.LOGO);
+		stylesheet = options.get(Option.STYLESHEET);
+
+		try {
+			resolution = Resolutions.valueOf(options
+					.get(Option.IMAGE_RESOLUTION));
+		} catch (IllegalArgumentException e) {
+			Pattern p = Pattern.compile("^\\s*(\\d+)\\s*x\\s*(\\d+)\\s*$");
+			Matcher m = p.matcher(options.get(Option.IMAGE_RESOLUTION));
+
+			if (m.matches()) {
+				resolution = new CustomResolution(Integer.parseInt(m.group(1)),
+						Integer.parseInt(m.group(2)));
+			} else {
+				errors.add("bad resolution: "
+						+ options.get(Option.IMAGE_RESOLUTION));
+			}
+		}
+
+		if (stylesheet != null && stylesheet.length() < 1024) {
+			File test = new File(stylesheet);
+
+			if (test.exists()) {
+				FileReader in = new FileReader(test);
+				char[] buffer = new char[128];
+				String content = "";
+
+				while (in.ready()) {
+					int c = in.read(buffer, 0, 128);
+					content += new String(buffer, 0, c);
+				}
+
+				stylesheet = content;
+			}
+		}
+
+		{
+			File test = new File(others.peek());
+			if (!test.exists())
+				errors.add(String.format("file \"%s\" does not exist",
+						others.peek()));
+		}
+
+		if (errors.size() > 0) {
+			System.err.printf("error:%n");
+
+			for (String error : errors)
+				System.err.printf("- %s%n", error);
+
+			System.exit(1);
+		}
+
 		FileSourceDGS dgs = new FileSourceDGS();
-		FileSinkImages fsi = new FileSinkImages(args[1],
-				OutputType.valueOf(args[2]), Resolutions.valueOf(args[3]),
-				OutputPolicy.valueOf(args[4]));
+		FileSinkImages fsi = new FileSinkImages(imagePrefix, outputType,
+				resolution, outputPolicy);
 
 		dgs.addSink(fsi);
 
-		if (args.length > 5)
-			fsi.addLogo(args[5], 0, 0);
+		if (logo != null)
+			fsi.addLogo(logo, 0, 0);
 
-		fsi.setHighQuality();
-		fsi.setStyleSheet("graph { padding: 50px; fill-color: black; }"
-				+ "node { stroke-mode: plain; stroke-color: #3d5689,#639330,#8d4180,#97872f,#9c4432; stroke-width: 2px; fill-mode: dyn-plain; fill-color: #5782db,#90dd3e,#e069cb,#e0ce69,#e07c69; }"
-				+ "edge { fill-color: white; }");
+		fsi.setQuality(quality);
+		if (stylesheet != null)
+			fsi.setStyleSheet(stylesheet);
 
 		boolean next = true;
 
-		dgs.begin(args[0]);
+		dgs.begin(others.get(0));
 
 		while (next)
 			next = dgs.nextStep();
