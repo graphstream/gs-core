@@ -552,25 +552,25 @@ public class DefaultGraph extends AbstractElement implements Graph {
 		src = (DefaultNode) nodes.get(from);
 		trg = (DefaultNode) nodes.get(to);
 
-		if (src == null) {
-			if (strictChecking) {
-				throw new ElementNotFoundException("cannot make edge from '"
-						+ from + "' to '" + to + "' since node '" + from
-						+ "' is not part of this graph");
-			} else if (autoCreate) {
-				src = addNode(from);
-			}
-		}
-
-		if (trg == null) {
-			if (strictChecking) {
-				throw new ElementNotFoundException("cannot make edge from '"
-						+ from + "' to '" + to + "' since node '" + to
-						+ "' is not part of this graph");
-			} else if (autoCreate) {
-				trg = addNode(to);
-			}
-		}
+//		if (src == null) {
+//			if (strictChecking) {
+//				throw new ElementNotFoundException("cannot make edge from '"
+//						+ from + "' to '" + to + "' since node '" + from
+//						+ "' is not part of this graph");
+//			} else if (autoCreate) {
+//				src = addNode(from);
+//			}
+//		}
+//
+//		if (trg == null) {
+//			if (strictChecking) {
+//				throw new ElementNotFoundException("cannot make edge from '"
+//						+ from + "' to '" + to + "' since node '" + to
+//						+ "' is not part of this graph");
+//			} else if (autoCreate) {
+//				trg = addNode(to);
+//			}
+//		}
 
 		if (src != null && trg != null) {
 			T e = (T) edges.get(edgeId);
@@ -612,6 +612,24 @@ public class DefaultGraph extends AbstractElement implements Graph {
 	public <T extends Edge> T addEdge(String id, String from, String to,
 			boolean directed) throws IdAlreadyInUseException,
 			ElementNotFoundException {
+		// We need to auto create nodes before the edge, to preserve events order.
+		
+		if (getNode(from)==null) {
+			if (strictChecking)
+				throw new ElementNotFoundException(
+						String.format("cannot make edge from '%s' to '%s', since node '%s' is not part of this graph",from, to, from));
+			if(autoCreate)
+				addNode(from);
+		}
+		
+		if (getNode(to)==null) {
+			if (strictChecking)
+				throw new ElementNotFoundException(
+						String.format("cannot make edge from '%s' to '%s', since node '%s' is not part of this graph",from, to, to));
+			if(autoCreate)
+				addNode(to);
+		}
+		
 		T edge = addEdge_(getId(), listeners.newEvent(), id, from, to, directed);
 		// An explanation for this strange "if": in the SingleGraph
 		// implementation
