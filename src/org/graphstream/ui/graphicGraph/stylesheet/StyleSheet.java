@@ -457,6 +457,66 @@ public class StyleSheet {
 		rule.setStyle(style);
 		addRule(rule);
 	}
+	
+	/**
+	 * Load a style sheet from an attribute value, the value can either be
+	 * the contents of the whole style sheet, or begin by "url". If it starts
+	 * with "url", it must then contain between parenthesis the string of the
+	 * URL to load. For example:
+	 * <pre>
+	 * 		url('file:///some/path/on/the/file/system')
+	 * </pre>
+	 * Or
+	 * <pre>
+	 * 		url('http://some/web/url')
+	 * </pre>
+	 * 
+	 * @param styleSheetValue
+	 *            The style sheet name of content.
+	 * @throws IOException
+	 *             If the loading or parsing of the style sheet failed.
+	 */
+	public void load(String styleSheetValue) throws IOException {
+		if (styleSheetValue.startsWith("url")) {
+			// Extract the part between '(' and ')'.
+
+			int beg = styleSheetValue.indexOf('(');
+			int end = styleSheetValue.lastIndexOf(')');
+
+			if (beg >= 0 && end > beg)
+				styleSheetValue = styleSheetValue.substring(beg + 1, end);
+
+			styleSheetValue = styleSheetValue.trim();
+
+			// Remove the quotes (') or (").
+
+			if (styleSheetValue.startsWith("'")) {
+				beg = 0;
+				end = styleSheetValue.lastIndexOf('\'');
+
+				if (beg >= 0 && end > beg)
+					styleSheetValue = styleSheetValue.substring(beg + 1, end);
+			}
+
+			styleSheetValue = styleSheetValue.trim();
+
+			if (styleSheetValue.startsWith("\"")) {
+				beg = 0;
+				end = styleSheetValue.lastIndexOf('"');
+
+				if (beg >= 0 && end > beg)
+					styleSheetValue = styleSheetValue.substring(beg + 1, end);
+			}
+
+			// That's it.
+
+			parseFromURL(styleSheetValue);
+		} else // Parse from string, the value is considered to be the style
+				// sheet contents.
+		{
+			parseFromString(styleSheetValue);
+		}
+	}
 
 	/**
 	 * Parse the style sheet from the given reader.

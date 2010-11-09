@@ -545,7 +545,8 @@ public class GraphicGraph extends AbstractElement implements Graph,
 					|| event == AttributeChangeEvent.CHANGE) {
 				if (newValue instanceof String) {
 					try {
-						loadStyleSheet((String) newValue);
+						styleSheet.load((String) newValue);
+						//loadStyleSheet((String) newValue);
 						graphChanged = true;
 					} catch (IOException e) {
 						System.err
@@ -1113,58 +1114,6 @@ public class GraphicGraph extends AbstractElement implements Graph,
 			System.err
 					.printf("GraphicGraph : cannot place sprite with posiiton '%s' (instance of %s)%n",
 							value, value.getClass().getName());
-		}
-	}
-
-	// Style sheet API
-
-	/**
-	 * Load a style sheet from an attribute.
-	 * 
-	 * @param styleSheetValue
-	 *            The style sheet name of content.
-	 * @throws IOException
-	 *             If the loading or parsing of the style sheet failed.
-	 */
-	protected void loadStyleSheet(String styleSheetValue) throws IOException {
-		if (styleSheetValue.startsWith("url")) {
-			// Extract the part between '(' and ')'.
-
-			int beg = styleSheetValue.indexOf('(');
-			int end = styleSheetValue.lastIndexOf(')');
-
-			if (beg >= 0 && end > beg)
-				styleSheetValue = styleSheetValue.substring(beg + 1, end);
-
-			styleSheetValue = styleSheetValue.trim();
-
-			// Remove the quotes (') or (").
-
-			if (styleSheetValue.startsWith("'")) {
-				beg = 0;
-				end = styleSheetValue.lastIndexOf('\'');
-
-				if (beg >= 0 && end > beg)
-					styleSheetValue = styleSheetValue.substring(beg + 1, end);
-			}
-
-			styleSheetValue = styleSheetValue.trim();
-
-			if (styleSheetValue.startsWith("\"")) {
-				beg = 0;
-				end = styleSheetValue.lastIndexOf('"');
-
-				if (beg >= 0 && end > beg)
-					styleSheetValue = styleSheetValue.substring(beg + 1, end);
-			}
-
-			// That's it.
-
-			styleSheet.parseFromURL(styleSheetValue);
-		} else // Parse from string, the value is considered to be the style
-				// sheet contents.
-		{
-			styleSheet.parseFromString(styleSheetValue);
 		}
 	}
 
