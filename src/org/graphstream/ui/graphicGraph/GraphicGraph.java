@@ -546,7 +546,6 @@ public class GraphicGraph extends AbstractElement implements Graph,
 				if (newValue instanceof String) {
 					try {
 						styleSheet.load((String) newValue);
-						//loadStyleSheet((String) newValue);
 						graphChanged = true;
 					} catch (IOException e) {
 						System.err

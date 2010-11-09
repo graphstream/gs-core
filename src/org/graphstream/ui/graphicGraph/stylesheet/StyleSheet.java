@@ -471,6 +471,9 @@ public class StyleSheet {
 	 * 		url('http://some/web/url')
 	 * </pre>
 	 * 
+	 * The loaded style sheet will be merged with the styles already present
+	 * in the style sheet.
+	 * 
 	 * @param styleSheetValue
 	 *            The style sheet name of content.
 	 * @throws IOException
