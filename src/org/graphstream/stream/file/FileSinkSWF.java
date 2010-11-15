@@ -213,6 +213,7 @@ public class FileSinkSWF implements FileSink {
 		/**
 		 * BitString to string.
 		 **/
+		@Override
 		public String toString() {
 			StringBuffer b = new StringBuffer();
 			for (int i = 0; i < curseur; i++) {

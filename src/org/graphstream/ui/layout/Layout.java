@@ -56,7 +56,7 @@ import org.graphstream.ui.geom.Point3;
  * This behaviour has been chosen because this algorithm is often run aside the
  * main thread that works on the graph. We want a thread to be able to compute a
  * new layout on its side, without disturbing the main algorithm run on the
- * graph. See the {@link org.graphstream.ui.old.layout.LayoutRunner} for an
+ * graph. See the {@link org.graphstream.ui.layout.LayoutRunner} for an
  * helper class allowing to create such a thread.
  * </p>
  * 

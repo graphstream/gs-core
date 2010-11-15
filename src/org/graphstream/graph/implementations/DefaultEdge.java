@@ -133,6 +133,10 @@ public abstract class DefaultEdge extends AbstractElement implements Edge {
 	public boolean isDirected() {
 		return directed;
 	}
+	
+	public boolean isLoop() {
+		return (src == trg);
+	}
 
 	/**
 	 * @complexity Constant.

@@ -432,8 +432,8 @@ public class StyleConstants {
 		if (value instanceof CharSequence) {
 			CharSequence string = (CharSequence) value;
 
-			if (string == null)
-				throw new RuntimeException("null size string ...");
+//			if (string == null)
+//				throw new RuntimeException("null size string ...");
 
 			if (string.length() < 0)
 				throw new RuntimeException("empty size string ...");

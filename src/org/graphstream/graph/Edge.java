@@ -41,6 +41,13 @@ public interface Edge extends Element {
 	boolean isDirected();
 
 	/**
+	 * Does the source and target of this edge identify the same node ?.
+	 * 
+	 * @return True if this edge is a loop.
+	 */
+	boolean isLoop();
+	
+	/**
 	 * First node of the edge.
 	 * <p>
 	 * This is equivalent to the {@link #getSourceNode()} method, but may be

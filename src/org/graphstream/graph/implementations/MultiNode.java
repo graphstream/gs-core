@@ -236,9 +236,16 @@ public class MultiNode extends DefaultNode {
 
 		// Add the edge.
 
+		if (edges.contains(edge)) {
+			if(edge.isLoop())
+				return;
+			else
+				throw new IdAlreadyInUseException(String.format("cannot add twice the same edge (%s) to node %s.",edge.getId(), getId()));
+		}
+
 		edges.add(edge);
 
-		if (edge.isDirected()) {
+		if (edge.isDirected() && ( ! edge.isLoop() ) ) {
 			MultiEdgeMap<Edge> map;
 
 			if (edge.getSourceNode() == this) {

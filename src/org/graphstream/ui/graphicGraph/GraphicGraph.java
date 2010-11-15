@@ -19,7 +19,6 @@ package org.graphstream.ui.graphicGraph;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.regex.Matcher;
@@ -520,12 +519,14 @@ public class GraphicGraph extends AbstractElement implements Graph,
 		return node;
 	}
 
-	public GraphicNode getNode(String id) {
-		return (GraphicNode) styleGroups.getNode(id);
+	@SuppressWarnings("unchecked")
+	public <T extends Node> T getNode(String id) {
+		return (T) styleGroups.getNode(id);
 	}
 
-	public GraphicEdge getEdge(String id) {
-		return (GraphicEdge) styleGroups.getEdge(id);
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T getEdge(String id) {
+		return (T) styleGroups.getEdge(id);
 	}
 
 	public GraphicSprite getSprite(String id) {
@@ -642,11 +643,11 @@ public class GraphicGraph extends AbstractElement implements Graph,
 		return styleGroups.nodes();
 	}
 
-	public Collection<? extends Node> getNodeSet() {
+	public <T extends Node> Collection<T> getNodeSet() {
 		throw new RuntimeException("Not yet implemented");
 	}
 
-	public Collection<? extends Edge> getEdgeSet() {
+	public <T extends Edge> Collection<T> getEdgeSet() {
 		throw new RuntimeException("Not yet implemented");
 	}
 
@@ -687,35 +688,41 @@ public class GraphicGraph extends AbstractElement implements Graph,
 		return listeners.elementSinks();
 	}
 
-	public Edge addEdge(String id, String from, String to)
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T addEdge(String id, String from, String to)
 			throws IdAlreadyInUseException, ElementNotFoundException {
-		return addEdge(getId(), newEvent(), id, from, to, false, null);
+		return (T)addEdge(getId(), newEvent(), id, from, to, false, null);
 	}
 
-	public Edge addEdge(String id, String from, String to, boolean directed)
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T addEdge(String id, String from, String to, boolean directed)
 			throws IdAlreadyInUseException, ElementNotFoundException {
-		return addEdge(getId(), newEvent(), id, from, to, directed, null);
+		return (T)addEdge(getId(), newEvent(), id, from, to, directed, null);
 	}
 
-	public Node addNode(String id) throws IdAlreadyInUseException {
-		return addNode(getId(), newEvent(), id, null);
+	@SuppressWarnings("unchecked")
+	public <T extends Node> T addNode(String id) throws IdAlreadyInUseException {
+		return (T)addNode(getId(), newEvent(), id, null);
 	}
 
 	public void clear() {
 		clear(getId(), newEvent());
 	}
 
-	public Edge removeEdge(String id) throws ElementNotFoundException {
-		return removeEdge(getId(), newEvent(), id);
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T removeEdge(String id) throws ElementNotFoundException {
+		return (T)removeEdge(getId(), newEvent(), id);
 	}
 
-	public Edge removeEdge(String from, String to)
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T removeEdge(String from, String to)
 			throws ElementNotFoundException {
-		return removeEdge(getId(), newEvent(), from, to);
+		return (T)removeEdge(getId(), newEvent(), from, to);
 	}
 
-	public Node removeNode(String id) throws ElementNotFoundException {
-		return removeNode(getId(), newEvent(), id);
+	@SuppressWarnings("unchecked")
+	public <T extends Node> T removeNode(String id) throws ElementNotFoundException {
+		return (T)removeNode(getId(), newEvent(), id);
 	}
 
 	public org.graphstream.ui.swingViewer.Viewer display() {
@@ -730,7 +737,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 		stepBegins(getId(), newEvent(), step);
 	}
 
-	public EdgeFactory edgeFactory() {
+	public EdgeFactory<? extends Edge> edgeFactory() {
 		return null;
 	}
 
@@ -738,6 +745,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 		return styleGroups.getEdgeCount();
 	}
 
+	@SuppressWarnings("unchecked")
 	public Iterator<? extends Edge> getEdgeIterator() {
 		return styleGroups.getEdgeIterator();
 	}
@@ -750,8 +758,9 @@ public class GraphicGraph extends AbstractElement implements Graph,
 		return styleGroups.getSpriteCount();
 	}
 
-	public Iterator<? extends Node> getNodeIterator() {
-		return styleGroups.getNodeIterator();
+	@SuppressWarnings("unchecked")
+	public <T extends Node> Iterator<T> getNodeIterator() {
+		return (Iterator<T>)styleGroups.getNodeIterator();
 	}
 
 	public Iterator<? extends GraphicSprite> getSpriteIterator() {
@@ -770,7 +779,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 		return false;
 	}
 
-	public NodeFactory nodeFactory() {
+	public NodeFactory<? extends Node> nodeFactory() {
 		return null;
 	}
 
@@ -799,12 +808,12 @@ public class GraphicGraph extends AbstractElement implements Graph,
 		nullAttrError = on;
 	}
 	
-	public void setEdgeFactory(EdgeFactory ef) {
+	public void setEdgeFactory(EdgeFactory<? extends Edge> ef) {
 		throw new RuntimeException(
 				"you cannot change the edge factory for graphic graphs !");
 	}
 
-	public void setNodeFactory(NodeFactory nf) {
+	public void setNodeFactory(NodeFactory<? extends Node> nf) {
 		throw new RuntimeException(
 				"you cannot change the node factory for graphic graphs !");
 	}

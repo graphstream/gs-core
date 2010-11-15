@@ -110,6 +110,7 @@ public class FileSinkImages extends FileSinkBase {
 			return height;
 		}
 
+		@Override
 		public String toString() {
 			return String.format("%s (%dx%d)", name(), width, height);
 		}
@@ -134,6 +135,7 @@ public class FileSinkImages extends FileSinkBase {
 			return height;
 		}
 
+		@Override
 		public String toString() {
 			return String.format("%dx%d", width, height);
 		}
@@ -493,14 +495,16 @@ public class FileSinkImages extends FileSinkBase {
 	}
 
 	/**
-	 * @see org.graphstream.stream.FileSink
+	 * @see org.graphstream.stream.file.FileSink
 	 */
+	@Override
 	protected void outputEndOfFile() throws IOException {
 	}
 
 	/**
-	 * @see org.graphstream.stream.FileSink
+	 * @see org.graphstream.stream.file.FileSink
 	 */
+	@Override
 	protected void outputHeader() throws IOException {
 	}
 

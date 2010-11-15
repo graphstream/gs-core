@@ -45,6 +45,12 @@ public class Vector2 implements java.io.Serializable {
 		data = new float[2];
 		copy(point);
 	}
+	
+	public Vector2(Point2 from, Point2 to) {
+		data = new float[2];
+		data[0] = to.x - from.x;
+		data[1] = to.y - from.y;
+	}
 
 	// Predicates
 

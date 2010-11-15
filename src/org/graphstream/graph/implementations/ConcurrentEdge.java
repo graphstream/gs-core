@@ -126,6 +126,10 @@ public class ConcurrentEdge extends AbstractElement implements Edge {
 	public boolean isDirected() {
 		return directed;
 	}
+	
+	public boolean isLoop() {
+		return (n0 == n1);
+	}
 
 	public void setDirected(boolean on) {
 		// XXX Bug, the new edge created in the event stream will loose all its

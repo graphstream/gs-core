@@ -192,67 +192,77 @@ public class GraphicNode extends GraphicElement implements Node {
 		return 0;
 	}
 
-	public Edge getEdge(int i) {
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T getEdge(int i) {
 		ArrayList<GraphicEdge> edges = mygraph.connectivity.get(this);
 
 		if (edges != null && i >= 0 && i < edges.size())
-			return edges.get(i);
+			return (T)edges.get(i);
 
 		return null;
 	}
 	
-	public Edge getEdgeBetween(String id) {
-		if(hasEdgeToward(id)) return getEdgeToward(id);
-		else return getEdgeFrom(id);
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T getEdgeBetween(String id) {
+		if(hasEdgeToward(id)) return (T)getEdgeToward(id);
+		else return (T)getEdgeFrom(id);
 	}
 
-	public Edge getEdgeFrom(String id) {
-		return null;
-	}
-
-	public Iterator<? extends Edge> getEdgeIterator() {
-		ArrayList<GraphicEdge> edges = mygraph.connectivity.get(this);
-
-		if (edges != null)
-			return edges.iterator();
-
+	@SuppressWarnings("all")
+	public <T extends Edge> T getEdgeFrom(String id) {
 		return null;
 	}
 
 	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterator<T> getEdgeIterator() {
+		ArrayList<GraphicEdge> edges = mygraph.connectivity.get(this);
+
+		if (edges != null)
+			return (Iterator<T>)edges.iterator();
+
+		return null;
+	}
+
+	@SuppressWarnings("all")
 	public Iterator<Edge> iterator() {
 		return (Iterator<Edge>) getEdgeIterator();
 	}
 	
-	public Iterable<? extends Edge> getEachEdge() {
-		return mygraph.connectivity.get(this);
+	@SuppressWarnings("all")
+	public <T extends Edge> Iterable<T> getEachEdge() {
+		return (Iterable<T>)mygraph.connectivity.get(this);
 	}
 
-	public Collection<? extends Edge> getEdgeSet() {
-		return Collections.unmodifiableCollection(mygraph.connectivity.get(this));
+	@SuppressWarnings("all")
+	public <T extends Edge> Collection<T> getEdgeSet() {
+		return (Collection<T>)Collections.unmodifiableCollection(mygraph.connectivity.get(this));
 	}
 
-	public Edge getEdgeToward(String id) {
+	@SuppressWarnings("all")
+	public <T extends Edge> T getEdgeToward(String id) {
 		ArrayList<? extends Edge> edges = mygraph.connectivity.get(this);
 
 		for (Edge edge : edges) {
 			if (edge.getOpposite(this).getId().equals(id))
-				return edge;
+				return (T)edge;
 		}
 
 		return null;
 	}
 
-	public Iterator<? extends Edge> getEnteringEdgeIterator() {
+	@SuppressWarnings("all")
+	public <T extends Edge> Iterator<T> getEnteringEdgeIterator() {
 		return getEdgeIterator();
 	}
 	
-	public Iterable<? extends Edge> getEachEnteringEdge() {
+	@SuppressWarnings("all")
+	public <T extends Edge> Iterable<T> getEachEnteringEdge() {
 		return getEdgeSet();
 	}
 
-	public Collection<? extends Edge> getEnteringEdgeSet() {
-		return Collections.unmodifiableCollection(getEdgeSet());
+	@SuppressWarnings("all")
+	public <T extends Edge> Collection<T> getEnteringEdgeSet() {
+		return (Collection<T>)Collections.unmodifiableCollection(getEdgeSet());
 	}
 
 	public Graph getGraph() {
@@ -271,16 +281,19 @@ public class GraphicNode extends GraphicElement implements Node {
 		return getDegree();
 	}
 
-	public Iterator<? extends Edge> getLeavingEdgeIterator() {
+	@SuppressWarnings("all")
+	public <T extends Edge> Iterator<T> getLeavingEdgeIterator() {
 		return getEdgeIterator();
 	}
 
-	public Iterable<? extends Edge> getEachLeavingEdge() {
+	@SuppressWarnings("all")
+	public <T extends Edge> Iterable<T> getEachLeavingEdge() {
 		return getEdgeSet();
 	}
 
-	public Collection<? extends Edge> getLeavingEdgeSet() {
-		return Collections.unmodifiableCollection(getEdgeSet());
+	@SuppressWarnings("all")
+	public <T extends Edge> Collection<T> getLeavingEdgeSet() {
+		return (Collection<T>)Collections.unmodifiableCollection(getEdgeSet());
 	}
 
 	public Iterator<Node> getNeighborNodeIterator() {
