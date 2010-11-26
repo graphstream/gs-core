@@ -194,9 +194,9 @@ public class StyleConstants {
 	static {
 		// Prepare some pattern matchers.
 
-		number = Pattern.compile("\\s*(\\p{Digit}+(.\\p{Digit})?)\\s*");
+		number = Pattern.compile("\\s*(\\p{Digit}+([.]\\p{Digit})?)\\s*");
 		numberUnit = Pattern
-				.compile("\\s*(\\p{Digit}+(.\\p{Digit})?)\\s*(gu|px|%)\\s*");
+				.compile("\\s*(\\p{Digit}+(?:[.]\\p{Digit}+)?)\\s*(gu|px|%)\\s*");
 
 		sharpColor1 = Pattern
 				.compile("#(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})((\\p{XDigit}\\p{XDigit})?)");
