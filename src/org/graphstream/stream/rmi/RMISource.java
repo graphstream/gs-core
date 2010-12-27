@@ -41,12 +41,14 @@ public class RMISource extends UnicastRemoteObject implements RMIAdapterIn,
 	ConcurrentLinkedQueue<ElementSink> elementsListeners;
 
 	public RMISource() throws RemoteException {
+		super();
+		
 		attributesListeners = new ConcurrentLinkedQueue<AttributeSink>();
 		elementsListeners = new ConcurrentLinkedQueue<ElementSink>();
 	}
 
 	public RMISource(String name) throws RemoteException {
-		super();
+		this();
 		bind(name);
 	}
 

@@ -36,11 +36,12 @@ public class RMISink extends UnicastRemoteObject implements RMIAdapterOut, Sink 
 	ConcurrentHashMap<String, RMIAdapterIn> inputs;
 
 	public RMISink() throws RemoteException {
+		super();
 		inputs = new ConcurrentHashMap<String, RMIAdapterIn>();
 	}
 
 	public RMISink(String name) throws RemoteException {
-		super();
+		this();
 		bind(name);
 	}
 
