@@ -1,51 +1,32 @@
 /*
- * This file is part of GraphStream.
+ * Copyright 2006 - 2011 
+ *     Julien Baudry	<julien.baudry@graphstream-project.org>
+ *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
+ *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
+ *     Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
  * 
- * GraphStream is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This file is part of GraphStream <http://graphstream-project.org>.
  * 
- * GraphStream is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GraphStream is a library whose purpose is to handle static or dynamic
+ * graph, create them from scratch, file or any source and display them.
  * 
- * You should have received a copy of the GNU General Public License
- * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
+ * This program is free software distributed under the terms of two licenses, the
+ * CeCILL-C license that fits European law, and the GNU Lesser General Public
+ * License. You can  use, modify and/ or redistribute the software under the terms
+ * of the CeCILL-C license as circulated by CEA, CNRS and INRIA at the following
+ * URL <http://www.cecill.info> or under the terms of the GNU LGPL as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * Copyright 2006 - 2009
- * 	Julien Baudry
- * 	Antoine Dutot
- * 	Yoann Pigné
- * 	Guilhelm Savin
- */
-
-/**
- * Various graph layout algorithms (visual organisation of a graph).
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * 
- * <p>
- * A graph layout algorithm takes as input a graph description and outputs
- * position in the 2D or 3D space for each node of the graph according to some
- * constraints. Most of the time the constraints are that the graph must be
- * easy to visualise, with the less possible edge crossing and node overlapping.
- * </p>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * <p>
- * The <tt>Layout</tt> and <tt>LayoutListener</tt> interfaces are the main definition of a layout.
- * They are quite low level. The <tt>elasticbox</tt> is an implementation of these interfaces.
- * </p>
- * 
- * <p>
- * The <tt>LayoutAlgorithm</tt> is the class you need to use if you want to apply
- * a layout to a graph (store x,y,z coordinates in the graph) without opening
- * a graph viewer.
- * </p>
- * 
- * <p>
- * The <tt>LayoutRunner</tt>, <tt>LayoutListenerProxy</tt> are used by the graph viewer to
- * run the layout in a thread and communicate with this thread.
- * </p>
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
 package org.graphstream.ui.layout;
 

@@ -1,55 +1,31 @@
 /*
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * Copyright 2006 - 2011 
+ *     Julien Baudry	<julien.baudry@graphstream-project.org>
+ *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
+ *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
+ *     Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of GraphStream <http://graphstream-project.org>.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place - Suite 330, Boston, MA 02111-1307, USA.
- */
-
-/**
- * Definition of style sheets and styles.
+ * GraphStream is a library whose purpose is to handle static or dynamic
+ * graph, create them from scratch, file or any source and display them.
  * 
- * <p>
- * The {@link org.graphstream.ui.graphicGraph.stylesheet.parser} sub-package provide a JavaCC
- * parser for the style sheets defined in this package.
- * </p>
+ * This program is free software distributed under the terms of two licenses, the
+ * CeCILL-C license that fits European law, and the GNU Lesser General Public
+ * License. You can  use, modify and/ or redistribute the software under the terms
+ * of the CeCILL-C license as circulated by CEA, CNRS and INRIA at the following
+ * URL <http://www.cecill.info> or under the terms of the GNU LGPL as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * <p>
- * This package contains several classes that concentrate on the definition of a style sheet,
- * its contents, and the way they allow fast drawing of a very large number of graph elements.
- * </p>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * 
- * <p>
- * The {@link org.graphstream.ui.graphicGraph.stylesheet.Style} class contains the definition
- * of a single style. A style is a set of pairs (property,value) that can inherit another style or
- * link to a set of alternative styles (also known as meta-classes, or events).
- * </p>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * <p>
- * Inside the style the values can be colours, strings and numeric values. Numeric values can use
- * units of measure. This is why most numeric values in the style sheet are stored as instances of
- * {@link org.graphstream.ui.graphicGraph.stylesheet.Value}. This class stores a value an the
- * units of measure it is expressed in.
- * </p>
- * 
- * <p>
- * In the style sheet, the styles are not referred directly, they are contained in
- * {@link org.graphstream.ui.graphicGraph.stylesheet.Rule}s. A rule is a pair (selector,style).
- * The {@link org.graphstream.ui.graphicGraph.stylesheet.Selector} class defines the set
- * of elements the style applies to, it can be loosely compared to a regular expression.
- * </p>
- * 
- * <p>
- * The {@link org.graphstream.ui.graphicGraph.stylesheet.StyleSheetListener} allows to listen
- * at events occurring in the style sheet.
- * </p>
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
 package org.graphstream.ui.graphicGraph.stylesheet;
