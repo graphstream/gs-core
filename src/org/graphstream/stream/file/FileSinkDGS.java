@@ -61,7 +61,7 @@ public class FileSinkDGS extends FileSinkBase {
 		if (graphName.length() <= 0)
 			out.printf("null 0 0%n");
 		else
-			out.printf("\"%s\" 0 0%n", graphName);
+			out.printf("\"%s\" 0 0%n", formatStringForQuoting(graphName));
 	}
 
 	@Override
@@ -76,13 +76,13 @@ public class FileSinkDGS extends FileSinkBase {
 
 	public void edgeAttributeChanged(String graphId, long timeId,
 			String edgeId, String attribute, Object oldValue, Object newValue) {
-		out.printf("ce \"%s\" %s%n", edgeId,
+		out.printf("ce \"%s\" %s%n", formatStringForQuoting(edgeId),
 				attributeString(attribute, newValue, false));
 	}
 
 	public void edgeAttributeRemoved(String graphId, long timeId,
 			String edgeId, String attribute) {
-		out.printf("ce \"%s\" %s%n", edgeId,
+		out.printf("ce \"%s\" %s%n", formatStringForQuoting(edgeId),
 				attributeString(attribute, null, true));
 	}
 
@@ -108,24 +108,28 @@ public class FileSinkDGS extends FileSinkBase {
 
 	public void nodeAttributeChanged(String graphId, long timeId,
 			String nodeId, String attribute, Object oldValue, Object newValue) {
-		out.printf("cn \"%s\" %s%n", nodeId,
+		out.printf("cn \"%s\" %s%n", formatStringForQuoting(nodeId),
 				attributeString(attribute, newValue, false));
 	}
 
 	public void nodeAttributeRemoved(String graphId, long timeId,
 			String nodeId, String attribute) {
-		out.printf("cn \"%s\" %s%n", nodeId,
+		out.printf("cn \"%s\" %s%n", formatStringForQuoting(nodeId),
 				attributeString(attribute, null, true));
 	}
 
 	public void edgeAdded(String graphId, long timeId, String edgeId,
 			String fromNodeId, String toNodeId, boolean directed) {
+		edgeId = formatStringForQuoting(edgeId);
+		fromNodeId = formatStringForQuoting(fromNodeId);
+		toNodeId = formatStringForQuoting(toNodeId);
+		
 		out.printf("ae \"%s\" \"%s\" %s \"%s\"%n", edgeId, fromNodeId,
 				directed ? ">" : "", toNodeId);
 	}
 
 	public void edgeRemoved(String graphId, long timeId, String edgeId) {
-		out.printf("de \"%s\"%n", edgeId);
+		out.printf("de \"%s\"%n", formatStringForQuoting(edgeId));
 	}
 
 	public void graphCleared(String graphId, long timeId) {
@@ -133,11 +137,11 @@ public class FileSinkDGS extends FileSinkBase {
 	}
 
 	public void nodeAdded(String graphId, long timeId, String nodeId) {
-		out.printf("an \"%s\"%n", nodeId);
+		out.printf("an \"%s\"%n", formatStringForQuoting(nodeId));
 	}
 
 	public void nodeRemoved(String graphId, long timeId, String nodeId) {
-		out.printf("dn \"%s\"%n", nodeId);
+		out.printf("dn \"%s\"%n", formatStringForQuoting(nodeId));
 	}
 
 	public void stepBegins(String graphId, long timeId, double step) {
@@ -146,6 +150,10 @@ public class FileSinkDGS extends FileSinkBase {
 
 	// Utility
 
+	protected String formatStringForQuoting(String str) {
+		return str.replaceAll("(^|[^\\\\])\"", "$1\\\\\"");
+	}
+	
 	protected String attributeString(String key, Object value, boolean remove) {
 		if (key == null || key.length() == 0)
 			return null;
@@ -176,7 +184,10 @@ public class FileSinkDGS extends FileSinkBase {
 
 	protected String valueString(Object value) {
 		if (value instanceof CharSequence) {
-			return String.format("\"%s\"", (CharSequence) value);
+			if(value instanceof String)
+				return String.format("\"%s\"", formatStringForQuoting((String) value));
+			else
+				return String.format("\"%s\"", (CharSequence) value);
 		} else if (value instanceof Number) {
 			if (value instanceof Integer || value instanceof Short
 					|| value instanceof Byte || value instanceof Long) {
