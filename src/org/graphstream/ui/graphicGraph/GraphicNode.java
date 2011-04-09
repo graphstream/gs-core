@@ -42,6 +42,7 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.stream.SourceBase.ElementType;
+import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.stylesheet.Selector;
 
 /**
@@ -94,6 +95,10 @@ public class GraphicNode extends GraphicElement implements Node {
 	@Override
 	public float getZ() {
 		return z;
+	}
+
+	protected Point3 getPosition() {
+		return new Point3(x, y, z);
 	}
 
 	protected void moveFromEvent(float x, float y, float z) {

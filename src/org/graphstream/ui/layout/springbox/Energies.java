@@ -60,6 +60,8 @@ public class Energies {
 	 * The current position in the energies array.
 	 */
 	protected int energiesPos = 0;
+	
+	protected float energySum = 0;
 
 	// Constructor
 
@@ -91,16 +93,20 @@ public class Energies {
 		// vary anymore.
 
 		int range = 200;
-		float max = 1;
 		float eprev = getPreviousEnergyValue(range);
 		float diff = (float) Math.abs(lastEnergy - eprev);
 
-		diff = diff > max ? max : diff;
-
-		if (diff < 0)
-			diff = 0;
-
-		return (diff / max);
+		diff = diff < 1 ? 1 : diff;
+		
+		return 1/diff;
+	}
+	
+	/**
+	 * The average energy in the whole buffer.
+	 * @return The average energy.
+	 */
+	public float getAverageEnergy() {
+		return energySum / energies.length;
 	}
 
 	/**
@@ -138,7 +144,9 @@ public class Energies {
 	public void storeEnergy() {
 		energiesPos = (energiesPos + 1) % energies.length;
 
+		energySum -= energies[energiesPos];
 		energies[energiesPos] = energy;
+		energySum += energy;
 		lastEnergy = energy;
 		energy = 0;
 	}

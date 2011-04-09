@@ -86,6 +86,10 @@ import org.miv.pherd.ntree.QuadtreeCellSpace;
  * lowest energy for a spring. This coefficient allows to modify this target
  * spring length. Value larger than one will make the edge longer. Values
  * between 0 and 1 will make the edge smaller.</li>
+ * <li>layout.stabilization-limit : the stabilisation of a layout is a
+ * number between 0 and 1. 1 means fully stable, but this value is rare.
+ * Therefore one can consider the layout stable at a lower value. The
+ * default is 0.9. You can fix it with this attribute.</li>
  * </ul>
  * </p>
  */
@@ -241,6 +245,8 @@ public class SpringBox extends SourceBase implements Layout,
 	 * If greater than one, move events are sent only every N steps.
 	 */
 	protected int sendMoveEventsEvery = 1;
+	
+	protected double stabilizationLimit = 0.9;
 
 	// Constructors
 
@@ -317,7 +323,11 @@ public class SpringBox extends SourceBase implements Layout,
 		if (time > energies.getBufferSize())
 			return energies.getStabilization();
 
-		return 1;
+		return 0;
+	}
+	
+	public double getStabilizationLimit() {
+		return stabilizationLimit;
 	}
 
 	public int getSteps() {
@@ -664,6 +674,12 @@ public class SpringBox extends SourceBase implements Layout,
 
 			System.err.printf("layout.elasticBox.output-stats: %b%n",
 					outputStats);
+		} else if(attribute.equals("layout.stabilization-limit")) {
+			if(newValue instanceof Number) {
+				stabilizationLimit = ((Number)newValue).doubleValue();
+				if(stabilizationLimit > 1) stabilizationLimit = 1;
+				else if(stabilizationLimit < 0) stabilizationLimit = 0;
+			}
 		}
 	}
 

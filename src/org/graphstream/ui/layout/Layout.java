@@ -102,8 +102,15 @@ public interface Layout extends Pipe {
 
 	/**
 	 * How close to stabilisation the layout algorithm is.
+	 * @return a value between 0 and 1. 1 means fully stabilised.
 	 */
 	double getStabilization();
+	
+	/**
+	 * Above which value a correct stabilisation is achieved?
+	 * @return The stabilisation limit.
+	 */
+	double getStabilizationLimit();
 
 	/**
 	 * Smallest point in space of the layout bounding box.

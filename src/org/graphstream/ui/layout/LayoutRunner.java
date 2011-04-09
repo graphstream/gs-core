@@ -112,9 +112,21 @@ public class LayoutRunner extends Thread {
 		String layoutName = layout.getLayoutAlgorithmName();
 
 		while (loop) {
+			double limit = layout.getStabilizationLimit();
+			
 			pumpPipe.pump();
-			layout.compute();
-			nap(10);
+			if(limit > 0) {
+				if(layout.getStabilization()>limit) {
+					nap(80);
+//System.err.printf("Stable layout%n");
+				} else {
+					layout.compute();
+					nap(10);
+				}
+			} else {
+				layout.compute();
+				nap(10);
+			}
 		}
 
 		System.out.printf("Layout '%s' process stopped.%n", layoutName);
