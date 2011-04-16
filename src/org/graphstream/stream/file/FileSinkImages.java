@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,6 +48,7 @@ import org.graphstream.stream.ProxyPipe;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.layout.Layout;
+import org.graphstream.ui.layout.LayoutListener;
 import org.graphstream.ui.layout.LayoutRunner;
 import org.graphstream.ui.layout.Layouts;
 import org.graphstream.ui.swingViewer.GraphRenderer;
@@ -79,7 +81,7 @@ import org.graphstream.ui.swingViewer.GraphRenderer;
  * 
  * </pre>
  */
-public class FileSinkImages extends FileSinkBase {
+public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	/**
 	 * Output resolutions.
 	 */
@@ -153,15 +155,19 @@ public class FileSinkImages extends FileSinkBase {
 	 * Output image type.
 	 */
 	public static enum OutputType {
-		PNG(BufferedImage.TYPE_INT_ARGB), JPG(BufferedImage.TYPE_INT_RGB), png(
-				BufferedImage.TYPE_INT_ARGB), jpg(BufferedImage.TYPE_INT_RGB)
+		PNG(BufferedImage.TYPE_INT_ARGB, "png"), JPG(
+				BufferedImage.TYPE_INT_RGB, "jpg"), png(
+				BufferedImage.TYPE_INT_ARGB, "png"), jpg(
+				BufferedImage.TYPE_INT_RGB, "jpg")
 
 		;
 
 		final int imageType;
+		final String ext;
 
-		OutputType(int imageType) {
+		OutputType(int imageType, String ext) {
 			this.imageType = imageType;
+			this.ext = ext;
 		}
 	}
 
@@ -173,7 +179,7 @@ public class FileSinkImages extends FileSinkBase {
 	 * images just for nodes creation.
 	 */
 	public static enum OutputPolicy {
-		ByEventOutput, ByElementEventOutput, ByAttributeEventOutput, ByNodeEventOutput, ByEdgeEventOutput, ByGraphEventOutput, ByStepOutput, ByNodeAddedRemovedOutput, ByEdgeAddedRemovedOutput, ByNodeAttributeOutput, ByEdgeAttributeOutput, ByGraphAttributeOutput
+		ByEventOutput, ByElementEventOutput, ByAttributeEventOutput, ByNodeEventOutput, ByEdgeEventOutput, ByGraphEventOutput, ByStepOutput, ByNodeAddedRemovedOutput, ByEdgeAddedRemovedOutput, ByNodeAttributeOutput, ByEdgeAttributeOutput, ByGraphAttributeOutput, ByLayoutStepOutput, ByNodeMovedOutput
 	}
 
 	/**
@@ -261,6 +267,10 @@ public class FileSinkImages extends FileSinkBase {
 	protected LayoutRunner optLayout;
 	protected ProxyPipe layoutPipeIn;
 	protected Layout layout;
+	protected float layoutStabilizationLimit = 0.9f;
+	protected int layoutStepAfterStabilization = 10;
+	protected int layoutStepPerFrame = 4;
+	protected int layoutStepWithoutFrame = 0;
 
 	public FileSinkImages(String prefix, OutputType type,
 			Resolution resolution, OutputPolicy outputPolicy) {
@@ -394,6 +404,7 @@ public class FileSinkImages extends FileSinkBase {
 		if (policy != layoutPolicy) {
 			switch (layoutPolicy) {
 			case ComputedInLayoutRunner:
+				layout.removeListener(this);
 				optLayout.release();
 				optLayout = null;
 				layoutPipeIn.removeAttributeSink(gg);
@@ -401,6 +412,7 @@ public class FileSinkImages extends FileSinkBase {
 				layout = null;
 				break;
 			case ComputedAtNewImage:
+				layout.removeListener(this);
 				gg.removeSink(layout);
 				layout.removeAttributeSink(gg);
 				layout = null;
@@ -410,9 +422,7 @@ public class FileSinkImages extends FileSinkBase {
 			switch (policy) {
 			case ComputedInLayoutRunner:
 				layout = Layouts.newLayoutAlgorithm();
-				optLayout = new LayoutRunner(gg, layout);
-				layoutPipeIn = optLayout.newLayoutPipe();
-				layoutPipeIn.addAttributeSink(gg);
+				optLayout = new InnerLayoutRunner();
 				break;
 			case ComputedAtNewImage:
 				layout = Layouts.newLayoutAlgorithm();
@@ -421,8 +431,30 @@ public class FileSinkImages extends FileSinkBase {
 				break;
 			}
 
+			layout.addListener(this);
 			layoutPolicy = policy;
 		}
+	}
+
+	/**
+	 * Set the amount of step before output a new image. This is used only in
+	 * ByLayoutStepOutput output policy.
+	 * 
+	 * @param spf
+	 *            step per frame
+	 */
+	public void setLayoutStepPerFrame(int spf) {
+		this.layoutStepPerFrame = spf;
+	}
+
+	/**
+	 * Set the amount of steps after the stabilization of the algorithm.
+	 * 
+	 * @param sas
+	 *            step after stabilization.
+	 */
+	public void setLayoutStepAfterStabilization(int sas) {
+		this.layoutStepAfterStabilization = sas;
 	}
 
 	/**
@@ -458,6 +490,9 @@ public class FileSinkImages extends FileSinkBase {
 	 */
 	protected synchronized void outputNewImage() {
 		switch (layoutPolicy) {
+		case ComputedInLayoutRunner:
+			layoutPipeIn.pump();
+			break;
 		case ComputedAtNewImage:
 			if (layout != null)
 				layout.compute();
@@ -484,10 +519,10 @@ public class FileSinkImages extends FileSinkBase {
 		image.flush();
 
 		try {
-			File out = new File(String.format("%s%06d.png", filePrefix,
-					counter++));
+			File out = new File(String.format("%s%06d.%s", filePrefix,
+					counter++, outputType.ext));
 
-			if (!out.getParentFile().exists())
+			if (out.getParent() != null && !out.getParentFile().exists())
 				out.getParentFile().mkdirs();
 
 			ImageIO.write(image, outputType.name(), out);
@@ -768,6 +803,45 @@ public class FileSinkImages extends FileSinkBase {
 		}
 	}
 
+	public void nodeMoved(String id, float x, float y, float z) {
+		switch (outputPolicy) {
+		case ByNodeMovedOutput:
+			outputNewImage();
+			break;
+		}
+	}
+
+	public void nodeInfos(String id, float dx, float dy, float dz) {
+	}
+
+	public void edgeChanged(String id, float[] points) {
+	}
+
+	public void nodesMoved(Map<String, float[]> nodes) {
+		switch (outputPolicy) {
+		case ByNodeMovedOutput:
+			outputNewImage();
+			break;
+		}
+	}
+
+	public void edgesChanged(Map<String, float[]> edges) {
+	}
+
+	public void stepCompletion(float percent) {
+		switch (outputPolicy) {
+		case ByLayoutStepOutput:
+			layoutStepWithoutFrame++;
+
+			if (layoutStepWithoutFrame >= layoutStepPerFrame) {
+				outputNewImage();
+				layoutStepWithoutFrame = 0;
+			}
+
+			break;
+		}
+	}
+
 	public static enum Option {
 		IMAGE_PREFIX("image-prefix", 'p', "prefix of outputted images", true,
 				true, "image_"), IMAGE_TYPE("image-type", 't',
@@ -802,6 +876,38 @@ public class FileSinkImages extends FileSinkBase {
 		}
 	}
 
+	protected class InnerLayoutRunner extends LayoutRunner {
+
+		public InnerLayoutRunner() {
+			super(FileSinkImages.this.gg, FileSinkImages.this.layout, true,
+					true);
+
+			FileSinkImages.this.layoutPipeIn = newLayoutPipe();
+			FileSinkImages.this.layoutPipeIn
+					.addAttributeSink(FileSinkImages.this.gg);
+		}
+
+		public void run() {
+
+			int stepAfterStabilization = 0;
+
+			do {
+				pumpPipe.pump();
+				layout.compute();
+
+				if (layout.getStabilization() > layout.getStabilizationLimit())
+					stepAfterStabilization++;
+				else
+					stepAfterStabilization = 0;
+
+				nap(80);
+
+				if (stepAfterStabilization > layoutStepAfterStabilization)
+					loop = false;
+			} while (loop);
+		}
+	}
+
 	public static void usage() {
 		System.out.printf("usage: java %s [options] fichier.dgs%n",
 				FileSinkImages.class.getName());
@@ -828,7 +934,8 @@ public class FileSinkImages extends FileSinkBase {
 
 			for (int i = 0; i < args.length; i++) {
 
-				if (args[i].matches("^--\\w[\\w-]*\\w?(=(\"[^\"]*\"|[^\\s]*))?$")) {
+				if (args[i]
+						.matches("^--\\w[\\w-]*\\w?(=(\"[^\"]*\"|[^\\s]*))?$")) {
 					boolean found = false;
 					for (Option option : Option.values()) {
 						if (args[i].startsWith("--" + option.fullopts + "=")) {
@@ -845,23 +952,24 @@ public class FileSinkImages extends FileSinkBase {
 							break;
 						}
 					}
-					
-					if( ! found ) {
-						System.err.printf("unknown option: %s%n",args[i].substring(0,args[i].indexOf('=')));
+
+					if (!found) {
+						System.err.printf("unknown option: %s%n",
+								args[i].substring(0, args[i].indexOf('=')));
 						System.exit(1);
 					}
 				} else if (args[i].matches("^-\\w$")) {
 					boolean found = false;
-					
+
 					for (Option option : Option.values()) {
 						if (args[i].equals("-" + option.shortopts)) {
 							options.put(option, args[++i]);
 							break;
 						}
 					}
-					
-					if( ! found ) {
-						System.err.printf("unknown option: %s%n",args[i]);
+
+					if (!found) {
+						System.err.printf("unknown option: %s%n", args[i]);
 						System.exit(1);
 					}
 				} else {
