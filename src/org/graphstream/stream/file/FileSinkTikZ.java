@@ -38,13 +38,14 @@ import java.util.LinkedList;
 import java.util.Locale;
 
 import org.graphstream.graph.Edge;
-import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
+import org.graphstream.stream.GraphReplay;
 import org.graphstream.ui.graphicGraph.GraphicEdge;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.GraphicNode;
 import org.graphstream.ui.graphicGraph.StyleGroup;
 import org.graphstream.ui.graphicGraph.StyleGroupSet;
+import org.graphstream.ui.layout.springbox.SpringBox;
 
 /**
  * An export of a graph to PGF/TikZ format.
@@ -121,8 +122,45 @@ public class FileSinkTikZ extends FileSinkBase {
 	protected int classIndex = 0;
 	protected int colorIndex = 0;
 
+	protected double width = 10;
+	protected double height = 10;
+
+	protected boolean layout = false;
+
+	protected GraphicGraph buffer;
+	
+	protected String css = null;
+
 	protected static String formatId(String id) {
 		return "node" + id.replaceAll("\\W", "_");
+	}
+
+	public FileSinkTikZ() {
+		buffer = new GraphicGraph("tikz-buffer");
+	}
+
+	public double getWidth() {
+		return width;
+	}
+
+	public void setWidth(double width) {
+		this.width = width;
+	}
+
+	public double getHeight() {
+		return height;
+	}
+
+	public void setHeight(double height) {
+		this.height = height;
+	}
+	
+	public void setCSS(String css) {
+		this.css = css;
+	}
+	
+	public void setLayout(boolean layout) {
+		this.layout = layout;
 	}
 
 	protected double getNodeX(Node n) {
@@ -261,27 +299,66 @@ public class FileSinkTikZ extends FileSinkBase {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.file.FileSinkBase#exportGraph(org.graphstream.graph.Graph)
+	 * 
+	 * @see org.graphstream.stream.file.FileSinkBase#outputHeader()
 	 */
-	protected void exportGraph(Graph graph) {
-		double xmin, ymin, xmax, ymax;
-		double width, height;
-		Locale l = Locale.ROOT;
+	protected void outputHeader() throws IOException {
+		if (output instanceof PrintStream)
+			out = (PrintStream) output;
+		else
+			out = new PrintStream(output);
 
-		if (graph instanceof GraphicGraph) {
-			GraphicGraph gg = (GraphicGraph) graph;
-			StyleGroupSet sgs = gg.getStyleGroups();
+		colors.clear();
+		classes.clear();
+		classNames.clear();
 
-			for (StyleGroup sg : sgs.groups()) {
-				String key = String.format("class%02d", classIndex++);
-				classNames.put(sg.getId(), key);
-				classes.put(key, getTikzStyle(sg));
-			}
+		buffer.clear();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.file.FileSinkBase#outputEndOfFile()
+	 */
+	protected void outputEndOfFile() throws IOException {
+		SpringBox sbox = null;
+
+		if (layout) {
+			sbox = new SpringBox();
+
+
+			GraphReplay replay = new GraphReplay("replay");
+			replay.addSink(sbox);
+			sbox.addAttributeSink(buffer);
+			
+			replay.replay(buffer);
+			
+			do
+				sbox.compute();
+			while (sbox.getStabilization() < 0.9);
+
+			buffer.removeSink(sbox);
+			sbox.removeAttributeSink(buffer);
+
+			sbox = null;
+		}
+
+		if (css != null)
+			buffer.addAttribute("ui.stylesheet", css);
+		
+		StyleGroupSet sgs = buffer.getStyleGroups();
+
+		for (StyleGroup sg : sgs.groups()) {
+			String key = String.format("class%02d", classIndex++);
+			classNames.put(sg.getId(), key);
+			classes.put(key, getTikzStyle(sg));
 		}
 
 		String nodeStyle = "circle,draw=black,fill=black";
 		String edgeStyle = "draw=black";
-
+		Locale l = Locale.ROOT;
+		double xmin, ymin, xmax, ymax;
+		
 		out.printf("%%%n%% Do not forget \\usepackage{tikz} in header.%n%%%n");
 
 		//
@@ -293,20 +370,14 @@ public class FileSinkTikZ extends FileSinkBase {
 		out.printf(l, "\ttikzgsnode/.style={%s},%n", nodeStyle);
 		out.printf(l, "\ttikzgsedge/.style={%s}%n", edgeStyle);
 		out.printf("]%n");
-
 		for (String rgb : colors.keySet())
 			out.printf(l, "\t\\definecolor{%s}{rgb}{%s}%n", colors.get(rgb),
 					rgb);
 
-		width = graph.hasAttribute(WIDTH_ATTR) ? graph.getNumber(WIDTH_ATTR)
-				: 10;
-		height = graph.hasAttribute(HEIGHT_ATTR) ? graph.getNumber(HEIGHT_ATTR)
-				: 10;
-
 		xmin = ymin = Double.MAX_VALUE;
 		xmax = ymax = Double.MIN_VALUE;
 
-		for (Node n : graph.getEachNode()) {
+		for (Node n : buffer.getEachNode()) {
 			double x, y;
 
 			x = getNodeX(n);
@@ -321,8 +392,8 @@ public class FileSinkTikZ extends FileSinkBase {
 				System.err.printf("[warning] missing node (x,y).%n");
 			}
 		}
-
-		for (Node n : graph.getEachNode()) {
+		
+		for (Node n : buffer.getEachNode()) {
 			double x, y;
 			String label;
 			String uiClass = "tikzgsnode";
@@ -347,7 +418,7 @@ public class FileSinkTikZ extends FileSinkBase {
 					formatId(n.getId()), x, y, label);
 		}
 
-		for (Edge e : graph.getEachEdge()) {
+		for (Edge e : buffer.getEachEdge()) {
 			String uiClass = "tikzgsedge";
 
 			if (e instanceof GraphicEdge)
@@ -367,38 +438,13 @@ public class FileSinkTikZ extends FileSinkBase {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.graphstream.stream.file.FileSinkBase#outputHeader()
-	 */
-	protected void outputHeader() throws IOException {
-		if (output instanceof PrintStream)
-			out = (PrintStream) output;
-		else
-			out = new PrintStream(output);
-
-		colors.clear();
-		classes.clear();
-		classNames.clear();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSinkBase#outputEndOfFile()
-	 */
-	protected void outputEndOfFile() throws IOException {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * org.graphstream.stream.AttributeSink#graphAttributeAdded(java.lang.String
 	 * , long, java.lang.String, java.lang.Object)
 	 */
 	public void graphAttributeAdded(String sourceId, long timeId,
 			String attribute, Object value) {
-		throw new RuntimeException(FileSinkTikZ.class.getName()
-				+ " does not handle dynamic.");
+		buffer.graphAttributeAdded(sourceId, timeId, attribute, value);
 	}
 
 	/*
@@ -410,8 +456,8 @@ public class FileSinkTikZ extends FileSinkBase {
 	 */
 	public void graphAttributeChanged(String sourceId, long timeId,
 			String attribute, Object oldValue, Object newValue) {
-		throw new RuntimeException(FileSinkTikZ.class.getName()
-				+ " does not handle dynamic.");
+		buffer.graphAttributeChanged(sourceId, timeId, attribute, oldValue,
+				newValue);
 	}
 
 	/*
@@ -423,8 +469,7 @@ public class FileSinkTikZ extends FileSinkBase {
 	 */
 	public void graphAttributeRemoved(String sourceId, long timeId,
 			String attribute) {
-		throw new RuntimeException(FileSinkTikZ.class.getName()
-				+ " does not handle dynamic.");
+		buffer.graphAttributeRemoved(sourceId, timeId, attribute);
 	}
 
 	/*
@@ -436,8 +481,7 @@ public class FileSinkTikZ extends FileSinkBase {
 	 */
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
 			String attribute, Object value) {
-		throw new RuntimeException(FileSinkTikZ.class.getName()
-				+ " does not handle dynamic.");
+		buffer.nodeAttributeAdded(sourceId, timeId, nodeId, attribute, value);
 	}
 
 	/*
@@ -450,8 +494,8 @@ public class FileSinkTikZ extends FileSinkBase {
 	 */
 	public void nodeAttributeChanged(String sourceId, long timeId,
 			String nodeId, String attribute, Object oldValue, Object newValue) {
-		throw new RuntimeException(FileSinkTikZ.class.getName()
-				+ " does not handle dynamic.");
+		buffer.nodeAttributeChanged(sourceId, timeId, nodeId, attribute,
+				oldValue, newValue);
 	}
 
 	/*
@@ -463,8 +507,7 @@ public class FileSinkTikZ extends FileSinkBase {
 	 */
 	public void nodeAttributeRemoved(String sourceId, long timeId,
 			String nodeId, String attribute) {
-		throw new RuntimeException(FileSinkTikZ.class.getName()
-				+ " does not handle dynamic.");
+		buffer.nodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
 	}
 
 	/*
@@ -476,8 +519,7 @@ public class FileSinkTikZ extends FileSinkBase {
 	 */
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
 			String attribute, Object value) {
-		throw new RuntimeException(FileSinkTikZ.class.getName()
-				+ " does not handle dynamic.");
+		buffer.edgeAttributeAdded(sourceId, timeId, edgeId, attribute, value);
 	}
 
 	/*
@@ -490,8 +532,8 @@ public class FileSinkTikZ extends FileSinkBase {
 	 */
 	public void edgeAttributeChanged(String sourceId, long timeId,
 			String edgeId, String attribute, Object oldValue, Object newValue) {
-		throw new RuntimeException(FileSinkTikZ.class.getName()
-				+ " does not handle dynamic.");
+		buffer.edgeAttributeChanged(sourceId, timeId, edgeId, attribute,
+				oldValue, newValue);
 	}
 
 	/*
@@ -503,8 +545,7 @@ public class FileSinkTikZ extends FileSinkBase {
 	 */
 	public void edgeAttributeRemoved(String sourceId, long timeId,
 			String edgeId, String attribute) {
-		throw new RuntimeException(FileSinkTikZ.class.getName()
-				+ " does not handle dynamic.");
+		buffer.edgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
 	}
 
 	/*
@@ -514,8 +555,7 @@ public class FileSinkTikZ extends FileSinkBase {
 	 * java.lang.String)
 	 */
 	public void nodeAdded(String sourceId, long timeId, String nodeId) {
-		throw new RuntimeException(FileSinkTikZ.class.getName()
-				+ " does not handle dynamic.");
+		buffer.nodeAdded(sourceId, timeId, nodeId);
 	}
 
 	/*
@@ -525,8 +565,7 @@ public class FileSinkTikZ extends FileSinkBase {
 	 * long, java.lang.String)
 	 */
 	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
-		throw new RuntimeException(FileSinkTikZ.class.getName()
-				+ " does not handle dynamic.");
+		buffer.nodeRemoved(sourceId, timeId, nodeId);
 	}
 
 	/*
@@ -537,8 +576,8 @@ public class FileSinkTikZ extends FileSinkBase {
 	 */
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
 			String fromNodeId, String toNodeId, boolean directed) {
-		throw new RuntimeException(FileSinkTikZ.class.getName()
-				+ " does not handle dynamic.");
+		buffer.edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId,
+				directed);
 	}
 
 	/*
@@ -548,8 +587,7 @@ public class FileSinkTikZ extends FileSinkBase {
 	 * long, java.lang.String)
 	 */
 	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
-		throw new RuntimeException(FileSinkTikZ.class.getName()
-				+ " does not handle dynamic.");
+		buffer.edgeRemoved(sourceId, timeId, edgeId);
 	}
 
 	/*
@@ -559,8 +597,7 @@ public class FileSinkTikZ extends FileSinkBase {
 	 * long)
 	 */
 	public void graphCleared(String sourceId, long timeId) {
-		throw new RuntimeException(FileSinkTikZ.class.getName()
-				+ " does not handle dynamic.");
+		buffer.graphCleared(sourceId, timeId);
 	}
 
 	/*
@@ -570,7 +607,6 @@ public class FileSinkTikZ extends FileSinkBase {
 	 * long, double)
 	 */
 	public void stepBegins(String sourceId, long timeId, double step) {
-		throw new RuntimeException(FileSinkTikZ.class.getName()
-				+ " does not handle dynamic.");
+		buffer.stepBegins(sourceId, timeId, step);
 	}
 }

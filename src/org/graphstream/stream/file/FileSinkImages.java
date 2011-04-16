@@ -487,7 +487,7 @@ public class FileSinkImages extends FileSinkBase {
 			File out = new File(String.format("%s%06d.png", filePrefix,
 					counter++));
 
-			if (!out.getParentFile().exists())
+			if (out.getParent() != null && !out.getParentFile().exists())
 				out.getParentFile().mkdirs();
 
 			ImageIO.write(image, outputType.name(), out);
@@ -828,7 +828,8 @@ public class FileSinkImages extends FileSinkBase {
 
 			for (int i = 0; i < args.length; i++) {
 
-				if (args[i].matches("^--\\w[\\w-]*\\w?(=(\"[^\"]*\"|[^\\s]*))?$")) {
+				if (args[i]
+						.matches("^--\\w[\\w-]*\\w?(=(\"[^\"]*\"|[^\\s]*))?$")) {
 					boolean found = false;
 					for (Option option : Option.values()) {
 						if (args[i].startsWith("--" + option.fullopts + "=")) {
@@ -845,23 +846,24 @@ public class FileSinkImages extends FileSinkBase {
 							break;
 						}
 					}
-					
-					if( ! found ) {
-						System.err.printf("unknown option: %s%n",args[i].substring(0,args[i].indexOf('=')));
+
+					if (!found) {
+						System.err.printf("unknown option: %s%n",
+								args[i].substring(0, args[i].indexOf('=')));
 						System.exit(1);
 					}
 				} else if (args[i].matches("^-\\w$")) {
 					boolean found = false;
-					
+
 					for (Option option : Option.values()) {
 						if (args[i].equals("-" + option.shortopts)) {
 							options.put(option, args[++i]);
 							break;
 						}
 					}
-					
-					if( ! found ) {
-						System.err.printf("unknown option: %s%n",args[i]);
+
+					if (!found) {
+						System.err.printf("unknown option: %s%n", args[i]);
 						System.exit(1);
 					}
 				} else {
