@@ -803,7 +803,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		}
 	}
 
-	public void nodeMoved(String id, float x, float y, float z) {
+	public void nodeMoved(String id, double x, double y, double z) {
 		switch (outputPolicy) {
 		case ByNodeMovedOutput:
 			outputNewImage();
@@ -811,13 +811,13 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		}
 	}
 
-	public void nodeInfos(String id, float dx, float dy, float dz) {
+	public void nodeInfos(String id, double dx, double dy, double dz) {
 	}
 
-	public void edgeChanged(String id, float[] points) {
+	public void edgeChanged(String id, double[] points) {
 	}
 
-	public void nodesMoved(Map<String, float[]> nodes) {
+	public void nodesMoved(Map<String, double[]> nodes) {
 		switch (outputPolicy) {
 		case ByNodeMovedOutput:
 			outputNewImage();
@@ -825,10 +825,10 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		}
 	}
 
-	public void edgesChanged(Map<String, float[]> edges) {
+	public void edgesChanged(Map<String, double[]> edges) {
 	}
 
-	public void stepCompletion(float percent) {
+	public void stepCompletion(double percent) {
 		switch (outputPolicy) {
 		case ByLayoutStepOutput:
 			layoutStepWithoutFrame++;
