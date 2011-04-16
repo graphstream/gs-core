@@ -76,14 +76,14 @@ public interface GraphRenderer {
 	 * @return A real for which value 1 means the graph is fully visible and
 	 *         uses the whole view port.
 	 */
-	public abstract float getViewPercent();
+	public abstract double getViewPercent();
 
 	/**
 	 * The current rotation angle.
 	 * 
 	 * @return The rotation angle in degrees.
 	 */
-	public abstract float getViewRotation();
+	public abstract double getViewRotation();
 
 	/**
 	 * A number in GU that gives the approximate graph size (often the diagonal
@@ -93,7 +93,7 @@ public interface GraphRenderer {
 	 * 
 	 * @return The graph estimated size in graph units.
 	 */
-	public abstract float getGraphDimension();
+	public abstract double getGraphDimension();
 
 	/**
 	 * Search for the first node or sprite (in that order) that contains the
@@ -106,7 +106,7 @@ public interface GraphRenderer {
 	 * @return The first node or sprite at the given coordinates or null if
 	 *         nothing found.
 	 */
-	public abstract GraphicElement findNodeOrSpriteAt(float x, float y);
+	public abstract GraphicElement findNodeOrSpriteAt(double x, double y);
 
 	/**
 	 * Search for all the nodes and sprites contained inside the rectangle
@@ -122,8 +122,8 @@ public interface GraphRenderer {
 	 *            The rectangle highest point ordinate.
 	 * @return The set of sprites and nodes in the given rectangle.
 	 */
-	public abstract ArrayList<GraphicElement> allNodesOrSpritesIn(float x1,
-			float y1, float x2, float y2);
+	public abstract ArrayList<GraphicElement> allNodesOrSpritesIn(double x1,
+			double y1, double x2, double y2);
 
 	// Command
 
@@ -143,8 +143,8 @@ public interface GraphRenderer {
 	 * @param maxz
 	 *            Highest depth.
 	 */
-	public abstract void setBounds(float minx, float miny, float minz,
-			float maxx, float maxy, float maxz);
+	public abstract void setBounds(double minx, double miny, double minz,
+			double maxx, double maxy, double maxz);
 
 	/**
 	 * Redisplay or update the graph.
@@ -166,7 +166,7 @@ public interface GraphRenderer {
 	 * @param z
 	 *            The new depth.
 	 */
-	public abstract void setViewCenter(float x, float y, float z);
+	public abstract void setViewCenter(double x, double y, double z);
 
 	/**
 	 * Specify exactly the minimum and maximum points in GU that are visible
@@ -182,13 +182,13 @@ public interface GraphRenderer {
 	 *            The maximum abscissa visible.
 	 * @see #removeGraphViewport()
 	 */
-	public abstract void setGraphViewport(float minx, float miny, float maxx,
-			float maxy);
+	public abstract void setGraphViewport(double minx, double miny, double maxx,
+			double maxy);
 
 	/**
 	 * Remove the specified graph view port.
 	 * 
-	 * @see #setGraphViewport(float, float, float, float)
+	 * @see #setGraphViewport(double, double, double, double)
 	 */
 	public abstract void removeGraphViewport();
 
@@ -198,7 +198,7 @@ public interface GraphRenderer {
 	 * @param percent
 	 *            Percent of the graph visible.
 	 */
-	public abstract void setViewPercent(float percent);
+	public abstract void setViewPercent(double percent);
 
 	/**
 	 * Rotate the view around its centre point by a given theta angles (in
@@ -207,7 +207,7 @@ public interface GraphRenderer {
 	 * @param theta
 	 *            The rotation angle in degrees.
 	 */
-	public abstract void setViewRotation(float theta);
+	public abstract void setViewRotation(double theta);
 
 	/**
 	 * Called by the mouse manager to specify where a node and sprite selection
@@ -218,7 +218,7 @@ public interface GraphRenderer {
 	 * @param y1
 	 *            The selection start ordinate.
 	 */
-	public abstract void beginSelectionAt(float x1, float y1);
+	public abstract void beginSelectionAt(double x1, double y1);
 
 	/**
 	 * The selection already started grows toward position (x, y).
@@ -228,7 +228,7 @@ public interface GraphRenderer {
 	 * @param y
 	 *            The new end selection ordinate.
 	 */
-	public abstract void selectionGrowsAt(float x, float y);
+	public abstract void selectionGrowsAt(double x, double y);
 
 	/**
 	 * Called by the mouse manager to specify where a node and spite selection
@@ -239,7 +239,7 @@ public interface GraphRenderer {
 	 * @param y2
 	 *            The selection stop ordinate.
 	 */
-	public abstract void endSelectionAt(float x2, float y2);
+	public abstract void endSelectionAt(double x2, double y2);
 
 	/**
 	 * Force an element to move at the given location in pixels.
@@ -251,8 +251,8 @@ public interface GraphRenderer {
 	 * @param y
 	 *            The requested position ordinate in pixels.
 	 */
-	public abstract void moveElementAtPx(GraphicElement element, float x,
-			float y);
+	public abstract void moveElementAtPx(GraphicElement element, double x,
+			double y);
 
 	public abstract void screenshot(String filename, int width, int height);
 

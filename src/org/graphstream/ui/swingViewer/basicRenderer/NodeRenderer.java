@@ -51,7 +51,7 @@ public class NodeRenderer extends ElementRenderer {
 
 	protected Ellipse2D shape;
 
-	protected float width, height, w2, h2;
+	protected double width, height, w2, h2;
 
 	@Override
 	protected void setupRenderingPass(StyleGroup group, Graphics2D g,
@@ -82,7 +82,7 @@ public class NodeRenderer extends ElementRenderer {
 	@Override
 	protected void pushStyle(StyleGroup group, Graphics2D g, Camera camera) {
 		size = group.getSize();
-		shape = new Ellipse2D.Float();
+		shape = new Ellipse2D.Double();
 		width = metrics.lengthToGu(size, 0);
 		height = size.size() > 1 ? metrics.lengthToGu(size, 1) : width;
 		w2 = width / 2;

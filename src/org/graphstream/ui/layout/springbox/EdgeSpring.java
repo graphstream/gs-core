@@ -54,7 +54,7 @@ public class EdgeSpring {
 	/**
 	 * Edge weight.
 	 */
-	public float weight = 1f;
+	public double weight = 1f;
 
 	/**
 	 * The attraction force on this edge.
@@ -69,7 +69,7 @@ public class EdgeSpring {
 	/**
 	 * The edge attraction energy.
 	 */
-	public float attE;
+	public double attE;
 
 	/**
 	 * New edge between two given nodes.
@@ -112,9 +112,9 @@ public class EdgeSpring {
 			 * 
 			 * spring.set( p1.x - p0.x, p1.y - p0.y, is3D ? p1.z - p0.z : 0 );
 			 * 
-			 * float len = spring.normalize();
+			 * double len = spring.normalize();
 			 * 
-			 * if( k != 0 ) { float factor = ( len*len/k ) * weight *
+			 * if( k != 0 ) { double factor = ( len*len/k ) * weight *
 			 * node0.getWeight() * node1.getWeight(); energy += factor*2;
 			 * spring.scalarMult( factor );
 			 * 

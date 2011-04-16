@@ -50,12 +50,12 @@ public class Point2 implements java.io.Serializable {
 	/**
 	 * X axis value.
 	 */
-	public float x;
+	public double x;
 
 	/**
 	 * Y axis value.
 	 */
-	public float y;
+	public double y;
 
 	// Attributes -- Shared
 
@@ -75,7 +75,7 @@ public class Point2 implements java.io.Serializable {
 	/**
 	 * New 2D point at (x,y).
 	 */
-	public Point2(float x, float y) {
+	public Point2(double x, double y) {
 		set(x, y);
 	}
 
@@ -89,7 +89,7 @@ public class Point2 implements java.io.Serializable {
 	/**
 	 * New 2D point at (x,y).
 	 */
-	public void make(float x, float y) {
+	public void make(double x, double y) {
 		set(x, y);
 	}
 
@@ -106,7 +106,7 @@ public class Point2 implements java.io.Serializable {
 	// * Is other equal to this ?
 	// */
 	// public boolean
-	// equals( const Point2 < float > & other ) const
+	// equals( const Point2 < double > & other ) const
 	// {
 	// return( x == other.x
 	// and y == other.y
@@ -119,7 +119,7 @@ public class Point2 implements java.io.Serializable {
 	 * <code>factor</code> is between 0 and 1 (0 yields this point, 1 yields the
 	 * <code>other</code> point).
 	 */
-	public Point2 interpolate(Point2 other, float factor) {
+	public Point2 interpolate(Point2 other, double factor) {
 		Point2 p = new Point2(x + ((other.x - x) * factor), y
 				+ ((other.y - y) * factor));
 
@@ -129,10 +129,10 @@ public class Point2 implements java.io.Serializable {
 	/**
 	 * Distance between this and <code>other</code>.
 	 */
-	public float distance(Point2 other) {
-		float xx = other.x - x;
-		float yy = other.y - y;
-		return (float) Math.abs(Math.sqrt((xx * xx) + (yy * yy)));
+	public double distance(Point2 other) {
+		double xx = other.x - x;
+		double yy = other.y - y;
+		return Math.abs(Math.sqrt((xx * xx) + (yy * yy)));
 	}
 
 	// Commands
@@ -148,7 +148,7 @@ public class Point2 implements java.io.Serializable {
 	/**
 	 * Like #moveTo().
 	 */
-	public void set(float x, float y) {
+	public void set(double x, double y) {
 		this.x = x;
 		this.y = y;
 	}
@@ -158,7 +158,7 @@ public class Point2 implements java.io.Serializable {
 	/**
 	 * Move to absolute position (x,y).
 	 */
-	public void moveTo(float x, float y) {
+	public void moveTo(double x, double y) {
 		this.x = x;
 		this.y = y;
 	}
@@ -166,7 +166,7 @@ public class Point2 implements java.io.Serializable {
 	/**
 	 * Move of given vector (dx,dy).
 	 */
-	public void move(float dx, float dy) {
+	public void move(double dx, double dy) {
 		this.x += dx;
 		this.y += dy;
 	}
@@ -182,21 +182,21 @@ public class Point2 implements java.io.Serializable {
 	/**
 	 * Move horizontally of dx.
 	 */
-	public void moveX(float dx) {
+	public void moveX(double dx) {
 		x += dx;
 	}
 
 	/**
 	 * Move vertically of dy.
 	 */
-	public void moveY(float dy) {
+	public void moveY(double dy) {
 		y += dy;
 	}
 
 	/**
 	 * Scale of factor (sx,sy).
 	 */
-	public void scale(float sx, float sy) {
+	public void scale(double sx, double sy) {
 		x *= sx;
 		y *= sy;
 	}
@@ -212,14 +212,14 @@ public class Point2 implements java.io.Serializable {
 	/**
 	 * Change only abscissa at absolute coordinate x.
 	 */
-	public void setX(float x) {
+	public void setX(double x) {
 		this.x = x;
 	}
 
 	/**
 	 * Change only ordinate at absolute coordinate y.
 	 */
-	public void setY(float y) {
+	public void setY(double y) {
 		this.y = y;
 	}
 
@@ -227,7 +227,7 @@ public class Point2 implements java.io.Serializable {
 	 * Exchange the values of this and other.
 	 */
 	public void swap(Point2 other) {
-		float t;
+		double t;
 
 		if (other != this) {
 			t = this.x;

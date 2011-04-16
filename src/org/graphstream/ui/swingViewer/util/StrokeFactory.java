@@ -69,7 +69,7 @@ public class StrokeFactory {
 
 	protected static Stroke generatePlainStroke(Style style,
 			GraphMetrics metrics) {
-		float width = metrics.lengthToGu(style.getStrokeWidth());
+		float width = (float)metrics.lengthToGu(style.getStrokeWidth());
 
 		/*
 		 * if( width == 1f ) return plainLine1px; // XXX Not a good optimisation
@@ -84,14 +84,14 @@ public class StrokeFactory {
 	}
 
 	protected static Stroke generateDotsStroke(Style style, GraphMetrics metrics) {
-		float width = metrics.lengthToGu(style.getStrokeWidth());
+		float width = (float)metrics.lengthToGu(style.getStrokeWidth());
 		/*
 		 * if( width == 1f ) return dotsLine1px; else if( width == 2f ) return
 		 * dotsLine2px; else if( width == 3f ) return dotsLine3px; else if(
 		 * width == 5f ) return dotsLine5px; else if( width == 10f ) return
 		 * dotsLine10px; else
 		 */{
-			dots[0] = metrics.lengthToGu(1f, Units.PX);
+			dots[0] = (float)metrics.lengthToGu(1f, Units.PX);
 			dots[1] = dots[0];
 			return new BasicStroke(width, BasicStroke.CAP_BUTT,
 					BasicStroke.JOIN_MITER, 1f, dots, 0);
@@ -100,14 +100,14 @@ public class StrokeFactory {
 
 	protected static Stroke generateDashesStroke(Style style,
 			GraphMetrics metrics) {
-		float width = metrics.lengthToGu(style.getStrokeWidth());
+		float width = (float)metrics.lengthToGu(style.getStrokeWidth());
 		/*
 		 * if( width == 1f ) return dashesLine1px; else if( width == 2f ) return
 		 * dashesLine2px; else if( width == 3f ) return dashesLine3px; else if(
 		 * width == 5f ) return dashesLine5px; else if( width == 10f ) return
 		 * dashesLine10px; else
 		 */{
-			dashes[0] = metrics.lengthToGu(3f, Units.PX);
+			dashes[0] = (float)metrics.lengthToGu(3f, Units.PX);
 			dashes[1] = dashes[0];
 			return new BasicStroke(width, BasicStroke.CAP_BUTT,
 					BasicStroke.JOIN_MITER, 1f, dashes, 0);

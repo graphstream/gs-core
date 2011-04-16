@@ -47,11 +47,11 @@ public class ShortcutManager implements KeyListener {
 	 */
 	protected View view;
 
-	protected float viewPercent = 1;
+	protected double viewPercent = 1;
 
 	protected Point3 viewPos = new Point3();
 
-	protected float rotation = 0;
+	protected double rotation = 0;
 
 	// Construction
 
@@ -80,10 +80,10 @@ public class ShortcutManager implements KeyListener {
 			view.setViewPercent(view.getViewPercent() + 0.05f);
 		} else if (event.getKeyCode() == KeyEvent.VK_LEFT) {
 			if ((event.getModifiers() & KeyEvent.ALT_MASK) != 0) {
-				float r = view.getViewRotation();
+				double r = view.getViewRotation();
 				view.setViewRotation(r - 5);
 			} else {
-				float delta = 0;
+				double delta = 0;
 
 				if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0)
 					delta = view.getGraphDimension() * 0.1f;
@@ -95,10 +95,10 @@ public class ShortcutManager implements KeyListener {
 			}
 		} else if (event.getKeyCode() == KeyEvent.VK_RIGHT) {
 			if ((event.getModifiers() & KeyEvent.ALT_MASK) != 0) {
-				float r = view.getViewRotation();
+				double r = view.getViewRotation();
 				view.setViewRotation(r + 5);
 			} else {
-				float delta = 0;
+				double delta = 0;
 
 				if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0)
 					delta = view.getGraphDimension() * 0.1f;
@@ -109,7 +109,7 @@ public class ShortcutManager implements KeyListener {
 				view.setViewCenter(p.x + delta, p.y, 0);
 			}
 		} else if (event.getKeyCode() == KeyEvent.VK_UP) {
-			float delta = 0;
+			double delta = 0;
 
 			if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0)
 				delta = view.getGraphDimension() * 0.1f;
@@ -119,7 +119,7 @@ public class ShortcutManager implements KeyListener {
 			Point3 p = view.getViewCenter();
 			view.setViewCenter(p.x, p.y + delta, 0);
 		} else if (event.getKeyCode() == KeyEvent.VK_DOWN) {
-			float delta = 0;
+			double delta = 0;
 
 			if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0)
 				delta = view.getGraphDimension() * 0.1f;

@@ -114,31 +114,31 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 		return camera.getViewCenter();
 	}
 
-	public float getViewPercent() {
+	public double getViewPercent() {
 		return camera.getViewPercent();
 	}
 
-	public float getViewRotation() {
+	public double getViewRotation() {
 		return camera.getViewRotation();
 	}
 
-	public float getGraphDimension() {
+	public double getGraphDimension() {
 		return camera.getMetrics().diagonal;
 	}
 
-	public ArrayList<GraphicElement> allNodesOrSpritesIn(float x1, float y1,
-			float x2, float y2) {
+	public ArrayList<GraphicElement> allNodesOrSpritesIn(double x1, double y1,
+			double x2, double y2) {
 		return camera.allNodesOrSpritesIn(graph, x1, y1, x2, y2);
 	}
 
-	public GraphicElement findNodeOrSpriteAt(float x, float y) {
+	public GraphicElement findNodeOrSpriteAt(double x, double y) {
 		return camera.findNodeOrSpriteAt(graph, x, y);
 	}
 
 	// Command
 
-	public void setBounds(float minx, float miny, float minz, float maxx,
-			float maxy, float maxz) {
+	public void setBounds(double minx, double miny, double minz, double maxx,
+			double maxy, double maxz) {
 		camera.getMetrics().setBounds(minx, miny, minz, maxx, maxy, maxz);
 	}
 
@@ -166,12 +166,12 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 		camera.setRotation(0);
 	}
 
-	public void setViewCenter(float x, float y, float z) {
+	public void setViewCenter(double x, double y, double z) {
 		camera.setAutoFitView(false);
 		camera.setCenter(x, y /* ignore Z */);
 	}
 
-	public void setGraphViewport(float minx, float miny, float maxx, float maxy) {
+	public void setGraphViewport(double minx, double miny, double maxx, double maxy) {
 		camera.setAutoFitView(false);
 		camera.setCenter(minx + (maxx - minx), miny + (maxy - miny));
 		camera.setGraphViewport(minx, miny, maxx, maxy);
@@ -183,17 +183,17 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 		resetView();
 	}
 
-	public void setViewPercent(float percent) {
+	public void setViewPercent(double percent) {
 		camera.setAutoFitView(false);
 		camera.setZoom(percent);
 	}
 
-	public void setViewRotation(float theta) {
+	public void setViewRotation(double theta) {
 		camera.setRotation(theta);
 	}
 
-	public void moveElementAtPx(GraphicElement element, float x, float y) {
-		Point2D.Float p = camera.inverseTransform(x, y);
+	public void moveElementAtPx(GraphicElement element, double x, double y) {
+		Point2D.Double p = camera.inverseTransform(x, y);
 		element.move(p.x, p.y, element.getZ());
 	}
 
@@ -201,9 +201,9 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 
 	protected void renderGraph(Graphics2D g) {
 		StyleGroup style = graph.getStyle();
-		Rectangle2D rect = new Rectangle2D.Float();
+		Rectangle2D rect = new Rectangle2D.Double();
 		GraphMetrics metrics = camera.getMetrics();
-		float px1 = metrics.px1;
+		double px1 = metrics.px1;
 		Value stroke = style.getShadowWidth();
 
 		setupGraphics(g);
@@ -216,7 +216,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 				&& style.getStrokeWidth().value != 0) {
 			rect.setFrame(metrics.lo.x, metrics.lo.y + px1,
 					metrics.size.data[0] - px1, metrics.size.data[1] - px1);
-			g.setStroke(new BasicStroke(metrics.lengthToGu(stroke)));
+			g.setStroke(new BasicStroke((float)metrics.lengthToGu(stroke)));
 			g.setColor(graph.getStyle().getStrokeColor(0));
 			g.draw(rect);
 		}
@@ -330,14 +330,14 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 	protected void renderSelection(Graphics2D g) {
 		if (selection != null && selection.x1 != selection.x2
 				&& selection.y1 != selection.y2) {
-			float x1 = selection.x1;
-			float y1 = selection.y1;
-			float x2 = selection.x2;
-			float y2 = selection.y2;
-			float t;
+			double x1 = selection.x1;
+			double y1 = selection.y1;
+			double x2 = selection.x2;
+			double y2 = selection.y2;
+			double t;
 
-			float w = camera.getMetrics().getSize().data[0];
-			float h = camera.getMetrics().getSize().data[1];
+			double w = camera.getMetrics().getSize().data[0];
+			double h = camera.getMetrics().getSize().data[1];
 
 			if (x1 > x2) {
 				t = x1;
@@ -392,22 +392,22 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 	 * area (that should always map to the window borders).
 	 */
 	protected void debugVisibleArea(Graphics2D g) {
-		Rectangle2D rect = new Rectangle2D.Float();
+		Rectangle2D rect = new Rectangle2D.Double();
 		GraphMetrics metrics = camera.getMetrics();
 
-		float x = metrics.loVisible.x;
-		float y = metrics.loVisible.y;
-		float w = (float) Math.abs(metrics.hiVisible.x - x);
-		float h = (float) Math.abs(metrics.hiVisible.y - y);
+		double x = metrics.loVisible.x;
+		double y = metrics.loVisible.y;
+		double w =  Math.abs(metrics.hiVisible.x - x);
+		double h =  Math.abs(metrics.hiVisible.y - y);
 
 		rect.setFrame(x, y, w, h);
-		g.setStroke(new BasicStroke(metrics.px1 * 4));
+		g.setStroke(new BasicStroke((float)(metrics.px1 * 4)));
 		g.setColor(Color.RED);
 		g.draw(rect);
 
 		g.setColor(Color.BLUE);
-		Ellipse2D ellipse = new Ellipse2D.Float();
-		float px1 = metrics.px1;
+		Ellipse2D ellipse = new Ellipse2D.Double();
+		double px1 = metrics.px1;
 		ellipse.setFrame(camera.getViewCenter().x - 3 * px1,
 				camera.getViewCenter().y - 3 * px1, px1 * 6, px1 * 6);
 		g.fill(ellipse);

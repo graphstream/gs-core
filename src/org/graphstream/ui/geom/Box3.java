@@ -87,7 +87,7 @@ public class Box3 implements java.io.Serializable {
 	/**
 	 * New box from point (x1,y1,z1) to point (x2,y2,x2).
 	 */
-	public Box3(float x1, float y1, float z1, float x2, float y2, float z2) {
+	public Box3(double x1, double y1, double z1, double x2, double y2, double z2) {
 		lo = new Point3(x1, y1, z1);
 		hi = new Point3(x2, y2, z2);
 	}
@@ -102,7 +102,7 @@ public class Box3 implements java.io.Serializable {
 	/**
 	 * New box from point (x1,y1,z1) to point (x2,y2,x2).
 	 */
-	public void make(float x1, float y1, float z1, float x2, float y2, float z2) {
+	public void make(double x1, double y1, double z1, double x2, double y2, double z2) {
 		set(x1, y1, z1, x2, y2, z2);
 	}
 
@@ -119,7 +119,7 @@ public class Box3 implements java.io.Serializable {
 	// * Is other equal to this ?
 	// */
 	// public boolean
-	// equals( const Box3 < float > other )
+	// equals( const Box3 < double > other )
 	// {
 	// return ( lo.equals ( other.lo ) and hi.equals ( other.hi ) );
 	// }
@@ -143,21 +143,21 @@ public class Box3 implements java.io.Serializable {
 	/**
 	 * Absolute width.
 	 */
-	public float getWidth() {
+	public double getWidth() {
 		return hi.x - lo.x;
 	}
 
 	/**
 	 * Absolute height.
 	 */
-	public float getHeight() {
+	public double getHeight() {
 		return hi.y - lo.y;
 	}
 
 	/**
 	 * Absolute depth.
 	 */
-	public float getDepth() {
+	public double getDepth() {
 		return hi.z - lo.z;
 	}
 
@@ -174,7 +174,7 @@ public class Box3 implements java.io.Serializable {
 	/**
 	 * Change the box to (x1,y1,z1,x2,y2,z2).
 	 */
-	public void set(float x1, float y1, float z1, float x2, float y2, float z2) {
+	public void set(double x1, double y1, double z1, double x2, double y2, double z2) {
 		lo.moveTo(x1, y1, z1);
 		hi.moveTo(x2, y2, z2);
 	}
@@ -359,7 +359,7 @@ public class Box3 implements java.io.Serializable {
 	 * Move lo to the absolute location (x,y,z). The point hi is moved from the
 	 * same amount than lo.
 	 */
-	public void moveTo(float x, float y, float z) {
+	public void moveTo(double x, double y, double z) {
 		hi.moveTo(hi.x + (x - lo.x), hi.y + (y - lo.y), hi.z + (z - lo.z));
 		lo.moveTo(x, y, z);
 	}
@@ -367,7 +367,7 @@ public class Box3 implements java.io.Serializable {
 	/**
 	 * Move the two points along the (dx,dy,dz) vector.
 	 */
-	public void move(float dx, float dy, float dz) {
+	public void move(double dx, double dy, double dz) {
 		lo.move(dx, dy, dz);
 		hi.move(dx, dy, dz);
 	}

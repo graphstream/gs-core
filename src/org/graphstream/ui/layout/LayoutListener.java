@@ -52,7 +52,7 @@ public interface LayoutListener {
 	 * @param z
 	 *            new depth of the node.
 	 */
-	void nodeMoved(String id, float x, float y, float z);
+	void nodeMoved(String id, double x, double y, double z);
 
 	/**
 	 * Only if requested in the layout algorithm, this reports various
@@ -67,7 +67,7 @@ public interface LayoutListener {
 	 * @param dz
 	 *            The node displacement vector.
 	 */
-	void nodeInfos(String id, float dx, float dy, float dz);
+	void nodeInfos(String id, double dx, double dy, double dz);
 
 	/**
 	 * The break points of an edge changed.
@@ -78,7 +78,7 @@ public interface LayoutListener {
 	 *            The points description. This description is specific to the
 	 *            layout algorithm.
 	 */
-	void edgeChanged(String id, float points[]);
+	void edgeChanged(String id, double points[]);
 
 	/**
 	 * Several nodes moved at once.
@@ -86,7 +86,7 @@ public interface LayoutListener {
 	 * @param nodes
 	 *            The new node positions.
 	 */
-	void nodesMoved(final Map<String, float[]> nodes);
+	void nodesMoved(final Map<String, double[]> nodes);
 
 	/**
 	 * Several edges changed at once.
@@ -94,7 +94,7 @@ public interface LayoutListener {
 	 * @param edges
 	 *            The new edges description.
 	 */
-	void edgesChanged(final Map<String, float[]> edges);
+	void edgesChanged(final Map<String, double[]> edges);
 
 	/**
 	 * The current step is completed at the given percent. This allows to
@@ -103,5 +103,5 @@ public interface LayoutListener {
 	 * @param percent
 	 *            a number between 0 and 1, 1 means the steps is completed.
 	 */
-	void stepCompletion(float percent);
+	void stepCompletion(double percent);
 }

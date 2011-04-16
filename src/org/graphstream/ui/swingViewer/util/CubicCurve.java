@@ -42,8 +42,8 @@ public class CubicCurve {
 	 * 
 	 * @return The coordinate at parametric position `t` on the curve.
 	 */
-	public static float eval(float x0, float x1, float x2, float x3, float t) {
-		float tt = (1f - t);
+	public static double eval(double x0, double x1, double x2, double x3, double t) {
+		double tt = (1f - t);
 
 		return x0 * (tt * tt * tt) + 3f * x1 * t * (tt * tt) + 3f * x2
 				* (t * t) * tt + x3 * (t * t * t);
@@ -57,7 +57,7 @@ public class CubicCurve {
 	 * @return The point at parametric position `t` on the curve.
 	 */
 	public static Point2 eval(Point2 p0, Point2 p1, Point2 p2, Point2 p3,
-			float t) {
+			double t) {
 		return new Point2(eval(p0.x, p1.x, p2.x, p3.x, t), eval(p0.y, p1.y,
 				p2.y, p3.y, t));
 	}
@@ -69,9 +69,9 @@ public class CubicCurve {
 	 * 
 	 * @return The point at parametric position `t` on the curve.
 	 */
-	public static Point2D.Float eval(Point2D.Float p0, Point2D.Float p1,
-			Point2D.Float p2, Point2D.Float p3, float t) {
-		return new Point2D.Float(eval(p0.x, p1.x, p2.x, p3.x, t), eval(p0.y,
+	public static Point2D.Double eval(Point2D.Double p0, Point2D.Double p1,
+			Point2D.Double p2, Point2D.Double p3, double t) {
+		return new Point2D.Double(eval(p0.x, p1.x, p2.x, p3.x, t), eval(p0.y,
 				p1.y, p2.y, p3.y, t));
 	}
 
@@ -83,7 +83,7 @@ public class CubicCurve {
 	 * @return the given reference to `result`.
 	 */
 	public static Point2 eval(Point2 p0, Point2 p1, Point2 p2, Point2 p3,
-			float t, Point2 result) {
+			double t, Point2 result) {
 		result.set(eval(p0.x, p1.x, p2.x, p3.x, t),
 				eval(p0.y, p1.y, p2.y, p3.y, t));
 		return result;
@@ -95,8 +95,8 @@ public class CubicCurve {
 	 * 
 	 * @return The derivative at parametric position `t` on the curve.
 	 */
-	public static float derivative(float x0, float x1, float x2, float x3,
-			float t) {
+	public static double derivative(double x0, double x1, double x2, double x3,
+			double t) {
 		return 3 * (x3 - 3 * x2 + 3 * x1 - x0) * t * t + 2
 				* (3 * x2 - 6 * x1 + 3 * x0) * t + (3 * x1 - 3 * x0);
 	}
@@ -108,7 +108,7 @@ public class CubicCurve {
 	 * @return The derivative point at parametric position `t` on the curve.
 	 */
 	public static Point2 derivative(Point2 p0, Point2 p1, Point2 p2, Point3 p3,
-			float t) {
+			double t) {
 		return new Point2(derivative(p0.x, p1.x, p2.x, p3.x, t), derivative(
 				p0.y, p1.y, p2.y, p3.y, t));
 	}
@@ -121,7 +121,7 @@ public class CubicCurve {
 	 * @return the given reference to `result`.
 	 */
 	public static Point2 derivative(Point2 p0, Point2 p1, Point2 p2, Point3 p3,
-			float t, Point2 result) {
+			double t, Point2 result) {
 		result.set(derivative(p0.x, p1.x, p2.x, p3.x, t),
 				derivative(p0.y, p1.y, p2.y, p3.y, t));
 		return result;
@@ -134,7 +134,7 @@ public class CubicCurve {
 	 * @return A vector perpendicular to the curve at position `t`.
 	 */
 	public static Vector2 perpendicular(Point2 p0, Point2 p1, Point2 p2,
-			Point2 p3, float t) {
+			Point2 p3, double t) {
 		return new Vector2(derivative(p0.y, p1.y, p2.y, p3.y, t), -derivative(
 				p0.x, p1.x, p2.x, p3.x, t));
 	}
@@ -146,7 +146,7 @@ public class CubicCurve {
 	 * @return the given reference to `result`.
 	 */
 	public static Vector2 perpendicular(Point2 p0, Point2 p1, Point2 p2,
-			Point2 p3, float t, Vector2 result) {
+			Point2 p3, double t, Vector2 result) {
 		result.set(derivative(p0.y, p1.y, p2.y, p3.y, t),
 				-derivative(p0.x, p1.x, p2.x, p3.x, t));
 		return result;
@@ -158,9 +158,9 @@ public class CubicCurve {
 	 * 
 	 * @return A vector perpendicular to the curve at position `t`.
 	 */
-	public static Point2D.Float perpendicular(Point2D.Float p0,
-			Point2D.Float p1, Point2D.Float p2, Point2D.Float p3, float t) {
-		return new Point2D.Float(derivative(p0.y, p1.y, p2.y, p3.y, t),
+	public static Point2D.Double perpendicular(Point2D.Double p0,
+			Point2D.Double p1, Point2D.Double p2, Point2D.Double p3, double t) {
+		return new Point2D.Double(derivative(p0.y, p1.y, p2.y, p3.y, t),
 				-derivative(p0.x, p1.x, p2.x, p3.x, t));
 	}
 }

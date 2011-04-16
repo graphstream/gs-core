@@ -337,6 +337,7 @@ shape:
 	cubic-curve
 	cubic-angle-curve ?				(todo)
 	polyline						(todo)
+	polyline-scaled					(todo)
 	blob
 	freeplane
 	

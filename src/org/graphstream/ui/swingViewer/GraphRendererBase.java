@@ -84,7 +84,7 @@ public abstract class GraphRendererBase implements GraphRenderer,
 
 	// Selection
 
-	public void beginSelectionAt(float x1, float y1) {
+	public void beginSelectionAt(double x1, double y1) {
 		if (selection == null)
 			selection = new Selection();
 
@@ -94,12 +94,12 @@ public abstract class GraphRendererBase implements GraphRenderer,
 		selection.y2 = y1;
 	}
 
-	public void selectionGrowsAt(float x, float y) {
+	public void selectionGrowsAt(double x, double y) {
 		selection.x2 = x;
 		selection.y2 = y;
 	}
 
-	public void endSelectionAt(float x2, float y2) {
+	public void endSelectionAt(double x2, double y2) {
 		selection = null;
 	}
 
@@ -113,14 +113,14 @@ public abstract class GraphRendererBase implements GraphRenderer,
 		g.drawLine(0, 0, w, h);
 		g.drawLine(0, h, w, 0);
 
-		float msg1length = g.getFontMetrics().stringWidth(msg1);
-		float msg2length = g.getFontMetrics().stringWidth(msg2);
+		double msg1length = g.getFontMetrics().stringWidth(msg1);
+		double msg2length = g.getFontMetrics().stringWidth(msg2);
 
-		float x = w / 2;
-		float y = h / 2;
+		double x = w / 2;
+		double y = h / 2;
 
 		g.setColor(Color.BLACK);
-		g.drawString(msg1, x - msg1length / 2, y - 20);
-		g.drawString(msg2, x - msg2length / 2, y + 20);
+		g.drawString(msg1, (float)(x - msg1length / 2), (float)(y - 20));
+		g.drawString(msg2, (float)(x - msg2length / 2), (float)(y + 20));
 	}
 }

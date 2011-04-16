@@ -155,19 +155,19 @@ public abstract class GraphicElement extends AbstractElement {
 	 * Abscissa of the element, always in GU (graph units). For edges this is
 	 * the X of the "from" node.
 	 */
-	public abstract float getX();
+	public abstract double getX();
 
 	/**
 	 * Ordinate of the element, always in GU (graph units). For edges this is
 	 * the Y of the "from" node.
 	 */
-	public abstract float getY();
+	public abstract double getY();
 
 	/**
 	 * Depth of the element, always in GU (graph units). For edges this is the Z
 	 * of the "from" node.
 	 */
-	public abstract float getZ();
+	public abstract double getZ();
 
 	/**
 	 * The associated GUI component.
@@ -196,7 +196,7 @@ public abstract class GraphicElement extends AbstractElement {
 	 * @param z
 	 *            the new Z.
 	 */
-	public abstract void move(float x, float y, float z);
+	public abstract void move(double x, double y, double z);
 
 	/**
 	 * Set the GUI component of this element.

@@ -39,12 +39,12 @@ public class Energies {
 	/**
 	 * Global current energy (maybe actually updated).
 	 */
-	protected float energy;
+	protected double energy;
 
 	/**
 	 * The last computed energy.
 	 */
-	protected float lastEnergy;
+	protected double lastEnergy;
 
 	/**
 	 * The number of energy values remembered.
@@ -54,14 +54,14 @@ public class Energies {
 	/**
 	 * A circular array of the last values of energy.
 	 */
-	protected float[] energies = new float[energiesBuffer];
+	protected double[] energies = new double[energiesBuffer];
 
 	/**
 	 * The current position in the energies array.
 	 */
 	protected int energiesPos = 0;
 	
-	protected float energySum = 0;
+	protected double energySum = 0;
 
 	// Constructor
 
@@ -72,7 +72,7 @@ public class Energies {
 	 * 
 	 * @return The actual level of energy.
 	 */
-	public float getEnergy() {
+	public double getEnergy() {
 		return lastEnergy;
 	}
 
@@ -88,13 +88,13 @@ public class Energies {
 	 * 
 	 * @return A value that indicates the level of stabilisation in [0-1].
 	 */
-	public float getStabilization() {
+	public double getStabilization() {
 		// The stability is attained when the global energy of the graph do not
 		// vary anymore.
 
-		int range = 200;
-		float eprev = getPreviousEnergyValue(range);
-		float diff = (float) Math.abs(lastEnergy - eprev);
+		int    range = 200;
+		double eprev = getPreviousEnergyValue(range);
+		double diff  = Math.abs(lastEnergy - eprev);
 
 		diff = diff < 1 ? 1 : diff;
 		
@@ -105,7 +105,7 @@ public class Energies {
 	 * The average energy in the whole buffer.
 	 * @return The average energy.
 	 */
-	public float getAverageEnergy() {
+	public double getAverageEnergy() {
 		return energySum / energies.length;
 	}
 
@@ -116,7 +116,7 @@ public class Energies {
 	 *            The number of steps back in history.
 	 * @return The energy value at stepsBack in time.
 	 */
-	public float getPreviousEnergyValue(int stepsBack) {
+	public double getPreviousEnergyValue(int stepsBack) {
 		if (stepsBack >= energies.length)
 			stepsBack = energies.length - 1;
 
@@ -134,7 +134,7 @@ public class Energies {
 	 * @param value
 	 *            The value to accumulate.
 	 */
-	public void accumulateEnergy(float value) {
+	public void accumulateEnergy(double value) {
 		energy += value;
 	}
 
@@ -156,6 +156,6 @@ public class Energies {
 	 */
 	protected void clearEnergies() {
 		for (int i = 0; i < energies.length; ++i)
-			energies[i] = (float) ((Math.random() * 2000) - 1000);
+			energies[i] = ((Math.random() * 2000) - 1000);
 	}
 }

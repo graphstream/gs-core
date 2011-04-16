@@ -129,7 +129,7 @@ public class Matrix4 implements java.io.Serializable {
 	 * directly access the data array. This ordering has been chosen to be
 	 * compatible with OpenGL.
 	 */
-	public float[] data = new float[16];
+	public double[] data = new double[16];
 
 	// Construction
 
@@ -144,9 +144,9 @@ public class Matrix4 implements java.io.Serializable {
 	 * 
 	 * @param init
 	 *            The element to copy in each cell of the matrix.
-	 * @see #fill(float)
+	 * @see #fill(double)
 	 */
-	public Matrix4(float init) {
+	public Matrix4(double init) {
 		fill(init);
 	}
 
@@ -167,7 +167,7 @@ public class Matrix4 implements java.io.Serializable {
 	 * can be {@link #COLUMN_MAJOR} or {@link #ROW_MAJOR} and indicates how the
 	 * matrix is stored in <code>m16</code> ({@link #COLUMN_MAJOR} is the OpenGL
 	 * convention, {@link #ROW_MAJOR }is the C and RenderMan convention). See
-	 * also {@link #copy(float[],int,int)}.
+	 * also {@link #copy(double[],int,int)}.
 	 * 
 	 * @param m16
 	 *            The array of values to copy, it must at least contain 16
@@ -178,7 +178,7 @@ public class Matrix4 implements java.io.Serializable {
 	 *            The matrix order (row or column major). <code>offset</code>+16
 	 *            cells.
 	 */
-	public Matrix4(float[] m16, int offset, int order) {
+	public Matrix4(double[] m16, int offset, int order) {
 		copy(m16, offset, order);
 	}
 
@@ -218,7 +218,7 @@ public class Matrix4 implements java.io.Serializable {
 	 * (ordinate), is given before he column <code>x</code> (abscissa) as in
 	 * usual mathematical notations.
 	 */
-	public float get(int y, int x) {
+	public double get(int y, int x) {
 		return data[(x << 2) + y];
 	}
 
@@ -250,7 +250,7 @@ public class Matrix4 implements java.io.Serializable {
 	 * Set the line to be the vector [<code>x</code>,<code>y</code>,
 	 * <code>z</code>,<code>w</code>].
 	 */
-	public void setLine(int line, float x, float y, float z, float w) {
+	public void setLine(int line, double x, double y, double z, double w) {
 		data[0 + line] = x;
 		data[4 + line] = y;
 		data[8 + line] = z;
@@ -260,14 +260,14 @@ public class Matrix4 implements java.io.Serializable {
 	/**
 	 * Set the component at (<code>x</code>,<code>y</code>) to value.
 	 */
-	public void set(int y, int x, float value) {
+	public void set(int y, int x, double value) {
 		data[(x * 4) + y] = value;
 	}
 
 	/**
 	 * Assign value to each component.
 	 */
-	public void fill(float value) {
+	public void fill(double value) {
 		data[0] = data[4] = data[8] = data[12] = value;
 		data[1] = data[5] = data[9] = data[13] = value;
 		data[2] = data[6] = data[10] = data[14] = value;
@@ -291,9 +291,9 @@ public class Matrix4 implements java.io.Serializable {
 	 * {@link #ROW_MAJOR} and indicates how the matrix is stored in
 	 * <code>m16</code> ({@link #COLUMN_MAJOR} is the OpenGL convention,
 	 * {@link #ROW_MAJOR} is the C and RenderMan convention). See also
-	 * {@link #copy(float[],int,int)}.
+	 * {@link #copy(double[],int,int)}.
 	 */
-	public void copy(float[] m16, int offset, int order) {
+	public void copy(double[] m16, int offset, int order) {
 		if (order == COLUMN_MAJOR) {
 			try {
 				System.arraycopy(m16, offset, data, 0, 16);
@@ -384,7 +384,7 @@ public class Matrix4 implements java.io.Serializable {
 		if (rhs == this)
 			throw new RuntimeException("this and rhs cannot be the same matrix");
 
-		float a, b, c, d;
+		double a, b, c, d;
 
 		//
 		// For each row of the result.
@@ -492,7 +492,7 @@ public class Matrix4 implements java.io.Serializable {
 				+ (data[10] * rhs.data[2]) + (data[14]);
 
 		if (divide_by_w) {
-			float w = (data[3] * rhs.data[0]) + (data[7] * rhs.data[1])
+			double w = (data[3] * rhs.data[0]) + (data[7] * rhs.data[1])
 					+ (data[11] * rhs.data[2]) + (data[15]);
 
 			if (w != 1.0)
@@ -554,7 +554,7 @@ public class Matrix4 implements java.io.Serializable {
 				+ (data[14]);
 
 		if (divide_by_w) {
-			float w = (data[3] * rhs.x) + (data[7] * rhs.y)
+			double w = (data[3] * rhs.x) + (data[7] * rhs.y)
 					+ (data[11] * rhs.z) + (data[15]);
 
 			if (w != 1.0) {
@@ -568,7 +568,7 @@ public class Matrix4 implements java.io.Serializable {
 	/**
 	 * Add <code>value</code> to each element.
 	 */
-	public void scalarAdd(float value) {
+	public void scalarAdd(double value) {
 		data[0] += value;
 		data[1] += value;
 		data[2] += value;
@@ -593,7 +593,7 @@ public class Matrix4 implements java.io.Serializable {
 	/**
 	 * Substract <code>value</code> to each element.
 	 */
-	public void scalarSub(float value) {
+	public void scalarSub(double value) {
 		data[0] -= value;
 		data[1] -= value;
 		data[2] -= value;
@@ -618,7 +618,7 @@ public class Matrix4 implements java.io.Serializable {
 	/**
 	 * Multiply each element by <code>value</code>.
 	 */
-	public void scalarMult(float value) {
+	public void scalarMult(double value) {
 		data[0] *= value;
 		data[1] *= value;
 		data[2] *= value;
@@ -644,7 +644,7 @@ public class Matrix4 implements java.io.Serializable {
 	 * Transpose in place.
 	 */
 	public void transpose() {
-		float t;
+		double t;
 
 		for (int y = 1; y < 4; ++y) {
 			for (int x = 0; x < y; ++x) {
@@ -660,7 +660,7 @@ public class Matrix4 implements java.io.Serializable {
 	 * matrices for example.
 	 */
 	public void transpose3x3() {
-		float tmp;
+		double tmp;
 
 		tmp = data[1];
 		data[1] = data[4];
@@ -682,14 +682,14 @@ public class Matrix4 implements java.io.Serializable {
 	 * <code>angle</code> is expressed in degees. The old matrix is erased, not
 	 * post-multiplied.
 	 */
-	public void setXRotation(float angle) {
+	public void setXRotation(double angle) {
 		if (angle < -360)
 			angle = -360;
 		else if (angle > 360)
 			angle = 360;
 
-		float sint = (float) Math.sin((Math.PI / 180.0) * angle);
-		float cost = (float) Math.cos((Math.PI / 180.0) * angle);
+		double sint = Math.sin((Math.PI / 180.0) * angle);
+		double cost = Math.cos((Math.PI / 180.0) * angle);
 
 		data[0] = 1;
 		data[4] = 0;
@@ -710,16 +710,16 @@ public class Matrix4 implements java.io.Serializable {
 	}
 
 	/**
-	 * Idem to {@link #setXRotation(float)} but arround the Y axis.
+	 * Idem to {@link #setXRotation(double)} but arround the Y axis.
 	 */
-	public void setYRotation(float angle) {
+	public void setYRotation(double angle) {
 		if (angle < -360)
 			angle = -360;
 		else if (angle > 360)
 			angle = 360;
 
-		float sint = (float) Math.sin((Math.PI / 180.0) * angle);
-		float cost = (float) Math.cos((Math.PI / 180.0) * angle);
+		double sint = Math.sin((Math.PI / 180.0) * angle);
+		double cost = Math.cos((Math.PI / 180.0) * angle);
 
 		data[0] = cost;
 		data[4] = 0;
@@ -740,16 +740,16 @@ public class Matrix4 implements java.io.Serializable {
 	}
 
 	/**
-	 * Idem to {@link #setXRotation(float)} but arround the Z axis.
+	 * Idem to {@link #setXRotation(double)} but arround the Z axis.
 	 */
-	public void setZRotation(float angle) {
+	public void setZRotation(double angle) {
 		if (angle < -360)
 			angle = -360;
 		else if (angle > 360)
 			angle = 360;
 
-		float sint = (float) Math.sin((Math.PI / 180.0) * angle);
-		float cost = (float) Math.cos((Math.PI / 180.0) * angle);
+		double sint = Math.sin((Math.PI / 180.0) * angle);
+		double cost = Math.cos((Math.PI / 180.0) * angle);
 
 		data[0] = cost;
 		data[4] = -sint;
@@ -783,7 +783,7 @@ public class Matrix4 implements java.io.Serializable {
 	 * Fill only the translation part of this matrix with the vector (
 	 * <code>tx</code>,<code>ty</code>,<code>tz</code>).
 	 */
-	public void setTranslation(float tx, float ty, float tz) {
+	public void setTranslation(double tx, double ty, double tz) {
 		data[12] = tx;
 		data[13] = ty;
 		data[14] = tz;
@@ -792,8 +792,8 @@ public class Matrix4 implements java.io.Serializable {
 	/**
 	 * Fill only the upper left 3x3 matrix.
 	 */
-	public void setRotation(float r01, float r02, float r03, float r11,
-			float r12, float r13, float r21, float r22, float r23) {
+	public void setRotation(double r01, double r02, double r03, double r11,
+			double r12, double r13, double r21, double r22, double r23) {
 		data[0] = r01;
 		data[4] = r02;
 		data[8] = r03;
@@ -817,7 +817,7 @@ public class Matrix4 implements java.io.Serializable {
 	/**
 	 * Make this matrix a rotation matrix using the euler angles <code>r</code>.
 	 * 
-	 * @see #setEulerRotation(float, float, float)
+	 * @see #setEulerRotation(double, double, double)
 	 */
 	public void setEulerRotation(Vector3 r) {
 		setEulerRotation(r.data[0], r.data[1], r.data[2]);
@@ -832,7 +832,7 @@ public class Matrix4 implements java.io.Serializable {
 	 * 
 	 * @see #setEulerRotation(Vector3)
 	 */
-	public void setEulerRotation(float rx, float ry, float rz) {
+	public void setEulerRotation(double rx, double ry, double rz) {
 		// See the Matrix FAQ for an explanation of this.
 		// http://skal.planet-d.net/demo/matrixfaq.htm (or type Matrix FAQ in
 		// Google!).
@@ -841,14 +841,14 @@ public class Matrix4 implements java.io.Serializable {
 		ry *= (Math.PI / 180);
 		rz *= (Math.PI / 180);
 
-		float A = (float) Math.cos(rx);
-		float B = (float) Math.sin(rx);
-		float C = (float) Math.cos(ry);
-		float D = (float) Math.sin(ry);
-		float E = (float) Math.cos(rz);
-		float F = (float) Math.sin(rz);
-		float AD = A * D;
-		float BD = B * D;
+		double A = Math.cos(rx);
+		double B = Math.sin(rx);
+		double C = Math.cos(ry);
+		double D = Math.sin(ry);
+		double E = Math.cos(rz);
+		double F = Math.sin(rz);
+		double AD = A * D;
+		double BD = B * D;
 		data[0] = C * E;
 		data[4] = -C * F;
 		data[8] = D;

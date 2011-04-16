@@ -64,17 +64,17 @@ public class NodeParticle extends Particle {
 	/**
 	 * Last computed displacement vector length.
 	 */
-	public float len;
+	public double len;
 
 	/**
 	 * Attraction energy for this node only.
 	 */
-	public float attE;
+	public double attE;
 
 	/**
 	 * Repulsion energy for this node only.
 	 */
-	public float repE;
+	public double repE;
 
 	/**
 	 * If non null, all this node statistics will be output to this stream.
@@ -97,9 +97,10 @@ public class NodeParticle extends Particle {
 	 *            The node identifier.
 	 */
 	public NodeParticle(SpringBox box, String id) {
-		this(box, id, (box.random.nextFloat() * 2 * box.k) - box.k, (box.random
-				.nextFloat() * 2 * box.k) - box.k, box.is3D ? (box.random
-				.nextFloat() * 2 * box.k) - box.k : 0);
+		this(box, id,
+				(box.random.nextDouble() * 2 * box.k) - box.k,
+				(box.random.nextDouble() * 2 * box.k) - box.k,
+				box.is3D ? (box.random.nextDouble() * 2 * box.k) - box.k : 0);
 
 		this.box = box;
 	}
@@ -118,7 +119,7 @@ public class NodeParticle extends Particle {
 	 * @param z
 	 *            The depth.
 	 */
-	public NodeParticle(SpringBox box, String id, float x, float y, float z) {
+	public NodeParticle(SpringBox box, String id, double x, double y, double z) {
 		super(id, x, y, box.is3D ? z : 0);
 		this.box = box;
 		disp = new Vector3();
@@ -219,8 +220,8 @@ public class NodeParticle extends Particle {
 
 		if (box.sendNodeInfos) {
 			for (LayoutListener listener : box.listeners)
-				listener.nodeInfos((String) id, (float) disp.data[0],
-						(float) disp.data[1], box.is3D ? (float) disp.data[2]
+				listener.nodeInfos((String) id, disp.data[0],
+						disp.data[1], box.is3D ? disp.data[2]
 								: 0);
 		}
 
@@ -232,7 +233,7 @@ public class NodeParticle extends Particle {
 		super.nextStep(time);
 	}
 
-	public void move(float dx, float dy, float dz) {
+	public void move(double dx, double dy, double dz) {
 		pos.set(pos.x + dx, pos.y + dy, pos.z + dz);
 	}
 
@@ -253,8 +254,8 @@ public class NodeParticle extends Particle {
 				delta.set(node.pos.x - pos.x, node.pos.y - pos.y,
 						box.is3D ? node.pos.z - pos.z : 0);
 
-				float len = delta.normalize();
-				float factor = len != 0 ? ((box.K2 / (len * len)) * node.weight)
+				double len = delta.normalize();
+				double factor = len != 0 ? ((box.K2 / (len * len)) * node.weight)
 						: 0.00001f;
 
 				delta.scalarMult(-factor);
@@ -308,14 +309,14 @@ public class NodeParticle extends Particle {
 						delta.set(node.pos.x - pos.x, node.pos.y - pos.y,
 								box.is3D ? node.pos.z - pos.z : 0);
 
-						float len = delta.normalize();
+						double len = delta.normalize();
 
 						if (len > 0)// && len < ( box.k * box.viewZone ) )
 						{
 							if (len < box.k)
 								len = box.k; // XXX NEW To prevent infinite
 												// repulsion.
-							float factor = len != 0 ? ((box.K2 / (len * len)) * node.weight)
+							double factor = len != 0 ? ((box.K2 / (len * len)) * node.weight)
 									: 0.00001f;
 							box.energies.accumulateEnergy(factor); // TODO check
 																	// this
@@ -336,8 +337,8 @@ public class NodeParticle extends Particle {
 			if (cell != this.cell) {
 				BarycenterCellData bary = (BarycenterCellData) cell.getData();
 
-				float dist = bary.distanceFrom(pos);
-				float size = cell.getSpace().getSize();
+				double dist = bary.distanceFrom(pos);
+				double size = cell.getSpace().getSize();
 
 				if ((!cell.isLeaf()) && ((size / dist) > box.theta)) {
 					int div = cell.getSpace().getDivisions();
@@ -352,13 +353,13 @@ public class NodeParticle extends Particle {
 						delta.set(bary.center.x - pos.x, bary.center.y - pos.y,
 								box.is3D ? bary.center.z - pos.z : 0);
 
-						float len = delta.normalize();
+						double len = delta.normalize();
 
 						if (len > 0) {
 							if (len < box.k)
 								len = box.k; // XXX NEW To prevent infinite
 												// repulsion.
-							float factor = len != 0 ? ((box.K2 / (len * len)) * (bary.weight))
+							double factor = len != 0 ? ((box.K2 / (len * len)) * (bary.weight))
 									: 0.00001f;
 							box.energies.accumulateEnergy(factor);
 							delta.scalarMult(-factor);
@@ -380,10 +381,10 @@ public class NodeParticle extends Particle {
 				delta.set(other.pos.x - pos.x, other.pos.y - pos.y,
 						box.is3D ? other.pos.z - pos.z : 0);
 
-				float len = delta.normalize();
-				float k = box.k * edge.weight;
+				double len = delta.normalize();
+				double k = box.k * edge.weight;
 
-				float factor = box.K1 * (len - k);
+				double factor = box.K1 * (len - k);
 
 				// delta.scalarMult( factor );
 				delta.scalarMult(factor * (1f / (neighbours.size() * 0.1f))); // XXX
@@ -403,22 +404,22 @@ public class NodeParticle extends Particle {
 	}
 
 	protected boolean intersection(Cell cell) {
-		float k = box.k;
-		float vz = box.viewZone;
+		double k = box.k;
+		double vz = box.viewZone;
 
-		float x1 = cell.getSpace().getLoAnchor().x;
-		float y1 = cell.getSpace().getLoAnchor().y;
-		float z1 = cell.getSpace().getLoAnchor().z;
-		float x2 = cell.getSpace().getHiAnchor().x;
-		float y2 = cell.getSpace().getHiAnchor().y;
-		float z2 = cell.getSpace().getHiAnchor().z;
+		double x1 = cell.getSpace().getLoAnchor().x;
+		double y1 = cell.getSpace().getLoAnchor().y;
+		double z1 = cell.getSpace().getLoAnchor().z;
+		double x2 = cell.getSpace().getHiAnchor().x;
+		double y2 = cell.getSpace().getHiAnchor().y;
+		double z2 = cell.getSpace().getHiAnchor().z;
 
-		float X1 = pos.x - (k * vz);
-		float Y1 = pos.y - (k * vz);
-		float Z1 = pos.z - (k * vz);
-		float X2 = pos.x + (k * vz);
-		float Y2 = pos.y + (k * vz);
-		float Z2 = pos.z + (k * vz);
+		double X1 = pos.x - (k * vz);
+		double Y1 = pos.y - (k * vz);
+		double Z1 = pos.z - (k * vz);
+		double X2 = pos.x + (k * vz);
+		double Y2 = pos.y + (k * vz);
+		double Z2 = pos.z + (k * vz);
 
 		// Only when the area is before or after the cell there cannot
 		// exist an intersection (case a and b). Else there must be an
@@ -486,7 +487,7 @@ public class NodeParticle extends Particle {
 	 * Move the node by a random vector.
 	 */
 	public void shake() {
-		float k = box.k;
+		double k = box.k;
 
 		pos.x += box.random.nextFloat() * k * 2 - 1;
 		pos.y += box.random.nextFloat() * k * 2 - 1;

@@ -365,9 +365,9 @@ public class GraphicGraph extends AbstractElement implements Graph,
 			for (GraphicSprite sprite : spriteSet()) {
 				if (!sprite.isAttached()
 						&& sprite.getUnits() == StyleConstants.Units.GU) {
-					float x = sprite.getX();
-					float y = sprite.getY();
-					float z = sprite.getZ();
+					double x = sprite.getX();
+					double y = sprite.getY();
+					double z = sprite.getZ();
 
 					if (x < lo.x)
 						lo.x = x;
@@ -447,7 +447,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 		return node;
 	}
 
-	protected void moveNode(String id, float x, float y, float z) {
+	protected void moveNode(String id, double x, double y, double z) {
 		GraphicNode node = (GraphicNode) styleGroups.getNode(id);
 
 		if (node != null) {
@@ -1090,9 +1090,9 @@ public class GraphicGraph extends AbstractElement implements Graph,
 				if (values[0] instanceof Number && values[1] instanceof Number
 						&& values[2] instanceof Number
 						&& values[3] instanceof Style.Units) {
-					sprite.setPosition(((Number) values[0]).floatValue(),
-							((Number) values[1]).floatValue(),
-							((Number) values[2]).floatValue(),
+					sprite.setPosition(((Number) values[0]).doubleValue(),
+							((Number) values[1]).doubleValue(),
+							((Number) values[2]).doubleValue(),
 							(Style.Units) values[3]);
 				} else {
 					System.err
@@ -1101,16 +1101,16 @@ public class GraphicGraph extends AbstractElement implements Graph,
 			} else if (values.length == 3) {
 				if (values[0] instanceof Number && values[1] instanceof Number
 						&& values[2] instanceof Number) {
-					sprite.setPosition(((Number) values[0]).floatValue(),
-							((Number) values[1]).floatValue(),
-							((Number) values[2]).floatValue(), Units.GU);
+					sprite.setPosition(((Number) values[0]).doubleValue(),
+							((Number) values[1]).doubleValue(),
+							((Number) values[2]).doubleValue(), Units.GU);
 				} else {
 					System.err
 							.printf("GraphicGraph : cannot parse values[3] for sprite position.%n");
 				}
 			} else if (values.length == 1) {
 				if (values[0] instanceof Number) {
-					sprite.setPosition(((Number) value).floatValue());
+					sprite.setPosition(((Number) value).doubleValue());
 				} else {
 					System.err
 							.printf("GraphicGraph : sprite position percent is not a number.%n");
@@ -1121,9 +1121,9 @@ public class GraphicGraph extends AbstractElement implements Graph,
 								values, values.length);
 			}
 		} else if (value instanceof Number) {
-			// System.err.printf( " Number %f%n", ((Number)value).floatValue()
+			// System.err.printf( " Number %f%n", ((Number)value).doubleValue()
 			// );
-			sprite.setPosition(((Number) value).floatValue());
+			sprite.setPosition(((Number) value).doubleValue());
 		} else if (value instanceof Value) {
 			// System.err.printf( " Value %s%n", ((Value)value).value );
 			sprite.setPosition(((Value) value).value);

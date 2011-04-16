@@ -86,7 +86,7 @@ public class GraphicEdge extends GraphicElement implements Edge {
 	 * For example for cubic Bezier curves in 2D this array contains four cells.
 	 * The control points are ordered from node0 to node1.
 	 */
-	public float[] ctrl;
+	public double[] ctrl;
 
 	// Constructors
 
@@ -136,17 +136,17 @@ public class GraphicEdge extends GraphicElement implements Edge {
 	}
 
 	@Override
-	public float getX() {
+	public double getX() {
 		return from.x + ((to.x - from.x) / 2);
 	}
 
 	@Override
-	public float getY() {
+	public double getY() {
 		return from.y + ((to.y - from.y) / 2);
 	}
 
 	@Override
-	public float getZ() {
+	public double getZ() {
 		return from.z + ((to.z - from.z) / 2);
 	}
 
@@ -163,7 +163,7 @@ public class GraphicEdge extends GraphicElement implements Edge {
 	 * @return The control points coordinates or null if this edge is a straight
 	 *         line.
 	 */
-	public float[] getControlPoints() {
+	public double[] getControlPoints() {
 		return ctrl;
 	}
 
@@ -186,7 +186,7 @@ public class GraphicEdge extends GraphicElement implements Edge {
 	 *            method for an explanation on the organisation of this array.
 	 * @see #getControlPoints()
 	 */
-	public void setControlPoints(float points[]) {
+	public void setControlPoints(double points[]) {
 		ctrl = points;
 	}
 
@@ -201,7 +201,7 @@ public class GraphicEdge extends GraphicElement implements Edge {
 	}
 
 	@Override
-	public void move(float x, float y, float z) {
+	public void move(double x, double y, double z) {
 		// NOP on edges !!!
 	}
 

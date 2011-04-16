@@ -145,7 +145,7 @@ public interface Layout extends Pipe {
 	 * 
 	 * @return A real number.
 	 */
-	float getForce();
+	double getForce();
 
 	// Commands
 
@@ -170,7 +170,7 @@ public interface Layout extends Pipe {
 	 * @param value
 	 *            A number in [0..1].
 	 */
-	void setForce(float value);
+	void setForce(double value);
 
 	/**
 	 * Set the overall quality level. There are five quality levels.
@@ -207,7 +207,7 @@ public interface Layout extends Pipe {
 	 * @param z
 	 *            The node new Z.
 	 */
-	void moveNode(String id, float x, float y, float z);
+	void moveNode(String id, double x, double y, double z);
 
 	/**
 	 * Freeze or un-freeze a node.
@@ -255,7 +255,7 @@ public interface Layout extends Pipe {
 	 * needed).</li>
 	 * <li>a colon.
 	 * <li>
-	 * <li>and a list of two to three float numbers indicating the position of
+	 * <li>and a list of two to three double numbers indicating the position of
 	 * the node in a given space.</li>
 	 * <li>Empty lines are ignored.</li>
 	 * <li>Lines beginning with an arbitrary number of spaces and then a sharp

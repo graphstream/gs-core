@@ -81,7 +81,7 @@ public class GraphMetrics {
 	/**
 	 * The graph diagonal.
 	 */
-	public float diagonal = 1;
+	public double diagonal = 1;
 
 	/**
 	 * The view port size.
@@ -91,12 +91,12 @@ public class GraphMetrics {
 	/**
 	 * The scaling factor to pass from graph units to pixels.
 	 */
-	public float ratioPx2Gu;
+	public double ratioPx2Gu;
 
 	/**
 	 * The length for one pixel, according to the current transformation.
 	 */
-	public float px1;
+	public double px1;
 
 	// Construction
 
@@ -128,7 +128,7 @@ public class GraphMetrics {
 	 * 
 	 * @return The diagonal.
 	 */
-	public float getDiagonal() {
+	public double getDiagonal() {
 		return diagonal;
 	}
 
@@ -159,15 +159,15 @@ public class GraphMetrics {
 		return hi;
 	}
 
-	public float graphWidthGU() {
+	public double graphWidthGU() {
 		return hi.x - lo.x;
 	}
 
-	public float graphHeightGU() {
+	public double graphHeightGU() {
 		return hi.y - lo.y;
 	}
 
-	public float graphDepthGU() {
+	public double graphDepthGU() {
 		return hi.z - lo.z;
 	}
 
@@ -182,7 +182,7 @@ public class GraphMetrics {
 	 *            The units the value to convert is expressed in.
 	 * @return The value converted to GU.
 	 */
-	public float lengthToGu(float value, StyleConstants.Units units) {
+	public double lengthToGu(double value, StyleConstants.Units units) {
 		switch (units) {
 		case PX:
 			return (value - 0.01f) / ratioPx2Gu;
@@ -200,7 +200,7 @@ public class GraphMetrics {
 	 * @param value
 	 *            The value to convert (it contains its own units).
 	 */
-	public float lengthToGu(Value value) {
+	public double lengthToGu(Value value) {
 		return lengthToGu(value.value, value.units);
 	}
 
@@ -213,7 +213,7 @@ public class GraphMetrics {
 	 * @param index
 	 *            Index of the value to convert.
 	 */
-	public float lengthToGu(Values values, int index) {
+	public double lengthToGu(Values values, int index) {
 		return lengthToGu(values.get(index), values.units);
 	}
 
@@ -226,7 +226,7 @@ public class GraphMetrics {
 	 *            The units the value to convert is expressed in.
 	 * @return The value converted in pixels.
 	 */
-	public float lengthToPx(float value, StyleConstants.Units units) {
+	public double lengthToPx(double value, StyleConstants.Units units) {
 		switch (units) {
 		case GU:
 			return (value - 0.01f) * ratioPx2Gu;
@@ -244,7 +244,7 @@ public class GraphMetrics {
 	 * @param value
 	 *            The value to convert (it contains its own units).
 	 */
-	public float lengthToPx(Value value) {
+	public double lengthToPx(Value value) {
 		return lengthToPx(value.value, value.units);
 	}
 
@@ -257,7 +257,7 @@ public class GraphMetrics {
 	 * @param index
 	 *            Index of the value to convert.
 	 */
-	public float lengthToPx(Values values, int index) {
+	public double lengthToPx(Values values, int index) {
 		return lengthToPx(values.get(index), values.units);
 	}
 
@@ -289,7 +289,7 @@ public class GraphMetrics {
 	 * @param viewportHeight
 	 *            The width in pixels of the view port.
 	 */
-	public void setViewport(float viewportWidth, float viewportHeight) {
+	public void setViewport(double viewportWidth, double viewportHeight) {
 		viewport.set(viewportWidth, viewportHeight, 0);
 	}
 
@@ -300,7 +300,7 @@ public class GraphMetrics {
 	 * @param ratio
 	 *            The ratio.
 	 */
-	public void setRatioPx2Gu(float ratio) {
+	public void setRatioPx2Gu(double ratio) {
 		if (ratio > 0) {
 			ratioPx2Gu = ratio;
 			px1 = 0.95f / ratioPx2Gu;
@@ -323,8 +323,8 @@ public class GraphMetrics {
 	 * @param maxz
 	 *            Highest depth.
 	 */
-	public void setBounds(float minx, float miny, float minz, float maxx,
-			float maxy, float maxz) {
+	public void setBounds(double minx, double miny, double minz, double maxx,
+			double maxy, double maxz) {
 		lo.x = minx;
 		lo.y = miny;
 		lo.z = minz;
@@ -335,7 +335,7 @@ public class GraphMetrics {
 		size.data[0] = hi.x - lo.x;
 		size.data[1] = hi.y - lo.y;
 		size.data[2] = hi.z - lo.z;
-		diagonal = (float) Math.sqrt(size.data[0] * size.data[0] + size.data[1]
+		diagonal =  Math.sqrt(size.data[0] * size.data[0] + size.data[1]
 				* size.data[1] + size.data[2] * size.data[2]);
 
 		// System.err.printf( "lo=%s hi=%s%n", lo, hi );

@@ -205,27 +205,27 @@ public abstract class ElementRenderer {
 			String label = element.getLabel();
 
 			if (label != null) {
-				Point2D.Float p = null;
+				Point2D.Double p = null;
 				GraphicSprite s = null;
 
 				if (element instanceof GraphicSprite)
 					s = (GraphicSprite) element;
 
 				if (s != null && s.getUnits() == Units.PX) {
-					float w = camera.getMetrics()
+					double w = camera.getMetrics()
 							.lengthToPx(group.getSize(), 0);
-					p = new Point2D.Float();
+					p = new Point2D.Double();
 					p.x = element.getX() + (w / 2);
 					p.y = element.getY();
 				} else if (s != null && s.getUnits() == Units.PERCENTS) {
-					float w = camera.getMetrics()
+					double w = camera.getMetrics()
 							.lengthToPx(group.getSize(), 0);
-					p = new Point2D.Float();
+					p = new Point2D.Double();
 					p.x = camera.getMetrics().viewport.data[1] * element.getX()
 							+ (w / 2);
 					p.y = camera.getMetrics().viewport.data[2] * element.getY();
 				} else {
-					float w = camera.getMetrics()
+					double w = camera.getMetrics()
 							.lengthToGu(group.getSize(), 0);
 					p = camera.transform(element.getX() + (w / 2),
 							element.getY());
@@ -237,7 +237,7 @@ public abstract class ElementRenderer {
 				g.setColor(textColor);
 				g.setFont(textFont);
 				g.setTransform(new AffineTransform());
-				g.drawString(label, p.x, p.y + textSize / 3); // approximation
+				g.drawString(label, (float)p.x, (float)(p.y + textSize / 3)); // approximation
 																// to gain time.
 				g.setTransform(Tx);
 				g.setColor(c);
@@ -252,7 +252,7 @@ public abstract class ElementRenderer {
 
 		if (n > 1) {
 			if (element.hasNumber("ui.color") && n > 1) {
-				float value = (float) element.getNumber("ui.color");
+				double value =  element.getNumber("ui.color");
 
 				if (value < 0)
 					value = 0;
@@ -265,7 +265,7 @@ public abstract class ElementRenderer {
 				} else if (value != 0) // If value == 0, color is already set
 										// above.
 				{
-					float div = 1f / (n - 1);
+					double div = 1f / (n - 1);
 					int col = (int) (value / div);
 
 					div = (value - (div * col)) / div;
@@ -273,16 +273,16 @@ public abstract class ElementRenderer {
 
 					Color color0 = group.getFillColor(col);
 					Color color1 = group.getFillColor(col + 1);
-					float red = ((color0.getRed() * (1 - div)) + (color1
+					double red = ((color0.getRed() * (1 - div)) + (color1
 							.getRed() * div)) / 255f;
-					float green = ((color0.getGreen() * (1 - div)) + (color1
+					double green = ((color0.getGreen() * (1 - div)) + (color1
 							.getGreen() * div)) / 255f;
-					float blue = ((color0.getBlue() * (1 - div)) + (color1
+					double blue = ((color0.getBlue() * (1 - div)) + (color1
 							.getBlue() * div)) / 255f;
-					float alpha = ((color0.getAlpha() * (1 - div)) + (color1
+					double alpha = ((color0.getAlpha() * (1 - div)) + (color1
 							.getAlpha() * div)) / 255f;
 
-					color = new Color(red, green, blue, alpha);
+					color = new Color((float)red, (float)green, (float)blue, (float)alpha);
 				}
 			}
 		}

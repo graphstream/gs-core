@@ -52,7 +52,7 @@ public class Point3 extends Point2 implements java.io.Serializable {
 	/**
 	 * Z axis value.
 	 */
-	public float z;
+	public double z;
 
 	// Attributes -- Shared
 
@@ -72,14 +72,14 @@ public class Point3 extends Point2 implements java.io.Serializable {
 	/**
 	 * New 3D point at (x,y,0).
 	 */
-	public Point3(float x, float y) {
+	public Point3(double x, double y) {
 		set(x, y, 0);
 	}
 
 	/**
 	 * New 3D point at(x,y,z).
 	 */
-	public Point3(float x, float y, float z) {
+	public Point3(double x, double y, double z) {
 		set(x, y, z);
 	}
 
@@ -108,7 +108,7 @@ public class Point3 extends Point2 implements java.io.Serializable {
 	// * Is other equal to this ?
 	// */
 	// public boolean
-	// equals( const Point3 < float > & other ) const
+	// equals( const Point3 < double > & other ) const
 	// {
 	// return( x == other.x
 	// and y == other.y
@@ -121,7 +121,7 @@ public class Point3 extends Point2 implements java.io.Serializable {
 	 * <code>factor</code> is between 0 and 1 (0 yields this point, 1 yields the
 	 * <code>other</code> point).
 	 */
-	public Point3 interpolate(Point3 other, float factor) {
+	public Point3 interpolate(Point3 other, double factor) {
 		Point3 p = new Point3(x + ((other.x - x) * factor), y
 				+ ((other.y - y) * factor), z + ((other.z - z) * factor));
 
@@ -131,21 +131,21 @@ public class Point3 extends Point2 implements java.io.Serializable {
 	/**
 	 * Distance between this and <code>other</code>.
 	 */
-	public float distance(Point3 other) {
-		float xx = other.x - x;
-		float yy = other.y - y;
-		float zz = other.z - z;
-		return (float) Math.abs(Math.sqrt((xx * xx) + (yy * yy) + (zz * zz)));
+	public double distance(Point3 other) {
+		double xx = other.x - x;
+		double yy = other.y - y;
+		double zz = other.z - z;
+		return Math.abs(Math.sqrt((xx * xx) + (yy * yy) + (zz * zz)));
 	}
 
 	/**
 	 * Distance between this and point (x,y,z).
 	 */
-	public float distance(float x, float y, float z) {
-		float xx = x - this.x;
-		float yy = y - this.y;
-		float zz = z - this.z;
-		return (float) Math.abs(Math.sqrt((xx * xx) + (yy * yy) + (zz * zz)));
+	public double distance(double x, double y, double z) {
+		double xx = x - this.x;
+		double yy = y - this.y;
+		double zz = z - this.z;
+		return Math.abs(Math.sqrt((xx * xx) + (yy * yy) + (zz * zz)));
 	}
 
 	// Commands
@@ -168,7 +168,7 @@ public class Point3 extends Point2 implements java.io.Serializable {
 	/**
 	 * Like #moveTo().
 	 */
-	public void set(float x, float y, float z) {
+	public void set(double x, double y, double z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -179,7 +179,7 @@ public class Point3 extends Point2 implements java.io.Serializable {
 	/**
 	 * Move to absolute position (x,y,z).
 	 */
-	public void moveTo(float x, float y, float z) {
+	public void moveTo(double x, double y, double z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -188,7 +188,7 @@ public class Point3 extends Point2 implements java.io.Serializable {
 	/**
 	 * Move of given vector(dx,dy,dz).
 	 */
-	public void move(float dx, float dy, float dz) {
+	public void move(double dx, double dy, double dz) {
 		this.x += dx;
 		this.y += dy;
 		this.z += dz;
@@ -215,14 +215,14 @@ public class Point3 extends Point2 implements java.io.Serializable {
 	/**
 	 * Move in depth of dz.
 	 */
-	public void moveZ(float dz) {
+	public void moveZ(double dz) {
 		z += dz;
 	}
 
 	/**
 	 * Scale of factor (sx,sy,sz).
 	 */
-	public void scale(float sx, float sy, float sz) {
+	public void scale(double sx, double sy, double sz) {
 		x *= sx;
 		y *= sy;
 		z *= sz;
@@ -252,7 +252,7 @@ public class Point3 extends Point2 implements java.io.Serializable {
 	 * @param scalar
 	 *            The multiplier.
 	 */
-	public void scale(float scalar) {
+	public void scale(double scalar) {
 		x *= scalar;
 		y *= scalar;
 		z *= scalar;
@@ -261,7 +261,7 @@ public class Point3 extends Point2 implements java.io.Serializable {
 	/**
 	 * Change only depth at absolute coordinate z.
 	 */
-	public void setZ(float z) {
+	public void setZ(double z) {
 		this.z = z;
 	}
 
@@ -269,7 +269,7 @@ public class Point3 extends Point2 implements java.io.Serializable {
 	 * Exchange the values of this and other.
 	 */
 	public void swap(Point3 other) {
-		float t;
+		double t;
 
 		if (other != this) {
 			t = this.x;

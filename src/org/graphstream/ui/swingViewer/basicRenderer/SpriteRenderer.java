@@ -52,7 +52,7 @@ public class SpriteRenderer extends ElementRenderer {
 
 	protected Ellipse2D shape;
 
-	protected float width, height, w2, h2;
+	protected double width, height, w2, h2;
 
 	@Override
 	protected void setupRenderingPass(StyleGroup group, Graphics2D g,
@@ -83,7 +83,7 @@ public class SpriteRenderer extends ElementRenderer {
 	@Override
 	protected void pushStyle(StyleGroup group, Graphics2D g, Camera camera) {
 		size = group.getSize();
-		shape = new Ellipse2D.Float();
+		shape = new Ellipse2D.Double();
 		width = metrics.lengthToGu(size, 0);
 		height = size.size() > 1 ? metrics.lengthToGu(size, 1) : width;
 		w2 = width / 2;
@@ -103,8 +103,8 @@ public class SpriteRenderer extends ElementRenderer {
 	protected void renderElement(StyleGroup group, Graphics2D g, Camera camera,
 			GraphicElement element) {
 		GraphicSprite sprite = (GraphicSprite) element;
-		Point2D.Float pos = camera.getSpritePosition(sprite,
-				new Point2D.Float(), StyleConstants.Units.GU);
+		Point2D.Double pos = camera.getSpritePosition(sprite,
+				new Point2D.Double(), StyleConstants.Units.GU);
 
 		shape.setFrame(pos.x - w2, pos.y - h2, width, height);
 		g.fill(shape);

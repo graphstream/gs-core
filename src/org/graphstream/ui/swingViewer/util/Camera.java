@@ -95,7 +95,7 @@ public class Camera {
 	/**
 	 * The camera zoom.
 	 */
-	protected float zoom;
+	protected double zoom;
 
 	/**
 	 * The graph-space -> pixel-space transformation.
@@ -115,7 +115,7 @@ public class Camera {
 	/**
 	 * The rotation angle.
 	 */
-	protected float rotation;
+	protected double rotation;
 
 	/**
 	 * Padding around the graph.
@@ -133,7 +133,7 @@ public class Camera {
 	 * graph space. It allows to compute the view according to a specified area
 	 * of the graph space instead of the graph dimensions.
 	 */
-	protected float gviewport[] = null;
+	protected double gviewport[] = null;
 
 	// Construction
 
@@ -160,7 +160,7 @@ public class Camera {
 	 * @return A real for which value 1 means the graph is fully visible and
 	 *         uses the whole view port.
 	 */
-	public float getViewPercent() {
+	public double getViewPercent() {
 		return zoom;
 	}
 
@@ -169,7 +169,7 @@ public class Camera {
 	 * 
 	 * @return The rotation angle in degrees.
 	 */
-	public float getViewRotation() {
+	public double getViewRotation() {
 		return rotation;
 	}
 
@@ -233,8 +233,8 @@ public class Camera {
 	 *            The source point ordinate in pixels.
 	 * @return The resulting points in graph units.
 	 */
-	public Point2D.Float inverseTransform(float x, float y) {
-		Point2D.Float p = new Point2D.Float(x, y);
+	public Point2D.Double inverseTransform(double x, double y) {
+		Point2D.Double p = new Point2D.Double(x, y);
 
 		xT.transform(p, p);
 
@@ -246,8 +246,8 @@ public class Camera {
 	 * 
 	 * @return The transformed point.
 	 */
-	public Point2D.Float transform(float x, float y) {
-		Point2D.Float p = new Point2D.Float(x, y);
+	public Point2D.Double transform(double x, double y) {
+		Point2D.Double p = new Point2D.Double(x, y);
 
 		Tx.transform(p, p);
 
@@ -261,8 +261,8 @@ public class Camera {
 	 * rendering (if the view port changed).
 	 */
 	public void checkVisibility(GraphicGraph graph) {
-		float W = metrics.viewport.data[0];
-		float H = metrics.viewport.data[1];
+		double W = metrics.viewport.data[0];
+		double H = metrics.viewport.data[1];
 
 		nodeInvisible.clear();
 
@@ -287,8 +287,8 @@ public class Camera {
 	 * @return The first node or sprite at the given coordinates or null if
 	 *         nothing found.
 	 */
-	public GraphicElement findNodeOrSpriteAt(GraphicGraph graph, float x,
-			float y) {
+	public GraphicElement findNodeOrSpriteAt(GraphicGraph graph, double x,
+			double y) {
 		for (Node n : graph) {
 			GraphicNode node = (GraphicNode) n;
 
@@ -321,7 +321,7 @@ public class Camera {
 	 * @return The set of sprites and nodes in the given rectangle.
 	 */
 	public ArrayList<GraphicElement> allNodesOrSpritesIn(GraphicGraph graph,
-			float x1, float y1, float x2, float y2) {
+			double x1, double y1, double x2, double y2) {
 		ArrayList<GraphicElement> elts = new ArrayList<GraphicElement>();
 
 		for (Node node : graph) {
@@ -352,8 +352,8 @@ public class Camera {
 	 *         if pos was null, containing the computed position in the given
 	 *         units.
 	 */
-	public Point2D.Float getSpritePosition(GraphicSprite sprite,
-			Point2D.Float pos, Units units) {
+	public Point2D.Double getSpritePosition(GraphicSprite sprite,
+			Point2D.Double pos, Units units) {
 		if (sprite.isAttachedToNode())
 			return getSpritePositionNode(sprite, pos, units);
 		else if (sprite.isAttachedToEdge())
@@ -362,14 +362,14 @@ public class Camera {
 			return getSpritePositionFree(sprite, pos, units);
 	}
 
-	public float[] getGraphViewport() {
+	public double[] getGraphViewport() {
 		return gviewport;
 	}
 
 	// Command
 
-	public void setGraphViewport(float minx, float miny, float maxx, float maxy) {
-		gviewport = new float[4];
+	public void setGraphViewport(double minx, double miny, double maxx, double maxy) {
+		gviewport = new double[4];
 		gviewport[0] = minx;
 		gviewport[1] = miny;
 		gviewport[2] = maxx;
@@ -426,12 +426,12 @@ public class Camera {
 	 * @return The transformation modified.
 	 */
 	protected AffineTransform autoFitView(Graphics2D g2, AffineTransform Tx) {
-		float sx, sy;
-		float tx, ty;
-		float padXgu = getPaddingXgu() * 2;
-		float padYgu = getPaddingYgu() * 2;
-		float padXpx = getPaddingXpx() * 2;
-		float padYpx = getPaddingYpx() * 2;
+		double sx, sy;
+		double tx, ty;
+		double padXgu = getPaddingXgu() * 2;
+		double padYgu = getPaddingYgu() * 2;
+		double padXpx = getPaddingXpx() * 2;
+		double padYpx = getPaddingYpx() * 2;
 
 		sx = (metrics.viewport.data[0] - padXpx)
 				/ (metrics.size.data[0] + padXgu); // Ratio along X
@@ -495,17 +495,17 @@ public class Camera {
 	 * @return The transformation modified.
 	 */
 	protected AffineTransform userView(Graphics2D g2, AffineTransform Tx) {
-		float sx, sy;
-		float tx, ty;
-		float padXgu = getPaddingXgu() * 2;
-		float padYgu = getPaddingYgu() * 2;
-		float padXpx = getPaddingXpx() * 2;
-		float padYpx = getPaddingYpx() * 2;
-		float gw = gviewport != null ? gviewport[2] - gviewport[0]
+		double sx, sy;
+		double tx, ty;
+		double padXgu = getPaddingXgu() * 2;
+		double padYgu = getPaddingYgu() * 2;
+		double padXpx = getPaddingXpx() * 2;
+		double padYpx = getPaddingYpx() * 2;
+		double gw = gviewport != null ? gviewport[2] - gviewport[0]
 				: metrics.size.data[0];
-		float gh = gviewport != null ? gviewport[3] - gviewport[1]
+		double gh = gviewport != null ? gviewport[3] - gviewport[1]
 				: metrics.size.data[1];
-		// float diag = ((float)Math.max( metrics.size.data[0]+padXgu,
+		// double diag = ((double)Math.max( metrics.size.data[0]+padXgu,
 		// metrics.size.data[1]+padYgu )) * zoom;
 		//
 		// sx = ( metrics.viewport.data[0] - padXpx ) / diag;
@@ -550,8 +550,8 @@ public class Camera {
 
 		metrics.setRatioPx2Gu(sx);
 
-		float w2 = (metrics.viewport.data[0] / sx) / 2;
-		float h2 = (metrics.viewport.data[1] / sx) / 2;
+		double w2 = (metrics.viewport.data[0] / sx) / 2;
+		double h2 = (metrics.viewport.data[1] / sx) / 2;
 
 		metrics.loVisible.set(center.x - w2, center.y - h2);
 		metrics.hiVisible.set(center.x + w2, center.y + h2);
@@ -589,7 +589,7 @@ public class Camera {
 	 * @param y
 	 *            The new position ordinate.
 	 */
-	public void setCenter(float x, float y) {
+	public void setCenter(double x, double y) {
 		center.set(x, y, 0);
 	}
 
@@ -600,7 +600,7 @@ public class Camera {
 	 * @param z
 	 *            The zoom.
 	 */
-	public void setZoom(float z) {
+	public void setZoom(double z) {
 		zoom = z;
 	}
 
@@ -610,7 +610,7 @@ public class Camera {
 	 * @param angle
 	 *            The rotation angle in degrees.
 	 */
-	public void setRotation(float angle) {
+	public void setRotation(double angle) {
 		rotation = angle;
 	}
 
@@ -622,7 +622,7 @@ public class Camera {
 	 * @param viewportHeight
 	 *            The width in pixels of the view port.
 	 */
-	public void setViewport(float viewportWidth, float viewportHeight) {
+	public void setViewport(double viewportWidth, double viewportHeight) {
 		metrics.setViewport(viewportWidth, viewportHeight);
 	}
 
@@ -638,28 +638,28 @@ public class Camera {
 
 	// Utility
 
-	protected float getPaddingXgu() {
+	protected double getPaddingXgu() {
 		if (padding.units == Style.Units.GU && padding.size() > 0)
 			return padding.get(0);
 
 		return 0;
 	}
 
-	protected float getPaddingYgu() {
+	protected double getPaddingYgu() {
 		if (padding.units == Style.Units.GU && padding.size() > 1)
 			return padding.get(1);
 
 		return getPaddingXgu();
 	}
 
-	protected float getPaddingXpx() {
+	protected double getPaddingXpx() {
 		if (padding.units == Style.Units.PX && padding.size() > 0)
 			return padding.get(0);
 
 		return 0;
 	}
 
-	protected float getPaddingYpx() {
+	protected double getPaddingYpx() {
 		if (padding.units == Style.Units.PX && padding.size() > 1)
 			return padding.get(1);
 
@@ -707,20 +707,20 @@ public class Camera {
 	 *            The max ordinate of the area.
 	 * @return True if the node lies in the given area.
 	 */
-	protected boolean isNodeIn(GraphicNode node, float X1, float Y1, float X2,
-			float Y2) {
+	protected boolean isNodeIn(GraphicNode node, double X1, double Y1, double X2,
+			double Y2) {
 		Values size = node.getStyle().getSize();
-		float w2 = metrics.lengthToPx(size, 0) / 2;
-		float h2 = size.size() > 1 ? metrics.lengthToPx(size, 1) / 2 : w2;
-		Point2D.Float src = new Point2D.Float(node.getX(), node.getY());
+		double w2 = metrics.lengthToPx(size, 0) / 2;
+		double h2 = size.size() > 1 ? metrics.lengthToPx(size, 1) / 2 : w2;
+		Point2D.Double src = new Point2D.Double(node.getX(), node.getY());
 		boolean vis = true;
 
 		Tx.transform(src, src);
 
-		float x1 = src.x - w2;
-		float x2 = src.x + w2;
-		float y1 = src.y - h2;
-		float y2 = src.y + h2;
+		double x1 = src.x - w2;
+		double x2 = src.x + w2;
+		double y1 = src.y - h2;
+		double y2 = src.y + h2;
 
 		if (x2 < X1)
 			vis = false;
@@ -749,8 +749,8 @@ public class Camera {
 	 *            The max ordinate of the area.
 	 * @return True if the node lies in the given area.
 	 */
-	protected boolean isSpriteIn(GraphicSprite sprite, float X1, float Y1,
-			float X2, float Y2) {
+	protected boolean isSpriteIn(GraphicSprite sprite, double X1, double Y1,
+			double X2, double Y2) {
 		if (sprite.isAttachedToNode()
 				&& nodeInvisible.contains(sprite.getNodeAttachment().getId())) {
 			return false;
@@ -759,18 +759,18 @@ public class Camera {
 			return false;
 		} else {
 			Values size = sprite.getStyle().getSize();
-			float w2 = metrics.lengthToPx(size, 0) / 2;
-			float h2 = size.size() > 1 ? metrics.lengthToPx(size, 1) / 2 : w2;
-			Point2D.Float src = spritePositionPx(sprite);// new Point2D.Float(
+			double w2 = metrics.lengthToPx(size, 0) / 2;
+			double h2 = size.size() > 1 ? metrics.lengthToPx(size, 1) / 2 : w2;
+			Point2D.Double src = spritePositionPx(sprite);// new Point2D.Double(
 															// sprite.getX(),
 															// sprite.getY() );
 
 			// Tx.transform( src, src );
 
-			float x1 = src.x - w2;
-			float x2 = src.x + w2;
-			float y1 = src.y - h2;
-			float y2 = src.y + h2;
+			double x1 = src.x - w2;
+			double x2 = src.x + w2;
+			double y1 = src.y - h2;
+			double y2 = src.y + h2;
 
 			if (x2 < X1)
 				return false;
@@ -785,23 +785,23 @@ public class Camera {
 		}
 	}
 
-	protected Point2D.Float spritePositionPx(GraphicSprite sprite) {
-		Point2D.Float pos = new Point2D.Float();
+	protected Point2D.Double spritePositionPx(GraphicSprite sprite) {
+		Point2D.Double pos = new Point2D.Double();
 
 		return getSpritePosition(sprite, pos, Units.PX);
 		// if( sprite.getUnits() == Units.PX )
 		// {
-		// return new Point2D.Float( sprite.getX(), sprite.getY() );
+		// return new Point2D.Double( sprite.getX(), sprite.getY() );
 		// }
 		// else if( sprite.getUnits() == Units.GU )
 		// {
-		// Point2D.Float pos = new Point2D.Float( sprite.getX(), sprite.getY()
+		// Point2D.Double pos = new Point2D.Double( sprite.getX(), sprite.getY()
 		// );
-		// return (Point2D.Float) Tx.transform( pos, pos );
+		// return (Point2D.Double) Tx.transform( pos, pos );
 		// }
 		// else// if( sprite.getUnits() == Units.PERCENTS )
 		// {
-		// return new Point2D.Float(
+		// return new Point2D.Double(
 		// (sprite.getX()/100f)*metrics.viewport.data[0],
 		// (sprite.getY()/100f)*metrics.viewport.data[1] );
 		// }
@@ -818,19 +818,19 @@ public class Camera {
 	 *            The point ordinate.
 	 * @return True if (x,y) is in the given element.
 	 */
-	protected boolean nodeContains(GraphicElement elt, float x, float y) {
+	protected boolean nodeContains(GraphicElement elt, double x, double y) {
 		Values size = elt.getStyle().getSize();
-		float w2 = metrics.lengthToPx(size, 0) / 2;
-		float h2 = size.size() > 1 ? metrics.lengthToPx(size, 1) / 2 : w2;
-		Point2D.Float src = new Point2D.Float(elt.getX(), elt.getY());
-		Point2D.Float dst = new Point2D.Float();
+		double w2 = metrics.lengthToPx(size, 0) / 2;
+		double h2 = size.size() > 1 ? metrics.lengthToPx(size, 1) / 2 : w2;
+		Point2D.Double src = new Point2D.Double(elt.getX(), elt.getY());
+		Point2D.Double dst = new Point2D.Double();
 
 		Tx.transform(src, dst);
 
-		float x1 = dst.x - w2;
-		float x2 = dst.x + w2;
-		float y1 = dst.y - h2;
-		float y2 = dst.y + h2;
+		double x1 = dst.x - w2;
+		double x2 = dst.x + w2;
+		double y1 = dst.y - h2;
+		double y2 = dst.y + h2;
 
 		if (x < x1)
 			return false;
@@ -855,23 +855,23 @@ public class Camera {
 	 *            The point ordinate.
 	 * @return True if (x,y) is in the given element.
 	 */
-	protected boolean spriteContains(GraphicElement elt, float x, float y) {
+	protected boolean spriteContains(GraphicElement elt, double x, double y) {
 		Values size = elt.getStyle().getSize();
-		float w2 = metrics.lengthToPx(size, 0) / 2;
-		float h2 = size.size() > 1 ? metrics.lengthToPx(size, 1) / 2 : w2;
-		Point2D.Float dst = spritePositionPx((GraphicSprite) elt); // new
-																	// Point2D.Float(
+		double w2 = metrics.lengthToPx(size, 0) / 2;
+		double h2 = size.size() > 1 ? metrics.lengthToPx(size, 1) / 2 : w2;
+		Point2D.Double dst = spritePositionPx((GraphicSprite) elt); // new
+																	// Point2D.Double(
 																	// elt.getX(),
 																	// elt.getY()
 																	// );
-		// Point2D.Float dst = new Point2D.Float();
+		// Point2D.Double dst = new Point2D.Double();
 
 		// Tx.transform( src, dst );
 
-		float x1 = dst.x - w2;
-		float x2 = dst.x + w2;
-		float y1 = dst.y - h2;
-		float y2 = dst.y + h2;
+		double x1 = dst.x - w2;
+		double x2 = dst.x + w2;
+		double y1 = dst.y - h2;
+		double y2 = dst.y + h2;
 
 		if (x < x1)
 			return false;
@@ -897,10 +897,10 @@ public class Camera {
 	 *            The units the computed position must be given into.
 	 * @return The same instance as pos, or a new one if pos was null.
 	 */
-	protected Point2D.Float getSpritePositionFree(GraphicSprite sprite,
-			Point2D.Float pos, Units units) {
+	protected Point2D.Double getSpritePositionFree(GraphicSprite sprite,
+			Point2D.Double pos, Units units) {
 		if (pos == null)
-			pos = new Point2D.Float();
+			pos = new Point2D.Double();
 
 		if (sprite.getUnits() == units) {
 			pos.x = sprite.getX();
@@ -942,17 +942,17 @@ public class Camera {
 	 *            The units the computed position must be given into.
 	 * @return The same instance as pos, or a new one if pos was null.
 	 */
-	protected Point2D.Float getSpritePositionNode(GraphicSprite sprite,
-			Point2D.Float pos, Units units) {
+	protected Point2D.Double getSpritePositionNode(GraphicSprite sprite,
+			Point2D.Double pos, Units units) {
 		if (pos == null)
-			pos = new Point2D.Float();
+			pos = new Point2D.Double();
 
 		GraphicNode node = sprite.getNodeAttachment();
-		float radius = metrics.lengthToGu(sprite.getX(), sprite.getUnits());
-		float z = (float) (sprite.getZ() * (Math.PI / 180f));
+		double radius = metrics.lengthToGu(sprite.getX(), sprite.getUnits());
+		double z = (double) (sprite.getZ() * (Math.PI / 180f));
 
-		pos.x = node.x + ((float) Math.cos(z) * radius);
-		pos.y = node.y + ((float) Math.sin(z) * radius);
+		pos.x = node.x + ((double) Math.cos(z) * radius);
+		pos.y = node.y + ((double) Math.sin(z) * radius);
 
 		if (units == Units.PX)
 			Tx.transform(pos, pos);
@@ -972,22 +972,22 @@ public class Camera {
 	 *            The units the computed position must be given into.
 	 * @return The same instance as pos, or a new one if pos was null.
 	 */
-	protected Point2D.Float getSpritePositionEdge(GraphicSprite sprite,
-			Point2D.Float pos, Units units) {
+	protected Point2D.Double getSpritePositionEdge(GraphicSprite sprite,
+			Point2D.Double pos, Units units) {
 		if (pos == null)
-			pos = new Point2D.Float();
+			pos = new Point2D.Double();
 
 		GraphicEdge edge = sprite.getEdgeAttachment();
 
 		if (edge.isCurve()) {
-			float ctrl[] = edge.getControlPoints();
+			double ctrl[] = edge.getControlPoints();
 			Point2 p0 = new Point2(edge.from.getX(), edge.from.getY());
 			Point2 p1 = new Point2(ctrl[0], ctrl[1]);
 			Point2 p2 = new Point2(ctrl[1], ctrl[2]);
 			Point2 p3 = new Point2(edge.to.getX(), edge.to.getY());
 			Vector2 perp = CubicCurve.perpendicular(p0, p1, p2, p3,
 					sprite.getX());
-			float y = metrics.lengthToGu(sprite.getY(), sprite.getUnits());
+			double y = metrics.lengthToGu(sprite.getY(), sprite.getUnits());
 
 			perp.normalize();
 			perp.scalarMult(y);
@@ -997,12 +997,12 @@ public class Camera {
 			pos.y = CubicCurve.eval(p0.y, p1.y, p2.y, p3.y, sprite.getX())
 					- perp.data[1];
 		} else {
-			float x = ((GraphicNode) edge.getSourceNode()).x;
-			float y = ((GraphicNode) edge.getSourceNode()).y;
-			float dx = ((GraphicNode) edge.getTargetNode()).x - x;
-			float dy = ((GraphicNode) edge.getTargetNode()).y - y;
-			float d = sprite.getX(); // Percent on the edge.
-			float o = metrics.lengthToGu(sprite.getY(), sprite.getUnits());
+			double x = ((GraphicNode) edge.getSourceNode()).x;
+			double y = ((GraphicNode) edge.getSourceNode()).y;
+			double dx = ((GraphicNode) edge.getTargetNode()).x - x;
+			double dy = ((GraphicNode) edge.getTargetNode()).y - y;
+			double d = sprite.getX(); // Percent on the edge.
+			double o = metrics.lengthToGu(sprite.getY(), sprite.getUnits());
 			// Offset from the position given by percent, perpendicular to the
 			// edge.
 
@@ -1012,7 +1012,7 @@ public class Camera {
 			x += dx * d;
 			y += dy * d;
 
-			d = (float) Math.sqrt(dx * dx + dy * dy);
+			d = (double) Math.sqrt(dx * dx + dy * dy);
 			dx /= d;
 			dy /= d;
 

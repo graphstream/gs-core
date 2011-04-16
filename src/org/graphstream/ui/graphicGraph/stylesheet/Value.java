@@ -47,7 +47,7 @@ public class Value extends Number {
 	/**
 	 * The value.
 	 */
-	public float value;
+	public double value;
 
 	/**
 	 * The value units.
@@ -64,7 +64,7 @@ public class Value extends Number {
 	 * @param value
 	 *            The value.
 	 */
-	public Value(Style.Units units, float value) {
+	public Value(Style.Units units, double value) {
 		this.value = value;
 		this.units = units;
 	}
@@ -81,18 +81,18 @@ public class Value extends Number {
 	}
 
 	@Override
+	public float floatValue() {
+		return (float)value;
+	}
+
+	@Override
 	public double doubleValue() {
 		return value;
 	}
 
 	@Override
-	public float floatValue() {
-		return value;
-	}
-
-	@Override
 	public int intValue() {
-		return Math.round(value);
+		return (int)Math.round(value);
 	}
 
 	@Override

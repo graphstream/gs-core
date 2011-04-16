@@ -262,19 +262,19 @@ public class DefaultView extends View implements ComponentListener,
 	// Selection
 
 	@Override
-	public void beginSelectionAt(float x1, float y1) {
+	public void beginSelectionAt(double x1, double y1) {
 		renderer.beginSelectionAt(x1, y1);
 		canvasChanged = true;
 	}
 
 	@Override
-	public void selectionGrowsAt(float x, float y) {
+	public void selectionGrowsAt(double x, double y) {
 		renderer.selectionGrowsAt(x, y);
 		canvasChanged = true;
 	}
 
 	@Override
-	public void endSelectionAt(float x2, float y2) {
+	public void endSelectionAt(double x2, double y2) {
 		renderer.endSelectionAt(x2, y2);
 		canvasChanged = true;
 	}
@@ -343,18 +343,18 @@ public class DefaultView extends View implements ComponentListener,
 	// Methods deferred to the renderer
 
 	@Override
-	public ArrayList<GraphicElement> allNodesOrSpritesIn(float x1, float y1,
-			float x2, float y2) {
+	public ArrayList<GraphicElement> allNodesOrSpritesIn(double x1, double y1,
+			double x2, double y2) {
 		return renderer.allNodesOrSpritesIn(x1, y1, x2, y2);
 	}
 
 	@Override
-	public GraphicElement findNodeOrSpriteAt(float x, float y) {
+	public GraphicElement findNodeOrSpriteAt(double x, double y) {
 		return renderer.findNodeOrSpriteAt(x, y);
 	}
 
 	@Override
-	public float getGraphDimension() {
+	public double getGraphDimension() {
 		return renderer.getGraphDimension();
 	}
 
@@ -364,17 +364,17 @@ public class DefaultView extends View implements ComponentListener,
 	}
 
 	@Override
-	public float getViewPercent() {
+	public double getViewPercent() {
 		return renderer.getViewPercent();
 	}
 
 	@Override
-	public float getViewRotation() {
+	public double getViewRotation() {
 		return renderer.getViewRotation();
 	}
 
 	@Override
-	public void moveElementAtPx(GraphicElement element, float x, float y) {
+	public void moveElementAtPx(GraphicElement element, double x, double y) {
 		renderer.moveElementAtPx(element, x, y);
 	}
 
@@ -385,19 +385,19 @@ public class DefaultView extends View implements ComponentListener,
 	}
 
 	@Override
-	public void setBounds(float minx, float miny, float minz, float maxx,
-			float maxy, float maxz) {
+	public void setBounds(double minx, double miny, double minz, double maxx,
+			double maxy, double maxz) {
 		renderer.setBounds(minx, miny, minz, maxx, maxy, maxz);
 	}
 
 	@Override
-	public void setViewCenter(float x, float y, float z) {
+	public void setViewCenter(double x, double y, double z) {
 		renderer.setViewCenter(x, y, z);
 		canvasChanged = true;
 	}
 
 	@Override
-	public void setGraphViewport(float minx, float miny, float maxx, float maxy) {
+	public void setGraphViewport(double minx, double miny, double maxx, double maxy) {
 		renderer.setGraphViewport(minx, miny, maxx, maxy);
 		canvasChanged = true;
 	}
@@ -409,13 +409,13 @@ public class DefaultView extends View implements ComponentListener,
 	}
 
 	@Override
-	public void setViewPercent(float percent) {
+	public void setViewPercent(double percent) {
 		renderer.setViewPercent(percent);
 		canvasChanged = true;
 	}
 
 	@Override
-	public void setViewRotation(float theta) {
+	public void setViewRotation(double theta) {
 		renderer.setViewRotation(theta);
 		canvasChanged = true;
 	}

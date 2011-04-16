@@ -44,7 +44,7 @@ import org.graphstream.ui.graphicGraph.stylesheet.Values;
  * 
  * <p>
  * Sprite objects allow to add data representations in a graphic display of a
- * graph. A sprite is a graphical representation that can float anywhere in the
+ * graph. A sprite is a graphical representation that can double anywhere in the
  * graph drawing surface, or be "attached" to nodes or edges. When attached to
  * an edge, a sprite can be positioned easily at any point along the edge, or
  * perpendicular to it with one or two coordinates. When attached to a node, a
@@ -232,7 +232,7 @@ public class Sprite implements Element {
 	 * 
 	 * @return The position in abscissa.
 	 */
-	public float getX() {
+	public double getX() {
 		if (position.values.size() > 0)
 			return position.values.get(0);
 
@@ -244,7 +244,7 @@ public class Sprite implements Element {
 	 * 
 	 * @return The position in ordinate.
 	 */
-	public float getY() {
+	public double getY() {
 		if (position.values.size() > 1)
 			return position.values.get(1);
 
@@ -256,7 +256,7 @@ public class Sprite implements Element {
 	 * 
 	 * @return The position in depth.
 	 */
-	public float getZ() {
+	public double getZ() {
 		if (position.values.size() > 2)
 			return position.values.get(2);
 
@@ -315,15 +315,15 @@ public class Sprite implements Element {
 		}
 	}
 
-	public void setPosition(float percent) {
+	public void setPosition(double percent) {
 		setPosition(position.units, percent, 0, 0);
 	}
 
-	public void setPosition(float x, float y, float z) {
+	public void setPosition(double x, double y, double z) {
 		setPosition(position.units, x, y, z);
 	}
 
-	public void setPosition(Style.Units units, float x, float y, float z) {
+	public void setPosition(Style.Units units, double x, double y, double z) {
 		boolean changed = false;
 
 		if (position.get(0) != x) {

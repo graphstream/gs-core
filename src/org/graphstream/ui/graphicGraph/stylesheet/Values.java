@@ -42,13 +42,13 @@ import java.util.Iterator;
  * object.
  * </p>
  */
-public class Values implements Iterable<Float> {
+public class Values implements Iterable<Double> {
 	// Attributes
 
 	/**
 	 * The value.
 	 */
-	public ArrayList<Float> values = new ArrayList<Float>();
+	public ArrayList<Double> values = new ArrayList<Double>();
 
 	/**
 	 * The values units.
@@ -65,10 +65,10 @@ public class Values implements Iterable<Float> {
 	 * @param values
 	 *            A variable count of values.
 	 */
-	public Values(Style.Units units, float... values) {
+	public Values(Style.Units units, double... values) {
 		this.units = units;
 
-		for (float value : values)
+		for (double value : values)
 			this.values.add(value);
 	}
 
@@ -79,7 +79,7 @@ public class Values implements Iterable<Float> {
 	 *            The other values to copy.
 	 */
 	public Values(Values other) {
-		this.values = new ArrayList<Float>(other.values);
+		this.values = new ArrayList<Double>(other.values);
 		this.units = other.units;
 	}
 
@@ -90,7 +90,7 @@ public class Values implements Iterable<Float> {
 	 *            The value to copy with its units.
 	 */
 	public Values(Value value) {
-		this.values = new ArrayList<Float>();
+		this.values = new ArrayList<Double>();
 		this.units = value.units;
 
 		values.add(value.value);
@@ -123,7 +123,7 @@ public class Values implements Iterable<Float> {
 	 *            The value index.
 	 * @return The corresponding value.
 	 */
-	public float get(int i) {
+	public double get(int i) {
 		if (i < 0)
 			return values.get(0);
 		else if (i >= values.size())
@@ -166,7 +166,7 @@ public class Values implements Iterable<Float> {
 		return true;
 	}
 
-	public Iterator<Float> iterator() {
+	public Iterator<Double> iterator() {
 		return values.iterator();
 	}
 
@@ -175,7 +175,7 @@ public class Values implements Iterable<Float> {
 		StringBuilder builder = new StringBuilder();
 
 		builder.append('(');
-		for (float value : values) {
+		for (double value : values) {
 			builder.append(' ');
 			builder.append(value);
 		}
@@ -217,8 +217,8 @@ public class Values implements Iterable<Float> {
 	 * @param values
 	 *            The value set to append.
 	 */
-	public void addValues(float... values) {
-		for (float value : values)
+	public void addValues(double... values) {
+		for (double value : values)
 			this.values.add(value);
 	}
 
@@ -230,7 +230,7 @@ public class Values implements Iterable<Float> {
 	 * @param value
 	 *            The value to insert.
 	 */
-	public void insertValue(int i, float value) {
+	public void insertValue(int i, double value) {
 		values.add(i, value);
 	}
 
@@ -242,7 +242,7 @@ public class Values implements Iterable<Float> {
 	 * @param value
 	 *            The value to put.
 	 */
-	public void setValue(int i, float value) {
+	public void setValue(int i, double value) {
 		values.set(i, value);
 	}
 

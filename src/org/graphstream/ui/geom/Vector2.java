@@ -38,7 +38,7 @@ public class Vector2 implements java.io.Serializable {
 	/**
 	 * Sequence of 3 coefficients.
 	 */
-	public float data[];
+	public double data[];
 
 	// Constructors
 
@@ -46,7 +46,7 @@ public class Vector2 implements java.io.Serializable {
 	 * New zero vector.
 	 */
 	public Vector2() {
-		data = new float[2];
+		data = new double[2];
 		data[0] = 0;
 		data[1] = 0;
 	}
@@ -54,8 +54,8 @@ public class Vector2 implements java.io.Serializable {
 	/**
 	 * New (<code>x</code>,<code>y</code>) vector.
 	 */
-	public Vector2(float x, float y) {
-		data = new float[2];
+	public Vector2(double x, double y) {
+		data = new double[2];
 		data[0] = x;
 		data[1] = y;
 	}
@@ -64,7 +64,7 @@ public class Vector2 implements java.io.Serializable {
 	 * New vector copy of <code>other</code>.
 	 */
 	public Vector2(Vector2 other) {
-		data = new float[2];
+		data = new double[2];
 		copy(other);
 	}
 
@@ -72,12 +72,12 @@ public class Vector2 implements java.io.Serializable {
 	 * New vector copy of <code>point</code>.
 	 */
 	public Vector2(Point2 point) {
-		data = new float[2];
+		data = new double[2];
 		copy(point);
 	}
 	
 	public Vector2(Point2 from, Point2 to) {
-		data = new float[2];
+		data = new double[2];
 		data[0] = to.x - from.x;
 		data[1] = to.y - from.y;
 	}
@@ -128,7 +128,7 @@ public class Vector2 implements java.io.Serializable {
 	/**
 	 * i-th element.
 	 */
-	public float at(int i) {
+	public double at(int i) {
 		return data[i];
 	}
 
@@ -139,22 +139,22 @@ public class Vector2 implements java.io.Serializable {
 
 	// Accessors
 
-	public float dotProduct(float ox, float oy) {
+	public double dotProduct(double ox, double oy) {
 		return ((data[0] * ox) + (data[1] * oy));
 	}
 
 	/**
 	 * Dot product of this and other.
 	 */
-	public float dotProduct(Vector2 other) {
+	public double dotProduct(Vector2 other) {
 		return ((data[0] * other.data[0]) + (data[1] * other.data[1]));
 	}
 
 	/**
 	 * Cartesian length.
 	 */
-	public float length() {
-		return (float) Math.sqrt((data[0] * data[0]) + (data[1] * data[1]));
+	public double length() {
+		return Math.sqrt((data[0] * data[0]) + (data[1] * data[1]));
 	}
 
 	// Commands
@@ -162,21 +162,21 @@ public class Vector2 implements java.io.Serializable {
 	/**
 	 * Assign value to all elements.
 	 */
-	public void fill(float value) {
+	public void fill(double value) {
 		data[0] = data[1] = value;
 	}
 
 	/**
 	 * Explicitly set the i-th component to value.
 	 */
-	public void set(int i, float value) {
+	public void set(int i, double value) {
 		data[i] = value;
 	}
 
 	/**
 	 * Explicitly set the three components.
 	 */
-	public void set(float x, float y) {
+	public void set(double x, double y) {
 		data[0] = x;
 		data[1] = y;
 	}
@@ -208,7 +208,7 @@ public class Vector2 implements java.io.Serializable {
 	/**
 	 * Add value to each element.
 	 */
-	public void scalarAdd(float value) {
+	public void scalarAdd(double value) {
 		data[0] += value;
 		data[1] += value;
 	}
@@ -216,7 +216,7 @@ public class Vector2 implements java.io.Serializable {
 	/**
 	 * Substract value to each element.
 	 */
-	public void scalarSub(float value) {
+	public void scalarSub(double value) {
 		data[0] -= value;
 		data[1] -= value;
 	}
@@ -224,7 +224,7 @@ public class Vector2 implements java.io.Serializable {
 	/**
 	 * Multiply each element by value.
 	 */
-	public void scalarMult(float value) {
+	public void scalarMult(double value) {
 		data[0] *= value;
 		data[1] *= value;
 	}
@@ -232,7 +232,7 @@ public class Vector2 implements java.io.Serializable {
 	/**
 	 * Divide each element by value.
 	 */
-	public void scalarDiv(float value) {
+	public void scalarDiv(double value) {
 		data[0] /= value;
 		data[1] /= value;
 	}
@@ -242,8 +242,8 @@ public class Vector2 implements java.io.Serializable {
 	 * 
 	 * @return the vector length.
 	 */
-	public float normalize() {
-		float len = length();
+	public double normalize() {
+		double len = length();
 
 		if (len != 0) {
 			data[0] /= len;

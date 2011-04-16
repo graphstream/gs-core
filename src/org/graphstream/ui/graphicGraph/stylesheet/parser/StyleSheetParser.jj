@@ -213,6 +213,7 @@ TOKEN: { < PANEL             : "panel" > }
 
 TOKEN: { < LINE              : "line" > }
 TOKEN: { < POLYLINE          : "polyline" > } 
+TOKEN: { < POLYLINESCALED    : "polyline-scaled" > }
 TOKEN: { < ANGLE             : "angle" > }
 TOKEN: { < CUBICCURVE        : "cubic-curve" > }
 TOKEN: { < BLOB              : "blob" > }
@@ -662,6 +663,7 @@ Style.Shape shape():
 	| ( <ANGLE>          { s = Style.Shape.ANGLE;            } )
 	| ( <CUBICCURVE>     { s = Style.Shape.CUBIC_CURVE;      } )
 	| ( <POLYLINE>       { s = Style.Shape.POLYLINE;         } )
+	| ( <POLYLINESCALED> { s = Style.Shape.POLYLINE_SCALED;  } )
 	| ( <BLOB>           { s = Style.Shape.BLOB;             } )
 	)
 	{ return s; }

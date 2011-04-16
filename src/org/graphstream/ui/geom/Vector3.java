@@ -31,7 +31,7 @@
 package org.graphstream.ui.geom;
 
 /**
- * A three component vector made of floats.
+ * A three component vector made of doubles.
  * 
  * @author Antoine Dutot
  * @since 20000613
@@ -48,7 +48,7 @@ public class Vector3 extends Vector2 {
 	 * New zero vector.
 	 */
 	public Vector3() {
-		data = new float[3];
+		data = new double[3];
 		data[0] = 0;
 		data[1] = 0;
 		data[2] = 0;
@@ -57,8 +57,8 @@ public class Vector3 extends Vector2 {
 	/**
 	 * New (<code>x</code>,<code>y</code>,<code>z</code>) vector.
 	 */
-	public Vector3(float x, float y, float z) {
-		data = new float[3];
+	public Vector3(double x, double y, double z) {
+		data = new double[3];
 		data[0] = x;
 		data[1] = y;
 		data[2] = z;
@@ -68,7 +68,7 @@ public class Vector3 extends Vector2 {
 	 * New vector copy of <code>other</code>.
 	 */
 	public Vector3(Vector3 other) {
-		data = new float[3];
+		data = new double[3];
 		copy(other);
 	}
 
@@ -76,7 +76,7 @@ public class Vector3 extends Vector2 {
 	 * New vector copy of <code>point</code>.
 	 */
 	public Vector3(Point3 point) {
-		data = new float[3];
+		data = new double[3];
 		copy(point);
 	}
 
@@ -132,14 +132,14 @@ public class Vector3 extends Vector2 {
 
 	// Access
 
-	public float dotProduct(float ox, float oy, float oz) {
+	public double dotProduct(double ox, double oy, double oz) {
 		return ((data[0] * ox) + (data[1] * oy) + (data[2] * oz));
 	}
 
 	/**
 	 * Dot product of this and other.
 	 */
-	public float dotProduct(Vector3 other) {
+	public double dotProduct(Vector3 other) {
 		return ((data[0] * other.data[0]) + (data[1] * other.data[1]) + (data[2] * other.data[2]));
 	}
 
@@ -147,8 +147,8 @@ public class Vector3 extends Vector2 {
 	 * Cartesian length.
 	 */
 	@Override
-	public float length() {
-		return (float) Math.sqrt((data[0] * data[0]) + (data[1] * data[1])
+	public double length() {
+		return Math.sqrt((data[0] * data[0]) + (data[1] * data[1])
 				+ (data[2] * data[2]));
 	}
 
@@ -158,7 +158,7 @@ public class Vector3 extends Vector2 {
 	 * Assign value to all elements.
 	 */
 	@Override
-	public void fill(float value) {
+	public void fill(double value) {
 		data[0] = data[1] = data[2] = value;
 	}
 
@@ -166,14 +166,14 @@ public class Vector3 extends Vector2 {
 	 * Explicitly set the i-th component to value.
 	 */
 	@Override
-	public void set(int i, float value) {
+	public void set(int i, double value) {
 		data[i] = value;
 	}
 
 	/**
 	 * Explicitly set the three components.
 	 */
-	public void set(float x, float y, float z) {
+	public void set(double x, double y, double z) {
 		data[0] = x;
 		data[1] = y;
 		data[2] = z;
@@ -210,7 +210,7 @@ public class Vector3 extends Vector2 {
 	 * Add value to each element.
 	 */
 	@Override
-	public void scalarAdd(float value) {
+	public void scalarAdd(double value) {
 		data[0] += value;
 		data[1] += value;
 		data[2] += value;
@@ -220,7 +220,7 @@ public class Vector3 extends Vector2 {
 	 * Substract value to each element.
 	 */
 	@Override
-	public void scalarSub(float value) {
+	public void scalarSub(double value) {
 		data[0] -= value;
 		data[1] -= value;
 		data[2] -= value;
@@ -230,7 +230,7 @@ public class Vector3 extends Vector2 {
 	 * Multiply each element by value.
 	 */
 	@Override
-	public void scalarMult(float value) {
+	public void scalarMult(double value) {
 		data[0] *= value;
 		data[1] *= value;
 		data[2] *= value;
@@ -240,7 +240,7 @@ public class Vector3 extends Vector2 {
 	 * Divide each element by value.
 	 */
 	@Override
-	public void scalarDiv(float value) {
+	public void scalarDiv(double value) {
 		data[0] /= value;
 		data[1] /= value;
 		data[2] /= value;
@@ -250,8 +250,8 @@ public class Vector3 extends Vector2 {
 	 * Set this to the cross product of this and other.
 	 */
 	public void crossProduct(Vector3 other) {
-		float x;
-		float y;
+		double x;
+		double y;
 
 		x = (data[1] * other.data[2]) - (data[2] * other.data[1]);
 		y = (data[2] * other.data[0]) - (data[0] * other.data[2]);
@@ -275,8 +275,8 @@ public class Vector3 extends Vector2 {
 	 * @return the vector length.
 	 */
 	@Override
-	public float normalize() {
-		float len = length();
+	public double normalize() {
+		double len = length();
 
 		if (len != 0) {
 			data[0] /= len;

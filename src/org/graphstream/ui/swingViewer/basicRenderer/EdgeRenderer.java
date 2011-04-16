@@ -49,13 +49,13 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.SizeMode;
 import org.graphstream.ui.swingViewer.util.Camera;
 
 public class EdgeRenderer extends ElementRenderer {
-	protected Line2D shape = new Line2D.Float();
+	protected Line2D shape = new Line2D.Double();
 
-	protected float width = 1;
+	protected double width = 1;
 
-	protected float arrowLength = 0;
+	protected double arrowLength = 0;
 
-	protected float arrowWidth = 0;
+	protected double arrowWidth = 0;
 
 	@Override
 	protected void setupRenderingPass(StyleGroup group, Graphics2D g,
@@ -78,10 +78,10 @@ public class EdgeRenderer extends ElementRenderer {
 					.lengthToGu(
 							StyleConstants.convertValue(element
 									.getAttribute("ui.size")));
-			// width = camera.getMetrics().lengthToGu( (float)
+			// width = camera.getMetrics().lengthToGu( (double)
 			// element.getNumber( "ui.size" ), Units.PX );
 
-			g.setStroke(new BasicStroke(width, BasicStroke.CAP_BUTT,
+			g.setStroke(new BasicStroke((float)width, BasicStroke.CAP_BUTT,
 					BasicStroke.JOIN_BEVEL));
 		}
 	}
@@ -94,7 +94,7 @@ public class EdgeRenderer extends ElementRenderer {
 				group.getArrowSize().size() > 1 ? 1 : 0);
 
 		g.setColor(group.getFillColor(0));
-		g.setStroke(new BasicStroke(width, BasicStroke.CAP_BUTT,
+		g.setStroke(new BasicStroke((float)width, BasicStroke.CAP_BUTT,
 				BasicStroke.JOIN_BEVEL));
 	}
 
@@ -120,17 +120,17 @@ public class EdgeRenderer extends ElementRenderer {
 			GraphicEdge edge) {
 		if (edge.isDirected() && arrowWidth > 0 && arrowLength > 0) {
 			if (group.getArrowShape()!=ArrowShape.NONE) {
-				Path2D shape = new Path2D.Float();
+				Path2D shape = new Path2D.Double();
 				GraphicNode node0 = (GraphicNode) edge.getNode0();
 				GraphicNode node1 = (GraphicNode) edge.getNode1();
-				float off = evalEllipseRadius(edge, node0, node1, camera);
+				double off = evalEllipseRadius(edge, node0, node1, camera);
 				Vector2 theDirection = new Vector2(node1.getX() - node0.getX(),
 						node1.getY() - node0.getY());
 	
 				theDirection.normalize();
 	
-				float x = node1.x - (theDirection.data[0] * off);
-				float y = node1.y - (theDirection.data[1] * off);
+				double x = node1.x - (theDirection.data[0] * off);
+				double y = node1.y - (theDirection.data[1] * off);
 				Vector2 perp = new Vector2(theDirection.data[1],
 						-theDirection.data[0]);
 	
@@ -153,11 +153,11 @@ public class EdgeRenderer extends ElementRenderer {
 		}
 	}
 
-	protected float evalEllipseRadius(GraphicEdge edge, GraphicNode node0,
+	protected double evalEllipseRadius(GraphicEdge edge, GraphicNode node0,
 			GraphicNode node1, Camera camera) {
 		Values size = node0.getStyle().getSize();
-		float w = camera.getMetrics().lengthToGu(size.get(0), size.getUnits());
-		float h = size.size() > 1 ? camera.getMetrics().lengthToGu(size.get(1),
+		double w = camera.getMetrics().lengthToGu(size.get(0), size.getUnits());
+		double h = size.size() > 1 ? camera.getMetrics().lengthToGu(size.get(1),
 				size.getUnits()) : w;
 
 		if (w == h)
@@ -165,8 +165,8 @@ public class EdgeRenderer extends ElementRenderer {
 
 		// Vector of the entering edge.
 
-		float dx = node1.getX() - node0.getX();
-		float dy = node1.getY() - node0.getY();
+		double dx = node1.getX() - node0.getX();
+		double dy = node1.getY() - node0.getY();
 
 		// The entering edge must be deformed by the ellipse ratio to find the
 		// correct angle.
@@ -175,20 +175,20 @@ public class EdgeRenderer extends ElementRenderer {
 
 		// Find the angle of the entering vector with (1,0).
 
-		float d = (float) Math.sqrt(dx * dx + dy * dy);
-		float a = dx / d;
+		double d = Math.sqrt(dx * dx + dy * dy);
+		double a = dx / d;
 
 		// Compute the coordinates at which the entering vector and the ellipse
 		// cross.
 
-		a = (float) Math.acos(a);
-		dx = (float) (Math.cos(a) * w);
-		dy = (float) (Math.sin(a) * h);
+		a  = Math.acos(a);
+		dx = Math.cos(a) * w;
+		dy = Math.sin(a) * h;
 
 		// The distance from the ellipse centre to the crossing point of the
 		// ellipse and
 		// vector. Yo !
 
-		return (float) Math.sqrt(dx * dx + dy * dy);
+		return Math.sqrt(dx * dx + dy * dy);
 	}
 }

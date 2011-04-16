@@ -59,7 +59,7 @@ public class GraphicNode extends GraphicElement implements Node {
 	/**
 	 * The position of the node. In graph units.
 	 */
-	public float x, y, z;
+	public double x, y, z;
 
 	/**
 	 * New graphic node.
@@ -83,17 +83,17 @@ public class GraphicNode extends GraphicElement implements Node {
 	}
 
 	@Override
-	public float getX() {
+	public double getX() {
 		return x;
 	}
 
 	@Override
-	public float getY() {
+	public double getY() {
 		return y;
 	}
 
 	@Override
-	public float getZ() {
+	public double getZ() {
 		return z;
 	}
 
@@ -101,7 +101,7 @@ public class GraphicNode extends GraphicElement implements Node {
 		return new Point3(x, y, z);
 	}
 
-	protected void moveFromEvent(float x, float y, float z) {
+	protected void moveFromEvent(double x, double y, double z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -111,7 +111,7 @@ public class GraphicNode extends GraphicElement implements Node {
 	}
 
 	@Override
-	public void move(float x, float y, float z) {
+	public void move(double x, double y, double z) {
 		moveFromEvent(x, y, z);
 
 		if (mygraph.feedbackXYZ)
@@ -147,15 +147,15 @@ public class GraphicNode extends GraphicElement implements Node {
 	}
 
 	/**
-	 * Try to convert the object to a float.
+	 * Try to convert the object to a double.
 	 * 
 	 * @param value
 	 *            The object to convert.
 	 * @return The value.
 	 */
-	protected float numberAttribute(Object value) {
+	protected double numberAttribute(Object value) {
 		if (value instanceof Number) {
-			return ((Number) value).floatValue();
+			return ((Number) value).doubleValue();
 		} else if (value instanceof CharSequence) {
 			String xs = ((CharSequence) value).toString();
 

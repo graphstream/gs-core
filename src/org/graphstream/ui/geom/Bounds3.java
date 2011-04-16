@@ -44,17 +44,17 @@ public class Bounds3 implements java.io.Serializable {
 	/**
 	 * First axis.
 	 */
-	public float width;
+	public double width;
 
 	/**
 	 * Second axis.
 	 */
-	public float height;
+	public double height;
 
 	/**
 	 * Third axis.
 	 */
-	public float depth;
+	public double depth;
 
 	// Attributes -- Shared
 
@@ -80,7 +80,7 @@ public class Bounds3 implements java.io.Serializable {
 	/**
 	 * New bounds (width,height,depth).
 	 */
-	public Bounds3(float width, float height, float depth) {
+	public Bounds3(double width, double height, double depth) {
 		this.width = width;
 		this.height = height;
 		this.depth = depth;
@@ -102,7 +102,7 @@ public class Bounds3 implements java.io.Serializable {
 	/**
 	 * Change the box to (x1,y1,z1,x2,y2,z2).
 	 */
-	public void set(float width, float height, float depth) {
+	public void set(double width, double height, double depth) {
 		this.width = width;
 		this.height = height;
 		this.depth = depth;

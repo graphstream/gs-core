@@ -146,34 +146,34 @@ public class SpringBox extends SourceBase implements Layout,
 	/**
 	 * The optimal distance between nodes.
 	 */
-	protected float k = 1f;
+	protected double k = 1f;
 
 	/**
 	 * Default attraction.
 	 */
-	protected float K1 = 0.06f; // 0.3 ??
+	protected double K1 = 0.06f; // 0.3 ??
 
 	/**
 	 * Default repulsion.
 	 */
-	protected float K2 = 0.024f; // 0.12 ??
+	protected double K2 = 0.024f; // 0.12 ??
 
 	/**
 	 * Global force strength. This is a factor in [0..1] that is used to scale
 	 * all computed displacements.
 	 */
-	protected float force = 1f;
+	protected double force = 1f;
 
 	/**
 	 * The view distance at which the cells of the n-tree are explored
 	 * exhaustively, after this the poles are used. This is a multiple of k.
 	 */
-	protected float viewZone = 5f;
+	protected double viewZone = 5f;
 
 	/**
 	 * The Barnes/Hut theta threshold to know if we use a pole or not.
 	 */
-	protected float theta = .7f;
+	protected double theta = .7f;
 
 	/**
 	 * The quality level.
@@ -200,17 +200,17 @@ public class SpringBox extends SourceBase implements Layout,
 	/**
 	 * The diagonal of the graph area at the current step.
 	 */
-	protected float area = 1;
+	protected double area = 1;
 
 	/**
 	 * The maximum length of a node displacement at the current step.
 	 */
-	protected float maxMoveLength;
+	protected double maxMoveLength;
 
 	/**
 	 * Average move length.
 	 */
-	protected float avgLength;
+	protected double avgLength;
 
 	/**
 	 * Number of nodes that moved during last step.
@@ -338,7 +338,7 @@ public class SpringBox extends SourceBase implements Layout,
 		return quality;
 	}
 
-	public float getForce() {
+	public double getForce() {
 		return force;
 	}
 
@@ -360,7 +360,7 @@ public class SpringBox extends SourceBase implements Layout,
 		}
 	}
 
-	public void setForce(float value) {
+	public void setForce(double value) {
 		this.force = value;
 	}
 
@@ -400,7 +400,7 @@ public class SpringBox extends SourceBase implements Layout,
 
 		computeArea();
 
-		maxMoveLength = Float.MIN_VALUE;
+		maxMoveLength = Double.MIN_VALUE;
 		k = 1f;
 		t1 = System.currentTimeMillis();
 		nodeMoveCount = 0;
@@ -421,7 +421,7 @@ public class SpringBox extends SourceBase implements Layout,
 		lastStepTime = System.currentTimeMillis() - t1;
 
 		for (LayoutListener listener : listeners)
-			listener.stepCompletion((float) getStabilization());
+			listener.stepCompletion(getStabilization());
 	}
 
 	/**
@@ -439,7 +439,7 @@ public class SpringBox extends SourceBase implements Layout,
 			}
 
 			if (statsOut != null) {
-				float energyDiff = energies.getEnergy()
+				double energyDiff = energies.getEnergy()
 						- energies.getPreviousEnergyValue(30);
 
 				statsOut.printf(Locale.US, "%f %d %f %f %f %f%n",
@@ -467,7 +467,7 @@ public class SpringBox extends SourceBase implements Layout,
 		nodes.addParticle(new NodeParticle(this, id));
 	}
 
-	public void moveNode(String id, float dx, float dy, float dz) {
+	public void moveNode(String id, double dx, double dy, double dz) {
 		NodeParticle node = (NodeParticle) nodes.getParticle(id);
 
 		if (node != null) {
@@ -484,7 +484,7 @@ public class SpringBox extends SourceBase implements Layout,
 		}
 	}
 
-	protected void setNodeWeight(String id, float weight) {
+	protected void setNodeWeight(String id, double weight) {
 		NodeParticle node = (NodeParticle) nodes.getParticle(id);
 
 		if (node != null)
@@ -533,7 +533,7 @@ public class SpringBox extends SourceBase implements Layout,
 		}
 	}
 
-	protected void setEdgeWeight(String id, float weight) {
+	protected void setEdgeWeight(String id, double weight) {
 		EdgeSpring edge = edges.get(id);
 
 		if (edge != null)
@@ -559,13 +559,13 @@ public class SpringBox extends SourceBase implements Layout,
 
 	// Particle box listener
 
-	public void particleAdded(Object id, float x, float y, float z, Object mark) {
+	public void particleAdded(Object id, double x, double y, double z, Object mark) {
 	}
 
 	public void particleMarked(Object id, Object mark) {
 	}
 
-	public void particleMoved(Object id, float x, float y, float z) {
+	public void particleMoved(Object id, double x, double y, double z) {
 		if ((time % sendMoveEventsEvery) == 0) {
 			for (LayoutListener listener : listeners)
 				listener.nodeMoved((String) id, x, y, z);
@@ -586,7 +586,7 @@ public class SpringBox extends SourceBase implements Layout,
 	public void stepFinished(int time) {
 	}
 
-	public void particleAdded(Object id, float x, float y, float z) {
+	public void particleAdded(Object id, double x, double y, double z) {
 	}
 
 	public void particleAttributeChanged(Object id, String attribute,
@@ -641,9 +641,9 @@ public class SpringBox extends SourceBase implements Layout,
 			Object oldValue, Object newValue) {
 		if (attribute.equals("layout.force")) {
 			if (newValue instanceof Number)
-				setForce(((Number) newValue).floatValue());
+				setForce(((Number) newValue).doubleValue());
 			System.err.printf("layout.elasticBox.force: %f%n",
-					((Number) newValue).floatValue());
+					((Number) newValue).doubleValue());
 		} else if (attribute.equals("layout.quality")) {
 			if (newValue instanceof Number) {
 				int q = ((Number) newValue).intValue();
@@ -656,7 +656,7 @@ public class SpringBox extends SourceBase implements Layout,
 			}
 		} else if (attribute.equals("layout.exact-zone")) {
 			if (newValue instanceof Number) {
-				float factor = ((Number) newValue).floatValue();
+				double factor = ((Number) newValue).doubleValue();
 
 				factor = factor > 1 ? 1 : factor;
 				factor = factor < 0 ? 0 : factor;
@@ -705,7 +705,7 @@ public class SpringBox extends SourceBase implements Layout,
 			String attribute, Object oldValue, Object newValue) {
 		if (attribute.equals("layout.weight")) {
 			if (newValue instanceof Number)
-				setNodeWeight(nodeId, ((Number) newValue).floatValue());
+				setNodeWeight(nodeId, ((Number) newValue).doubleValue());
 			else if (newValue == null)
 				setNodeWeight(nodeId, 1);
 		}
@@ -733,7 +733,7 @@ public class SpringBox extends SourceBase implements Layout,
 			String attribute, Object oldValue, Object newValue) {
 		if (attribute.equals("layout.weight")) {
 			if (newValue instanceof Number)
-				setEdgeWeight(edgeId, ((Number) newValue).floatValue());
+				setEdgeWeight(edgeId, ((Number) newValue).doubleValue());
 			else if (newValue == null)
 				setEdgeWeight(edgeId, 1);
 		} else if (attribute.equals("layout.ignored")) {

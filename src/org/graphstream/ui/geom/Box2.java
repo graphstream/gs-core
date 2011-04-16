@@ -73,7 +73,7 @@ public class Box2 implements java.io.Serializable {
 	/**
 	 * New box from point (x1,y1) to point (x2,y2).
 	 */
-	public Box2(float x1, float y1, float x2, float y2) {
+	public Box2(double x1, double y1, double x2, double y2) {
 		p1 = new Point2(x1, y1);
 		p2 = new Point2(x2, y2);
 	}
@@ -88,7 +88,7 @@ public class Box2 implements java.io.Serializable {
 	/**
 	 * New box from point (x1,y1) to point (x2,y2).
 	 */
-	public void make(float x1, float y1, float x2, float y2) {
+	public void make(double x1, double y1, double x2, double y2) {
 		set(x1, y1, x2, y2);
 	}
 
@@ -105,7 +105,7 @@ public class Box2 implements java.io.Serializable {
 	// * Is other equal to this ?
 	// */
 	// public boolean
-	// equals( const Box2 < float > other )
+	// equals( const Box2 < double > other )
 	// {
 	// return( p1.equals( other.p1 ) and p2.equals( other.p2 ) );
 	// }
@@ -123,7 +123,7 @@ public class Box2 implements java.io.Serializable {
 	/**
 	 * Change the box to (x1,y1,x2,y2).
 	 */
-	public void set(float x1, float y1, float x2, float y2) {
+	public void set(double x1, double y1, double x2, double y2) {
 		p1.moveTo(x1, y1);
 		p2.moveTo(x2, y2);
 	}
@@ -270,7 +270,7 @@ public class Box2 implements java.io.Serializable {
 	/**
 	 * Move of the vector (dx,dy,dz).
 	 */
-	public void move(float dx, float dy) {
+	public void move(double dx, double dy) {
 		p1.move(dx, dy);
 		p2.move(dx, dy);
 	}

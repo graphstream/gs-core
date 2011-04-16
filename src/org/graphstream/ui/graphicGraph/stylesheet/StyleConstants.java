@@ -148,8 +148,9 @@ public class StyleConstants {
 				ShapeKind.RECTANGULAR), IMAGES(ShapeKind.RECTANGULAR),
 
 		LINE(ShapeKind.LINEAR), ANGLE(ShapeKind.LINEAR), CUBIC_CURVE(
-				ShapeKind.CURVE), POLYLINE(ShapeKind.LINEAR), BLOB(
-				ShapeKind.CURVE);
+				ShapeKind.CURVE), POLYLINE(ShapeKind.LINEAR),
+				POLYLINE_SCALED(ShapeKind.LINEAR),
+				BLOB(ShapeKind.CURVE);
 
 		public ShapeKind kind;
 

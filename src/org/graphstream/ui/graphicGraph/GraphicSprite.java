@@ -153,17 +153,17 @@ public class GraphicSprite extends GraphicElement {
 	}
 
 	@Override
-	public float getX() {
+	public double getX() {
 		return position.get(0);
 	}
 
 	@Override
-	public float getY() {
+	public double getY() {
 		return position.get(1);
 	}
 
 	@Override
-	public float getZ() {
+	public double getZ() {
 		return position.get(2);
 	}
 
@@ -174,7 +174,7 @@ public class GraphicSprite extends GraphicElement {
 	// Commands
 
 	@Override
-	public void move(float x, float y, float z) {
+	public void move(double x, double y, double z) {
 		setPosition(x, y, z, Style.Units.GU);
 	}
 
@@ -236,7 +236,7 @@ public class GraphicSprite extends GraphicElement {
 	 * @param value
 	 *            The coordinate.
 	 */
-	public void setPosition(float value) {
+	public void setPosition(double value) {
 		setPosition(value, 0, 0, getUnits());
 	}
 
@@ -253,7 +253,7 @@ public class GraphicSprite extends GraphicElement {
 	 *            The units to use for lengths and radii, null means
 	 *            "unchanged".
 	 */
-	public void setPosition(float x, float y, float z, Style.Units units) {
+	public void setPosition(double x, double y, double z, Style.Units units) {
 		/*
 		 * if( node != null ) { y = checkAngle( y ); z = checkAngle( z ); } else
 		 */if (edge != null) {
@@ -293,9 +293,9 @@ public class GraphicSprite extends GraphicElement {
 	}
 
 	public void setPosition(Values values) {
-		float x = 0;
-		float y = 0;
-		float z = 0;
+		double x = 0;
+		double y = 0;
+		double z = 0;
 
 		if (values.getValueCount() > 0)
 			x = values.get(0);
@@ -312,13 +312,13 @@ public class GraphicSprite extends GraphicElement {
 		setPosition(x, y, z, values.units);
 	}
 
-	protected float checkAngle(double angle) {
+	protected double checkAngle(double angle) {
 		if (angle > Math.PI * 2)
 			angle = angle % (Math.PI * 2);
 		else if (angle < 0)
 			angle = (Math.PI * 2) - (angle % (Math.PI * 2));
 
-		return (float) angle;
+		return angle;
 	}
 
 	@Override

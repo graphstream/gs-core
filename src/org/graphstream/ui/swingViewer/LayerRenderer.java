@@ -68,7 +68,7 @@ public interface LayerRenderer {
 	 *            The maximum visible point ordinate of the graph in graph
 	 *            units.
 	 */
-	void render(Graphics2D graphics, GraphicGraph graph, float px2Gu,
-			int widthPx, int heightPx, float minXGu, float minYGu,
-			float maxXGu, float maxYGu);
+	void render(Graphics2D graphics, GraphicGraph graph, double px2Gu,
+			int widthPx, int heightPx, double minXGu, double minYGu,
+			double maxXGu, double maxYGu);
 }

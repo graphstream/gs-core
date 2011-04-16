@@ -70,7 +70,7 @@ public class Locator extends Box3 {
 	 * New locator with its pivot at <code>(x,y,z)</code>, and size (1,1,1)
 	 * around the pivot.
 	 */
-	public Locator(float x, float y, float z) {
+	public Locator(double x, double y, double z) {
 		this(x, y, z, -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f);
 	}
 
@@ -78,8 +78,8 @@ public class Locator extends Box3 {
 	 * New locator with its pivot at <code>(x,y,z)</code>, and size
 	 * <code>(width,height,depht)</code> around the pivot.
 	 */
-	public Locator(float x, float y, float z, float width, float height,
-			float depth) {
+	public Locator(double x, double y, double z, double width, double height,
+			double depth) {
 		this(x, y, z, -width / 2, -height / 2, -depth / 2, width / 2,
 				height / 2, depth / 2);
 	}
@@ -89,8 +89,8 @@ public class Locator extends Box3 {
 	 * <code>(low_x,low_y,low_z)</code> and highest point at
 	 * <code>(hi_x,hi_y,hi_z)</code>.
 	 */
-	public Locator(float x, float y, float z, float low_x, float low_y,
-			float low_z, float hi_x, float hi_y, float hi_z) {
+	public Locator(double x, double y, double z, double low_x, double low_y,
+			double low_z, double hi_x, double hi_y, double hi_z) {
 		super(low_x, low_y, low_z, hi_x, hi_y, hi_z);
 		pivot.set(x, y, z);
 	}
@@ -107,21 +107,21 @@ public class Locator extends Box3 {
 	/**
 	 * Abscissa of the pivot.
 	 */
-	public float getX() {
+	public double getX() {
 		return pivot.x;
 	}
 
 	/**
 	 * Ordinate of the pivot.
 	 */
-	public float getY() {
+	public double getY() {
 		return pivot.y;
 	}
 
 	/**
 	 * Depth of the pivot.
 	 */
-	public float getZ() {
+	public double getZ() {
 		return pivot.z;
 	}
 

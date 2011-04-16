@@ -49,7 +49,7 @@ public class Arrow extends Shape {
 
 	protected int widthGu = 0;
 
-	protected float x, y;
+	protected double x, y;
 
 	protected Path2D.Float path = new Path2D.Float();
 
@@ -88,13 +88,13 @@ public class Arrow extends Shape {
 
 		x = edge.to.x;
 		y = edge.to.y;
-		float vx = x - edge.from.x;
-		float vy = y - edge.from.y;
-		float off = evalTargetRadius(edge, metrics);
+		double vx = x - edge.from.x;
+		double vy = y - edge.from.y;
+		double off = evalTargetRadius(edge, metrics);
 
 		// Normalise the vectors.
 
-		float d = (float) Math.sqrt(vx * vx + vy * vy);
+		double d = (double) Math.sqrt(vx * vx + vy * vy);
 
 		vx /= d;
 		vy /= d;
@@ -119,15 +119,15 @@ public class Arrow extends Shape {
 	 * @param dy
 	 *            The arrow vector (and length).
 	 */
-	protected void setShapeAt(float x, float y, float dx, float dy) {
+	protected void setShapeAt(double x, double y, double dx, double dy) {
 		// Compute the edge vector (1) and the perpendicular vector (2).
 
-		float dx2 = dy;
-		float dy2 = -dx;
+		double dx2 = dy;
+		double dy2 = -dx;
 
 		// Normalise the vectors.
 
-		float d2 = (float) Math.sqrt(dx2 * dx2 + dy2 * dy2);
+		double d2 = (double) Math.sqrt(dx2 * dx2 + dy2 * dy2);
 
 		dx2 /= d2;
 		dy2 /= d2;
@@ -157,15 +157,15 @@ public class Arrow extends Shape {
 	 * @return The length from the node centre along the edge to position the
 	 *         arrow.
 	 */
-	protected float evalTargetRadius(GraphicEdge edge, GraphMetrics metrics) {
+	protected double evalTargetRadius(GraphicEdge edge, GraphMetrics metrics) {
 		GraphicNode target = edge.to;
 		StyleGroup group = target.getStyle();
-		float w = metrics.lengthToGu(group.getSize(), 0);
-		float h = group.getSize().size() > 1 ? metrics.lengthToGu(
+		double w = metrics.lengthToGu(group.getSize(), 0);
+		double h = group.getSize().size() > 1 ? metrics.lengthToGu(
 				group.getSize(), 1) : w;
 
 		if (w == h) {
-			float b = group.getStrokeMode() != StrokeMode.NONE ? metrics
+			double b = group.getStrokeMode() != StrokeMode.NONE ? metrics
 					.lengthToGu(group.getStrokeWidth()) : 0;
 			return ((w / 2) + b);
 		} else {
@@ -185,11 +185,11 @@ public class Arrow extends Shape {
 	 *            The ellipse second radius (height/2).
 	 * @return The length of the radius along the edge vector.
 	 */
-	protected float evalEllipseRadius(GraphicEdge edge, float w, float h) {
+	protected double evalEllipseRadius(GraphicEdge edge, double w, double h) {
 		// Vector of the entering edge.
 
-		float dx;
-		float dy;
+		double dx;
+		double dy;
 
 		dx = edge.to.x - edge.from.x;
 		dy = edge.to.y - edge.from.y;
@@ -202,20 +202,20 @@ public class Arrow extends Shape {
 
 		// Find the angle of the entering vector with (1,0).
 
-		float d = (float) Math.sqrt(dx * dx + dy * dy);
-		float a = dx / d;
+		double d = (double) Math.sqrt(dx * dx + dy * dy);
+		double a = dx / d;
 
 		// Compute the coordinates at which the entering vector and the ellipse
 		// cross.
 
-		a = (float) Math.acos(a);
-		dx = (float) Math.cos(a) * w;
-		dy = (float) Math.sin(a) * h;
+		a = (double) Math.acos(a);
+		dx = (double) Math.cos(a) * w;
+		dy = (double) Math.sin(a) * h;
 
 		// The distance from the ellipse centre to the crossing point of the
 		// ellipse and
 		// vector. Yo !
 
-		return (float) Math.sqrt(dx * dx + dy * dy);
+		return Math.sqrt(dx * dx + dy * dy);
 	}
 }
