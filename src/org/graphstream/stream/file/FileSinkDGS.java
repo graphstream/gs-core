@@ -32,6 +32,7 @@ package org.graphstream.stream.file;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -123,7 +124,7 @@ public class FileSinkDGS extends FileSinkBase {
 		edgeId = formatStringForQuoting(edgeId);
 		fromNodeId = formatStringForQuoting(fromNodeId);
 		toNodeId = formatStringForQuoting(toNodeId);
-		
+
 		out.printf("ae \"%s\" \"%s\" %s \"%s\"%n", edgeId, fromNodeId,
 				directed ? ">" : "", toNodeId);
 	}
@@ -153,7 +154,7 @@ public class FileSinkDGS extends FileSinkBase {
 	protected String formatStringForQuoting(String str) {
 		return str.replaceAll("(^|[^\\\\])\"", "$1\\\\\"");
 	}
-	
+
 	protected String attributeString(String key, Object value, boolean remove) {
 		if (key == null || key.length() == 0)
 			return null;
@@ -162,30 +163,52 @@ public class FileSinkDGS extends FileSinkBase {
 			return String.format(" -\"%s\"", key);
 		} else {
 			if (value != null && value.getClass().isArray()) {
-				Object[] values = (Object[]) value;
-				StringBuffer sb = new StringBuffer();
-
-				sb.append(String.format(" \"%s\":", key));
-
-				if (values.length > 0)
-					sb.append(valueString(values[0]));
-				else
-					sb.append("\"\"");
-
-				for (int i = 1; i < values.length; ++i)
-					sb.append(String.format(",%s", valueString(values[i])));
-
-				return sb.toString();
+				return String.format("\"%s\":%s", key, arrayString(value));
+				/*
+				 * Object[] values = (Object[]) value; StringBuffer sb = new
+				 * StringBuffer();
+				 * 
+				 * sb.append(String.format(" \"%s\":", key));
+				 * 
+				 * if (values.length > 0) sb.append(valueString(values[0]));
+				 * else sb.append("\"\"");
+				 * 
+				 * for (int i = 1; i < values.length; ++i)
+				 * sb.append(String.format(",%s", valueString(values[i])));
+				 * 
+				 * return sb.toString();
+				 */
 			} else {
 				return String.format(" \"%s\":%s", key, valueString(value));
 			}
 		}
 	}
 
+	protected String arrayString(Object value) {
+		if (value != null && value.getClass().isArray()) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("{");
+			
+			if (Array.getLength(value) == 0)
+				sb.append("\"\"");
+			else
+				sb.append(arrayString(Array.get(value, 0)));
+
+			for (int i = 1; i < Array.getLength(value); ++i)
+				sb.append(String.format(",%s", arrayString(Array.get(value, i))));
+			
+			sb.append("}");
+			return sb.toString();
+		} else {
+			return valueString(value);
+		}
+	}
+
 	protected String valueString(Object value) {
 		if (value instanceof CharSequence) {
-			if(value instanceof String)
-				return String.format("\"%s\"", formatStringForQuoting((String) value));
+			if (value instanceof String)
+				return String.format("\"%s\"",
+						formatStringForQuoting((String) value));
 			else
 				return String.format("\"%s\"", (CharSequence) value);
 		} else if (value instanceof Number) {

@@ -380,7 +380,8 @@ public class FileSourceDGS extends FileSourceBase {
 		Object value2 = null;
 		String next = null;
 
-		eatSymbols(":=");
+		if (key != null)
+			eatSymbols(":=");
 
 		value = getStringOrWordOrSymbolOrNumberO();
 
@@ -392,31 +393,64 @@ public class FileSourceDGS extends FileSourceBase {
 			eatSymbol(']');
 
 			value = map;
+		} else if (value.equals("{")) {
+			vector = readAttributeArray(key);
+			eatSymbol('}');
 		} else {
 			pushBack();
 
 			value = getStringOrWordOrNumberO();
-			next = getWordOrSymbolOrNumberOrStringOrEolOrEof();
 
-			while (next.equals(",")) {
-				if (vector == null) {
-					vector = new ArrayList<Object>();
-					vector.add(value);
-				}
-
-				value2 = getStringOrWordOrNumberO();
+			if (key != null) {
 				next = getWordOrSymbolOrNumberOrStringOrEolOrEof();
 
-				vector.add(value2);
-			}
+				while (next.equals(",")) {
+					if (vector == null) {
+						vector = new ArrayList<Object>();
+						vector.add(value);
+					}
 
-			pushBack();
+					value2 = getStringOrWordOrNumberO();
+					next = getWordOrSymbolOrNumberOrStringOrEolOrEof();
+
+					vector.add(value2);
+				}
+
+				pushBack();
+			}
 		}
 
 		if (vector != null)
 			return vector.toArray();
 		else
 			return value;
+	}
+
+	/**
+	 * Read a list of values.
+	 * 
+	 * @param key
+	 *            attribute key
+	 * @return a vector
+	 * @throws IOException
+	 */
+	protected ArrayList<Object> readAttributeArray(String key)
+			throws IOException {
+		ArrayList<Object> list = new ArrayList<Object>();
+
+		Object value;
+		String next;
+
+		do {
+			value = readAttributeValue(null);
+			next = getWordOrSymbolOrNumberOrStringOrEolOrEof();
+
+			list.add(value);
+		} while (next.equals(","));
+
+		pushBack();
+
+		return list;
 	}
 
 	// Command -- Basic parsing
