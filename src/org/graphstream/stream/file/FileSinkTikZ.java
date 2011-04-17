@@ -33,13 +33,16 @@ package org.graphstream.stream.file;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Locale;
 
 import org.graphstream.graph.Edge;
+import org.graphstream.graph.Element;
 import org.graphstream.graph.Node;
 import org.graphstream.stream.GraphReplay;
+import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicEdge;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.GraphicNode;
@@ -128,7 +131,7 @@ public class FileSinkTikZ extends FileSinkBase {
 	protected boolean layout = false;
 
 	protected GraphicGraph buffer;
-	
+
 	protected String css = null;
 
 	protected static String formatId(String id) {
@@ -154,11 +157,11 @@ public class FileSinkTikZ extends FileSinkBase {
 	public void setHeight(double height) {
 		this.height = height;
 	}
-	
+
 	public void setCSS(String css) {
 		this.css = css;
 	}
-	
+
 	public void setLayout(boolean layout) {
 		this.layout = layout;
 	}
@@ -167,12 +170,18 @@ public class FileSinkTikZ extends FileSinkBase {
 		if (n.hasAttribute(XYZ_ATTR))
 			return ((Number) (n.getArray(XYZ_ATTR)[0])).doubleValue();
 
+		if (n.hasAttribute("x"))
+			return n.getNumber("x");
+
 		return Double.NaN;
 	}
 
 	protected double getNodeY(Node n) {
 		if (n.hasAttribute(XYZ_ATTR))
 			return ((Number) (n.getArray(XYZ_ATTR)[1])).doubleValue();
+
+		if (n.hasAttribute("y"))
+			return n.getNumber("y");
 
 		return Double.NaN;
 	}
@@ -326,13 +335,12 @@ public class FileSinkTikZ extends FileSinkBase {
 		if (layout) {
 			sbox = new SpringBox();
 
-
 			GraphReplay replay = new GraphReplay("replay");
 			replay.addSink(sbox);
 			sbox.addAttributeSink(buffer);
-			
+
 			replay.replay(buffer);
-			
+
 			do
 				sbox.compute();
 			while (sbox.getStabilization() < 0.9);
@@ -345,7 +353,7 @@ public class FileSinkTikZ extends FileSinkBase {
 
 		if (css != null)
 			buffer.addAttribute("ui.stylesheet", css);
-		
+
 		StyleGroupSet sgs = buffer.getStyleGroups();
 
 		for (StyleGroup sg : sgs.groups()) {
@@ -358,7 +366,8 @@ public class FileSinkTikZ extends FileSinkBase {
 		String edgeStyle = "draw=black";
 		Locale l = Locale.ROOT;
 		double xmin, ymin, xmax, ymax;
-		
+		PointsWrapper points = new PointsWrapper();
+
 		out.printf("%%%n%% Do not forget \\usepackage{tikz} in header.%n%%%n");
 
 		//
@@ -392,7 +401,23 @@ public class FileSinkTikZ extends FileSinkBase {
 				System.err.printf("[warning] missing node (x,y).%n");
 			}
 		}
-		
+
+		for (Edge e : buffer.getEachEdge()) {
+			points.setElement(e);
+
+			if (points.check()) {
+				for (int i = 0; i < points.getPointsCount(); i++) {
+					double x = points.getX(i);
+					double y = points.getY(i);
+
+					xmin = Math.min(xmin, x);
+					xmax = Math.max(xmax, x);
+					ymin = Math.min(ymin, y);
+					ymax = Math.max(ymax, y);
+				}
+			}
+		}
+
 		for (Node n : buffer.getEachNode()) {
 			double x, y;
 			String label;
@@ -424,9 +449,26 @@ public class FileSinkTikZ extends FileSinkBase {
 			if (e instanceof GraphicEdge)
 				uiClass = classNames.get(((GraphicEdge) e).style.getId());
 
-			out.printf(l, "\t\\draw[%s] (%s) %s (%s);%n", uiClass, formatId(e
-					.getSourceNode().getId()), e.isDirected() ? "->" : "--",
-					formatId(e.getTargetNode().getId()));
+			String uiPoints = "";
+			points.setElement(e);
+
+			if (points.check()) {
+				for (int i = 0; i < points.getPointsCount(); i++) {
+					double x, y;
+
+					x = points.getX(i);
+					y = points.getY(i);
+					x = width * (x - xmin) / (xmax - xmin);
+					y = height * (y - ymin) / (ymax - ymin);
+
+					uiPoints = String.format(l, "%s-- (%.3f,%.3f) ", uiPoints,
+							x, y);
+				}
+			}
+
+			out.printf(l, "\t\\draw[%s] (%s) %s%s (%s);%n", uiClass, formatId(e
+					.getSourceNode().getId()), uiPoints, e.isDirected() ? "->"
+					: "--", formatId(e.getTargetNode().getId()));
 		}
 
 		//
@@ -608,5 +650,72 @@ public class FileSinkTikZ extends FileSinkBase {
 	 */
 	public void stepBegins(String sourceId, long timeId, double step) {
 		buffer.stepBegins(sourceId, timeId, step);
+	}
+
+	protected class PointsWrapper {
+		Object[] points;
+
+		PointsWrapper() {
+		}
+
+		public void setElement(Element e) {
+			if (e.hasArray("ui.points"))
+				points = e.getArray("ui.points");
+			else
+				points = null;
+		}
+
+		public boolean check() {
+			if (points == null)
+				return false;
+
+			for (int i = 0; i < points.length; i++) {
+				if (!(points[i] instanceof Point3)
+						&& !points[i].getClass().isArray())
+					return false;
+			}
+
+			return true;
+		}
+
+		public int getPointsCount() {
+			return points == null ? 0 : points.length;
+		}
+
+		public double getX(int i) {
+			if (points == null || i >= points.length)
+				return Double.NaN;
+
+			Object p = points[i];
+
+			if (p instanceof Point3)
+				return ((Point3) p).x;
+			else {
+				Object x = Array.get(p, 0);
+				
+				if(x instanceof Number)
+					return ((Number) x).doubleValue();
+				else
+					return Array.getDouble(p, 0);
+			}
+		}
+
+		public double getY(int i) {
+			if (i >= points.length)
+				return Double.NaN;
+
+			Object p = points[i];
+
+			if (p instanceof Point3)
+				return ((Point3) p).y;
+			else {
+				Object y = Array.get(p, 0);
+				
+				if(y instanceof Number)
+					return ((Number) y).doubleValue();
+				else
+					return Array.getDouble(p, 1);
+			}
+		}
 	}
 }
