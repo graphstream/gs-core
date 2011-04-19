@@ -67,7 +67,7 @@ import org.graphstream.ui.geom.Point3;
  * based files where a real XML parser would probably be better.
  * </p>
  */
-abstract class FileSourceBase extends SourceBase implements FileSource {
+public abstract class FileSourceBase extends SourceBase implements FileSource {
 	// Attributes
 
 	/**
