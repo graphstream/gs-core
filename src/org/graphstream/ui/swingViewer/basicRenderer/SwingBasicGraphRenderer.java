@@ -226,15 +226,16 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 	}
 
 	protected void setupGraphics(Graphics2D g) {
-		g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
-				RenderingHints.VALUE_STROKE_PURE);
-
 		if (graph.hasAttribute("ui.antialias")) {
+			g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
+					RenderingHints.VALUE_STROKE_PURE);
 			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 					RenderingHints.VALUE_ANTIALIAS_ON);
 		} else {
+			g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
+					RenderingHints.VALUE_STROKE_DEFAULT);
 			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 					RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
