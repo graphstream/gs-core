@@ -348,7 +348,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 			for (Node n : getEachNode()) {
 				GraphicNode node = (GraphicNode) n;
 
-				if(!node.hidden) {
+				if(!node.hidden && node.positionned) {
 					if (node.x < lo.x)
 						lo.x = node.x;
 					if (node.x > hi.x)

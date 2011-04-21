@@ -482,11 +482,7 @@ public class SpringBox extends SourceBase implements Layout,
 	// Graph representation
 
 	protected void addNode(String sourceId, String id) {
-		double x = lo.x + (hi.x - lo.x)*random.nextDouble();
-		double y = lo.y + (hi.y - lo.y)*random.nextDouble();
-		double z = is3D ? lo.z + (hi.z - lo.z)*random.nextDouble() : 0.0;
-		
-		nodes.addParticle(new NodeParticle(this, id, x, y, z));
+		nodes.addParticle(new NodeParticle(this, id));
 	}
 
 	public void moveNode(String id, double dx, double dy, double dz) {
