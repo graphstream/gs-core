@@ -34,6 +34,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
+import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
@@ -304,6 +305,10 @@ public class FileSinkSWF implements FileSink {
 
 	}
 
+	public void begin(Writer writer) throws IOException {
+		
+	}
+	
 	public void end() throws IOException {
 		// TODO Auto-generated method stub
 
@@ -324,6 +329,10 @@ public class FileSinkSWF implements FileSink {
 
 	}
 
+	public void writeAll(Graph graph, Writer writer) throws IOException {
+		
+	}
+	
 	public void edgeAttributeAdded(String graphId, long timeId, String edgeId,
 			String attribute, Object value) {
 		// TODO Auto-generated method stub

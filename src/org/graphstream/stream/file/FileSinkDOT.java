@@ -31,7 +31,7 @@
 package org.graphstream.stream.file;
 
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.Map;
 
 /**
@@ -43,7 +43,7 @@ public class FileSinkDOT extends FileSinkBase {
 	/**
 	 * The output.
 	 */
-	protected PrintStream out;
+	protected PrintWriter out;
 
 	/**
 	 * The graph name (set as soon as known).
@@ -61,7 +61,7 @@ public class FileSinkDOT extends FileSinkBase {
 
 	@Override
 	protected void outputHeader() throws IOException {
-		out = (PrintStream) output;
+		out = (PrintWriter) output;
 		out.printf("graph {%n");
 
 		if (graphName.length() > 0)

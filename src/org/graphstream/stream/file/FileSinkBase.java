@@ -32,7 +32,8 @@ package org.graphstream.stream.file;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.Writer;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
@@ -57,9 +58,9 @@ import org.graphstream.graph.Node;
  * <p>
  * In order to implement an output you have to:
  * <ul>
- * <li>Eventually override {@link #createOutputStream(OutputStream)} or
- * {@link #createOutputStream(String)} to replace the default instance of
- * PrintStream created for you.</li>
+ * <li>Eventually override {@link #createWriter(OutputStream)} or
+ * {@link #createWriter(String)} to replace the default instance of PrintStream
+ * created for you.</li>
  * <li>Implement the {@link #outputHeader()} method. This method is called at
  * start, before any graph event is sent to output. Use it to output the header
  * of your file.</li>
@@ -81,7 +82,7 @@ public abstract class FileSinkBase implements FileSink {
 	/**
 	 * The output.
 	 */
-	protected OutputStream output;
+	protected Writer output;
 
 	// Command
 
@@ -93,6 +94,12 @@ public abstract class FileSinkBase implements FileSink {
 
 	public void writeAll(Graph graph, OutputStream stream) throws IOException {
 		begin(stream);
+		exportGraph(graph);
+		end();
+	}
+
+	public void writeAll(Graph graph, Writer writer) throws IOException {
+		begin(writer);
 		exportGraph(graph);
 		end();
 	}
@@ -137,7 +144,7 @@ public abstract class FileSinkBase implements FileSink {
 			throw new IOException(
 					"cannot call begin() twice without calling end() before.");
 
-		output = createOutputStream(fileName);
+		output = createWriter(fileName);
 
 		outputHeader();
 	}
@@ -147,7 +154,17 @@ public abstract class FileSinkBase implements FileSink {
 			throw new IOException(
 					"cannot call begin() twice without calling end() before.");
 
-		output = createOutputStream(stream);
+		output = createWriter(stream);
+
+		outputHeader();
+	}
+
+	public void begin(Writer writer) throws IOException {
+		if (output != null)
+			throw new IOException(
+					"cannot call begin() twice without calling end() before.");
+		
+		output = createWriter(writer);
 
 		outputHeader();
 	}
@@ -182,39 +199,54 @@ public abstract class FileSinkBase implements FileSink {
 	protected abstract void outputEndOfFile() throws IOException;
 
 	/**
-	 * Create an output stream from a file name. Override this method if the
-	 * default PrintStream does not suits your needs. This method is called by
+	 * Create a a writer from a file name. Override this method if the default
+	 * PrintWriter does not suits your needs. This method is called by
 	 * {@link #begin(String)} and {@link #writeAll(Graph, String)}.
 	 * 
 	 * @param fileName
 	 *            Name of the file to output to.
-	 * @return A new output stream.
+	 * @return A new writer.
 	 * @throws IOException
 	 *             If any I/O error occurs.
 	 */
-	protected OutputStream createOutputStream(String fileName)
-			throws IOException {
-		return new PrintStream(fileName);
+	protected Writer createWriter(String fileName) throws IOException {
+		return new PrintWriter(fileName);
 	}
 
 	/**
-	 * Create an output stream from an existing output stream. Override this
-	 * method if the default PrintStream does not suits your needs. This method
-	 * is called by {@link #begin(OutputStream)} and
+	 * Create a writer from an existing output stream. Override this method if
+	 * the default PrintWriter does not suits your needs. This method is called
+	 * by {@link #begin(OutputStream)} and
 	 * {@link #writeAll(Graph, OutputStream)}. This method does not create an
 	 * output stream if the given stream is already instance of PrintStream.
 	 * 
 	 * @param stream
 	 *            An already existing output stream.
-	 * @return A new output stream.
+	 * @return A new writer.
 	 * @throws IOException
 	 *             If any I/O error occurs.
 	 */
-	protected OutputStream createOutputStream(OutputStream stream)
-			throws IOException {
-		if (stream instanceof PrintStream)
-			return stream;
+	protected Writer createWriter(OutputStream stream) throws IOException {
+		return new PrintWriter(stream);
+	}
 
-		return new PrintStream(stream);
+	/**
+	 * Create a writer from an existing writer. Override this method if the
+	 * default PrintWriter does not suits your needs. This method is called by
+	 * {@link #begin(Writer)} and {@link #writeAll(Graph, Writer)}. This method
+	 * does not create a new writer if the given writer is already instance of
+	 * PrintWriter.
+	 * 
+	 * @param stream
+	 *            An already existing output stream.
+	 * @return A new writer.
+	 * @throws IOException
+	 *             If any I/O error occurs.
+	 */
+	protected Writer createWriter(Writer writer) throws IOException {
+		if (writer instanceof PrintWriter)
+			return writer;
+
+		return new PrintWriter(writer);
 	}
 }

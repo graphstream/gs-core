@@ -31,7 +31,7 @@
 package org.graphstream.stream.file;
 
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -62,7 +62,7 @@ public class FileSinkSVG extends FileSinkBase {
 	/**
 	 * The output.
 	 */
-	protected PrintStream out;
+	protected PrintWriter out;
 
 	/**
 	 * What element ?.
@@ -97,7 +97,7 @@ public class FileSinkSVG extends FileSinkBase {
 
 	@Override
 	protected void outputHeader() throws IOException {
-		out = (PrintStream) output;
+		out = (PrintWriter) output;
 
 		out.printf("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>%n");
 		out.printf("<svg" + " xmlns:svg=\"http://www.w3.org/2000/svg\""

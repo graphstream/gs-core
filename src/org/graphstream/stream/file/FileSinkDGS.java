@@ -31,7 +31,7 @@
 package org.graphstream.stream.file;
 
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Locale;
@@ -47,7 +47,7 @@ public class FileSinkDGS extends FileSinkBase {
 	/**
 	 * A shortcut to the output.
 	 */
-	protected PrintStream out;
+	protected PrintWriter out;
 
 	protected String graphName = "";
 
@@ -55,7 +55,7 @@ public class FileSinkDGS extends FileSinkBase {
 
 	@Override
 	protected void outputHeader() throws IOException {
-		out = (PrintStream) output;
+		out = (PrintWriter) output;
 
 		out.printf("DGS004%n");
 

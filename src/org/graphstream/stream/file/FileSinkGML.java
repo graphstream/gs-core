@@ -31,7 +31,7 @@
 package org.graphstream.stream.file;
 
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 
 /**
  * Transform the input events into a GML graph.
@@ -53,7 +53,7 @@ public class FileSinkGML extends FileSinkBase {
 	// Attributes
 
 	/** Alias on the output OutputStream. */
-	protected PrintStream out;
+	protected PrintWriter out;
 
 	protected String nodeToFinish = null;
 
@@ -69,7 +69,7 @@ public class FileSinkGML extends FileSinkBase {
 
 	@Override
 	protected void outputHeader() throws IOException {
-		out = (PrintStream) output;
+		out = (PrintWriter) output;
 
 		out.printf("graph [%n");
 	}

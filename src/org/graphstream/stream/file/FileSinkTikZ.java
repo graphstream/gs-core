@@ -32,7 +32,7 @@ package org.graphstream.stream.file;
 
 import java.awt.Color;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -116,7 +116,7 @@ public class FileSinkTikZ extends FileSinkBase {
 	 */
 	public static final String HEIGHT_ATTR = "ui.tikz.height";
 
-	protected PrintStream out;
+	protected PrintWriter out;
 
 	protected HashMap<String, String> colors = new HashMap<String, String>();
 	protected HashMap<String, String> classes = new HashMap<String, String>();
@@ -312,10 +312,7 @@ public class FileSinkTikZ extends FileSinkBase {
 	 * @see org.graphstream.stream.file.FileSinkBase#outputHeader()
 	 */
 	protected void outputHeader() throws IOException {
-		if (output instanceof PrintStream)
-			out = (PrintStream) output;
-		else
-			out = new PrintStream(output);
+		out = (PrintWriter) output;
 
 		colors.clear();
 		classes.clear();
