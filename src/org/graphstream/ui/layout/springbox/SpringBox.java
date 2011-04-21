@@ -486,8 +486,6 @@ public class SpringBox extends SourceBase implements Layout,
 		double y = lo.y + (hi.y - lo.y)*random.nextDouble();
 		double z = is3D ? lo.z + (hi.z - lo.z)*random.nextDouble() : 0.0;
 		
-System.err.printf("(%f, %f) [%f | %f] ==> (%f,  %f)%n", lo.x, lo.y, (hi.x-lo.x), (hi.y-lo.y), x, y);
-		
 		nodes.addParticle(new NodeParticle(this, id, x, y, z));
 	}
 
