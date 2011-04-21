@@ -348,18 +348,20 @@ public class GraphicGraph extends AbstractElement implements Graph,
 			for (Node n : getEachNode()) {
 				GraphicNode node = (GraphicNode) n;
 
-				if (node.x < lo.x)
-					lo.x = node.x;
-				if (node.x > hi.x)
-					hi.x = node.x;
-				if (node.y < lo.y)
-					lo.y = node.y;
-				if (node.y > hi.y)
-					hi.y = node.y;
-				if (node.z < lo.z)
-					lo.z = node.z;
-				if (node.z > hi.z)
-					hi.z = node.z;
+				if(!node.hidden) {
+					if (node.x < lo.x)
+						lo.x = node.x;
+					if (node.x > hi.x)
+						hi.x = node.x;
+					if (node.y < lo.y)
+						lo.y = node.y;
+					if (node.y > hi.y)
+						hi.y = node.y;
+					if (node.z < lo.z)
+						lo.z = node.z;
+					if (node.z > hi.z)
+						hi.z = node.z;
+				}
 			}
 
 			for (GraphicSprite sprite : spriteSet()) {
@@ -369,18 +371,20 @@ public class GraphicGraph extends AbstractElement implements Graph,
 					double y = sprite.getY();
 					double z = sprite.getZ();
 
-					if (x < lo.x)
-						lo.x = x;
-					if (x > hi.x)
-						hi.x = x;
-					if (y < lo.y)
-						lo.y = y;
-					if (y > hi.y)
-						hi.y = y;
-					if (z < lo.z)
-						lo.z = z;
-					if (z > hi.z)
-						hi.z = z;
+					if(!sprite.hidden) {
+						if (x < lo.x)
+							lo.x = x;
+						if (x > hi.x)
+							hi.x = x;
+						if (y < lo.y)
+							lo.y = y;
+						if (y > hi.y)
+							hi.y = y;
+						if (z < lo.z)
+							lo.z = z;
+						if (z > hi.z)
+							hi.z = z;
+					}
 				}
 			}
 

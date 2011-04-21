@@ -60,6 +60,8 @@ public class GraphicNode extends GraphicElement implements Node {
 	 * The position of the node. In graph units.
 	 */
 	public double x, y, z;
+	
+	public boolean positionned = false;
 
 	/**
 	 * New graphic node.
@@ -105,6 +107,10 @@ public class GraphicNode extends GraphicElement implements Node {
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		
+		if(!positionned) { 
+			positionned = true;
+		}
 
 		mygraph.graphChanged = true;
 		mygraph.boundsChanged = true;

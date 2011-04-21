@@ -209,7 +209,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 		setupGraphics(g);
 		renderGraphBackground(g);
 		renderBackLayer(g);
-		camera.pushView(g);
+		camera.pushView(graph, g);
 		renderGraphElements(g);
 
 		if (style.getStrokeMode() != StyleConstants.StrokeMode.NONE

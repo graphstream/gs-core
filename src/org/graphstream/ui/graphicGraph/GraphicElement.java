@@ -94,7 +94,12 @@ public abstract class GraphicElement extends AbstractElement {
 	 * Associated GUI component.
 	 */
 	public Object component;
-
+	
+	/**
+	 * Do not show.
+	 */
+	public boolean hidden = false;
+	
 	// Construction
 
 	/**
@@ -247,6 +252,7 @@ public abstract class GraphicElement extends AbstractElement {
 					System.err.printf("ERROR !!%n");
 				}
 			} else if (attribute.equals("ui.hide")) {
+				hidden = true;
 				mygraph.graphChanged = true;
 			} else if (attribute.equals("ui.clicked")) {
 				style.pushEventFor(this, "clicked");
@@ -280,6 +286,7 @@ public abstract class GraphicElement extends AbstractElement {
 				label = "";
 				mygraph.graphChanged = true;
 			} else if (attribute.equals("ui.hide")) {
+				hidden = false;
 				mygraph.graphChanged = true;
 			} else if (attribute.equals("ui.clicked")) {
 				style.popEventFor(this, "clicked");

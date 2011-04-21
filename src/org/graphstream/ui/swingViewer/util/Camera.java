@@ -134,7 +134,7 @@ public class Camera {
 	 * of the graph space instead of the graph dimensions.
 	 */
 	protected double gviewport[] = null;
-
+	
 	// Construction
 
 	/**
@@ -267,7 +267,7 @@ public class Camera {
 		nodeInvisible.clear();
 
 		for (Node node : graph) {
-			boolean visible = isNodeIn((GraphicNode) node, 0, 0, W, H);
+			boolean visible = isNodeIn((GraphicNode) node, 0, 0, W, H) && (! ((GraphicNode)node).hidden) && ((GraphicNode)node).positionned;
 
 			if (!visible)
 				nodeInvisible.add(node.getId());
@@ -388,7 +388,7 @@ public class Camera {
 	 * @param g2
 	 *            The Swing graphics to change.
 	 */
-	public void pushView(Graphics2D g2) {
+	public void pushView(GraphicGraph graph, Graphics2D g2) {
 		if (oldTx == null) {
 			oldTx = g2.getTransform();
 
@@ -399,6 +399,8 @@ public class Camera {
 
 			g2.setTransform(Tx);
 		}
+		
+		checkVisibility(graph);
 	}
 
 	/**
@@ -446,25 +448,11 @@ public class Camera {
 			sy = sx;
 
 		Tx.setToIdentity();
-		Tx.translate(metrics.viewport.data[0] / 2, metrics.viewport.data[1] / 2); // 4.
-																					// Place
-																					// the
-																					// whole
-																					// result
-																					// at
-																					// the
-																					// centre
-																					// of
-																					// the
-																					// view
-																					// port.
+		Tx.translate(metrics.viewport.data[0] / 2, metrics.viewport.data[1] / 2);
 		if (rotation != 0)
-			Tx.rotate(rotation / (180 / Math.PI)); // 3. Eventually apply a
-													// rotation.
-		Tx.scale(sx, -sy); // 2. Scale the graph to pixels. Scale -y since we
-							// reverse the view (top-left to bottom-left).
-		Tx.translate(-tx, -ty); // 1. Move the graph so that its real centre is
-								// at (0,0).
+			Tx.rotate(rotation / (180 / Math.PI));
+		Tx.scale(sx, -sy);
+		Tx.translate(-tx, -ty);
 
 		xT = new AffineTransform(Tx);
 		try {
@@ -521,25 +509,11 @@ public class Camera {
 			sy = sx;
 
 		Tx.setToIdentity();
-		Tx.translate(metrics.viewport.data[0] / 2, metrics.viewport.data[1] / 2); // 4.
-																					// Place
-																					// the
-																					// whole
-																					// result
-																					// at
-																					// the
-																					// centre
-																					// of
-																					// the
-																					// view
-																					// port.
+		Tx.translate(metrics.viewport.data[0] / 2, metrics.viewport.data[1] / 2); 
 		if (rotation != 0)
-			Tx.rotate(rotation / (180 / Math.PI)); // 3. Eventually apply a
-													// rotation.
-		Tx.scale(sx, -sy); // 2. Scale the graph to pixels. Scale -y since we
-							// reverse the view (top-left to bottom-left).
-		Tx.translate(-tx, -ty); // 1. Move the graph so that the given centre is
-								// at (0,0).
+			Tx.rotate(rotation / (180 / Math.PI));
+		Tx.scale(sx, -sy);
+		Tx.translate(-tx, -ty);
 
 		xT = new AffineTransform(Tx);
 		try {
@@ -686,8 +660,14 @@ public class Camera {
 	 * @return True if visible.
 	 */
 	protected boolean isEdgeVisible(GraphicEdge edge) {
-		boolean node0Invis = nodeInvisible.contains(edge.getNode0().getId());
-		boolean node1Invis = nodeInvisible.contains(edge.getNode1().getId());
+		GraphicNode node0 = edge.getNode0();
+		GraphicNode node1 = edge.getNode1();
+		
+		if((!node1.positionned) || (!node0.positionned))
+			return false;
+		
+		boolean node0Invis = nodeInvisible.contains(node0.getId());
+		boolean node1Invis = nodeInvisible.contains(node1.getId());
 
 		return !(node0Invis && node1Invis);
 	}

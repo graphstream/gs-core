@@ -52,7 +52,7 @@ public class NodeRenderer extends ElementRenderer {
 	protected Ellipse2D shape;
 
 	protected double width, height, w2, h2;
-
+	
 	@Override
 	protected void setupRenderingPass(StyleGroup group, Graphics2D g,
 			Camera camera) {

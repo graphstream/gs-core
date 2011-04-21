@@ -59,7 +59,7 @@ public class GraphicSprite extends GraphicElement {
 	 * Sprite position.
 	 */
 	public Values position = new Values(StyleConstants.Units.GU, 0, 0, 0);
-
+	
 	// Constructors
 
 	/**
