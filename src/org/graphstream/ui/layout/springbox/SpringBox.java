@@ -547,11 +547,9 @@ public class SpringBox extends SourceBase implements Layout,
 		if(n0.getEdges().size() == 1 && n1.getEdges().size() > 1) {
 			org.miv.pherd.geom.Point3 pos = n1.getPosition();
 			n0.move(pos.x, pos.y, pos.z);
-			System.err.printf("moving 0%n");
 		} else if(n1.getEdges().size() == 1 && n0.getEdges().size() > 1) {
 			org.miv.pherd.geom.Point3 pos = n0.getPosition();
 			n1.move(pos.x, pos.y, pos.z);
-			System.err.printf("moving 1%n");
 		}
 	}
 
