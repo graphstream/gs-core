@@ -106,7 +106,7 @@ public class LayoutRunner extends Thread {
 	public ProxyPipe newLayoutPipe() {
 		return new ThreadProxyPipe(layout);
 	}
-
+	
 	@Override
 	public void run() {
 		String layoutName = layout.getLayoutAlgorithmName();
@@ -118,8 +118,9 @@ public class LayoutRunner extends Thread {
 			if(limit > 0) {
 				if(layout.getStabilization()>limit) {
 					nap(80);
-//System.err.printf("Stable layout%n");
+//System.err.printf("Stable layout (%f  >  %f)%n", layout.getStabilization(), limit);
 				} else {
+//System.err.printf("** layout (%f  <  %f)%n", layout.getStabilization(), limit);
 					layout.compute();
 					nap(10);
 				}

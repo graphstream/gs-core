@@ -111,6 +111,11 @@ public class SpringBox extends SourceBase implements Layout,
 	protected HashMap<String, EdgeSpring> edges = new HashMap<String, EdgeSpring>();
 
 	/**
+	 * Used to avoid stabilising if an event occurred.
+	 */
+	protected int lastElementCount = 0;
+	
+	/**
 	 * Random number generator.
 	 */
 	protected Random random;
@@ -298,12 +303,14 @@ public class SpringBox extends SourceBase implements Layout,
 
 	public Point3 getLowPoint() {
 		org.miv.pherd.geom.Point3 p = nodes.getNTree().getLowestPoint();
-		return new Point3(p.x, p.y, p.z);
+		lo.set(p.x, p.y, p.z);
+		return lo;
 	}
 
 	public Point3 getHiPoint() {
 		org.miv.pherd.geom.Point3 p = nodes.getNTree().getHighestPoint();
-		return new Point3(p.x, p.y, p.z);
+		hi.set(p.x, p.y, p.z);
+		return hi;
 	}
 
 	public ParticleBox getSpatialIndex() {
@@ -323,8 +330,12 @@ public class SpringBox extends SourceBase implements Layout,
 	}
 
 	public double getStabilization() {
-		if (time > energies.getBufferSize())
-			return energies.getStabilization();
+		if(lastElementCount == nodes.getParticleCount()+edges.size()) {
+			if (time > energies.getBufferSize())
+				return energies.getStabilization();
+		}
+
+		lastElementCount = nodes.getParticleCount()+edges.size();
 
 		return 0;
 	}
@@ -412,9 +423,7 @@ public class SpringBox extends SourceBase implements Layout,
 		t1 = System.currentTimeMillis();
 		nodeMoveCount = 0;
 		avgLength = 0;
-		/*
-		 * for( Edge edge : edges.values() ) edge.attraction();
-		 */
+		//for( Edge edge : edges.values() ) edge.attraction();
 		nodes.step();
 
 		if (nodeMoveCount > 0)
@@ -422,6 +431,8 @@ public class SpringBox extends SourceBase implements Layout,
 
 		// Ready for the next step.
 
+		getLowPoint();
+		getHiPoint();
 		energies.storeEnergy();
 		printStats();
 		time++;
@@ -440,6 +451,8 @@ public class SpringBox extends SourceBase implements Layout,
 			if (statsOut == null) {
 				try {
 					statsOut = new PrintStream("springBox.dat");
+					statsOut.printf("# stabilization nodeMoveCount energy energyDiff maxMoveLength avgLength area%n");
+					statsOut.flush();
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				}
@@ -468,10 +481,14 @@ public class SpringBox extends SourceBase implements Layout,
 
 	// Graph representation
 
-	protected void addNode(String sourceId, String id) // throws
-														// SingletonException
-	{
-		nodes.addParticle(new NodeParticle(this, id));
+	protected void addNode(String sourceId, String id) {
+		double x = lo.x + (hi.x - lo.x)*random.nextDouble();
+		double y = lo.y + (hi.y - lo.y)*random.nextDouble();
+		double z = is3D ? lo.z + (hi.z - lo.z)*random.nextDouble() : 0.0;
+		
+System.err.printf("(%f, %f) [%f | %f] ==> (%f,  %f)%n", lo.x, lo.y, (hi.x-lo.x), (hi.y-lo.y), x, y);
+		
+		nodes.addParticle(new NodeParticle(this, id, x, y, z));
 	}
 
 	public void moveNode(String id, double dx, double dy, double dz) {
@@ -508,7 +525,6 @@ public class SpringBox extends SourceBase implements Layout,
 
 	protected void addEdge(String sourceId, String id, String from, String to,
 			boolean directed)
-	// throws NotFoundException, SingletonException
 	{
 		NodeParticle n0 = (NodeParticle) nodes.getParticle(from);
 		NodeParticle n1 = (NodeParticle) nodes.getParticle(to);
@@ -518,13 +534,26 @@ public class SpringBox extends SourceBase implements Layout,
 			EdgeSpring o = edges.put(id, e);
 
 			if (o != null) {
-				// throw new SingletonException( "edge '"+id+"' already exists"
-				// );
+				// throw new SingletonException( "edge '"+id+"' already exists");
 				System.err.printf("edge '%s' already exists%n", id);
 			} else {
 				n0.registerEdge(e);
 				n1.registerEdge(e);
 			}
+			
+			chooseNodePosition(n0, n1);
+		}
+	}
+	
+	protected void chooseNodePosition(NodeParticle n0, NodeParticle n1) {
+		if(n0.getEdges().size() == 1 && n1.getEdges().size() > 1) {
+			org.miv.pherd.geom.Point3 pos = n1.getPosition();
+			n0.move(pos.x, pos.y, pos.z);
+			System.err.printf("moving 0%n");
+		} else if(n1.getEdges().size() == 1 && n0.getEdges().size() > 1) {
+			org.miv.pherd.geom.Point3 pos = n0.getPosition();
+			n1.move(pos.x, pos.y, pos.z);
+			System.err.printf("moving 1%n");
 		}
 	}
 

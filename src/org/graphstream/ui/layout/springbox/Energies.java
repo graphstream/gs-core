@@ -92,13 +92,16 @@ public class Energies {
 		// The stability is attained when the global energy of the graph do not
 		// vary anymore.
 
-		int    range = 200;
-		double eprev = getPreviousEnergyValue(range);
-		double diff  = Math.abs(lastEnergy - eprev);
+		int    range  = 200;
+		double eprev1 = getPreviousEnergyValue(range);
+		double eprev2 = getPreviousEnergyValue(range-10);
+		double eprev3 = getPreviousEnergyValue(range-20);
+		double eprev  = (eprev1+eprev2+eprev3)/3.0;
+		double diff   = Math.abs(lastEnergy - eprev);
 
 		diff = diff < 1 ? 1 : diff;
 		
-		return 1/diff;
+		return 1.0/diff;
 	}
 	
 	/**

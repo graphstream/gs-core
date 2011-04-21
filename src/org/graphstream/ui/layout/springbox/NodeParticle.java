@@ -317,7 +317,7 @@ public class NodeParticle extends Particle {
 								len = box.k; // XXX NEW To prevent infinite
 												// repulsion.
 							double factor = len != 0 ? ((box.K2 / (len * len)) * node.weight)
-									: 0.00001f;
+									: 0.00001;
 							box.energies.accumulateEnergy(factor); // TODO check
 																	// this
 							repE += factor;
@@ -434,6 +434,9 @@ public class NodeParticle extends Particle {
 		// |-+----f----+-|
 		// | |
 		// +---------+
+		//
+		// (04/21/11) here lies my beautiful comment. Sorry if it is
+		// no more readable, barbarians ruined it.
 
 		if (X2 < x1 || X1 > x2)
 			return false;
