@@ -246,6 +246,9 @@ public class SpringBox extends SourceBase implements Layout,
 	 */
 	protected int sendMoveEventsEvery = 1;
 	
+	/**
+	 * The stabilisation limit of this algorithm.
+	 */
 	protected double stabilizationLimit = 0.9;
 
 	// Constructors
@@ -362,6 +365,10 @@ public class SpringBox extends SourceBase implements Layout,
 
 	public void setForce(double value) {
 		this.force = value;
+	}
+	
+	public void setStabilizationLimit(double value) {
+		this.stabilizationLimit = value;
 	}
 
 	public void setQuality(int qualityLevel) {

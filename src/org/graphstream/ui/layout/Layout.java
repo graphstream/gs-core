@@ -165,12 +165,46 @@ public interface Layout extends Pipe {
 	void removeListener(LayoutListener listener);
 
 	/**
-	 * The general "speed" of the algorithm.
+	 * The general "speed" of the algorithm. For some algorithm this will have no effect. For most
+	 * "dynamic" algorithms, this change the way iterations toward stabilisation are done.
 	 * 
 	 * @param value
 	 *            A number in [0..1].
 	 */
 	void setForce(double value);
+	
+	/**
+	 * Change the stabilisation limit for this layout algorithm.
+	 * 
+	 * <p> 
+	 * The stabilisation is a number
+	 * between 0 and 1 that indicates how close to stabilisation (no nodes need to move) the
+	 * layout is. The value 1 means the layout is fully stabilised. Naturally this is often only
+	 * an indication only, for some algorithms, it is difficult to determine if the layout is
+	 * correct or acceptable enough. You can get the actual stabilisation limit using
+	 * {@link #getStabilizationLimit()}. You can get the actual stabilisation using
+	 * {@link #getStabilization()}.
+	 * </p> 
+	 * 
+	 * <p>
+	 * Be careful, most layout classes do not use the stabilisation limit, this number is mostly
+	 * used the process that control the layout, like the {@link LayoutRunner} for example. The
+	 * stabilisation limit is only an indication with a default set for each layout algorithm.
+	 * However this default can be changed using this method, or by storing on the graph an
+	 * attribute "layout.stabilization-limit" (or "layout.stabilisation-limit").
+	 * </p>
+	 * 
+	 * <p>
+	 * The convention is that the value 0 means that the process controlling the layout will not
+	 * stop the layout (will therefore not consider the stabilisation limit). In other words the
+	 * layout will compute endlessly.
+	 * </p>
+	 * 
+	 * @param value
+	 * 			The new stabilisation limit, 0 means no need to stabilise. Else a value larger than
+	 * 			zero or equal to 1 is accepted.
+	 */
+	void setStabilizationLimit(double value);
 
 	/**
 	 * Set the overall quality level. There are five quality levels.
