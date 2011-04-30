@@ -31,6 +31,11 @@
 package org.graphstream.graph;
 
 public class NullAttributeException extends RuntimeException {
+	/**
+	 * Serializable uid.
+	 */
+	private static final long serialVersionUID = 8227620372327862335L;
+
 	public NullAttributeException() {
 		super("Attribute does not exist or is not of the expected type");
 	}
