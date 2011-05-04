@@ -32,6 +32,7 @@ package org.graphstream.stream.file;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -506,8 +507,7 @@ public class FileSourceDGS extends FileSourceBase {
 	}
 
 	@Override
-	protected StreamTokenizer createTokenizerFrom(String file)
-			throws IOException {
+	protected Reader createReaderFrom(String file) throws FileNotFoundException {
 		InputStream is = null;
 
 		try {
@@ -516,15 +516,12 @@ public class FileSourceDGS extends FileSourceBase {
 			is = new FileInputStream(file);
 		}
 
-		return new StreamTokenizer(
-				new BufferedReader(new InputStreamReader(is)));
+		return new BufferedReader(new InputStreamReader(is));
 	}
 
 	@Override
-	protected StreamTokenizer createTokenizerFrom(InputStream stream)
-			throws IOException {
-		return new StreamTokenizer(new BufferedReader(new InputStreamReader(
-				stream)));
+	protected Reader createReaderFrom(InputStream stream) {
+		return new BufferedReader(new InputStreamReader(stream));
 	}
 
 	@Override
