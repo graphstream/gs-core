@@ -535,13 +535,14 @@ public class FileSourceDGS extends FileSourceBase {
 			} else {
 				try {
 					is.close();
-					is = new FileInputStream(file);
 				} catch (IOException e2) {
 					//
 					// Dirty but we hope do not get there
 					//
 					e2.printStackTrace();
 				}
+				
+				is = new FileInputStream(file);
 			}
 		}
 
