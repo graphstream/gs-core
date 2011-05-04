@@ -510,10 +510,39 @@ public class FileSourceDGS extends FileSourceBase {
 	protected Reader createReaderFrom(String file) throws FileNotFoundException {
 		InputStream is = null;
 
+		is = new FileInputStream(file);
+
+		if (is.markSupported())
+			is.mark(128);
+
 		try {
-			is = new GZIPInputStream(new FileInputStream(file));
-		} catch (IOException e) {
-			is = new FileInputStream(file);
+			is = new GZIPInputStream(is);
+		} catch (IOException e1) {
+			//
+			// This is not a gzip input.
+			// But gzip has eat some bytes so we reset the stream
+			// or close and open it again.
+			//
+			if (is.markSupported()) {
+				try {
+					is.reset();
+				} catch (IOException e2) {
+					//
+					// Dirty but we hope do not get there
+					//
+					e2.printStackTrace();
+				}
+			} else {
+				try {
+					is.close();
+					is = new FileInputStream(file);
+				} catch (IOException e2) {
+					//
+					// Dirty but we hope do not get there
+					//
+					e2.printStackTrace();
+				}
+			}
 		}
 
 		return new BufferedReader(new InputStreamReader(is));
