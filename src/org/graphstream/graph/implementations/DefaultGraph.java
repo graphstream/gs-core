@@ -817,10 +817,12 @@ public class DefaultGraph extends AbstractElement implements Graph {
 				Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
 		GraphRenderer renderer = Viewer.newGraphRenderer();
 
-		viewer.addView(
+		viewer.addView(Viewer.DEFAULT_VIEW_ID, renderer);
+
+/*		viewer.addView(
 				String.format("defaultView_%d", (long) (Math.random() * 10000)),
 				renderer);
-
+*/
 		if (autoLayout) {
 			Layout layout = Layouts.newLayoutAlgorithm();
 			viewer.enableAutoLayout(layout);

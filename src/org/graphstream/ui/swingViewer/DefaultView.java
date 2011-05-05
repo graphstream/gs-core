@@ -221,6 +221,13 @@ public class DefaultView extends View implements ComponentListener,
 		removeMouseMotionListener(mouseClicks);
 		openInAFrame(false);
 	}
+	
+	@Override
+	public void resizeFrame(int width, int height) {
+		if(frame != null) {
+			frame.setSize(width, height);
+		}
+	}
 
 	@Override
 	public void openInAFrame(boolean on) {

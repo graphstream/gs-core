@@ -186,6 +186,15 @@ public abstract class View extends JPanel {
 	public abstract void openInAFrame(boolean on);
 
 	/**
+	 * Set the size of the view frame, if any. If this view has been open in a frame, this changes
+	 * the size of the frame containing it. 
+	 * 
+	 * @param width The new width.
+	 * @param height The new height.
+	 */
+	public abstract void resizeFrame(int width, int height);
+	
+	/**
 	 * Reset the view to the automatic mode.
 	 */
 	public abstract void resetView();

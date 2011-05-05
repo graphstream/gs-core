@@ -4,7 +4,6 @@ Reorganisation
 	- Remove the old elasticBox package in ui.layout.
 	- Where to put the ToolBox ? Is this the right name ?
 
-
 GraphStream Roadmap
 ===================
 
@@ -14,7 +13,6 @@ Legend:
 	= Started.
 	- To do.
 	~ To figure out.
-
 
 - Future:
 ---------
@@ -43,7 +41,7 @@ Legend:
 		- Add more metrics in tools:
 			* Maintain the number of connected components (for static and dynamic graphs).
 			* Modularity.
-			- diameter
+			* diameter
 				* The APSP subproblem (all-pair shortest paths) needed to compute the
 				  diameter.
 				* Use the APSP to store the paths (is there an efficient way to
@@ -62,11 +60,11 @@ Legend:
 		  iteratively in another thread with the GraphListenerProxy, etc.)
 		  
 	I/O
-		- Add more features in the DGS format :
-			- Allow to remove attributes.
-			- Allow to change attributes for the graph.
-			- Allow to change the direction of directed edges.
-		~ Related : It is not possible to delete attributes from elements with the
+		* Add more features in the DGS format :
+			* Allow to remove attributes.
+			* Allow to change attributes for the graph.
+			/ Allow to change the direction of directed edges.
+		* Related : It is not possible to delete attributes from elements with the
 		  GraphReader/GraphWriter interfaces.
 		- Add more algorithms:
 		~ Design a dynamic version of the dot file format ?.	
@@ -74,20 +72,20 @@ Legend:
 		  GraphReader interface.
 		- Add a GraphWriterGML that can write "objects" (deserialisation). 
 
-  		~ How do GraphReader and GraphWriters should act:
-  			- for the attributes when a change occur: add the attributes ? in this
+  		* How do GraphReader and GraphWriters should act:
+  			* for the attributes when a change occur: add the attributes ? in this
   			  case how to delete attributes ? Replace the existing set of attributes
   			  by another ? In this case we have to specify the new set each time a
   			  small change occurs. => a solution would be to propose a new API to
   		 	 treat attribute events separately. It would impose to remove all
   		 	 change node and edge events...
-  			- for the edge orientation changes. Actually the Graph API allows to
+  			* for the edge orientation changes. Actually the Graph API allows to
   			  switch an edge direction, but the reader and writers cannot read or
   			  output theses changes in dynamic graphs. 
 		- Add a reader for the Chaco format (already in Go2).
   	
   	Viewer
-	  	- Allow the SettingsWindow of the GraphPanel to be also embeddable in GUIs
+	  	/ Allow the SettingsWindow of the GraphPanel to be also embeddable in GUIs
 	  	  as a panel.
   			- Could be as a panel or
   			- as a tool bar.
@@ -98,7 +96,7 @@ Legend:
 		* Add more metrics in tools:
 			* Maintain the number of connected components (for static and dynamic graphs).
 			* Modularity.
-			- diameter
+			* diameter
 				* The APSP subproblem (all-pair shortest paths) needed to compute the
 				  diameter.
 				* Use the APSP to store the paths (is there an efficient way to
