@@ -224,7 +224,8 @@ text-size:
 
 text-background-mode:
 	none,
-	plain
+	plain,
+	rounded-box
 	
 text-background-color:
 	<color>

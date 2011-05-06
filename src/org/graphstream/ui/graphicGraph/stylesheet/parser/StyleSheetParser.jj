@@ -78,8 +78,10 @@ TOKEN: { < SHARP             : "#" > }
 TOKEN: { < COLON             : ":" > }
 TOKEN: { < SEMICOLON         : ";" > }
 TOKEN: { < COMA              : "," > }
-TOKEN: { < RGBA              : "rgba("(<DIGIT>){1,3}","(<DIGIT>){1,3}","(<DIGIT>){1,3}","(<DIGIT>){1,3}")" > }
-TOKEN: { < RGB               : "rgb("(<DIGIT>){1,3}","(<DIGIT>){1,3}","(<DIGIT>){1,3}")" > }
+//TOKEN: { < RGBA              : "rgba("(<DIGIT>){1,3}","(<DIGIT>){1,3}","(<DIGIT>){1,3}","(<DIGIT>){1,3}")" > }
+//TOKEN: { < RGB               : "rgb("(<DIGIT>){1,3}","(<DIGIT>){1,3}","(<DIGIT>){1,3}")" > }
+TOKEN: { < RGBA              : "rgba" > }
+TOKEN: { < RGB               : "rgb" > } 
 TOKEN: { < HTMLCOLOR         : ( "#" (((<HEXDIGIT>){3})|((<HEXDIGIT>){4})|((<HEXDIGIT>){6})|((<HEXDIGIT>){8})|((<HEXDIGIT>){9})|((<HEXDIGIT>){12})|((<HEXDIGIT>){16})) ) > }
 TOKEN: { < REAL              : ( "-" | "+" )? ( <DIGIT> )+ ( "." (<DIGIT>)+ )? (<UNITS>)? > } 
 TOKEN: { < STRING            : (("\"" (~["\""])* "\"")|("'" (~["'"])* "'")) > }
@@ -449,10 +451,11 @@ Color color():
 {
 	Token  t;
 	String s;
+	Token r, g, b, a;
 }
 {
-	( ( t=<RGB>        { s = t.image; } )
-	| ( t=<RGBA>       { s = t.image; } )
+	( ( <RGB>  <LPAREN> r=<REAL> <COMA> g=<REAL> <COMA> b=<REAL> <RPAREN> { s = String.format("rgb(%s,%s,%s)", r.image, g.image, b.image); } )
+	| ( <RGBA> <LPAREN> r=<REAL> <COMA> g=<REAL> <COMA> b=<REAL> <COMA> a=<REAL> <RPAREN> { s = String.format("rgba(%s,%s,%s,%s)", r.image, g.image, b.image, a.image); } )
 	| ( t=<HTMLCOLOR>  { s = t.image; } )
 	| ( t=<IDENTIFIER> { s = t.image; } )
 	| ( t=<STRING>     { s = t.image.substring( 1, t.image.length()-1 ); } )
@@ -557,8 +560,9 @@ Style.TextBackgroundMode textBgMode():
   	Style.TextBackgroundMode m;
 }
 {
-	( ( <NONE>  { m = Style.TextBackgroundMode.NONE;  } )
-	| ( <PLAIN> { m = Style.TextBackgroundMode.PLAIN; } )
+	( ( <NONE>       { m = Style.TextBackgroundMode.NONE;       } )
+	| ( <PLAIN>      { m = Style.TextBackgroundMode.PLAIN;      } )
+	| ( <ROUNDEDBOX> { m = Style.TextBackgroundMode.ROUNDEDBOX; } )
 	)
 	{ return m; } }
 

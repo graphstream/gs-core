@@ -125,7 +125,7 @@ public class StyleConstants {
 	}
 
 	public static enum TextBackgroundMode {
-		NONE, PLAIN
+		NONE, PLAIN, ROUNDEDBOX
 	}
 
 	public static enum ShapeKind {
@@ -276,6 +276,7 @@ public class StyleConstants {
 		if (anyValue instanceof String) {
 			Color c = null;
 			String value = (String) anyValue;
+System.err.printf("convertColor(%s)%n", value);
 
 			if (value.startsWith("#")) {
 				Matcher m = sharpColor1.matcher(value);
