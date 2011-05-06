@@ -253,13 +253,13 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	protected void pushTokenizer(String file) throws IOException {
 		StreamTokenizer tok;
 		CurrentFile cur;
+		Reader reader;
 
 		try {
-			tok = createTokenizerFrom(file); // new StreamTokenizer( new
-												// BufferedReader( new
-												// FileReader( file ) ) ); //
-												// Scaring, isn't it?
-			cur = new CurrentFile(file, tok);
+			reader = createReaderFrom(file);
+			tok = createTokenizer(reader); 
+			
+			cur = new CurrentFile(file, tok, reader);
 		} catch (FileNotFoundException e) {
 			throw new IOException("cannot read file '" + file
 					+ "', not found: " + e.getMessage());
@@ -272,6 +272,31 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 		filename = file;
 	}
 
+	/**
+	 * Create a reader for by the tokenizer.
+	 * 
+	 * @param file
+	 *            File name to be opened.
+	 * @return a reader for the tokenizer.
+	 * @throws FileNotFoundException
+	 *             If the given file does not exist or un readable.
+	 */
+	protected Reader createReaderFrom(String file) throws FileNotFoundException {
+		return new BufferedReader(new FileReader(file));
+	}
+
+	/**
+	 * Create a stream that can be read by the tokenizer.
+	 * 
+	 * @param stream
+	 *            Input stream to be open as a reader.
+	 * @return a reader for the tokenizer.
+	 */
+	protected Reader createReaderFrom(InputStream stream) {
+		return new BufferedReader(new InputStreamReader(stream));
+	}
+	
+	
 	/**
 	 * Push a tokenizer created from a stream on the file stack and make it
 	 * current.
@@ -307,12 +332,11 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 			throws IOException {
 		StreamTokenizer tok;
 		CurrentFile cur;
+		Reader reader;
 
-		tok = createTokenizerFrom(stream); // new StreamTokenizer( new
-											// BufferedReader( new
-											// InputStreamReader( stream ) )
-											// ); // Yes, quite scaring!!
-		cur = new CurrentFile(name, tok);
+		reader = createReaderFrom(stream);
+		tok = createTokenizer(reader); 
+		cur = new CurrentFile(name, tok, reader);
 
 		configureTokenizer(tok);
 		tok_stack.add(cur);
@@ -320,6 +344,8 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 		st = tok;
 		filename = name;
 	}
+
+
 
 	/**
 	 * Push a tokenizer created from a reader on the file stack and make it
@@ -331,9 +357,9 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	protected void pushTokenizer(Reader reader) throws IOException {
 		StreamTokenizer tok;
 		CurrentFile cur;
-
-		tok = createTokenizerFrom(reader);
-		cur = new CurrentFile("<?reader?>", tok);
+		
+		tok = createTokenizer(reader);
+		cur = new CurrentFile("<?reader?>", tok,reader);
 		configureTokenizer(tok);
 		tok_stack.add(cur);
 
@@ -343,36 +369,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	}
 
 	/**
-	 * Method to override to create a tokenizer from a specific input source.
-	 * 
-	 * @param file
-	 *            File name.
-	 * @return The new tokenizer.
-	 * @throws IOException
-	 *             For any I/O error.
-	 */
-	protected StreamTokenizer createTokenizerFrom(String file)
-			throws IOException {
-		return new StreamTokenizer(new BufferedReader(new FileReader(file)));
-	}
-
-	/**
-	 * Method to override to create a tokenizer from a specific input source.
-	 * 
-	 * @param stream
-	 *            Input stream.
-	 * @return The new tokenizer.
-	 * @throws IOException
-	 *             For any I/O error.
-	 */
-	protected StreamTokenizer createTokenizerFrom(InputStream stream)
-			throws IOException {
-		return new StreamTokenizer(new BufferedReader(new InputStreamReader(
-				stream)));
-	}
-
-	/**
-	 * Method to override to create a tokenizer from a specific input source.
+	 * Create a tokenizer from an input source.
 	 * 
 	 * @param reader
 	 *            The reader.
@@ -380,11 +377,12 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	 * @throws IOException
 	 *             For any I/O error.
 	 */
-	protected StreamTokenizer createTokenizerFrom(Reader reader)
+	private StreamTokenizer createTokenizer(Reader reader)
 			throws IOException {
 		return new StreamTokenizer(new BufferedReader(reader));
 	}
 
+	
 	/**
 	 * Method to override to configure the tokenizer behaviour. It is called
 	 * each time a tokenizer is created (for the parsed file and all included
@@ -411,12 +409,13 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 
 		n -= 1;
 
-		tok_stack.remove(n);
-
+		CurrentFile  cur = tok_stack.remove(n);
+		cur.reader.close();
+		
 		if (n > 0) {
 			n -= 1;
 
-			CurrentFile cur = tok_stack.get(n);
+			cur = tok_stack.get(n);
 
 			st = cur.tok;
 			filename = cur.file;
@@ -1242,10 +1241,13 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 		 * The stream tokenizer.
 		 */
 		public StreamTokenizer tok;
+		
+		public Reader reader;
 
-		public CurrentFile(String f, StreamTokenizer t) {
+		public CurrentFile(String f, StreamTokenizer t, Reader reader) {
 			file = f;
 			tok = t;
+			this.reader=reader;
 		}
 	}
 }

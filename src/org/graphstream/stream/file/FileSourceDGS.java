@@ -32,6 +32,7 @@ package org.graphstream.stream.file;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -506,25 +507,51 @@ public class FileSourceDGS extends FileSourceBase {
 	}
 
 	@Override
-	protected StreamTokenizer createTokenizerFrom(String file)
-			throws IOException {
+	protected Reader createReaderFrom(String file) throws FileNotFoundException {
 		InputStream is = null;
 
+		is = new FileInputStream(file);
+
+		if (is.markSupported())
+			is.mark(128);
+
 		try {
-			is = new GZIPInputStream(new FileInputStream(file));
-		} catch (IOException e) {
-			is = new FileInputStream(file);
+			is = new GZIPInputStream(is);
+		} catch (IOException e1) {
+			//
+			// This is not a gzip input.
+			// But gzip has eat some bytes so we reset the stream
+			// or close and open it again.
+			//
+			if (is.markSupported()) {
+				try {
+					is.reset();
+				} catch (IOException e2) {
+					//
+					// Dirty but we hope do not get there
+					//
+					e2.printStackTrace();
+				}
+			} else {
+				try {
+					is.close();
+				} catch (IOException e2) {
+					//
+					// Dirty but we hope do not get there
+					//
+					e2.printStackTrace();
+				}
+				
+				is = new FileInputStream(file);
+			}
 		}
 
-		return new StreamTokenizer(
-				new BufferedReader(new InputStreamReader(is)));
+		return new BufferedReader(new InputStreamReader(is));
 	}
 
 	@Override
-	protected StreamTokenizer createTokenizerFrom(InputStream stream)
-			throws IOException {
-		return new StreamTokenizer(new BufferedReader(new InputStreamReader(
-				stream)));
+	protected Reader createReaderFrom(InputStream stream) {
+		return new BufferedReader(new InputStreamReader(stream));
 	}
 
 	@Override
