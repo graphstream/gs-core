@@ -289,8 +289,6 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		setRenderer(RendererType.Basic);
 
 		initImage();
-
-		this.renderer.open(gg, null);
 	}
 
 	/**
@@ -371,7 +369,12 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 					.forName(rendererType.classname);
 
 			GraphRenderer obj = clazz.newInstance();
+
+			if (this.renderer != null)
+				this.renderer.close();
+
 			this.renderer = obj;
+			this.renderer.open(gg, null);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (ClassCastException e) {
