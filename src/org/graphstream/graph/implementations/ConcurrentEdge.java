@@ -138,29 +138,6 @@ public class ConcurrentEdge extends AbstractElement implements Edge {
 		return (n0 == n1);
 	}
 
-	public void setDirected(boolean on) {
-		// XXX Bug, the new edge created in the event stream will loose all its
-		// attributes.
-		((ConcurrentGraph) n0.graph).listeners.sendEdgeRemoved(myGraphId(),
-				newEvent(), getId());
-		this.directed = on;
-		((ConcurrentGraph) n0.graph).listeners.sendEdgeAdded(myGraphId(),
-				newEvent(), getId(), n0.getId(), n1.getId(), directed);
-	}
-
-	public void switchDirection() {
-		// XXX Bug, the new edge create in the event stream will loose all its
-		// attributes.
-		((ConcurrentGraph) n0.graph).listeners.sendEdgeRemoved(myGraphId(),
-				newEvent(), getId());
-
-		ConcurrentNode n = n0;
-		n0 = n1;
-		n1 = n;
-		((ConcurrentGraph) n0.graph).listeners.sendEdgeAdded(myGraphId(),
-				newEvent(), getId(), n0.getId(), n1.getId(), directed);
-	}
-
 	@Override
 	protected void attributeChanged(String sourceId, long timeId,
 			String attribute, AttributeChangeEvent event, Object oldValue,

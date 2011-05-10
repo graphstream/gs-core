@@ -108,11 +108,13 @@ public class SingleNode extends DefaultNode {
 	public <T extends Edge> T getEdgeFrom(String id) {
 		return (T) from.get(id);
 	}
-	
+
 	@Override
 	public <T extends Edge> T getEdgeBetween(String id) {
-		if (hasEdgeToward(id)) return getEdgeToward(id);
-		else return getEdgeFrom(id);
+		if (hasEdgeToward(id))
+			return getEdgeToward(id);
+		else
+			return getEdgeFrom(id);
 	}
 
 	@Override
@@ -150,7 +152,8 @@ public class SingleNode extends DefaultNode {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends Edge> Collection<T> getEnteringEdgeSet() {
-		return (Collection<T>) Collections.unmodifiableCollection(from.values());
+		return (Collection<T>) Collections
+				.unmodifiableCollection(from.values());
 	}
 
 	// Command
@@ -166,7 +169,7 @@ public class SingleNode extends DefaultNode {
 	 *            If the edge is directed only from this node to the target.
 	 */
 	@Override
-	@SuppressWarnings({ "deprecation", "unchecked" })
+	@SuppressWarnings("unchecked")
 	protected <T extends Edge> T addEdgeToward(String tag, DefaultNode target,
 			boolean directed) throws IllegalArgumentException {
 		// Some checks.
@@ -190,13 +193,7 @@ public class SingleNode extends DefaultNode {
 		Edge edge = target.getEdgeToward(getId());
 
 		if (edge != null) {
-			// There exist yet an edge from the target to this node.
-			// Change the edge so that it is no more directed since it
-			// became bidirectional.
-
-			edge.setDirected(false);
-
-			return (T) edge;
+			throw new IllegalArgumentException(new IdAlreadyInUseException(tag));
 		} else {
 			T e = (T) G.edgeFactory.newInstance(tag, this, target, directed);
 			// e.setDirected(directed);

@@ -201,48 +201,6 @@ public abstract class DefaultEdge extends AbstractElement implements Edge {
 	// Commands
 
 	/**
-	 * @complexity Constant.
-	 */
-	public void setDirected(boolean on) {
-		if (directed != on) {
-			src.G.listeners.sendEdgeRemoved(myGraphId(), newEvent(), getId());
-
-			src.unregisterEdge(this);
-			trg.unregisterEdge(this);
-
-			directed = on;
-
-			src.registerEdge(this);
-			trg.registerEdge(this);
-
-			src.G.listeners.sendEdgeAdded(myGraphId(), newEvent(), getId(),
-					src.getId(), trg.getId(), directed);
-		}
-	}
-
-	/**
-	 * @complexity Constant.
-	 */
-	public void switchDirection() {
-		src.G.listeners.sendEdgeRemoved(myGraphId(), newEvent(), getId());
-
-		src.unregisterEdge(this);
-		trg.unregisterEdge(this);
-
-		DefaultNode tmp;
-
-		tmp = src;
-		src = trg;
-		trg = tmp;
-
-		src.registerEdge(this);
-		trg.registerEdge(this);
-
-		src.G.listeners.sendEdgeAdded(myGraphId(), newEvent(), getId(),
-				src.getId(), trg.getId(), directed);
-	}
-
-	/**
 	 * Bind this edge to the given source node and target node. If directed is
 	 * true, the edge goes from source to target, else this is a bidirectional
 	 * edge. The edge is also registered in the graph of the two nodes.

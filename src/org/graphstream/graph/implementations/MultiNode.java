@@ -126,11 +126,13 @@ public class MultiNode extends DefaultNode {
 
 		return null;
 	}
-	
+
 	@Override
 	public <T extends Edge> T getEdgeBetween(String id) {
-		if (hasEdgeToward(id)) return getEdgeToward(id);
-		else return getEdgeFrom(id);
+		if (hasEdgeToward(id))
+			return getEdgeToward(id);
+		else
+			return getEdgeFrom(id);
 	}
 
 	@Override
@@ -156,13 +158,13 @@ public class MultiNode extends DefaultNode {
 	public <T extends Edge> Iterable<T> getEachLeavingEdge() {
 		return (Iterable<T>) to;
 	}
-	
+
 	@Override
 	public <T extends Edge> Collection<T> getEnteringEdgeSet() {
 		// Ah ah, this set does not exists, must create it.
 		HashSet<T> set = new HashSet<T>();
 		Iterator<T> k = getEnteringEdgeIterator();
-		while(k.hasNext()) {
+		while (k.hasNext()) {
 			set.add(k.next());
 		}
 		return set;
@@ -173,7 +175,7 @@ public class MultiNode extends DefaultNode {
 		// Ah ah, this set does not exists, must create it.
 		HashSet<T> set = new HashSet<T>();
 		Iterator<T> k = getLeavingEdgeIterator();
-		while(k.hasNext()) {
+		while (k.hasNext()) {
 			set.add(k.next());
 		}
 		return set;
@@ -216,12 +218,7 @@ public class MultiNode extends DefaultNode {
 		ArrayList<Edge> toward = (ArrayList<Edge>) to.get(getId());
 
 		if (toward != null) {
-			// There exist yet an edge from the target to this node.
-
-			T e = (T) G.edgeFactory.newInstance(tag, this, target, directed);
-			// e.bind( this, target, directed );
-			// e.setDirected(directed);
-			return e;
+			throw new IllegalArgumentException(new IdAlreadyInUseException(tag));
 		} else {
 			T e = (T) G.edgeFactory.newInstance(tag, this, target, directed);
 			// e.bind( this, target, directed );
@@ -244,15 +241,17 @@ public class MultiNode extends DefaultNode {
 		// Add the edge.
 
 		if (edges.contains(edge)) {
-			if(edge.isLoop())
+			if (edge.isLoop())
 				return;
 			else
-				throw new IdAlreadyInUseException(String.format("cannot add twice the same edge (%s) to node %s.",edge.getId(), getId()));
+				throw new IdAlreadyInUseException(String.format(
+						"cannot add twice the same edge (%s) to node %s.",
+						edge.getId(), getId()));
 		}
 
 		edges.add(edge);
 
-		if (edge.isDirected() && ( ! edge.isLoop() ) ) {
+		if (edge.isDirected() && (!edge.isLoop())) {
 			MultiEdgeMap<Edge> map;
 
 			if (edge.getSourceNode() == this) {

@@ -182,25 +182,4 @@ public interface Edge extends Element {
 	 * @return the opposite node of the given node.
 	 */
 	<T extends Node> T getOpposite(T node);
-
-	/**
-	 * Have an edge directed or non-directed. You make this edge directed, it
-	 * will be oriented from its {@link #getSourceNode()} node toward its
-	 * {@link #getTargetNode()} node. You can swap these nodes using
-	 * {@link #switchDirection()}.
-	 * 
-	 * @param on
-	 *            If true the edge becomes directed, else it becomes
-	 *            bidirectional.
-	 */
-	@Deprecated
-	void setDirected(boolean on);
-
-	/**
-	 * Swap the source and target nodes. This allows to redirect an edge.
-	 * However, if the edge was not directed, this method does not direct it,
-	 * see the {@link #setDirected(boolean)} method.
-	 */
-	@Deprecated
-	void switchDirection();
 }
