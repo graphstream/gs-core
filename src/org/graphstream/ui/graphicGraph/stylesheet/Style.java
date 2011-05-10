@@ -455,6 +455,20 @@ public class Style extends StyleConstants {
 
 		return null;
 	}
+	
+	/**
+	 * Offset of the text from its computed position.
+	 */
+	public Values getTextOffset() {
+		return (Values) getValue("text-offset");
+	}
+
+	/**
+	 * Padding of the text inside its background, if any.
+	 */
+	public Values getTextPadding() {
+		return (Values) getValue("text-padding");
+	}
 
 	/**
 	 * The element shape.
@@ -574,6 +588,8 @@ public class Style extends StyleConstants {
 		values.put("text-alignment", TextAlignment.CENTER);
 		values.put("text-background-mode", TextBackgroundMode.NONE);
 		values.put("text-background-color", textBgColor);
+		values.put("text-offset", new Values(Units.PX, 0, 0));
+		values.put("text-padding", new Values(Units.PX, 0, 0));
 
 		values.put("icon-mode", IconMode.NONE);
 		values.put("icon", null);
@@ -634,6 +650,8 @@ public class Style extends StyleConstants {
 			augmentField("text-alignment", other);
 			augmentField("text-background-mode", other);
 			augmentField("text-background-color", other);
+			augmentField("text-offset", other);
+			augmentField("text-padding", other);
 
 			augmentField("icon-mode", other);
 			augmentField("icon", other);

@@ -150,17 +150,27 @@ public class ViewerPipe extends SourceBase implements ProxyPipe {
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
 			String attribute, Object value) {
 		sendNodeAttributeAdded(sourceId, timeId, nodeId, attribute, value);
+
+		if(attribute.equals("ui.clicked")) {
+			for(ViewerListener listener: viewerListeners)
+				listener.buttonPushed(nodeId);
+		}
 	}
 
 	public void nodeAttributeChanged(String sourceId, long timeId,
 			String nodeId, String attribute, Object oldValue, Object newValue) {
 		sendNodeAttributeChanged(sourceId, timeId, nodeId, attribute, oldValue,
-				newValue);
+			newValue);
 	}
 
 	public void nodeAttributeRemoved(String sourceId, long timeId,
 			String nodeId, String attribute) {
 		sendNodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
+
+		if(attribute.equals("ui.clicked")) {
+			for(ViewerListener listener: viewerListeners)
+				listener.buttonReleased(nodeId);
+		}
 	}
 
 	public void edgeAdded(String sourceId, long timeId, String edgeId,

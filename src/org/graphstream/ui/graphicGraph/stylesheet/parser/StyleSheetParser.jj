@@ -115,6 +115,8 @@ TOKEN: { < TEXTSIZE          : "text-size" > }
 TOKEN: { < TEXTVISIBILITYMODE: "text-visibility-mode" > }
 TOKEN: { < TEXTVISIBILITY    : "text-visibility" > }
 TOKEN: { < TEXTBACKGROUNDMODE: "text-background-mode" > }TOKEN: { < TEXTBACKGROUNDCOLOR: "text-background-color" > }
+TOKEN: { < TEXTOFFSET        : "text-offset" > }
+TOKEN: { < TEXTPADDING       : "text-padding" > }
 
 TOKEN: { < ICONMODE          : "icon-mode" > }
 TOKEN: { < ICON              : "icon" > }
@@ -357,6 +359,8 @@ void style( Style style ):
 	| ( <TEXTFONT>           <COLON> url           = font()              <SEMICOLON> { style.setValue( "text-font",            url            ); } )
 	| ( <TEXTSIZE>           <COLON> value         = value()             <SEMICOLON> { style.setValue( "text-size",            value          ); } )
 	| ( <TEXTALIGNMENT>      <COLON> textAlignment = textAlign()         <SEMICOLON> { style.setValue( "text-alignment",       textAlignment  ); } )
+	| ( <TEXTOFFSET>         <COLON> values        = values()            <SEMICOLON> { style.setValue( "text-offset",          values         ); } )
+	| ( <TEXTPADDING>        <COLON> values        = values()            <SEMICOLON> { style.setValue( "text-padding",         values         ); } )
 	| ( <ICONMODE>           <COLON> iconMode      = iconMode()          <SEMICOLON> { style.setValue( "icon-mode",            iconMode       ); } )
 	| ( <ICON>               <COLON> url           = icon()              <SEMICOLON> { style.setValue( "icon",                 url            ); } )
 	| ( <JCOMPONENT>         <COLON> component     = jcomponent()        <SEMICOLON> { style.setValue( "jcomponent",           component      ); } )

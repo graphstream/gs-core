@@ -219,8 +219,11 @@ text-size:
 	
 	Size of the font in points only.
 
-?text-offset:
-?	<number(1,3)[px,gu,%]>		(todo)
+text-padding:
+	<number(1,2)[px,gu,%]>
+
+text-offset:
+	<number(1,3)[px,gu,%]>
 
 text-background-mode:
 	none,
