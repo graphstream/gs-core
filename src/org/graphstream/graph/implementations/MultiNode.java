@@ -214,17 +214,9 @@ public class MultiNode extends DefaultNode {
 					+ "' since they pertain to distinct graphs");
 
 		// Register the edge.
-
-		ArrayList<Edge> toward = (ArrayList<Edge>) to.get(getId());
-
-		if (toward != null) {
-			throw new IllegalArgumentException(new IdAlreadyInUseException(tag));
-		} else {
-			T e = (T) G.edgeFactory.newInstance(tag, this, target, directed);
-			// e.bind( this, target, directed );
-			// e.setDirected(directed);
-			return e;
-		}
+		
+		T e = (T) G.edgeFactory.newInstance(tag, this, target, directed);
+		return e;
 	}
 
 	/**
