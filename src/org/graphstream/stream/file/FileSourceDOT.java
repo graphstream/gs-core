@@ -384,9 +384,11 @@ public class FileSourceDOT extends FileSourceBase {
 
 	protected void declareNode(String id, HashMap<String, Object> attributes)
 			throws IOException {
-		nodes.add(id);
 
-		sendNodeAdded(graphName, id);
+		if (!nodes.contains(id)) {
+			sendNodeAdded(graphName, id);
+			nodes.add(id);
+		}
 
 		if (this.attributes != null) {
 			for (String key : this.attributes.keySet()) {
@@ -426,6 +428,14 @@ public class FileSourceDOT extends FileSourceBase {
 
 	protected void putAttribute(String id, Object value,
 			HashMap<String, Object> attributes) {
+		if (value != null && value instanceof String) {
+			String sValue = (String) value;
+			if (sValue.matches("\\d+"))
+				value = Integer.valueOf(sValue);
+			else if (sValue.matches("\\d+[.]\\d+"))
+				value = Double.valueOf(sValue);
+		}
+		
 		attributes.put(id, value);
 	}
 

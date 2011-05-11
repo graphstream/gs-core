@@ -90,12 +90,13 @@ public class FileSinkDOT extends FileSinkBase {
 
 	public void graphAttributeAdded(String graphId, long timeId,
 			String attribute, Object value) {
-		// NOP
+		out.printf("\tgraph [ %s ];%n", outputAttribute(attribute, value, true));
 	}
 
 	public void graphAttributeChanged(String graphId, long timeId,
 			String attribute, Object oldValue, Object newValue) {
-		// NOP
+		out.printf("\tgraph [ %s ];%n",
+				outputAttribute(attribute, newValue, true));
 	}
 
 	public void graphAttributeRemoved(String graphId, long timeId,
@@ -149,41 +150,29 @@ public class FileSinkDOT extends FileSinkBase {
 	}
 
 	// Utility
-
-	protected void outputAttributes(Map<String, Object> attributes, What what)
-			throws IOException {
-		out.printf(" [");
-
-		boolean first = true;
-
-		for (String key : attributes.keySet()) {
-			Object value = attributes.get(key);
-
-			if (what == What.NODE) {
-				// if( ! nodeForbiddenAttrs.contains( key ) )
-				{
-					first = outputAttribute(key, value, first);
-				}
-			} else if (what == What.EDGE) {
-				// if( ! edgeForbiddenAttrs.contains( key ) )
-				{
-					first = outputAttribute(key, value, first);
-				}
-			} else {
-				first = outputAttribute(key, value, first);
-			}
-
-		}
-
-		out.printf("]");
-	}
-
-	protected boolean outputAttribute(String key, Object value, boolean first) {
+	/*
+	 * protected void outputAttributes(Map<String, Object> attributes, What
+	 * what) throws IOException { out.printf(" [");
+	 * 
+	 * boolean first = true;
+	 * 
+	 * for (String key : attributes.keySet()) { Object value =
+	 * attributes.get(key);
+	 * 
+	 * if (what == What.NODE) { // if( ! nodeForbiddenAttrs.contains( key ) ) {
+	 * first = outputAttribute(key, value, first); } } else if (what ==
+	 * What.EDGE) { // if( ! edgeForbiddenAttrs.contains( key ) ) { first =
+	 * outputAttribute(key, value, first); } } else { first =
+	 * outputAttribute(key, value, first); }
+	 * 
+	 * }
+	 * 
+	 * out.printf("]"); }
+	 */
+	protected String outputAttribute(String key, Object value, boolean first) {
 		if (first)
-			out.printf("\"%s\"=\"%s\"", key, value);
+			return String.format("\"%s\"=\"%s\"", key, value);
 		else
-			out.printf(",\"%s\"=\"%s\"", key, value);
-
-		return false;
+			return String.format(",\"%s\"=\"%s\"", key, value);
 	}
 }
