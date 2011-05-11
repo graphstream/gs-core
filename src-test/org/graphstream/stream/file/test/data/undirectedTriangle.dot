@@ -1,0 +1,6 @@
+graph test1 {
+    graph [ id="test1" ];
+    A -- B [ id=AB ];
+    B -- C [ id=BC ];
+    C -- A [ id=CA ];
+}
