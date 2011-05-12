@@ -251,33 +251,41 @@ public interface StyleSheetParserConstants {
   /** RegularExpression Id. */
   int BLOB = 124;
   /** RegularExpression Id. */
-  int ARROW = 125;
+  int SQUARELINE = 125;
   /** RegularExpression Id. */
-  int FLOW = 126;
+  int LSQUARELINE = 126;
   /** RegularExpression Id. */
-  int PIECHART = 127;
+  int HSQUARELINE = 127;
   /** RegularExpression Id. */
-  int IMAGE = 128;
+  int VSQUARELINE = 128;
   /** RegularExpression Id. */
-  int IMAGES = 129;
+  int ARROW = 129;
   /** RegularExpression Id. */
-  int FROM = 130;
+  int FLOW = 130;
   /** RegularExpression Id. */
-  int NODE0 = 131;
+  int PIECHART = 131;
   /** RegularExpression Id. */
-  int TO = 132;
+  int IMAGE = 132;
   /** RegularExpression Id. */
-  int NODE1 = 133;
+  int IMAGES = 133;
   /** RegularExpression Id. */
-  int PROJECTION = 134;
+  int FROM = 134;
   /** RegularExpression Id. */
-  int CLICKED = 135;
+  int NODE0 = 135;
   /** RegularExpression Id. */
-  int SELECTED = 136;
+  int TO = 136;
   /** RegularExpression Id. */
-  int IDENTIFIER = 137;
+  int NODE1 = 137;
   /** RegularExpression Id. */
-  int COMMENT = 138;
+  int PROJECTION = 138;
+  /** RegularExpression Id. */
+  int CLICKED = 139;
+  /** RegularExpression Id. */
+  int SELECTED = 140;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 141;
+  /** RegularExpression Id. */
+  int COMMENT = 142;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -409,6 +417,10 @@ public interface StyleSheetParserConstants {
     "\"angle\"",
     "\"cubic-curve\"",
     "\"blob\"",
+    "\"square-line\"",
+    "\"L-square-line\"",
+    "\"horizontal-square-line\"",
+    "\"vertical-square-line\"",
     "\"arrow\"",
     "\"flow\"",
     "\"pie-chart\"",

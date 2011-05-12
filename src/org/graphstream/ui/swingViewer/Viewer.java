@@ -374,6 +374,16 @@ public class Viewer implements ActionListener {
 			return views.get(id);
 		}
 	}
+	
+	/**
+	 * The default view. This is a shortcut to a call to {@link #getView(String)}
+	 * with {@link #DEFAULT_VIEW_ID} as parameter.
+	 * 
+	 * @return The default view or null if no default view has been installed.
+	 */
+	public View getDefaultView() {
+		return getView(DEFAULT_VIEW_ID);
+	}
 
 	// Command
 

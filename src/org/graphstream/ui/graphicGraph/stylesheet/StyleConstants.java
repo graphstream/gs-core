@@ -150,6 +150,8 @@ public class StyleConstants {
 		LINE(ShapeKind.LINEAR), ANGLE(ShapeKind.LINEAR), CUBIC_CURVE(
 				ShapeKind.CURVE), POLYLINE(ShapeKind.LINEAR),
 				POLYLINE_SCALED(ShapeKind.LINEAR),
+				SQUARELINE(ShapeKind.LINEAR), LSQUARELINE(ShapeKind.LINEAR),
+				HSQUARELINE(ShapeKind.LINEAR), VSQUARELINE(ShapeKind.LINEAR),
 				BLOB(ShapeKind.CURVE);
 
 		public ShapeKind kind;

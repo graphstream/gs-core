@@ -221,6 +221,10 @@ TOKEN: { < POLYLINESCALED    : "polyline-scaled" > }
 TOKEN: { < ANGLE             : "angle" > }
 TOKEN: { < CUBICCURVE        : "cubic-curve" > }
 TOKEN: { < BLOB              : "blob" > }
+TOKEN: { < SQUARELINE        : "square-line" > }
+TOKEN: { < LSQUARELINE       : "L-square-line" > }
+TOKEN: { < HSQUARELINE       : "horizontal-square-line" > }
+TOKEN: { < VSQUARELINE       : "vertical-square-line" > }
 
 TOKEN: { < ARROW             : "arrow" > }
 TOKEN: { < FLOW              : "flow" > }
@@ -673,6 +677,10 @@ Style.Shape shape():
 	| ( <POLYLINE>       { s = Style.Shape.POLYLINE;         } )
 	| ( <POLYLINESCALED> { s = Style.Shape.POLYLINE_SCALED;  } )
 	| ( <BLOB>           { s = Style.Shape.BLOB;             } )
+	| ( <SQUARELINE>     { s = Style.Shape.SQUARELINE;       } )
+	| ( <LSQUARELINE>    { s = Style.Shape.LSQUARELINE;      } )
+	| ( <HSQUARELINE>    { s = Style.Shape.HSQUARELINE;      } )
+	| ( <VSQUARELINE>    { s = Style.Shape.VSQUARELINE;      } )
 	)
 	{ return s; }
 }

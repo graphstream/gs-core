@@ -93,6 +93,30 @@ public class Point3 extends Point2 implements java.io.Serializable {
 	public Point3(Vector3 vec) {
 		copy(vec);
 	}
+	
+	public Point3(float data[]) {
+		this(0, data);
+	}
+	
+	public Point3(double data[]) {
+		this(0, data);
+	}
+
+	public Point3(int start, float data[]) {
+		if(data != null) {
+			if(data.length>start+0) x = data[start+0];
+			if(data.length>start+1) y = data[start+1];
+			if(data.length>start+2) z = data[start+2];
+		}
+	}
+	
+	public Point3(int start, double data[]) {
+		if(data != null) {
+			if(data.length>start+0) x = data[start+0];
+			if(data.length>start+1) y = data[start+1];
+			if(data.length>start+2) z = data[start+2];
+		}
+	}
 
 	// Predicates
 
