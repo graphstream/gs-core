@@ -204,7 +204,7 @@ public class StyleGroup extends Style implements Iterable<Element> {
 	 * event. Such elements cannot therefore be drawn in a group operation, but
 	 * one by one.
 	 * 
-	 * @return
+	 * @return True if the group contains some elements changed by an event.
 	 */
 	public boolean hasEventElements() {
 		return (eventsFor != null && eventsFor.size() > 0);

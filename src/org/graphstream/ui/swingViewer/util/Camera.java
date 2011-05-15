@@ -404,7 +404,7 @@ public class Camera {
 	}
 
 	/**
-	 * Restore the transform that was used before {@link #pushView(Graphics2D)}
+	 * Restore the transform that was used before {@link #pushView(GraphicGraph, Graphics2D)}
 	 * is used.
 	 * 
 	 * @param g2

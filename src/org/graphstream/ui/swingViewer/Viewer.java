@@ -338,7 +338,7 @@ public class Viewer implements ActionListener {
 	/**
 	 * New proxy pipe on events coming from the viewer through a thread.
 	 * 
-	 * @return
+	 * @return The new proxy pipe.
 	 */
 	public ProxyPipe newThreadProxyOnGraphicGraph() {
 		return new ThreadProxyPipe(graph);
@@ -347,7 +347,7 @@ public class Viewer implements ActionListener {
 	/**
 	 * New viewer pipe on the events coming from the viewer through a thread.
 	 * 
-	 * @return
+	 * @return The new viewer pipe.
 	 */
 	public ViewerPipe newViewerPipe() {
 		return new ViewerPipe(String.format("viewer_%d",
