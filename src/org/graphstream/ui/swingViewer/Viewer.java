@@ -356,7 +356,8 @@ public class Viewer implements ActionListener {
 	}
 
 	/**
-	 * The underlying graphic graph.
+	 * The underlying graphic graph. Caution : Use the returned graph only
+	 * in the Swing thread !!
 	 */
 	public GraphicGraph getGraphicGraph() {
 		return graph;
@@ -484,23 +485,23 @@ public class Viewer implements ActionListener {
 	 * Never call this method.
 	 */
 	public void actionPerformed(ActionEvent e) {
-		if (pumpPipe != null)
-			pumpPipe.pump();
-
-		if (layoutPipeIn != null)
-			layoutPipeIn.pump();
-
-		boolean changed = graph.graphChangedFlag();
-
-		if (changed)
-			computeGraphMetrics();
-
 		synchronized (views) {
+			if (pumpPipe != null)
+				pumpPipe.pump();
+
+			if (layoutPipeIn != null)
+				layoutPipeIn.pump();
+
+			boolean changed = graph.graphChangedFlag();
+
+			if (changed)
+				computeGraphMetrics();
+
 			for (View view : views.values())
 				view.display(graph, changed);
-		}
 
-		graph.resetGraphChangedFlag();
+			graph.resetGraphChangedFlag();
+		}
 	}
 
 	/**
@@ -529,7 +530,9 @@ public class Viewer implements ActionListener {
 	 *            The close frame policy.
 	 */
 	public void setCloseFramePolicy(CloseFramePolicy policy) {
-		closeFramePolicy = policy;
+		synchronized(views) {
+			closeFramePolicy = policy;
+		}
 	}
 
 	// Optional layout algorithm
@@ -539,7 +542,9 @@ public class Viewer implements ActionListener {
 	 * views. By default the "xyz" attribute is changed.
 	 */
 	public void enableXYZfeedback(boolean on) {
-		graph.feedbackXYZ(on);
+		synchronized(views) {
+			graph.feedbackXYZ(on);
+		}
 	}
 
 	/**
@@ -559,10 +564,12 @@ public class Viewer implements ActionListener {
 	 *            default algorithm).
 	 */
 	public void enableAutoLayout(Layout layoutAlgorithm) {
-		if (optLayout == null) {
-			optLayout = new LayoutRunner(graph, layoutAlgorithm, true, true);
-			layoutPipeIn = optLayout.newLayoutPipe();
-			layoutPipeIn.addAttributeSink(graph);
+		synchronized(views) {
+			if (optLayout == null) {
+				optLayout = new LayoutRunner(graph, layoutAlgorithm, true, true);
+				layoutPipeIn = optLayout.newLayoutPipe();
+				layoutPipeIn.addAttributeSink(graph);
+			}
 		}
 	}
 
@@ -570,12 +577,14 @@ public class Viewer implements ActionListener {
 	 * Disable the running automatic layout process, if any.
 	 */
 	public void disableAutoLayout() {
-		if (optLayout != null) {
-			((ThreadProxyPipe) layoutPipeIn).unregisterFromSource();
-			layoutPipeIn.removeSink(graph);
-			layoutPipeIn = null;
-			optLayout.release();
-			optLayout = null;
+		synchronized(views) {
+			if (optLayout != null) {
+				((ThreadProxyPipe) layoutPipeIn).unregisterFromSource();
+				layoutPipeIn.removeSink(graph);
+				layoutPipeIn = null;
+				optLayout.release();
+				optLayout = null;
+			}
 		}
 	}
 }
