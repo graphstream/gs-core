@@ -35,7 +35,7 @@
 	<!-- Source code of GraphStream is hosted on GitHub. -->
 	<scm>
 		<connection>scm:git:git://github.com/graphstream/gs-core.git</connection>
-		<tag>HEAD</tag>
+		<tag>1.0</tag>
 		<url>https://github.com/graphstream/gs-core</url>
 	</scm>
 
@@ -129,6 +129,9 @@
 				<configuration>
 					<source>1.5</source>
 					<target>1.5</target>
+					<excludes>
+						<exclude>org/graphstream/stream/file/FileSinkSWF.java</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 
@@ -193,7 +196,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
 				<configuration>
-					<keyname><![CDATA[GraphStream <team@graphstream-project.org>]]></keyname>
+					<keyname><![CDATA[GraphStream Team <team@graphstream-project.org>]]></keyname>
+					<skip>true</skip>
 				</configuration>
 				<executions>
 					<execution>
