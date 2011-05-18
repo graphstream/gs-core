@@ -179,7 +179,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	 * images just for nodes creation.
 	 */
 	public static enum OutputPolicy {
-		ByEventOutput, ByElementEventOutput, ByAttributeEventOutput, ByNodeEventOutput, ByEdgeEventOutput, ByGraphEventOutput, ByStepOutput, ByNodeAddedRemovedOutput, ByEdgeAddedRemovedOutput, ByNodeAttributeOutput, ByEdgeAttributeOutput, ByGraphAttributeOutput, ByLayoutStepOutput, ByNodeMovedOutput
+		BY_EVENT, BY_ELEMENT_EVENT, BY_ATTRIBUTE_EVENT, BY_NODE_EVENT, BY_EDGE_EVENT, BY_GRAPH_EVENT, BY_STEP, BY_NODE_ADDED_REMOVED, BY_EDGE_ADDED_REMOVED, BY_NODE_ATTRIBUTE, BY_EDGE_ATTRIBUTE, BY_GRAPH_ATTRIBUTE, ByLayoutStepOutput, ByNodeMovedOutput
 	}
 
 	/**
@@ -562,10 +562,10 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		gg.edgeAttributeAdded(sourceId, timeId, edgeId, attribute, value);
 
 		switch (outputPolicy) {
-		case ByEventOutput:
-		case ByEdgeEventOutput:
-		case ByEdgeAttributeOutput:
-		case ByAttributeEventOutput:
+		case BY_EVENT:
+		case BY_EDGE_EVENT:
+		case BY_EDGE_ATTRIBUTE:
+		case BY_ATTRIBUTE_EVENT:
 			outputNewImage();
 			break;
 		}
@@ -580,10 +580,10 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 				newValue);
 
 		switch (outputPolicy) {
-		case ByEventOutput:
-		case ByEdgeEventOutput:
-		case ByEdgeAttributeOutput:
-		case ByAttributeEventOutput:
+		case BY_EVENT:
+		case BY_EDGE_EVENT:
+		case BY_EDGE_ATTRIBUTE:
+		case BY_ATTRIBUTE_EVENT:
 			outputNewImage();
 			break;
 		}
@@ -597,10 +597,10 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		gg.edgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
 
 		switch (outputPolicy) {
-		case ByEventOutput:
-		case ByEdgeEventOutput:
-		case ByEdgeAttributeOutput:
-		case ByAttributeEventOutput:
+		case BY_EVENT:
+		case BY_EDGE_EVENT:
+		case BY_EDGE_ATTRIBUTE:
+		case BY_ATTRIBUTE_EVENT:
 			outputNewImage();
 			break;
 		}
@@ -614,10 +614,10 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		gg.graphAttributeAdded(sourceId, timeId, attribute, value);
 
 		switch (outputPolicy) {
-		case ByEventOutput:
-		case ByGraphEventOutput:
-		case ByGraphAttributeOutput:
-		case ByAttributeEventOutput:
+		case BY_EVENT:
+		case BY_GRAPH_EVENT:
+		case BY_GRAPH_ATTRIBUTE:
+		case BY_ATTRIBUTE_EVENT:
 			outputNewImage();
 			break;
 		}
@@ -632,10 +632,10 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 				newValue);
 
 		switch (outputPolicy) {
-		case ByEventOutput:
-		case ByGraphEventOutput:
-		case ByGraphAttributeOutput:
-		case ByAttributeEventOutput:
+		case BY_EVENT:
+		case BY_GRAPH_EVENT:
+		case BY_GRAPH_ATTRIBUTE:
+		case BY_ATTRIBUTE_EVENT:
 			outputNewImage();
 			break;
 		}
@@ -649,10 +649,10 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		gg.graphAttributeRemoved(sourceId, timeId, attribute);
 
 		switch (outputPolicy) {
-		case ByEventOutput:
-		case ByGraphEventOutput:
-		case ByGraphAttributeOutput:
-		case ByAttributeEventOutput:
+		case BY_EVENT:
+		case BY_GRAPH_EVENT:
+		case BY_GRAPH_ATTRIBUTE:
+		case BY_ATTRIBUTE_EVENT:
 			outputNewImage();
 			break;
 		}
@@ -666,10 +666,10 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		gg.nodeAttributeAdded(sourceId, timeId, nodeId, attribute, value);
 
 		switch (outputPolicy) {
-		case ByEventOutput:
-		case ByNodeEventOutput:
-		case ByNodeAttributeOutput:
-		case ByAttributeEventOutput:
+		case BY_EVENT:
+		case BY_NODE_EVENT:
+		case BY_NODE_ATTRIBUTE:
+		case BY_ATTRIBUTE_EVENT:
 			outputNewImage();
 			break;
 		}
@@ -684,10 +684,10 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 				newValue);
 
 		switch (outputPolicy) {
-		case ByEventOutput:
-		case ByNodeEventOutput:
-		case ByNodeAttributeOutput:
-		case ByAttributeEventOutput:
+		case BY_EVENT:
+		case BY_NODE_EVENT:
+		case BY_NODE_ATTRIBUTE:
+		case BY_ATTRIBUTE_EVENT:
 			outputNewImage();
 			break;
 		}
@@ -701,10 +701,10 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		gg.nodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
 
 		switch (outputPolicy) {
-		case ByEventOutput:
-		case ByNodeEventOutput:
-		case ByNodeAttributeOutput:
-		case ByAttributeEventOutput:
+		case BY_EVENT:
+		case BY_NODE_EVENT:
+		case BY_NODE_ATTRIBUTE:
+		case BY_ATTRIBUTE_EVENT:
 			outputNewImage();
 			break;
 		}
@@ -718,10 +718,10 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		gg.edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId, directed);
 
 		switch (outputPolicy) {
-		case ByEventOutput:
-		case ByEdgeEventOutput:
-		case ByEdgeAddedRemovedOutput:
-		case ByElementEventOutput:
+		case BY_EVENT:
+		case BY_EDGE_EVENT:
+		case BY_EDGE_ADDED_REMOVED:
+		case BY_ELEMENT_EVENT:
 			outputNewImage();
 			break;
 		}
@@ -734,10 +734,10 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		gg.edgeRemoved(sourceId, timeId, edgeId);
 
 		switch (outputPolicy) {
-		case ByEventOutput:
-		case ByEdgeEventOutput:
-		case ByEdgeAddedRemovedOutput:
-		case ByElementEventOutput:
+		case BY_EVENT:
+		case BY_EDGE_EVENT:
+		case BY_EDGE_ADDED_REMOVED:
+		case BY_ELEMENT_EVENT:
 			outputNewImage();
 			break;
 		}
@@ -750,11 +750,11 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		gg.graphCleared(sourceId, timeId);
 
 		switch (outputPolicy) {
-		case ByEventOutput:
-		case ByGraphEventOutput:
-		case ByNodeAddedRemovedOutput:
-		case ByEdgeAddedRemovedOutput:
-		case ByElementEventOutput:
+		case BY_EVENT:
+		case BY_GRAPH_EVENT:
+		case BY_NODE_ADDED_REMOVED:
+		case BY_EDGE_ADDED_REMOVED:
+		case BY_ELEMENT_EVENT:
 			outputNewImage();
 			break;
 		}
@@ -767,10 +767,10 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		gg.nodeAdded(sourceId, timeId, nodeId);
 
 		switch (outputPolicy) {
-		case ByEventOutput:
-		case ByNodeEventOutput:
-		case ByNodeAddedRemovedOutput:
-		case ByElementEventOutput:
+		case BY_EVENT:
+		case BY_NODE_EVENT:
+		case BY_NODE_ADDED_REMOVED:
+		case BY_ELEMENT_EVENT:
 			outputNewImage();
 			break;
 		}
@@ -783,10 +783,10 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		gg.nodeRemoved(sourceId, timeId, nodeId);
 
 		switch (outputPolicy) {
-		case ByEventOutput:
-		case ByNodeEventOutput:
-		case ByNodeAddedRemovedOutput:
-		case ByElementEventOutput:
+		case BY_EVENT:
+		case BY_NODE_EVENT:
+		case BY_NODE_ADDED_REMOVED:
+		case BY_ELEMENT_EVENT:
 			outputNewImage();
 			break;
 		}
@@ -799,8 +799,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		gg.stepBegins(sourceId, timeId, step);
 
 		switch (outputPolicy) {
-		case ByEventOutput:
-		case ByStepOutput:
+		case BY_EVENT:
+		case BY_STEP:
 			outputNewImage();
 			break;
 		}
