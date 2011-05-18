@@ -110,6 +110,13 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 	// Constructors
 
 	/**
+	 * New thread proxy pipe with no input.
+	 */
+	public ThreadProxyPipe() {
+		this((Source) null);
+	}
+
+	/**
 	 * Listen at an input in a given thread and redirect all events to
 	 * GraphListeners that may be in another thread.
 	 * 
@@ -136,7 +143,9 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 		this.from = "<in>";
 		this.input = input;
 
-		input.addSink(this);
+		if (input != null)
+			input.addSink(this);
+
 		((MBoxStandalone) this.events).addListener(this);
 	}
 
@@ -315,7 +324,8 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 
 	protected boolean maybeUnregister() {
 		if (unregisterWhenPossible) {
-			input.removeSink(this);
+			if (input != null)
+				input.removeSink(this);
 			return true;
 		}
 
