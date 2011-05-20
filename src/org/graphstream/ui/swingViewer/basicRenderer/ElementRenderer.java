@@ -201,7 +201,8 @@ public abstract class ElementRenderer {
 
 	protected void renderText(StyleGroup group, Graphics2D g, Camera camera,
 			GraphicElement element) {
-		if (group.getTextMode() != StyleConstants.TextMode.HIDDEN) {
+		if (group.getTextMode() != StyleConstants.TextMode.HIDDEN
+		 && group.getTextVisibilityMode() != StyleConstants.TextVisibilityMode.HIDDEN) {
 			String label = element.getLabel();
 
 			if (label != null) {
