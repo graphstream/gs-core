@@ -45,6 +45,8 @@ import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 
 import org.graphstream.stream.ProxyPipe;
+import org.graphstream.stream.Sink;
+import org.graphstream.stream.thread.ThreadProxyPipe;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.layout.Layout;
@@ -179,7 +181,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	 * images just for nodes creation.
 	 */
 	public static enum OutputPolicy {
-		BY_EVENT, BY_ELEMENT_EVENT, BY_ATTRIBUTE_EVENT, BY_NODE_EVENT, BY_EDGE_EVENT, BY_GRAPH_EVENT, BY_STEP, BY_NODE_ADDED_REMOVED, BY_EDGE_ADDED_REMOVED, BY_NODE_ATTRIBUTE, BY_EDGE_ATTRIBUTE, BY_GRAPH_ATTRIBUTE, ByLayoutStepOutput, ByNodeMovedOutput
+		BY_EVENT, BY_ELEMENT_EVENT, BY_ATTRIBUTE_EVENT, BY_NODE_EVENT, BY_EDGE_EVENT, BY_GRAPH_EVENT, BY_STEP, BY_NODE_ADDED_REMOVED, BY_EDGE_ADDED_REMOVED, BY_NODE_ATTRIBUTE, BY_EDGE_ATTRIBUTE, BY_GRAPH_ATTRIBUTE, BY_LAYOUT_STEP, BY_NODE_MOVED, ON_RUNNER, NONE
 	}
 
 	/**
@@ -190,7 +192,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	 * rendered. This will smooth the move of nodes in the movie.
 	 */
 	public static enum LayoutPolicy {
-		NoLayout, ComputedInLayoutRunner, ComputedAtNewImage
+		NO_LAYOUT, COMPUTED_IN_LAYOUT_RUNNER, COMPUTED_AT_NEW_IMAGE
 	}
 
 	/**
@@ -236,8 +238,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	 * Experimental. Allows to choose which renderer will be used.
 	 */
 	public static enum RendererType {
-		Basic(
-				"org.graphstream.ui.swingViewer.basicRenderer.SwingBasicGraphRenderer"), Scala(
+		BASIC(
+				"org.graphstream.ui.swingViewer.basicRenderer.SwingBasicGraphRenderer"), SCALA(
 				"org.graphstream.ui.j2dviewer.J2DGraphRenderer")
 
 		;
@@ -259,7 +261,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	protected String filePrefix;
 	protected BufferedImage image;
 	protected Graphics2D g2d;
-	protected GraphicGraph gg;
+	protected final GraphicGraph gg;
+	protected Sink sink;
 	protected int counter;
 	protected OutputPolicy outputPolicy;
 	protected LinkedList<PostRenderer> postRenderers;
@@ -271,6 +274,11 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	protected int layoutStepAfterStabilization = 10;
 	protected int layoutStepPerFrame = 4;
 	protected int layoutStepWithoutFrame = 0;
+	protected long outputRunnerDelay = 10;
+	protected boolean outputRunnerAlive = false;
+	protected OutputRunner outputRunner;
+	protected ThreadProxyPipe outputRunnerProxy;
+	protected boolean clearImageBeforeOutput = false;
 
 	public FileSinkImages(String prefix, OutputType type,
 			Resolution resolution, OutputPolicy outputPolicy) {
@@ -279,14 +287,15 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		this.filePrefix = prefix;
 		this.counter = 0;
 		this.gg = new GraphicGraph(prefix);
-		this.outputPolicy = outputPolicy;
 		this.postRenderers = new LinkedList<PostRenderer>();
-		this.layoutPolicy = LayoutPolicy.NoLayout;
+		this.layoutPolicy = LayoutPolicy.NO_LAYOUT;
 		this.layout = null;
 		this.optLayout = null;
 		this.layoutPipeIn = null;
+		this.sink = gg;
 
-		setRenderer(RendererType.Basic);
+		setOutputPolicy(outputPolicy);
+		setRenderer(RendererType.BASIC);
 
 		initImage();
 	}
@@ -406,7 +415,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	public synchronized void setLayoutPolicy(LayoutPolicy policy) {
 		if (policy != layoutPolicy) {
 			switch (layoutPolicy) {
-			case ComputedInLayoutRunner:
+			case COMPUTED_IN_LAYOUT_RUNNER:
 				layout.removeListener(this);
 				optLayout.release();
 				optLayout = null;
@@ -414,7 +423,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 				layoutPipeIn = null;
 				layout = null;
 				break;
-			case ComputedAtNewImage:
+			case COMPUTED_AT_NEW_IMAGE:
 				layout.removeListener(this);
 				gg.removeSink(layout);
 				layout.removeAttributeSink(gg);
@@ -423,11 +432,11 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 			}
 
 			switch (policy) {
-			case ComputedInLayoutRunner:
+			case COMPUTED_IN_LAYOUT_RUNNER:
 				layout = Layouts.newLayoutAlgorithm();
 				optLayout = new InnerLayoutRunner();
 				break;
-			case ComputedAtNewImage:
+			case COMPUTED_AT_NEW_IMAGE:
 				layout = Layouts.newLayoutAlgorithm();
 				gg.addSink(layout);
 				layout.addAttributeSink(gg);
@@ -481,6 +490,73 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		}
 	}
 
+	public synchronized void setOutputRunnerEnabled(boolean on) {
+		if (!on && outputRunnerAlive) {
+			outputRunnerAlive = false;
+
+			try {
+				if (outputRunner != null)
+					outputRunner.join();
+			} catch (InterruptedException e) {
+				// ... ?
+			}
+
+			outputRunner = null;
+			sink = gg;
+
+			if (outputRunnerProxy != null)
+				outputRunnerProxy.pump();
+		}
+
+		outputRunnerAlive = on;
+
+		if (outputRunnerAlive) {
+			if (outputRunnerProxy == null) {
+				outputRunnerProxy = new ThreadProxyPipe();
+				outputRunnerProxy.addSink(gg);
+			}
+
+			sink = outputRunnerProxy;
+			outputRunner = new OutputRunner();
+			outputRunner.start();
+		}
+	}
+
+	public void setOutputRunnerDelay(long delay) {
+		outputRunnerDelay = delay;
+	}
+
+	public void stabilizeLayout(double limit) {
+		if (layout != null) {
+			while (layout.getStabilization() < limit)
+				layout.compute();
+		}
+	}
+
+	public Point3 getViewCenter() {
+		return renderer.getViewCenter();
+	}
+	
+	public void setViewCenter(double x, double y) {
+		renderer.setViewCenter(x, y, 0);
+	}
+
+	public double getViewPercent() {
+		return renderer.getViewPercent();
+	}
+	
+	public void setViewPercent(double zoom) {
+		renderer.setViewPercent(zoom);
+	}
+
+	public void setClearImageBeforeOutputEnabled(boolean on) {
+		clearImageBeforeOutput = on;
+	}
+	
+	public void end() throws IOException {
+		// Nothing to do.
+	}
+	
 	protected void initImage() {
 		image = new BufferedImage(resolution.getWidth(),
 				resolution.getHeight(), outputType.imageType);
@@ -493,18 +569,23 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	 */
 	protected synchronized void outputNewImage() {
 		switch (layoutPolicy) {
-		case ComputedInLayoutRunner:
+		case COMPUTED_IN_LAYOUT_RUNNER:
 			layoutPipeIn.pump();
 			break;
-		case ComputedAtNewImage:
+		case COMPUTED_AT_NEW_IMAGE:
 			if (layout != null)
 				layout.compute();
-			break;
 		}
 
 		if (resolution.getWidth() != image.getWidth()
 				|| resolution.getHeight() != image.getHeight())
 			initImage();
+
+		if (clearImageBeforeOutput) {
+			for (int x = 0; x < resolution.getWidth(); x++)
+				for (int y = 0; y < resolution.getHeight(); y++)
+					image.setRGB(x, y, 0);
+		}
 
 		if (gg.getNodeCount() > 0) {
 			gg.computeBounds();
@@ -559,7 +640,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	 */
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
 			String attribute, Object value) {
-		gg.edgeAttributeAdded(sourceId, timeId, edgeId, attribute, value);
+		sink.edgeAttributeAdded(sourceId, timeId, edgeId, attribute, value);
 
 		switch (outputPolicy) {
 		case BY_EVENT:
@@ -576,8 +657,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	 */
 	public void edgeAttributeChanged(String sourceId, long timeId,
 			String edgeId, String attribute, Object oldValue, Object newValue) {
-		gg.edgeAttributeChanged(sourceId, timeId, edgeId, attribute, oldValue,
-				newValue);
+		sink.edgeAttributeChanged(sourceId, timeId, edgeId, attribute,
+				oldValue, newValue);
 
 		switch (outputPolicy) {
 		case BY_EVENT:
@@ -594,7 +675,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	 */
 	public void edgeAttributeRemoved(String sourceId, long timeId,
 			String edgeId, String attribute) {
-		gg.edgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
+		sink.edgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
 
 		switch (outputPolicy) {
 		case BY_EVENT:
@@ -611,7 +692,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	 */
 	public void graphAttributeAdded(String sourceId, long timeId,
 			String attribute, Object value) {
-		gg.graphAttributeAdded(sourceId, timeId, attribute, value);
+		sink.graphAttributeAdded(sourceId, timeId, attribute, value);
 
 		switch (outputPolicy) {
 		case BY_EVENT:
@@ -628,7 +709,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	 */
 	public void graphAttributeChanged(String sourceId, long timeId,
 			String attribute, Object oldValue, Object newValue) {
-		gg.graphAttributeChanged(sourceId, timeId, attribute, oldValue,
+		sink.graphAttributeChanged(sourceId, timeId, attribute, oldValue,
 				newValue);
 
 		switch (outputPolicy) {
@@ -646,7 +727,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	 */
 	public void graphAttributeRemoved(String sourceId, long timeId,
 			String attribute) {
-		gg.graphAttributeRemoved(sourceId, timeId, attribute);
+		sink.graphAttributeRemoved(sourceId, timeId, attribute);
 
 		switch (outputPolicy) {
 		case BY_EVENT:
@@ -663,7 +744,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	 */
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
 			String attribute, Object value) {
-		gg.nodeAttributeAdded(sourceId, timeId, nodeId, attribute, value);
+		sink.nodeAttributeAdded(sourceId, timeId, nodeId, attribute, value);
 
 		switch (outputPolicy) {
 		case BY_EVENT:
@@ -680,8 +761,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	 */
 	public void nodeAttributeChanged(String sourceId, long timeId,
 			String nodeId, String attribute, Object oldValue, Object newValue) {
-		gg.nodeAttributeChanged(sourceId, timeId, nodeId, attribute, oldValue,
-				newValue);
+		sink.nodeAttributeChanged(sourceId, timeId, nodeId, attribute,
+				oldValue, newValue);
 
 		switch (outputPolicy) {
 		case BY_EVENT:
@@ -698,7 +779,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	 */
 	public void nodeAttributeRemoved(String sourceId, long timeId,
 			String nodeId, String attribute) {
-		gg.nodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
+		sink.nodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
 
 		switch (outputPolicy) {
 		case BY_EVENT:
@@ -715,7 +796,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	 */
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
 			String fromNodeId, String toNodeId, boolean directed) {
-		gg.edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId, directed);
+		sink.edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId, directed);
 
 		switch (outputPolicy) {
 		case BY_EVENT:
@@ -731,7 +812,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	 * @see org.graphstream.stream.Sink
 	 */
 	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
-		gg.edgeRemoved(sourceId, timeId, edgeId);
+		sink.edgeRemoved(sourceId, timeId, edgeId);
 
 		switch (outputPolicy) {
 		case BY_EVENT:
@@ -747,7 +828,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	 * @see org.graphstream.stream.Sink
 	 */
 	public void graphCleared(String sourceId, long timeId) {
-		gg.graphCleared(sourceId, timeId);
+		sink.graphCleared(sourceId, timeId);
 
 		switch (outputPolicy) {
 		case BY_EVENT:
@@ -764,7 +845,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	 * @see org.graphstream.stream.Sink
 	 */
 	public void nodeAdded(String sourceId, long timeId, String nodeId) {
-		gg.nodeAdded(sourceId, timeId, nodeId);
+		sink.nodeAdded(sourceId, timeId, nodeId);
 
 		switch (outputPolicy) {
 		case BY_EVENT:
@@ -780,7 +861,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	 * @see org.graphstream.stream.Sink
 	 */
 	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
-		gg.nodeRemoved(sourceId, timeId, nodeId);
+		sink.nodeRemoved(sourceId, timeId, nodeId);
 
 		switch (outputPolicy) {
 		case BY_EVENT:
@@ -796,7 +877,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	 * @see org.graphstream.stream.Sink
 	 */
 	public void stepBegins(String sourceId, long timeId, double step) {
-		gg.stepBegins(sourceId, timeId, step);
+		sink.stepBegins(sourceId, timeId, step);
 
 		switch (outputPolicy) {
 		case BY_EVENT:
@@ -808,7 +889,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 
 	public void nodeMoved(String id, double x, double y, double z) {
 		switch (outputPolicy) {
-		case ByNodeMovedOutput:
+		case BY_NODE_MOVED:
 			outputNewImage();
 			break;
 		}
@@ -822,7 +903,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 
 	public void nodesMoved(Map<String, double[]> nodes) {
 		switch (outputPolicy) {
-		case ByNodeMovedOutput:
+		case BY_NODE_MOVED:
 			outputNewImage();
 			break;
 		}
@@ -833,7 +914,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 
 	public void stepCompletion(double percent) {
 		switch (outputPolicy) {
-		case ByLayoutStepOutput:
+		case BY_LAYOUT_STEP:
 			layoutStepWithoutFrame++;
 
 			if (layoutStepWithoutFrame >= layoutStepPerFrame) {
@@ -908,6 +989,25 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 				if (stepAfterStabilization > layoutStepAfterStabilization)
 					loop = false;
 			} while (loop);
+		}
+	}
+
+	protected class OutputRunner extends Thread {
+		public OutputRunner() {
+			setDaemon(true);
+		}
+
+		public void run() {
+			while (outputRunnerAlive && outputPolicy == OutputPolicy.ON_RUNNER) {
+				outputRunnerProxy.pump();
+				outputNewImage();
+
+				try {
+					Thread.sleep(outputRunnerDelay);
+				} catch (InterruptedException e) {
+					outputRunnerAlive = false;
+				}
+			}
 		}
 	}
 
