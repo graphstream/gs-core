@@ -409,8 +409,11 @@ public class SpringBox extends SourceBase implements Layout,
 	}
 
 	public void clear() {
-		// TODO
-		throw new RuntimeException("clear() TODO in ElasticBox. Sorry ;-)");
+		energies.clearEnergies();
+		nodes.removeAllParticles();
+		edges.clear();
+		nodeMoveCount = 0;
+		lastStepTime = 0;
 	}
 
 	public void compute() {

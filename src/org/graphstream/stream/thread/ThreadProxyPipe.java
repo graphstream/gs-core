@@ -49,41 +49,42 @@ import org.miv.mbox.MBoxStandalone;
  * <p>
  * This filter allows to register it as an output for some source of events in a
  * source thread (hereafter called the input thread) and to register listening
- * outputs in a destination thread (hereafter called the output thread).
+ * outputs in a destination thread (hereafter called the sink thread).
  * </p>
  * 
  * <pre>
  *                       |
- *   Input ----> ThreadProxyFilter ----> Outputs
+ *   Source ---> ThreadProxyFilter ----> Sink
  *  Thread 1             |              Thread 2
  *                       |
  * </pre>
  * 
  * <p>
- * In other words, this class allows to listen in a (output) thread graph events
- * that are produced in another (input) thread without any explicit
- * synchronisation on the source of events.
+ * In other words, this class allows to listen in a sink thread graph events
+ * that are produced in another source thread without any explicit
+ * synchronization on the source of events.
  * </p>
  * 
  * <p>
- * The only restriction is that the output thread must regularly call the
+ * The only restriction is that the sink thread must regularly call the
  * {@link #pump()} method to dispatch events coming from the source to all
- * outputs registered (see the explanation in
- * {@link org.graphstream.stream.ProxyPipe}).
+ * sinks registered (see the explanation in {@link org.graphstream.stream.ProxyPipe}).
  * </p>
  * 
  * <p>
  * You can register any kind of input as source of event, but if the input is a
  * graph, then you can choose to "replay" all the content of the graph so that
  * at the other end of the filter, all outputs receive the complete content of
- * the graph. This is the default behaviour if this filter is constructed with a
+ * the graph. This is the default behavior if this filter is constructed with a
  * graph as input.
  * </p>
  */
 public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 		MBoxListener {
-	// Attributes
 
+	/**
+	 * Proxy id.
+	 */
 	protected String id;
 
 	/**
@@ -97,7 +98,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 	protected MBox events;
 
 	/**
-	 * Used only to remove the listener. We ensure this is done in the Input
+	 * Used only to remove the listener. We ensure this is done in the source
 	 * thread.
 	 */
 	protected Source input;
@@ -106,8 +107,6 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 	 * Signals that this proxy must be removed from the source input.
 	 */
 	protected boolean unregisterWhenPossible = false;
-
-	// Constructors
 
 	/**
 	 * New thread proxy pipe with no input.
@@ -223,8 +222,6 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 		((MBoxStandalone) this.events).addListener(this);
 	}
 
-	// Access
-
 	@Override
 	public String toString() {
 		String dest = "nil";
@@ -234,21 +231,6 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 
 		return String.format("thread-proxy(from %s to %s)", from, dest);
 	}
-
-	// Command
-
-	/**
-	 * Allow filter/filter synchronization through two thread proxy filters in
-	 * the two opposite directions.
-	 * 
-	 * @param other
-	 *            The other thread proxy filter going in the reverse direction.
-	 * @param onThis
-	 *            one of the outputs of this proxy thread filter, source of
-	 *            events for the "other" thread proxy filter. public void
-	 *            synchronizeWith( ThreadProxyFilter other, Filter onThis ) {
-	 *            synchro.add( new InputSynchro( onThis, other ) ); }
-	 */
 
 	/**
 	 * Ask the proxy to unregister from the event input source (stop receive
@@ -268,13 +250,15 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 		((MBoxStandalone) events).processMessages();
 	}
 
-	// Command
-
 	/**
 	 * Set of events sent via the message box.
 	 */
 	protected static enum GraphEvents {
-		ADD_NODE, DEL_NODE, ADD_EDGE, DEL_EDGE, STEP, CLEARED, ADD_GRAPH_ATTR, CHG_GRAPH_ATTR, DEL_GRAPH_ATTR, ADD_NODE_ATTR, CHG_NODE_ATTR, DEL_NODE_ATTR, ADD_EDGE_ATTR, CHG_EDGE_ATTR, DEL_EDGE_ATTR
+		ADD_NODE, DEL_NODE, ADD_EDGE, DEL_EDGE,
+		STEP, CLEARED,
+		ADD_GRAPH_ATTR, CHG_GRAPH_ATTR, DEL_GRAPH_ATTR,
+		ADD_NODE_ATTR, CHG_NODE_ATTR, DEL_NODE_ATTR,
+		ADD_EDGE_ATTR, CHG_EDGE_ATTR, DEL_EDGE_ATTR
 	};
 
 	protected void replayGraph(Graph graph) {
@@ -288,6 +272,8 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 					events.post(from, GraphEvents.ADD_GRAPH_ATTR, graphId,
 							sourceTime.newEvent(), key, graph.getAttribute(key));
 
+			Thread.yield();
+			
 			// Replay all nodes and their attributes.
 
 			for (Node node : graph) {
@@ -299,6 +285,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 						events.post(from, GraphEvents.ADD_NODE_ATTR, graphId,
 								sourceTime.newEvent(), node.getId(), key,
 								node.getAttribute(key));
+				Thread.yield();
 			}
 
 			// Replay all edges and their attributes.
@@ -314,6 +301,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 						events.post(from, GraphEvents.ADD_EDGE_ATTR, graphId,
 								sourceTime.newEvent(), edge.getId(), key,
 								edge.getAttribute(key));
+				Thread.yield();
 			}
 		} catch (CannotPostException e) {
 			System.err
@@ -331,8 +319,6 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 
 		return false;
 	}
-
-	// Command
 
 	public void edgeAttributeAdded(String graphId, long timeId, String edgeId,
 			String attribute, Object value) {

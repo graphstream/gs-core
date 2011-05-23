@@ -486,21 +486,31 @@ public class Viewer implements ActionListener {
 	 */
 	public void actionPerformed(ActionEvent e) {
 		synchronized (views) {
+//long t1=System.currentTimeMillis();
+//long gsize1=graph.getNodeCount();
 			if (pumpPipe != null)
 				pumpPipe.pump();
+//long gsize2=graph.getNodeCount();
+//long t2=System.currentTimeMillis();
 
 			if (layoutPipeIn != null)
 				layoutPipeIn.pump();
+//long t3=System.currentTimeMillis();
 
 			boolean changed = graph.graphChangedFlag();
 
 			if (changed)
 				computeGraphMetrics();
+//long t4=System.currentTimeMillis();
 
 			for (View view : views.values())
 				view.display(graph, changed);
+//long t5=System.currentTimeMillis();
 
 			graph.resetGraphChangedFlag();
+			
+//System.err.printf("display pump=%f  layoutPump=%f  metrics=%f  display=%f (size delta=%d  size1=%d size2=%d)%n",
+//		(t2-t1)/1000.0, (t3-t2)/1000.0, (t4-t3)/1000.0, (t5-t4)/1000.0, (gsize2-gsize1), gsize1, gsize2);
 		}
 	}
 
