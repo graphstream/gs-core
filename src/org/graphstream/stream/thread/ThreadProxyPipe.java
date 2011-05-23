@@ -272,6 +272,8 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 					events.post(from, GraphEvents.ADD_GRAPH_ATTR, graphId,
 							sourceTime.newEvent(), key, graph.getAttribute(key));
 
+			Thread.yield();
+			
 			// Replay all nodes and their attributes.
 
 			for (Node node : graph) {
@@ -283,6 +285,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 						events.post(from, GraphEvents.ADD_NODE_ATTR, graphId,
 								sourceTime.newEvent(), node.getId(), key,
 								node.getAttribute(key));
+				Thread.yield();
 			}
 
 			// Replay all edges and their attributes.
@@ -298,6 +301,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 						events.post(from, GraphEvents.ADD_EDGE_ATTR, graphId,
 								sourceTime.newEvent(), edge.getId(), key,
 								edge.getAttribute(key));
+				Thread.yield();
 			}
 		} catch (CannotPostException e) {
 			System.err
