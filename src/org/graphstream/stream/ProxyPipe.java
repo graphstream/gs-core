@@ -56,7 +56,7 @@ package org.graphstream.stream;
  * </p>
  * 
  * <p>
- * This way of doing allows for example to passe a thread frontier with a
+ * This way of doing allows for example to pass a thread frontier with a
  * minimum of synchronization : only the mail box has to be synchronized. And
  * the source and sink can most of the time run in parallel. Without such a
  * proxy, we would have to synchronize the whole graph, and threads would
