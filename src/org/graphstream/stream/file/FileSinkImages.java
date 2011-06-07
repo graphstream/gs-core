@@ -567,7 +567,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	/**
 	 * Produce a new image.
 	 */
-	protected synchronized void outputNewImage() {
+	public synchronized void outputNewImage() {
 		switch (layoutPolicy) {
 		case COMPUTED_IN_LAYOUT_RUNNER:
 			layoutPipeIn.pump();
