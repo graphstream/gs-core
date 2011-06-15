@@ -418,7 +418,7 @@ public class StyleSheet {
 	 *             For any kind of I/O error or parse error.
 	 */
 	public void parseFromURL(String url) throws IOException {
-		URL u = ClassLoader.getSystemResource(url);
+		URL u = StyleSheet.class.getClassLoader().getResource(url);
 		if (u == null) {
 			File f = new File(url);
 

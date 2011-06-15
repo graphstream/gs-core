@@ -125,7 +125,7 @@ public class ImageCache {
 			return null;
 
 		if (ii == null) {
-			URL url = ClassLoader.getSystemClassLoader().getResource(
+			URL url = ImageCache.class.getClassLoader().getResource(
 					fileNameOrUrl);
 
 			if (url != null) {
