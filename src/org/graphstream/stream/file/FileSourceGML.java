@@ -153,13 +153,23 @@ public class FileSourceGML extends FileSourceBase {
 	protected void init() throws IOException {
 		CG = new CurrentGraph();
 
-		String v = getWord();
+		boolean loop = true;
+		
+		do {
+			String v = getWord();
 
-		if (v.toLowerCase().equals("creator"))
-			CG.addAttribute("creator", getWordOrString());
-		else
-			pushBack();
-
+			if (v.toLowerCase().equals("creator"))
+				CG.addAttribute("creator", getWordOrString());
+			else if(v.toLowerCase().equals("version"))
+				getWordOrNumber();
+			else if(v.toLowerCase().equals("title"))
+				CG.addAttribute("title", getWordOrString());
+			else {
+			    pushBack();
+			    loop  = false;
+			}
+		} while(loop);
+		
 		eatWord("graph");
 		eatSymbol('[');
 
@@ -261,6 +271,7 @@ public class FileSourceGML extends FileSourceBase {
 					parseError("expecting EOF here, got `]'");
 
 				// Do nothing, parsing finished.
+				finishParsing();
 				eatEof();
 				finished = true;
 				return false;
@@ -282,6 +293,29 @@ public class FileSourceGML extends FileSourceBase {
 		return true;
 	}
 
+	protected void finishParsing()
+		throws IOException 
+	{
+		boolean loop = true;
+		
+		do {
+			String v = getWordOrStringOrEolOrEof().toLowerCase();
+		
+			if (v.equals("creator"))
+				CG.addAttribute("creator", getWordOrString());
+			else if(v.equals("version"))
+				getWordOrNumber();
+			else if(v.equals("title"))
+				CG.addAttribute("title", getWordOrString());
+			else if(v.equals("eof")) {
+				loop = false;
+			}
+			else {
+				parseError("garbage at end of file");
+			}
+		} while(loop);
+	}
+	
 	@Override
 	public void end() throws IOException {
 		super.end();
@@ -556,6 +590,7 @@ public class FileSourceGML extends FileSourceBase {
 	protected void parseGraphics() throws IOException {
 		String key;
 		boolean loop = true;
+		HashMap<String, String> graphics = new HashMap<String, String>();
 
 		eatSymbol('[');
 
@@ -569,7 +604,7 @@ public class FileSourceGML extends FileSourceBase {
 				double value = getNumber();
 
 				ct.addAttribute(key, value);
-			} else if (key.equals("w")) {
+			} else if (key.equals("w") || key.equals("width")) {
 				double value = getNumber();
 
 				ct.addAttribute("width", value);
@@ -581,11 +616,21 @@ public class FileSourceGML extends FileSourceBase {
 				double value = getNumber();
 
 				ct.addAttribute("depth", value);
-			} else if (key.equals("color")) {
+			} else if (key.equals("color") || key.equals("fill")) {
 				String clr = getWordOrSymbolOrNumberOrStringOrEolOrEof();
 
 				ct.addAttribute("color", clr);
-			} else if (key.equals("type")) {
+				graphics.put("fill-color", clr);
+			} else if (key.equals("outline")) {
+				String clr = getWordOrString();
+				graphics.put("stroke-color", clr);
+			} else if (key.equals("outline_width")) {
+				String clr = getWordOrNumber();
+				graphics.put("stroke-mode", "plain");
+				graphics.put("stroke-width", clr);
+			} else if (key.equals("source_arrow") || key.equals("target_arrow")) {
+				getWordOrNumber();
+ 			} else if (key.equals("type")) {
 				String type = getWordOrString();
 
 				if (type.equals("arc")) {
@@ -594,8 +639,11 @@ public class FileSourceGML extends FileSourceBase {
 					String name = getWordOrString();
 
 					ct.addAttribute("icon", name);
+				} else if (type.equals("ellipse")) {
+					
 				} else if (type.equals("line")) {
-					ct.addAttribute("line", readPoints());
+					getWordOrString();	// eat the "Line"
+					ct.addAttribute("line", readPoints());	// eat the line points.
 				} else if (type.equals("oval")) {
 					ct.addAttribute("oval", readPoints());
 				} else if (type.equals("polygon")) {
@@ -619,6 +667,17 @@ public class FileSourceGML extends FileSourceBase {
 			}
 
 		} while (loop);
+		
+		addStyle(graphics, ct);
+	}
+	
+	protected void addStyle(HashMap<String, String> style, CurrentThing thing) {
+		StringBuffer buf = new StringBuffer();
+		for(String key: style.keySet()) {
+			buf.append(String.format("%s: %s; ", key, style.get(key)));
+		}
+		
+		thing.addAttribute("ui.style", buf.toString());
 	}
 
 	/**
