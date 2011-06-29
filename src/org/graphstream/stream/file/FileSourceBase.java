@@ -50,8 +50,8 @@ import org.graphstream.ui.geom.Point3;
  * Base for various graph file input.
  * 
  * <p>
- * This is a piece of crap, but used in so many places... :-( TODO use a parser
- * generator (jj ?)
+ * This class is a piece of crap. However it is still used in many places... :-(
+ * TODO use a parser generator to replace it.
  * </p>
  * 
  * <p>

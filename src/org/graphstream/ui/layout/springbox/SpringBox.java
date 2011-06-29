@@ -735,7 +735,7 @@ public class SpringBox extends SourceBase implements Layout,
 	protected void nodeAttributeChanged_(String graphId, String nodeId,
 			String attribute, Object oldValue, Object newValue) {
 		if (attribute.equals("layout.weight")) {
-			if (newValue instanceof Number)
+			if (newValue instanceof Number) 
 				setNodeWeight(nodeId, ((Number) newValue).doubleValue());
 			else if (newValue == null)
 				setNodeWeight(nodeId, 1);

@@ -663,6 +663,9 @@ public class Camera {
 		GraphicNode node0 = edge.getNode0();
 		GraphicNode node1 = edge.getNode1();
 		
+		if(edge.hidden)
+			return false;
+		
 		if((!node1.positionned) || (!node0.positionned))
 			return false;
 		
