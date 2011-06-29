@@ -673,8 +673,10 @@ public class SpringBox extends SourceBase implements Layout,
 		if (attribute.equals("layout.force")) {
 			if (newValue instanceof Number)
 				setForce(((Number) newValue).doubleValue());
-			System.err.printf("layout.elasticBox.force: %f%n",
-					((Number) newValue).doubleValue());
+//			System.err.printf("layout.elasticBox.force: %f%n",
+//					((Number) newValue).doubleValue());
+			
+			energies.clearEnergies();
 		} else if (attribute.equals("layout.quality")) {
 			if (newValue instanceof Number) {
 				int q = ((Number) newValue).intValue();
@@ -685,6 +687,8 @@ public class SpringBox extends SourceBase implements Layout,
 				setQuality(q);
 				System.err.printf("layout.elasticBox.quality: %d%n", q);
 			}
+			
+			energies.clearEnergies();
 		} else if (attribute.equals("layout.exact-zone")) {
 			if (newValue instanceof Number) {
 				double factor = ((Number) newValue).doubleValue();
@@ -696,6 +700,8 @@ public class SpringBox extends SourceBase implements Layout,
 				System.err.printf(
 						"layout.elasticBox.exact-zone: %f of [0..1]%n",
 						viewZone);
+				
+				energies.clearEnergies();
 			}
 		} else if (attribute.equals("layout.output-stats")) {
 			if (newValue == null)
@@ -710,6 +716,8 @@ public class SpringBox extends SourceBase implements Layout,
 				stabilizationLimit = ((Number)newValue).doubleValue();
 				if(stabilizationLimit > 1) stabilizationLimit = 1;
 				else if(stabilizationLimit < 0) stabilizationLimit = 0;
+				
+				energies.clearEnergies();
 			}
 		}
 	}
@@ -739,6 +747,8 @@ public class SpringBox extends SourceBase implements Layout,
 				setNodeWeight(nodeId, ((Number) newValue).doubleValue());
 			else if (newValue == null)
 				setNodeWeight(nodeId, 1);
+
+			energies.clearEnergies();
 		}
 	}
 
@@ -767,9 +777,12 @@ public class SpringBox extends SourceBase implements Layout,
 				setEdgeWeight(edgeId, ((Number) newValue).doubleValue());
 			else if (newValue == null)
 				setEdgeWeight(edgeId, 1);
+			
+			energies.clearEnergies();
 		} else if (attribute.equals("layout.ignored")) {
 			if (newValue instanceof Boolean)
 				ignoreEdge(edgeId, (Boolean) newValue);
+			energies.clearEnergies();
 		}
 	}
 
