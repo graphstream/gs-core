@@ -71,11 +71,20 @@ public class NodeRenderer extends ElementRenderer {
 		g.setColor(color);
 
 		if (group.getSizeMode() == SizeMode.DYN_SIZE) {
-			width = metrics.lengthToGu(StyleConstants.convertValue(element
-					.getAttribute("ui.size")));
-			height = width;
-			w2 = width / 2;
-			h2 = height / 2;
+			Object s = element.getAttribute("ui.size");
+			
+			if(s != null) {
+				width = metrics.lengthToGu(StyleConstants.convertValue(s));
+				height = width;
+				w2 = width / 2;
+				h2 = height / 2;
+			} else {
+				size = group.getSize();
+				width = metrics.lengthToGu(size, 0);
+				height = size.size() > 1 ? metrics.lengthToGu(size, 1) : width;
+				w2 = width / 2;
+				h2 = height / 2;
+			}
 		}
 	}
 
