@@ -107,6 +107,9 @@ public abstract class FileSinkBase implements FileSink {
 	/**
 	 * Echo each element and attribute of the graph to the actual output.
 	 * 
+	 * The elements are echoed as add events (add node, add edge, add attribute).
+	 * This method guarantees there are no change or delete events.
+	 * 
 	 * @param graph
 	 *            The graph to export.
 	 */
@@ -237,8 +240,8 @@ public abstract class FileSinkBase implements FileSink {
 	 * does not create a new writer if the given writer is already instance of
 	 * PrintWriter.
 	 * 
-	 * @param stream
-	 *            An already existing output stream.
+	 * @param writer
+	 *            An already existing writer.
 	 * @return A new writer.
 	 * @throws IOException
 	 *             If any I/O error occurs.

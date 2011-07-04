@@ -28,45 +28,53 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.stream.file;
 
-/**
- * Try to instantiate the correct writer given a graph filename.
- * 
- * <p>
- * This class tries to instantiate a writer given a filename. Actually it purely
- * tries to analyze the extension and propose the writer according to this
- * extension.
- * </p>
- */
-public class FileSinkFactory {
-	/**
-	 * Looks at the file name given and its extension and propose a file output
-	 * for the format that match this extension.
-	 * 
-	 * @param filename
-	 *            The file name where the graph will be written.
-	 * @return A file sink or null.
-	 */
-	public static FileSink sinkFor(String filename) {
-		// String fc = new String( filename );
-		filename = filename.toLowerCase();
+package org.graphstream.stream.file.gml;
 
-		if (filename.endsWith(".dgs"))
-			return new FileSinkDGS();
+import java.io.IOException;
 
-		if (filename.endsWith(".dgml"))
-			return new FileSinkDynamicGML();
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.stream.file.FileSinkDynamicGML;
+import org.graphstream.stream.file.FileSinkGML;
+
+public class TestSinkGML {
+	public static void main(String args[]) {
+		try {
+			(new TestSinkGML()).test();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void test() throws IOException {
+		Graph graph = new MultiGraph("test GML");
+		FileSinkGML out1 = new FileSinkGML();
+		FileSinkDynamicGML out2 = new FileSinkDynamicGML();
+	
+		out1.begin("TestSinkGML.gml");
+		out2.begin("TestSinkGML.dgml");
 		
-		if (filename.endsWith(".gml"))
-			return new FileSinkGML();
-
-		if (filename.endsWith(".dot"))
-			return new FileSinkDOT();
-
-		if (filename.endsWith(".svg"))
-			return new FileSinkSVG();
-
-		return null;
+		graph.addSink(out1);
+		graph.addSink(out2);
+		
+		graph.addNode("A");
+		graph.getNode("A").addAttribute("s", "foo bar");
+		graph.addNode("B");
+		graph.stepBegins(1);
+		graph.addEdge("AB", "A", "B", true);
+		graph.getEdge("AB").addAttribute("n", 1);
+		graph.stepBegins(2);
+		graph.addAttribute("b", true);
+		graph.getNode("B").addAttribute("c", 'X');
+		graph.getNode("B").addAttribute("d", 'Y');
+		graph.stepBegins(3);
+		graph.getNode("B").removeAttribute("c");
+		graph.removeAttribute("b");
+		graph.removeNode("A");
+		graph.removeNode("B");
+		
+		out1.end();
+		out2.end();
 	}
 }

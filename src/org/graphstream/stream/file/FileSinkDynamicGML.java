@@ -30,10 +30,6 @@
  */
 package org.graphstream.stream.file;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Locale;
-
 /**
  * Transform the input events into a GML graph.
  * 
@@ -50,39 +46,16 @@ import java.util.Locale;
  * addition directly follows the corresponding node or edge.
  * </p>
  */
-public class FileSinkGML extends FileSinkBase {
-	// Attributes
-
-	/** Alias on the output OutputStream. */
-	protected PrintWriter out;
-
-	protected String nodeToFinish = null;
-
-	protected String edgeToFinish = null;
-
+public class FileSinkDynamicGML extends FileSinkGML {
 	// Construction
 
-	public FileSinkGML() {
+	public FileSinkDynamicGML() {
 		// NOP
-	}
-
-	// File format events
-
-	@Override
-	protected void outputHeader() throws IOException {
-		out = (PrintWriter) output;
-
-		out.printf("graph [%n");
-	}
-
-	@Override
-	protected void outputEndOfFile() throws IOException {
-		ensureToFinish();
-		out.printf("]%n");
 	}
 
 	// Attribute events
 
+	@Override
 	public void graphAttributeAdded(String sourceId, long timeId,
 			String attribute, Object value) {
 		ensureToFinish();
@@ -94,74 +67,91 @@ public class FileSinkGML extends FileSinkBase {
 		}
 	}
 
+	@Override
 	public void graphAttributeChanged(String sourceId, long timeId,
 			String attribute, Object oldValue, Object newValue) {
 		ensureToFinish();
-		// GML is not a dynamic file format ?
+		graphAttributeAdded(sourceId, timeId, attribute, newValue);
 	}
 
+	@Override
 	public void graphAttributeRemoved(String sourceId, long timeId,
 			String attribute) {
 		ensureToFinish();
-		// GML is not a dynamic file format ?
+		out.printf("\t-%s%n", attribute);
 	}
 
+	@Override
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
 			String attribute, Object value) {
-		if (nodeToFinish != null && nodeToFinish.equals(nodeId)) {
-			String val = valueToString(value);
-
-			if (val != null) {
-				out.printf("\t\t%s %s%n", attribute, val);
-			}
-		} else {
-			ensureToFinish();
-		}
+		nodeAttributeChanged(sourceId, timeId, nodeId, attribute, null, value);
 	}
 
+	@Override
 	public void nodeAttributeChanged(String sourceId, long timeId,
 			String nodeId, String attribute, Object oldValue, Object newValue) {
-		if (edgeToFinish != null)
+
+		if(nodeToFinish == null || (!nodeToFinish.equals(nodeId))) {
 			ensureToFinish();
-		// GML is not a dynamic file format ?
-	}
+			out.printf("\t+node [%n");
+			out.printf("\t\tid \"%s\"%n", nodeId);
+			nodeToFinish = nodeId;
+		}
 
-	public void nodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute) {
-		if (edgeToFinish != null)
-			ensureToFinish();
-		// GML is not a dynamic file format ?
-	}
-
-	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
-			String attribute, Object value) {
-		if (edgeToFinish != null && edgeToFinish.equals(edgeId)) {
-			String val = valueToString(value);
-
+		if(newValue != null) {
+			String val = valueToString(newValue);
+			
 			if (val != null) {
 				out.printf("\t\t%s %s%n", attribute, val);
 			}
 		} else {
-			ensureToFinish();
+			out.printf("\t\t-%s%n", attribute);
 		}
 	}
 
-	public void edgeAttributeChanged(String sourceId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
-		if (nodeToFinish != null)
-			ensureToFinish();
-		// GML is not a dynamic file format ?
+	@Override
+	public void nodeAttributeRemoved(String sourceId, long timeId,
+			String nodeId, String attribute) {
+		nodeAttributeChanged(sourceId, timeId, nodeId, attribute, null, null);
 	}
 
+	@Override
+	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
+			String attribute, Object value) {
+		edgeAttributeChanged(sourceId, timeId, edgeId, attribute, null, value);
+	}
+
+	@Override
+	public void edgeAttributeChanged(String sourceId, long timeId,
+			String edgeId, String attribute, Object oldValue, Object newValue) {
+
+		if(edgeToFinish == null || (!edgeToFinish.equals(edgeId))) {
+			ensureToFinish();
+			out.printf("\t+edge [%n");
+			out.printf("\t\tid \"%s\"%n", edgeId);
+			edgeToFinish = edgeId;
+		}
+
+		if(newValue != null) {
+			String val = valueToString(newValue);
+			
+			if (val != null) {
+				out.printf("\t\t%s %s%n", attribute, val);
+			}
+		} else {
+			out.printf("\t\t-%s%n", attribute);
+		}
+	}
+
+	@Override
 	public void edgeAttributeRemoved(String sourceId, long timeId,
 			String edgeId, String attribute) {
-		if (nodeToFinish != null)
-			ensureToFinish();
-		// GML is not a dynamic file format ?
+		edgeAttributeChanged(sourceId, timeId, edgeId, attribute, null, null);
 	}
 
 	// Element events
 
+	@Override
 	public void nodeAdded(String sourceId, long timeId, String nodeId) {
 		ensureToFinish();
 		out.printf("\tnode [%n");
@@ -169,10 +159,13 @@ public class FileSinkGML extends FileSinkBase {
 		nodeToFinish = nodeId;
 	}
 
+	@Override
 	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 		ensureToFinish();
+		out.printf("\t-node \"%s\"%n", nodeId);
 	}
 
+	@Override
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
 			String fromNodeId, String toNodeId, boolean directed) {
 		ensureToFinish();
@@ -180,46 +173,26 @@ public class FileSinkGML extends FileSinkBase {
 		out.printf("\t\tid \"%s\"%n", edgeId);
 		out.printf("\t\tsource \"%s\"%n", fromNodeId);
 		out.printf("\t\ttarget \"%s\"%n", toNodeId);
+		out.printf("\t\tdirected %s%n", directed ? "1" : "0");
 		edgeToFinish = edgeId;
 	}
 
+	@Override
 	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 		ensureToFinish();
+		out.printf("\t-edge \"%s\"%n", edgeId);
 	}
 
+	@Override
 	public void graphCleared(String sourceId, long timeId) {
 		// Ah ah ah !!
 	}
 
+	@Override
 	public void stepBegins(String sourceId, long timeId, double step) {
-		// NOP
-	}
-
-	// Commands
-
-	protected String valueToString(Object value) {
-		if (value instanceof CharSequence) {
-			return String.format("\"%s\"", (CharSequence) value);
-		} else if (value instanceof Number) {
-			double val = ((Number)value).doubleValue();
-			if((val-((int)val)) == 0) 
-				 return String.format(Locale.US, "%d", (int)val);
-			else return String.format(Locale.US, "%f", val);
-		} else if (value != null) {
-			return String.format("\"%s\"", value.toString());
-		}
-
-		return null;
-	}
-
-	protected void ensureToFinish() {
-		assert ((nodeToFinish != null && edgeToFinish == null)
-				|| (nodeToFinish == null && edgeToFinish != null) || (nodeToFinish == null && edgeToFinish == null));
-
-		if (nodeToFinish != null || edgeToFinish != null) {
-			out.printf("\t]%n");
-			nodeToFinish = null;
-			edgeToFinish = null;
-		}
+		ensureToFinish();
+		if((step-((int)step))==0) 
+		     out.printf("\tstep %d%n", (int)step);
+		else out.printf("\tstep %f%n", step);
 	}
 }

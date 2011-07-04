@@ -125,7 +125,7 @@ public class FileSourceFactory {
 
 		// If we did not found anything, we try with the filename extension ...
 
-		if (flc.endsWith(".gml")) {
+		if (flc.endsWith(".gml") || flc.endsWith(".dgml")) {
 			return new FileSourceGML();
 		}
 
