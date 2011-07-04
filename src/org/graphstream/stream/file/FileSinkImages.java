@@ -35,6 +35,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -44,6 +46,8 @@ import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
+import org.graphstream.graph.Graph;
+import org.graphstream.stream.GraphReplay;
 import org.graphstream.stream.ProxyPipe;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.thread.ThreadProxyPipe;
@@ -83,7 +87,7 @@ import org.graphstream.ui.swingViewer.GraphRenderer;
  * 
  * </pre>
  */
-public class FileSinkImages extends FileSinkBase implements LayoutListener {
+public class FileSinkImages implements FileSink, LayoutListener {
 	/**
 	 * Output resolutions.
 	 */
@@ -279,6 +283,15 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	protected OutputRunner outputRunner;
 	protected ThreadProxyPipe outputRunnerProxy;
 	protected boolean clearImageBeforeOutput = false;
+	protected boolean hasBegan = false;
+
+	public FileSinkImages() {
+		this(OutputType.PNG, Resolutions.HD720);
+	}
+
+	public FileSinkImages(OutputType type, Resolution resolution) {
+		this("frame_", type, resolution, OutputPolicy.NONE);
+	}
 
 	public FileSinkImages(String prefix, OutputType type,
 			Resolution resolution, OutputPolicy outputPolicy) {
@@ -536,7 +549,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	public Point3 getViewCenter() {
 		return renderer.getViewCenter();
 	}
-	
+
 	public void setViewCenter(double x, double y) {
 		renderer.setViewCenter(x, y, 0);
 	}
@@ -544,7 +557,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	public double getViewPercent() {
 		return renderer.getViewPercent();
 	}
-	
+
 	public void setViewPercent(double zoom) {
 		renderer.setViewPercent(zoom);
 	}
@@ -552,11 +565,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	public void setClearImageBeforeOutputEnabled(boolean on) {
 		clearImageBeforeOutput = on;
 	}
-	
-	public void end() throws IOException {
-		// Nothing to do.
-	}
-	
+
 	protected void initImage() {
 		image = new BufferedImage(resolution.getWidth(),
 				resolution.getHeight(), outputType.imageType);
@@ -567,7 +576,12 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	/**
 	 * Produce a new image.
 	 */
-	public synchronized void outputNewImage() {
+	public void outputNewImage() {
+		outputNewImage(String.format("%s%06d.%s", filePrefix, counter++,
+				outputType.ext));
+	}
+
+	public synchronized void outputNewImage(String filename) {
 		switch (layoutPolicy) {
 		case COMPUTED_IN_LAYOUT_RUNNER:
 			layoutPipeIn.pump();
@@ -603,8 +617,7 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		image.flush();
 
 		try {
-			File out = new File(String.format("%s%06d.%s", filePrefix,
-					counter++, outputType.ext));
+			File out = new File(filename);
 
 			if (out.getParent() != null && !out.getParentFile().exists())
 				out.getParentFile().mkdirs();
@@ -621,18 +634,94 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		System.out.printf("\033[s\033[K%d images written\033[u", counter);
 	}
 
-	/**
-	 * @see org.graphstream.stream.file.FileSink
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.file.FileSink#begin(java.io.OutputStream)
 	 */
-	@Override
-	protected void outputEndOfFile() throws IOException {
+	public void begin(OutputStream stream) throws IOException {
+		throw new IOException("not implemented");
 	}
 
-	/**
-	 * @see org.graphstream.stream.file.FileSink
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.file.FileSink#begin(java.io.Writer)
 	 */
-	@Override
-	protected void outputHeader() throws IOException {
+	public void begin(Writer writer) throws IOException {
+		throw new IOException("not implemented");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.file.FileSink#begin(java.lang.String)
+	 */
+	public void begin(String prefix) throws IOException {
+		this.filePrefix = prefix;
+		this.hasBegan = true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.file.FileSink#flush()
+	 */
+	public void flush() throws IOException {
+		// Nothing to do
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.file.FileSink#end()
+	 */
+	public void end() throws IOException {
+		flush();
+		this.hasBegan = false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph
+	 * , java.io.OutputStream)
+	 */
+	public void writeAll(Graph g, OutputStream stream) throws IOException {
+		throw new IOException("not implemented");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph
+	 * , java.io.Writer)
+	 */
+	public void writeAll(Graph g, Writer writer) throws IOException {
+		throw new IOException("not implemented");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph
+	 * , java.lang.String)
+	 */
+	public synchronized void writeAll(Graph g, String filename)
+			throws IOException {
+		gg.clear();
+
+		GraphReplay replay = new GraphReplay("file_sink_image-write_all-replay");
+		replay.addSink(gg);
+		replay.replay(g);
+		replay.removeSink(gg);
+
+		outputNewImage(filename);
+
+		gg.clear();
 	}
 
 	/**
@@ -647,7 +736,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		case BY_EDGE_EVENT:
 		case BY_EDGE_ATTRIBUTE:
 		case BY_ATTRIBUTE_EVENT:
-			outputNewImage();
+			if (hasBegan)
+				outputNewImage();
 			break;
 		}
 	}
@@ -665,7 +755,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		case BY_EDGE_EVENT:
 		case BY_EDGE_ATTRIBUTE:
 		case BY_ATTRIBUTE_EVENT:
-			outputNewImage();
+			if (hasBegan)
+				outputNewImage();
 			break;
 		}
 	}
@@ -682,7 +773,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		case BY_EDGE_EVENT:
 		case BY_EDGE_ATTRIBUTE:
 		case BY_ATTRIBUTE_EVENT:
-			outputNewImage();
+			if (hasBegan)
+				outputNewImage();
 			break;
 		}
 	}
@@ -699,7 +791,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		case BY_GRAPH_EVENT:
 		case BY_GRAPH_ATTRIBUTE:
 		case BY_ATTRIBUTE_EVENT:
-			outputNewImage();
+			if (hasBegan)
+				outputNewImage();
 			break;
 		}
 	}
@@ -717,7 +810,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		case BY_GRAPH_EVENT:
 		case BY_GRAPH_ATTRIBUTE:
 		case BY_ATTRIBUTE_EVENT:
-			outputNewImage();
+			if (hasBegan)
+				outputNewImage();
 			break;
 		}
 	}
@@ -734,7 +828,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		case BY_GRAPH_EVENT:
 		case BY_GRAPH_ATTRIBUTE:
 		case BY_ATTRIBUTE_EVENT:
-			outputNewImage();
+			if (hasBegan)
+				outputNewImage();
 			break;
 		}
 	}
@@ -751,7 +846,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		case BY_NODE_EVENT:
 		case BY_NODE_ATTRIBUTE:
 		case BY_ATTRIBUTE_EVENT:
-			outputNewImage();
+			if (hasBegan)
+				outputNewImage();
 			break;
 		}
 	}
@@ -769,7 +865,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		case BY_NODE_EVENT:
 		case BY_NODE_ATTRIBUTE:
 		case BY_ATTRIBUTE_EVENT:
-			outputNewImage();
+			if (hasBegan)
+				outputNewImage();
 			break;
 		}
 	}
@@ -786,7 +883,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		case BY_NODE_EVENT:
 		case BY_NODE_ATTRIBUTE:
 		case BY_ATTRIBUTE_EVENT:
-			outputNewImage();
+			if (hasBegan)
+				outputNewImage();
 			break;
 		}
 	}
@@ -803,7 +901,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		case BY_EDGE_EVENT:
 		case BY_EDGE_ADDED_REMOVED:
 		case BY_ELEMENT_EVENT:
-			outputNewImage();
+			if (hasBegan)
+				outputNewImage();
 			break;
 		}
 	}
@@ -819,7 +918,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		case BY_EDGE_EVENT:
 		case BY_EDGE_ADDED_REMOVED:
 		case BY_ELEMENT_EVENT:
-			outputNewImage();
+			if (hasBegan)
+				outputNewImage();
 			break;
 		}
 	}
@@ -836,7 +936,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		case BY_NODE_ADDED_REMOVED:
 		case BY_EDGE_ADDED_REMOVED:
 		case BY_ELEMENT_EVENT:
-			outputNewImage();
+			if (hasBegan)
+				outputNewImage();
 			break;
 		}
 	}
@@ -852,7 +953,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		case BY_NODE_EVENT:
 		case BY_NODE_ADDED_REMOVED:
 		case BY_ELEMENT_EVENT:
-			outputNewImage();
+			if (hasBegan)
+				outputNewImage();
 			break;
 		}
 	}
@@ -868,7 +970,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		case BY_NODE_EVENT:
 		case BY_NODE_ADDED_REMOVED:
 		case BY_ELEMENT_EVENT:
-			outputNewImage();
+			if (hasBegan)
+				outputNewImage();
 			break;
 		}
 	}
@@ -882,7 +985,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		switch (outputPolicy) {
 		case BY_EVENT:
 		case BY_STEP:
-			outputNewImage();
+			if (hasBegan)
+				outputNewImage();
 			break;
 		}
 	}
@@ -890,7 +994,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	public void nodeMoved(String id, double x, double y, double z) {
 		switch (outputPolicy) {
 		case BY_NODE_MOVED:
-			outputNewImage();
+			if (hasBegan)
+				outputNewImage();
 			break;
 		}
 	}
@@ -904,7 +1009,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 	public void nodesMoved(Map<String, double[]> nodes) {
 		switch (outputPolicy) {
 		case BY_NODE_MOVED:
-			outputNewImage();
+			if (hasBegan)
+				outputNewImage();
 			break;
 		}
 	}
@@ -918,7 +1024,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 			layoutStepWithoutFrame++;
 
 			if (layoutStepWithoutFrame >= layoutStepPerFrame) {
-				outputNewImage();
+				if (hasBegan)
+					outputNewImage();
 				layoutStepWithoutFrame = 0;
 			}
 
@@ -1000,7 +1107,8 @@ public class FileSinkImages extends FileSinkBase implements LayoutListener {
 		public void run() {
 			while (outputRunnerAlive && outputPolicy == OutputPolicy.ON_RUNNER) {
 				outputRunnerProxy.pump();
-				outputNewImage();
+				if (hasBegan)
+					outputNewImage();
 
 				try {
 					Thread.sleep(outputRunnerDelay);
