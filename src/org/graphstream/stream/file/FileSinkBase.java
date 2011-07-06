@@ -107,8 +107,8 @@ public abstract class FileSinkBase implements FileSink {
 	/**
 	 * Echo each element and attribute of the graph to the actual output.
 	 * 
-	 * The elements are echoed as add events (add node, add edge, add attribute).
-	 * This method guarantees there are no change or delete events.
+	 * The elements are echoed as add events (add node, add edge, add
+	 * attribute). This method guarantees there are no change or delete events.
 	 * 
 	 * @param graph
 	 *            The graph to export.
@@ -162,20 +162,33 @@ public abstract class FileSinkBase implements FileSink {
 		outputHeader();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.graphstream.stream.file.FileSink#begin(java.io.Writer)
+	 */
 	public void begin(Writer writer) throws IOException {
 		if (output != null)
 			throw new IOException(
 					"cannot call begin() twice without calling end() before.");
-		
+
 		output = createWriter(writer);
 
 		outputHeader();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.graphstream.stream.file.FileSink#flush()
+	 */
 	public void flush() throws IOException {
-		output.flush();
+		if (output != null)
+			output.flush();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.graphstream.stream.file.FileSink#end()
+	 */
 	public void end() throws IOException {
 		outputEndOfFile();
 		output.flush();
