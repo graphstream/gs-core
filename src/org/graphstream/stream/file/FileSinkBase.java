@@ -142,6 +142,10 @@ public abstract class FileSinkBase implements FileSink {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.graphstream.stream.file.FileSink#begin(java.lang.String)
+	 */
 	public void begin(String fileName) throws IOException {
 		if (output != null)
 			throw new IOException(
@@ -152,6 +156,10 @@ public abstract class FileSinkBase implements FileSink {
 		outputHeader();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.graphstream.stream.file.FileSink#begin(java.io.OutputStream)
+	 */
 	public void begin(OutputStream stream) throws IOException {
 		if (output != null)
 			throw new IOException(
