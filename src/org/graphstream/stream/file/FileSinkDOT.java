@@ -32,7 +32,6 @@ package org.graphstream.stream.file;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
 
 /**
  * Graph writer for the GraphViz DOT format.

@@ -156,7 +156,7 @@ public class DepthFirstIterator<T extends Node> implements Iterator<T> {
 
 		while (k.hasNext()) {
 			Edge edge = k.next();
-			T adj = (T) edge.getOpposite(node);
+			T adj = edge.getOpposite(node);
 
 			if (!tabu(adj)) {
 				lifo.add(adj);
