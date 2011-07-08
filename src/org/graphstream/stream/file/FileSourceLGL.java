@@ -28,6 +28,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
+
 package org.graphstream.stream.file;
 
 import java.io.IOException;
@@ -37,26 +38,17 @@ import java.net.URL;
 import java.util.HashSet;
 
 /**
- * Reader for the "edge" graph format.
+ * Reader for the "LGL" graph format.
  * 
  * <p>
- * The edge graph format is a very simple and lightweight format where each line
- * describes an edge by giving two node names. The nodes are created implicitly.
- * </p>
- * 
- * <p>
- * This reader also understands the derivative format where a line contains a
- * first node name, followed by several node names separated by spaces. In this
- * case it links the first node with all other node name following on the line.
+ * The LGL graph format is a simple format where each line beginning by a
+ * sharp sign "#" describes a source vertex, and each subsequent line
+ * not beginning by a sharp sign describe an edge target for this source.
  * </p>
  * 
  * <p>
  * Also, the format does not specify any direction for edges. By default all
- * edges are undirected. You can choose to make all edges directed by passing
- * "true" as the first arguments to constructors
- * {@link #FileSourceEdge(boolean)} or {@link #FileSourceEdge(boolean, boolean)}
- * . The direction of edges goes from the first node name on each line toward
- * the second (or more) node names on each line.
+ * edges are undirected.
  * </p>
  * 
  * <p>
@@ -70,12 +62,12 @@ import java.util.HashSet;
  * events are correctly issued. If this input is directly connected to a graph,
  * as graphs can create non-existing nodes automatically, you can disable the
  * hash set of nodes using the constructor
- * {@link #FileSourceEdge(boolean, boolean)}, and giving "false" for the second
+ * {@link #FileSourceLGL(boolean)}, and giving "false" for the first
  * argument. </p>
  * 
- * The usual file name extension for this format is ".edge".
+ * The usual file name extension for this format is ".lgl".
  */
-public class FileSourceEdge extends FileSourceBase {
+public class FileSourceLGL extends FileSourceBase {
 	// Attribute
 
 	/**
@@ -84,46 +76,33 @@ public class FileSourceEdge extends FileSourceBase {
 	protected int edgeid = 0;
 
 	/**
-	 * By default, consider edges as undirected.
-	 */
-	protected boolean directed = false;
-
-	/**
 	 * Set of existing nodes (if nodes are declared).
 	 */
 	protected HashSet<String> nodes;
 
-	protected String graphName = "EDGE_";
+	/**
+	 * The current source node.
+	 */
+	protected String source;
 
+	protected String graphName = "LGL_";
+	
 	// Construction
 
 	/**
-	 * New reader for the "edge" format.
+	 * New reader for the "LGL" format.
 	 */
-	public FileSourceEdge() {
+	public FileSourceLGL() {
 		this(false);
 	}
 
 	/**
-	 * New reader for the "edge" format.
+	 * New reader for the "LGL" format.
 	 * 
-	 * @param edgesAreDirected
-	 *            If true (default=false) edges are considered directed.
-	 */
-	public FileSourceEdge(boolean edgesAreDirected) {
-		this(edgesAreDirected, true);
-	}
-
-	/**
-	 * New reader for the "edge" format.
-	 * 
-	 * @param edgesAreDirected
-	 *            If true (default=false) edges are considered directed.
 	 * @param declareNodes
 	 *            If true (default=true) this reader outputs nodeAdded events.
 	 */
-	public FileSourceEdge(boolean edgesAreDirected, boolean declareNodes) {
-		directed = edgesAreDirected;
+	public FileSourceLGL(boolean declareNodes) {
 		nodes = declareNodes ? new HashSet<String>() : null;
 	}
 
@@ -131,31 +110,50 @@ public class FileSourceEdge extends FileSourceBase {
 
 	@Override
 	protected void continueParsingInInclude() throws IOException {
-		// Should not happen, EDGE files cannot be nested.
+		// Should not happen, NCol files cannot be nested.
 	}
 
 	@Override
 	public boolean nextEvents() throws IOException {
-		String id1 = getWordOrNumberOrStringOrEolOrEof();
+		String id1 = getWordOrSymbolOrNumberOrStringOrEolOrEof();
 
 		if (id1.equals("EOL")) {
-			// Empty line.
+			// Empty line. Skip it.
 		} else if (id1.equals("EOF")) {
 			return false;
+		} else if (id1.equals("#")) {
+			// A new sequence of edges starts
+			String src = getWordOrNumberOrStringOrEolOrEof();
+			
+			if(!src.equals("EOL") && !src.equals("EOF")) {
+				source = src;
+			} else {
+				source = null;
+			}
 		} else {
-			declareNode(id1);
-
-			String id2 = getWordOrNumberOrStringOrEolOrEof();
-
-			while (!id2.equals("EOL")) {
-				if (!id1.equals(id2)) {
-					String edgeId = Integer.toString(edgeid++);
-
-					declareNode(id2);
-					sendEdgeAdded(graphName, edgeId, id1, id2, directed);
+			// we got a new target.
+			if(source != null) {
+				String weight = getWordOrNumberOrStringOrEolOrEof();
+				double w = 0.0;
+				
+				if(weight.equals("EOL") || weight.equals("EOF")) {
+					weight = null;
+					pushBack();
+				} else {
+					try {
+						w = Double.parseDouble(weight);
+					} catch(Exception e) {
+						throw new IOException(String.format("cannot transform weight %s into a number", weight));
+					}
 				}
-
-				id2 = getWordOrNumberOrStringOrEolOrEof();
+				
+				String edgeId = Integer.toString(edgeid++);
+				
+				sendEdgeAdded(graphName, edgeId, source, id1, false);
+				
+				if(weight != null) {
+					sendEdgeAttributeAdded(graphName, edgeId, "weight", (Double)w);
+				}
 			}
 		}
 
@@ -197,7 +195,7 @@ public class FileSourceEdge extends FileSourceBase {
 
 	protected void init() throws IOException {
 		st.eolIsSignificant(true);
-		st.commentChar('#');
+		st.commentChar('%');
 
 		graphName = String.format("%s_%d", graphName,
 				System.currentTimeMillis() + ((long) Math.random() * 10));

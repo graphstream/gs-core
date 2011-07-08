@@ -43,6 +43,7 @@ import org.graphstream.stream.SourceBase;
 import org.graphstream.stream.file.FileSource;
 
 /**
+ * A GML parser.
  * 
  * This parser should understand the whole GML syntax. It transforms any
  * unknown tag into an attribute. Depending on the location of the unknown
@@ -58,7 +59,8 @@ import org.graphstream.stream.file.FileSource;
  * "stroke-width", in pixels).
  * 
  * If edges have no "id" tag, the id is the concatenation of the source
- * and target node identifiers separated by a "_" character.
+ * and target node identifiers separated by a "_" character and a random
+ * number.
  * 
  * You can declare nodes either with the full declaration:
  * <pre>
@@ -79,9 +81,35 @@ import org.graphstream.stream.file.FileSource;
  * </pre>
  * And the same for edges with "-edge" or "del-edge".
  * 
- * You can add or remove attributes to or from a node or edge using:
+ * All the dynamic events of GraphStream are supported as an extension.
+ * 
+ * You can add or remove attributes to or from a node or edge using a
+ * minus sign in front of the attribute name and following the attribute
+ * name by [].
+ * 
+ * You can remove a node or edge using a minus sign in front of the
+ * node and edge tags:
  * <pre>
+ *     -node [ id "foo" ]
  * </pre>
+ * Or
+ * <pre>
+ *     -node "foo"
+ * </pre>
+ * 
+ * You can change the attributes of a node or edge using a plus sign
+ * in front of the node and edge tags:
+ * <pre>
+ *     +node [ id "foo" someAttribute "added" -removedAttribute [] ]
+ * </pre>
+ * 
+ * Be careful, that files exported with the dynamic extensions will not
+ * be compatible with most GML readers of other programs.
+ * 
+ * The standard extension for GML files is ".gml". If your file contains
+ * dynamic additions, you can use the ".dgml" (Dynamic GML) extensions.
+ * The parser will handle both dynamic and non dynamic files with the
+ * extension ".gml".
  */
 public class FileSourceGML extends SourceBase implements FileSource {
 	

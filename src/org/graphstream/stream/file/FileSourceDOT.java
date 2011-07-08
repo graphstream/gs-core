@@ -50,6 +50,10 @@ import java.util.HashSet;
  * </pre>
  * 
  * </p>
+ * 
+ * TODO this parser may not be fully compatible with the DOT format.
+ * 
+ * The usual file name extension for this format is ".dot".
  */
 public class FileSourceDOT extends FileSourceBase {
 	// Attribute

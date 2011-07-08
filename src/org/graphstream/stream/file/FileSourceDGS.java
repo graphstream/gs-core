@@ -53,6 +53,8 @@ import java.util.zip.GZIPInputStream;
  * href="http://graphstream-project.org/">http://graphstream-project.org/</a>
  * </p>
  * 
+ * The usual file name extension used for this format is ".dgs".
+ * 
  * @see FileSource
  */
 public class FileSourceDGS extends FileSourceBase {

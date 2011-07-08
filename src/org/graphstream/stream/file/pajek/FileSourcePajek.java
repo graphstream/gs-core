@@ -44,7 +44,15 @@ import org.graphstream.stream.SourceBase;
 import org.graphstream.stream.file.FileSource;
 
 /**
+ * A parser for the Pajek NET format.
  * 
+ * This should support most the NET file format. However this format seems
+ * to have numerous derivative that may not be known to us. It parses the
+ * edges/arcs, edgeslist/arclist, and matrix notations. It understands a
+ * large part of the formating notation, and transform it to CSS "ui.style"
+ * attribute stored on nodes and edges.
+ * 
+ * The standard extension for such files is ".net".
  */
 public class FileSourcePajek extends SourceBase implements FileSource {
 	

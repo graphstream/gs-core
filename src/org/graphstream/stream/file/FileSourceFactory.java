@@ -142,6 +142,14 @@ public class FileSourceFactory {
 		if (flc.endsWith(".edge")) {
 			return new FileSourceEdge();
 		}
+		
+		if (flc.endsWith(".lgl")) {
+			return new FileSourceLGL();
+		}
+		
+		if (flc.endsWith(".ncol")) {
+			return new FileSourceNCol();
+		}
 
 		if (flc.endsWith(".tlp")) {
 			// return new FileInputTLP();
