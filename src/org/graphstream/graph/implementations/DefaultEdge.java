@@ -181,7 +181,7 @@ public abstract class DefaultEdge extends AbstractElement implements Edge {
 	 * @complexity Constant.
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends Node> T getOpposite(T node) {
+	public <T extends Node> T getOpposite(Node node) {
 		if (src == node)
 			return (T) trg;
 		else if (trg == node)

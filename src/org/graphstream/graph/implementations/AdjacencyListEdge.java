@@ -119,7 +119,7 @@ public class AdjacencyListEdge extends AbstractElement implements Edge {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Node> T getOpposite(T node) {
+	public <T extends Node> T getOpposite(Node node) {
 		if (node == n0)
 			return (T) n1;
 		else if (node == n1)

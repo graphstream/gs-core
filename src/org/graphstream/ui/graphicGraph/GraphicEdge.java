@@ -282,7 +282,7 @@ public class GraphicEdge extends GraphicElement implements Edge {
 	}
 
 	@SuppressWarnings("all")
-	public <T extends Node> T getOpposite(T node) {
+	public <T extends Node> T getOpposite(Node node) {
 		if (node == from)
 			return (T)to;
 

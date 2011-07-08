@@ -181,5 +181,5 @@ public interface Edge extends Element {
 	 *            The node we search the opposite of.
 	 * @return the opposite node of the given node.
 	 */
-	<T extends Node> T getOpposite(T node);
+	<T extends Node> T getOpposite(Node node);
 }
