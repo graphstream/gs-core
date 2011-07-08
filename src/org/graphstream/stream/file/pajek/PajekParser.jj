@@ -1,0 +1,483 @@
+/*
+ * Copyright 2006 - 2011 
+ *     Julien Baudry	<julien.baudry@graphstream-project.org>
+ *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
+ *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
+ *     Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
+ * 
+ * This file is part of GraphStream <http://graphstream-project.org>.
+ * 
+ * GraphStream is a library whose purpose is to handle static or dynamic
+ * graph, create them from scratch, file or any source and display them.
+ * 
+ * This program is free software distributed under the terms of two licenses, the
+ * CeCILL-C license that fits European law, and the GNU Lesser General Public
+ * License. You can  use, modify and/ or redistribute the software under the terms
+ * of the CeCILL-C license as circulated by CEA, CNRS and INRIA at the following
+ * URL <http://www.cecill.info> or under the terms of the GNU LGPL as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
+ */
+
+options {
+	JDK_VERSION    = "1.5";
+	STATIC         = false;
+	LOOKAHEAD      = 2;
+	IGNORE_CASE    = true;
+}
+
+PARSER_BEGIN(PajekParser)
+package org.graphstream.stream.file.pajek;
+
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.ArrayList;
+
+public class PajekParser {
+	// The node count.
+	int nodeCount;
+	// The file source.
+	FileSourcePajek pajek;
+	// If true we are parsing the vertices labels.
+	// False as soon as we encounter the arcs.
+	boolean inVertices = true;
+	// If true the list of edges is a edge list.
+	boolean edgeListMode = true;
+  
+	public PajekParser(FileSourcePajek pajek, InputStream stream)
+	{
+		this(stream);
+		this.pajek = pajek;
+	}
+	
+	public PajekParser(FileSourcePajek pajek, Reader stream )
+	{
+		this(stream);
+		this.pajek = pajek;
+	}
+}
+PARSER_END(PajekParser)
+
+/************************************************************************/
+/* The lexer.                                                           */
+/************************************************************************/
+
+SKIP:
+{ 	" "
+|	"\t"
+}
+//
+// Base tokens.
+//
+TOKEN: { < EOL       : (("\r")|("\n"))> }
+TOKEN: { < #DIGIT    : ["0"-"9"] > }
+TOKEN: { < #HEXDIGIT : (["0"-"9","a"-"f","A"-"F"])> }
+TOKEN: { < INT       : ( "-" | "+" )? ( <DIGIT> )+ > }
+TOKEN: { < REAL      : ( "-" | "+" )? ( <DIGIT> )+ ( "." (<DIGIT>)+ )?> } 
+TOKEN: { < STRING    : (("\"" (~["\""])* "\"")|("'" (~["'"])* "'")) > }
+//
+// More base tokens that must appear at the end for precedence reasons.
+//
+TOKEN: { < NETWORK   : "*network" > }
+TOKEN: { < VERTICES  : "*vertices" > }
+TOKEN: { < ARCS      : "*arcs" > }
+TOKEN: { < EDGES     : "*edges" > }
+TOKEN: { < EDGESLIST : "*edgeslist" > }
+TOKEN: { < ARCSLIST  : "*arcslist" > }
+TOKEN: { < MATRIX    : "*matrix" > }
+TOKEN: { < COMMENT   : ( "%" (~["\r","\n"])* (<EOL>)+ ) > }
+
+TOKEN: { < ELLIPSE   : "ellipse" > }
+TOKEN: { < DIAMOND   : "diamond" > }
+TOKEN: { < CROSS     : "cross" > }
+TOKEN: { < BOX       : "box" > }
+TOKEN: { < TRIANGLE  : "triangle" > }
+TOKEN: { < EMPTY     : "empty" > }
+
+TOKEN: { < SIZE      : ("s_size" | "size") > }
+TOKEN: { < XFACT     : "x_fact" > }
+TOKEN: { < YFACT     : "y_fact" > }
+TOKEN: { < PHI       : "phi" > }
+TOKEN: { < R         : "r" > }
+TOKEN: { < Q         : "q" > }
+TOKEN: { < IC        : "ic" > }
+TOKEN: { < BC        : "bc" > }
+TOKEN: { < BW        : "bw" > }
+TOKEN: { < LC        : "lc" > }
+TOKEN: { < LA        : "la" > }
+TOKEN: { < LR        : "lr" > }
+TOKEN: { < LPHI      : "lphi" > }
+TOKEN: { < FOS       : "fos" > }
+TOKEN: { < FONT      : "font" > }
+
+TOKEN: { < C         : "c" > }
+TOKEN: { < P         : "p" > }
+TOKEN: { < W         : "w" > }
+TOKEN: { < S         : "s" > }
+TOKEN: { < A         : "a" > }
+TOKEN: { < AP        : "ap" > }
+TOKEN: { < L         : "l" > }
+TOKEN: { < LP        : "lp" > }
+TOKEN: { < H1        : "h1" > }
+TOKEN: { < H2        : "h2" > }
+TOKEN: { < K1        : "k1" > }
+TOKEN: { < K2        : "k2" > }
+TOKEN: { < A1        : "a1" > }
+TOKEN: { < A2        : "a2" > }
+
+TOKEN: { < B         : "b" > }
+
+TOKEN: { < KEY       : ["A"-"Z","a"-"z","0"-"9","."](["A"-"Z","a"-"z","0"-"9","_","-",".","@","#",":"])*> }
+
+
+/*****************************************************************/
+/* The parser.                                                   */
+/*****************************************************************/
+
+/** Unused rule, call it to slurp in the whole file. */
+void start():
+{}
+{
+	(nextEvents())+
+}
+
+boolean nextEvents(): 
+{
+	boolean ok = true;
+	Token k;
+}
+{
+	( network()
+	| vertices()
+	| edges()
+	| k=<COMMENT> { System.err.printf("got comment %s%n", k.image); }
+	| <EOL>
+	| <EOF> { ok = false; }
+	)
+	{ return ok; }
+}
+
+void network():
+{
+	Token k;
+	StringBuffer buf = new StringBuffer();
+	boolean first = true;
+}
+{
+	( <NETWORK>
+		( k=<STRING> { if(!first) buf.append(" "); buf.append(k.image.substring(1, k.image.length()-1)); first=false; }
+		| k=<KEY>    { if(!first) buf.append(" "); buf.append(k.image); first=false; }
+		)*
+	)
+	
+	{ pajek.addGraphAttribute("ui.label", buf.toString()); }
+	
+	EO()
+}
+
+// Vertices
+
+void vertices():
+{
+	Token n;
+}
+{
+	<VERTICES> n=<INT> EO()
+	{
+		nodeCount = pajek.addNodes(n);
+	}
+	
+	( vertex()
+	| <COMMENT>
+	)*
+}
+
+void vertex():
+{
+	Token id, k, x, y, z=null, sh;
+	String label=null, value;
+	NodeGraphics graphics = null;
+}
+{
+	id=<INT>
+
+	(	( k=validIdentifier() { label = k.image; } )
+	
+		(	((x=<REAL>|x=<INT>) (y=<REAL>|y=<INT>) (z=<REAL>|z=<INT>)? { pajek.addNodePosition(id.image, x, y, z); })
+
+			( (k=<ELLIPSE> 	{ if(graphics==null) graphics = new NodeGraphics(); graphics.addKey("shape", "circle",   k); } )
+			| (k=<BOX>		{ if(graphics==null) graphics = new NodeGraphics(); graphics.addKey("shape", "box",      k); } )
+			| (k=<TRIANGLE> { if(graphics==null) graphics = new NodeGraphics(); graphics.addKey("shape", "triangle", k); } )
+			| (k=<CROSS>	{ if(graphics==null) graphics = new NodeGraphics(); graphics.addKey("shape", "cross",    k); } )
+			| (k=<DIAMOND>	{ if(graphics==null) graphics = new NodeGraphics(); graphics.addKey("shape", "diamond",  k); } )
+			| (k=<EMPTY>	{ if(graphics==null) graphics = new NodeGraphics(); graphics.addKey("shape", "circle",   k); } )
+			)?
+			
+			( (k=<SIZE>   value=number()      { if(graphics==null) graphics = new NodeGraphics(); graphics.addKey("s_size", value, k); } )
+			| (k=<XFACT>  value=number()      { } )
+			| (k=<YFACT>  value=number()      { } )
+			| (k=<PHI>    value=number()      { } )
+			| (k=<R>      value=number()      { } )
+			| (k=<Q>      value=number()      { } )
+			| (k=<IC>     value=color()       { if(graphics==null) graphics = new NodeGraphics(); graphics.addKey("ic", value, k); } )
+			| (k=<BC>     value=color()       { if(graphics==null) graphics = new NodeGraphics(); graphics.addKey("bc", value, k); } )
+			| (k=<BW>     value=number()      { if(graphics==null) graphics = new NodeGraphics(); graphics.addKey("bw", value, k); } )
+			| (k=<LC>     value=color()       { if(graphics==null) graphics = new NodeGraphics(); graphics.addKey("lc", value, k); } )
+			| (k=<LA>     value=number()      { } )
+			| (k=<LR>     value=number()      { } )
+			| (k=<LPHI>   value=number()      { } )
+			| (k=<FOS>    value=number()      { if(graphics==null) graphics = new NodeGraphics(); graphics.addKey("fos",  value, k); } )
+			| (k=<FONT>   value=keyOrString() { if(graphics==null) graphics = new NodeGraphics(); graphics.addKey("font", value, k); } )
+			)*
+				
+			((k=validIdentifier()|k=<REAL>) { System.err.printf("%d:%d: unparsed garbage in .net (%s)%n", k.beginLine, k.beginColumn, k.image); })*
+		)?
+	)?
+	
+	EO()
+
+	{
+		if(label != null) {
+			if(label.startsWith("\"")) label = label.substring(1, label.length()-1);
+			pajek.addNodeLabel(id.image, label);
+		}
+		if(graphics != null )
+			pajek.addNodeGraphics(id.image, graphics);
+	}
+}
+
+// Edges and edge lists.
+
+void edges():
+{
+}
+{
+	( ( <ARCS>      EO() { edgeListMode = false; inVertices = false; pajek.setDirected(true);  } (edge()|<COMMENT>)*     )
+	| ( <EDGES>     EO() { edgeListMode = false; inVertices = false; pajek.setDirected(false); } (edge()|<COMMENT>)*     )
+	| ( <ARCSLIST>  EO() { edgeListMode = true;  inVertices = false; pajek.setDirected(true);  } (edgeList()|<COMMENT>)* )
+	| ( <EDGESLIST> EO() { edgeListMode = true;  inVertices = false; pajek.setDirected(false); } (edgeList()|<COMMENT>)* )
+	| matrix()
+	| <COMMENT>
+	)
+}
+
+void edge():
+{
+	Token src, trg, more, weight, k, sh;
+	String id, value;
+	EdgeGraphics graphics = null;
+}
+{
+	src=<INT> trg=<INT> { id=pajek.addEdge(src.image, trg.image); }
+	
+	( 
+		(k=<INT>|k=<REAL>) { pajek.addEdgeWeight(id, k); }
+	
+		( ( k=<P>    value=keyOrString()  { if(graphics==null) graphics = new EdgeGraphics(); graphics.addKey("p",    value, k); } )
+		| ( k=<W>    value=number()       { if(graphics==null) graphics = new EdgeGraphics(); graphics.addKey("w",    value, k); } )
+		| ( k=<C>    value=color()        { if(graphics==null) graphics = new EdgeGraphics(); graphics.addKey("c",    value, k); } )
+		| ( k=<S>    value=number()       { if(graphics==null) graphics = new EdgeGraphics(); graphics.addKey("s",    value, k); } )
+		| ( k=<A>    (k=<A>|k=<B>)        { if(graphics==null) graphics = new EdgeGraphics(); graphics.addKey("a",    k.image, k); } )
+		| ( k=<AP>   value=number()       { if(graphics==null) graphics = new EdgeGraphics(); graphics.addKey("ap",   value, k); } )
+		| ( k=<L>    value=keyOrString()  { if(graphics==null) graphics = new EdgeGraphics(); graphics.addKey("l",    value, k); } )
+		| ( k=<LP>   value=number()       { if(graphics==null) graphics = new EdgeGraphics(); graphics.addKey("lp",   value, k); } )
+		| ( k=<LR>   value=number()       { if(graphics==null) graphics = new EdgeGraphics(); graphics.addKey("lr",   value, k); } )
+		| ( k=<LPHI> value=number()       { if(graphics==null) graphics = new EdgeGraphics(); graphics.addKey("lphi", value, k); } )
+		| ( k=<LC>   value=color()        { if(graphics==null) graphics = new EdgeGraphics(); graphics.addKey("lc",   value, k); } )
+		| ( k=<LA>   value=number()       { if(graphics==null) graphics = new EdgeGraphics(); graphics.addKey("la",   value, k); } )
+		| ( k=<FOS>  value=number()       { if(graphics==null) graphics = new EdgeGraphics(); graphics.addKey("fos",  value, k); } )
+		| ( k=<FONT> value=keyOrString()  { if(graphics==null) graphics = new EdgeGraphics(); graphics.addKey("font", value, k); } )
+		| ( k=<H1>   value=number()       { if(graphics==null) graphics = new EdgeGraphics(); graphics.addKey("h1",   value, k); } )
+		| ( k=<H2>   value=number()       { if(graphics==null) graphics = new EdgeGraphics(); graphics.addKey("h2",   value, k); } )
+		| ( k=<A1>   value=number()       { if(graphics==null) graphics = new EdgeGraphics(); graphics.addKey("a1",   value, k); } )
+		| ( k=<A2>   value=number()       { if(graphics==null) graphics = new EdgeGraphics(); graphics.addKey("a2",   value, k); } )
+		| ( k=<K1>   value=number()       { if(graphics==null) graphics = new EdgeGraphics(); graphics.addKey("k1",   value, k); } )
+		| ( k=<K2>   value=number()       { if(graphics==null) graphics = new EdgeGraphics(); graphics.addKey("k2",   value, k); } )
+		)*
+		 
+		((k=validIdentifier()|k=<REAL>) { System.err.printf("%d:%d: unparsed garbage in .net (%s)%n", k.beginLine, k.beginColumn, k.image); })*
+	)?
+	
+	EO()
+
+	{
+		if(graphics != null)
+			pajek.addEdgeGraphics(id, graphics);
+	}
+}
+
+void edgeList():
+{
+	Token src, trg, more;
+	String id;
+}
+{
+	src=<INT> trg=<INT>	{ id=pajek.addEdge(src.image, trg.image); }
+	( more=<INT> { if(edgeListMode) pajek.addEdge(src.image, more.image); } )* 
+	EO()
+}
+
+// The awful *matrix notation.
+
+void matrix():
+{
+	EdgeMatrix mat = new EdgeMatrix(nodeCount);
+	ArrayList<String> line;
+}
+{
+	<MATRIX> (<EOL>)+
+	(line = matrixline(mat) { mat.addLine(line); } | <COMMENT> )+
+	{ pajek.addEdges(mat); }
+}
+
+ArrayList<String> matrixline(EdgeMatrix mat):
+{
+	Token k;
+	ArrayList<String> line = new ArrayList<String>(nodeCount);
+}
+{
+	(k=<INT> { line.add(k.image); })+ EO()
+	{ return line; }
+}
+
+// Various
+
+String keyOrString():
+{
+	Token k;
+	String value;
+}
+{
+	( ( k=<KEY>    { value = k.image; } )
+	| ( k=<STRING> { value = k.image.substring(1, k.image.length()-1); } )
+	)
+	{
+		return value;
+	}
+}
+
+String number():
+{
+	Token k;
+}
+{
+	((k=<INT>) | (k=<REAL>))
+	{ return k.image; }
+}
+
+String color():
+{
+	String value;
+	Token r, g, b;
+}
+{
+	( value=keyOrString()
+	| ( r=<REAL> g=<REAL> b=<REAL>  { value = pajek.toColorValue(r, g, b); } )
+	| ( r=<INT>  g=<INT>  b=<INT>   { value = pajek.toColorValue(r, g, b); } )
+	)
+	{ return value; }
+}
+
+void EO():
+{}
+{
+	( (<EOL>)+
+	| <EOF>
+	)
+}
+
+Token anyGraphicAttribute():
+{
+	Token k;
+}
+{
+	(k=<INT>
+	|k=<REAL>
+	|k=<KEY>
+	|k=<STRING>
+	|k=<SIZE>
+	|k=<XFACT>
+	|k=<YFACT>
+	|k=<PHI>
+	|k=<R>
+	|k=<Q>
+	|k=<IC>
+	|k=<BC>
+	|k=<BW>
+	|k=<LC>
+	|k=<LA>
+	|k=<LR>
+	|k=<LPHI>
+	|k=<FOS>
+	|k=<FONT>
+	|k=<C>
+	|k=<P>
+	|k=<W>
+	|k=<A>
+	|k=<B>
+	|k=<AP>
+	|k=<L>
+	|k=<LP>
+	|k=<H1>
+	|k=<H2>
+	|k=<K1>
+	|k=<K2>
+	|k=<A1>
+	|k=<A2>
+	)
+	{ return k; }
+}
+
+Token validIdentifier():
+{
+	Token k=null;	
+}
+{
+	( k=<KEY>
+	| k=<STRING>
+	| k=<INT>
+	| k=<A>
+	| k=<A1>
+	| k=<A2>
+	| k=<AP>
+	| k=<B>
+	| k=<BC>
+	| k=<BW>
+	| k=<C>
+	| k=<FONT>
+	| k=<FOS>
+	| k=<H1>
+	| k=<H2>
+	| k=<IC>
+	| k=<K1>
+	| k=<K2>
+	| k=<L>
+	| k=<LA>
+	| k=<LC>
+	| k=<LP>
+	| k=<LPHI>
+	| k=<LR>
+	| k=<P>
+	| k=<PHI>
+	| k=<Q>
+	| k=<R>
+	| k=<S>
+	| k=<SIZE>
+	| k=<W>
+	| k=<XFACT>
+	| k=<YFACT>
+	)
+	{
+		return k;
+	}
+}

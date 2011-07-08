@@ -34,6 +34,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import org.graphstream.stream.file.pajek.FileSourcePajek;
+
 /**
  * File source factory.
  * 
@@ -112,21 +114,21 @@ public class FileSourceFactory {
 
 		if (n >= 7 && b[0] == 'g' && b[1] == 'r' && b[2] == 'a' && b[3] == 'p'
 				&& b[4] == 'h' && b[5] == ' ' && b[6] == '[') {
-			return new FileSourceGML();
+			return new org.graphstream.stream.file.gml.FileSourceGML();
 		}
 
 		// The web reader.
 
 		String flc = fileName.toLowerCase();
 
-		if (flc.endsWith(".html") || flc.endsWith(".htm")) {
-			// TODO
-		}
-
 		// If we did not found anything, we try with the filename extension ...
 
 		if (flc.endsWith(".gml") || flc.endsWith(".dgml")) {
-			return new FileSourceGML();
+			return new org.graphstream.stream.file.gml.FileSourceGML();
+		}
+		
+		if (flc.endsWith(".net")) {
+			return new FileSourcePajek();
 		}
 
 		if (flc.endsWith(".chaco") || flc.endsWith(".graph")) {

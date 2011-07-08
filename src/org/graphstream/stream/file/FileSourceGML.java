@@ -52,7 +52,10 @@ import org.graphstream.ui.geom.Point3;
  * 
  * TODO: check this effectively respects the GML syntax. TODO: document the
  * additional features.
+ * 
+ * @Deprecated use the org.graphstream.stream.file.gml.FileSourceGML instead.
  */
+@Deprecated
 public class FileSourceGML extends FileSourceBase {
 	// Attribute
 
