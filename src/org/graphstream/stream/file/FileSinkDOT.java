@@ -50,18 +50,59 @@ public class FileSinkDOT extends FileSinkBase {
 	protected String graphName = "";
 
 	/**
+	 * Is the graph directed ?
+	 */
+	protected boolean digraph;
+
+	/**
 	 * What element ?.
 	 */
 	protected enum What {
 		NODE, EDGE, OTHER
 	};
 
+	/**
+	 * Build a new DOT sink to export undirected graph.
+	 */
+	public FileSinkDOT() {
+		this(false);
+	}
+
+	/**
+	 * Build a new DOT sink specifying if the graph is directed or not.
+	 * 
+	 * @param digraph
+	 *            true if the graph is directed
+	 */
+	public FileSinkDOT(boolean digraph) {
+		this.digraph = digraph;
+	}
+
 	// Command
+
+	/**
+	 * Set flag indicating if exported graph is directed or not.
+	 * 
+	 * @param digraph
+	 *            true is exported graph is directed
+	 */
+	public void setDirected(boolean digraph) {
+		this.digraph = digraph;
+	}
+
+	/**
+	 * Get the flag indicating if exported graph is directed or not.
+	 * 
+	 * @return true if exported graph is directed
+	 */
+	public boolean isDirected() {
+		return digraph;
+	}
 
 	@Override
 	protected void outputHeader() throws IOException {
 		out = (PrintWriter) output;
-		out.printf("graph {%n");
+		out.printf("%s {%n", digraph ? "digraph" : "graph");
 
 		if (graphName.length() > 0)
 			out.printf("\tgraph [label=%s];%n", graphName);
@@ -122,7 +163,7 @@ public class FileSinkDOT extends FileSinkBase {
 
 	public void edgeAdded(String graphId, long timeId, String edgeId,
 			String fromNodeId, String toNodeId, boolean directed) {
-		if (directed)
+		if (digraph)
 			out.printf("\t%s -> %s;%n", fromNodeId, toNodeId);
 		else
 			out.printf("\t%s -- %s;%n", fromNodeId, toNodeId);
