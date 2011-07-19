@@ -36,7 +36,10 @@ import java.util.Random;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
-import org.graphstream.graph.ElementNotFoundException;
+import org.graphstream.ui.geom.Point2;
+import org.graphstream.ui.geom.Point3;
+import org.graphstream.ui.geom.Vector2;
+import org.graphstream.ui.geom.Vector3;
 
 /**
  * Lots of small often used measuring algorithms on graphs.
@@ -86,6 +89,7 @@ public class GraphPosLengthUtils {
 		throw new RuntimeException("Outch !!");
 	}
 
+
 	/**
 	 * Retrieve a node position from its attributes ("x", "y", "z", or "xy", or
 	 * "xyz").
@@ -96,11 +100,30 @@ public class GraphPosLengthUtils {
 	 *         position of the node, or null if the node is not part of the
 	 *         graph.
 	 */
-	public static float[] nodePosition(Graph graph, String id) {
+	public static double[] nodePosition(Graph graph, String id) {
 		Node node = graph.getNode(id);
 
 		if (node != null)
 			return nodePosition(node);
+
+		return null;
+	}
+
+	/**
+	 * Retrieve a node position from its attributes ("x", "y", "z", or "xy", or
+	 * "xyz").
+	 * 
+	 * @param id
+	 *            The node identifier.
+	 * @return A newly allocated point containing the (x,y,z)
+	 *         position of the node, or null if the node is not part of the
+	 *         graph.
+	 */
+	public static Point3 nodePointPosition(Graph graph, String id) {
+		Node node = graph.getNode(id);
+
+		if (node != null)
+			return nodePointPosition(node);
 
 		return null;
 	}
@@ -114,12 +137,29 @@ public class GraphPosLengthUtils {
 	 * @return A newly allocated array of three floats containing the (x,y,z)
 	 *         position of the node.
 	 */
-	public static float[] nodePosition(Node node) {
-		float xyz[] = new float[3];
+	public static double[] nodePosition(Node node) {
+		double xyz[] = new double[3];
 
 		nodePosition(node, xyz);
 
 		return xyz;
+	}
+
+	/**
+	 * Like {@link #nodePointPosition(Graph,String)} but use an existing node as
+	 * argument.
+	 * 
+	 * @param node
+	 *            The node to consider.
+	 * @return A newly allocated point containing the (x,y,z)
+	 *         position of the node.
+	 */
+	public static Point3 nodePointPosition(Node node) {
+		Point3 pos = new Point3();
+
+		nodePosition(node, pos);
+
+		return pos;
 	}
 
 	/**
@@ -131,21 +171,41 @@ public class GraphPosLengthUtils {
 	 *            The node identifier.
 	 * @param xyz
 	 *            An array of at least three cells.
-	 * @throws ElementNotFoundException
+	 * @throws RuntimeException
 	 *             If the node with the given identifier does not exist.
 	 */
-	public static void nodePosition(Graph graph, String id, float xyz[])
-			throws ElementNotFoundException {
+	public static void nodePosition(Graph graph, String id, double xyz[]) {
 		Node node = graph.getNode(id);
 
 		if (node != null)
 			nodePosition(node, xyz);
 
-		throw new ElementNotFoundException("node '" + id + "' does not exist");
+		throw new RuntimeException("node '" + id + "' does not exist");
+	}
+	
+	/**
+	 * Like {@link #nodePointPosition(Graph,String)}, but instead of returning a
+	 * newly allocated array, fill up the array given as parameter. This array
+	 * must have at least three cells.
+	 * 
+	 * @param id
+	 *            The node identifier.
+	 * @param pos
+	 *            A point that will receive the node position.
+	 * @throws RuntimeException
+	 *             If the node with the given identifier does not exist.
+	 */
+	public static void nodePosition(Graph graph, String id, Point3 pos) {
+		Node node = graph.getNode(id);
+
+		if (node != null)
+			nodePosition(node, pos);
+
+		throw new RuntimeException("node '" + id + "' does not exist");
 	}
 
 	/**
-	 * Like {@link #nodePosition(Graph,String,float[])} but use an existing node
+	 * Like {@link #nodePosition(Graph,String,double[])} but use an existing node
 	 * as argument.
 	 * 
 	 * @param node
@@ -153,13 +213,106 @@ public class GraphPosLengthUtils {
 	 * @param xyz
 	 *            An array of at least three cells.
 	 */
-	public static void nodePosition(Node node, float xyz[]) {
-		if (xyz.length < 3) {
-			System.err
-					.println("xyz[] argument must be at least 3 cells in size.");
+	public static void nodePosition(Node node, double xyz[]) {
+		if (xyz.length < 3)
 			return;
-		}
 
+		if (node.hasAttribute("xyz") || node.hasAttribute("xy")) {
+			Object o = node.getAttribute("xyz");
+
+			if (o == null)
+				o = node.getAttribute("xy");
+
+			if (o != null) {
+				if(o instanceof Object[]) {
+					Object oo[] = (Object[]) o;
+
+					if (oo.length > 0 && oo[0] instanceof Number) {
+						xyz[0] = ((Number) oo[0]).doubleValue();
+						if (oo.length > 1) xyz[1] = ((Number) oo[1]).doubleValue();
+						if (oo.length > 2) xyz[2] = ((Number) oo[2]).doubleValue();
+					}
+				} else if(o instanceof Double[]) {
+					Double oo[] = (Double[]) o;
+					if(oo.length > 0) xyz[0] = oo[0];
+					if(oo.length > 1) xyz[1] = oo[1];
+					if(oo.length > 2) xyz[2] = oo[2];
+				} else if(o instanceof Float[]) {
+					Float oo[] = (Float[]) o;
+					if(oo.length > 0) xyz[0] = oo[0];
+					if(oo.length > 1) xyz[1] = oo[1];
+					if(oo.length > 2) xyz[2] = oo[2];
+				} else if(o instanceof Integer[]) {
+					Integer oo[] = (Integer[]) o;
+					if(oo.length > 0) xyz[0] = oo[0];
+					if(oo.length > 1) xyz[1] = oo[1];
+					if(oo.length > 2) xyz[2] = oo[2];
+				} else if(o instanceof double[]) {
+					double oo[] = (double[]) o;
+					if(oo.length > 0) xyz[0] = oo[0];
+					if(oo.length > 1) xyz[1] = oo[1];
+					if(oo.length > 2) xyz[2] = oo[2];
+				} else if(o instanceof float[]) {
+					float oo[] = (float[]) o;
+					if(oo.length > 0) xyz[0] = oo[0];
+					if(oo.length > 1) xyz[1] = oo[1];
+					if(oo.length > 2) xyz[2] = oo[2];
+				} else if(o instanceof int[]) {
+					int oo[] = (int[]) o;
+					if(oo.length > 0) xyz[0] = oo[0];
+					if(oo.length > 1) xyz[1] = oo[1];
+					if(oo.length > 2) xyz[2] = oo[2];
+				} else if(o instanceof Number[]) {
+					Number oo[] = (Number[]) o;
+					if(oo.length > 0) xyz[0] = oo[0].doubleValue();
+					if(oo.length > 1) xyz[1] = oo[1].doubleValue();
+					if(oo.length > 2) xyz[2] = oo[2].doubleValue();
+				} else if(o instanceof Point3) {
+					Point3 oo = (Point3) o;
+					xyz[0] = oo.x;
+					xyz[1] = oo.y;
+					xyz[2] = oo.z;
+				} else if(o instanceof Vector3) {
+					Vector3 oo = (Vector3) o;
+					xyz[0] = oo.data[0];
+					xyz[1] = oo.data[1];
+					xyz[2] = oo.data[2];
+				} else if(o instanceof Point2) {
+					Point2 oo = (Point2) o;
+					xyz[0] = oo.x;
+					xyz[1] = oo.y;
+					xyz[2] = 0;
+				} else if(o instanceof Vector2) {
+					Vector2 oo = (Vector2) o;
+					xyz[0] = oo.data[0];
+					xyz[1] = oo.data[1];
+					xyz[2] = 0;
+				} else {
+					System.err.printf("Do not know how to handle xyz attribute %s%n", o.getClass().getName());
+				}
+			}
+			
+		} else if (node.hasAttribute("x")) {
+			xyz[0] = (double) node.getNumber("x");
+
+			if (node.hasAttribute("y"))
+				xyz[1] = (double) node.getNumber("y");
+
+			if (node.hasAttribute("z"))
+				xyz[2] = (double) node.getNumber("z");
+		}
+	}
+	
+	/**
+	 * Like {@link #nodePosition(Graph,String,Point3)} but use an existing node
+	 * as argument.
+	 * 
+	 * @param node
+	 *            The node to consider.
+	 * @param pos
+	 *            A point that will receive the node position.
+	 */
+	public static void nodePosition(Node node, Point3 pos) {
 		if (node.hasAttribute("xyz") || node.hasAttribute("xy")) {
 			Object o = node.getAttribute("xyz");
 
@@ -170,22 +323,22 @@ public class GraphPosLengthUtils {
 				Object oo[] = (Object[]) o;
 
 				if (oo.length > 0 && oo[0] instanceof Number) {
-					xyz[0] = ((Number) oo[0]).floatValue();
+					pos.x = ((Number) oo[0]).doubleValue();
 
 					if (oo.length > 1)
-						xyz[1] = ((Number) oo[1]).floatValue();
+						pos.y = ((Number) oo[1]).doubleValue();
 					if (oo.length > 2)
-						xyz[2] = ((Number) oo[2]).floatValue();
+						pos.z = ((Number) oo[2]).doubleValue();
 				}
 			}
 		} else if (node.hasAttribute("x")) {
-			xyz[0] = (float) node.getNumber("x");
+			pos.x = (double) node.getNumber("x");
 
 			if (node.hasAttribute("y"))
-				xyz[1] = (float) node.getNumber("y");
+				pos.y = (double) node.getNumber("y");
 
 			if (node.hasAttribute("z"))
-				xyz[2] = (float) node.getNumber("z");
+				pos.z = (double) node.getNumber("z");
 		}
 	}
 
@@ -196,11 +349,10 @@ public class GraphPosLengthUtils {
 	 * @param id
 	 *            The identifier of the edge.
 	 * @return The edge length or -1 if the nodes of the edge have no positions.
-	 * @throws ElementNotFoundException
+	 * @throws RuntimeException
 	 *             If the edge cannot be found.
 	 */
-	public static float edgeLength(Graph graph, String id)
-			throws ElementNotFoundException {
+	public static double edgeLength(Graph graph, String id) {
 		Edge edge = graph.getEdge(id);
 
 		if (edge != null)
@@ -216,9 +368,9 @@ public class GraphPosLengthUtils {
 	 * @param edge
 	 * @return The edge length or -1 if the nodes of the edge have no positions.
 	 */
-	public static float edgeLength(Edge edge) {
-		float xyz0[] = nodePosition(edge.getNode0());
-		float xyz1[] = nodePosition(edge.getNode1());
+	public static double edgeLength(Edge edge) {
+		double xyz0[] = nodePosition(edge.getNode0());
+		double xyz1[] = nodePosition(edge.getNode1());
 
 		if (xyz0 == null || xyz1 == null)
 			return -1;
@@ -227,7 +379,7 @@ public class GraphPosLengthUtils {
 		xyz0[1] = xyz1[1] - xyz0[1];
 		xyz0[2] = xyz1[2] - xyz0[2];
 
-		return (float) Math.sqrt(xyz0[0] * xyz0[0] + xyz0[1] * xyz0[1]
+		return Math.sqrt(xyz0[0] * xyz0[0] + xyz0[1] * xyz0[1]
 				+ xyz0[2] * xyz0[2]);
 	}
 }

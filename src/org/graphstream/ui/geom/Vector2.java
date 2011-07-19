@@ -131,6 +131,14 @@ public class Vector2 implements java.io.Serializable {
 	public double at(int i) {
 		return data[i];
 	}
+	
+	public double x() {
+		return data[0];
+	}
+	
+	public double y() {
+		return data[1];
+	}
 
 	@Override
 	public Object clone() {
