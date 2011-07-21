@@ -1,5 +1,9 @@
+options { JDK_VERSION = "1.5"; STATIC = false; IGNORE_CASE = true; }
+
+PARSER_BEGIN(DOTParser)
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev     <stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -28,10 +32,6 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-
-options { JDK_VERSION = "1.5"; STATIC = false; IGNORE_CASE = true; }
-
-PARSER_BEGIN(DOTParser)
 package org.graphstream.stream.file.dot;
 
 import java.io.InputStream;
@@ -39,32 +39,153 @@ import java.io.Reader;
 import java.util.LinkedList;
 import java.util.HashMap;
 
+import org.graphstream.stream.SourceBase.ElementType;
+import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
+
+/**
+ * This class defines a DOT parser.
+ *
+ * It respects the specifications of the DOT language that can be found
+ * <a href="http://www.graphviz.org/doc/info/lang.html">here</a>.
+ *
+ * Subgraph produces no error but has no effect on the graph.
+ */
+@SuppressWarnings("unused")
 public class DOTParser {
-	boolean inGraph = false;
-	FileSourceDOT dot;
+	/**
+	 * The DOT source associated with this parser.
+	 */
+	private FileSourceDOT dot;
+	
+	/**
+	 * Id of the parser used in events.
+	 */
+	private String sourceId;
+	
+	/**
+	 * Flag telling if the graph is directed.
+	 */
+	private boolean directed;
+	
+	/**
+	 * Flag telling if the graph is 'strict'.
+	 */
+	private boolean strict;
+	
+	/**
+	 * Global attributes of nodes.
+	 */
+	private HashMap<String, Object> globalNodesAttributes;
+	
+	/**
+	 * Global attributes of edges.
+	 */
+	private HashMap<String, Object> globalEdgesAttributes;
   
-	public DOTParser(FileSourceDOT dot, InputStream stream)
-	{
+  	/**
+  	 * Create a new parser associated with a DOT source from an input stream.
+  	 */
+	public DOTParser(FileSourceDOT dot, InputStream stream) {
 		this(stream);
-		this.dot = dot;
+		init(dot);
 	}
 	
-	public DOTParser(FileSourceDOT dot, Reader stream )
-	{
+  	/**
+  	 * Create a new parser associated with a DOT source from a reader.
+  	 */
+	public DOTParser(FileSourceDOT dot, Reader stream ) {
 		this(stream);
-		this.dot = dot;
+		init(dot);
 	}
 	
-	public boolean isInGraph()
-	{
-		return inGraph; 
+	/**
+	 * Closes the parser, closing the opened stream.
+	 */
+	public void end() {
+		try {
+			jj_input_stream.inputStream.close();
+		} catch(Exception e) {
+		}
+		
+		jj_input_stream.Done();
+	}
+	
+	private void init(FileSourceDOT dot) {
+		this.dot = dot;
+		this.sourceId = String.format("<DOT stream %x>", System.nanoTime());
+		
+		globalNodesAttributes = new HashMap<String, Object>();
+		globalEdgesAttributes = new HashMap<String, Object>();
+	}
+	
+	private void addNode(String nodeId, String [] port, 
+			HashMap<String, Object> attr) {
+		dot.sendNodeAdded(sourceId, nodeId);
+		
+		if (attr == null) {
+			for (String key : globalNodesAttributes.keySet())
+				dot.sendAttributeChangedEvent( sourceId, nodeId, ElementType.NODE,
+					key, AttributeChangeEvent.ADD, null, globalNodesAttributes.get(key));
+		} else {
+			for (String key : globalNodesAttributes.keySet()) {
+				if (!attr.containsKey(key))
+					dot.sendAttributeChangedEvent( sourceId, nodeId, ElementType.NODE,
+						key, AttributeChangeEvent.ADD, null, globalNodesAttributes.get(key));
+			}
+		
+			for (String key : attr.keySet())
+				dot.sendAttributeChangedEvent( sourceId, nodeId, ElementType.NODE,
+					key, AttributeChangeEvent.ADD, null, attr.get(key));
+		}
+	}
+	
+	private void addEdges(LinkedList<String> edges) {
+		HashMap<String, Integer> hash = new HashMap<String, Integer>();
+		String [] ids = new String [(edges.size() - 1) / 2];
+		boolean [] directed = new boolean [(edges.size() - 1) / 2];
+		int count = 0;
+		
+		for (int i = 0; i < edges.size() - 1; i += 2) {
+			String from = edges.get(i);
+			String to = edges.get(i+2);
+			String edgeId = String.format("(%s;%s)", from, to);
+			String rev = String.format("(%s;%s)", to, from);
+			 
+			 if (hash.containsKey(rev)) {
+			 	directed [hash.get(rev)] = false;
+			 } else {
+			 	hash.put(edgeId, count);
+			 	ids [count] = edgeId;
+			 	directed [count] = edges.get(i).equals("->");
+			 	
+			 	count++;
+			 }
+		}
+		
+		hash.clear();
+		
+		for (int i = 0; i < count; i++)
+			dot.sendEdgeAdded(sourceId, ids [i], edges.get(i*2),
+				edges.get((i+1)*2), directed [i]);
+	}
+	
+	private void setGlobalAttributes(String who, HashMap<String, Object> attr) {
+		if (who.equalsIgnoreCase("graph")) {
+			for (String key : attr.keySet())
+				dot.sendAttributeChangedEvent( sourceId, sourceId, ElementType.GRAPH,
+					key, AttributeChangeEvent.ADD, null, attr.get(key));
+		}
+		else if (who.equalsIgnoreCase("node"))
+			globalNodesAttributes.putAll(attr);
+		else if (who.equalsIgnoreCase("edge"))
+			globalEdgesAttributes.putAll(attr);
 	}
 }
 PARSER_END(DOTParser)
 
-/************************************************************************/
-/* The lexer.                                                           */
-/************************************************************************/
+/************************************************************************
+ * The lexer.                                                           
+ */
 
 SKIP :
 { 	" "
@@ -74,70 +195,102 @@ SKIP :
 |	<"/*" (~["*"]|"*" ~["/"])* "*/">
 |	<("//" | "#") (~["\n","\r"])* <EOL>>
 }
-//
-// Base tokens.
-//
-TOKEN: { < #EOL              : (("\r")|("\n"))> }
-TOKEN: { < #DIGIT            : ["0"-"9"] > }
-TOKEN: { < #HEXDIGIT         : (["0"-"9","a"-"f","A"-"F"])> }
-
-TOKEN: { < LSQBR             : "[" > }
-TOKEN: { < RSQBR             : "]" > }
-TOKEN: { < LBRACE            : "{" > }
-TOKEN: { < RBRACE            : "}" > }
-TOKEN: { < COLON             : ":" > }
-TOKEN: { < COMMA             : "," > }
-TOKEN: { < EQUALS            : "=" > }
 
 //
-// More base tokens that must appear at the end for precedence reasons.
+// Private tokens.
 //
-TOKEN: { < GRAPH     : "graph" > }
-TOKEN: { < DIGRAPH   : "digraph" > }
-TOKEN: { < SUBGRAPH  : "subgraph" > }
-TOKEN: { < NODE      : "node" > }
-TOKEN: { < EDGE      : "edge" > }
-TOKEN: { < STRICT    : "strict" > }
-TOKEN: { < EDGE_OP   : ( "--" | "->" ) > }
-
-TOKEN: { < REAL              : ( "-" | "+" )? ( <DIGIT> )+ ( "." (<DIGIT>)+ )?> } 
-TOKEN: { < STRING            : (("\"" (~["\""]|"\\\"")* "\"")|("'" (~["'"])* "'")) > }
-TOKEN: { < WORD              : [ "a"-"z", "A"-"Z", "\200"-"\377", "_" ] ( [ "a"-"z", "A"-"Z", "\200"-"\377", "_", "0"-"9" ] )* > }
-
-/*****************************************************************/
-/* The parser.                                                   */
-/*****************************************************************/
-
-boolean next():
-{
-
-}
-{
-	statement() { return true; }
-|	<RBRACE> { return false; }
-|	<EOF> { return false; }
+TOKEN: {
+	< #EOL              : (("\r")|("\n"))>
+|	< #DIGIT            : ["0"-"9"] >
+|	< #HEXDIGIT         : (["0"-"9","a"-"f","A"-"F"])>
 }
 
-void graph():
+//
+// Symbols
+//
+TOKEN: {
+	< LSQBR             : "[" >
+|	< RSQBR             : "]" >
+|	< LBRACE            : "{" >
+|	< RBRACE            : "}" >
+|	< COLON             : ":" >
+|	< COMMA             : "," >
+|	< EQUALS            : "=" >
+}
+
+//
+// DOT keywords
+//
+TOKEN: {
+	< GRAPH     : "graph" >
+|	< DIGRAPH   : "digraph" >
+|	< SUBGRAPH  : "subgraph" >
+|	< NODE      : "node" >
+|	< EDGE      : "edge" >
+|	< STRICT    : "strict" >
+|	< EDGE_OP   : ( "--" | "->" ) >
+}
+
+//
+// Complex tokens
+//
+TOKEN: {
+	< REAL      : ( "-" | "+" )? ( <DIGIT> )+ ( "." (<DIGIT>)+ )?> 
+|	< STRING    : (("\"" (~["\""]|"\\\"")* "\"")|("'" (~["'"])* "'")) >
+|	< WORD      : [ "a"-"z", "A"-"Z", "\200"-"\377", "_" ] ( [ "a"-"z", "A"-"Z", "\200"-"\377", "_", "0"-"9" ] )* >
+}
+
+/*****************************************************************
+ * The parser.
+ */
+
+public void all():
+{}
 {
-	String graphId = null;
-	boolean directed = false;
+	graph() ( statement() )* <RBRACE>
+}
+
+public boolean next():
+{
+	boolean hasMore = false;
 }
 {
-	( <STRICT> )?
+(	statement() { hasMore = true; }
+|	<RBRACE>
+|	<EOF>
+)
+	{return hasMore;}
+}
+
+public void begin():
+{}
+{
+	graph()
+}
+
+private void graph():
+{
+	directed = false;
+	strict = false;
+	
+	globalNodesAttributes.clear();
+	globalEdgesAttributes.clear();
+}
+{
+	( <STRICT> {strict = true;})?
 	( <GRAPH> | <DIGRAPH> { directed = true; } )
-	( graphId = id() )?
+	( this.sourceId = id() )?
 	<LBRACE>
 }
 
-void subgraph():
+private void subgraph():
 {
 }
 {
-	<SUBGRAPH> ( id() )? <LBRACE> <RBRACE>
+	<SUBGRAPH> ( id() )? <LBRACE> ( statement() )* <RBRACE>
 }
 
-String id():
+private String id():
 {
 	Token t;
 }
@@ -150,7 +303,7 @@ String id():
 	{ return t.image; }
 }
 
-void statement():
+private void statement():
 {
 
 }
@@ -164,25 +317,25 @@ void statement():
 	";"
 }
 
-void nodeStatement():
+private void nodeStatement():
 {
 	String nodeId;
 	String [] port;
+	HashMap<String, Object> attr = null;
 	
 	port = null;
 }
 {
-	nodeId = id() ( port = port() )? ( attributesList() )?
-	{ System.out.printf("add node \"%s\"\n", nodeId); }
+	nodeId = id() ( port = port() )? ( attr = attributesList() )?
+	{ addNode(nodeId, port, attr); }
 }
 
-String compassPoint():
+private String compassPoint():
 {
 	Token pt = null;
 }
 {
-(
-	pt = "n"
+(	pt = "n"
 | 	pt = "ne"
 | 	pt = "e"
 | 	pt = "se"
@@ -196,7 +349,7 @@ String compassPoint():
 	{return pt.image;}
 }
 
-String [] port():
+private String [] port():
 {
 	String [] p = { null, null };
 }
@@ -208,7 +361,7 @@ String [] port():
 	{return p;}
 }
 
-void edgeStatement():
+private void edgeStatement():
 {
 	String id;
 	LinkedList<String> edges = new LinkedList<String>();
@@ -217,15 +370,10 @@ void edgeStatement():
 	id = id() { edges.add(id); }
 	edgeRHS(edges)
 	( attributesList() )?
-	{
-	System.out.printf("add edge : "); 
-	for( int i=0; i<edges.size(); i++)
-		System.out.printf("%s ", edges.get(i));
-	System.out.printf("\n");
-	}
+	{addEdges(edges);}
 }
 
-void edgeRHS(LinkedList<String> edges):
+private void edgeRHS(LinkedList<String> edges):
 {
 	Token t;
 	String i;
@@ -236,19 +384,21 @@ void edgeRHS(LinkedList<String> edges):
 	( edgeRHS(edges) )?
 }
 
-void attributeStatement():
+private void attributeStatement():
 {
-
+	Token t;
+	HashMap<String, Object> attr;
 }
 {
-(	<GRAPH>
-|	<NODE>
-|	<EDGE>
+(	t = <GRAPH>
+|	t = <NODE>
+|	t = <EDGE>
 )
-	attributesList()
+	attr = attributesList()
+	{setGlobalAttributes(t.image, attr);}
 }
 
-HashMap<String,Object> attributesList():
+private HashMap<String,Object> attributesList():
 {
 	HashMap<String, Object> attributes = new HashMap<String, Object>();
 }
@@ -257,7 +407,7 @@ HashMap<String,Object> attributesList():
 	{ return attributes; }
 }
 
-void attributeList(HashMap<String,Object> attributes):
+private void attributeList(HashMap<String,Object> attributes):
 {
 	String key;
 	Object val;
@@ -273,4 +423,5 @@ void attributeList(HashMap<String,Object> attributes):
 	|	val = id()
 	)		
 )?
+	{attributes.put(key, val);}
 }
