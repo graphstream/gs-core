@@ -32,7 +32,13 @@
 package org.graphstream.stream.file.gml;
 
 import java.io.InputStream;
+import java.io.IOException;
 import java.io.Reader;
+
+import org.graphstream.utils.parser.ParseException;
+import org.graphstream.utils.parser.SimpleCharStream;
+import org.graphstream.utils.parser.Token;
+import org.graphstream.utils.parser.TokenMgrError;
 
 @SuppressWarnings("unused")
 public class GMLParser implements GMLParserConstants {
@@ -56,13 +62,8 @@ public class GMLParser implements GMLParserConstants {
 	/**
 	 * Closes the parser, closing the opened stream.
 	 */
-	public void end() {
-		try {
-			jj_input_stream.inputStream.close();
-		} catch (Exception e) {
-		}
-
-		jj_input_stream.Done();
+	public void close() throws IOException {
+		jj_input_stream.close();
 	}
 
 	/*****************************************************************/

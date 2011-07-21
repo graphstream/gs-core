@@ -43,6 +43,9 @@ import java.util.Locale;
 import org.graphstream.stream.SourceBase;
 import org.graphstream.stream.file.FileSource;
 
+import org.graphstream.utils.parser.ParseException;
+import org.graphstream.utils.parser.Token;
+
 /**
  * A parser for the Pajek NET format.
  * 
@@ -128,7 +131,7 @@ public class FileSourcePajek extends SourceBase implements FileSource {
 	}
 
 	public void end() throws IOException {
-		parser.end();
+		parser.close();
 	}
 	
 	protected int addNodes(Token nb)

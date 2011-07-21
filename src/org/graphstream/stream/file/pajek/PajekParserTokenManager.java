@@ -31,6 +31,10 @@
  */
 package org.graphstream.stream.file.pajek;
 
+import org.graphstream.utils.parser.SimpleCharStream;
+import org.graphstream.utils.parser.Token;
+import org.graphstream.utils.parser.TokenMgrError;
+
 /** Token Manager. */
 public class PajekParserTokenManager implements PajekParserConstants {
 

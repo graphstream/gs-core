@@ -41,6 +41,7 @@ public class TestPajekParser {
 	public static void main(String args[]) throws IOException {
 		System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 		
+		@SuppressWarnings("unused")
 		TestPajekParser test = new TestPajekParser();
 		
 //		test.test("/home/antoine/Documents/Recherche/Media/Graphs/Pajek/1.NET", false, false, false);		// All

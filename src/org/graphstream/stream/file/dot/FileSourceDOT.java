@@ -41,6 +41,8 @@ import java.net.URL;
 import org.graphstream.stream.SourceBase;
 import org.graphstream.stream.file.FileSource;
 
+import org.graphstream.utils.parser.ParseException;
+
 public class FileSourceDOT extends SourceBase implements FileSource {
 
 	protected DOTParser parser;
@@ -193,6 +195,6 @@ public class FileSourceDOT extends SourceBase implements FileSource {
 	 * @see org.graphstream.stream.file.FileSource#end()
 	 */
 	public void end() throws IOException {
-		parser.end();
+		parser.close();
 	}
 }

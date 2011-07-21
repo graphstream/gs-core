@@ -42,6 +42,8 @@ import java.util.HashMap;
 import org.graphstream.stream.SourceBase;
 import org.graphstream.stream.file.FileSource;
 
+import org.graphstream.utils.parser.ParseException;
+
 /**
  * A GML parser.
  * 
@@ -227,7 +229,7 @@ public class FileSourceGML extends SourceBase implements FileSource {
 	}
 
 	public void end() throws IOException {
-		parser.end();
+		parser.close();
 	}
 	
 	protected void insertKeyValues(KeyValues kv)
