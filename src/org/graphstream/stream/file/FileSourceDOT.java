@@ -55,6 +55,7 @@ import java.util.HashSet;
  * 
  * The usual file name extension for this format is ".dot".
  */
+@Deprecated
 public class FileSourceDOT extends FileSourceBase {
 	// Attribute
 
