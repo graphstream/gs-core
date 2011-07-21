@@ -1,0 +1,252 @@
+/*
+ * Copyright 2006 - 2011 
+ *     Julien Baudry	<julien.baudry@graphstream-project.org>
+ *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
+ *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
+ *     Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
+ * 
+ * This file is part of GraphStream <http://graphstream-project.org>.
+ * 
+ * GraphStream is a library whose purpose is to handle static or dynamic
+ * graph, create them from scratch, file or any source and display them.
+ * 
+ * This program is free software distributed under the terms of two licenses, the
+ * CeCILL-C license that fits European law, and the GNU Lesser General Public
+ * License. You can  use, modify and/ or redistribute the software under the terms
+ * of the CeCILL-C license as circulated by CEA, CNRS and INRIA at the following
+ * URL <http://www.cecill.info> or under the terms of the GNU LGPL as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
+ */
+
+options { JDK_VERSION = "1.5"; STATIC = false; IGNORE_CASE = true; }
+
+PARSER_BEGIN(DOTParser)
+package org.graphstream.stream.file.dot;
+
+import java.io.InputStream;
+import java.io.Reader;
+
+public class DOTParser {
+	boolean inGraph = false;
+	FileSourceDOT dot;
+  
+	public DOTParser(FileSourceDOT dot, InputStream stream)
+	{
+		this(stream);
+		this.dot = dot;
+	}
+	
+	public DOTParser(FileSourceDOT dot, Reader stream )
+	{
+		this(stream);
+		this.dot = dot;
+	}
+	
+	public boolean isInGraph()
+	{
+		return inGraph; 
+	}
+}
+PARSER_END(DOTParser)
+
+/************************************************************************/
+/* The lexer.                                                           */
+/************************************************************************/
+
+SKIP :
+{ 	" "
+|	"\r"
+|	"\t"
+|	"\n"
+|	<"/*" (~["*"]|"*" ~["/"])* "*/">
+|	<("//" | "#") (~["\n","\r"])* <EOL>>
+}
+//
+// Base tokens.
+//
+TOKEN: { < #EOL              : (("\r")|("\n"))> }
+TOKEN: { < #DIGIT            : ["0"-"9"] > }
+TOKEN: { < #HEXDIGIT         : (["0"-"9","a"-"f","A"-"F"])> }
+
+TOKEN: { < LSQBR             : "[" > }
+TOKEN: { < RSQBR             : "]" > }
+TOKEN: { < LBRACE            : "{" > }
+TOKEN: { < RBRACE            : "}" > }
+TOKEN: { < COLON             : ":" > }
+TOKEN: { < COMMA             : "," > }
+TOKEN: { < EQUALS            : "=" > }
+
+//
+// More base tokens that must appear at the end for precedence reasons.
+//
+TOKEN: { < GRAPH     : "graph" > }
+TOKEN: { < DIGRAPH   : "digraph" > }
+TOKEN: { < SUBGRAPH  : "subgraph" > }
+TOKEN: { < NODE      : "node" > }
+TOKEN: { < EDGE      : "edge" > }
+TOKEN: { < STRICT    : "strict" > }
+TOKEN: { < COMPASS_PT: ( "n" | "ne" | "e" | "se" | "s" | "sw" | "w" | "nw" | "c" | "_" ) > }
+TOKEN: { < EDGE_OP   : ( "--" | "->" ) > }
+TOKEN: { < KEY       : (["-","+","a"-"z","A"-"Z"])(["a"-"z","A"-"Z","0"-"9","_","-"])* > }
+
+TOKEN: { < REAL              : ( "-" | "+" )? ( <DIGIT> )+ ( "." (<DIGIT>)+ )?> } 
+TOKEN: { < STRING            : (("\"" (~["\""]|"\\\"")* "\"")|("'" (~["'"])* "'")) > }
+TOKEN: { < WORD              : [ "a"-"z", "A"-"Z", "\200"-"\377", "_" ] ( [ "a"-"z", "A"-"Z", "\200"-"\377", "_", "0"-"9" ] )* > }
+
+/*****************************************************************/
+/* The parser.                                                   */
+/*****************************************************************/
+
+boolean next():
+{
+
+}
+{
+	statement() { return true; }
+|	<EOF> { return false; }
+}
+
+void graph():
+{
+	String graphId = null;
+	boolean directed = false;
+}
+{
+	( <STRICT> )?
+	( <GRAPH> | <DIGRAPH> { directed = true; } )
+	( graphId = id() )?
+	<LBRACE>
+}
+
+void subgraph():
+{
+}
+{
+	<SUBGRAPH> ( id() )? <LBRACE> <RBRACE>
+}
+
+String id():
+{
+	Token t;
+}
+{
+(
+	t = <STRING>
+| 	t = <REAL>
+| 	t = <WORD>
+)
+	{ return t.image; }
+}
+
+void statement():
+{
+
+}
+{
+(LOOKAHEAD(2)
+	nodeStatement()
+|	edgeStatement()
+|	attributeStatement()
+|	subgraph()
+)
+	";"
+}
+
+void nodeStatement():
+{
+	String nodeId;
+	String [] port;
+	
+	port = null;
+}
+{
+	nodeId = id() ( port = port() )? attributesList()
+}
+
+String port():
+{
+	String [] p = { null, null };
+	Token t;
+}
+{
+	<COLON>
+(	p [0] = id() ( <COLON> t = <COMPASS_PT> )?
+|	t = <COMPASS_PT>
+)
+	{
+		p [1] = t.image;
+		return p;
+	}
+}
+
+void edgeStatement():
+{
+	String id;
+	LinkedList<String> edges = new LinkedList<String>();
+}
+{
+	id = id() { edges.add(id); }
+	edgeRHS(edges)
+	( attributeList() )?
+}
+
+void edgeRHS(LinkedList<String> edges):
+{
+	Token t;
+	String i;
+}
+{
+	t = <EDGE_OP> { edges.add(t.image); }
+	i = id()      { edges.add(i); }
+	( edgeRHS(edges) )?
+}
+
+void attributeStatement():
+{
+
+}
+{
+(	<GRAPH>
+|	<NODE>
+|	<EDGE>
+)
+	attributeList()
+}
+
+HashMap<String,Object> attributesList():
+{
+	HashMap<String, Object> attributes = new HashMap<String, Object>();
+}
+{
+	(<LSQBR>( attributeList(attributes) ( <COMMA> attributeList(attributes) )* )? <RSQBR>)+
+	{ return attributes; }
+}
+
+void attributeList(HashMap<String,Object> attributes):
+{
+	String key;
+	Object val;
+	
+	Token t;
+}
+{
+	id = id() { val = Boolean.TRUE; }
+(
+	<EQUALS>
+	(LOOKAHEAD(2)
+		t = <REAL> { val = Double.parseDouble(t.image); }
+	|	val = id()
+	)		
+)?
+}
