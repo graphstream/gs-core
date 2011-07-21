@@ -64,6 +64,11 @@ public abstract class AbstractElement implements Element {
 	 * Tag of this element.
 	 */
 	private String id;
+	
+	/**
+	 * The index of this element.
+	 */
+	private int index;
 
 	/**
 	 * Attributes map. This map is created only when needed. It contains pairs
@@ -88,6 +93,19 @@ public abstract class AbstractElement implements Element {
 
 	public String getId() {
 		return id;
+	}
+	
+	public int getIndex() {
+		return index;
+	}
+	
+	/**
+	 * Used by subclasses to change the index of an element
+	 * 
+	 * @param index the new index
+	 */
+	protected void setIndex(int index) {
+		this.index = index;
 	}
 
 	// XXX UGLY. how to create events in the abstract element ?

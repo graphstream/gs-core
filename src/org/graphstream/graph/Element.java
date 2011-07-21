@@ -39,8 +39,8 @@ import java.util.Map;
  * An element is a part of a graph (node, edge, the graph itself).
  * 
  * <p>
- * An interface that defines common method to manipulate identifiers and
- * attributes of the elements (graph, nodes and edges) of a graph.
+ * An interface that defines common method to manipulate identifiers,
+ * attributes and indices of the elements (graph, nodes and edges) of a graph.
  * </p>
  * *
  * <p>
@@ -68,6 +68,14 @@ public interface Element {
 	 * @return The identifier value.
 	 */
 	String getId();
+	
+	
+	/**
+	 * The current index of this element
+	 * 
+	 * @return The index value
+	 */
+	int getIndex();
 
 	/**
 	 * Get the attribute object bound to the given key. The returned value may
