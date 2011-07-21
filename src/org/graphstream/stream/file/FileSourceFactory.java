@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import org.graphstream.stream.file.pajek.FileSourcePajek;
+import org.graphstream.stream.file.tlp.FileSourceTLP;
 
 /**
  * File source factory.
@@ -117,6 +118,9 @@ public class FileSourceFactory {
 			return new org.graphstream.stream.file.gml.FileSourceGML();
 		}
 
+		if (n >= 4 && b[0] == '(' && b[1] == 't' && b[2] == 'l' && b[3] == 'p')
+			return new FileSourceTLP();
+
 		// The web reader.
 
 		String flc = fileName.toLowerCase();
@@ -126,7 +130,7 @@ public class FileSourceFactory {
 		if (flc.endsWith(".gml") || flc.endsWith(".dgml")) {
 			return new org.graphstream.stream.file.gml.FileSourceGML();
 		}
-		
+
 		if (flc.endsWith(".net")) {
 			return new FileSourcePajek();
 		}
@@ -142,17 +146,17 @@ public class FileSourceFactory {
 		if (flc.endsWith(".edge")) {
 			return new FileSourceEdge();
 		}
-		
+
 		if (flc.endsWith(".lgl")) {
 			return new FileSourceLGL();
 		}
-		
+
 		if (flc.endsWith(".ncol")) {
 			return new FileSourceNCol();
 		}
 
 		if (flc.endsWith(".tlp")) {
-			return new org.graphstream.stream.file.tlp.FileSourceTLP();
+			return new FileSourceTLP();
 		}
 
 		return null;
