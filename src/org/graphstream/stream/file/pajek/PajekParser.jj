@@ -1,3 +1,11 @@
+options {
+	JDK_VERSION    = "1.5";
+	STATIC         = false;
+	LOOKAHEAD      = 2;
+	IGNORE_CASE    = true;
+}
+
+PARSER_BEGIN(PajekParser)
 /*
  * Copyright 2006 - 2011 
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
@@ -28,21 +36,13 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-
-options {
-	JDK_VERSION    = "1.5";
-	STATIC         = false;
-	LOOKAHEAD      = 2;
-	IGNORE_CASE    = true;
-}
-
-PARSER_BEGIN(PajekParser)
 package org.graphstream.stream.file.pajek;
 
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 
+@SuppressWarnings("unused")
 public class PajekParser {
 	// The node count.
 	int nodeCount;
@@ -64,6 +64,18 @@ public class PajekParser {
 	{
 		this(stream);
 		this.pajek = pajek;
+	}
+	
+	/**
+	 * Closes the parser, closing the opened stream.
+	 */
+	public void end() {
+		try {
+			jj_input_stream.inputStream.close();
+		} catch(Exception e) {
+		}
+		
+		jj_input_stream.Done();
 	}
 }
 PARSER_END(PajekParser)
@@ -382,8 +394,8 @@ String color():
 }
 {
 	( value=keyOrString()
-	| ( r=<REAL> g=<REAL> b=<REAL>  { value = pajek.toColorValue(r, g, b); } )
-	| ( r=<INT>  g=<INT>  b=<INT>   { value = pajek.toColorValue(r, g, b); } )
+	| ( r=<REAL> g=<REAL> b=<REAL>  { value = FileSourcePajek.toColorValue(r, g, b); } )
+	| ( r=<INT>  g=<INT>  b=<INT>   { value = FileSourcePajek.toColorValue(r, g, b); } )
 	)
 	{ return value; }
 }

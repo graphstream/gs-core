@@ -128,6 +128,7 @@ public class FileSourcePajek extends SourceBase implements FileSource {
 	}
 
 	public void end() throws IOException {
+		parser.end();
 	}
 	
 	protected int addNodes(Token nb)
