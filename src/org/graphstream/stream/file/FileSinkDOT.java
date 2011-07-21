@@ -163,8 +163,14 @@ public class FileSinkDOT extends FileSinkBase {
 
 	public void edgeAdded(String graphId, long timeId, String edgeId,
 			String fromNodeId, String toNodeId, boolean directed) {
-		if (digraph)
-			out.printf("\t%s -> %s;%n", fromNodeId, toNodeId);
+		if (digraph) {
+			out.printf("\t%s -> %s", fromNodeId, toNodeId);
+			
+			if (!directed)
+				out.printf(" -> %s", fromNodeId);
+			
+			out.printf("\n;");
+		}
 		else
 			out.printf("\t%s -- %s;%n", fromNodeId, toNodeId);
 	}

@@ -128,7 +128,7 @@ public class FileSourceDOT extends FileSourceBase {
 
 			parseAttributeBlock("edge", edgesAttributes);
 			eatSymbolOrPushback(';');
-		} else if (w.equals("graph")) {
+		} else if (w.equals("graph") || w.equals("digraph")) {
 			// Graph attributes.
 
 			attributes.clear();
@@ -345,7 +345,9 @@ public class FileSourceDOT extends FileSourceBase {
 			else
 				parseError("expecting '>' or '-', got '" + symbol + "'");
 
-			EdgeRepr e = parseEdge(id);
+			EdgeRepr e = new EdgeRepr(Integer.toString(edgeId++), id, null, directed);
+			e = parseEdge(e);
+			
 			this.attributes.clear();
 			this.attributes.putAll(edgesAttributes);
 			maybeParseAttributeBlock("edge", this.attributes);
@@ -361,7 +363,7 @@ public class FileSourceDOT extends FileSourceBase {
 			if (!nodes.contains(e.to))
 				declareNode(e.to, nodesAttributes);
 
-			sendEdgeAdded(graphName, e.id, e.from, e.to, directed);
+			sendEdgeAdded(graphName, e.id, e.from, e.to, e.directed);
 
 			if (this.attributes != null) {
 				for (String key : this.attributes.keySet()) {
@@ -402,9 +404,11 @@ public class FileSourceDOT extends FileSourceBase {
 		}
 	}
 
-	protected EdgeRepr parseEdge(String node0Id) throws IOException {
+	protected EdgeRepr parseEdge(EdgeRepr repr) throws IOException {
 		String node1Id;
+		boolean directed;
 
+		directed = false;
 		node1Id = getStringOrWordOrNumber();
 
 		if (node1Id.equals("subgraph")) {
@@ -414,19 +418,29 @@ public class FileSourceDOT extends FileSourceBase {
 			// node1_id = SG.get_id();
 		} else {
 			String w = getWordOrSymbolOrPushback();
+			repr.to = node1Id;
 
 			if (w != null) {
 				if (w.startsWith("-")) {
 					// Chain of edges.
+					String next;
 
-					eatSymbols(">-");
-					parseEdge(node1Id);
+					directed = (eatSymbols(">-") == '>');
+					next = this.getStringOrWordOrNumberOrPushback();
+					
+					if (next.equals(repr.from)) {
+						repr.directed = false;
+					} else {
+						pushBack();
+						EdgeRepr repr1 = new EdgeRepr(Integer.toString(edgeId++), node1Id, null, directed);
+						parseEdge(repr1);
+					}
 				} else {
 					pushBack();
 				}
 			}
 
-			return new EdgeRepr(Integer.toString(edgeId++), node0Id, node1Id);
+			return repr;
 		}
 	}
 
@@ -447,11 +461,13 @@ public class FileSourceDOT extends FileSourceBase {
 		public String id;
 		public String from;
 		public String to;
-
-		public EdgeRepr(String id, String from, String to) {
+		public boolean directed;
+		
+		public EdgeRepr(String id, String from, String to, boolean directed) {
 			this.id = id;
 			this.from = from;
 			this.to = to;
+			this.directed = directed;
 		}
 	}
 }

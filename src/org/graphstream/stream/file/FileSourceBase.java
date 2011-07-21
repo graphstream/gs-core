@@ -548,7 +548,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	 * Eat one of the list of expected <code>symbols</code> or generate a parse
 	 * error none of <code>symbols</code> can be found.
 	 */
-	protected void eatSymbols(String symbols) throws IOException {
+	protected int eatSymbols(String symbols) throws IOException {
 		int tok = st.nextToken();
 		int n = symbols.length();
 		boolean f = false;
@@ -563,6 +563,8 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 		if (!f)
 			parseError("expecting one of symbols `" + symbols + "', "
 					+ gotWhat(tok));
+		
+		return tok;
 	}
 
 	/**
@@ -729,6 +731,31 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 				return Double.toString(st.nval);
 		} else {
 			return st.sval;
+		}
+	}
+
+	/**
+	 * Read a string or number or pushback and return null. If it is a number it
+	 * is converted to a string before being returned.
+	 */
+	protected String getStringOrWordOrNumberOrPushback() throws IOException {
+		int tok = st.nextToken();
+
+		if (tok == StreamTokenizer.TT_EOL || tok == StreamTokenizer.TT_EOF) {
+			pushBack();
+			return null;
+		}
+
+		if (tok == StreamTokenizer.TT_NUMBER) {
+			if ((st.nval - ((int) st.nval)) == 0)
+				return Integer.toString((int) st.nval);
+			else
+				return Double.toString(st.nval);
+		} else if (tok == StreamTokenizer.TT_WORD || tok == QUOTE_CHAR) {
+			return st.sval;
+		} else {
+			pushBack();
+			return null;
 		}
 	}
 
