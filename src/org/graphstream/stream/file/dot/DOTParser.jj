@@ -36,6 +36,8 @@ package org.graphstream.stream.file.dot;
 
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.LinkedList;
+import java.util.HashMap;
 
 public class DOTParser {
 	boolean inGraph = false;
@@ -96,9 +98,7 @@ TOKEN: { < SUBGRAPH  : "subgraph" > }
 TOKEN: { < NODE      : "node" > }
 TOKEN: { < EDGE      : "edge" > }
 TOKEN: { < STRICT    : "strict" > }
-TOKEN: { < COMPASS_PT: ( "n" | "ne" | "e" | "se" | "s" | "sw" | "w" | "nw" | "c" | "_" ) > }
 TOKEN: { < EDGE_OP   : ( "--" | "->" ) > }
-TOKEN: { < KEY       : (["-","+","a"-"z","A"-"Z"])(["a"-"z","A"-"Z","0"-"9","_","-"])* > }
 
 TOKEN: { < REAL              : ( "-" | "+" )? ( <DIGIT> )+ ( "." (<DIGIT>)+ )?> } 
 TOKEN: { < STRING            : (("\"" (~["\""]|"\\\"")* "\"")|("'" (~["'"])* "'")) > }
@@ -114,6 +114,7 @@ boolean next():
 }
 {
 	statement() { return true; }
+|	<RBRACE> { return false; }
 |	<EOF> { return false; }
 }
 
@@ -154,9 +155,9 @@ void statement():
 
 }
 {
-(LOOKAHEAD(2)
-	nodeStatement()
-|	edgeStatement()
+(LOOKAHEAD(3)
+	edgeStatement()
+|	nodeStatement()
 |	attributeStatement()
 |	subgraph()
 )
@@ -171,23 +172,40 @@ void nodeStatement():
 	port = null;
 }
 {
-	nodeId = id() ( port = port() )? attributesList()
+	nodeId = id() ( port = port() )? ( attributesList() )?
+	{ System.out.printf("add node \"%s\"\n", nodeId); }
 }
 
-String port():
+String compassPoint():
+{
+	Token pt = null;
+}
+{
+(
+	pt = "n"
+| 	pt = "ne"
+| 	pt = "e"
+| 	pt = "se"
+| 	pt = "s"
+| 	pt = "sw"
+| 	pt = "w"
+| 	pt = "nw"
+| 	pt = "c"
+| 	pt = "_"
+)
+	{return pt.image;}
+}
+
+String [] port():
 {
 	String [] p = { null, null };
-	Token t;
 }
 {
 	<COLON>
-(	p [0] = id() ( <COLON> t = <COMPASS_PT> )?
-|	t = <COMPASS_PT>
+(	p [0] = id() ( <COLON> p [1] = compassPoint() )?
+|	p [1] = compassPoint()
 )
-	{
-		p [1] = t.image;
-		return p;
-	}
+	{return p;}
 }
 
 void edgeStatement():
@@ -198,7 +216,13 @@ void edgeStatement():
 {
 	id = id() { edges.add(id); }
 	edgeRHS(edges)
-	( attributeList() )?
+	( attributesList() )?
+	{
+	System.out.printf("add edge : "); 
+	for( int i=0; i<edges.size(); i++)
+		System.out.printf("%s ", edges.get(i));
+	System.out.printf("\n");
+	}
 }
 
 void edgeRHS(LinkedList<String> edges):
@@ -221,7 +245,7 @@ void attributeStatement():
 |	<NODE>
 |	<EDGE>
 )
-	attributeList()
+	attributesList()
 }
 
 HashMap<String,Object> attributesList():
@@ -241,7 +265,7 @@ void attributeList(HashMap<String,Object> attributes):
 	Token t;
 }
 {
-	id = id() { val = Boolean.TRUE; }
+	key = id() { val = Boolean.TRUE; }
 (
 	<EQUALS>
 	(LOOKAHEAD(2)

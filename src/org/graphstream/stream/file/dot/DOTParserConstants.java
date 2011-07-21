@@ -43,17 +43,13 @@ public interface DOTParserConstants {
   /** RegularExpression Id. */
   int STRICT = 22;
   /** RegularExpression Id. */
-  int COMPASS_PT = 23;
+  int EDGE_OP = 23;
   /** RegularExpression Id. */
-  int EDGE_OP = 24;
+  int REAL = 24;
   /** RegularExpression Id. */
-  int KEY = 25;
+  int STRING = 25;
   /** RegularExpression Id. */
-  int REAL = 26;
-  /** RegularExpression Id. */
-  int STRING = 27;
-  /** RegularExpression Id. */
-  int WORD = 28;
+  int WORD = 26;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -83,13 +79,21 @@ public interface DOTParserConstants {
     "\"node\"",
     "\"edge\"",
     "\"strict\"",
-    "<COMPASS_PT>",
     "<EDGE_OP>",
-    "<KEY>",
     "<REAL>",
     "<STRING>",
     "<WORD>",
     "\";\"",
+    "\"n\"",
+    "\"ne\"",
+    "\"e\"",
+    "\"se\"",
+    "\"s\"",
+    "\"sw\"",
+    "\"w\"",
+    "\"nw\"",
+    "\"c\"",
+    "\"_\"",
   };
 
 }
