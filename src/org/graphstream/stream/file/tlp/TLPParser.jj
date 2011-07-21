@@ -1,0 +1,425 @@
+options { JDK_VERSION = "1.5"; STATIC = false; IGNORE_CASE = true; }
+
+PARSER_BEGIN(TLPParser)
+/*
+ * Copyright 2006 - 2011 
+ *     Stefan Balev     <stefan.balev@graphstream-project.org>
+ *     Julien Baudry	<julien.baudry@graphstream-project.org>
+ *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
+ *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
+ *     Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
+ * 
+ * This file is part of GraphStream <http://graphstream-project.org>.
+ * 
+ * GraphStream is a library whose purpose is to handle static or dynamic
+ * graph, create them from scratch, file or any source and display them.
+ * 
+ * This program is free software distributed under the terms of two licenses, the
+ * CeCILL-C license that fits European law, and the GNU Lesser General Public
+ * License. You can  use, modify and/ or redistribute the software under the terms
+ * of the CeCILL-C license as circulated by CEA, CNRS and INRIA at the following
+ * URL <http://www.cecill.info> or under the terms of the GNU LGPL as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
+ */
+package org.graphstream.stream.file.tlp;
+
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.Reader;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Stack;
+
+import org.graphstream.stream.SourceBase.ElementType;
+import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
+
+import org.graphstream.utils.parser.ParseException;
+import org.graphstream.utils.parser.SimpleCharStream;
+import org.graphstream.utils.parser.Token;
+import org.graphstream.utils.parser.TokenMgrError;
+
+/**
+ * This class defines a TLP parser.
+ */
+@SuppressWarnings("unused")
+public class TLPParser {
+
+	protected static enum PropertyType {
+		BOOL, COLOR, DOUBLE, LAYOUT, INT, SIZE, STRING
+	}
+	
+	protected static class Cluster {
+		int index;
+		String name;
+		
+		LinkedList<String> nodes;
+		LinkedList<String> edges;
+		
+		Cluster(int index, String name) {
+			this.index = index;
+			this.name  = name;
+			this.nodes = new LinkedList<String>();
+			this.edges = new LinkedList<String>();
+		}
+	}
+
+	/**
+	 * The DOT source associated with this parser.
+	 */
+	private FileSourceTLP tlp;
+	
+	/**
+	 * Id of the parser used in events.
+	 */
+	private String sourceId;
+	
+	private Cluster root;
+	private HashMap<Integer, Cluster> clusters;
+	private Stack<Cluster> stack;
+
+  	/**
+  	 * Create a new parser associated with a TLP source from an input stream.
+  	 */
+	public TLPParser(FileSourceTLP tlp, InputStream stream) {
+		this(stream);
+		init(tlp);
+	}
+	
+  	/**
+  	 * Create a new parser associated with a DOT source from a reader.
+  	 */
+	public TLPParser(FileSourceTLP tlp, Reader stream ) {
+		this(stream);
+		init(tlp);
+	}
+	
+	/**
+	 * Closes the parser, closing the opened stream.
+	 */
+    public void close() throws IOException {
+		jj_input_stream.close();
+		clusters.clear();
+	}
+	
+	private void init(FileSourceTLP tlp) {
+		this.tlp = tlp;
+		this.sourceId = String.format("<DOT stream %x>", System.nanoTime());
+		
+		this.clusters = new HashMap<Integer, Cluster>();
+		this.stack = new Stack<Cluster>();
+		
+		this.root = new Cluster(0, "<root>");
+		this.clusters.put(0, this.root);
+		this.stack.push(this.root);
+	}
+	
+	private void addNode(String id) throws ParseException {
+		if (stack.size() > 1 && (!root.nodes.contains(id) || !stack.get(stack.size() - 2).nodes.contains(id)))
+			throw new ParseException("parent cluster do not contain the node");
+			
+		if (stack.size() == 1)
+			tlp.sendNodeAdded(sourceId, id);
+		
+		stack.peek().nodes.add(id);
+	}
+	
+	private void addEdge(String id, String source, String target) throws ParseException {
+		if (stack.size() > 1 && (!root.edges.contains(id) || !stack.get(stack.size() - 2).edges.contains(id)))
+			throw new ParseException("parent cluster "+stack.get(stack.size()-2).name+" do not contain the edge");
+			
+		if (stack.size() == 1)
+			tlp.sendEdgeAdded(sourceId, id, source, target, false);
+		
+		stack.peek().edges.add(id);
+	}
+	
+	private void includeEdge(String id) throws ParseException {
+		if (stack.size() > 1 && (!root.edges.contains(id) || !stack.get(stack.size() - 2).edges.contains(id)))
+			throw new ParseException("parent cluster "+stack.get(stack.size()-2).name+" do not contain the edge");
+			
+		stack.peek().edges.add(id);
+	}
+	
+	private void graphAttribute(String key, Object value) {
+		tlp.sendAttributeChangedEvent( sourceId, sourceId, ElementType.GRAPH,
+						key, AttributeChangeEvent.ADD, null, value);
+	}
+	
+	private void pushCluster(int i, String name) {
+		Cluster c = new Cluster(i, name);
+		clusters.put(i, c);
+		stack.push(c);
+	}
+	
+	private void popCluster() {
+		if(stack.size() > 1)
+			stack.pop();
+	}
+	
+	private void newProperty(Integer cluster, String name, PropertyType type, 
+		String nodeDefault, String edgeDefault, HashMap<String,String> nodes, HashMap<String,String> edges) {
+		Object nodeDefaultValue = convert(type, nodeDefault);
+		Object edgeDefaultValue = convert(type, edgeDefault);
+		Cluster c = clusters.get(cluster);
+		
+		for (String id : c.nodes) {
+			Object value = nodeDefaultValue;
+			
+			if (nodes.containsKey(id))
+				value = convert(type, nodes.get(id));
+			
+			tlp.sendAttributeChangedEvent( sourceId, id, ElementType.NODE,
+					name, AttributeChangeEvent.ADD, null, value);
+		}
+		
+		for (String id : c.edges) {
+			Object value = edgeDefaultValue;
+			
+			if (edges.containsKey(id))
+				value = convert(type, edges.get(id));
+			
+			tlp.sendAttributeChangedEvent( sourceId, id, ElementType.EDGE,
+					name, AttributeChangeEvent.ADD, null, value);
+		}
+	}
+	
+	private Object convert(PropertyType type, String value) {
+		switch(type) {
+		case BOOL:
+			return Boolean.valueOf(value);
+		case INT:
+			return Integer.valueOf(value);
+		case DOUBLE:
+			return Double.valueOf(value);
+		case LAYOUT:
+		case COLOR:
+		case SIZE:
+		case STRING:
+			return value;
+		}
+		
+		return value;
+	}
+}
+PARSER_END(TLPParser)
+
+/************************************************************************
+ * The lexer.                                                           
+ */
+
+SKIP :
+{ 	" "
+|	"\r"
+|	"\t"
+|	"\n"
+|	<"/*" (~["*"]|"*" ~["/"])* "*/">
+|	<";" (~["\n","\r"])* <EOL>>
+}
+
+//
+// Private tokens.
+//
+TOKEN: {
+	< #EOL              : (("\r")|("\n"))>
+|	< #DIGIT            : ["0"-"9"] >
+|	< #HEXDIGIT         : (["0"-"9","a"-"f","A"-"F"])>
+}
+
+//
+// Symbols
+//
+TOKEN: {
+	< OBRACKET          : "(" >
+|	< CBRACKET          : ")" >
+}
+
+//
+// DOT keywords
+//
+TOKEN: {
+	< TLP       : "tlp" >	
+|	< GRAPH     : "graph" >
+|	< NODE      : "node" >
+|	< NODES     : "nodes" >
+|	< EDGE      : "edge" >
+|	< EDGES     : "edges" >
+|	< CLUSTER	: "cluster" >
+|	< AUTHOR	: "author" >
+|	< DATE		: "date" >
+|	< COMMENTS	: "comments" >
+|	< PROPERTY  : "property" >
+|	< DEF		: "default" >
+}
+
+//
+// Complex tokens
+//
+TOKEN: {
+	< INTEGER	: (<DIGIT>)+ >
+|	< REAL      : ( "-" | "+" )? ( <DIGIT> )+ ( "." (<DIGIT>)+ )?>
+|	< STRING    : (("\"" (~["\""]|"\\\"")* "\"")|("'" (~["'"])* "'")) >
+|	< PTYPE     : ("bool" | "color" | "double" | "layout" | "int" | "size" | "string") >
+}
+
+/*****************************************************************
+ * The parser.
+ */
+
+public void all():
+{}
+{
+	tlp() (statement())* <CBRACKET> <EOF>
+}
+
+public boolean next():
+{
+	boolean hasMore = false;
+}
+{
+(	statement() { hasMore = true; }
+|	<EOF>
+)
+	{ return hasMore; }
+}
+
+public void begin():
+{}
+{
+	tlp()
+}
+
+private void tlp():
+{
+	
+}
+{
+	<OBRACKET> <TLP> <STRING> (LOOKAHEAD(2) headers())*
+}
+
+private void headers():
+{
+	String s;
+}
+{
+	<OBRACKET>
+(	<DATE> s = string()     { graphAttribute("date", s); }
+|	<AUTHOR> s = string()   { graphAttribute("author", s); }
+|	<COMMENTS> s = string() { graphAttribute("comments", s); }
+)	<CBRACKET>
+}
+
+private void statement():
+{}
+{
+LOOKAHEAD(2)	nodes()
+|LOOKAHEAD(2)	edge()
+|LOOKAHEAD(2)	cluster()
+|LOOKAHEAD(2)	property()
+}
+
+private void nodes():
+{
+	Token i;
+}
+{
+	<OBRACKET> <NODES> ( i = <INTEGER> { addNode(i.image); })* <CBRACKET>
+}
+
+private void edge():
+{
+	Token i, s, t;
+}
+{
+	<OBRACKET> <EDGE> i = <INTEGER> s = <INTEGER> t = <INTEGER> <CBRACKET>
+	{ addEdge(i.image, s.image, t.image); }
+}
+
+private void edges():
+{
+	Token i;
+}
+{
+	<OBRACKET> <EDGES> ( i = <INTEGER> { includeEdge(i.image); })* <CBRACKET>
+}
+
+private void cluster():
+{
+	Token index;
+	String name;
+}
+{
+	<OBRACKET>
+	<CLUSTER> index = <INTEGER> name = string()
+	{ pushCluster(Integer.valueOf(index.image), name); }
+	nodes()
+	edges()
+	( cluster() )*
+	<CBRACKET>
+	{ popCluster(); }
+}
+
+private void property():
+{
+	PropertyType type;
+	Integer cluster;
+	String name;
+	String nodeDefault, edgeDefault;
+	String value;
+	Token t;
+	
+	HashMap<String, String> nodes = new HashMap<String, String>();
+	HashMap<String, String> edges = new HashMap<String, String>(); 
+}
+{
+	<OBRACKET>
+	<PROPERTY> cluster = integer() type = type() name = string()
+		<OBRACKET>
+		<DEF> nodeDefault = string() edgeDefault = string()
+		<CBRACKET>
+		( <OBRACKET>
+		( <NODE> t = <INTEGER> value = string() { nodes.put(t.image, value); }
+		| <EDGE> t = <INTEGER> value = string() { edges.put(t.image, value); }
+		)  <CBRACKET> )*
+	<CBRACKET>
+	{ newProperty(cluster, name, type, nodeDefault, edgeDefault, nodes, edges); }
+}
+
+private PropertyType type():
+{
+	Token t;
+}
+{
+	t = <PTYPE>
+	{ return PropertyType.valueOf(t.image.toUpperCase()); }
+}
+
+private String string():
+{
+	Token t;
+}
+{
+	t = <STRING>
+	{ return t.image.substring(1, t.image.length()-1); }
+}
+
+private Integer integer():
+{
+	Token t;
+}
+{
+	t = <INTEGER>
+	{ return Integer.valueOf(t.image); }
+}
+

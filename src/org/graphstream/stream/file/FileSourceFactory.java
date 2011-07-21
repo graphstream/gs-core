@@ -136,7 +136,7 @@ public class FileSourceFactory {
 		}
 
 		if (flc.endsWith(".dot")) {
-			return new FileSourceDOT();
+			return new org.graphstream.stream.file.dot.FileSourceDOT();
 		}
 
 		if (flc.endsWith(".edge")) {
@@ -152,7 +152,7 @@ public class FileSourceFactory {
 		}
 
 		if (flc.endsWith(".tlp")) {
-			// return new FileInputTLP();
+			return new org.graphstream.stream.file.tlp.FileSourceTLP();
 		}
 
 		return null;
