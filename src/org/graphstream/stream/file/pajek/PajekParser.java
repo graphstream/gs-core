@@ -37,10 +37,10 @@ import java.io.Reader;
 
 import java.util.ArrayList;
 
-import org.graphstream.utils.parser.ParseException;
-import org.graphstream.utils.parser.SimpleCharStream;
-import org.graphstream.utils.parser.Token;
-import org.graphstream.utils.parser.TokenMgrError;
+import org.graphstream.util.parser.ParseException;
+import org.graphstream.util.parser.SimpleCharStream;
+import org.graphstream.util.parser.Token;
+import org.graphstream.util.parser.TokenMgrError;
 
 @SuppressWarnings("unused")
 public class PajekParser implements PajekParserConstants {

@@ -42,7 +42,7 @@ import java.util.HashMap;
 import org.graphstream.stream.SourceBase;
 import org.graphstream.stream.file.FileSource;
 
-import org.graphstream.utils.parser.ParseException;
+import org.graphstream.util.parser.ParseException;
 
 /**
  * A GML parser.

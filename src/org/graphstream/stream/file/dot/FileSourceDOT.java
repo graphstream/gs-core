@@ -41,7 +41,7 @@ import java.net.URL;
 import org.graphstream.stream.SourceBase;
 import org.graphstream.stream.file.FileSource;
 
-import org.graphstream.utils.parser.ParseException;
+import org.graphstream.util.parser.ParseException;
 
 public class FileSourceDOT extends SourceBase implements FileSource {
 

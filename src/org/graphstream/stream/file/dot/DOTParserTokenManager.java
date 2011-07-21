@@ -32,9 +32,9 @@
  */
 package org.graphstream.stream.file.dot;
 
-import org.graphstream.utils.parser.SimpleCharStream;
-import org.graphstream.utils.parser.Token;
-import org.graphstream.utils.parser.TokenMgrError;
+import org.graphstream.util.parser.SimpleCharStream;
+import org.graphstream.util.parser.Token;
+import org.graphstream.util.parser.TokenMgrError;
 
 /** Token Manager. */
 public class DOTParserTokenManager implements DOTParserConstants

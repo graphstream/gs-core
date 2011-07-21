@@ -43,8 +43,8 @@ import java.util.Locale;
 import org.graphstream.stream.SourceBase;
 import org.graphstream.stream.file.FileSource;
 
-import org.graphstream.utils.parser.ParseException;
-import org.graphstream.utils.parser.Token;
+import org.graphstream.util.parser.ParseException;
+import org.graphstream.util.parser.Token;
 
 /**
  * A parser for the Pajek NET format.
