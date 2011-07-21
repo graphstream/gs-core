@@ -1,0 +1,28 @@
+
+	/**
+	 * Increment the element at i by value.
+	 * @param i Index of the element.
+	 * @param value The value to add.
+	 */
+	public void
+	incr( int i, Object value )
+	{
+		if( i < 0 || i >= pte )
+			throw new InvalidIndexException( i );
+
+		beg[i] += value;
+	}
+
+	/**
+	 * Multiply the element at i by value.
+	 * @param i Index of the element.
+	 * @param value The multiplier.
+	 */
+	public void
+	mult( int i, Object value )
+	{
+		if( i < 0 || i >= pte )
+			throw new InvalidIndexException( i );
+
+		beg[i] *= value;
+	}
