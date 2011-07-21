@@ -227,6 +227,7 @@ public class FileSourceGML extends SourceBase implements FileSource {
 	}
 
 	public void end() throws IOException {
+		parser.end();
 	}
 	
 	protected void insertKeyValues(KeyValues kv)
@@ -649,6 +650,8 @@ class Graphics {
 }
 
 class KeyValues extends HashMap<String, Object> {
+	private static final long serialVersionUID = 5920553787913520204L;
+	
 	public String key;
 	public int line;
 	public int column;
