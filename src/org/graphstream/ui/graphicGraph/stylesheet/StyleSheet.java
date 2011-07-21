@@ -48,8 +48,8 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.ui.graphicGraph.GraphicSprite;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.StrokeMode;
-import org.graphstream.ui.graphicGraph.stylesheet.parser.ParseException;
 import org.graphstream.ui.graphicGraph.stylesheet.parser.StyleSheetParser;
+import org.graphstream.util.parser.ParseException;
 
 /**
  * Implementation of the style sheets that can be stored in the graphic graph.
