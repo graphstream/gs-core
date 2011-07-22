@@ -29,24 +29,20 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.stream.file.dot;
+package org.graphstream.util.parser;
 
 import java.io.Reader;
 
-import org.graphstream.stream.file.FileSourceParser;
-import org.graphstream.util.parser.Parser;
-import org.graphstream.util.parser.ParserFactory;
-
-public class FileSourceDOT extends FileSourceParser {
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.stream.file.FileSourceParser#getNewFactory()
+/**
+ * Factory to create parser.
+ */
+public interface ParserFactory {
+	/**
+	 * Create a new parser from a reader.
+	 * 
+	 * @param reader
+	 *            stream to be parsed
+	 * @return a parser
 	 */
-	public ParserFactory getNewParserFactory() {
-		return new ParserFactory() {
-			public Parser newParser(Reader reader) {
-				return new DOTParser(FileSourceDOT.this, reader);
-			}
-		};
-	}
+	Parser newParser(Reader reader);
 }

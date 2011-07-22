@@ -44,6 +44,7 @@ import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
 
 import org.graphstream.util.parser.ParseException;
+import org.graphstream.util.parser.Parser;
 import org.graphstream.util.parser.SimpleCharStream;
 import org.graphstream.util.parser.Token;
 import org.graphstream.util.parser.TokenMgrError;
@@ -52,7 +53,7 @@ import org.graphstream.util.parser.TokenMgrError;
  * This class defines a TLP parser.
  */
 @SuppressWarnings("unused")
-public class TLPParser implements TLPParserConstants {
+public class TLPParser implements Parser, TLPParserConstants {
 
 	protected static enum PropertyType {
 		BOOL, COLOR, DOUBLE, LAYOUT, INT, SIZE, STRING

@@ -31,17 +31,11 @@
  */
 package org.graphstream.stream.file.tlp;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.URL;
 
-import org.graphstream.stream.SourceBase;
-import org.graphstream.stream.file.FileSource;
-
-import org.graphstream.util.parser.ParseException;
+import org.graphstream.stream.file.FileSourceParser;
+import org.graphstream.util.parser.Parser;
+import org.graphstream.util.parser.ParserFactory;
 
 /**
  * Source for the Tulip file format (TLP).
@@ -121,158 +115,16 @@ import org.graphstream.util.parser.ParseException;
  * <li>size</li>
  * </ul>
  */
-public class FileSourceTLP extends SourceBase implements FileSource {
-
-	protected TLPParser parser;
-
+public class FileSourceTLP extends FileSourceParser {
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#readAll(java.lang.String)
+	 * @see org.graphstream.stream.file.FileSourceParser#getNewFactory()
 	 */
-	public void readAll(String fileName) throws IOException {
-		TLPParser parser = new TLPParser(this, new FileReader(fileName));
-
-		try {
-			parser.all();
-		} catch (ParseException e) {
-			throw new IOException(e);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#readAll(java.net.URL)
-	 */
-	public void readAll(URL url) throws IOException {
-		TLPParser parser = new TLPParser(this, new InputStreamReader(
-				url.openStream()));
-
-		try {
-			parser.all();
-		} catch (ParseException e) {
-			throw new IOException(e);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#readAll(java.io.InputStream)
-	 */
-	public void readAll(InputStream stream) throws IOException {
-		TLPParser parser = new TLPParser(this, stream);
-
-		try {
-			parser.all();
-		} catch (ParseException e) {
-			throw new IOException(e);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#readAll(java.io.Reader)
-	 */
-	public void readAll(Reader reader) throws IOException {
-		TLPParser parser = new TLPParser(this, reader);
-
-		try {
-			parser.all();
-		} catch (ParseException e) {
-			throw new IOException(e);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#begin(java.lang.String)
-	 */
-	public void begin(String fileName) throws IOException {
-		parser = new TLPParser(this, new FileReader(fileName));
-
-		try {
-			parser.begin();
-		} catch (ParseException e) {
-			throw new IOException(e);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#begin(java.net.URL)
-	 */
-	public void begin(URL url) throws IOException {
-		parser = new TLPParser(this, new InputStreamReader(url.openStream()));
-
-		try {
-			parser.begin();
-		} catch (ParseException e) {
-			throw new IOException(e);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#begin(java.io.InputStream)
-	 */
-	public void begin(InputStream stream) throws IOException {
-		parser = new TLPParser(this, new InputStreamReader(stream));
-
-		try {
-			parser.begin();
-		} catch (ParseException e) {
-			throw new IOException(e);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#begin(java.io.Reader)
-	 */
-	public void begin(Reader reader) throws IOException {
-		parser = new TLPParser(this, reader);
-
-		try {
-			parser.begin();
-		} catch (ParseException e) {
-			throw new IOException(e);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#nextEvents()
-	 */
-	public boolean nextEvents() throws IOException {
-		try {
-			return parser.next();
-		} catch (ParseException e) {
-			throw new IOException(e);
-		}
-	}
-
-	/**
-	 * Since there is no step in TLP, this does the same action than
-	 * {@link #nextEvents()}.
-	 */
-	public boolean nextStep() throws IOException {
-		return nextEvents();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#end()
-	 */
-	public void end() throws IOException {
-		parser.close();
+	public ParserFactory getNewParserFactory() {
+		return new ParserFactory() {
+			public Parser newParser(Reader reader) {
+				return new TLPParser(FileSourceTLP.this, reader);
+			}
+		};
 	}
 }
