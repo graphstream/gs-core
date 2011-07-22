@@ -256,7 +256,8 @@ public interface Node extends Element, Iterable<Edge> {
 	 * Iterator on the set of neighbour nodes connected to this node via one or
 	 * more edges. This iterator iterate across any leaving, entering and non
 	 * directed edge (nodes are neighbour even if they only have a directed edge
-	 * from them toward this node).
+	 * from them toward this node). If there are mutliple edges connecting the
+	 * same none, it is iterated several times.
 	 * 
 	 * @return The iterator, neighbour are iterated in arbitrary order.
 	 */
