@@ -238,7 +238,7 @@ public class DOTParser implements Parser, DOTParserConstants {
 		throw new Error("Missing return statement in function");
 	}
 
-	final public void begin() throws ParseException {
+	final public void open() throws ParseException {
 		graph();
 	}
 

@@ -265,7 +265,7 @@ public boolean next():
 	{return hasMore;}
 }
 
-public void begin():
+public void open():
 {}
 {
 	graph()

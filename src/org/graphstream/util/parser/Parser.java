@@ -39,21 +39,21 @@ public interface Parser {
 	 * 
 	 * @throws ParseException
 	 */
-	void all() throws ParseException;
+	void all() throws IOException, ParseException;
 
 	/**
 	 * Start parsing the stream.
 	 * 
 	 * @throws ParseException
 	 */
-	void begin() throws ParseException;
+	void open() throws IOException, ParseException;
 
 	/**
 	 * 
 	 * @return
 	 * @throws ParseException
 	 */
-	boolean next() throws ParseException;
+	boolean next() throws IOException, ParseException;
 
 	/**
 	 * Close the stream.

@@ -263,7 +263,7 @@ public class TLPParser implements Parser, TLPParserConstants {
 		throw new Error("Missing return statement in function");
 	}
 
-	final public void begin() throws ParseException {
+	final public void open() throws ParseException {
 		tlp();
 	}
 
