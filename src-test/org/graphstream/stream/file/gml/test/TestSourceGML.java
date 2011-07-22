@@ -29,10 +29,11 @@
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
 
-package org.graphstream.stream.file.gml;
+package org.graphstream.stream.file.gml.test;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.stream.file.gml.FileSourceGML;
 
 public class TestSourceGML {
 	public static void main(String args[]) {

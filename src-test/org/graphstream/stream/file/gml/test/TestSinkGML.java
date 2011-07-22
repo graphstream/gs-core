@@ -29,7 +29,7 @@
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
 
-package org.graphstream.stream.file.gml;
+package org.graphstream.stream.file.gml.test;
 
 import java.io.IOException;
 
