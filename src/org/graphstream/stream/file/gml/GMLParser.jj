@@ -38,30 +38,56 @@ import java.io.IOException;
 import java.io.Reader;
 
 import org.graphstream.util.parser.ParseException;
+import org.graphstream.util.parser.Parser;
 import org.graphstream.util.parser.SimpleCharStream;
 import org.graphstream.util.parser.Token;
 import org.graphstream.util.parser.TokenMgrError;
 
 @SuppressWarnings("unused")
-public class GMLParser {
+public class GMLParser implements Parser {
 	boolean inGraph = false;
-	FileSourceGML gml;
+	GMLContext ctx;
+	boolean step;
   
 	public GMLParser(FileSourceGML gml, InputStream stream)
 	{
 		this(stream);
-		this.gml = gml;
+		this.ctx = new GMLContext(gml);
 	}
 	
 	public GMLParser(FileSourceGML gml, Reader stream )
 	{
 		this(stream);
-		this.gml = gml;
+		this.ctx = new GMLContext(gml);
 	}
 	
 	public boolean isInGraph()
 	{
 		return inGraph; 
+	}
+	
+	public void open() throws IOException, ParseException {
+	}
+	
+	public boolean next() throws IOException, ParseException {
+		KeyValues kv = null;
+		kv = nextEvents();
+		ctx.handleKeyValues(kv);
+		
+		return (kv != null);
+	}
+	
+	public boolean step() throws IOException, ParseException {
+		KeyValues kv = null;
+		step = false;
+		
+		while((kv = nextEvents()) != null && !step)
+			ctx.handleKeyValues(kv);
+			
+		if (kv != null)
+			ctx.setNextStep(kv);
+		
+		return (kv != null);
 	}
 	
 	/**
@@ -115,6 +141,22 @@ void start():
 	list()
 }
 
+void all() throws IOException:
+{
+	KeyValues values = new KeyValues();
+	String key;
+}
+{
+	( graphStart()         { inGraph = true; ctx.setDirected(false); }
+	| diGraphStart()       { inGraph = true; ctx.setDirected(true); }
+	| graphEnd()           { values.key = null; inGraph = false; }
+	)
+	
+	( key=keyValue(values) { values.key = key; ctx.handleKeyValues(values); values.clear(); } )*
+	
+	<EOF>
+}
+
 void graphStart(): {} { <GRAPH> <LSQBR> }
 void diGraphStart(): {} { <DIGRAPH> <LSQBR> }
 void graphEnd(): {} { <RSQBR> }
@@ -132,9 +174,9 @@ KeyValues nextEvents():
 	String key;
 }
 {
-	( graphStart()         { values.key = null; inGraph = true; gml.setDirected(false); }
-	| diGraphStart()       { values.key = null; inGraph = true; gml.setDirected(true); }
-	| graphEnd()           { values.key = null; inGraph = false; }
+	( graphStart()         { values.key = null; ctx.setIsInGraph(true); ctx.setDirected(false); }
+	| diGraphStart()       { values.key = null; ctx.setIsInGraph(true); ctx.setDirected(true); }
+	| graphEnd()           { values.key = null; ctx.setIsInGraph(false); }
 	| key=keyValue(values) { values.key = key; }
 	|<EOF>			       { values = null; }
 	)
@@ -166,7 +208,7 @@ KeyValues list():
 }
 {
 	( (<COMMENT>)*
-  	  ( k=<KEY>    { key=k.image.toLowerCase(); }
+  	  ( k=<KEY>    { key=k.image.toLowerCase(); if (key.equals("step")) step = true; }
   	  | k=<STRING> { key=k.image.substring(1,k.image.length()-2).toLowerCase(); }
   	  )
 	  v=value(key) { values.put(key, v); values.line = k.beginLine; values.column = k.beginColumn; }

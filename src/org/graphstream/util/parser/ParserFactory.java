@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev     <stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -28,53 +29,20 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
+package org.graphstream.util.parser;
 
-package org.graphstream.stream.file.gml;
+import java.io.Reader;
 
-import java.io.IOException;
-
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.stream.file.FileSinkDynamicGML;
-import org.graphstream.stream.file.FileSinkGML;
-
-public class TestSinkGML {
-	public static void main(String args[]) {
-		try {
-			(new TestSinkGML()).test();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void test() throws IOException {
-		Graph graph = new MultiGraph("test GML");
-		FileSinkGML out1 = new FileSinkGML();
-		FileSinkDynamicGML out2 = new FileSinkDynamicGML();
-	
-		out1.begin("TestSinkGML.gml");
-		out2.begin("TestSinkGML.dgml");
-		
-		graph.addSink(out1);
-		graph.addSink(out2);
-		
-		graph.addNode("A");
-		graph.getNode("A").addAttribute("s", "foo bar");
-		graph.addNode("B");
-		graph.stepBegins(1);
-		graph.addEdge("AB", "A", "B", true);
-		graph.getEdge("AB").addAttribute("n", 1);
-		graph.stepBegins(2);
-		graph.addAttribute("b", true);
-		graph.getNode("B").addAttribute("c", 'X');
-		graph.getNode("B").addAttribute("d", 'Y');
-		graph.stepBegins(3);
-		graph.getNode("B").removeAttribute("c");
-		graph.removeAttribute("b");
-		graph.removeNode("A");
-		graph.removeNode("B");
-		
-		out1.end();
-		out2.end();
-	}
+/**
+ * Factory to create parser.
+ */
+public interface ParserFactory {
+	/**
+	 * Create a new parser from a reader.
+	 * 
+	 * @param reader
+	 *            stream to be parsed
+	 * @return a parser
+	 */
+	Parser newParser(Reader reader);
 }

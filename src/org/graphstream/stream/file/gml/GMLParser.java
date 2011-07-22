@@ -36,27 +36,53 @@ import java.io.IOException;
 import java.io.Reader;
 
 import org.graphstream.util.parser.ParseException;
+import org.graphstream.util.parser.Parser;
 import org.graphstream.util.parser.SimpleCharStream;
 import org.graphstream.util.parser.Token;
 import org.graphstream.util.parser.TokenMgrError;
 
 @SuppressWarnings("unused")
-public class GMLParser implements GMLParserConstants {
+public class GMLParser implements Parser, GMLParserConstants {
 	boolean inGraph = false;
-	FileSourceGML gml;
+	GMLContext ctx;
+	boolean step;
 
 	public GMLParser(FileSourceGML gml, InputStream stream) {
 		this(stream);
-		this.gml = gml;
+		this.ctx = new GMLContext(gml);
 	}
 
 	public GMLParser(FileSourceGML gml, Reader stream) {
 		this(stream);
-		this.gml = gml;
+		this.ctx = new GMLContext(gml);
 	}
 
 	public boolean isInGraph() {
 		return inGraph;
+	}
+
+	public void open() throws IOException, ParseException {
+	}
+
+	public boolean next() throws IOException, ParseException {
+		KeyValues kv = null;
+		kv = nextEvents();
+		ctx.handleKeyValues(kv);
+
+		return (kv != null);
+	}
+
+	public boolean step() throws IOException, ParseException {
+		KeyValues kv = null;
+		step = false;
+
+		while ((kv = nextEvents()) != null && !step)
+			ctx.handleKeyValues(kv);
+
+		if (kv != null)
+			ctx.setNextStep(kv);
+
+		return (kv != null);
 	}
 
 	/**
@@ -73,6 +99,49 @@ public class GMLParser implements GMLParserConstants {
 	/** Unused rule, call it to slurp in the whole file. */
 	final public void start() throws ParseException {
 		list();
+	}
+
+	final public void all() throws ParseException, IOException {
+		KeyValues values = new KeyValues();
+		String key;
+		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
+		case GRAPH:
+			graphStart();
+			inGraph = true;
+			ctx.setDirected(false);
+			break;
+		case DIGRAPH:
+			diGraphStart();
+			inGraph = true;
+			ctx.setDirected(true);
+			break;
+		case RSQBR:
+			graphEnd();
+			values.key = null;
+			inGraph = false;
+			break;
+		default:
+			jj_la1[0] = jj_gen;
+			jj_consume_token(-1);
+			throw new ParseException();
+		}
+		label_1: while (true) {
+			switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
+			case STRING:
+			case KEY:
+			case COMMENT:
+				;
+				break;
+			default:
+				jj_la1[1] = jj_gen;
+				break label_1;
+			}
+			key = keyValue(values);
+			values.key = key;
+			ctx.handleKeyValues(values);
+			values.clear();
+		}
+		jj_consume_token(0);
 	}
 
 	final public void graphStart() throws ParseException {
@@ -103,19 +172,19 @@ public class GMLParser implements GMLParserConstants {
 		case GRAPH:
 			graphStart();
 			values.key = null;
-			inGraph = true;
-			gml.setDirected(false);
+			ctx.setIsInGraph(true);
+			ctx.setDirected(false);
 			break;
 		case DIGRAPH:
 			diGraphStart();
 			values.key = null;
-			inGraph = true;
-			gml.setDirected(true);
+			ctx.setIsInGraph(true);
+			ctx.setDirected(true);
 			break;
 		case RSQBR:
 			graphEnd();
 			values.key = null;
-			inGraph = false;
+			ctx.setIsInGraph(false);
 			break;
 		case STRING:
 		case KEY:
@@ -128,7 +197,7 @@ public class GMLParser implements GMLParserConstants {
 			values = null;
 			break;
 		default:
-			jj_la1[0] = jj_gen;
+			jj_la1[2] = jj_gen;
 			jj_consume_token(-1);
 			throw new ParseException();
 		}
@@ -144,7 +213,7 @@ public class GMLParser implements GMLParserConstants {
 	 */
 	final public KeyValues list() throws ParseException {
 		KeyValues values = new KeyValues();
-		label_1: while (true) {
+		label_2: while (true) {
 			switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
 			case STRING:
 			case KEY:
@@ -152,8 +221,8 @@ public class GMLParser implements GMLParserConstants {
 				;
 				break;
 			default:
-				jj_la1[1] = jj_gen;
-				break label_1;
+				jj_la1[3] = jj_gen;
+				break label_2;
 			}
 			keyValue(values);
 		}
@@ -175,14 +244,14 @@ public class GMLParser implements GMLParserConstants {
 		String key;
 		Object v;
 		boolean isGraph = false;
-		label_2: while (true) {
+		label_3: while (true) {
 			switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
 			case COMMENT:
 				;
 				break;
 			default:
-				jj_la1[2] = jj_gen;
-				break label_2;
+				jj_la1[4] = jj_gen;
+				break label_3;
 			}
 			jj_consume_token(COMMENT);
 		}
@@ -190,13 +259,15 @@ public class GMLParser implements GMLParserConstants {
 		case KEY:
 			k = jj_consume_token(KEY);
 			key = k.image.toLowerCase();
+			if (key.equals("step"))
+				step = true;
 			break;
 		case STRING:
 			k = jj_consume_token(STRING);
 			key = k.image.substring(1, k.image.length() - 2).toLowerCase();
 			break;
 		default:
-			jj_la1[3] = jj_gen;
+			jj_la1[5] = jj_gen;
 			jj_consume_token(-1);
 			throw new ParseException();
 		}
@@ -239,7 +310,7 @@ public class GMLParser implements GMLParserConstants {
 			jj_consume_token(RSQBR);
 			break;
 		default:
-			jj_la1[4] = jj_gen;
+			jj_la1[6] = jj_gen;
 			jj_consume_token(-1);
 			throw new ParseException();
 		}
@@ -259,14 +330,15 @@ public class GMLParser implements GMLParserConstants {
 	public Token jj_nt;
 	private int jj_ntk;
 	private int jj_gen;
-	final private int[] jj_la1 = new int[5];
+	final private int[] jj_la1 = new int[7];
 	static private int[] jj_la1_0;
 	static {
 		jj_la1_init_0();
 	}
 
 	private static void jj_la1_init_0() {
-		jj_la1_0 = new int[] { 0xfa01, 0xc800, 0x8000, 0x4800, 0x4d00, };
+		jj_la1_0 = new int[] { 0x3200, 0xc800, 0xfa01, 0xc800, 0x8000, 0x4800,
+				0x4d00, };
 	}
 
 	/** Constructor with InputStream. */
@@ -285,7 +357,7 @@ public class GMLParser implements GMLParserConstants {
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 7; i++)
 			jj_la1[i] = -1;
 	}
 
@@ -305,7 +377,7 @@ public class GMLParser implements GMLParserConstants {
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 7; i++)
 			jj_la1[i] = -1;
 	}
 
@@ -316,7 +388,7 @@ public class GMLParser implements GMLParserConstants {
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 7; i++)
 			jj_la1[i] = -1;
 	}
 
@@ -327,7 +399,7 @@ public class GMLParser implements GMLParserConstants {
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 7; i++)
 			jj_la1[i] = -1;
 	}
 
@@ -337,7 +409,7 @@ public class GMLParser implements GMLParserConstants {
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 7; i++)
 			jj_la1[i] = -1;
 	}
 
@@ -347,7 +419,7 @@ public class GMLParser implements GMLParserConstants {
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 7; i++)
 			jj_la1[i] = -1;
 	}
 
@@ -409,7 +481,7 @@ public class GMLParser implements GMLParserConstants {
 			la1tokens[jj_kind] = true;
 			jj_kind = -1;
 		}
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 7; i++) {
 			if (jj_la1[i] == jj_gen) {
 				for (int j = 0; j < 32; j++) {
 					if ((jj_la1_0[i] & (1 << j)) != 0) {

@@ -1,6 +1,5 @@
 /*
  * Copyright 2006 - 2011 
- *     Stefan Balev     <stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -29,24 +28,53 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.stream.file.dot;
 
-import java.io.Reader;
+package org.graphstream.stream.file.gml.test;
 
-import org.graphstream.stream.file.FileSourceParser;
-import org.graphstream.util.parser.Parser;
-import org.graphstream.util.parser.ParserFactory;
+import java.io.IOException;
 
-public class FileSourceDOT extends FileSourceParser {
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.stream.file.FileSourceParser#getNewFactory()
-	 */
-	public ParserFactory getNewParserFactory() {
-		return new ParserFactory() {
-			public Parser newParser(Reader reader) {
-				return new DOTParser(FileSourceDOT.this, reader);
-			}
-		};
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.stream.file.FileSinkDynamicGML;
+import org.graphstream.stream.file.FileSinkGML;
+
+public class TestSinkGML {
+	public static void main(String args[]) {
+		try {
+			(new TestSinkGML()).test();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void test() throws IOException {
+		Graph graph = new MultiGraph("test GML");
+		FileSinkGML out1 = new FileSinkGML();
+		FileSinkDynamicGML out2 = new FileSinkDynamicGML();
+	
+		out1.begin("TestSinkGML.gml");
+		out2.begin("TestSinkGML.dgml");
+		
+		graph.addSink(out1);
+		graph.addSink(out2);
+		
+		graph.addNode("A");
+		graph.getNode("A").addAttribute("s", "foo bar");
+		graph.addNode("B");
+		graph.stepBegins(1);
+		graph.addEdge("AB", "A", "B", true);
+		graph.getEdge("AB").addAttribute("n", 1);
+		graph.stepBegins(2);
+		graph.addAttribute("b", true);
+		graph.getNode("B").addAttribute("c", 'X');
+		graph.getNode("B").addAttribute("d", 'Y');
+		graph.stepBegins(3);
+		graph.getNode("B").removeAttribute("c");
+		graph.removeAttribute("b");
+		graph.removeNode("A");
+		graph.removeNode("B");
+		
+		out1.end();
+		out2.end();
 	}
 }

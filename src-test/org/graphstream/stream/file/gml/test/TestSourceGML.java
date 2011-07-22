@@ -29,14 +29,15 @@
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
 
-package org.graphstream.stream.file.gml;
+package org.graphstream.stream.file.gml.test;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.stream.file.gml.FileSourceGML;
 
 public class TestSourceGML {
 	public static void main(String args[]) {
-		System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
+		//System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 		new TestSourceGML();
 	}
 	
@@ -55,7 +56,7 @@ public class TestSourceGML {
 			graph.addAttribute("ui.antialias");
 			graph.display();
 			source.addSink(graph);
-			source.begin("/home/antoine/Documents/Programs/TestThingsOnGS/dynamic.gml");
+			source.begin(TestSourceGML.class.getResourceAsStream("dynamic.gml"));
 			int step = 0;
 			while(source.nextStep()) {
 				System.err.printf("Step %d%n", step);
@@ -84,7 +85,7 @@ public class TestSourceGML {
 			graph.addAttribute("ui.stylesheet", "node { text-size:8; text-color: #0008; text-alignment: at-right; } edge { text-size:8; text-color: #0008; }");
 			graph.display(false);
 			source.addSink(graph);
-			source.begin("/home/antoine/Documents/Programs/TestThingsOnGS/example2.sif.gml");
+			source.begin(TestSourceGML.class.getResourceAsStream("example2.sif.gml"));
 			while(source.nextEvents()) {}
 			source.end();
 		}
@@ -102,7 +103,7 @@ public class TestSourceGML {
 			//graph.addAttribute("ui.stylesheet", "node { text-size:8; text-color: #0008; text-alignment: at-right; } edge { text-size:8; text-color: #0008; }");
 			graph.display();
 			source.addSink(graph);
-			source.begin("/home/antoine/Documents/Programs/TestThingsOnGS/SmallTest.gml");
+			source.begin(TestSourceGML.class.getResourceAsStream("SmallTest.gml"));
 			while(source.nextEvents()) {}
 			source.end();
 		}

@@ -29,24 +29,36 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.stream.file.dot;
+package org.graphstream.util.parser;
 
-import java.io.Reader;
+import java.io.IOException;
 
-import org.graphstream.stream.file.FileSourceParser;
-import org.graphstream.util.parser.Parser;
-import org.graphstream.util.parser.ParserFactory;
-
-public class FileSourceDOT extends FileSourceParser {
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.stream.file.FileSourceParser#getNewFactory()
+public interface Parser {
+	/**
+	 * Parse the whole stream.
+	 * 
+	 * @throws ParseException
 	 */
-	public ParserFactory getNewParserFactory() {
-		return new ParserFactory() {
-			public Parser newParser(Reader reader) {
-				return new DOTParser(FileSourceDOT.this, reader);
-			}
-		};
-	}
+	void all() throws IOException, ParseException;
+
+	/**
+	 * Start parsing the stream.
+	 * 
+	 * @throws ParseException
+	 */
+	void open() throws IOException, ParseException;
+
+	/**
+	 * 
+	 * @return
+	 * @throws ParseException
+	 */
+	boolean next() throws IOException, ParseException;
+
+	/**
+	 * Close the stream.
+	 * 
+	 * @throws IOException
+	 */
+	void close() throws IOException;
 }
