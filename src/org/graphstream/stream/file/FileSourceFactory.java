@@ -159,6 +159,10 @@ public class FileSourceFactory {
 			return new FileSourceTLP();
 		}
 
+		if (flc.endsWith(".xml")) {
+			return new FileSourceGraphML();
+		}
+
 		return null;
 	}
 }
