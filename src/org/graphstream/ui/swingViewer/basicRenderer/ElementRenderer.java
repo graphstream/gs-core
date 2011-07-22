@@ -285,7 +285,11 @@ public abstract class ElementRenderer {
 
 					color = new Color((float)red, (float)green, (float)blue, (float)alpha);
 				}
+			} else if(element.hasAttribute("ui.color", Color.class)) {
+				color = element.getAttribute("ui.color");
 			}
+		} else if(element.hasAttribute("ui.color", Color.class)) {
+			color = element.getAttribute("ui.color");
 		}
 
 		return color;
