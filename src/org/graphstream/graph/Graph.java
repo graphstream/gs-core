@@ -776,9 +776,13 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 	<T extends Edge> T addEdge(String id, int fromIndex, int toIndex,
 			boolean directed);
 
+	<T extends Edge> T addEdge(String id, Node node1, Node node2);
+	<T extends Edge> T addEdge(String id, Node from, Node to, boolean directed);
+
 	<T extends Edge> T removeEdge(int index);
 
 	<T extends Edge> T removeEdge(int fromIndex, int toIndex);
+	<T extends Edge> T removeEdge(Node node1, Node node2);
 
 	<T extends Edge> T removeEdge(Edge edge);
 

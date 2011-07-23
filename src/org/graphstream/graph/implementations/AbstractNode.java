@@ -476,6 +476,8 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	 *            an edge incident to this node that will be removed
 	 */
 	protected abstract void removeEdgeCallback(AbstractEdge edge);
+	
+	protected abstract void clearCallback();
 
 	/**
 	 * Checks if an edge enters this node. Utility method that can be useful in
