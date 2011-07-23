@@ -861,5 +861,4 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 					"This iterator does not support remove.");
 		}
 	}
-
 }

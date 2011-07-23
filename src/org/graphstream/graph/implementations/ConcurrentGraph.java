@@ -339,7 +339,7 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph 
 					edge = (T) old;
 				}
 			} else {
-				if (src.hasEdgeToward(trg) != null) {
+				if (src.getEdgeToward(trg) != null) {
 					throw new IdAlreadyInUseException(
 							"Cannot add edge between " + from + " and " + to
 									+ ". A link already exists.");
@@ -564,7 +564,7 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph 
 			//
 			// If fails, n0 does not register an edge of type T.
 			//
-			T e = (T) n0.hasEdgeToward(n1);
+			T e = (T) n0.getEdgeToward(n1);
 
 			if (e != null) {
 				return removeEdge_(sourceId, timeId, e);
@@ -572,7 +572,7 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph 
 				//
 				// If fails, n0 does not register an edge of type T.
 				//
-				e = (T) n0.hasEdgeToward(n1);
+				e = (T) n0.getEdgeToward(n1);
 
 				if (e != null) {
 					return removeEdge_(sourceId, timeId, e);
@@ -604,9 +604,10 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph 
 	 * @complexity O( log(m) ) with m the number of edges in the graph, plus
 	 *             overhead due to thread synchronization.
 	 */
-	public <T extends Edge> T removeEdge(T edge)
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T removeEdge(Edge edge)
 			throws ElementNotFoundException {
-		return removeEdge_(getId(), newEvent(), edge);
+		return removeEdge_(getId(), newEvent(), (T)edge);
 	}
 
 	protected <T extends Edge> T removeEdge_(String sourceId, long timeId,
@@ -645,9 +646,10 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph 
 	 * @complexity 0( log(n) ) with n the number of nodes in the graph, plus
 	 *             overhead due to thread synchronization.
 	 */
-	public <T extends Node> T removeNode(T node)
+	@SuppressWarnings("unchecked")
+	public <T extends Node> T removeNode(Node node)
 			throws ElementNotFoundException {
-		return removeNode_(getId(), newEvent(), node);
+		return removeNode_(getId(), newEvent(), (T)node);
 	}
 
 	protected <T extends Node> T removeNode_(String sourceId, long timeId,
@@ -1111,5 +1113,61 @@ public class ConcurrentGraph extends AbstractConcurrentElement implements Graph 
 				stepBegins_(sourceId, timeId, step);
 			}
 		}
+	}
+	
+	// XXX stubs for the new methods
+
+	public <T extends Edge> T addEdge(String id, int index1, int index2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T addEdge(String id, int fromIndex, int toIndex,
+			boolean directed) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T addEdge(String id, Node node1, Node node2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T addEdge(String id, Node from, Node to,
+			boolean directed) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T getEdge(int index)
+			throws IndexOutOfBoundsException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Node> T getNode(int index)
+			throws IndexOutOfBoundsException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T removeEdge(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T removeEdge(int fromIndex, int toIndex) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T removeEdge(Node node1, Node node2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Node> T removeNode(int index) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

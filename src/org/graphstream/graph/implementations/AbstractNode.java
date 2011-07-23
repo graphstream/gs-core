@@ -118,7 +118,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	 * This implementation returns {@code true} if {@link #getEdgeToward(Node)}
 	 * is not {@code null}.
 	 * 
-	 * @see org.graphstream.graph.Node#hasEdgeToward(org.graphstream.graph.Node)
+	 * @see org.graphstream.graph.Node#getEdgeToward(org.graphstream.graph.Node)
 	 */
 	public boolean hasEdgeToward(Node node) {
 		return getEdgeToward(node) != null;

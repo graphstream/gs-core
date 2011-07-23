@@ -312,7 +312,7 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node {
 
 	public boolean hasEdgeFrom(String id) {
 		Node n = ((ConcurrentGraph) graph).lookForNode(id);
-		return hasEdgeFrom(n) == null ? false : true;
+		return getEdgeFrom(n) == null ? false : true;
 	}
 
 	/**
@@ -325,7 +325,7 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node {
 	 *            The node we look for an edge towards.
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> T hasEdgeFrom(Node n) {
+	public <T extends Edge> T getEdgeFrom(Node n) {
 		if (n != null) {
 			Iterator<Edge> it = edges.iterator();
 
@@ -344,7 +344,7 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node {
 
 	public boolean hasEdgeToward(String id) {
 		Node n = ((ConcurrentGraph) graph).lookForNode(id);
-		return hasEdgeToward(n) == null ? false : true;
+		return getEdgeToward(n) == null ? false : true;
 	}
 
 	/**
@@ -357,7 +357,7 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node {
 	 *            The node we look for an edge towards.
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> T hasEdgeToward(Node n) {
+	public <T extends Edge> T getEdgeToward(Node n) {
 		if (n != null) {
 			Iterator<Edge> it = edges.iterator();
 
@@ -376,7 +376,6 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node {
 		return null;
 	}
 
-	@Override
 	protected void attributeChanged(String sourceId, long timeId,
 			String attribute, AttributeChangeEvent event, Object oldValue,
 			Object newValue) {
@@ -385,4 +384,59 @@ public class ConcurrentNode extends AbstractConcurrentElement implements Node {
 					sourceId, timeId, getId(), ElementType.NODE, attribute,
 					event, oldValue, newValue);
 	}
+	
+	// XXX stubs for the new methods
+
+	public <T extends Edge> T getEdgeBetween(Node Node) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T getEdgeBetween(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public <T extends Edge> T getEdgeFrom(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T getEdgeToward(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean hasEdgeBetween(Node node) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean hasEdgeBetween(int index) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean hasEdgeFrom(int index) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean hasEdgeToward(Node node) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean hasEdgeToward(int index) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean hasEdgeFrom(Node node) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
 }

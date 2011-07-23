@@ -1184,4 +1184,70 @@ public class DefaultGraph extends AbstractElement implements Graph {
 			}
 		}
 	}
+	
+	// XXX stubs for the new methods
+
+	public <T extends Edge> T addEdge(String id, int index1, int index2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T addEdge(String id, int fromIndex, int toIndex,
+			boolean directed) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T addEdge(String id, Node node1, Node node2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T addEdge(String id, Node from, Node to,
+			boolean directed) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T getEdge(int index)
+			throws IndexOutOfBoundsException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Node> T getNode(int index)
+			throws IndexOutOfBoundsException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T removeEdge(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T removeEdge(int fromIndex, int toIndex) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T removeEdge(Node node1, Node node2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T removeEdge(Edge edge) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Node> T removeNode(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Node> T removeNode(Node node) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

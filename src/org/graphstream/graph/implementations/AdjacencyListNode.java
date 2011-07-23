@@ -408,7 +408,7 @@ public class AdjacencyListNode extends AbstractElement implements Node {
 
 	public boolean hasEdgeFrom(String id) {
 		Node n = ((AdjacencyListGraph) graph).lookForNode(id);
-		return hasEdgeFrom(n) == null ? false : true;
+		return getEdgeFrom(n) == null ? false : true;
 	}
 
 	/**
@@ -420,7 +420,7 @@ public class AdjacencyListNode extends AbstractElement implements Node {
 	 * @param n
 	 *            The node we look for an edge towards.
 	 */
-	public <T extends Edge> T hasEdgeFrom(Node n) {
+	public <T extends Edge> T getEdgeFrom(Node n) {
 		if (n != null) {
 			Iterator<T> it = new EnteringEdgeIterator<T>(this);
 
@@ -439,7 +439,7 @@ public class AdjacencyListNode extends AbstractElement implements Node {
 
 	public boolean hasEdgeToward(String id) {
 		Node n = ((AdjacencyListGraph) graph).lookForNode(id);
-		return hasEdgeToward(n) == null ? false : true;
+		return getEdgeToward(n) == null ? false : true;
 	}
 
 	/**
@@ -451,7 +451,7 @@ public class AdjacencyListNode extends AbstractElement implements Node {
 	 * @param n
 	 *            The node we look for an edge towards.
 	 */
-	public <T extends Edge> T hasEdgeToward(Node n) {
+	public <T extends Edge> T getEdgeToward(Node n) {
 		if (n != null) {
 			Iterator<T> it = new LeavingEdgeIterator<T>(this);
 
@@ -468,6 +468,8 @@ public class AdjacencyListNode extends AbstractElement implements Node {
 		}
 		return null;
 	}
+	
+	// XXX stubs for the unimplemented methods
 
 	@Override
 	protected void attributeChanged(String sourceId, long timeId,
@@ -478,4 +480,67 @@ public class AdjacencyListNode extends AbstractElement implements Node {
 					sourceId, timeId, getId(), ElementType.NODE, attribute,
 					event, oldValue, newValue);
 	}
+
+	@Override
+	public <T extends Edge> T getEdgeBetween(Node Node) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T extends Edge> T getEdgeBetween(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T extends Edge> T getEdgeFrom(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public <T extends Edge> T getEdgeToward(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean hasEdgeBetween(Node node) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean hasEdgeBetween(int index) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean hasEdgeFrom(Node node) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean hasEdgeFrom(int index) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean hasEdgeToward(int index) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean hasEdgeToward(Node node) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
 }

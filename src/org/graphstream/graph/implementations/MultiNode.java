@@ -391,4 +391,66 @@ public class MultiNode extends DefaultNode {
 			return new MultiElementIterator<T>(this);
 		}
 	}
+	
+	// XXX stubs for the new methods
+
+	public <T extends Edge> T getEdgeBetween(Node Node) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T getEdgeBetween(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T getEdgeFrom(Node Node) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T getEdgeFrom(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T getEdgeToward(Node Node) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T getEdgeToward(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean hasEdgeBetween(Node node) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean hasEdgeBetween(int index) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean hasEdgeFrom(Node node) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean hasEdgeFrom(int index) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean hasEdgeToward(Node node) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean hasEdgeToward(int index) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

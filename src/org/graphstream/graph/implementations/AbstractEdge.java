@@ -2,6 +2,7 @@ package org.graphstream.graph.implementations;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
+import org.graphstream.stream.SourceBase.ElementType;
 
 /**
  * <p>
@@ -20,8 +21,6 @@ import org.graphstream.graph.Node;
 public abstract class AbstractEdge extends AbstractElement implements Edge {
 
 	// *** Fields ***
-
-	// XXX Should these be private or protected?
 
 	/**
 	 * The source node
@@ -83,7 +82,9 @@ public abstract class AbstractEdge extends AbstractElement implements Edge {
 	protected void attributeChanged(String sourceId, long timeId,
 			String attribute, AttributeChangeEvent event, Object oldValue,
 			Object newValue) {
-		// TODO -> later when graph listeners are implemented
+		graph.listeners.sendAttributeChangedEvent(sourceId, timeId, getId(),
+				ElementType.EDGE, attribute, event, oldValue,
+				newValue);
 	}
 
 	/**

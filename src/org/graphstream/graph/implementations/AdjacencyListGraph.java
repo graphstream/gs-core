@@ -356,7 +356,7 @@ public class AdjacencyListGraph extends AbstractElement implements Graph {
 					edge = old;
 				}
 			} else {
-				if (src.hasEdgeToward(trg) != null) {
+				if (src.getEdgeToward(trg) != null) {
 					throw new IdAlreadyInUseException(
 							"Cannot add edge between " + from + " and " + to
 									+ ". A link already exists.");
@@ -594,12 +594,12 @@ public class AdjacencyListGraph extends AbstractElement implements Graph {
 		AdjacencyListNode n1 = lookForNode(to);
 
 		if (n0 != null && n1 != null) {
-			T e = n0.hasEdgeToward(n1);
+			T e = n0.getEdgeToward(n1);
 
 			if (e != null) {
 				return removeEdge_(sourceId, timeId, e);
 			} else {
-				e = n0.hasEdgeToward(n1);
+				e = n0.getEdgeToward(n1);
 
 				if (e != null) {
 					return removeEdge_(sourceId, timeId, e);
@@ -630,9 +630,9 @@ public class AdjacencyListGraph extends AbstractElement implements Graph {
 	 * @complexity O( log(m) ) with m being the number of edges in the graph.
 	 * @return A reference to this edge or null.
 	 */
-	public <T extends Edge> T removeEdge(T edge)
-			throws ElementNotFoundException {
-		return removeEdge_(getId(), newEvent(), edge);
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T removeEdge(Edge edge) {
+		return removeEdge_(getId(), newEvent(), (T)edge);
 	}
 
 	protected <T extends Edge> T removeEdge_(String sourceId, long timeId,
@@ -671,9 +671,9 @@ public class AdjacencyListGraph extends AbstractElement implements Graph {
 	 * @complexity 0( log(n) ) with n being the number of nodes in the graph.
 	 * @return A reference to the removed node or null.
 	 */
-	public <T extends Node> T removeNode(T node)
-			throws ElementNotFoundException {
-		return removeNode_(getId(), newEvent(), node);
+	@SuppressWarnings("unchecked")
+	public <T extends Node> T removeNode(Node node) {
+		return removeNode_(getId(), newEvent(), (T)node);
 	}
 
 	protected <T extends Node> T removeNode_(String sourceId, long timeId,
@@ -1094,5 +1094,61 @@ public class AdjacencyListGraph extends AbstractElement implements Graph {
 				stepBegins_(sourceId, timeId, step);
 			}
 		}
+	}
+	
+	// XXX stubs of the new methods
+
+	public <T extends Edge> T addEdge(String id, int index1, int index2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T addEdge(String id, int fromIndex, int toIndex,
+			boolean directed) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T addEdge(String id, Node node1, Node node2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T addEdge(String id, Node from, Node to,
+			boolean directed) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T getEdge(int index)
+			throws IndexOutOfBoundsException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Node> T getNode(int index)
+			throws IndexOutOfBoundsException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T removeEdge(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T removeEdge(int fromIndex, int toIndex) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T removeEdge(Node node1, Node node2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Node> T removeNode(int index) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
