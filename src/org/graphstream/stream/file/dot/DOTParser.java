@@ -144,7 +144,7 @@ public class DOTParser implements Parser, DOTParserConstants {
 		}
 	}
 
-	private void addEdges(LinkedList<String> edges) {
+	private void addEdges(LinkedList<String> edges, HashMap<String, Object> attr) {
 		HashMap<String, Integer> hash = new HashMap<String, Integer>();
 		String[] ids = new String[(edges.size() - 1) / 2];
 		boolean[] directed = new boolean[(edges.size() - 1) / 2];
@@ -169,9 +169,35 @@ public class DOTParser implements Parser, DOTParserConstants {
 
 		hash.clear();
 
-		for (int i = 0; i < count; i++)
+		if (count == 1 && attr != null && attr.containsKey("id")) {
+			ids[0] = attr.get("id").toString();
+			attr.remove("id");
+		}
+
+		for (int i = 0; i < count; i++) {
 			dot.sendEdgeAdded(sourceId, ids[i], edges.get(i * 2),
 					edges.get((i + 1) * 2), directed[i]);
+
+			if (attr == null) {
+				for (String key : globalEdgesAttributes.keySet())
+					dot.sendAttributeChangedEvent(sourceId, ids[i],
+							ElementType.EDGE, key, AttributeChangeEvent.ADD,
+							null, globalEdgesAttributes.get(key));
+			} else {
+				for (String key : globalEdgesAttributes.keySet()) {
+					if (!attr.containsKey(key))
+						dot.sendAttributeChangedEvent(sourceId, ids[i],
+								ElementType.EDGE, key,
+								AttributeChangeEvent.ADD, null,
+								globalEdgesAttributes.get(key));
+				}
+
+				for (String key : attr.keySet())
+					dot.sendAttributeChangedEvent(sourceId, ids[i],
+							ElementType.EDGE, key, AttributeChangeEvent.ADD,
+							null, attr.get(key));
+			}
+		}
 	}
 
 	private void setGlobalAttributes(String who, HashMap<String, Object> attr) {
@@ -484,18 +510,19 @@ public class DOTParser implements Parser, DOTParserConstants {
 	final private void edgeStatement() throws ParseException {
 		String id;
 		LinkedList<String> edges = new LinkedList<String>();
+		HashMap<String, Object> attr = null;
 		id = id();
 		edges.add(id);
 		edgeRHS(edges);
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
 		case LSQBR:
-			attributesList();
+			attr = attributesList();
 			break;
 		default:
 			jj_la1[14] = jj_gen;
 			;
 		}
-		addEdges(edges);
+		addEdges(edges, attr);
 	}
 
 	final private void edgeRHS(LinkedList<String> edges) throws ParseException {
@@ -640,24 +667,14 @@ public class DOTParser implements Parser, DOTParserConstants {
 		}
 	}
 
-	private boolean jj_3R_7() {
-		if (jj_scan_token(EDGE_OP))
-			return true;
-		if (jj_3R_6())
-			return true;
-		return false;
-	}
-
-	private boolean jj_3R_5() {
-		if (jj_3R_6())
-			return true;
-		if (jj_3R_7())
-			return true;
-		return false;
-	}
-
 	private boolean jj_3_1() {
 		if (jj_3R_5())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_2() {
+		if (jj_scan_token(REAL))
 			return true;
 		return false;
 	}
@@ -676,8 +693,18 @@ public class DOTParser implements Parser, DOTParserConstants {
 		return false;
 	}
 
-	private boolean jj_3_2() {
-		if (jj_scan_token(REAL))
+	private boolean jj_3R_7() {
+		if (jj_scan_token(EDGE_OP))
+			return true;
+		if (jj_3R_6())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3R_5() {
+		if (jj_3R_6())
+			return true;
+		if (jj_3R_7())
 			return true;
 		return false;
 	}
