@@ -282,7 +282,8 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	public <T extends Edge> Iterable<T> getEachEdge() {
 		return new Iterable<T>() {
 			public Iterator<T> iterator() {
-				return getEdgeIterator();
+				Iterator<T> it = getEdgeIterator();
+				return new AbstractGraph.ImmutableIterator<T>(it);
 			}
 		};
 	}
@@ -295,7 +296,8 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	public <T extends Edge> Iterable<T> getEachEnteringEdge() {
 		return new Iterable<T>() {
 			public Iterator<T> iterator() {
-				return getEnteringEdgeIterator();
+				Iterator<T> it = getEnteringEdgeIterator();
+				return new AbstractGraph.ImmutableIterator<T>(it);
 			}
 		};
 	}
@@ -308,7 +310,8 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	public <T extends Edge> Iterable<T> getEachLeavingEdge() {
 		return new Iterable<T>() {
 			public Iterator<T> iterator() {
-				return getLeavingEdgeIterator();
+				Iterator<T> it = getLeavingEdgeIterator();
+				return new AbstractGraph.ImmutableIterator<T>(it);
 			}
 		};
 	}
@@ -325,7 +328,8 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 		return new AbstractCollection<T>() {
 			@Override
 			public Iterator<T> iterator() {
-				return getEdgeIterator();
+				Iterator<T> it =  getEdgeIterator();
+				return new AbstractGraph.ImmutableIterator<T>(it);
 			}
 
 			@Override
@@ -345,7 +349,8 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 		return new AbstractCollection<T>() {
 			@Override
 			public Iterator<T> iterator() {
-				return getEnteringEdgeIterator();
+				Iterator<T> it = getEnteringEdgeIterator();
+				return new AbstractGraph.ImmutableIterator<T>(it);
 			}
 
 			@Override
@@ -365,7 +370,8 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 		return new AbstractCollection<T>() {
 			@Override
 			public Iterator<T> iterator() {
-				return getLeavingEdgeIterator();
+				Iterator<T> it = getLeavingEdgeIterator();
+				return new AbstractGraph.ImmutableIterator<T>(it);
 			}
 
 			@Override

@@ -1,6 +1,7 @@
 package org.graphstream.graph.implementations;
 
 import java.io.IOException;
+import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -28,14 +29,19 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 
 	private boolean strictChecking;
 	private boolean autoCreate;
-	protected GraphListeners listeners;
+	GraphListeners listeners;
 	private NodeFactory<? extends AbstractNode> nodeFactory;
 	private EdgeFactory<? extends AbstractEdge> edgeFactory;
+	
 	/**
 	 * The number of adds and removes of elements. Maintained because of
 	 * iterators
 	 */
 	private int modifCount = 0;
+	
+	private double step = 0;
+	
+	private boolean nullAttributesAreErrors;
 
 	// *** Constructors ***
 
@@ -49,40 +55,176 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		this.autoCreate = autoCreate;
 		listeners = new GraphListeners();
 
-		// XXX Subclasses must instanciate their factories
+		// Subclasses must instanciate their factories and initialize their data structures
 
 	}
+	
+	
+
+	// *** Inherited from abstract element
 
 	@Override
 	protected void attributeChanged(String sourceId, long timeId,
 			String attribute, AttributeChangeEvent event, Object oldValue,
 			Object newValue) {
-		// TODO Auto-generated method stub
-
+		listeners.sendAttributeChangedEvent(sourceId, timeId, getId(),
+				SourceBase.ElementType.GRAPH, attribute, event, oldValue,
+				newValue);
 	}
 
 	@Override
 	protected String myGraphId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		return getId();
+	} // XXX how to avoid this ?
 
 	@Override
 	protected long newEvent() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+		return listeners.newEvent();
+	} // XXX how to avoid this ?
 
+	
 	@Override
 	public boolean nullAttributesAreErrors() {
-		// TODO Auto-generated method stub
-		return false;
+		return nullAttributesAreErrors;
 	}
 
-	@Override
+	// *** Inherited from graph ***
+	
+	// get node / edge by its id/index
+
+	public abstract <T extends Node> T getNode(String id);
+	
+	public <T extends Node> T getNode(int index) throws IndexOutOfBoundsException {
+		if (index < 0 || index >= getNodeCount()) {
+			if (strictChecking)
+				throw new IndexOutOfBoundsException("Node with index " + index + " does not exist");
+			return null;
+		}
+		return getNodeSub(index);
+	}
+	
+	protected abstract <T extends Node> T getNodeSub(int index);
+	
+	public abstract <T extends Edge> T getEdge(String id);
+	
+	public <T extends Edge> T getEdge(int index) throws IndexOutOfBoundsException {
+		if (index < 0 || index >= getEdgeCount()) {
+			if (strictChecking)
+				throw new IndexOutOfBoundsException("Edge with index " + index + "does not exist");
+		}
+		return getEdgeSub(index);
+	}
+
+	protected abstract <T extends Edge> T getEdgeSub(int index);
+	
+	// node and edge count, iterators and views
+	
+	public abstract int getNodeCount();
+	
+	public abstract int getEdgeCount();
+	
+	public abstract <T extends Node> Iterator<T> getNodeIterator();
+
+	public abstract <T extends Edge> Iterator<T> getEdgeIterator();
+	
+	public <T extends Node> Iterable<? extends T> getEachNode() {
+		return new Iterable<T>() {
+			public Iterator<T> iterator() {
+				Iterator<T> it = getNodeIterator();
+				return new ImmutableIterator<T>(it);
+			}
+		};
+	}
+
+	public <T extends Edge> Iterable<? extends T> getEachEdge() {
+		return new Iterable<T>() {
+			public Iterator<T> iterator() {
+				Iterator<T> it = getEdgeIterator();
+				return new ImmutableIterator<T>(it);
+			}
+		};
+	}
+
+	public <T extends Node> Collection<T> getNodeSet() {
+		return new AbstractCollection<T>() {
+			public Iterator<T> iterator() {
+				Iterator<T> it = getNodeIterator();
+				return new ImmutableIterator<T>(it);
+			}
+
+			public int size() {
+				return getNodeCount();
+			}
+		};
+	}
+
+
+	public <T extends Edge> Collection<T> getEdgeSet() {
+		return new AbstractCollection<T>() {
+			public Iterator<T> iterator() {
+				Iterator<T> it = getEdgeIterator();
+				return new ImmutableIterator<T>(it);
+			}
+
+			public int size() {
+				return getNodeCount();
+			}
+		};
+	}
+	
+	// Factories
+	
+	public NodeFactory<? extends Node> nodeFactory() {
+		return nodeFactory;
+	}
+	
+	public EdgeFactory<? extends Edge> edgeFactory() {
+		return edgeFactory;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void setNodeFactory(NodeFactory<? extends Node> nf) {
+		nodeFactory = (NodeFactory<? extends AbstractNode>) nf;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void setEdgeFactory(EdgeFactory<? extends Edge> ef) {
+		edgeFactory = (EdgeFactory<? extends AbstractEdge>) ef;
+	}
+
+	// strict checking, autocreation, etc
+	
+	public boolean isStrict() {
+		return strictChecking;
+	}
+	
+	public boolean isAutoCreationEnabled() {
+		return autoCreate;
+	}
+	
+	public double getStep() {
+		return step;
+	}
+	
+	public void setNullAttributesAreErrors(boolean on) {
+		nullAttributesAreErrors = on;
+	}
+	
+	public void setStrict(boolean on) {
+		strictChecking = on;
+	}
+	
+	public void setAutoCreate(boolean on) {
+		autoCreate = on;
+	}
+
+	
+	
+	
+	
 	public <T extends Edge> T addEdge(String id, String node1, String node2)
 			throws IdAlreadyInUseException, ElementNotFoundException {
-		// TODO Auto-generated method stub
+		// TODO
 		return null;
 	}
 
@@ -124,11 +266,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		return null;
 	}
 
-	@Override
-	public EdgeFactory<? extends Edge> edgeFactory() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public Iterable<ElementSink> elementSinks() {
@@ -136,89 +273,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		return null;
 	}
 
-	@Override
-	public <T extends Edge> Iterable<? extends T> getEachEdge() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <T extends Node> Iterable<? extends T> getEachNode() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <T extends Edge> T getEdge(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getEdgeCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public <T extends Edge> Iterator<T> getEdgeIterator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <T extends Edge> Collection<T> getEdgeSet() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <T extends Node> T getNode(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getNodeCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public <T extends Node> Iterator<T> getNodeIterator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <T extends Node> Collection<T> getNodeSet() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public double getStep() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public boolean isAutoCreationEnabled() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isStrict() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public NodeFactory<? extends Node> nodeFactory() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public void read(String filename) throws IOException, GraphParseException,
@@ -255,35 +309,9 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		return null;
 	}
 
-	@Override
-	public void setAutoCreate(boolean on) {
-		// TODO Auto-generated method stub
 
-	}
 
-	@Override
-	public void setEdgeFactory(EdgeFactory<? extends Edge> ef) {
-		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public void setNodeFactory(NodeFactory<? extends Node> nf) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setNullAttributesAreErrors(boolean on) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setStrict(boolean on) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public void stepBegins(double time) {
@@ -463,17 +491,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		return null;
 	}
 
-	// *** new methods in Graph
+	// *** new methods in Graph ***
 
-	public <T extends Edge> T getEdge(int index) {
-		// TODO
-		return null;
-	}
-
-	public <T extends Node> T getNode(int index) {
-		// TODO
-		return null;
-	}
 
 	public <T extends Edge> T addEdge(String id, int index1, int index2) {
 		// TODO
@@ -632,7 +651,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	}
 
 	protected void stepBegins_(String sourceId, long timeId, double step) {
-		// TODO
+		this.step = step;
+		listeners.sendStepBegins(sourceId, timeId, step);
 	}
 
 	// helper for removeNode_
@@ -815,4 +835,27 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 			}
 		}
 	}
+	
+	// *** immutable iterators used for the views
+
+	protected static class ImmutableIterator<T> implements Iterator<T> {
+		private Iterator<T> it;
+		
+		protected ImmutableIterator(Iterator<T> it) {
+			this.it = it;
+		}
+		
+		public boolean hasNext() {
+			return it.hasNext();
+		}
+
+		public T next() {
+			return it.next();
+		}
+
+		public void remove() {
+			throw new UnsupportedOperationException("This iterator does not support remove.");
+		}
+	}
+
 }
