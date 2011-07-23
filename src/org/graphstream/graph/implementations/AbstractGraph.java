@@ -20,8 +20,13 @@ import org.graphstream.stream.Pipe;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.SourceBase;
 import org.graphstream.stream.file.FileSink;
+import org.graphstream.stream.file.FileSinkFactory;
 import org.graphstream.stream.file.FileSource;
+import org.graphstream.stream.file.FileSourceFactory;
 import org.graphstream.stream.sync.SinkTime;
+import org.graphstream.ui.layout.Layout;
+import org.graphstream.ui.layout.Layouts;
+import org.graphstream.ui.swingViewer.GraphRenderer;
 import org.graphstream.ui.swingViewer.Viewer;
 
 public abstract class AbstractGraph extends AbstractElement implements Graph {
@@ -176,6 +181,10 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		};
 	}
 
+	public Iterator<Node> iterator() {
+		return getNodeIterator();
+	}
+
 	// Factories
 
 	public NodeFactory<? extends Node> nodeFactory() {
@@ -220,6 +229,10 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 
 	public void setAutoCreate(boolean on) {
 		autoCreate = on;
+	}
+
+	public void stepBegins(double time) {
+		stepBegins_(getId(), listeners.newEvent(), time);
 	}
 
 	// adding and removing elements
@@ -269,7 +282,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	}
 
 	public <T extends Node> T removeNode(String id) {
-		return removeNode_(getId(), listeners.newEvent(), (AbstractNode)getNode(id), id, true);
+		return removeNode_(getId(), listeners.newEvent(),
+				(AbstractNode) getNode(id), id, true);
 	}
 
 	public <T extends Node> T removeNode(int index) {
@@ -282,14 +296,13 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 				throw new ElementNotFoundException("Cannot remove null node");
 			return null;
 		}
-		return removeNode_(getId(), listeners.newEvent(), (AbstractNode)node, node.getId(), true);
+		return removeNode_(getId(), listeners.newEvent(), (AbstractNode) node,
+				node.getId(), true);
 	}
 
-	
-
 	public <T extends Edge> T removeEdge(String id) {
-		// TODO Auto-generated method stub
-		return removeEdge_(getId(), listeners.newEvent(), (AbstractEdge)getEdge(id), id, true, true);
+		return removeEdge_(getId(), listeners.newEvent(),
+				(AbstractEdge) getEdge(id), id, true, true);
 	}
 
 	public <T extends Edge> T removeEdge(int index) {
@@ -302,251 +315,198 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 				throw new ElementNotFoundException("Cannot remove null edge");
 			return null;
 		}
-		return removeEdge_(getId(), listeners.newEvent(), (AbstractEdge)edge, edge.getId(), true, true);
+		return removeEdge_(getId(), listeners.newEvent(), (AbstractEdge) edge,
+				edge.getId(), true, true);
 	}
 
 	public <T extends Edge> T removeEdge(String from, String to) {
-			return removeEdge(getNode(from), getNode(to));
+		return removeEdge(getNode(from), getNode(to));
 	}
 
 	public <T extends Edge> T removeEdge(int fromIndex, int toIndex) {
 		return removeEdge(getNode(fromIndex), getNode(toIndex));
 	}
-	
+
 	public <T extends Edge> T removeEdge(Node node1, Node node2) {
 		if (node1 == null || node2 == null) {
 			if (strictChecking)
-				throw new ElementNotFoundException("Cannot remove the edge. One of its endpoints does not exist");
+				throw new ElementNotFoundException(
+						"Cannot remove the edge. One of its endpoints does not exist");
 			return null;
 		}
 		AbstractEdge edge = node1.getEdgeToward(node2);
 		if (edge == null) {
 			if (strictChecking)
-				throw new ElementNotFoundException("There is no edge from \"" + node1.getId() + "\" to \"" +
-						node2.getId() + "\". Cannot remove it.");
+				throw new ElementNotFoundException("There is no edge from \""
+						+ node1.getId() + "\" to \"" + node2.getId()
+						+ "\". Cannot remove it.");
 			return null;
 		}
-		return removeEdge_(getId(), listeners.newEvent(), edge, edge.getId(), true, true);
+		return removeEdge_(getId(), listeners.newEvent(), edge, edge.getId(),
+				true, true);
 	}
 
+	// *** Sinks, sources etc. ***
 
-	// //////////////////////////////////
-
-	@Override
 	public Iterable<AttributeSink> attributeSinks() {
-		// TODO Auto-generated method stub
-		return null;
+		return listeners.attributeSinks();
 	}
 
-	@Override
-	public Viewer display() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Viewer display(boolean autoLayout) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Iterable<ElementSink> elementSinks() {
-		// TODO Auto-generated method stub
-		return null;
+		return listeners.elementSinks();
 	}
 
-	@Override
-	public void read(String filename) throws IOException, GraphParseException,
-			ElementNotFoundException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void read(FileSource input, String filename) throws IOException,
-			GraphParseException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void stepBegins(double time) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void write(String filename) throws IOException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void write(FileSink output, String filename) throws IOException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void addAttributeSink(AttributeSink sink) {
-		// TODO Auto-generated method stub
-
+		listeners.addAttributeSink(sink);
 	}
 
-	@Override
 	public void addElementSink(ElementSink sink) {
-		// TODO Auto-generated method stub
-
+		listeners.addElementSink(sink);
 	}
 
-	@Override
 	public void addSink(Sink sink) {
-		// TODO Auto-generated method stub
-
+		listeners.addSink(sink);
 	}
 
-	@Override
 	public void clearAttributeSinks() {
-		// TODO Auto-generated method stub
-
+		listeners.clearAttributeSinks();
 	}
 
-	@Override
 	public void clearElementSinks() {
-		// TODO Auto-generated method stub
-
+		listeners.clearElementSinks();
 	}
 
-	@Override
 	public void clearSinks() {
-		// TODO Auto-generated method stub
-
+		listeners.clearSinks();
 	}
 
-	@Override
 	public void removeAttributeSink(AttributeSink sink) {
-		// TODO Auto-generated method stub
-
+		listeners.removeAttributeSink(sink);
 	}
 
-	@Override
 	public void removeElementSink(ElementSink sink) {
-		// TODO Auto-generated method stub
-
+		listeners.removeElementSink(sink);
 	}
 
-	@Override
 	public void removeSink(Sink sink) {
-		// TODO Auto-generated method stub
-
+		listeners.removeSink(sink);
 	}
 
-	@Override
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
 			String attribute, Object value) {
-		// TODO Auto-generated method stub
-
+		listeners
+				.edgeAttributeAdded(sourceId, timeId, edgeId, attribute, value);
 	}
 
-	@Override
 	public void edgeAttributeChanged(String sourceId, long timeId,
 			String edgeId, String attribute, Object oldValue, Object newValue) {
-		// TODO Auto-generated method stub
-
+		listeners.edgeAttributeChanged(sourceId, timeId, edgeId, attribute,
+				oldValue, newValue);
 	}
 
-	@Override
 	public void edgeAttributeRemoved(String sourceId, long timeId,
 			String edgeId, String attribute) {
-		// TODO Auto-generated method stub
-
+		listeners.edgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
 	}
 
-	@Override
 	public void graphAttributeAdded(String sourceId, long timeId,
 			String attribute, Object value) {
-		// TODO Auto-generated method stub
-
+		listeners.graphAttributeAdded(sourceId, timeId, attribute, value);
 	}
 
-	@Override
 	public void graphAttributeChanged(String sourceId, long timeId,
 			String attribute, Object oldValue, Object newValue) {
-		// TODO Auto-generated method stub
-
+		listeners.graphAttributeChanged(sourceId, timeId, attribute, oldValue,
+				newValue);
 	}
 
-	@Override
 	public void graphAttributeRemoved(String sourceId, long timeId,
 			String attribute) {
-		// TODO Auto-generated method stub
-
+		listeners.graphAttributeRemoved(sourceId, timeId, attribute);
 	}
 
-	@Override
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
 			String attribute, Object value) {
-		// TODO Auto-generated method stub
-
+		listeners
+				.nodeAttributeAdded(sourceId, timeId, nodeId, attribute, value);
 	}
 
-	@Override
 	public void nodeAttributeChanged(String sourceId, long timeId,
 			String nodeId, String attribute, Object oldValue, Object newValue) {
-		// TODO Auto-generated method stub
-
+		listeners.nodeAttributeChanged(sourceId, timeId, nodeId, attribute,
+				oldValue, newValue);
 	}
 
-	@Override
 	public void nodeAttributeRemoved(String sourceId, long timeId,
 			String nodeId, String attribute) {
-		// TODO Auto-generated method stub
-
+		listeners.nodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
 	}
 
-	@Override
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
 			String fromNodeId, String toNodeId, boolean directed) {
-		// TODO Auto-generated method stub
-
+		listeners.edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId,
+				directed);
 	}
 
-	@Override
 	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
-		// TODO Auto-generated method stub
-
+		listeners.edgeRemoved(sourceId, timeId, edgeId);
 	}
 
-	@Override
 	public void graphCleared(String sourceId, long timeId) {
-		// TODO Auto-generated method stub
-
+		listeners.graphCleared(sourceId, timeId);
 	}
 
-	@Override
 	public void nodeAdded(String sourceId, long timeId, String nodeId) {
-		// TODO Auto-generated method stub
-
+		listeners.nodeAdded(sourceId, timeId, nodeId);
 	}
 
-	@Override
 	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
-		// TODO Auto-generated method stub
-
+		listeners.nodeRemoved(sourceId, timeId, nodeId);
 	}
 
-	@Override
 	public void stepBegins(String sourceId, long timeId, double step) {
-		// TODO Auto-generated method stub
-
+		listeners.stepBegins(sourceId, timeId, step);
 	}
 
-	@Override
-	public Iterator<Node> iterator() {
-		// TODO Auto-generated method stub
-		return null;
+	// display, read, write
+
+	public Viewer display() {
+		return display(true);
 	}
+
+	public Viewer display(boolean autoLayout) {
+		Viewer viewer = new Viewer(this,
+				Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+		GraphRenderer renderer = Viewer.newGraphRenderer();
+		viewer.addView(Viewer.DEFAULT_VIEW_ID, renderer);
+		if (autoLayout) {
+			Layout layout = Layouts.newLayoutAlgorithm();
+			viewer.enableAutoLayout(layout);
+		}
+		return viewer;
+	}
+
+	public void read(FileSource input, String filename) throws IOException,
+			GraphParseException {
+		input.readAll(filename);
+	}
+
+	public void read(String filename) throws IOException, GraphParseException,
+			ElementNotFoundException {
+		FileSource input = FileSourceFactory.sourceFor(filename);
+		input.addSink(this);
+		read(input, filename);
+	}
+
+	public void write(FileSink output, String filename) throws IOException {
+		output.writeAll(this, filename);
+	}
+
+	public void write(String filename) throws IOException {
+		FileSink output = FileSinkFactory.sinkFor(filename);
+		write(output, filename);
+	}
+
 
 	// *** callbacks maintaining user's data structure
 
@@ -724,13 +684,13 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 
 	// *** Methods for iterators ***
 
-	protected void removeNode(Node node, boolean graphCallback) {
-		// TODO
+	protected void removeNode(AbstractNode node, boolean graphCallback) {
+		removeNode_(getId(), listeners.newEvent(), node, node.getId(), graphCallback);
 	}
 
-	protected void removeEdge(Edge edge, boolean graphCallback,
+	protected void removeEdge(AbstractEdge edge, boolean graphCallback,
 			boolean nodeCallback) {
-		// TODO
+		removeEdge_(getId(), listeners.newEvent(), edge, edge.getId(), graphCallback, nodeCallback);
 	}
 
 	protected int getModifCount() {
