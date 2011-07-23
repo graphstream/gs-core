@@ -47,8 +47,7 @@ public abstract class AbstractEdge extends AbstractElement implements Edge {
 
 	/**
 	 * Constructs a new edge. This constructor copies the parameters into the
-	 * corresponding fields and calls {@link AbstractNode#addEdge(AbstractEdge)}
-	 * for the source and the target nodes.
+	 * corresponding fields.
 	 * 
 	 * @param id
 	 *            Unique identifier of this edge.
@@ -67,10 +66,6 @@ public abstract class AbstractEdge extends AbstractElement implements Edge {
 		this.target = target;
 		this.directed = directed;
 		this.graph = (AbstractGraph) source.getGraph();
-
-		// XXX if the edge is loop should we call this only once ?
-		source.addEdge(this);
-		target.addEdge(this);
 	}
 
 	/**

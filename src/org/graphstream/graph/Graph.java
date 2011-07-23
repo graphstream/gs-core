@@ -41,6 +41,8 @@ import org.graphstream.stream.Pipe;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSource;
 
+// TODO describe indices in javadoc
+
 /**
  * An Interface that advises general purpose methods for handling graphs.
  * 
@@ -715,5 +717,19 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 	 *         another thread).
 	 */
 	org.graphstream.ui.swingViewer.Viewer display(boolean autoLayout);
+	
+	// XXX Propositions of new methods
+	
+	<T extends Edge> T getEdge(int index);
+	<T extends Node> T getNode(int index);
+	
+	<T extends Edge> T addEdge(String id, int index1, int index2);
+	<T extends Edge> T addEdge(String id, int fromIndex, int toIndex, boolean directed);
 
+	<T extends Edge> T removeEdge(int index);
+	<T extends Edge> T removeEdge(int fromIndex, int toIndex);
+	<T extends Edge> T removeEdge(Edge edge);
+
+	<T extends Node> T removeNode(int index);
+	<T extends Node> T removeNode(Node node);
 }

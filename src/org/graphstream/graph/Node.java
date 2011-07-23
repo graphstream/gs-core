@@ -520,6 +520,7 @@ public interface Node extends Element, Iterable<Edge> {
 	
 	
 	// XXX Propositions for new methods
+	// TODO Write javadoc
 		
 	boolean hasEdgeToward(Node node);
 	boolean hasEdgeToward(int index);

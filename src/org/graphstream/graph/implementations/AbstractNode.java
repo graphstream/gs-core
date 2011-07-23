@@ -9,6 +9,7 @@ import org.graphstream.graph.DepthFirstIterator;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
+import org.graphstream.stream.SourceBase;
 
 /**
  * <p>
@@ -21,7 +22,7 @@ import org.graphstream.graph.Node;
  * {@link org.graphstream.graph.implementations#AbstractElement} and most of the
  * methods of {@link org.graphstream.graph#Node} (there are "only" ten abstract
  * methods). In addition to these, subclasses must provide implementations for
- * {@link #addEdge(AbstractEdge)} and {@link #removeEdge(AbstractEdge)} which
+ * {@link #addEdgeCallback(AbstractEdge)} and {@link #removeEdgeCallback(AbstractEdge)} which
  * are called by the parent graph when an edge incident to this node is added to
  * or removed from the graph. This class has a low memory overhead (one
  * reference as field).
@@ -58,7 +59,10 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	protected void attributeChanged(String sourceId, long timeId,
 			String attribute, AttributeChangeEvent event, Object oldValue,
 			Object newValue) {
-		// TODO -> later when graph listeners are implemented
+			graph.listeners.sendAttributeChangedEvent(sourceId, timeId, getId(),
+					SourceBase.ElementType.NODE, attribute, event, oldValue,
+					newValue);
+
 	}
 
 	@Override
@@ -291,7 +295,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	public <T extends Edge> Iterable<T> getEachEnteringEdge() {
 		return new Iterable<T>() {
 			public Iterator<T> iterator() {
-				return getEdgeIterator();
+				return getEnteringEdgeIterator();
 			}
 		};
 	}
@@ -304,7 +308,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	public <T extends Edge> Iterable<T> getEachLeavingEdge() {
 		return new Iterable<T>() {
 			public Iterator<T> iterator() {
-				return getEdgeIterator();
+				return getLeavingEdgeIterator();
 			}
 		};
 	}
@@ -456,7 +460,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	 * @param edge
 	 *            a new edge incident to this node
 	 */
-	protected abstract void addEdge(AbstractEdge edge);
+	protected abstract boolean addEdgeCallback(AbstractEdge edge);
 
 	/**
 	 * This method must be called before removing an edge incident to this node.
@@ -465,7 +469,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	 * @param edge
 	 *            an edge incident to this node that will be removed
 	 */
-	protected abstract void removeEdge(AbstractEdge edge);
+	protected abstract void removeEdgeCallback(AbstractEdge edge);
 
 	/**
 	 * Checks if an edge enters this node. Utility method that can be useful in
