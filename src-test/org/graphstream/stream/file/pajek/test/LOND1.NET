@@ -1,0 +1,28 @@
+*Network lond1
+*Vertices 10
+    1 " "  0.600 0.420 ELLIPSE  x_fact 0.5 y_fact 0.5  r 0 q 0.2 bw 1 ic LightCyan bc Blue lc Black la     0 lr      0 lphi     0 fos   15 font Helvetica
+    2 " "  0.529 0.349 ELLIPSE  x_fact 0.5 y_fact 0.5  r 0 q 0.2 bw 1 ic LightYellow bc Brown lc Black la     0 lr      0 lphi     0 fos   15 font Helvetica
+    3 " "  0.671 0.349 ELLIPSE  x_fact 0.5 y_fact 0.5  r 0 q 0.2 bw 1 ic LightYellow bc Brown lc Black la     0 lr      0 lphi     0 fos   15 font Helvetica
+    4 " "  0.600 0.349 ELLIPSE  x_fact 0.5 y_fact 0.5  r 0 q 0.2 bw 1 ic LightMagenta bc Red lc Black la     0 lr      0 lphi     0 fos   15 font Helvetica
+    5 " "  0.600 0.279 ELLIPSE  x_fact 0.5 y_fact 0.5  r 0 q 0.2 bw 1 ic LightMagenta bc Red  lc Black la     0 lr      0 lphi     0 fos   15 font Helvetica
+    6 " "  0.600 0.500 ELLIPSE  x_fact 0.5 y_fact 0.5 r 0 q 0.2 bw 1 ic LightCyan bc Blue lc Black la     0 lr      0 lphi     0 fos   15 font Helvetica
+    7 " "  0.671 0.571 ELLIPSE  x_fact 0.5 y_fact 0.5 r 0 q 0.2 bw 1 ic LightYellow bc Brown lc Black la     0 lr      0 lphi     0 fos   15 font Helvetica
+    8 " "  0.529 0.571 ELLIPSE  x_fact 0.5 y_fact 0.5  r 0 q 0.2 bw 1 ic LightYellow bc Brown lc Black la     0 lr      0 lphi     0 fos   15 font Helvetica
+    9 " "  0.600 0.571 ELLIPSE  x_fact 0.5 y_fact 0.5  r 0 q 0.2 bw 1 ic LightMagenta bc Red lc Black la     0 lr      0 lphi     0 fos   15 font Helvetica
+   10 " "  0.600 0.641 ELLIPSE  x_fact 0.5 y_fact 0.5  r 0 q 0.2 bw 1 ic LightMagenta bc Red lc Black la     0 lr      0 lphi     0 fos   15 font Helvetica
+*EDGES
+    1    2    1
+    1    3    1
+    3    4    1
+    3    5    1
+    2    5    1
+    2    4    1
+    5    4    1
+    6    7    1
+    6    8    1
+    8    9    1
+    8   10    1
+    7   10    1
+    7    9    1
+   10    9    1
+    6    1    1

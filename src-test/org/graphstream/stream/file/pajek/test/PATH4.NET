@@ -1,0 +1,56 @@
+*Vertices     24
+     1 "white"                                  0.5022    0.9582 box x_fact 3 ic White bc Black fos 18 y_fact 1.3
+     2 "blot"                                   0.6900    0.4332 ellipse x_fact 3.3 y_fact 1.3 fos 18 
+     3 "blow"                                   0.8074    0.3389 ellipse x_fact 3.3 y_fact 1.3 fos 18 
+     4 "hale"                                   0.1625    0.6679 ellipse x_fact 3.3 y_fact 1.3 fos 18 
+     5 "hall"                                   0.0862    0.5649 ellipse x_fact 3.3 y_fact 1.3 fos 18 
+     6 "halo"                                   0.2675    0.5611 ellipse x_fact 3.3 y_fact 1.3 fos 18 
+     7 "shit"                                   0.7547    0.7638 ellipse x_fact 3.3 y_fact 1.3 fos 18 
+     8 "shot"                                   0.8645    0.6663 ellipse x_fact 3.3 y_fact 1.3 fos 18 
+     9 "show"                                   0.9675    0.5573 ellipse x_fact 3.3 y_fact 1.3 fos 18 
+    10 "slit"                                   0.6613    0.6279 ellipse x_fact 3.3 y_fact 1.3 fos 18 
+    11 "slot"                                   0.7913    0.5477 ellipse x_fact 3.3 y_fact 1.3 fos 18 
+    12 "slow"                                   0.8912    0.4466 ellipse x_fact 3.3 y_fact 1.3 fos 18 
+    13 "whit"                                   0.6362    0.8550 ellipse x_fact 3.3 y_fact 1.3 fos 18 
+    14 "below"                                  0.7312    0.2042 ellipse x_fact 3.3 y_fact 1.3 fos 18 
+    15 "hallo"                                  0.1688    0.4466 ellipse x_fact 3.3 y_fact 1.3 fos 18 
+    16 "whale"                                  0.2475    0.7710 ellipse x_fact 3.3 y_fact 1.3 fos 18 
+    17 "while"                                  0.3650    0.8702 ellipse x_fact 3.3 y_fact 1.3 fos 18 
+    18 "bellow"                                 0.6025    0.1011 ellipse x_fact 3.3 y_fact 1.3 fos 18 
+    19 "fallow"                                 0.2037    0.1870 ellipse x_fact 3.3 y_fact 1.3 fos 18 
+    20 "fellow"                                 0.2700    0.0859 ellipse x_fact 3.3 y_fact 1.3 fos 18 
+    21 "hallow"                                 0.1838    0.3263 ellipse x_fact 3.3 y_fact 1.3 fos 18 
+    22 "mallow"                                 0.3575    0.2824 ellipse x_fact 3.3 y_fact 1.3 fos 18 
+    23 "mellow"                                 0.4288    0.1832 ellipse x_fact 3.3 y_fact 1.3 fos 18 
+    24 "yellow"                                 0.4625    0.0439 box x_fact 3 ic White bc Black fos 18 y_fact 1.3
+*Arcs
+*Edges
+      2     11       1
+      2      3       1
+      3     12       1
+      3     14       1
+      4      5       1
+      4      6       1
+      4     16       1
+      5     15       1
+      6     15       1
+      7     13       1
+      7     10       1
+      7      8       1
+      8     11       1
+      8      9       1
+      9     12       1
+     10     11       1
+     11     12       1
+      1     13       1
+     14     18       1
+     15     21       1
+     16     17       1
+      1     17       1
+     18     24       1
+     19     21       1
+     19     20       1
+     20     24       1
+     21     22       1
+     22     23       1
+     23     24       1

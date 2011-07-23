@@ -1,0 +1,57 @@
+*Network Sample6
+%Network from Roberts p. 76 a
+*Vertices 11
+1  1 280  50 15
+2  2 350 100 15
+3  3 250 200 15
+4  4 350 200 15
+5  5 330 270 15
+6  6 250 300 15
+7  7 130 200 15
+8  8 130 300 15
+9  9 130 350 15
+10 10 50 350 15
+11 11 50 300 15
+%
+*Arcs
+10 11 -1
+10  9 -1
+9  11  1
+8   9 -1
+11  8 -1
+8  7  -1
+6   8 -1
+7   3 -1
+3   6 -1
+5   3  1
+4   5 -1
+3   4 -1
+3   1  1
+1   2  1
+2   3  1
+*Edges
+%
+*Properties
+Clustering: { { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11} } errors =   5.00 alfa = 0.50
+Clustering: { { 1, 2, 3, 5, 8, 10},  { 4, 6, 7, 9, 11} } errors =   0.00 alfa = 0.50
+Clustering: { { 1, 2, 3, 5, 8},  { 4, 6, 10},  { 7, 9, 11} } errors =   0.00 alfa = 0.50
+Clustering: { { 1, 2, 3, 5},  { 4, 6, 7, 9, 11},  { 8, 10} } errors =   0.00 alfa = 0.50
+Clustering: { { 1, 2, 3, 5},  { 4, 8, 10},  { 6, 7, 9, 11} } errors =   0.00 alfa = 0.50
+Clustering: { { 1, 2, 3, 5, 9, 11},  { 4, 6, 7},  { 8, 10} } errors =   0.00 alfa = 0.50
+Clustering: { { 1, 2, 3, 5, 8},  { 4, 6, 7, 10},  { 9, 11} } errors =   0.00 alfa = 0.50
+Clustering: { { 1, 2, 3, 5, 8, 10},  { 4, 7},  { 6, 9, 11} } errors =   0.00 alfa = 0.50
+Clustering: { { 1, 2, 3, 5},  { 4, 6},  { 7, 9, 11},  { 8, 10} } errors =   0.00 alfa = 0.50
+Clustering: { { 1, 2, 3, 5},  { 4, 6},  { 7},  { 8, 10},  { 9, 11} } errors =   0.00 alfa = 0.50
+Clustering: { { 1, 2, 3, 5},  { 4, 8},  { 6},  { 7},  { 9, 11},  { 10} } errors =   0.00 alfa = 0.50
+Clustering: { { 1, 2, 3, 5},  { 4},  { 6},  { 7},  { 8},  { 9, 11},  { 10} } errors =   0.00 alfa = 0.50
+Clustering: { { 1, 2, 3},  { 4},  { 5},  { 6},  { 7},  { 8},  { 9, 11},  { 10} } errors =   0.50 alfa = 0.50
+Clustering: { { 1, 2, 3},  { 4},  { 5},  { 6},  { 7},  { 8},  { 9},  { 10},  { 11} } errors =   1.00 alfa = 0.50
+Clustering: { { 1},  { 2},  { 3},  { 4},  { 5},  { 6},  { 7},  { 8},  { 9, 11},  { 10} } errors =   2.00 alfa = 0.50
+Clustering: { { 1},  { 2},  { 3},  { 4},  { 5},  { 6},  { 7},  { 8},  { 9},  { 10},  { 11} } errors =   2.50 alfa = 0.50
+Clustering: { { 1, 2, 4, 6, 7, 9, 11},  { 3, 5, 8, 10} } errors =   1.00 alfa = 0.50
+Clustering: { { 1, 2, 7, 9, 11},  { 3, 5, 8},  { 4, 6, 10} } errors =   1.00 alfa = 0.50
+Clustering: { { 1, 2, 3, 4, 5, 6, 7},  { 8, 9, 10, 11} } errors =   0.00 alfa = 0.00
+Clustering: { { a, b, c, e, f, i, k},  { d, g, h, j} } errors =   1.00 alfa = 0.50
+Clustering: { { 1, 2, 3, 5, 9, 11},  { 4, 6, 7, 8, 10} } errors =   1.00 alfa = 0.50
+Clustering: { { a, b, c, e, h, j},  { d, f, g, i, k} } errors =   0.00 alfa = 0.50
+Clustering: { { 1, 2, 3, 5, 10},  { 4, 6, 7, 9, 11},  { 8} } errors =   0.00 alfa = 0.50

@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import org.graphstream.stream.SourceBase.ElementType;
+import org.graphstream.stream.file.FileSourceDOT;
 import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
 
 import org.graphstream.util.parser.ParseException;

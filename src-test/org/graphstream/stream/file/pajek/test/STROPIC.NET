@@ -1,0 +1,31 @@
+*Network STROPIC
+*Vertices 10
+    1 a 0.050 0.550 diamond  x_fact 2 y_fact 2 phi 0 r 0 q 0.2 bw 1 ic YellowGreen bc Violet lc Black la     0 lr      0 lphi     0 fos   25 font Helvetica q 0.5
+    2 b 0.350 0.950 ellipse  x_fact 2 y_fact 2 phi 0 r 0 q 0.2 bw 1 ic LightOrange bc Plum lc Black la     0 lr      0 lphi     0 fos   25 font Helvetica
+    3 c 0.650 0.550 ellipse  x_fact 2 y_fact 2 phi 0 r 0 q 0.2 bw 1 ic LightOrange bc Plum lc Black la     0 lr      0 lphi     0 fos   25 font Helvetica
+    4 e 0.350 0.800 ellipse  x_fact 2 y_fact 2 phi 0 r 0 q 0.2 bw 1 ic LightOrange bc Plum lc Black la     0 lr      0 lphi     0 fos   25 font Helvetica
+    5 d 0.350 0.100 box  x_fact 2 y_fact 2 phi 0 r 0 q 0.2 bw 1 ic LightCyan bc BlueViolet lc Black la     0 lr      0 lphi     0 fos   25
+    6 f 0.350 0.300 box  x_fact 2 y_fact 2 phi 0 r 0 q 0.2 bw 1 ic LightCyan bc BlueViolet lc Black la     0 lr      0 lphi     0 fos   25
+    7 g 0.250 0.550 diamond  x_fact 2 y_fact 2 phi 0 r 0 q 0.01 bw 1 ic LightYellow bc Fuchsia lc Black la     0 lr      0 lphi     0 fos   25 font Helvetica
+    8 h 0.350 0.650 diamond  x_fact 2 y_fact 2 phi 0 r 0 q 0.01 bw 1 ic LightYellow bc Fuchsia lc Black la     0 lr      0 lphi     0 fos   25 font Helvetica
+    9 i 0.450 0.550 diamond  x_fact 2 y_fact 2 phi 0 r 0 q 0.01 bw 1 ic LightYellow bc Fuchsia lc Black la     0 lr      0 lphi     0 fos   25 font Helvetica
+   10 j 0.350 0.450 diamond  x_fact 2 y_fact 2 phi 0 r 0 q 0.01 bw 1 ic LightYellow bc Fuchsia lc Black la     0 lr      0 lphi     0 fos   25 font Helvetica
+*arcs
+    2    1   -1 w 4 p Solid c Red ap 0 a A s 3 h1   18 h2   3 k1 -1 k2 15 a1 0 a2 0
+    2    3    1 w 4 p Solid c Red ap 0 a A s 3 h1   36 h2  27 k1 -1 k2 15 a1 0 a2 0
+    3    4    1 w 3 p Dots c Black ap 0.5 a B s 3 h1   22 h2  36 k1  1.00 k2  1.00 a1  -3.42 a2 -41.58
+    5    1    1 w 4 p Solid c Red ap 0 a A s 3 h1   18 h2   1 k1 -1 k2 15 a1 0 a2 0
+    5    6    1 w 3 p Dots c Black ap 0.5 a B s 3 h1   7 h2   1 k1  1.00 k2  1.00 a1 -45.00 a2 315.00
+    6    5    1 w 3 p Dots c Black ap 0.5 a B s 3 h1   3 h2   5 k1  1.00 k2  1.00 a1 -45.00 a2 315.00
+    5    3    1 w 4 p Solid c Red ap 0 a A s 3 h1   36 h2   9 k1 -1 k2 15 a1 0 a2 0
+    4    1    1 w 3 p Dots c Black ap 0.5 a B s 3 h1   18 h2   31 k1  1.00 k2  1.00 a1 -41.58 a2  -3.42
+    4    2    1 w 4 p Solid c Blue ap 0 a A s 3
+    7    1    1 w 4 p Solid c Blue ap 0 a A s 3
+    7    9    1 w 4 p Solid c Blue ap 0 a A s 3
+    8    7    1 w 4 p Solid c Green ap 0 a A s 3 h1   2 h2   3 k1 -3 k2   -40.00 a1 0 a2 0
+    8    4    1 w 4 p Solid c Blue ap 0 a A s 3
+    9    8    1 w 4 p Solid c Green ap 0 a A s 3 h1   3 h2   4 k1 -3 k2   -40.00 a1 0 a2 0
+    9    3    1 w 4 p Solid c Blue ap 0 a A s 3
+    9   10    1 w 4 p Solid c Green ap 0 a A s 3 h1   1 h2   4 k1 -2 k2    40.00 a1 0 a2 0
+   10    6    1 w 4 p Solid c Blue ap 0 a A s 3
+   10    7    1 w 4 p Solid c Green ap 0 a A s 3 h1   2 h2   1 k1 -2 k2    40.00 a1 0 a2 0

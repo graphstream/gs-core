@@ -45,32 +45,36 @@ import java.io.Reader;
 import java.util.ArrayList;
 
 import org.graphstream.util.parser.ParseException;
+import org.graphstream.util.parser.Parser;
 import org.graphstream.util.parser.SimpleCharStream;
 import org.graphstream.util.parser.Token;
 import org.graphstream.util.parser.TokenMgrError;
 
 @SuppressWarnings("unused")
-public class PajekParser {
+public class PajekParser implements Parser {
 	// The node count.
 	int nodeCount;
-	// The file source.
-	FileSourcePajek pajek;
 	// If true we are parsing the vertices labels.
 	// False as soon as we encounter the arcs.
 	boolean inVertices = true;
 	// If true the list of edges is a edge list.
 	boolean edgeListMode = true;
+	
+	PajekContext ctx;
   
 	public PajekParser(FileSourcePajek pajek, InputStream stream)
 	{
 		this(stream);
-		this.pajek = pajek;
+		this.ctx = new PajekContext(pajek);
 	}
 	
 	public PajekParser(FileSourcePajek pajek, Reader stream )
 	{
 		this(stream);
-		this.pajek = pajek;
+		this.ctx = new PajekContext(pajek);
+	}
+	
+	public void open() {
 	}
 	
 	/**
@@ -159,13 +163,19 @@ TOKEN: { < KEY       : ["A"-"Z","a"-"z","0"-"9","."](["A"-"Z","a"-"z","0"-"9","_
 /*****************************************************************/
 
 /** Unused rule, call it to slurp in the whole file. */
-void start():
+void all():
 {}
 {
-	(nextEvents())+
+	( network()
+	| vertices()
+	| edges()
+	| <COMMENT>
+	| <EOL>
+	)+
+	<EOF>
 }
 
-boolean nextEvents(): 
+boolean next(): 
 {
 	boolean ok = true;
 	Token k;
@@ -194,7 +204,7 @@ void network():
 		)*
 	)
 	
-	{ pajek.addGraphAttribute("ui.label", buf.toString()); }
+	{ ctx.addGraphAttribute("ui.label", buf.toString()); }
 	
 	EO()
 }
@@ -208,7 +218,7 @@ void vertices():
 {
 	<VERTICES> n=<INT> EO()
 	{
-		nodeCount = pajek.addNodes(n);
+		nodeCount = ctx.addNodes(n);
 	}
 	
 	( vertex()
@@ -227,7 +237,7 @@ void vertex():
 
 	(	( k=validIdentifier() { label = k.image; } )
 	
-		(	((x=<REAL>|x=<INT>) (y=<REAL>|y=<INT>) (z=<REAL>|z=<INT>)? { pajek.addNodePosition(id.image, x, y, z); })
+		(	((x=<REAL>|x=<INT>) (y=<REAL>|y=<INT>) (z=<REAL>|z=<INT>)? { ctx.addNodePosition(id.image, x, y, z); })
 
 			( (k=<ELLIPSE> 	{ if(graphics==null) graphics = new NodeGraphics(); graphics.addKey("shape", "circle",   k); } )
 			| (k=<BOX>		{ if(graphics==null) graphics = new NodeGraphics(); graphics.addKey("shape", "box",      k); } )
@@ -263,10 +273,10 @@ void vertex():
 	{
 		if(label != null) {
 			if(label.startsWith("\"")) label = label.substring(1, label.length()-1);
-			pajek.addNodeLabel(id.image, label);
+			ctx.addNodeLabel(id.image, label);
 		}
 		if(graphics != null )
-			pajek.addNodeGraphics(id.image, graphics);
+			ctx.addNodeGraphics(id.image, graphics);
 	}
 }
 
@@ -276,10 +286,10 @@ void edges():
 {
 }
 {
-	( ( <ARCS>      EO() { edgeListMode = false; inVertices = false; pajek.setDirected(true);  } (edge()|<COMMENT>)*     )
-	| ( <EDGES>     EO() { edgeListMode = false; inVertices = false; pajek.setDirected(false); } (edge()|<COMMENT>)*     )
-	| ( <ARCSLIST>  EO() { edgeListMode = true;  inVertices = false; pajek.setDirected(true);  } (edgeList()|<COMMENT>)* )
-	| ( <EDGESLIST> EO() { edgeListMode = true;  inVertices = false; pajek.setDirected(false); } (edgeList()|<COMMENT>)* )
+	( ( <ARCS>      EO() { edgeListMode = false; inVertices = false; ctx.setDirected(true);  } (edge()|<COMMENT>)*     )
+	| ( <EDGES>     EO() { edgeListMode = false; inVertices = false; ctx.setDirected(false); } (edge()|<COMMENT>)*     )
+	| ( <ARCSLIST>  EO() { edgeListMode = true;  inVertices = false; ctx.setDirected(true);  } (edgeList()|<COMMENT>)* )
+	| ( <EDGESLIST> EO() { edgeListMode = true;  inVertices = false; ctx.setDirected(false); } (edgeList()|<COMMENT>)* )
 	| matrix()
 	| <COMMENT>
 	)
@@ -292,10 +302,10 @@ void edge():
 	EdgeGraphics graphics = null;
 }
 {
-	src=<INT> trg=<INT> { id=pajek.addEdge(src.image, trg.image); }
+	src=<INT> trg=<INT> { id=ctx.addEdge(src.image, trg.image); }
 	
 	( 
-		(k=<INT>|k=<REAL>) { pajek.addEdgeWeight(id, k); }
+		(k=<INT>|k=<REAL>) { ctx.addEdgeWeight(id, k); }
 	
 		( ( k=<P>    value=keyOrString()  { if(graphics==null) graphics = new EdgeGraphics(); graphics.addKey("p",    value, k); } )
 		| ( k=<W>    value=number()       { if(graphics==null) graphics = new EdgeGraphics(); graphics.addKey("w",    value, k); } )
@@ -326,7 +336,7 @@ void edge():
 
 	{
 		if(graphics != null)
-			pajek.addEdgeGraphics(id, graphics);
+			ctx.addEdgeGraphics(id, graphics);
 	}
 }
 
@@ -336,8 +346,8 @@ void edgeList():
 	String id;
 }
 {
-	src=<INT> trg=<INT>	{ id=pajek.addEdge(src.image, trg.image); }
-	( more=<INT> { if(edgeListMode) pajek.addEdge(src.image, more.image); } )* 
+	src=<INT> trg=<INT>	{ id=ctx.addEdge(src.image, trg.image); }
+	( more=<INT> { if(edgeListMode) ctx.addEdge(src.image, more.image); } )* 
 	EO()
 }
 
@@ -351,7 +361,7 @@ void matrix():
 {
 	<MATRIX> (<EOL>)+
 	(line = matrixline(mat) { mat.addLine(line); } | <COMMENT> )+
-	{ pajek.addEdges(mat); }
+	{ ctx.addEdges(mat); }
 }
 
 ArrayList<String> matrixline(EdgeMatrix mat):
@@ -396,8 +406,8 @@ String color():
 }
 {
 	( value=keyOrString()
-	| ( r=<REAL> g=<REAL> b=<REAL>  { value = FileSourcePajek.toColorValue(r, g, b); } )
-	| ( r=<INT>  g=<INT>  b=<INT>   { value = FileSourcePajek.toColorValue(r, g, b); } )
+	| ( r=<REAL> g=<REAL> b=<REAL>  { value = PajekContext.toColorValue(r, g, b); } )
+	| ( r=<INT>  g=<INT>  b=<INT>   { value = PajekContext.toColorValue(r, g, b); } )
 	)
 	{ return value; }
 }

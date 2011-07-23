@@ -1,0 +1,68 @@
+*Vertices     25
+     1 " "                                    0.8473    0.4981    0.5000 ellipse x_fact 1 bw 1.5 fos 40 ic LightYellow 
+     2 " "                                    0.6112    0.8387    0.5000 ellipse x_fact 1 bw 1.5 fos 40 ic LightYellow 
+     3 " "                                    0.2010    0.7205    0.5000 ellipse x_fact 1 bw 1.5 fos 40 ic LightYellow 
+     4 " "                                    0.2216    0.2977    0.5000 ellipse x_fact 1  bw 1.5 fos 50 ic LightYellow 
+     5 " "                                    0.6120    0.1552    0.5000 ellipse x_fact 1  bw 1.5 fos 50 ic LightYellow 
+     6 "."                                    0.6188    0.4982    0.5000 ellipse x_fact 1  bw 1.5 fos 50 ic White lr -6.5
+     7 "."                                    0.5442    0.6249    0.5000 ellipse x_fact 1  bw 1.5 fos 50 ic White lr -6.5
+     8 "."                                    0.3781    0.5939    0.5000 ellipse x_fact 1  bw 1.5 fos 50 ic White lr -6.5
+     9 "."                                    0.3724    0.4074    0.5000 ellipse x_fact 1  bw 1.5 fos 50 ic White lr -6.5
+    10 "."                                    0.5453    0.3593    0.5000 ellipse x_fact 1  bw 1.5 fos 50 ic White lr -6.5
+    11 "."                                    0.6614    0.6222    0.5000 ellipse x_fact 1  bw 1.5 fos 50 ic LightCyan lr -6.5
+    12 "."                                    0.4299    0.7012    0.5000 ellipse x_fact 1  bw 1.5 fos 50 ic LightCyan lr -6.5
+    13 "."                                    0.2920    0.5134    0.5000 ellipse x_fact 1  bw 1.5 fos 50 ic LightCyan lr -6.5
+    14 "."                                    0.4351    0.3015    0.5000 ellipse x_fact 1  bw 1.5 fos 50 ic LightCyan lr -6.5
+    15 "."                                    0.6524    0.3707    0.5000 ellipse x_fact 1  bw 1.5 fos 50 ic LightCyan lr -6.5
+    16 " "                                   0.7328    0.4981    0.5000 box ic Black x_fact 0.2 y_fact 2 lr 25 lphi 105 fos 40 
+    17 " "                                   0.5790    0.7314    0.5000 box ic Black x_fact 0.2 y_fact 2 lr 25 lphi 105 fos 40 phi -72
+    18 " "                                   0.2857    0.6583    0.5000 box ic Black x_fact 0.2 y_fact 2 lr 25 lphi 105 fos 40 phi -144
+    19 " "                                   0.2913    0.3519    0.5000 box ic Black x_fact 0.2 y_fact 2 lr 25 lphi 105 fos 40 phi -216
+    20 " "                                   0.5826    0.2447    0.5000 box ic Black x_fact 0.2 y_fact 2 lr 25 lphi 105 fos 40 phi -288
+    21 " "                                   0.9505    0.4996    0.5000 box ic Blue  x_fact 0.2 y_fact 2 lr 25 lphi 105 fos 40          bc Blue
+    22 " "                                   0.6395    0.9274    0.5000 box ic Blue  x_fact 0.2 y_fact 2 lr 25 lphi 105 fos 40 phi -72  bc Blue
+    23 " "                                   0.1362    0.7652    0.5000 box ic Blue  x_fact 0.2 y_fact 2 lr 25 lphi 105 fos 40 phi -144 bc Blue
+    24 " "                                   0.1392    0.2356    0.5000 box ic Blue  x_fact 0.2 y_fact 2 lr 25 lphi 105 fos 40 phi -216 bc Blue
+    25 " "                                   0.6384    0.0741    0.5000 box ic Blue  x_fact 0.2 y_fact 2 lr 25 lphi 105 fos 40 phi -288 bc Blue
+*Arcs
+      6     16       1  s 2 w 2
+     16      1       1  s 2 w 2
+      1     21       1  s 2 w 2
+     21      6       1  s 2 w 2  h1 0 h2 9 a1 140 a2 80 k1 1 k2 0.8
+     21     11       1  s 2 w 2 h1 6
+     21     15       1  s 2 w 2 h1 2
+     15     16       1  s 2 w 2
+     11     16       1  s 2 w 2
+      7     17       1  s 2 w 2
+     17      2       1  s 2 w 2
+      2     22       1  s 2 w 2
+     22      7       1  s 2 w 2  h1 0 h2 1 a1 140 a2 80 k1 1 k2 0.8
+     22     11       1  s 2 w 2 h1 2
+     22     12       1  s 2 w 2 h1 6
+     11     17       1  s 2 w 2
+     12     17       1  s 2 w 2
+      8     18       1  s 2 w 2
+     18      3       1  s 2 w 2
+      3     23       1  s 2 w 2
+     23      8       1  s 2 w 2  h1 0 h2 30 a1 140 a2 80 k1 1 k2 0.8
+     23     12       1  s 2 w 2 h1 2
+     23     13       1  s 2 w 2 h1 6
+     12     18       1  s 2 w 2
+     13     18       1  s 2 w 2
+      9     19       1  s 2 w 2
+     19      4       1  s 2 w 2
+      4     24       1  s 2 w 2
+     24      9       1  s 2 w 2   h1 0 h2 27 a1 140 a2 80 k1 1 k2 0.8
+     24     13       1  s 2 w 2  h1 2
+     24     14       1  s 2 w 2  h1 6
+     13     19       1  s 2 w 2
+     14     19       1  s 2 w 2
+     10     20       1  s 2 w 2
+     20      5       1  s 2 w 2
+      5     25       1  s 2 w 2
+     25     10       1  s 2 w 2   h1 0 h2 13 a1 140 a2 80 k1 1 k2 0.8
+     25     14       1  s 2 w 2  h1 2
+     25     15       1  s 2 w 2  h1 6
+     14     20       1  s 2 w 2
+     15     20       1  s 2 w 2
+*Edges

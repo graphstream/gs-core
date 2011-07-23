@@ -1,0 +1,27 @@
+*Network Slovenia map
+*vertices 12
+   1 "Ljubljana"                                   0.4375 0.4750 box     x_fact 1   lr 15  fos 25
+   2 "Maribor"                                     0.8646 0.0938 ellipse x_fact 0.8 y_fact 0.8 lr 55 lphi 170 fos 22 ic Yellow
+   3 "Celje"                                       0.6917 0.3208 ellipse x_fact 0.6 y_fact 0.6 lr 15 lphi 315 fos 20 ic Yellow
+   4 "Kranj"                                       0.3729 0.3375 ellipse x_fact 0.5 y_fact 0.5 lr 15 lphi 135 fos 18 ic Yellow
+   5 "Novo mesto"                                  0.6958 0.6333 ellipse x_fact 0.5 y_fact 0.5 lr 15 lphi 135 fos 18 ic Yellow
+   6 "Jesenice"                                    0.0604 0.1396 ellipse x_fact 0.4 y_fact 0.4 lr 15 lphi 135 fos 18
+   7 "Nova Gorica"                                 0.0667 0.5854 ellipse x_fact 0.4 y_fact 0.4 lr 15 lphi 135 fos 18
+   8 "Koper"                                       0.0875 0.8083 ellipse x_fact 0.4 y_fact 0.4 lr 15 lphi 315 fos 18
+   9 "Razdrto"                                     0.2708 0.6708 ellipse x_fact 0.2 y_fact 0.2 lr 10 lphi 315 fos 15
+  10 "Trzin"                                       0.4583 0.4208 ellipse x_fact 0.2 y_fact 0.2 lr 15 lphi 135 fos 15
+  11 "Bled"                                        0.1771 0.2333 ellipse x_fact 0.3 y_fact 0.3 lr 15 lphi 135 fos 17
+  12 "V. Gora"                                     0.5417 0.5521 ellipse x_fact 0.3 y_fact 0.3 lr 10 lphi  45 fos 17
+*edges
+1 4 1 0 0 4  Red
+1 12 1 0 0 4 Red
+12 5 1 0 0 2 OliveGreen
+1 9 1 0 0 4   Red
+9 7 1 0 0 2 OliveGreen
+9 8 1 0 0 2 OliveGreen
+4 11 1 0 0 2 OliveGreen
+11 6 1 0 0 4   Red
+2 3 1  0 0 3   Blue
+1 10 1 0 0 2 OliveGreen
+10 3 1 0 0 2 OliveGreen
+10 4 1 0 0 2 OliveGreen

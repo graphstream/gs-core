@@ -37,31 +37,36 @@ import java.io.Reader;
 
 import java.util.ArrayList;
 
+import org.graphstream.stream.file.FileSourcePajek;
 import org.graphstream.util.parser.ParseException;
+import org.graphstream.util.parser.Parser;
 import org.graphstream.util.parser.SimpleCharStream;
 import org.graphstream.util.parser.Token;
 import org.graphstream.util.parser.TokenMgrError;
 
 @SuppressWarnings("unused")
-public class PajekParser implements PajekParserConstants {
+public class PajekParser implements Parser, PajekParserConstants {
 	// The node count.
 	int nodeCount;
-	// The file source.
-	FileSourcePajek pajek;
 	// If true we are parsing the vertices labels.
 	// False as soon as we encounter the arcs.
 	boolean inVertices = true;
 	// If true the list of edges is a edge list.
 	boolean edgeListMode = true;
 
+	PajekContext ctx;
+
 	public PajekParser(FileSourcePajek pajek, InputStream stream) {
 		this(stream);
-		this.pajek = pajek;
+		this.ctx = new PajekContext(pajek);
 	}
 
 	public PajekParser(FileSourcePajek pajek, Reader stream) {
 		this(stream);
-		this.pajek = pajek;
+		this.ctx = new PajekContext(pajek);
+	}
+
+	public void open() {
 	}
 
 	/**
@@ -76,32 +81,46 @@ public class PajekParser implements PajekParserConstants {
 	/*****************************************************************/
 
 	/** Unused rule, call it to slurp in the whole file. */
-	final public void start() throws ParseException {
+	final public void all() throws ParseException {
 		label_1: while (true) {
-			nextEvents();
 			if (jj_2_1(2)) {
+				network();
+			} else if (jj_2_2(2)) {
+				vertices();
+			} else if (jj_2_3(2)) {
+				edges();
+			} else if (jj_2_4(2)) {
+				jj_consume_token(COMMENT);
+			} else if (jj_2_5(2)) {
+				jj_consume_token(EOL);
+			} else {
+				jj_consume_token(-1);
+				throw new ParseException();
+			}
+			if (jj_2_6(2)) {
 				;
 			} else {
 				break label_1;
 			}
 		}
+		jj_consume_token(0);
 	}
 
-	final public boolean nextEvents() throws ParseException {
+	final public boolean next() throws ParseException {
 		boolean ok = true;
 		Token k;
-		if (jj_2_2(2)) {
+		if (jj_2_7(2)) {
 			network();
-		} else if (jj_2_3(2)) {
+		} else if (jj_2_8(2)) {
 			vertices();
-		} else if (jj_2_4(2)) {
+		} else if (jj_2_9(2)) {
 			edges();
-		} else if (jj_2_5(2)) {
+		} else if (jj_2_10(2)) {
 			k = jj_consume_token(COMMENT);
 			System.err.printf("got comment %s%n", k.image);
-		} else if (jj_2_6(2)) {
+		} else if (jj_2_11(2)) {
 			jj_consume_token(EOL);
-		} else if (jj_2_7(2)) {
+		} else if (jj_2_12(2)) {
 			jj_consume_token(0);
 			ok = false;
 		} else {
@@ -121,18 +140,18 @@ public class PajekParser implements PajekParserConstants {
 		boolean first = true;
 		jj_consume_token(NETWORK);
 		label_2: while (true) {
-			if (jj_2_8(2)) {
+			if (jj_2_13(2)) {
 				;
 			} else {
 				break label_2;
 			}
-			if (jj_2_9(2)) {
+			if (jj_2_14(2)) {
 				k = jj_consume_token(STRING);
 				if (!first)
 					buf.append(" ");
 				buf.append(k.image.substring(1, k.image.length() - 1));
 				first = false;
-			} else if (jj_2_10(2)) {
+			} else if (jj_2_15(2)) {
 				k = jj_consume_token(KEY);
 				if (!first)
 					buf.append(" ");
@@ -143,7 +162,7 @@ public class PajekParser implements PajekParserConstants {
 				throw new ParseException();
 			}
 		}
-		pajek.addGraphAttribute("ui.label", buf.toString());
+		ctx.addGraphAttribute("ui.label", buf.toString());
 		EO();
 	}
 
@@ -153,16 +172,16 @@ public class PajekParser implements PajekParserConstants {
 		jj_consume_token(VERTICES);
 		n = jj_consume_token(INT);
 		EO();
-		nodeCount = pajek.addNodes(n);
+		nodeCount = ctx.addNodes(n);
 		label_3: while (true) {
-			if (jj_2_11(2)) {
+			if (jj_2_16(2)) {
 				;
 			} else {
 				break label_3;
 			}
-			if (jj_2_12(2)) {
+			if (jj_2_17(2)) {
 				vertex();
-			} else if (jj_2_13(2)) {
+			} else if (jj_2_18(2)) {
 				jj_consume_token(COMMENT);
 			} else {
 				jj_consume_token(-1);
@@ -176,30 +195,30 @@ public class PajekParser implements PajekParserConstants {
 		String label = null, value;
 		NodeGraphics graphics = null;
 		id = jj_consume_token(INT);
-		if (jj_2_48(2)) {
+		if (jj_2_53(2)) {
 			k = validIdentifier();
 			label = k.image;
-			if (jj_2_47(2)) {
-				if (jj_2_14(2)) {
+			if (jj_2_52(2)) {
+				if (jj_2_19(2)) {
 					x = jj_consume_token(REAL);
-				} else if (jj_2_15(2)) {
+				} else if (jj_2_20(2)) {
 					x = jj_consume_token(INT);
 				} else {
 					jj_consume_token(-1);
 					throw new ParseException();
 				}
-				if (jj_2_16(2)) {
+				if (jj_2_21(2)) {
 					y = jj_consume_token(REAL);
-				} else if (jj_2_17(2)) {
+				} else if (jj_2_22(2)) {
 					y = jj_consume_token(INT);
 				} else {
 					jj_consume_token(-1);
 					throw new ParseException();
 				}
-				if (jj_2_20(2)) {
-					if (jj_2_18(2)) {
+				if (jj_2_25(2)) {
+					if (jj_2_23(2)) {
 						z = jj_consume_token(REAL);
-					} else if (jj_2_19(2)) {
+					} else if (jj_2_24(2)) {
 						z = jj_consume_token(INT);
 					} else {
 						jj_consume_token(-1);
@@ -208,34 +227,34 @@ public class PajekParser implements PajekParserConstants {
 				} else {
 					;
 				}
-				pajek.addNodePosition(id.image, x, y, z);
-				if (jj_2_27(2)) {
-					if (jj_2_21(2)) {
+				ctx.addNodePosition(id.image, x, y, z);
+				if (jj_2_32(2)) {
+					if (jj_2_26(2)) {
 						k = jj_consume_token(ELLIPSE);
 						if (graphics == null)
 							graphics = new NodeGraphics();
 						graphics.addKey("shape", "circle", k);
-					} else if (jj_2_22(2)) {
+					} else if (jj_2_27(2)) {
 						k = jj_consume_token(BOX);
 						if (graphics == null)
 							graphics = new NodeGraphics();
 						graphics.addKey("shape", "box", k);
-					} else if (jj_2_23(2)) {
+					} else if (jj_2_28(2)) {
 						k = jj_consume_token(TRIANGLE);
 						if (graphics == null)
 							graphics = new NodeGraphics();
 						graphics.addKey("shape", "triangle", k);
-					} else if (jj_2_24(2)) {
+					} else if (jj_2_29(2)) {
 						k = jj_consume_token(CROSS);
 						if (graphics == null)
 							graphics = new NodeGraphics();
 						graphics.addKey("shape", "cross", k);
-					} else if (jj_2_25(2)) {
+					} else if (jj_2_30(2)) {
 						k = jj_consume_token(DIAMOND);
 						if (graphics == null)
 							graphics = new NodeGraphics();
 						graphics.addKey("shape", "diamond", k);
-					} else if (jj_2_26(2)) {
+					} else if (jj_2_31(2)) {
 						k = jj_consume_token(EMPTY);
 						if (graphics == null)
 							graphics = new NodeGraphics();
@@ -248,80 +267,80 @@ public class PajekParser implements PajekParserConstants {
 					;
 				}
 				label_4: while (true) {
-					if (jj_2_28(2)) {
+					if (jj_2_33(2)) {
 						;
 					} else {
 						break label_4;
 					}
-					if (jj_2_29(2)) {
+					if (jj_2_34(2)) {
 						k = jj_consume_token(SIZE);
 						value = number();
 						if (graphics == null)
 							graphics = new NodeGraphics();
 						graphics.addKey("s_size", value, k);
-					} else if (jj_2_30(2)) {
+					} else if (jj_2_35(2)) {
 						k = jj_consume_token(XFACT);
 						value = number();
 
-					} else if (jj_2_31(2)) {
+					} else if (jj_2_36(2)) {
 						k = jj_consume_token(YFACT);
 						value = number();
 
-					} else if (jj_2_32(2)) {
+					} else if (jj_2_37(2)) {
 						k = jj_consume_token(PHI);
 						value = number();
 
-					} else if (jj_2_33(2)) {
+					} else if (jj_2_38(2)) {
 						k = jj_consume_token(R);
 						value = number();
 
-					} else if (jj_2_34(2)) {
+					} else if (jj_2_39(2)) {
 						k = jj_consume_token(Q);
 						value = number();
 
-					} else if (jj_2_35(2)) {
+					} else if (jj_2_40(2)) {
 						k = jj_consume_token(IC);
 						value = color();
 						if (graphics == null)
 							graphics = new NodeGraphics();
 						graphics.addKey("ic", value, k);
-					} else if (jj_2_36(2)) {
+					} else if (jj_2_41(2)) {
 						k = jj_consume_token(BC);
 						value = color();
 						if (graphics == null)
 							graphics = new NodeGraphics();
 						graphics.addKey("bc", value, k);
-					} else if (jj_2_37(2)) {
+					} else if (jj_2_42(2)) {
 						k = jj_consume_token(BW);
 						value = number();
 						if (graphics == null)
 							graphics = new NodeGraphics();
 						graphics.addKey("bw", value, k);
-					} else if (jj_2_38(2)) {
+					} else if (jj_2_43(2)) {
 						k = jj_consume_token(LC);
 						value = color();
 						if (graphics == null)
 							graphics = new NodeGraphics();
 						graphics.addKey("lc", value, k);
-					} else if (jj_2_39(2)) {
+					} else if (jj_2_44(2)) {
 						k = jj_consume_token(LA);
 						value = number();
 
-					} else if (jj_2_40(2)) {
+					} else if (jj_2_45(2)) {
 						k = jj_consume_token(LR);
 						value = number();
 
-					} else if (jj_2_41(2)) {
+					} else if (jj_2_46(2)) {
 						k = jj_consume_token(LPHI);
 						value = number();
 
-					} else if (jj_2_42(2)) {
+					} else if (jj_2_47(2)) {
 						k = jj_consume_token(FOS);
 						value = number();
 						if (graphics == null)
 							graphics = new NodeGraphics();
 						graphics.addKey("fos", value, k);
-					} else if (jj_2_43(2)) {
+					} else if (jj_2_48(2)) {
 						k = jj_consume_token(FONT);
 						value = keyOrString();
 						if (graphics == null)
@@ -333,14 +352,14 @@ public class PajekParser implements PajekParserConstants {
 					}
 				}
 				label_5: while (true) {
-					if (jj_2_44(2)) {
+					if (jj_2_49(2)) {
 						;
 					} else {
 						break label_5;
 					}
-					if (jj_2_45(2)) {
+					if (jj_2_50(2)) {
 						k = validIdentifier();
-					} else if (jj_2_46(2)) {
+					} else if (jj_2_51(2)) {
 						k = jj_consume_token(REAL);
 					} else {
 						jj_consume_token(-1);
@@ -359,101 +378,101 @@ public class PajekParser implements PajekParserConstants {
 		if (label != null) {
 			if (label.startsWith("\u005c""))
 				label = label.substring(1, label.length() - 1);
-			pajek.addNodeLabel(id.image, label);
+			ctx.addNodeLabel(id.image, label);
 		}
 		if (graphics != null)
-			pajek.addNodeGraphics(id.image, graphics);
+			ctx.addNodeGraphics(id.image, graphics);
 	}
 
 	// Edges and edge lists.
 	final public void edges() throws ParseException {
-		if (jj_2_61(2)) {
+		if (jj_2_66(2)) {
 			jj_consume_token(ARCS);
 			EO();
 			edgeListMode = false;
 			inVertices = false;
-			pajek.setDirected(true);
+			ctx.setDirected(true);
 			label_6: while (true) {
-				if (jj_2_49(2)) {
+				if (jj_2_54(2)) {
 					;
 				} else {
 					break label_6;
 				}
-				if (jj_2_50(2)) {
+				if (jj_2_55(2)) {
 					edge();
-				} else if (jj_2_51(2)) {
+				} else if (jj_2_56(2)) {
 					jj_consume_token(COMMENT);
 				} else {
 					jj_consume_token(-1);
 					throw new ParseException();
 				}
 			}
-		} else if (jj_2_62(2)) {
+		} else if (jj_2_67(2)) {
 			jj_consume_token(EDGES);
 			EO();
 			edgeListMode = false;
 			inVertices = false;
-			pajek.setDirected(false);
+			ctx.setDirected(false);
 			label_7: while (true) {
-				if (jj_2_52(2)) {
+				if (jj_2_57(2)) {
 					;
 				} else {
 					break label_7;
 				}
-				if (jj_2_53(2)) {
+				if (jj_2_58(2)) {
 					edge();
-				} else if (jj_2_54(2)) {
+				} else if (jj_2_59(2)) {
 					jj_consume_token(COMMENT);
 				} else {
 					jj_consume_token(-1);
 					throw new ParseException();
 				}
 			}
-		} else if (jj_2_63(2)) {
+		} else if (jj_2_68(2)) {
 			jj_consume_token(ARCSLIST);
 			EO();
 			edgeListMode = true;
 			inVertices = false;
-			pajek.setDirected(true);
+			ctx.setDirected(true);
 			label_8: while (true) {
-				if (jj_2_55(2)) {
+				if (jj_2_60(2)) {
 					;
 				} else {
 					break label_8;
 				}
-				if (jj_2_56(2)) {
+				if (jj_2_61(2)) {
 					edgeList();
-				} else if (jj_2_57(2)) {
+				} else if (jj_2_62(2)) {
 					jj_consume_token(COMMENT);
 				} else {
 					jj_consume_token(-1);
 					throw new ParseException();
 				}
 			}
-		} else if (jj_2_64(2)) {
+		} else if (jj_2_69(2)) {
 			jj_consume_token(EDGESLIST);
 			EO();
 			edgeListMode = true;
 			inVertices = false;
-			pajek.setDirected(false);
+			ctx.setDirected(false);
 			label_9: while (true) {
-				if (jj_2_58(2)) {
+				if (jj_2_63(2)) {
 					;
 				} else {
 					break label_9;
 				}
-				if (jj_2_59(2)) {
+				if (jj_2_64(2)) {
 					edgeList();
-				} else if (jj_2_60(2)) {
+				} else if (jj_2_65(2)) {
 					jj_consume_token(COMMENT);
 				} else {
 					jj_consume_token(-1);
 					throw new ParseException();
 				}
 			}
-		} else if (jj_2_65(2)) {
+		} else if (jj_2_70(2)) {
 			matrix();
-		} else if (jj_2_66(2)) {
+		} else if (jj_2_71(2)) {
 			jj_consume_token(COMMENT);
 		} else {
 			jj_consume_token(-1);
@@ -467,52 +486,52 @@ public class PajekParser implements PajekParserConstants {
 		EdgeGraphics graphics = null;
 		src = jj_consume_token(INT);
 		trg = jj_consume_token(INT);
-		id = pajek.addEdge(src.image, trg.image);
-		if (jj_2_95(2)) {
-			if (jj_2_67(2)) {
+		id = ctx.addEdge(src.image, trg.image);
+		if (jj_2_100(2)) {
+			if (jj_2_72(2)) {
 				k = jj_consume_token(INT);
-			} else if (jj_2_68(2)) {
+			} else if (jj_2_73(2)) {
 				k = jj_consume_token(REAL);
 			} else {
 				jj_consume_token(-1);
 				throw new ParseException();
 			}
-			pajek.addEdgeWeight(id, k);
+			ctx.addEdgeWeight(id, k);
 			label_10: while (true) {
-				if (jj_2_69(2)) {
+				if (jj_2_74(2)) {
 					;
 				} else {
 					break label_10;
 				}
-				if (jj_2_72(2)) {
+				if (jj_2_77(2)) {
 					k = jj_consume_token(P);
 					value = keyOrString();
 					if (graphics == null)
 						graphics = new EdgeGraphics();
 					graphics.addKey("p", value, k);
-				} else if (jj_2_73(2)) {
+				} else if (jj_2_78(2)) {
 					k = jj_consume_token(W);
 					value = number();
 					if (graphics == null)
 						graphics = new EdgeGraphics();
 					graphics.addKey("w", value, k);
-				} else if (jj_2_74(2)) {
+				} else if (jj_2_79(2)) {
 					k = jj_consume_token(C);
 					value = color();
 					if (graphics == null)
 						graphics = new EdgeGraphics();
 					graphics.addKey("c", value, k);
-				} else if (jj_2_75(2)) {
+				} else if (jj_2_80(2)) {
 					k = jj_consume_token(S);
 					value = number();
 					if (graphics == null)
 						graphics = new EdgeGraphics();
 					graphics.addKey("s", value, k);
-				} else if (jj_2_76(2)) {
+				} else if (jj_2_81(2)) {
 					k = jj_consume_token(A);
-					if (jj_2_70(2)) {
+					if (jj_2_75(2)) {
 						k = jj_consume_token(A);
-					} else if (jj_2_71(2)) {
+					} else if (jj_2_76(2)) {
 						k = jj_consume_token(B);
 					} else {
 						jj_consume_token(-1);
@@ -521,91 +540,91 @@ public class PajekParser implements PajekParserConstants {
 					if (graphics == null)
 						graphics = new EdgeGraphics();
 					graphics.addKey("a", k.image, k);
-				} else if (jj_2_77(2)) {
+				} else if (jj_2_82(2)) {
 					k = jj_consume_token(AP);
 					value = number();
 					if (graphics == null)
 						graphics = new EdgeGraphics();
 					graphics.addKey("ap", value, k);
-				} else if (jj_2_78(2)) {
+				} else if (jj_2_83(2)) {
 					k = jj_consume_token(L);
 					value = keyOrString();
 					if (graphics == null)
 						graphics = new EdgeGraphics();
 					graphics.addKey("l", value, k);
-				} else if (jj_2_79(2)) {
+				} else if (jj_2_84(2)) {
 					k = jj_consume_token(LP);
 					value = number();
 					if (graphics == null)
 						graphics = new EdgeGraphics();
 					graphics.addKey("lp", value, k);
-				} else if (jj_2_80(2)) {
+				} else if (jj_2_85(2)) {
 					k = jj_consume_token(LR);
 					value = number();
 					if (graphics == null)
 						graphics = new EdgeGraphics();
 					graphics.addKey("lr", value, k);
-				} else if (jj_2_81(2)) {
+				} else if (jj_2_86(2)) {
 					k = jj_consume_token(LPHI);
 					value = number();
 					if (graphics == null)
 						graphics = new EdgeGraphics();
 					graphics.addKey("lphi", value, k);
-				} else if (jj_2_82(2)) {
+				} else if (jj_2_87(2)) {
 					k = jj_consume_token(LC);
 					value = color();
 					if (graphics == null)
 						graphics = new EdgeGraphics();
 					graphics.addKey("lc", value, k);
-				} else if (jj_2_83(2)) {
+				} else if (jj_2_88(2)) {
 					k = jj_consume_token(LA);
 					value = number();
 					if (graphics == null)
 						graphics = new EdgeGraphics();
 					graphics.addKey("la", value, k);
-				} else if (jj_2_84(2)) {
+				} else if (jj_2_89(2)) {
 					k = jj_consume_token(FOS);
 					value = number();
 					if (graphics == null)
 						graphics = new EdgeGraphics();
 					graphics.addKey("fos", value, k);
-				} else if (jj_2_85(2)) {
+				} else if (jj_2_90(2)) {
 					k = jj_consume_token(FONT);
 					value = keyOrString();
 					if (graphics == null)
 						graphics = new EdgeGraphics();
 					graphics.addKey("font", value, k);
-				} else if (jj_2_86(2)) {
+				} else if (jj_2_91(2)) {
 					k = jj_consume_token(H1);
 					value = number();
 					if (graphics == null)
 						graphics = new EdgeGraphics();
 					graphics.addKey("h1", value, k);
-				} else if (jj_2_87(2)) {
+				} else if (jj_2_92(2)) {
 					k = jj_consume_token(H2);
 					value = number();
 					if (graphics == null)
 						graphics = new EdgeGraphics();
 					graphics.addKey("h2", value, k);
-				} else if (jj_2_88(2)) {
+				} else if (jj_2_93(2)) {
 					k = jj_consume_token(A1);
 					value = number();
 					if (graphics == null)
 						graphics = new EdgeGraphics();
 					graphics.addKey("a1", value, k);
-				} else if (jj_2_89(2)) {
+				} else if (jj_2_94(2)) {
 					k = jj_consume_token(A2);
 					value = number();
 					if (graphics == null)
 						graphics = new EdgeGraphics();
 					graphics.addKey("a2", value, k);
-				} else if (jj_2_90(2)) {
+				} else if (jj_2_95(2)) {
 					k = jj_consume_token(K1);
 					value = number();
 					if (graphics == null)
 						graphics = new EdgeGraphics();
 					graphics.addKey("k1", value, k);
-				} else if (jj_2_91(2)) {
+				} else if (jj_2_96(2)) {
 					k = jj_consume_token(K2);
 					value = number();
 					if (graphics == null)
@@ -617,14 +636,14 @@ public class PajekParser implements PajekParserConstants {
 				}
 			}
 			label_11: while (true) {
-				if (jj_2_92(2)) {
+				if (jj_2_97(2)) {
 					;
 				} else {
 					break label_11;
 				}
-				if (jj_2_93(2)) {
+				if (jj_2_98(2)) {
 					k = validIdentifier();
-				} else if (jj_2_94(2)) {
+				} else if (jj_2_99(2)) {
 					k = jj_consume_token(REAL);
 				} else {
 					jj_consume_token(-1);
@@ -638,7 +657,7 @@ public class PajekParser implements PajekParserConstants {
 		}
 		EO();
 		if (graphics != null)
-			pajek.addEdgeGraphics(id, graphics);
+			ctx.addEdgeGraphics(id, graphics);
 	}
 
 	final public void edgeList() throws ParseException {
@@ -646,16 +665,16 @@ public class PajekParser implements PajekParserConstants {
 		String id;
 		src = jj_consume_token(INT);
 		trg = jj_consume_token(INT);
-		id = pajek.addEdge(src.image, trg.image);
+		id = ctx.addEdge(src.image, trg.image);
 		label_12: while (true) {
-			if (jj_2_96(2)) {
+			if (jj_2_101(2)) {
 				;
 			} else {
 				break label_12;
 			}
 			more = jj_consume_token(INT);
 			if (edgeListMode)
-				pajek.addEdge(src.image, more.image);
+				ctx.addEdge(src.image, more.image);
 		}
 		EO();
 	}
@@ -667,29 +686,29 @@ public class PajekParser implements PajekParserConstants {
 		jj_consume_token(MATRIX);
 		label_13: while (true) {
 			jj_consume_token(EOL);
-			if (jj_2_97(2)) {
+			if (jj_2_102(2)) {
 				;
 			} else {
 				break label_13;
 			}
 		}
 		label_14: while (true) {
-			if (jj_2_98(2)) {
+			if (jj_2_103(2)) {
 				line = matrixline(mat);
 				mat.addLine(line);
-			} else if (jj_2_99(2)) {
+			} else if (jj_2_104(2)) {
 				jj_consume_token(COMMENT);
 			} else {
 				jj_consume_token(-1);
 				throw new ParseException();
 			}
-			if (jj_2_100(2)) {
+			if (jj_2_105(2)) {
 				;
 			} else {
 				break label_14;
 			}
 		}
-		pajek.addEdges(mat);
+		ctx.addEdges(mat);
 	}
 
 	final public ArrayList<String> matrixline(EdgeMatrix mat)
@@ -699,7 +718,7 @@ public class PajekParser implements PajekParserConstants {
 		label_15: while (true) {
 			k = jj_consume_token(INT);
 			line.add(k.image);
-			if (jj_2_101(2)) {
+			if (jj_2_106(2)) {
 				;
 			} else {
 				break label_15;
@@ -717,10 +736,10 @@ public class PajekParser implements PajekParserConstants {
 	final public String keyOrString() throws ParseException {
 		Token k;
 		String value;
-		if (jj_2_102(2)) {
+		if (jj_2_107(2)) {
 			k = jj_consume_token(KEY);
 			value = k.image;
-		} else if (jj_2_103(2)) {
+		} else if (jj_2_108(2)) {
 			k = jj_consume_token(STRING);
 			value = k.image.substring(1, k.image.length() - 1);
 		} else {
@@ -736,9 +755,9 @@ public class PajekParser implements PajekParserConstants {
 
 	final public String number() throws ParseException {
 		Token k;
-		if (jj_2_104(2)) {
+		if (jj_2_109(2)) {
 			k = jj_consume_token(INT);
-		} else if (jj_2_105(2)) {
+		} else if (jj_2_110(2)) {
 			k = jj_consume_token(REAL);
 		} else {
 			jj_consume_token(-1);
@@ -754,18 +773,18 @@ public class PajekParser implements PajekParserConstants {
 	final public String color() throws ParseException {
 		String value;
 		Token r, g, b;
-		if (jj_2_106(2)) {
+		if (jj_2_111(2)) {
 			value = keyOrString();
-		} else if (jj_2_107(2)) {
+		} else if (jj_2_112(2)) {
 			r = jj_consume_token(REAL);
 			g = jj_consume_token(REAL);
 			b = jj_consume_token(REAL);
-			value = FileSourcePajek.toColorValue(r, g, b);
-		} else if (jj_2_108(2)) {
+			value = PajekContext.toColorValue(r, g, b);
+		} else if (jj_2_113(2)) {
 			r = jj_consume_token(INT);
 			g = jj_consume_token(INT);
 			b = jj_consume_token(INT);
-			value = FileSourcePajek.toColorValue(r, g, b);
+			value = PajekContext.toColorValue(r, g, b);
 		} else {
 			jj_consume_token(-1);
 			throw new ParseException();
@@ -778,16 +797,16 @@ public class PajekParser implements PajekParserConstants {
 	}
 
 	final public void EO() throws ParseException {
-		if (jj_2_110(2)) {
+		if (jj_2_115(2)) {
 			label_16: while (true) {
 				jj_consume_token(EOL);
-				if (jj_2_109(2)) {
+				if (jj_2_114(2)) {
 					;
 				} else {
 					break label_16;
 				}
 			}
-		} else if (jj_2_111(2)) {
+		} else if (jj_2_116(2)) {
 			jj_consume_token(0);
 		} else {
 			jj_consume_token(-1);
@@ -797,71 +816,71 @@ public class PajekParser implements PajekParserConstants {
 
 	final public Token anyGraphicAttribute() throws ParseException {
 		Token k;
-		if (jj_2_112(2)) {
+		if (jj_2_117(2)) {
 			k = jj_consume_token(INT);
-		} else if (jj_2_113(2)) {
-			k = jj_consume_token(REAL);
-		} else if (jj_2_114(2)) {
-			k = jj_consume_token(KEY);
-		} else if (jj_2_115(2)) {
-			k = jj_consume_token(STRING);
-		} else if (jj_2_116(2)) {
-			k = jj_consume_token(SIZE);
-		} else if (jj_2_117(2)) {
-			k = jj_consume_token(XFACT);
 		} else if (jj_2_118(2)) {
-			k = jj_consume_token(YFACT);
+			k = jj_consume_token(REAL);
 		} else if (jj_2_119(2)) {
-			k = jj_consume_token(PHI);
+			k = jj_consume_token(KEY);
 		} else if (jj_2_120(2)) {
-			k = jj_consume_token(R);
+			k = jj_consume_token(STRING);
 		} else if (jj_2_121(2)) {
-			k = jj_consume_token(Q);
+			k = jj_consume_token(SIZE);
 		} else if (jj_2_122(2)) {
-			k = jj_consume_token(IC);
+			k = jj_consume_token(XFACT);
 		} else if (jj_2_123(2)) {
-			k = jj_consume_token(BC);
+			k = jj_consume_token(YFACT);
 		} else if (jj_2_124(2)) {
-			k = jj_consume_token(BW);
+			k = jj_consume_token(PHI);
 		} else if (jj_2_125(2)) {
-			k = jj_consume_token(LC);
+			k = jj_consume_token(R);
 		} else if (jj_2_126(2)) {
-			k = jj_consume_token(LA);
+			k = jj_consume_token(Q);
 		} else if (jj_2_127(2)) {
-			k = jj_consume_token(LR);
+			k = jj_consume_token(IC);
 		} else if (jj_2_128(2)) {
-			k = jj_consume_token(LPHI);
+			k = jj_consume_token(BC);
 		} else if (jj_2_129(2)) {
-			k = jj_consume_token(FOS);
+			k = jj_consume_token(BW);
 		} else if (jj_2_130(2)) {
-			k = jj_consume_token(FONT);
+			k = jj_consume_token(LC);
 		} else if (jj_2_131(2)) {
-			k = jj_consume_token(C);
+			k = jj_consume_token(LA);
 		} else if (jj_2_132(2)) {
-			k = jj_consume_token(P);
+			k = jj_consume_token(LR);
 		} else if (jj_2_133(2)) {
-			k = jj_consume_token(W);
+			k = jj_consume_token(LPHI);
 		} else if (jj_2_134(2)) {
-			k = jj_consume_token(A);
+			k = jj_consume_token(FOS);
 		} else if (jj_2_135(2)) {
-			k = jj_consume_token(B);
+			k = jj_consume_token(FONT);
 		} else if (jj_2_136(2)) {
-			k = jj_consume_token(AP);
+			k = jj_consume_token(C);
 		} else if (jj_2_137(2)) {
-			k = jj_consume_token(L);
+			k = jj_consume_token(P);
 		} else if (jj_2_138(2)) {
-			k = jj_consume_token(LP);
+			k = jj_consume_token(W);
 		} else if (jj_2_139(2)) {
-			k = jj_consume_token(H1);
+			k = jj_consume_token(A);
 		} else if (jj_2_140(2)) {
-			k = jj_consume_token(H2);
+			k = jj_consume_token(B);
 		} else if (jj_2_141(2)) {
-			k = jj_consume_token(K1);
+			k = jj_consume_token(AP);
 		} else if (jj_2_142(2)) {
-			k = jj_consume_token(K2);
+			k = jj_consume_token(L);
 		} else if (jj_2_143(2)) {
-			k = jj_consume_token(A1);
+			k = jj_consume_token(LP);
 		} else if (jj_2_144(2)) {
+			k = jj_consume_token(H1);
+		} else if (jj_2_145(2)) {
+			k = jj_consume_token(H2);
+		} else if (jj_2_146(2)) {
+			k = jj_consume_token(K1);
+		} else if (jj_2_147(2)) {
+			k = jj_consume_token(K2);
+		} else if (jj_2_148(2)) {
+			k = jj_consume_token(A1);
+		} else if (jj_2_149(2)) {
 			k = jj_consume_token(A2);
 		} else {
 			jj_consume_token(-1);
@@ -876,71 +895,71 @@ public class PajekParser implements PajekParserConstants {
 
 	final public Token validIdentifier() throws ParseException {
 		Token k = null;
-		if (jj_2_145(2)) {
+		if (jj_2_150(2)) {
 			k = jj_consume_token(KEY);
-		} else if (jj_2_146(2)) {
-			k = jj_consume_token(STRING);
-		} else if (jj_2_147(2)) {
-			k = jj_consume_token(INT);
-		} else if (jj_2_148(2)) {
-			k = jj_consume_token(A);
-		} else if (jj_2_149(2)) {
-			k = jj_consume_token(A1);
-		} else if (jj_2_150(2)) {
-			k = jj_consume_token(A2);
 		} else if (jj_2_151(2)) {
-			k = jj_consume_token(AP);
+			k = jj_consume_token(STRING);
 		} else if (jj_2_152(2)) {
-			k = jj_consume_token(B);
+			k = jj_consume_token(INT);
 		} else if (jj_2_153(2)) {
-			k = jj_consume_token(BC);
+			k = jj_consume_token(A);
 		} else if (jj_2_154(2)) {
-			k = jj_consume_token(BW);
+			k = jj_consume_token(A1);
 		} else if (jj_2_155(2)) {
-			k = jj_consume_token(C);
+			k = jj_consume_token(A2);
 		} else if (jj_2_156(2)) {
-			k = jj_consume_token(FONT);
+			k = jj_consume_token(AP);
 		} else if (jj_2_157(2)) {
-			k = jj_consume_token(FOS);
+			k = jj_consume_token(B);
 		} else if (jj_2_158(2)) {
-			k = jj_consume_token(H1);
+			k = jj_consume_token(BC);
 		} else if (jj_2_159(2)) {
-			k = jj_consume_token(H2);
+			k = jj_consume_token(BW);
 		} else if (jj_2_160(2)) {
-			k = jj_consume_token(IC);
+			k = jj_consume_token(C);
 		} else if (jj_2_161(2)) {
-			k = jj_consume_token(K1);
+			k = jj_consume_token(FONT);
 		} else if (jj_2_162(2)) {
-			k = jj_consume_token(K2);
+			k = jj_consume_token(FOS);
 		} else if (jj_2_163(2)) {
-			k = jj_consume_token(L);
+			k = jj_consume_token(H1);
 		} else if (jj_2_164(2)) {
-			k = jj_consume_token(LA);
+			k = jj_consume_token(H2);
 		} else if (jj_2_165(2)) {
-			k = jj_consume_token(LC);
+			k = jj_consume_token(IC);
 		} else if (jj_2_166(2)) {
-			k = jj_consume_token(LP);
+			k = jj_consume_token(K1);
 		} else if (jj_2_167(2)) {
-			k = jj_consume_token(LPHI);
+			k = jj_consume_token(K2);
 		} else if (jj_2_168(2)) {
-			k = jj_consume_token(LR);
+			k = jj_consume_token(L);
 		} else if (jj_2_169(2)) {
-			k = jj_consume_token(P);
+			k = jj_consume_token(LA);
 		} else if (jj_2_170(2)) {
-			k = jj_consume_token(PHI);
+			k = jj_consume_token(LC);
 		} else if (jj_2_171(2)) {
-			k = jj_consume_token(Q);
+			k = jj_consume_token(LP);
 		} else if (jj_2_172(2)) {
-			k = jj_consume_token(R);
+			k = jj_consume_token(LPHI);
 		} else if (jj_2_173(2)) {
-			k = jj_consume_token(S);
+			k = jj_consume_token(LR);
 		} else if (jj_2_174(2)) {
-			k = jj_consume_token(SIZE);
+			k = jj_consume_token(P);
 		} else if (jj_2_175(2)) {
-			k = jj_consume_token(W);
+			k = jj_consume_token(PHI);
 		} else if (jj_2_176(2)) {
-			k = jj_consume_token(XFACT);
+			k = jj_consume_token(Q);
 		} else if (jj_2_177(2)) {
+			k = jj_consume_token(R);
+		} else if (jj_2_178(2)) {
+			k = jj_consume_token(S);
+		} else if (jj_2_179(2)) {
+			k = jj_consume_token(SIZE);
+		} else if (jj_2_180(2)) {
+			k = jj_consume_token(W);
+		} else if (jj_2_181(2)) {
+			k = jj_consume_token(XFACT);
+		} else if (jj_2_182(2)) {
 			k = jj_consume_token(YFACT);
 		} else {
 			jj_consume_token(-1);
@@ -3077,20 +3096,124 @@ public class PajekParser implements PajekParserConstants {
 		}
 	}
 
-	private boolean jj_3_50() {
-		if (jj_3R_26())
+	private boolean jj_2_178(int xla) {
+		jj_la = xla;
+		jj_lastpos = jj_scanpos = token;
+		try {
+			return !jj_3_178();
+		} catch (LookaheadSuccess ls) {
+			return true;
+		} finally {
+			jj_save(177, xla);
+		}
+	}
+
+	private boolean jj_2_179(int xla) {
+		jj_la = xla;
+		jj_lastpos = jj_scanpos = token;
+		try {
+			return !jj_3_179();
+		} catch (LookaheadSuccess ls) {
+			return true;
+		} finally {
+			jj_save(178, xla);
+		}
+	}
+
+	private boolean jj_2_180(int xla) {
+		jj_la = xla;
+		jj_lastpos = jj_scanpos = token;
+		try {
+			return !jj_3_180();
+		} catch (LookaheadSuccess ls) {
+			return true;
+		} finally {
+			jj_save(179, xla);
+		}
+	}
+
+	private boolean jj_2_181(int xla) {
+		jj_la = xla;
+		jj_lastpos = jj_scanpos = token;
+		try {
+			return !jj_3_181();
+		} catch (LookaheadSuccess ls) {
+			return true;
+		} finally {
+			jj_save(180, xla);
+		}
+	}
+
+	private boolean jj_2_182(int xla) {
+		jj_la = xla;
+		jj_lastpos = jj_scanpos = token;
+		try {
+			return !jj_3_182();
+		} catch (LookaheadSuccess ls) {
+			return true;
+		} finally {
+			jj_save(181, xla);
+		}
+	}
+
+	private boolean jj_3R_29() {
+		Token xsp;
+		if (jj_3_106())
+			return true;
+		while (true) {
+			xsp = jj_scanpos;
+			if (jj_3_106()) {
+				jj_scanpos = xsp;
+				break;
+			}
+		}
+		if (jj_3R_27())
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_49() {
+	private boolean jj_3_102() {
+		if (jj_scan_token(EOL))
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_103() {
+		if (jj_3R_29())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_105() {
 		Token xsp;
 		xsp = jj_scanpos;
-		if (jj_3_50()) {
+		if (jj_3_103()) {
 			jj_scanpos = xsp;
-			if (jj_3_51())
+			if (jj_3_104())
 				return true;
 		}
+		return false;
+	}
+
+	private boolean jj_3R_28() {
+		if (jj_scan_token(MATRIX))
+			return true;
+		Token xsp;
+		if (jj_3_102())
+			return true;
+		while (true) {
+			xsp = jj_scanpos;
+			if (jj_3_102()) {
+				jj_scanpos = xsp;
+				break;
+			}
+		}
+		return false;
+	}
+
+	private boolean jj_3_99() {
+		if (jj_scan_token(REAL))
+			return true;
 		return false;
 	}
 
@@ -3100,35 +3223,27 @@ public class PajekParser implements PajekParserConstants {
 		return false;
 	}
 
-	private boolean jj_3R_30() {
-		Token xsp;
-		if (jj_3_101())
+	private boolean jj_3R_26() {
+		if (jj_scan_token(INT))
 			return true;
-		while (true) {
-			xsp = jj_scanpos;
-			if (jj_3_101()) {
-				jj_scanpos = xsp;
-				break;
-			}
-		}
-		if (jj_3R_28())
+		if (jj_scan_token(INT))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_97() {
-		if (jj_scan_token(EOL))
+	private boolean jj_3_76() {
+		if (jj_scan_token(B))
 			return true;
 		return false;
 	}
 
 	private boolean jj_3_98() {
-		if (jj_3R_30())
+		if (jj_3R_24())
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_100() {
+	private boolean jj_3_97() {
 		Token xsp;
 		xsp = jj_scanpos;
 		if (jj_3_98()) {
@@ -3139,105 +3254,86 @@ public class PajekParser implements PajekParserConstants {
 		return false;
 	}
 
-	private boolean jj_3R_29() {
-		if (jj_scan_token(MATRIX))
+	private boolean jj_3_96() {
+		if (jj_scan_token(K2))
 			return true;
-		Token xsp;
-		if (jj_3_97())
+		if (jj_3R_21())
 			return true;
-		while (true) {
-			xsp = jj_scanpos;
-			if (jj_3_97()) {
-				jj_scanpos = xsp;
-				break;
-			}
-		}
+		return false;
+	}
+
+	private boolean jj_3_95() {
+		if (jj_scan_token(K1))
+			return true;
+		if (jj_3R_21())
+			return true;
 		return false;
 	}
 
 	private boolean jj_3_94() {
-		if (jj_scan_token(REAL))
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_96() {
-		if (jj_scan_token(INT))
-			return true;
-		return false;
-	}
-
-	private boolean jj_3R_27() {
-		if (jj_scan_token(INT))
-			return true;
-		if (jj_scan_token(INT))
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_71() {
-		if (jj_scan_token(B))
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_93() {
-		if (jj_3R_25())
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_92() {
-		Token xsp;
-		xsp = jj_scanpos;
-		if (jj_3_93()) {
-			jj_scanpos = xsp;
-			if (jj_3_94())
-				return true;
-		}
-		return false;
-	}
-
-	private boolean jj_3_91() {
-		if (jj_scan_token(K2))
-			return true;
-		if (jj_3R_22())
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_90() {
-		if (jj_scan_token(K1))
-			return true;
-		if (jj_3R_22())
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_89() {
 		if (jj_scan_token(A2))
 			return true;
-		if (jj_3R_22())
+		if (jj_3R_21())
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_70() {
+	private boolean jj_3_75() {
 		if (jj_scan_token(A))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_88() {
+	private boolean jj_3_93() {
 		if (jj_scan_token(A1))
 			return true;
-		if (jj_3R_22())
+		if (jj_3R_21())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_92() {
+		if (jj_scan_token(H2))
+			return true;
+		if (jj_3R_21())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_91() {
+		if (jj_scan_token(H1))
+			return true;
+		if (jj_3R_21())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_90() {
+		if (jj_scan_token(FONT))
+			return true;
+		if (jj_3R_23())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_89() {
+		if (jj_scan_token(FOS))
+			return true;
+		if (jj_3R_21())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_88() {
+		if (jj_scan_token(LA))
+			return true;
+		if (jj_3R_21())
 			return true;
 		return false;
 	}
 
 	private boolean jj_3_87() {
-		if (jj_scan_token(H2))
+		if (jj_scan_token(LC))
 			return true;
 		if (jj_3R_22())
 			return true;
@@ -3245,114 +3341,31 @@ public class PajekParser implements PajekParserConstants {
 	}
 
 	private boolean jj_3_86() {
-		if (jj_scan_token(H1))
+		if (jj_scan_token(LPHI))
 			return true;
-		if (jj_3R_22())
+		if (jj_3R_21())
 			return true;
 		return false;
 	}
 
 	private boolean jj_3_85() {
-		if (jj_scan_token(FONT))
+		if (jj_scan_token(LR))
 			return true;
-		if (jj_3R_24())
+		if (jj_3R_21())
 			return true;
 		return false;
 	}
 
 	private boolean jj_3_84() {
-		if (jj_scan_token(FOS))
+		if (jj_scan_token(LP))
 			return true;
-		if (jj_3R_22())
+		if (jj_3R_21())
 			return true;
 		return false;
 	}
 
 	private boolean jj_3_83() {
-		if (jj_scan_token(LA))
-			return true;
-		if (jj_3R_22())
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_82() {
-		if (jj_scan_token(LC))
-			return true;
-		if (jj_3R_23())
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_81() {
-		if (jj_scan_token(LPHI))
-			return true;
-		if (jj_3R_22())
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_80() {
-		if (jj_scan_token(LR))
-			return true;
-		if (jj_3R_22())
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_79() {
-		if (jj_scan_token(LP))
-			return true;
-		if (jj_3R_22())
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_78() {
 		if (jj_scan_token(L))
-			return true;
-		if (jj_3R_24())
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_68() {
-		if (jj_scan_token(REAL))
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_77() {
-		if (jj_scan_token(AP))
-			return true;
-		if (jj_3R_22())
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_76() {
-		if (jj_scan_token(A))
-			return true;
-		Token xsp;
-		xsp = jj_scanpos;
-		if (jj_3_70()) {
-			jj_scanpos = xsp;
-			if (jj_3_71())
-				return true;
-		}
-		return false;
-	}
-
-	private boolean jj_3_75() {
-		if (jj_scan_token(S))
-			return true;
-		if (jj_3R_22())
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_74() {
-		if (jj_scan_token(C))
 			return true;
 		if (jj_3R_23())
 			return true;
@@ -3360,55 +3373,98 @@ public class PajekParser implements PajekParserConstants {
 	}
 
 	private boolean jj_3_73() {
-		if (jj_scan_token(W))
+		if (jj_scan_token(REAL))
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_82() {
+		if (jj_scan_token(AP))
+			return true;
+		if (jj_3R_21())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_81() {
+		if (jj_scan_token(A))
+			return true;
+		Token xsp;
+		xsp = jj_scanpos;
+		if (jj_3_75()) {
+			jj_scanpos = xsp;
+			if (jj_3_76())
+				return true;
+		}
+		return false;
+	}
+
+	private boolean jj_3_80() {
+		if (jj_scan_token(S))
+			return true;
+		if (jj_3R_21())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_79() {
+		if (jj_scan_token(C))
 			return true;
 		if (jj_3R_22())
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_69() {
+	private boolean jj_3_78() {
+		if (jj_scan_token(W))
+			return true;
+		if (jj_3R_21())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_74() {
 		Token xsp;
 		xsp = jj_scanpos;
-		if (jj_3_72()) {
+		if (jj_3_77()) {
 			jj_scanpos = xsp;
-			if (jj_3_73()) {
+			if (jj_3_78()) {
 				jj_scanpos = xsp;
-				if (jj_3_74()) {
+				if (jj_3_79()) {
 					jj_scanpos = xsp;
-					if (jj_3_75()) {
+					if (jj_3_80()) {
 						jj_scanpos = xsp;
-						if (jj_3_76()) {
+						if (jj_3_81()) {
 							jj_scanpos = xsp;
-							if (jj_3_77()) {
+							if (jj_3_82()) {
 								jj_scanpos = xsp;
-								if (jj_3_78()) {
+								if (jj_3_83()) {
 									jj_scanpos = xsp;
-									if (jj_3_79()) {
+									if (jj_3_84()) {
 										jj_scanpos = xsp;
-										if (jj_3_80()) {
+										if (jj_3_85()) {
 											jj_scanpos = xsp;
-											if (jj_3_81()) {
+											if (jj_3_86()) {
 												jj_scanpos = xsp;
-												if (jj_3_82()) {
+												if (jj_3_87()) {
 													jj_scanpos = xsp;
-													if (jj_3_83()) {
+													if (jj_3_88()) {
 														jj_scanpos = xsp;
-														if (jj_3_84()) {
+														if (jj_3_89()) {
 															jj_scanpos = xsp;
-															if (jj_3_85()) {
+															if (jj_3_90()) {
 																jj_scanpos = xsp;
-																if (jj_3_86()) {
+																if (jj_3_91()) {
 																	jj_scanpos = xsp;
-																	if (jj_3_87()) {
+																	if (jj_3_92()) {
 																		jj_scanpos = xsp;
-																		if (jj_3_88()) {
+																		if (jj_3_93()) {
 																			jj_scanpos = xsp;
-																			if (jj_3_89()) {
+																			if (jj_3_94()) {
 																				jj_scanpos = xsp;
-																				if (jj_3_90()) {
+																				if (jj_3_95()) {
 																					jj_scanpos = xsp;
-																					if (jj_3_91())
+																					if (jj_3_96())
 																						return true;
 																				}
 																			}
@@ -3432,38 +3488,38 @@ public class PajekParser implements PajekParserConstants {
 		return false;
 	}
 
-	private boolean jj_3_72() {
+	private boolean jj_3_77() {
 		if (jj_scan_token(P))
 			return true;
-		if (jj_3R_24())
+		if (jj_3R_23())
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_67() {
+	private boolean jj_3_72() {
 		if (jj_scan_token(INT))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_95() {
+	private boolean jj_3_100() {
 		Token xsp;
 		xsp = jj_scanpos;
-		if (jj_3_67()) {
+		if (jj_3_72()) {
 			jj_scanpos = xsp;
-			if (jj_3_68())
+			if (jj_3_73())
 				return true;
 		}
 		while (true) {
 			xsp = jj_scanpos;
-			if (jj_3_69()) {
+			if (jj_3_74()) {
 				jj_scanpos = xsp;
 				break;
 			}
 		}
 		while (true) {
 			xsp = jj_scanpos;
-			if (jj_3_92()) {
+			if (jj_3_97()) {
 				jj_scanpos = xsp;
 				break;
 			}
@@ -3471,7 +3527,7 @@ public class PajekParser implements PajekParserConstants {
 		return false;
 	}
 
-	private boolean jj_3R_26() {
+	private boolean jj_3R_25() {
 		if (jj_scan_token(INT))
 			return true;
 		if (jj_scan_token(INT))
@@ -3479,93 +3535,93 @@ public class PajekParser implements PajekParserConstants {
 		return false;
 	}
 
-	private boolean jj_3_46() {
+	private boolean jj_3_51() {
 		if (jj_scan_token(REAL))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_19() {
+	private boolean jj_3_24() {
 		if (jj_scan_token(INT))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_66() {
+	private boolean jj_3_71() {
 		if (jj_scan_token(COMMENT))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_18() {
+	private boolean jj_3_23() {
 		if (jj_scan_token(REAL))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_20() {
+	private boolean jj_3_25() {
 		Token xsp;
 		xsp = jj_scanpos;
-		if (jj_3_18()) {
+		if (jj_3_23()) {
 			jj_scanpos = xsp;
-			if (jj_3_19())
+			if (jj_3_24())
 				return true;
 		}
 		return false;
 	}
 
-	private boolean jj_3_65() {
-		if (jj_3R_29())
+	private boolean jj_3_70() {
+		if (jj_3R_28())
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_64() {
+	private boolean jj_3_69() {
 		if (jj_scan_token(EDGESLIST))
 			return true;
-		if (jj_3R_28())
+		if (jj_3R_27())
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_63() {
+	private boolean jj_3_68() {
 		if (jj_scan_token(ARCSLIST))
 			return true;
-		if (jj_3R_28())
+		if (jj_3R_27())
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_62() {
+	private boolean jj_3_67() {
 		if (jj_scan_token(EDGES))
 			return true;
-		if (jj_3R_28())
+		if (jj_3R_27())
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_61() {
+	private boolean jj_3_66() {
 		if (jj_scan_token(ARCS))
 			return true;
-		if (jj_3R_28())
+		if (jj_3R_27())
 			return true;
 		return false;
 	}
 
-	private boolean jj_3R_20() {
+	private boolean jj_3R_19() {
 		Token xsp;
 		xsp = jj_scanpos;
-		if (jj_3_61()) {
+		if (jj_3_66()) {
 			jj_scanpos = xsp;
-			if (jj_3_62()) {
+			if (jj_3_67()) {
 				jj_scanpos = xsp;
-				if (jj_3_63()) {
+				if (jj_3_68()) {
 					jj_scanpos = xsp;
-					if (jj_3_64()) {
+					if (jj_3_69()) {
 						jj_scanpos = xsp;
-						if (jj_3_65()) {
+						if (jj_3_70()) {
 							jj_scanpos = xsp;
-							if (jj_3_66())
+							if (jj_3_71())
 								return true;
 						}
 					}
@@ -3575,47 +3631,93 @@ public class PajekParser implements PajekParserConstants {
 		return false;
 	}
 
-	private boolean jj_3_17() {
+	private boolean jj_3_22() {
 		if (jj_scan_token(INT))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_45() {
-		if (jj_3R_25())
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_44() {
-		Token xsp;
-		xsp = jj_scanpos;
-		if (jj_3_45()) {
-			jj_scanpos = xsp;
-			if (jj_3_46())
-				return true;
-		}
-		return false;
-	}
-
-	private boolean jj_3_43() {
-		if (jj_scan_token(FONT))
-			return true;
+	private boolean jj_3_50() {
 		if (jj_3R_24())
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_42() {
+	private boolean jj_3_49() {
+		Token xsp;
+		xsp = jj_scanpos;
+		if (jj_3_50()) {
+			jj_scanpos = xsp;
+			if (jj_3_51())
+				return true;
+		}
+		return false;
+	}
+
+	private boolean jj_3_48() {
+		if (jj_scan_token(FONT))
+			return true;
+		if (jj_3R_23())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_47() {
 		if (jj_scan_token(FOS))
+			return true;
+		if (jj_3R_21())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_46() {
+		if (jj_scan_token(LPHI))
+			return true;
+		if (jj_3R_21())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_45() {
+		if (jj_scan_token(LR))
+			return true;
+		if (jj_3R_21())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_44() {
+		if (jj_scan_token(LA))
+			return true;
+		if (jj_3R_21())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_43() {
+		if (jj_scan_token(LC))
 			return true;
 		if (jj_3R_22())
 			return true;
 		return false;
 	}
 
+	private boolean jj_3_21() {
+		if (jj_scan_token(REAL))
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_42() {
+		if (jj_scan_token(BW))
+			return true;
+		if (jj_3R_21())
+			return true;
+		return false;
+	}
+
 	private boolean jj_3_41() {
-		if (jj_scan_token(LPHI))
+		if (jj_scan_token(BC))
 			return true;
 		if (jj_3R_22())
 			return true;
@@ -3623,7 +3725,7 @@ public class PajekParser implements PajekParserConstants {
 	}
 
 	private boolean jj_3_40() {
-		if (jj_scan_token(LR))
+		if (jj_scan_token(IC))
 			return true;
 		if (jj_3R_22())
 			return true;
@@ -3631,123 +3733,77 @@ public class PajekParser implements PajekParserConstants {
 	}
 
 	private boolean jj_3_39() {
-		if (jj_scan_token(LA))
+		if (jj_scan_token(Q))
 			return true;
-		if (jj_3R_22())
+		if (jj_3R_21())
 			return true;
 		return false;
 	}
 
 	private boolean jj_3_38() {
-		if (jj_scan_token(LC))
+		if (jj_scan_token(R))
 			return true;
-		if (jj_3R_23())
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_16() {
-		if (jj_scan_token(REAL))
+		if (jj_3R_21())
 			return true;
 		return false;
 	}
 
 	private boolean jj_3_37() {
-		if (jj_scan_token(BW))
+		if (jj_scan_token(PHI))
 			return true;
-		if (jj_3R_22())
+		if (jj_3R_21())
 			return true;
 		return false;
 	}
 
 	private boolean jj_3_36() {
-		if (jj_scan_token(BC))
+		if (jj_scan_token(YFACT))
 			return true;
-		if (jj_3R_23())
+		if (jj_3R_21())
 			return true;
 		return false;
 	}
 
 	private boolean jj_3_35() {
-		if (jj_scan_token(IC))
+		if (jj_scan_token(XFACT))
 			return true;
-		if (jj_3R_23())
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_34() {
-		if (jj_scan_token(Q))
-			return true;
-		if (jj_3R_22())
+		if (jj_3R_21())
 			return true;
 		return false;
 	}
 
 	private boolean jj_3_33() {
-		if (jj_scan_token(R))
-			return true;
-		if (jj_3R_22())
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_32() {
-		if (jj_scan_token(PHI))
-			return true;
-		if (jj_3R_22())
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_31() {
-		if (jj_scan_token(YFACT))
-			return true;
-		if (jj_3R_22())
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_30() {
-		if (jj_scan_token(XFACT))
-			return true;
-		if (jj_3R_22())
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_28() {
 		Token xsp;
 		xsp = jj_scanpos;
-		if (jj_3_29()) {
+		if (jj_3_34()) {
 			jj_scanpos = xsp;
-			if (jj_3_30()) {
+			if (jj_3_35()) {
 				jj_scanpos = xsp;
-				if (jj_3_31()) {
+				if (jj_3_36()) {
 					jj_scanpos = xsp;
-					if (jj_3_32()) {
+					if (jj_3_37()) {
 						jj_scanpos = xsp;
-						if (jj_3_33()) {
+						if (jj_3_38()) {
 							jj_scanpos = xsp;
-							if (jj_3_34()) {
+							if (jj_3_39()) {
 								jj_scanpos = xsp;
-								if (jj_3_35()) {
+								if (jj_3_40()) {
 									jj_scanpos = xsp;
-									if (jj_3_36()) {
+									if (jj_3_41()) {
 										jj_scanpos = xsp;
-										if (jj_3_37()) {
+										if (jj_3_42()) {
 											jj_scanpos = xsp;
-											if (jj_3_38()) {
+											if (jj_3_43()) {
 												jj_scanpos = xsp;
-												if (jj_3_39()) {
+												if (jj_3_44()) {
 													jj_scanpos = xsp;
-													if (jj_3_40()) {
+													if (jj_3_45()) {
 														jj_scanpos = xsp;
-														if (jj_3_41()) {
+														if (jj_3_46()) {
 															jj_scanpos = xsp;
-															if (jj_3_42()) {
+															if (jj_3_47()) {
 																jj_scanpos = xsp;
-																if (jj_3_43())
+																if (jj_3_48())
 																	return true;
 															}
 														}
@@ -3766,70 +3822,70 @@ public class PajekParser implements PajekParserConstants {
 		return false;
 	}
 
-	private boolean jj_3_29() {
+	private boolean jj_3_34() {
 		if (jj_scan_token(SIZE))
 			return true;
-		if (jj_3R_22())
+		if (jj_3R_21())
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_15() {
+	private boolean jj_3_20() {
 		if (jj_scan_token(INT))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_26() {
+	private boolean jj_3_31() {
 		if (jj_scan_token(EMPTY))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_25() {
+	private boolean jj_3_30() {
 		if (jj_scan_token(DIAMOND))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_24() {
+	private boolean jj_3_29() {
 		if (jj_scan_token(CROSS))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_23() {
+	private boolean jj_3_28() {
 		if (jj_scan_token(TRIANGLE))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_22() {
+	private boolean jj_3_27() {
 		if (jj_scan_token(BOX))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_21() {
+	private boolean jj_3_26() {
 		if (jj_scan_token(ELLIPSE))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_27() {
+	private boolean jj_3_32() {
 		Token xsp;
 		xsp = jj_scanpos;
-		if (jj_3_21()) {
+		if (jj_3_26()) {
 			jj_scanpos = xsp;
-			if (jj_3_22()) {
+			if (jj_3_27()) {
 				jj_scanpos = xsp;
-				if (jj_3_23()) {
+				if (jj_3_28()) {
 					jj_scanpos = xsp;
-					if (jj_3_24()) {
+					if (jj_3_29()) {
 						jj_scanpos = xsp;
-						if (jj_3_25()) {
+						if (jj_3_30()) {
 							jj_scanpos = xsp;
-							if (jj_3_26())
+							if (jj_3_31())
 								return true;
 						}
 					}
@@ -3839,75 +3895,75 @@ public class PajekParser implements PajekParserConstants {
 		return false;
 	}
 
-	private boolean jj_3_14() {
+	private boolean jj_3_19() {
 		if (jj_scan_token(REAL))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_47() {
+	private boolean jj_3_52() {
 		Token xsp;
 		xsp = jj_scanpos;
-		if (jj_3_14()) {
+		if (jj_3_19()) {
 			jj_scanpos = xsp;
-			if (jj_3_15())
+			if (jj_3_20())
 				return true;
 		}
 		xsp = jj_scanpos;
-		if (jj_3_16()) {
+		if (jj_3_21()) {
 			jj_scanpos = xsp;
-			if (jj_3_17())
+			if (jj_3_22())
 				return true;
 		}
 		return false;
 	}
 
-	private boolean jj_3_48() {
-		if (jj_3R_25())
+	private boolean jj_3_53() {
+		if (jj_3R_24())
 			return true;
 		Token xsp;
 		xsp = jj_scanpos;
-		if (jj_3_47())
+		if (jj_3_52())
 			jj_scanpos = xsp;
 		return false;
 	}
 
-	private boolean jj_3R_21() {
+	private boolean jj_3R_20() {
 		if (jj_scan_token(INT))
 			return true;
 		Token xsp;
 		xsp = jj_scanpos;
-		if (jj_3_48())
+		if (jj_3_53())
 			jj_scanpos = xsp;
-		if (jj_3R_28())
+		if (jj_3R_27())
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_13() {
+	private boolean jj_3_18() {
 		if (jj_scan_token(COMMENT))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_12() {
-		if (jj_3R_21())
+	private boolean jj_3_17() {
+		if (jj_3R_20())
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_11() {
+	private boolean jj_3_16() {
 		Token xsp;
 		xsp = jj_scanpos;
-		if (jj_3_12()) {
+		if (jj_3_17()) {
 			jj_scanpos = xsp;
-			if (jj_3_13())
+			if (jj_3_18())
 				return true;
 		}
 		return false;
 	}
 
-	private boolean jj_3R_19() {
+	private boolean jj_3R_18() {
 		if (jj_scan_token(VERTICES))
 			return true;
 		if (jj_scan_token(INT))
@@ -3915,65 +3971,89 @@ public class PajekParser implements PajekParserConstants {
 		return false;
 	}
 
-	private boolean jj_3_10() {
+	private boolean jj_3_15() {
 		if (jj_scan_token(KEY))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_9() {
+	private boolean jj_3_14() {
 		if (jj_scan_token(STRING))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_8() {
+	private boolean jj_3_13() {
 		Token xsp;
 		xsp = jj_scanpos;
-		if (jj_3_9()) {
+		if (jj_3_14()) {
 			jj_scanpos = xsp;
-			if (jj_3_10())
+			if (jj_3_15())
 				return true;
 		}
 		return false;
 	}
 
-	private boolean jj_3R_18() {
+	private boolean jj_3R_17() {
 		if (jj_scan_token(NETWORK))
 			return true;
 		Token xsp;
 		while (true) {
 			xsp = jj_scanpos;
-			if (jj_3_8()) {
+			if (jj_3_13()) {
 				jj_scanpos = xsp;
 				break;
 			}
 		}
-		if (jj_3R_28())
+		if (jj_3R_27())
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_7() {
+	private boolean jj_3_12() {
 		if (jj_scan_token(0))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_6() {
+	private boolean jj_3_11() {
 		if (jj_scan_token(EOL))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_5() {
+	private boolean jj_3_10() {
 		if (jj_scan_token(COMMENT))
 			return true;
 		return false;
 	}
 
+	private boolean jj_3_9() {
+		if (jj_3R_19())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_8() {
+		if (jj_3R_18())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_7() {
+		if (jj_3R_17())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_5() {
+		if (jj_scan_token(EOL))
+			return true;
+		return false;
+	}
+
 	private boolean jj_3_4() {
-		if (jj_3R_20())
+		if (jj_scan_token(COMMENT))
 			return true;
 		return false;
 	}
@@ -3990,22 +4070,25 @@ public class PajekParser implements PajekParserConstants {
 		return false;
 	}
 
-	private boolean jj_3R_17() {
+	private boolean jj_3_1() {
+		if (jj_3R_17())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_6() {
 		Token xsp;
 		xsp = jj_scanpos;
-		if (jj_3_2()) {
+		if (jj_3_1()) {
 			jj_scanpos = xsp;
-			if (jj_3_3()) {
+			if (jj_3_2()) {
 				jj_scanpos = xsp;
-				if (jj_3_4()) {
+				if (jj_3_3()) {
 					jj_scanpos = xsp;
-					if (jj_3_5()) {
+					if (jj_3_4()) {
 						jj_scanpos = xsp;
-						if (jj_3_6()) {
-							jj_scanpos = xsp;
-							if (jj_3_7())
-								return true;
-						}
+						if (jj_3_5())
+							return true;
 					}
 				}
 			}
@@ -4013,278 +4096,272 @@ public class PajekParser implements PajekParserConstants {
 		return false;
 	}
 
-	private boolean jj_3_1() {
-		if (jj_3R_17())
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_177() {
+	private boolean jj_3_182() {
 		if (jj_scan_token(YFACT))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_176() {
+	private boolean jj_3_181() {
 		if (jj_scan_token(XFACT))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_175() {
+	private boolean jj_3_180() {
 		if (jj_scan_token(W))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_174() {
+	private boolean jj_3_179() {
 		if (jj_scan_token(SIZE))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_173() {
+	private boolean jj_3_178() {
 		if (jj_scan_token(S))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_172() {
+	private boolean jj_3_177() {
 		if (jj_scan_token(R))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_171() {
+	private boolean jj_3_176() {
 		if (jj_scan_token(Q))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_170() {
+	private boolean jj_3_175() {
 		if (jj_scan_token(PHI))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_169() {
+	private boolean jj_3_174() {
 		if (jj_scan_token(P))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_168() {
+	private boolean jj_3_173() {
 		if (jj_scan_token(LR))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_167() {
+	private boolean jj_3_172() {
 		if (jj_scan_token(LPHI))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_166() {
+	private boolean jj_3_171() {
 		if (jj_scan_token(LP))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_165() {
+	private boolean jj_3_170() {
 		if (jj_scan_token(LC))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_164() {
+	private boolean jj_3_169() {
 		if (jj_scan_token(LA))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_163() {
+	private boolean jj_3_168() {
 		if (jj_scan_token(L))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_162() {
+	private boolean jj_3_167() {
 		if (jj_scan_token(K2))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_161() {
+	private boolean jj_3_166() {
 		if (jj_scan_token(K1))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_160() {
+	private boolean jj_3_165() {
 		if (jj_scan_token(IC))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_159() {
+	private boolean jj_3_164() {
 		if (jj_scan_token(H2))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_158() {
+	private boolean jj_3_163() {
 		if (jj_scan_token(H1))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_157() {
+	private boolean jj_3_162() {
 		if (jj_scan_token(FOS))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_156() {
+	private boolean jj_3_161() {
 		if (jj_scan_token(FONT))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_155() {
+	private boolean jj_3_160() {
 		if (jj_scan_token(C))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_154() {
+	private boolean jj_3_159() {
 		if (jj_scan_token(BW))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_153() {
+	private boolean jj_3_158() {
 		if (jj_scan_token(BC))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_152() {
+	private boolean jj_3_157() {
 		if (jj_scan_token(B))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_151() {
+	private boolean jj_3_156() {
 		if (jj_scan_token(AP))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_150() {
+	private boolean jj_3_155() {
 		if (jj_scan_token(A2))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_149() {
+	private boolean jj_3_154() {
 		if (jj_scan_token(A1))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_148() {
+	private boolean jj_3_153() {
 		if (jj_scan_token(A))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_147() {
+	private boolean jj_3_152() {
 		if (jj_scan_token(INT))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_146() {
+	private boolean jj_3_151() {
 		if (jj_scan_token(STRING))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_145() {
+	private boolean jj_3_150() {
 		if (jj_scan_token(KEY))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3R_25() {
+	private boolean jj_3R_24() {
 		Token xsp;
 		xsp = jj_scanpos;
-		if (jj_3_145()) {
+		if (jj_3_150()) {
 			jj_scanpos = xsp;
-			if (jj_3_146()) {
+			if (jj_3_151()) {
 				jj_scanpos = xsp;
-				if (jj_3_147()) {
+				if (jj_3_152()) {
 					jj_scanpos = xsp;
-					if (jj_3_148()) {
+					if (jj_3_153()) {
 						jj_scanpos = xsp;
-						if (jj_3_149()) {
+						if (jj_3_154()) {
 							jj_scanpos = xsp;
-							if (jj_3_150()) {
+							if (jj_3_155()) {
 								jj_scanpos = xsp;
-								if (jj_3_151()) {
+								if (jj_3_156()) {
 									jj_scanpos = xsp;
-									if (jj_3_152()) {
+									if (jj_3_157()) {
 										jj_scanpos = xsp;
-										if (jj_3_153()) {
+										if (jj_3_158()) {
 											jj_scanpos = xsp;
-											if (jj_3_154()) {
+											if (jj_3_159()) {
 												jj_scanpos = xsp;
-												if (jj_3_155()) {
+												if (jj_3_160()) {
 													jj_scanpos = xsp;
-													if (jj_3_156()) {
+													if (jj_3_161()) {
 														jj_scanpos = xsp;
-														if (jj_3_157()) {
+														if (jj_3_162()) {
 															jj_scanpos = xsp;
-															if (jj_3_158()) {
+															if (jj_3_163()) {
 																jj_scanpos = xsp;
-																if (jj_3_159()) {
+																if (jj_3_164()) {
 																	jj_scanpos = xsp;
-																	if (jj_3_160()) {
+																	if (jj_3_165()) {
 																		jj_scanpos = xsp;
-																		if (jj_3_161()) {
+																		if (jj_3_166()) {
 																			jj_scanpos = xsp;
-																			if (jj_3_162()) {
+																			if (jj_3_167()) {
 																				jj_scanpos = xsp;
-																				if (jj_3_163()) {
+																				if (jj_3_168()) {
 																					jj_scanpos = xsp;
-																					if (jj_3_164()) {
+																					if (jj_3_169()) {
 																						jj_scanpos = xsp;
-																						if (jj_3_165()) {
+																						if (jj_3_170()) {
 																							jj_scanpos = xsp;
-																							if (jj_3_166()) {
+																							if (jj_3_171()) {
 																								jj_scanpos = xsp;
-																								if (jj_3_167()) {
+																								if (jj_3_172()) {
 																									jj_scanpos = xsp;
-																									if (jj_3_168()) {
+																									if (jj_3_173()) {
 																										jj_scanpos = xsp;
-																										if (jj_3_169()) {
+																										if (jj_3_174()) {
 																											jj_scanpos = xsp;
-																											if (jj_3_170()) {
+																											if (jj_3_175()) {
 																												jj_scanpos = xsp;
-																												if (jj_3_171()) {
+																												if (jj_3_176()) {
 																													jj_scanpos = xsp;
-																													if (jj_3_172()) {
+																													if (jj_3_177()) {
 																														jj_scanpos = xsp;
-																														if (jj_3_173()) {
+																														if (jj_3_178()) {
 																															jj_scanpos = xsp;
-																															if (jj_3_174()) {
+																															if (jj_3_179()) {
 																																jj_scanpos = xsp;
-																																if (jj_3_175()) {
+																																if (jj_3_180()) {
 																																	jj_scanpos = xsp;
-																																	if (jj_3_176()) {
+																																	if (jj_3_181()) {
 																																		jj_scanpos = xsp;
-																																		if (jj_3_177())
+																																		if (jj_3_182())
 																																			return true;
 																																	}
 																																}
@@ -4321,223 +4398,223 @@ public class PajekParser implements PajekParserConstants {
 		return false;
 	}
 
-	private boolean jj_3_144() {
+	private boolean jj_3_149() {
 		if (jj_scan_token(A2))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_143() {
+	private boolean jj_3_148() {
 		if (jj_scan_token(A1))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_142() {
+	private boolean jj_3_147() {
 		if (jj_scan_token(K2))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_141() {
+	private boolean jj_3_146() {
 		if (jj_scan_token(K1))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_140() {
+	private boolean jj_3_145() {
 		if (jj_scan_token(H2))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_139() {
+	private boolean jj_3_144() {
 		if (jj_scan_token(H1))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_138() {
+	private boolean jj_3_143() {
 		if (jj_scan_token(LP))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_137() {
+	private boolean jj_3_142() {
 		if (jj_scan_token(L))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_136() {
+	private boolean jj_3_141() {
 		if (jj_scan_token(AP))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_135() {
+	private boolean jj_3_140() {
 		if (jj_scan_token(B))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_134() {
+	private boolean jj_3_139() {
 		if (jj_scan_token(A))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_133() {
+	private boolean jj_3_138() {
 		if (jj_scan_token(W))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_132() {
+	private boolean jj_3_137() {
 		if (jj_scan_token(P))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_131() {
+	private boolean jj_3_136() {
 		if (jj_scan_token(C))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_130() {
+	private boolean jj_3_135() {
 		if (jj_scan_token(FONT))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_129() {
+	private boolean jj_3_134() {
 		if (jj_scan_token(FOS))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_128() {
+	private boolean jj_3_133() {
 		if (jj_scan_token(LPHI))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_127() {
+	private boolean jj_3_132() {
 		if (jj_scan_token(LR))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_126() {
+	private boolean jj_3_131() {
 		if (jj_scan_token(LA))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_125() {
+	private boolean jj_3_130() {
 		if (jj_scan_token(LC))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_124() {
+	private boolean jj_3_129() {
 		if (jj_scan_token(BW))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_123() {
+	private boolean jj_3_128() {
 		if (jj_scan_token(BC))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_122() {
+	private boolean jj_3_127() {
 		if (jj_scan_token(IC))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_121() {
+	private boolean jj_3_126() {
 		if (jj_scan_token(Q))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_120() {
+	private boolean jj_3_125() {
 		if (jj_scan_token(R))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_119() {
+	private boolean jj_3_124() {
 		if (jj_scan_token(PHI))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_118() {
+	private boolean jj_3_123() {
 		if (jj_scan_token(YFACT))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_117() {
+	private boolean jj_3_122() {
 		if (jj_scan_token(XFACT))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_116() {
+	private boolean jj_3_121() {
 		if (jj_scan_token(SIZE))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_115() {
+	private boolean jj_3_120() {
 		if (jj_scan_token(STRING))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_114() {
+	private boolean jj_3_119() {
 		if (jj_scan_token(KEY))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_113() {
+	private boolean jj_3_118() {
 		if (jj_scan_token(REAL))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_112() {
+	private boolean jj_3_117() {
 		if (jj_scan_token(INT))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_109() {
+	private boolean jj_3_114() {
 		if (jj_scan_token(EOL))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_111() {
+	private boolean jj_3_116() {
 		if (jj_scan_token(0))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_110() {
+	private boolean jj_3_115() {
 		Token xsp;
-		if (jj_3_109())
+		if (jj_3_114())
 			return true;
 		while (true) {
 			xsp = jj_scanpos;
-			if (jj_3_109()) {
+			if (jj_3_114()) {
 				jj_scanpos = xsp;
 				break;
 			}
@@ -4545,24 +4622,24 @@ public class PajekParser implements PajekParserConstants {
 		return false;
 	}
 
-	private boolean jj_3R_28() {
+	private boolean jj_3R_27() {
 		Token xsp;
 		xsp = jj_scanpos;
-		if (jj_3_110()) {
+		if (jj_3_115()) {
 			jj_scanpos = xsp;
-			if (jj_3_111())
+			if (jj_3_116())
 				return true;
 		}
 		return false;
 	}
 
-	private boolean jj_3_99() {
+	private boolean jj_3_104() {
 		if (jj_scan_token(COMMENT))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_108() {
+	private boolean jj_3_113() {
 		if (jj_scan_token(INT))
 			return true;
 		if (jj_scan_token(INT))
@@ -4570,13 +4647,13 @@ public class PajekParser implements PajekParserConstants {
 		return false;
 	}
 
-	private boolean jj_3_105() {
+	private boolean jj_3_110() {
 		if (jj_scan_token(REAL))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_107() {
+	private boolean jj_3_112() {
 		if (jj_scan_token(REAL))
 			return true;
 		if (jj_scan_token(REAL))
@@ -4584,28 +4661,8 @@ public class PajekParser implements PajekParserConstants {
 		return false;
 	}
 
-	private boolean jj_3_106() {
-		if (jj_3R_24())
-			return true;
-		return false;
-	}
-
-	private boolean jj_3R_23() {
-		Token xsp;
-		xsp = jj_scanpos;
-		if (jj_3_106()) {
-			jj_scanpos = xsp;
-			if (jj_3_107()) {
-				jj_scanpos = xsp;
-				if (jj_3_108())
-					return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean jj_3_104() {
-		if (jj_scan_token(INT))
+	private boolean jj_3_111() {
+		if (jj_3R_23())
 			return true;
 		return false;
 	}
@@ -4613,109 +4670,152 @@ public class PajekParser implements PajekParserConstants {
 	private boolean jj_3R_22() {
 		Token xsp;
 		xsp = jj_scanpos;
-		if (jj_3_104()) {
+		if (jj_3_111()) {
 			jj_scanpos = xsp;
-			if (jj_3_105())
+			if (jj_3_112()) {
+				jj_scanpos = xsp;
+				if (jj_3_113())
+					return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean jj_3_109() {
+		if (jj_scan_token(INT))
+			return true;
+		return false;
+	}
+
+	private boolean jj_3R_21() {
+		Token xsp;
+		xsp = jj_scanpos;
+		if (jj_3_109()) {
+			jj_scanpos = xsp;
+			if (jj_3_110())
 				return true;
 		}
 		return false;
 	}
 
-	private boolean jj_3_60() {
+	private boolean jj_3_65() {
 		if (jj_scan_token(COMMENT))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_57() {
+	private boolean jj_3_62() {
 		if (jj_scan_token(COMMENT))
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_54() {
-		if (jj_scan_token(COMMENT))
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_51() {
-		if (jj_scan_token(COMMENT))
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_103() {
-		if (jj_scan_token(STRING))
-			return true;
-		return false;
-	}
-
-	private boolean jj_3_102() {
-		if (jj_scan_token(KEY))
 			return true;
 		return false;
 	}
 
 	private boolean jj_3_59() {
-		if (jj_3R_27())
+		if (jj_scan_token(COMMENT))
 			return true;
-		return false;
-	}
-
-	private boolean jj_3_58() {
-		Token xsp;
-		xsp = jj_scanpos;
-		if (jj_3_59()) {
-			jj_scanpos = xsp;
-			if (jj_3_60())
-				return true;
-		}
-		return false;
-	}
-
-	private boolean jj_3R_24() {
-		Token xsp;
-		xsp = jj_scanpos;
-		if (jj_3_102()) {
-			jj_scanpos = xsp;
-			if (jj_3_103())
-				return true;
-		}
 		return false;
 	}
 
 	private boolean jj_3_56() {
-		if (jj_3R_27())
+		if (jj_scan_token(COMMENT))
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_55() {
+	private boolean jj_3_108() {
+		if (jj_scan_token(STRING))
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_107() {
+		if (jj_scan_token(KEY))
+			return true;
+		return false;
+	}
+
+	private boolean jj_3R_23() {
 		Token xsp;
 		xsp = jj_scanpos;
-		if (jj_3_56()) {
+		if (jj_3_107()) {
 			jj_scanpos = xsp;
-			if (jj_3_57())
+			if (jj_3_108())
 				return true;
 		}
 		return false;
 	}
 
-	private boolean jj_3_53() {
+	private boolean jj_3_64() {
 		if (jj_3R_26())
 			return true;
 		return false;
 	}
 
-	private boolean jj_3_52() {
+	private boolean jj_3_63() {
 		Token xsp;
 		xsp = jj_scanpos;
-		if (jj_3_53()) {
+		if (jj_3_64()) {
 			jj_scanpos = xsp;
-			if (jj_3_54())
+			if (jj_3_65())
 				return true;
 		}
+		return false;
+	}
+
+	private boolean jj_3_61() {
+		if (jj_3R_26())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_60() {
+		Token xsp;
+		xsp = jj_scanpos;
+		if (jj_3_61()) {
+			jj_scanpos = xsp;
+			if (jj_3_62())
+				return true;
+		}
+		return false;
+	}
+
+	private boolean jj_3_58() {
+		if (jj_3R_25())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_57() {
+		Token xsp;
+		xsp = jj_scanpos;
+		if (jj_3_58()) {
+			jj_scanpos = xsp;
+			if (jj_3_59())
+				return true;
+		}
+		return false;
+	}
+
+	private boolean jj_3_55() {
+		if (jj_3R_25())
+			return true;
+		return false;
+	}
+
+	private boolean jj_3_54() {
+		Token xsp;
+		xsp = jj_scanpos;
+		if (jj_3_55()) {
+			jj_scanpos = xsp;
+			if (jj_3_56())
+				return true;
+		}
+		return false;
+	}
+
+	private boolean jj_3_106() {
+		if (jj_scan_token(INT))
+			return true;
 		return false;
 	}
 
@@ -4746,7 +4846,7 @@ public class PajekParser implements PajekParserConstants {
 		jj_la1_1 = new int[] {};
 	}
 
-	final private JJCalls[] jj_2_rtns = new JJCalls[177];
+	final private JJCalls[] jj_2_rtns = new JJCalls[182];
 	private boolean jj_rescan = false;
 	private int jj_gc = 0;
 
@@ -5017,7 +5117,7 @@ public class PajekParser implements PajekParserConstants {
 
 	private void jj_rescan_token() {
 		jj_rescan = true;
-		for (int i = 0; i < 177; i++) {
+		for (int i = 0; i < 182; i++) {
 			try {
 				JJCalls p = jj_2_rtns[i];
 				do {
@@ -5555,6 +5655,21 @@ public class PajekParser implements PajekParserConstants {
 							break;
 						case 176:
 							jj_3_177();
+							break;
+						case 177:
+							jj_3_178();
+							break;
+						case 178:
+							jj_3_179();
+							break;
+						case 179:
+							jj_3_180();
+							break;
+						case 180:
+							jj_3_181();
+							break;
+						case 181:
+							jj_3_182();
 							break;
 						}
 					}

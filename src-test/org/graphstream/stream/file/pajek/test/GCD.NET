@@ -1,0 +1,24 @@
+*Vertices     10
+     1 "start"                                  0.4271    0.0271    0.5000       ellipse
+     2 "read(x)"                                0.4271    0.1313    0.5000       box ic LightGreen
+     3 "r<y"                                    0.4271    0.6313    0.5000       diamond x_fact 2 y_fact 2 q 0.01
+     4 "write(q,r)"                             0.6979    0.6313    0.5000       box ic LightMagenta x_fact 4
+     5 "r:=r-y"                                 0.2781    0.8013    0.5000       box
+     6 "stop"                                   0.6979    0.7750    0.5000       ellipse
+     7 "read(y)"                                0.4271    0.2292    0.5000       box ic LightGreen
+     8 "q:=0"                                   0.4271    0.3375    0.5000       box
+     9 "r:=x"                                   0.4271    0.4417    0.5000       box
+    10 "q:=q+1"                                 0.2781    0.6325    0.5000       box
+*Arcs
+      1      2       1 0 -1 1 OliveGreen Solid B 2 0  1 0  1 5
+      2      7       1 0 -1 1 Sepia      Solid B 2 0  1 0  1 5
+      7      8       1 0 -1 1 Sepia      Solid B 2 0  1 0  1 5
+      8      9       1 0 -1 1 Sepia      Solid B 2 0  1 0  1 5
+      3      4       1 0 -1 1 Blue       Solid B 2 0  1 0  1 5 yes 0.5 10 90 Red
+      3      5       1 0 -1 1 Blue       Solid B 2 0  1 0  1 5 no 0.6 15 270 Red 90
+      5     10       1 0 -1 1 Sepia      Solid B 2 0  1 0  1 5
+      4      6       1 0 -1 1 OliveGreen Solid B 2 0  1 0  1 5 
+      9      3       1 0 -1 1 Sepia      Solid B 2 0  1 0  1 5
+     10      3       1 0 -1 1 Sepia      Solid B 2 0  1 0  1 5 
+*Edges
+

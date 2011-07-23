@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
 import org.graphstream.stream.SourceBase.ElementType;
+import org.graphstream.stream.file.FileSourceGML;
 
 public class GMLContext {
 	FileSourceGML gml;

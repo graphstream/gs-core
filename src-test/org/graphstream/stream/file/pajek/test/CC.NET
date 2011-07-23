@@ -1,0 +1,208 @@
+*Vertices 62
+   1 "t1"                                          0.5000 0.9021        ellipse x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightYellow
+   2 "t2"                                          0.5000 0.0104          ellipse x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightYellow
+   3 "t3"                                          0.9292 0.7500          ellipse x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightYellow
+   4 "t4"                                          0.4542 0.8625        ellipse x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightYellow
+   5 "t5"                                          0.2500 0.1813        ellipse x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightYellow
+   6 "t6"                                          0.0708 0.7500          ellipse x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightYellow
+   7 "t7"                                          0.4146 0.8250        ellipse x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightYellow
+   8 "t8"                                          0.2500 0.2563        ellipse x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightYellow
+   9 "t9"                                          0.1063 0.7188        ellipse x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightYellow
+  10 "o"                                           0.1417 0.6938        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  11 "o"                                           0.5000 0.9479        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  12 "o"                                           0.2875 0.1333        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  13 "o"                                           0.2292 0.1438        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  14 "o"                                           0.3229 0.2917        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  15 "o"                                           0.3313 0.2333        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  16 "o"                                           0.3521 0.1813        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  17 "o"                                           0.3896 0.1417        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  18 "o"                                           0.4250 0.1167        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  19 "o"                                           0.4646 0.0813        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  20 "o"                                           0.6271 0.0667        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  21 "o"                                           0.7208 0.1167        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  22 "o"                                           0.7896 0.1688        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  23 "o"                                           0.8438 0.2333        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  24 "o"                                           0.8833 0.3000        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  25 "o"                                           0.9167 0.3542        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  26 "o"                                           0.9458 0.4563        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  27 "o"                                           0.9604 0.5500        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  28 "t10"                                         0.5229 0.5583        ellipse x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightYellow
+  29 "t11"                                         0.8625 0.6750        ellipse x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightYellow
+  30 "t12"                                         0.5708 0.1021        ellipse x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightYellow
+  31 "o"                                           0.5729 0.5083        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  32 "o"                                           0.6104 0.5188        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  33 "o"                                           0.6521 0.5313        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  34 "o"                                           0.6938 0.5563        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  35 "o"                                           0.7500 0.5896        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  36 "o"                                           0.7458 0.4938        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  37 "o"                                           0.6833 0.4104        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  38 "o"                                           0.6333 0.3667        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  39 "o"                                           0.5854 0.3458        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  40 "o"                                           0.6042 0.4208        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  41 "t13"                                         0.8479 0.7500        ellipse x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightYellow
+  42 "t14"                                         0.5833 0.6042        ellipse x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightYellow
+  43 "t15"                                         0.5354 0.8521        ellipse x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightYellow
+  44 "o"                                           0.6229 0.8000        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  45 "o"                                           0.6375 0.7625        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  46 "o"                                           0.6500 0.7229        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  47 "o"                                           0.6604 0.6833        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  48 "o"                                           0.7042 0.7708        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  49 "o"                                           0.7167 0.7188        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  50 "o"                                           0.5750 0.7896        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  51 "o"                                           0.6063 0.6708        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  52 "o"                                           0.1771 0.6625        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  53 "o"                                           0.2750 0.7208        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  54 "o"                                           0.3792 0.7771        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  55 "o"                                           0.3042 0.6083        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  56 "o"                                           0.2625 0.5375        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  57 "o"                                           0.2208 0.4938        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  58 "o"                                           0.2479 0.6208        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  59 "o"                                           0.2979 0.6813        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  60 "o"                                           0.2188 0.5854        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  61 "o"                                           0.2833 0.4479        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+  62 "o"                                           0.2500 0.3729        box x_fact 0.5 y_fact 0.5  fos 7 bw 0.7 ic LightGreen
+*Edges
+  1   2   1 w 0.5
+  1   3   1 w 0.5
+  1   4   1 w 0.5
+  1   5   1 w 0.5
+  1   6   1 w 0.5
+  1  11   1 w 0.5
+  1  14   1 w 0.5
+  1  15   1 w 0.5
+  1  16   1 w 0.5
+  1  17   1 w 0.5
+  1  18   1 w 0.5
+  1  19   1 w 0.5
+  1  28   1 w 0.5
+  1  41   1 w 0.5
+ 2   3   1 w 0.5 k1 -3 k2 -246.85
+ 2   5   1 w 0.5
+  2   6   1 w 0.5 k1 -2 k2 246.85
+  2  12   1 w 0.5
+  2  13   1 w 0.5
+  2  19   1 w 0.5
+  2  20   1 w 0.5
+  2  30   1 w 0.5
+ 3   6   1 w 0.5 k1 -3 k2 -246.85
+  3  11   1 w 0.5
+  3  20   1 w 0.5
+  3  21   1 w 0.5
+  3  22   1 w 0.5
+  3  23   1 w 0.5
+  3  24   1 w 0.5
+  3  25   1 w 0.5
+  3  26   1 w 0.5
+  3  27   1 w 0.5
+  3  29   1 w 0.5
+  3  41   1 w 0.5
+  3  42   1 w 0.5
+  4   5   1 w 0.5
+  4   6   1 w 0.5
+  4   7   1 w 0.5
+  4   8   1 w 0.5
+  4   9   1 w 0.5
+  5   6   1 w 0.5
+  5   8   1 w 0.5
+  5   9   1 w 0.5
+  5  12   1 w 0.5
+  5  13   1 w 0.5
+  6   9   1 w 0.5
+  6  11   1 w 0.5
+  6  13   1 w 0.5
+  7   8   1 w 0.5
+  7   9   1 w 0.5
+  7  10   1 w 0.5
+  8   9   1 w 0.5
+  8  10   1 w 0.5
+  9  10   1 w 0.5
+ 10  52   1 w 0.5
+ 12  13   1 w 0.5
+ 14  15   1 w 0.5
+ 15  16   1 w 0.5
+ 16  17   1 w 0.5
+ 17  18   1 w 0.5
+ 18  19   1 w 0.5
+ 20  21   1 w 0.5
+ 21  22   1 w 0.5
+ 22  23   1 w 0.5
+ 23  24   1 w 0.5
+ 24  25   1 w 0.5
+ 25  26   1 w 0.5
+ 26  27   1 w 0.5
+ 28  29   1 w 0.5
+ 28  30   1 w 0.5
+ 28  31   1 w 0.5
+ 28  32   1 w 0.5
+ 28  33   1 w 0.5
+ 28  34   1 w 0.5
+ 28  35   1 w 0.5
+ 28  42   1 w 0.5
+ 28  43   1 w 0.5
+ 29  30   1 w 0.5
+ 29  35   1 w 0.5
+ 29  36   1 w 0.5
+ 29  42   1 w 0.5
+ 30  36   1 w 0.5
+ 30  37   1 w 0.5
+ 30  38   1 w 0.5
+ 30  39   1 w 0.5
+ 31  32   1 w 0.5
+ 31  40   1 w 0.5
+ 32  33   1 w 0.5
+ 32  40   1 w 0.5
+ 33  34   1 w 0.5
+ 33  40   1 w 0.5
+ 34  35   1 w 0.5
+ 34  40   1 w 0.5
+ 35  36   1 w 0.5
+ 35  37   1 w 0.5
+ 35  38   1 w 0.5
+ 35  39   1 w 0.5
+ 35  40   1 w 0.5
+ 36  37   1 w 0.5
+ 37  38   1 w 0.5
+ 38  39   1 w 0.5
+ 39  40   1 w 0.5
+ 41  42   1 w 0.5
+ 41  43   1 w 0.5
+ 41  48   1 w 0.5
+ 41  49   1 w 0.5
+ 42  43   1 w 0.5
+ 42  47   1 w 0.5
+ 42  51   1 w 0.5
+ 43  44   1 w 0.5
+ 43  50   1 w 0.5
+ 44  45   1 w 0.5
+ 44  48   1 w 0.5
+ 44  50   1 w 0.5
+ 45  46   1 w 0.5
+ 46  47   1 w 0.5
+ 47  49   1 w 0.5
+ 47  51   1 w 0.5
+ 48  49   1 w 0.5
+ 50  51   1 w 0.5
+ 52  53   1 w 0.5
+ 52  58   1 w 0.5
+ 52  59   1 w 0.5
+ 52  60   1 w 0.5
+ 53  54   1 w 0.5
+ 53  59   1 w 0.5
+ 54  55   1 w 0.5
+ 54  59   1 w 0.5
+ 54  61   1 w 0.5
+ 55  56   1 w 0.5
+ 55  58   1 w 0.5
+ 55  59   1 w 0.5
+ 55  61   1 w 0.5
+ 56  57   1 w 0.5
+ 56  58   1 w 0.5
+ 56  61   1 w 0.5
+ 56  62   1 w 0.5
+ 57  58   1 w 0.5
+ 57  60   1 w 0.5
+ 57  62   1 w 0.5
+ 58  59   1 w 0.5
+ 58  60   1 w 0.5
+ 61  62   1 w 0.5
+ 57  52   1 w 0.5

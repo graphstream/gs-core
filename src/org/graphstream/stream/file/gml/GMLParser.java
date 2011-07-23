@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.Reader;
 
+import org.graphstream.stream.file.FileSourceGML;
 import org.graphstream.util.parser.ParseException;
 import org.graphstream.util.parser.Parser;
 import org.graphstream.util.parser.SimpleCharStream;

@@ -1,0 +1,24 @@
+*Vertices     11
+     1 "minister1"                              0.2912    0.2004 ellipse
+     2 "pminister"                              0.4875    0.0153 diamond
+     3 "minister2"                              0.3537    0.3416 ellipse
+     4 "minister3"                              0.4225    0.5477 ellipse
+     5 "minister4"                              0.4538    0.1603 ellipse
+     6 "minister5"                              0.4900    0.3836 ellipse
+     7 "minister6"                              0.6212    0.5038 ellipse
+     8 "minister7"                              0.6450    0.2023 ellipse
+     9 "advisor1"                               0.6488    0.6031 box
+    10 "advisor2"                               0.3212    0.5515 box
+    11 "advisor3"                               0.7188    0.4218 box
+*Matrix
+ 0 1 1 0 0 1 0 0 0 0 0
+ 0 0 0 0 0 0 0 1 0 0 0
+ 1 1 0 1 0 1 1 1 0 0 0
+ 0 0 0 0 0 0 1 1 0 0 0
+ 0 1 0 1 0 1 1 1 0 0 0
+ 0 1 0 1 1 0 1 1 0 0 0
+ 0 0 0 1 0 0 0 1 1 0 1
+ 0 1 0 1 0 0 1 0 0 0 1
+ 0 0 0 1 0 0 1 1 0 0 1
+ 1 0 1 1 1 0 0 0 0 0 0
+ 0 0 0 0 0 1 0 1 1 0 0

@@ -33,7 +33,7 @@ package org.graphstream.stream.file.gml.test;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.stream.file.gml.FileSourceGML;
+import org.graphstream.stream.file.FileSourceGML;
 
 public class TestSourceGML {
 	public static void main(String args[]) {

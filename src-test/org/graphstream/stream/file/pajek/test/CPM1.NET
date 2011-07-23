@@ -1,0 +1,21 @@
+*Vertices      8
+     1 "1"                                      0.4122    0.0464
+     2 "2"                                      0.3801    0.2866
+     3 "3"                                      0.1379    0.4257
+     4 "4"                                      0.3715    0.4831
+     5 "5"                                      0.2401    0.6751
+     6 "6"                                      0.5800    0.4798
+     7 "7"                                      0.4997    0.7396
+     8 "8"                                      0.6172    0.9536
+*Arcs
+      1      2      12 l plan
+      2      3       8 l choose_place
+      2      4       4 l choose_supplier
+      2      6       3 l choose_employees
+      4      6       5 l writing_manuals
+      3      5      12 l building
+      4      5      18 l do_equipment
+      6      7       9 l training_employees
+      5      7       4 l installing_eqipment
+      7      8       6 l start
+*Edges

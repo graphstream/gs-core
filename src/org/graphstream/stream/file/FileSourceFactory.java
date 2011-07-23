@@ -34,8 +34,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import org.graphstream.stream.file.pajek.FileSourcePajek;
-import org.graphstream.stream.file.tlp.FileSourceTLP;
 
 /**
  * File source factory.
@@ -115,7 +113,7 @@ public class FileSourceFactory {
 
 		if (n >= 7 && b[0] == 'g' && b[1] == 'r' && b[2] == 'a' && b[3] == 'p'
 				&& b[4] == 'h' && b[5] == ' ' && b[6] == '[') {
-			return new org.graphstream.stream.file.gml.FileSourceGML();
+			return new org.graphstream.stream.file.FileSourceGML();
 		}
 
 		if (n >= 4 && b[0] == '(' && b[1] == 't' && b[2] == 'l' && b[3] == 'p')
@@ -128,7 +126,7 @@ public class FileSourceFactory {
 		// If we did not found anything, we try with the filename extension ...
 
 		if (flc.endsWith(".gml") || flc.endsWith(".dgml")) {
-			return new org.graphstream.stream.file.gml.FileSourceGML();
+			return new org.graphstream.stream.file.FileSourceGML();
 		}
 
 		if (flc.endsWith(".net")) {
@@ -140,7 +138,7 @@ public class FileSourceFactory {
 		}
 
 		if (flc.endsWith(".dot")) {
-			return new org.graphstream.stream.file.dot.FileSourceDOT();
+			return new org.graphstream.stream.file.FileSourceDOT();
 		}
 
 		if (flc.endsWith(".edge")) {

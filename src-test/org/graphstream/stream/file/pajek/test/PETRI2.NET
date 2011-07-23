@@ -1,0 +1,27 @@
+*Vertices      9
+     1 "p1"                                     0.1026    0.3179    0.5000 ellipse x_fact 1 lr 19 lphi 110 bw 1.5 fos 20
+     2 "p2"                                     0.3146    0.3179    0.5000 ellipse x_fact 1 lr 19 lphi 110 bw 1.5 fos 20
+     3 "p3"                                     0.5894    0.1225    0.5000 ellipse x_fact 1 lr 15 lphi -10 bw 1.5 fos 20
+     4 "p4"                                     0.5662    0.5530    0.5000 ellipse x_fact 1 lr 25 lphi -100 bw 1.5 fos 20
+     5 "p5"                                     0.8974    0.3245    0.5000 ellipse x_fact 1 lr 19 lphi 110 bw 1.5  fos 20
+     6 "t1"                                     0.1987    0.3179    0.5000 box ic Black x_fact 0.1 y_fact 2 lr 25 lphi 105 fos 20
+     7 "t2"                                     0.4338    0.3179    0.5000 box ic Black x_fact 0.1 y_fact 2 lr 25 lphi 105 fos 20
+     8 "t3"                                     0.6950    0.5499    0.5000 box ic Black x_fact 0.1 y_fact 2 lr 25 lphi 105 fos 20
+     9 "t4"                                     0.7152    0.3245    0.5000 box ic Black x_fact 0.1 y_fact 2 lr 25 lphi 105 fos 20
+*Arcs
+      1      6       1 s 2 w 2
+      6      3       1 a1 -30 h2 17 a2 -30 s 2 w 2
+      6      2       1 s 2 w 2
+      6      4       1 a1 50 h2 21 a2 30 s 2 k2 0.9 w 2
+      6      4       1 a1 30 h2 15 a2 30 s 2 k2 0.9 w 2
+      2      7       1 a1 20 a2 20 k1 1.1 k2 1.1 s 2 w 2
+      7      2       1 a1 20 a2 20 k1 1.1 k2 1.1 s 2 w 2
+      3      7       1 a1 -20 h1 25 a2 -20 h2 8 s 2 w 2
+      4      7       1 a1 20 h1 11 a2 20  h2 8 s 2 w 2
+      4      8       1 a1 -30 h1 2 a2 -30 s 2 k1 1.1 k2 1.1 w 2
+      4      8       1 a1 30 h1 34 a2 30 s 2 k1 1.1 k2 1.1 w 2
+      9      3       1 a1 -20 h2 29 a2 -20 s 2 w 2
+      9      4       1 a1 20 h2 7 a2 20 s 2 w 2
+      8      5       1 a1 30 h2 27 a2 30 s 2 w 2
+      5      9       1 s 2 w 2
+*Edges

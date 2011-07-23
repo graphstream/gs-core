@@ -29,11 +29,11 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.stream.file.tlp;
+package org.graphstream.stream.file;
 
 import java.io.Reader;
 
-import org.graphstream.stream.file.FileSourceParser;
+import org.graphstream.stream.file.tlp.TLPParser;
 import org.graphstream.util.parser.Parser;
 import org.graphstream.util.parser.ParserFactory;
 

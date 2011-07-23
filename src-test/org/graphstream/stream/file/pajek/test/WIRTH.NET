@@ -1,0 +1,26 @@
+*Vertices     10
+     1 "enka123451234234234234"                 0.9551    0.6267  ellipse bc Black ic LightYellow lc Blue x_fact 2
+     2 "2"                                      0.6484    0.8308  ellipse bc Black ic LightYellow lc Blue x_fact 1
+     3 "trojka_3"                               0.8758    0.2237  ellipse bc Black ic LightYellow lc Blue x_fact 1
+     4 "4"                                      0.4857    0.5522  ellipse bc Black ic LightYellow lc Blue x_fact 1
+     5 "5"                                      0.5383    0.0449  ellipse bc Black ic LightYellow lc Blue x_fact 1
+     6 "6"                                      0.7872    0.4410  ellipse bc Black ic LightYellow lc Blue x_fact 1
+     7 "7"                                      0.1603    0.2059  ellipse bc Black ic LightYellow lc Blue x_fact 1
+     8 "8"                                      0.4082    0.2401  ellipse bc Black ic LightYellow lc Blue x_fact 1
+     9 "9"                                      0.1639    0.5743  ellipse bc Black ic LightYellow lc Blue x_fact 1
+    10 "10"                                     0.3040    0.8959  ellipse bc Black ic LightYellow lc Blue x_fact 1
+*Arcs
+      1      2       1 0 -1 1 Fuchsia Solid  A 2 0 1 0 1
+      1      3       1 0 -1 1 Black   Solid  A 2 0 1 0 1 
+      2      4       1 0 -1 1 Fuchsia Solid  A 2 0 1 0 1 
+      2     10       1 0 -1 1 Fuchsia Solid  A 2 0 1 0 1 
+      3      5       1 0 -1 1 Fuchsia Solid  A 2 0 1 0 1 
+      4      6       1 0 -1 1 Fuchsia Solid  A 2 0 1 0 1 
+      4      8       1 0 -1 1 Fuchsia Solid  A 2 0 1 0 1 
+      5      8       1 0 -1 1 Fuchsia Solid  A 2 0 1 0 1 
+      6      3       1 0 -1 1 Fuchsia Solid  A 2 0 1 0 1 
+      7      5       1 0 -1 1 Fuchsia Solid  A 2 0 1 0 1 
+      7      9       1 0 -1 1 Fuchsia Solid  A 2 0 1 0 1 
+      9      4       1 0 -1 1 Fuchsia Solid  A 2 0 1 0 1 
+      9     10       1 0 -1 1 Fuchsia Solid  A 2 0 1 0 1   
+*Edges

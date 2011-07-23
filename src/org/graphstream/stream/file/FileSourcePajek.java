@@ -1,6 +1,5 @@
 /*
  * Copyright 2006 - 2011 
- *     Stefan Balev     <stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -29,23 +28,31 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.stream.file.dot;
+package org.graphstream.stream.file;
 
 import java.io.Reader;
 
-import org.graphstream.stream.file.FileSourceParser;
+import org.graphstream.stream.file.pajek.PajekParser;
+
 import org.graphstream.util.parser.Parser;
 import org.graphstream.util.parser.ParserFactory;
 
-public class FileSourceDOT extends FileSourceParser {
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.stream.file.FileSourceParser#getNewFactory()
-	 */
+/**
+ * A parser for the Pajek NET format.
+ * 
+ * This should support most the NET file format. However this format seems
+ * to have numerous derivative that may not be known to us. It parses the
+ * edges/arcs, edgeslist/arclist, and matrix notations. It understands a
+ * large part of the formating notation, and transform it to CSS "ui.style"
+ * attribute stored on nodes and edges.
+ * 
+ * The standard extension for such files is ".net".
+ */
+public class FileSourcePajek extends FileSourceParser {
 	public ParserFactory getNewParserFactory() {
 		return new ParserFactory() {
 			public Parser newParser(Reader reader) {
-				return new DOTParser(FileSourceDOT.this, reader);
+				return new PajekParser(FileSourcePajek.this, reader);
 			}
 		};
 	}

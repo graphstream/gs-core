@@ -41,6 +41,7 @@ import java.util.LinkedList;
 import java.util.Stack;
 
 import org.graphstream.stream.SourceBase.ElementType;
+import org.graphstream.stream.file.FileSourceTLP;
 import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
 
 import org.graphstream.util.parser.ParseException;
