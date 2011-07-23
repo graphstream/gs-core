@@ -114,7 +114,8 @@ public abstract class AbstractEdge extends AbstractElement implements Edge {
 	protected boolean nullAttributesAreErrors() {
 		return graph.nullAttributesAreErrors();
 	}
-
+	
+	@Override
 	public String toString() {
 		return String.format("%s[%s-%s%s]", getId(), source, directed ? ">"
 				: "-", target);
@@ -158,5 +159,4 @@ public abstract class AbstractEdge extends AbstractElement implements Edge {
 	public boolean isLoop() {
 		return source == target;
 	}
-
 }
