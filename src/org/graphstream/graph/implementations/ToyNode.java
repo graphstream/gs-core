@@ -128,7 +128,7 @@ public class ToyNode extends AbstractNode {
 	@Override
 	public <T extends Edge> T getEdgeToward(Node node) {
 		for (Edge e : edges)
-			if (e.getOpposite(this) == node && isEnteringEdge(e))
+			if (e.getOpposite(this) == node && isLeavingEdge(e))
 				return (T) e;
 		return null;
 	}
@@ -216,7 +216,7 @@ public class ToyNode extends AbstractNode {
 			while (iNext < edges.size()) {
 				Edge e = edges.get(iNext);
 				if (entering && ToyNode.this.isEnteringEdge(e)
-						|| ToyNode.this.isLeavingEdge(e))
+						|| (!entering && ToyNode.this.isLeavingEdge(e)))
 					break;
 				iNext++;
 			}
