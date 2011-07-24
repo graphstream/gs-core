@@ -277,12 +277,13 @@ public class TestGraph extends AbstractGraph {
 			checkModif();
 			if (iPrev == -1)
 				throw new IllegalStateException();
-			removeNode(nodeList.get(iPrev), true);
+			AbstractNode removed = nodeList.get(iPrev);
+			modifCount += 1 + removed.getDegree(); // for the node and all it's adjacent edges
+			removeNode(removed, true);
 			// or just removeNode(nodeList.get(iPrev));
 			
 			iNext = iPrev; // !!! the last element is now at position iPrev
 			iPrev = -1;
-			modifCount++;
 		}
 	}
 

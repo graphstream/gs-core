@@ -595,7 +595,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		// now we can finally add it
 		addEdgeCallback(edge);
 		modifCount++;
-		listeners.sendEdgeAdded(sourceId, edgeId, srcId, dstId, directed);
+		listeners.sendEdgeAdded(sourceId, timeId, edgeId, srcId, dstId, directed);
 		return (T) edge;
 	}
 
@@ -612,7 +612,9 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		if (graphCallback)
 			removeNodeCallback(node);
 		modifCount++;
-		listeners.sendNodeRemoved(sourceId, timeId, nodeId);
+		listeners.sendNodeRemoved(sourceId, listeners.newEvent(), nodeId); 
+		// XXX changed timeId to listeners.newEvent()
+		// see the big discussion "Is the Graph active or passive?"
 		return (T) node;
 	}
 
@@ -637,7 +639,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		if (graphCallback)
 			removeEdgeCallback(edge);
 		modifCount++;
-		listeners.sendEdgeRemoved(sourceId, edgeId);
+		listeners.sendEdgeRemoved(sourceId, timeId, edgeId);
 		return (T) edge;
 	}
 

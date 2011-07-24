@@ -410,7 +410,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 			}
 
 			public void remove() {
-				edgeIterator.remove();
+				throw new UnsupportedOperationException("This iterator does not support remove");
 			}
 		};
 	}

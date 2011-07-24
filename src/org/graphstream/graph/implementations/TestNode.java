@@ -203,6 +203,7 @@ public class TestNode extends AbstractNode {
 
 		protected directedEdgeIterator(boolean entering) {
 			this.entering = entering;
+			gotoNext();
 		}
 
 		private void checkModifCount() {
