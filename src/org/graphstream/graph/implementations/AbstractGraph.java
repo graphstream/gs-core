@@ -302,7 +302,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 
 	public <T extends Edge> T removeEdge(String id) {
 		return removeEdge_(getId(), listeners.newEvent(),
-				(AbstractEdge) getEdge(id), id, true, true);
+				(AbstractEdge) getEdge(id), id, true, true, true);
 	}
 
 	public <T extends Edge> T removeEdge(int index) {
@@ -316,7 +316,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 			return null;
 		}
 		return removeEdge_(getId(), listeners.newEvent(), (AbstractEdge) edge,
-				edge.getId(), true, true);
+				edge.getId(), true, true, true);
 	}
 
 	public <T extends Edge> T removeEdge(String from, String to) {
@@ -343,7 +343,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 			return null;
 		}
 		return removeEdge_(getId(), listeners.newEvent(), edge, edge.getId(),
-				true, true);
+				true, true, true);
 	}
 
 	// *** Sinks, sources etc. ***
@@ -507,7 +507,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		write(output, filename);
 	}
 
-
 	// *** callbacks maintaining user's data structure
 
 	protected abstract void addNodeCallback(AbstractNode node);
@@ -620,21 +619,21 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	@SuppressWarnings("unchecked")
 	protected <T extends Edge> T removeEdge_(String sourceId, long timeId,
 			AbstractEdge edge, String edgeId, boolean graphCallback,
-			boolean nodeCallback) {
+			boolean srcCallback, boolean dstCallback) {
 		if (edge == null) {
 			if (strictChecking)
 				throw new ElementNotFoundException("Edge \"" + edgeId
 						+ "\" not found. Cannot remove it.");
 			return null;
 		}
-		if (nodeCallback) {
-			AbstractNode src = edge.getSourceNode();
-			AbstractNode dst = edge.getSourceNode();
+
+		AbstractNode src = edge.getSourceNode();
+		AbstractNode dst = edge.getTargetNode();
+		if (srcCallback)
 			src.removeEdgeCallback(edge);
-			// note that the callback is called only once for loop edges
-			if (src != dst)
-				dst.removeEdgeCallback(edge);
-		}
+		// note that the callback is called only once for loop edges
+		if (src != dst && dstCallback)
+			dst.removeEdgeCallback(edge);
 		if (graphCallback)
 			removeEdgeCallback(edge);
 		modifCount++;
@@ -685,12 +684,14 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	// *** Methods for iterators ***
 
 	protected void removeNode(AbstractNode node, boolean graphCallback) {
-		removeNode_(getId(), listeners.newEvent(), node, node.getId(), graphCallback);
+		removeNode_(getId(), listeners.newEvent(), node, node.getId(),
+				graphCallback);
 	}
 
 	protected void removeEdge(AbstractEdge edge, boolean graphCallback,
-			boolean nodeCallback) {
-		removeEdge_(getId(), listeners.newEvent(), edge, edge.getId(), graphCallback, nodeCallback);
+			boolean srcCallback, boolean dstCallback) {
+		removeEdge_(getId(), listeners.newEvent(), edge, edge.getId(),
+				graphCallback, srcCallback, dstCallback);
 	}
 
 	protected int getModifCount() {
@@ -809,7 +810,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 			if (sinkTime.isNewEvent(sourceId, timeId)) {
 				AbstractEdge edge = getEdge(edgeId);
-				removeEdge_(sourceId, timeId, edge, edgeId, true, true);
+				removeEdge_(sourceId, timeId, edge, edgeId, true, true, true);
 			}
 		}
 
