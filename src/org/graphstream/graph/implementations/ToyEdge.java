@@ -12,9 +12,9 @@ package org.graphstream.graph.implementations;
  * @author Stefan Balev
  *
  */
-public class TestEdge extends AbstractEdge {
+public class ToyEdge extends AbstractEdge {
 
-	protected TestEdge(String id, AbstractNode source, AbstractNode target, boolean directed) {
+	protected ToyEdge(String id, AbstractNode source, AbstractNode target, boolean directed) {
 		super(id, source, target, directed);
 	}
 

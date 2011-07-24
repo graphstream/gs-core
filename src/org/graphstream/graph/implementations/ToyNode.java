@@ -15,7 +15,7 @@ import org.graphstream.graph.Node;
  * @author Stefan Balev
  * 
  */
-public class TestNode extends AbstractNode {
+public class ToyNode extends AbstractNode {
 
 	/**
 	 * My data structure is very simple (and inefficient). Just a list to store
@@ -29,7 +29,7 @@ public class TestNode extends AbstractNode {
 	 * In the constructor you need to call the constructor of the superclass and
 	 * initialize your data structure.
 	 */
-	protected TestNode(AbstractGraph graph, String id) {
+	protected ToyNode(AbstractGraph graph, String id) {
 		super(graph, id);
 
 		edges = new ArrayList<AbstractEdge>();
@@ -151,7 +151,7 @@ public class TestNode extends AbstractNode {
 	 */
 	private class edgeIterator<T extends Edge> implements Iterator<T> {
 		private Iterator<AbstractEdge> it = edges.iterator();
-		AbstractGraph g = (AbstractGraph) TestNode.this.getGraph();
+		AbstractGraph g = (AbstractGraph) ToyNode.this.getGraph();
 		private int modifCount = g.getModifCount();
 		AbstractEdge previous = null;
 
@@ -185,8 +185,8 @@ public class TestNode extends AbstractNode {
 			checkModifCount();
 			it.remove();
 			g.removeEdge(previous, true,
-					previous.getSourceNode() != TestNode.this, previous
-							.getTargetNode() != TestNode.this);
+					previous.getSourceNode() != ToyNode.this, previous
+							.getTargetNode() != ToyNode.this);
 			modifCount++;
 		}
 	}
@@ -195,7 +195,7 @@ public class TestNode extends AbstractNode {
 	 * Here we will use indices to show a different implementation
 	 */
 	private class directedEdgeIterator<T extends Edge> implements Iterator<T> {
-		private AbstractGraph g = (AbstractGraph) TestNode.this.getGraph();
+		private AbstractGraph g = (AbstractGraph) ToyNode.this.getGraph();
 		private int modifCount = g.getModifCount();
 		private int iPrev = -1;
 		private int iNext = -1;
@@ -215,8 +215,8 @@ public class TestNode extends AbstractNode {
 			iNext++;
 			while (iNext < edges.size()) {
 				Edge e = edges.get(iNext);
-				if (entering && TestNode.this.isEnteringEdge(e)
-						|| TestNode.this.isLeavingEdge(e))
+				if (entering && ToyNode.this.isEnteringEdge(e)
+						|| ToyNode.this.isLeavingEdge(e))
 					break;
 				iNext++;
 			}
@@ -242,8 +242,8 @@ public class TestNode extends AbstractNode {
 				throw new IllegalStateException();
 			AbstractEdge e = edges.remove(iPrev);
 			iNext--;
-			g.removeEdge(e, true, e.getSourceNode() != TestNode.this, e
-					.getTargetNode() != TestNode.this);
+			g.removeEdge(e, true, e.getSourceNode() != ToyNode.this, e
+					.getTargetNode() != ToyNode.this);
 			modifCount++;
 		}
 

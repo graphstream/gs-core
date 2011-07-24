@@ -26,7 +26,7 @@ import org.graphstream.graph.NodeFactory;
  * @author Stefan Balev
  * 
  */
-public class TestGraph extends AbstractGraph {
+public class ToyGraph extends AbstractGraph {
 
 	/**
 	 * These two are maintained for quickly access elements by their ids.
@@ -45,18 +45,18 @@ public class TestGraph extends AbstractGraph {
 	 * In the constructor you need to call the constructor of the superclass,
 	 * create your node and edge factories and initialize your data structures
 	 */
-	public TestGraph(String id, boolean strictChecking, boolean autoCreate) {
+	public ToyGraph(String id, boolean strictChecking, boolean autoCreate) {
 		super(id, strictChecking, autoCreate);
 
-		setNodeFactory(new NodeFactory<TestNode>() {
-			public TestNode newInstance(String id, Graph graph) {
-				return new TestNode((AbstractGraph) graph, id);
+		setNodeFactory(new NodeFactory<ToyNode>() {
+			public ToyNode newInstance(String id, Graph graph) {
+				return new ToyNode((AbstractGraph) graph, id);
 			}
 		});
-		setEdgeFactory(new EdgeFactory<TestEdge>() {
-			public TestEdge newInstance(String id, Node src, Node dst,
+		setEdgeFactory(new EdgeFactory<ToyEdge>() {
+			public ToyEdge newInstance(String id, Node src, Node dst,
 					boolean directed) {
-				return new TestEdge(id, (AbstractNode) src, (AbstractNode) dst,
+				return new ToyEdge(id, (AbstractNode) src, (AbstractNode) dst,
 						directed);
 			}
 		});
@@ -67,7 +67,7 @@ public class TestGraph extends AbstractGraph {
 		edgeList = new ArrayList<AbstractEdge>();
 	}
 
-	public TestGraph(String id) {
+	public ToyGraph(String id) {
 		this(id, true, false);
 	}
 
