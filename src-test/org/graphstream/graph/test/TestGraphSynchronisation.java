@@ -36,6 +36,7 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.graph.implementations.SingleGraph;
+import org.graphstream.graph.implementations.ToyGraph;
 import org.junit.Test;
 
 /**
@@ -56,6 +57,8 @@ public class TestGraphSynchronisation {
 		testGraphSyncBase(new AdjacencyListGraph("g1"), new AdjacencyListGraph(
 				"g2"));
 		testGraphSyncBase(new MultiGraph("g1"), new AdjacencyListGraph("g2"));
+		//testGraphSyncBase(new ToyGraph("g1"), new ToyGraph("g2")); // XXX
+		//testGraphSyncBase(new MultiGraph("g1"), new ToyGraph("g2")); // XXX
 	}
 
 	protected void testGraphSyncBase(Graph g1, Graph g2) {
@@ -178,6 +181,14 @@ public class TestGraphSynchronisation {
 				new AdjacencyListGraph("g2"), new AdjacencyListGraph("g3"));
 		testGraphSyncCycleSimple(new MultiGraph("g1"), new SingleGraph("g2"),
 				new AdjacencyListGraph("g3"));
+		
+		testGraphSyncCycleSimple(new ToyGraph("g1"), new ToyGraph("g2"),
+				new ToyGraph("g3")); // XXX
+		testGraphSyncCycleSimple(new MultiGraph("g1"), new SingleGraph("g2"),
+				new ToyGraph("g3")); // XXX
+		testGraphSyncCycleSimple(new ToyGraph("g1"), new SingleGraph("g2"),
+				new ToyGraph("g3")); // XX
+
 	}
 
 	protected void testGraphSyncCycleSimple(Graph g1, Graph g2, Graph g3) {
@@ -205,6 +216,14 @@ public class TestGraphSynchronisation {
 				new AdjacencyListGraph("g2"), new AdjacencyListGraph("g3"));
 		testGraphSyncCycleProblem(new MultiGraph("g1"), new SingleGraph("g2"),
 				new AdjacencyListGraph("g3"));
+
+		testGraphSyncCycleProblem(new ToyGraph("g1"), new ToyGraph("g2"),
+				new ToyGraph("g3")); // XXX
+		testGraphSyncCycleProblem(new MultiGraph("g1"), new SingleGraph("g2"),
+				new ToyGraph("g3")); // XXX
+		testGraphSyncCycleProblem(new ToyGraph("g1"), new SingleGraph("g2"),
+				new ToyGraph("g3")); // XX
+
 	}
 
 	protected void testGraphSyncCycleProblem(Graph g1, Graph g2, Graph g3) {

@@ -595,26 +595,37 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		// now we can finally add it
 		addEdgeCallback(edge);
 		modifCount++;
-		listeners.sendEdgeAdded(sourceId, timeId, edgeId, srcId, dstId, directed);
+		listeners.sendEdgeAdded(sourceId, timeId, edgeId, srcId, dstId,
+				directed);
 		return (T) edge;
 	}
 
 	@SuppressWarnings("unchecked")
 	protected <T extends Node> T removeNode_(String sourceId, long timeId,
 			AbstractNode node, String nodeId, boolean graphCallback) {
+
+		System.out.printf("%s node: src = %s time = %d node = %s\n", getId(),
+				sourceId, timeId, nodeId);
+
 		if (node == null) {
 			if (strictChecking)
 				throw new ElementNotFoundException("Node \"" + nodeId
 						+ "\" not found. Cannot remove it.");
 			return null;
 		}
+		
+		int deg = node.getDegree();
+
 		removeAllEdges(node);
 		if (graphCallback)
 			removeNodeCallback(node);
 		modifCount++;
-		listeners.sendNodeRemoved(sourceId, listeners.newEvent(), nodeId); 
-		// XXX changed timeId to listeners.newEvent()
+		
+		// ugly fix waiting for better times
 		// see the big discussion "Is the Graph active or passive?"
+		if (deg > 0 && sourceId.equals(getId()))
+			timeId = listeners.newEvent();
+		listeners.sendNodeRemoved(sourceId, timeId, nodeId); // XXX
 		return (T) node;
 	}
 
@@ -628,6 +639,9 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 						+ "\" not found. Cannot remove it.");
 			return null;
 		}
+
+		System.out.printf("%s edge: src = %s time = %d edge = %s\n", getId(),
+				sourceId, timeId, edgeId);
 
 		AbstractNode src = edge.getSourceNode();
 		AbstractNode dst = edge.getTargetNode();
