@@ -37,9 +37,21 @@ import org.graphstream.stream.file.dot.DOTParser;
 import org.graphstream.util.parser.Parser;
 import org.graphstream.util.parser.ParserFactory;
 
+/**
+ * Graph reader for GraphViz "dot" files.
+ * 
+ * In this format, edges have no identifier. By default an automatic identifier
+ * is added to each edge. You can add an identifier to an edge by adding an "id"
+ * attribute to the edge. For example :
+ * 
+ * <pre>
+ * A -- B [ id=AB ];
+ * </pre>
+ */
 public class FileSourceDOT extends FileSourceParser {
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.graphstream.stream.file.FileSourceParser#getNewFactory()
 	 */
 	public ParserFactory getNewParserFactory() {

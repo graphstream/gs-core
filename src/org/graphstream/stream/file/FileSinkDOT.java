@@ -146,13 +146,13 @@ public class FileSinkDOT extends FileSinkBase {
 
 	public void nodeAttributeAdded(String graphId, long timeId, String nodeId,
 			String attribute, Object value) {
-		out.printf("\t%s [ %s ];%n", nodeId,
+		out.printf("\t\"%s\" [ %s ];%n", nodeId,
 				outputAttribute(attribute, value, true));
 	}
 
 	public void nodeAttributeChanged(String graphId, long timeId,
 			String nodeId, String attribute, Object oldValue, Object newValue) {
-		out.printf("\t%s [ %s ];%n", nodeId,
+		out.printf("\t\"%s\" [ %s ];%n", nodeId,
 				outputAttribute(attribute, newValue, true));
 	}
 
@@ -164,15 +164,15 @@ public class FileSinkDOT extends FileSinkBase {
 	public void edgeAdded(String graphId, long timeId, String edgeId,
 			String fromNodeId, String toNodeId, boolean directed) {
 		if (digraph) {
-			out.printf("\t%s -> %s", fromNodeId, toNodeId);
+			out.printf("\t\"%s\" -> \"%s\"", fromNodeId, toNodeId);
 			
 			if (!directed)
-				out.printf(" -> %s", fromNodeId);
+				out.printf(" -> \"%s\"", fromNodeId);
 			
 			out.printf("\n;");
 		}
 		else
-			out.printf("\t%s -- %s;%n", fromNodeId, toNodeId);
+			out.printf("\t\"%s\" -- \"%s\";%n", fromNodeId, toNodeId);
 	}
 
 	public void edgeRemoved(String graphId, long timeId, String edgeId) {
@@ -184,7 +184,7 @@ public class FileSinkDOT extends FileSinkBase {
 	}
 
 	public void nodeAdded(String graphId, long timeId, String nodeId) {
-		out.printf("\t%s;%n", nodeId);
+		out.printf("\t\"%s\";%n", nodeId);
 	}
 
 	public void nodeRemoved(String graphId, long timeId, String nodeId) {
