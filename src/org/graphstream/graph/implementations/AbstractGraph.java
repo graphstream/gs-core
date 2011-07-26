@@ -157,8 +157,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	public <T extends Node> Iterable<? extends T> getEachNode() {
 		return new Iterable<T>() {
 			public Iterator<T> iterator() {
-				Iterator<T> it = getNodeIterator();
-				return new ImmutableIterator<T>(it);
+				return getNodeIterator();
 			}
 		};
 	}
@@ -171,8 +170,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	public <T extends Edge> Iterable<? extends T> getEachEdge() {
 		return new Iterable<T>() {
 			public Iterator<T> iterator() {
-				Iterator<T> it = getEdgeIterator();
-				return new ImmutableIterator<T>(it);
+				return getEdgeIterator();
 			}
 		};
 	}
@@ -186,8 +184,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	public <T extends Node> Collection<T> getNodeSet() {
 		return new AbstractCollection<T>() {
 			public Iterator<T> iterator() {
-				Iterator<T> it = getNodeIterator();
-				return new ImmutableIterator<T>(it);
+				return getNodeIterator();
 			}
 
 			public int size() {
@@ -205,8 +202,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	public <T extends Edge> Collection<T> getEdgeSet() {
 		return new AbstractCollection<T>() {
 			public Iterator<T> iterator() {
-				Iterator<T> it = getEdgeIterator();
-				return new ImmutableIterator<T>(it);
+				return getEdgeIterator();
 			}
 
 			public int size() {
@@ -954,29 +950,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 			if (sinkTime.isNewEvent(sourceId, timeId)) {
 				stepBegins_(sourceId, timeId, step);
 			}
-		}
-	}
-
-	// *** immutable iterators used for the views
-
-	protected static class ImmutableIterator<T> implements Iterator<T> {
-		private Iterator<T> it;
-
-		protected ImmutableIterator(Iterator<T> it) {
-			this.it = it;
-		}
-
-		public boolean hasNext() {
-			return it.hasNext();
-		}
-
-		public T next() {
-			return it.next();
-		}
-
-		public void remove() {
-			throw new UnsupportedOperationException(
-					"This iterator does not support remove.");
 		}
 	}
 }
