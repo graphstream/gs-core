@@ -57,8 +57,9 @@ public class TestGraphSynchronisation {
 		testGraphSyncBase(new AdjacencyListGraph("g1"), new AdjacencyListGraph(
 				"g2"));
 		testGraphSyncBase(new MultiGraph("g1"), new AdjacencyListGraph("g2"));
-		//testGraphSyncBase(new ToyGraph("g1"), new ToyGraph("g2")); // XXX
-		//testGraphSyncBase(new MultiGraph("g1"), new ToyGraph("g2")); // XXX
+		
+		testGraphSyncBase(new ToyGraph("g1"), new ToyGraph("g2")); // XXX
+		testGraphSyncBase(new MultiGraph("g1"), new ToyGraph("g2")); // XXX
 	}
 
 	protected void testGraphSyncBase(Graph g1, Graph g2) {

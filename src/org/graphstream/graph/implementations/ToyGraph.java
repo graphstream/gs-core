@@ -156,17 +156,19 @@ public class ToyGraph extends AbstractGraph {
 	}
 
 	/**
-	 * No need to check bounds here, your superclass has already done it for you
+	 * Your implementation is supposed to throw index out of bounds exception if
+	 * the index is bad. In our case we don't need to check because ArrayList
+	 * does it for us.
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	protected <T extends Edge> T getEdgeByIndex(int index) {
+	public <T extends Edge> T getEdge(int index) {
 		return (T) edgeList.get(index);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected <T extends Node> T getNodeByIndex(int index) {
+	public <T extends Node> T getNode(int index) {
 		return (T) nodeList.get(index);
 	}
 
@@ -242,7 +244,7 @@ public class ToyGraph extends AbstractGraph {
 				throw new IllegalStateException();
 			removeEdge(edgeList.get(iPrev), true, true, true);
 			// or just removeEdge(edgeList.get(iPrev));
-			
+
 			iNext = iPrev; // !!! the last element is now at position iPrev
 			iPrev = -1;
 			modifCount++;
@@ -278,10 +280,11 @@ public class ToyGraph extends AbstractGraph {
 			if (iPrev == -1)
 				throw new IllegalStateException();
 			AbstractNode removed = nodeList.get(iPrev);
-			modifCount += 1 + removed.getDegree(); // for the node and all it's adjacent edges
+			modifCount += 1 + removed.getDegree(); // for the node and all it's
+													// adjacent edges
 			removeNode(removed, true);
 			// or just removeNode(nodeList.get(iPrev));
-			
+
 			iNext = iPrev; // !!! the last element is now at position iPrev
 			iPrev = -1;
 		}

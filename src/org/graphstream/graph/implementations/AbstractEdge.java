@@ -12,8 +12,8 @@ import org.graphstream.stream.SourceBase.ElementType;
  * 
  * <p>
  * Although this class is abstract it implements all the methods of
- * {@link org.graphstream.graph#Edge} and
- * {@link org.graphstream.graph.implementations#AbstractElement}. It has a low
+ * {@link org.graphstream.graph.Edge} and
+ * {@link org.graphstream.graph.implementations.AbstractElement}. It has a low
  * memory overhead (3 references and a boolean as fields). All {@code Edge}
  * methods are executed in O(1) time.
  * </p>

@@ -29,6 +29,29 @@ import org.graphstream.ui.layout.Layouts;
 import org.graphstream.ui.swingViewer.GraphRenderer;
 import org.graphstream.ui.swingViewer.Viewer;
 
+/**
+ * <p>
+ * This class provides a basic implementation of
+ * {@link org.graphstream.graph.Graph} interface, to minimize the effort
+ * required to implement this interface. It provides event management
+ * implementing all the methods of {@link org.graphstream.stream.Pipe}. It also
+ * manages strict checking and auto-creation policies, as well as other services
+ * as displaying, reading and writing.
+ * </p>
+ * 
+ * <p>
+ * Subclasses have to maintain data structures allowing to efficiently access
+ * graph elements by their id or index and iterating on them. They also have to
+ * maintain coherent indices of the graph elements. When AbstractGraph decides
+ * to add or remove elements, it calls one of the "callbacks"
+ * {@link #addNodeCallback(AbstractNode)},
+ * {@link #addEdgeCallback(AbstractEdge)},
+ * {@link #removeNodeCallback(AbstractNode)},
+ * {@link #removeEdgeCallback(AbstractEdge)}, {@link #clearCallback()}. The role
+ * of these callbacks is to update the data structures and to re-index elements
+ * if necessary.
+ *</p>
+ */
 public abstract class AbstractGraph extends AbstractElement implements Graph {
 	// *** Fields ***
 
@@ -50,19 +73,30 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 
 	// *** Constructors ***
 
+	/**
+	 * The same as {@code AbstractGraph(id, true, false)}
+	 * 
+	 * @param id
+	 *            Identifier of the graph
+	 * @see #AbstractGraph(String, boolean, boolean)
+	 */
 	public AbstractGraph(String id) {
 		this(id, true, false);
 	}
 
+	/**
+	 * Creates a new graph. Subclasses must create their node and edge factories
+	 * and initialize their data structures in their constructors.
+	 * 
+	 * @param id
+	 * @param strictChecking
+	 * @param autoCreate
+	 */
 	public AbstractGraph(String id, boolean strictChecking, boolean autoCreate) {
 		super(id);
 		this.strictChecking = strictChecking;
 		this.autoCreate = autoCreate;
 		listeners = new GraphListeners();
-
-		// Subclasses must instanciate their factories and initialize their data
-		// structures
-
 	}
 
 	// *** Inherited from abstract element
@@ -99,33 +133,11 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 
 	public abstract <T extends Node> T getNode(String id);
 
-	public <T extends Node> T getNode(int index)
-			throws IndexOutOfBoundsException {
-		if (index < 0 || index >= getNodeCount()) {
-			if (strictChecking)
-				throw new IndexOutOfBoundsException("Node with index " + index
-						+ " does not exist");
-			return null;
-		}
-		return getNodeByIndex(index);
-	}
-
-	protected abstract <T extends Node> T getNodeByIndex(int index);
+	public abstract <T extends Node> T getNode(int index);
 
 	public abstract <T extends Edge> T getEdge(String id);
 
-	public <T extends Edge> T getEdge(int index)
-			throws IndexOutOfBoundsException {
-		if (index < 0 || index >= getEdgeCount()) {
-			if (strictChecking)
-				throw new IndexOutOfBoundsException("Edge with index " + index
-						+ "does not exist");
-			return null;
-		}
-		return getEdgeByIndex(index);
-	}
-
-	protected abstract <T extends Edge> T getEdgeByIndex(int index);
+	public abstract <T extends Edge> T getEdge(int index);
 
 	// node and edge count, iterators and views
 
@@ -137,6 +149,11 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 
 	public abstract <T extends Edge> Iterator<T> getEdgeIterator();
 
+	/**
+	 * This implementation uses {@link #getNodeIterator()}
+	 * 
+	 * @see org.graphstream.graph.Graph#getEachNode()
+	 */
 	public <T extends Node> Iterable<? extends T> getEachNode() {
 		return new Iterable<T>() {
 			public Iterator<T> iterator() {
@@ -146,6 +163,11 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		};
 	}
 
+	/**
+	 * This implementation uses {@link #getEdgeIterator()}
+	 * 
+	 * @see org.graphstream.graph.Graph#getEachEdge()
+	 */
 	public <T extends Edge> Iterable<? extends T> getEachEdge() {
 		return new Iterable<T>() {
 			public Iterator<T> iterator() {
@@ -155,6 +177,12 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		};
 	}
 
+	/**
+	 * This implementation uses {@link #getNodeIterator()} and
+	 * {@link #getNodeCount()}
+	 * 
+	 * @see org.graphstream.graph.Graph#getNodeSet()
+	 */
 	public <T extends Node> Collection<T> getNodeSet() {
 		return new AbstractCollection<T>() {
 			public Iterator<T> iterator() {
@@ -168,6 +196,12 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		};
 	}
 
+	/**
+	 * This implementation uses {@link #getEdgeIterator()} and
+	 * {@link #getEdgeCount()}
+	 * 
+	 * @see org.graphstream.graph.Graph#getNodeSet()
+	 */
 	public <T extends Edge> Collection<T> getEdgeSet() {
 		return new AbstractCollection<T>() {
 			public Iterator<T> iterator() {
@@ -181,6 +215,11 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		};
 	}
 
+	/**
+	 * This implementation returns {@link #getNodeIterator()}
+	 * 
+	 * @see java.lang.Iterable#iterator()
+	 */
 	public Iterator<Node> iterator() {
 		return getNodeIterator();
 	}
@@ -271,12 +310,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 
 	public <T extends Edge> T addEdge(String id, Node from, Node to,
 			boolean directed) {
-		if (from == null || to == null) {
-			if (strictChecking)
-				throw new ElementNotFoundException(
-						"Cannot create edge with null endpoints");
-			return null;
-		}
 		return addEdge_(getId(), listeners.newEvent(), id, (AbstractNode) from,
 				from.getId(), (AbstractNode) to, to.getId(), directed);
 	}
@@ -291,11 +324,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	}
 
 	public <T extends Node> T removeNode(Node node) {
-		if (node == null) {
-			if (strictChecking)
-				throw new ElementNotFoundException("Cannot remove null node");
-			return null;
-		}
 		return removeNode_(getId(), listeners.newEvent(), (AbstractNode) node,
 				node.getId(), true);
 	}
@@ -310,16 +338,21 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	}
 
 	public <T extends Edge> T removeEdge(Edge edge) {
-		if (edge == null) {
-			if (strictChecking)
-				throw new ElementNotFoundException("Cannot remove null edge");
-			return null;
-		}
 		return removeEdge_(getId(), listeners.newEvent(), (AbstractEdge) edge,
 				edge.getId(), true, true, true);
 	}
 
 	public <T extends Edge> T removeEdge(String from, String to) {
+		Node fromNode = getNode(from);
+		Node toNode = getNode(to);
+		if (fromNode == null || toNode == null) {
+			if (strictChecking)
+				throw new ElementNotFoundException(
+						"Cannot remove the edge. The node \""
+								+ (fromNode == null ? from : to)
+								+ "\" does not exist");
+			return null;
+		}
 		return removeEdge(getNode(from), getNode(to));
 	}
 
@@ -328,12 +361,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	}
 
 	public <T extends Edge> T removeEdge(Node node1, Node node2) {
-		if (node1 == null || node2 == null) {
-			if (strictChecking)
-				throw new ElementNotFoundException(
-						"Cannot remove the edge. One of its endpoints does not exist");
-			return null;
-		}
 		AbstractEdge edge = node1.getEdgeToward(node2);
 		if (edge == null) {
 			if (strictChecking)
@@ -509,14 +536,50 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 
 	// *** callbacks maintaining user's data structure
 
+	/**
+	 * This method is automatically called when a new node is created.
+	 * Subclasses must add the new node to their data structure and to set its
+	 * index correctly.
+	 * 
+	 * @param node
+	 *            the node to be added
+	 */
 	protected abstract void addNodeCallback(AbstractNode node);
 
+	/**
+	 * This method is automatically called when a new edge is created.
+	 * Subclasses must add the new edge to their data structure and to set its
+	 * index correctly.
+	 * 
+	 * @param edge
+	 *            the edge to be added
+	 */
 	protected abstract void addEdgeCallback(AbstractEdge edge);
 
+	/**
+	 * This method is automatically called when a node is removed. Subclasses
+	 * must remove the node from their data structures and to re-index other
+	 * node(s) so that node indices remain coherent.
+	 * 
+	 * @param node
+	 *            the node to be removed
+	 */
 	protected abstract void removeNodeCallback(AbstractNode node);
 
+	/**
+	 * This method is automatically called when an edge is removed. Subclasses
+	 * must remove the edge from their data structures and re-index other
+	 * edge(s) so that edge indices remain coherent.
+	 * 
+	 * @param edge
+	 *            the edge to be removed
+	 */
 	protected abstract void removeEdgeCallback(AbstractEdge edge);
 
+	/**
+	 * This method is automatically called when the graph is cleared. Subclasses
+	 * must remove all the nodes and all the edges from their data structures.
+	 */
 	protected abstract void clearCallback();
 
 	// *** _ methods ***
@@ -604,28 +667,25 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	protected <T extends Node> T removeNode_(String sourceId, long timeId,
 			AbstractNode node, String nodeId, boolean graphCallback) {
 
-		System.out.printf("%s node: src = %s time = %d node = %s\n", getId(),
-				sourceId, timeId, nodeId);
-
 		if (node == null) {
 			if (strictChecking)
 				throw new ElementNotFoundException("Node \"" + nodeId
 						+ "\" not found. Cannot remove it.");
 			return null;
 		}
-		
+
 		int deg = node.getDegree();
 
 		removeAllEdges(node);
 		if (graphCallback)
 			removeNodeCallback(node);
 		modifCount++;
-		
-		// ugly fix waiting for better times
+
+		// XXX ugly fix waiting for better times
 		// see the big discussion "Is the Graph active or passive?"
 		if (deg > 0 && sourceId.equals(getId()))
 			timeId = listeners.newEvent();
-		listeners.sendNodeRemoved(sourceId, timeId, nodeId); // XXX
+		listeners.sendNodeRemoved(sourceId, timeId, nodeId);
 		return (T) node;
 	}
 
@@ -639,9 +699,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 						+ "\" not found. Cannot remove it.");
 			return null;
 		}
-
-		System.out.printf("%s edge: src = %s time = %d edge = %s\n", getId(),
-				sourceId, timeId, edgeId);
 
 		AbstractNode src = edge.getSourceNode();
 		AbstractNode dst = edge.getTargetNode();
@@ -699,17 +756,61 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 
 	// *** Methods for iterators ***
 
+	/**
+	 * This method is similar to {@link #removeNode(Node)} but allows to control
+	 * if {@link #removeNodeCallback(AbstractNode)} is called or not. It is
+	 * useful for iterators supporting {@link java.util.Iterator#remove()} who
+	 * want to update the data structures by their owns.
+	 * 
+	 * @param node
+	 *            the node to be removed
+	 * @param graphCallback
+	 *            if {@code false}, {@code removeNodeCallback(node)} is not
+	 *            called
+	 */
 	protected void removeNode(AbstractNode node, boolean graphCallback) {
 		removeNode_(getId(), listeners.newEvent(), node, node.getId(),
 				graphCallback);
 	}
 
+	/**
+	 * This method is similar to {@link #removeEdge(Edge)} but allows to control
+	 * if different callbacks are called or not. It is useful for iterators
+	 * supporting {@link java.util.Iterator#remove()} who want to update the
+	 * data structures by their owns.
+	 * 
+	 * @param node
+	 *            the node to be removed
+	 * @param graphCallback
+	 *            if {@code false}, {@link #removeEdgeCallback(AbstractEdge)} of
+	 *            the graph is not called
+	 * @param sourceCallback
+	 *            if {@code false},
+	 *            {@link AbstractNode#removeEdgeCallback(AbstractEdge)} is not
+	 *            called for the source node of the edge
+	 * @param targetCallback
+	 *            if {@code false},
+	 *            {@link AbstractNode#removeEdgeCallback(AbstractEdge)} is not
+	 *            called for the target node of the edge
+	 */
 	protected void removeEdge(AbstractEdge edge, boolean graphCallback,
-			boolean srcCallback, boolean dstCallback) {
+			boolean sourceCallback, boolean targetCallback) {
 		removeEdge_(getId(), listeners.newEvent(), edge, edge.getId(),
-				graphCallback, srcCallback, dstCallback);
+				graphCallback, sourceCallback, targetCallback);
 	}
 
+	/**
+	 * This method returns the number of structural modifications made in the
+	 * graph since its creation. Structural modifications are: adding an
+	 * element, removing an element, and clearing the graph. It can be useful
+	 * for iterators that want to have fail-fast behavior. They can remember
+	 * the value returned by this method when they are created. If this value is not the same
+	 * later this means that the graph structure has changed. In this case the
+	 * iterators can throw {@link java.util.ConcurrentModificationException}.
+	 * 
+	 * @return the number of structural modifications made in the
+	 * graph since its creation
+	 */
 	protected int getModifCount() {
 		return modifCount;
 	}

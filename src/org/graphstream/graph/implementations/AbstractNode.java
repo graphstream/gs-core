@@ -22,10 +22,10 @@ import org.graphstream.stream.SourceBase;
  * {@link org.graphstream.graph.implementations#AbstractElement} and most of the
  * methods of {@link org.graphstream.graph#Node} (there are "only" ten abstract
  * methods). In addition to these, subclasses must provide implementations for
- * {@link #addEdgeCallback(AbstractEdge)} and {@link #removeEdgeCallback(AbstractEdge)} which
- * are called by the parent graph when an edge incident to this node is added to
- * or removed from the graph. This class has a low memory overhead (one
- * reference as field).
+ * {@link #addEdgeCallback(AbstractEdge)} and
+ * {@link #removeEdgeCallback(AbstractEdge)} which are called by the parent
+ * graph when an edge incident to this node is added to or removed from the
+ * graph. This class has a low memory overhead (one reference as field).
  * </p>
  */
 public abstract class AbstractNode extends AbstractElement implements Node {
@@ -59,9 +59,9 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	protected void attributeChanged(String sourceId, long timeId,
 			String attribute, AttributeChangeEvent event, Object oldValue,
 			Object newValue) {
-			graph.listeners.sendAttributeChangedEvent(sourceId, timeId, getId(),
-					SourceBase.ElementType.NODE, attribute, event, oldValue,
-					newValue);
+		graph.listeners.sendAttributeChangedEvent(sourceId, timeId, getId(),
+				SourceBase.ElementType.NODE, attribute, event, oldValue,
+				newValue);
 
 	}
 
@@ -328,7 +328,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 		return new AbstractCollection<T>() {
 			@Override
 			public Iterator<T> iterator() {
-				Iterator<T> it =  getEdgeIterator();
+				Iterator<T> it = getEdgeIterator();
 				return new AbstractGraph.ImmutableIterator<T>(it);
 			}
 
@@ -410,7 +410,8 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 			}
 
 			public void remove() {
-				throw new UnsupportedOperationException("This iterator does not support remove");
+				throw new UnsupportedOperationException(
+						"This iterator does not support remove");
 			}
 		};
 	}
@@ -460,8 +461,8 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	// *** Other methods ***
 
 	/**
-	 * This method must be called by the constructors of the edges incident to
-	 * this node. Subclasses use it to add the edge to their data structure.
+	 * This method is called automatically when an edge incident to this node is
+	 * created. Subclasses use it to add the edge to their data structure.
 	 * 
 	 * @param edge
 	 *            a new edge incident to this node
@@ -469,14 +470,20 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	protected abstract boolean addEdgeCallback(AbstractEdge edge);
 
 	/**
-	 * This method must be called before removing an edge incident to this node.
-	 * Subclasses use it to remove the edge from their data structure.
+	 * This method is called automatically before removing an edge incident to
+	 * this node. Subclasses use it to remove the edge from their data
+	 * structure.
 	 * 
 	 * @param edge
 	 *            an edge incident to this node that will be removed
 	 */
 	protected abstract void removeEdgeCallback(AbstractEdge edge);
-	
+
+	/**
+	 * This method is called for each node when the graph is cleared. Subclasses
+	 * may use it to clear their data structures in order to facilitate the
+	 * garbage collection.
+	 */
 	protected abstract void clearCallback();
 
 	/**
@@ -506,8 +513,8 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	}
 
 	/**
-	 * Checks if an edge is incident to this node. Utility method that can be useful in
-	 * subclasses.
+	 * Checks if an edge is incident to this node. Utility method that can be
+	 * useful in subclasses.
 	 * 
 	 * @param e
 	 *            an edge
