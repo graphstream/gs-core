@@ -36,8 +36,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-import java.util.HashSet;
 
 import org.graphstream.graph.CompoundAttribute;
 import org.graphstream.graph.Element;

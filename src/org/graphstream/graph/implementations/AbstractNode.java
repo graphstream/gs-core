@@ -4,8 +4,8 @@ import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.graphstream.graph.BreadthFirstIterator;
-import org.graphstream.graph.DepthFirstIterator;
+import org.graphstream.graph.BreadthFirstIteratorIndexed;
+import org.graphstream.graph.DepthFirstIteratorIndexed;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -419,7 +419,9 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	 * @see org.graphstream.graph.Node#getBreadthFirstIterator()
 	 */
 	public <T extends Node> Iterator<T> getBreadthFirstIterator() {
-		return new BreadthFirstIterator<T>(this);
+		// XXX change it when the old iterator disappears
+		// XXX change the return type to have access to the other methods
+		return new BreadthFirstIteratorIndexed<T>(this);
 	}
 
 	/**
@@ -429,7 +431,9 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	 * @see org.graphstream.graph.Node#getBreadthFirstIterator(boolean)
 	 */
 	public <T extends Node> Iterator<T> getBreadthFirstIterator(boolean directed) {
-		return new BreadthFirstIterator<T>(this, directed);
+		// XXX change it when the old iterator disappears
+		// XXX change the return type to have access to the other methods
+		return new BreadthFirstIteratorIndexed<T>(this, directed);
 	}
 
 	/**
@@ -439,7 +443,9 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	 * @see org.graphstream.graph.Node#getDepthFirstIterator()
 	 */
 	public <T extends Node> Iterator<T> getDepthFirstIterator() {
-		return new DepthFirstIterator<T>(this);
+		// XXX change it when the old iterator disappears
+		// XXX change the return type to have access to the other methods
+		return new DepthFirstIteratorIndexed<T>(this);
 	}
 
 	/**
@@ -449,7 +455,9 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	 * @see org.graphstream.graph.Node#getDepthFirstIterator(boolean)
 	 */
 	public <T extends Node> Iterator<T> getDepthFirstIterator(boolean directed) {
-		return new DepthFirstIterator<T>(this, directed);
+		// XXX change it when the old iterator disappears
+		// XXX change the return type to have access to the other methods
+		return new DepthFirstIteratorIndexed<T>(this, directed);
 	}
 
 	// *** Other methods ***
