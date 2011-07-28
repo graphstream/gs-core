@@ -30,7 +30,12 @@
  */
 package org.graphstream.graph.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.HashSet;
 
@@ -41,7 +46,7 @@ import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.graph.implementations.MultiNode;
 import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.graph.implementations.ToyGraph;
+import org.graphstream.graph.implementations.ALGraph;
 import org.junit.Test;
 
 public class TestGraph {
@@ -50,7 +55,7 @@ public class TestGraph {
 		testBasic(new SingleGraph("sg"));
 		testBasic(new MultiGraph("mg"));
 		testBasic(new AdjacencyListGraph("alg"));
-		testBasic(new ToyGraph("toy")); // XXX
+		testBasic(new ALGraph("toy")); // XXX
 	}
 
 	protected void testBasic(Graph graph) {
@@ -162,7 +167,7 @@ public class TestGraph {
 		testDirected(new SingleGraph("sg"));
 		testDirected(new MultiGraph("mg"));
 		// testDirected( new AdjacencyListGraph( "alg" ) );
-		testDirected(new ToyGraph("toy")); // XXX
+		testDirected(new ALGraph("toy")); // XXX
 	}
 
 	protected void testDirected(Graph graph) {
@@ -293,7 +298,7 @@ public class TestGraph {
 		testIterables(new SingleGraph("sg"));
 		testIterables(new MultiGraph("mg"));
 		// testIterables( new AdjacencyListGraph( "alg" ) );
-		testIterables(new ToyGraph("toy")); // XXX
+		testIterables(new ALGraph("toy")); // XXX
 	}
 
 	protected void testIterables(Graph graph) {
@@ -434,7 +439,7 @@ public class TestGraph {
 		testRemoval(new SingleGraph("sg"));
 		testRemoval(new MultiGraph("mg"));
 		// testRemoval( new AdjacencyListGraph( "alg" ) );
-		testRemoval(new ToyGraph("toy")); // XXX
+		testRemoval(new ALGraph("toy")); // XXX
 	}
 
 	public void testRemoval(Graph graph) {
@@ -517,7 +522,7 @@ public class TestGraph {
 		testGraphListener(new SingleGraph("sg"));
 		testGraphListener(new MultiGraph("mg"));
 		// testGraphListener( new AdjacencyListGraph( "alg" ) );
-		testGraphListener(new ToyGraph("toy")); // XXX
+		testGraphListener(new ALGraph("toy")); // XXX
 	}
 
 	protected void testGraphListener(Graph input) {

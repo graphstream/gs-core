@@ -58,7 +58,7 @@ import org.graphstream.graph.NullAttributeException;
 public abstract class AbstractElement implements Element {
 	// Attribute
 
-	protected static Set<String> emptySet = new HashSet<String>();
+//	protected static Set<String> emptySet = new HashSet<String>();
 	
 	/**
 	 * Tag of this element.
@@ -430,14 +430,14 @@ public abstract class AbstractElement implements Element {
 		if (attributes != null)
 			return attributes.keySet();
 
-		return emptySet;
+		return Collections.emptySet();
 	}
 	
 	public Collection<String> getAttributeKeySet() {
 		if (attributes != null)
 			return (Collection<String>) Collections.unmodifiableCollection(attributes.keySet());
 		
-		return (Collection<String>) Collections.unmodifiableCollection(emptySet);
+		return Collections.emptySet();
 	}
 
 	// public Map<String,Object> getAttributeMap()

@@ -35,7 +35,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	/**
 	 * The graph to which this node belongs
 	 */
-	private AbstractGraph graph;
+	protected AbstractGraph graph;
 
 	// *** Constructors
 

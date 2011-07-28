@@ -25,22 +25,22 @@ public abstract class AbstractEdge extends AbstractElement implements Edge {
 	/**
 	 * The source node
 	 */
-	private AbstractNode source;
+	protected AbstractNode source;
 
 	/**
 	 * The target node
 	 */
-	private AbstractNode target;
+	protected AbstractNode target;
 
 	/**
 	 * Is this edge directed ?
 	 */
-	private boolean directed;
+	protected boolean directed;
 
 	/**
 	 * The graph to which this edge belongs
 	 */
-	private AbstractGraph graph;
+	protected AbstractGraph graph;
 
 	// *** Constructors ***
 
