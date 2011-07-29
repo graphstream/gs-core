@@ -23,7 +23,11 @@ public class TestPerformance {
 	long start, end;
 
 	static enum Measures {
-		MEMORY, NODE_BY_ID, EDGE_BY_ID, GRAPH_NODE_IT, GRAPH_EDGE_IT, NODE_EDGE_IT, NODE_ENTERING_EDGE_IT, NODE_LEAVING_EDGE_IT, NODE_NEIGHBOR_IT, NODE_GET_EDGE, BFS_IT, DFS_IT, EDGE_BETWEEN, EDGE_FROM, EDGE_TOWARD, ADD_NODE, ADD_EDGE, REMOVE_NODE, REMOVE_EDGE
+		MEMORY, NODE_BY_ID, EDGE_BY_ID, GRAPH_NODE_IT, GRAPH_EDGE_IT, 
+		NODE_EDGE_IT, NODE_ENTERING_EDGE_IT, NODE_LEAVING_EDGE_IT, 
+		NODE_NEIGHBOR_IT, NODE_GET_EDGE, BFS_IT, DFS_IT, TRIANGLE, 
+		EDGE_BETWEEN, EDGE_FROM, EDGE_TOWARD, 
+		ADD_NODE, ADD_EDGE, REMOVE_NODE, REMOVE_EDGE
 	}
 
 	EnumMap<Measures, Long> measureValues;
@@ -329,6 +333,28 @@ public class TestPerformance {
 		end = System.currentTimeMillis();
 		measureValues.put(Measures.REMOVE_EDGE, end - start);
 	}
+	
+	public int testTriangleCount() {
+		start = System.currentTimeMillis();
+		int count = 0;
+		for (Node n0 : g) {
+			Iterator<Edge> it1 = n0.getEdgeIterator();
+			while (it1.hasNext()) {
+				Node n1 = it1.next().getOpposite(n0);
+				String n1id = n1.getId();
+				if (n0 == n1) continue;
+				Iterator<Edge> it2 = n0.getEdgeIterator();
+				while (it2.hasNext()) {
+					Node n2 = it2.next().getOpposite(n0);
+					if (n2 != n0 && n2 != n1 && n2.hasEdgeBetween(n1id))
+						count++;
+				}
+			}
+		}
+		end = System.currentTimeMillis();
+		measureValues.put(Measures.TRIANGLE, end - start);
+		return count / 3;
+	}
 
 	public static void latexOutput(TestPerformance[] tests, PrintStream ps) {
 		String header = "\\begin{tabular}{|l|";
@@ -345,6 +371,9 @@ public class TestPerformance {
 		ps.println("\\hline");
 
 		for (Measures m : Measures.values()) {
+			// skip if not measured
+			if (!tests[0].measureValues.containsKey(m))
+				continue;
 			ps.printf("%35s ", "\\lstinline~" + m.name() + "~");
 			for (TestPerformance t : tests) {
 				double val = t.measureValues.get(m);
@@ -361,31 +390,35 @@ public class TestPerformance {
 	}
 
 	public static void main(String[] args) {
-		String fileName = args[0];
-		// String fileName = "/home/stefan/tmp/yoann/test.dgs";
+		// String fileName = args[0];
+		String fileName = "/home/stefan/tmp/imdb/imdb-full.dgs";
 		int gCount = 4;
 		Graph[] graphs = new Graph[gCount];
 		graphs[0] = new SingleGraph("Single");
 		graphs[1] = new MultiGraph("Multi");
 		graphs[2] = new AdjacencyListGraph("Adj");
 		graphs[3] = new ALGraph("AL");
+		
 
 		TestPerformance[] tests = new TestPerformance[gCount];
 		for (int i = 0; i < gCount; i++) {
-			System.out.println("Loading graph " + i);
+			System.out.println("Loading graph " + graphs[i].getId());
 			tests[i] = new TestPerformance(fileName, graphs[i]);
-			System.out.println("  Testing access by id");
-			tests[i].testAccessById();
-			System.out.println("  Testing graph iterators");
-			tests[i].testGraphIterators();
-			System.out.println("  Testing node iterators");
-			tests[i].testNodeIterators();
-			System.out.println("  Testing BFS and DFS iterators");
-			tests[i].testBfsDfs();
-			System.out.println("  Testing finding edges");
-			tests[i].testFindEdge();
-			System.out.println("  Testing add / remove");
-			tests[i].testAddRemove();
+//			System.out.println("  Testing access by id");
+//			tests[i].testAccessById();
+//			System.out.println("  Testing graph iterators");
+//			tests[i].testGraphIterators();
+//			System.out.println("  Testing node iterators");
+//			tests[i].testNodeIterators();
+//			System.out.println("  Testing BFS and DFS iterators");
+//			tests[i].testBfsDfs();
+//			System.out.println("  Testing finding edges");
+//			tests[i].testFindEdge();
+//			System.out.println("  Testing add / remove");
+//			tests[i].testAddRemove();
+			System.out.println("  Testing triangles");
+			int t = tests[i].testTriangleCount();
+			System.out.println(t + " triangles");
 			tests[i].g.clear();
 			tests[i].nodeIds.clear();
 			tests[i].nodeIds = null;
