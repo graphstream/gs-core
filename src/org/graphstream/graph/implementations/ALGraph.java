@@ -170,13 +170,21 @@ public class ALGraph extends AbstractGraph {
 		return new Iterator<T>() {
 			int iNext = 0;
 			int iPrev = -1;
+//			int modifCount = getModifCount();
+//			
+//			protected void concurrentCheck() {
+//				if (modifCount != getModifCount())
+//					throw new ConcurrentModificationException();
+//			}
 
 			public boolean hasNext() {
+//				concurrentCheck();
 				return iNext < edgeCount;
 			}
 
 			@SuppressWarnings("unchecked")
 			public T next() {
+//				concurrentCheck();
 				if (iNext >= edgeCount)
 					throw new NoSuchElementException();
 				iPrev = iNext++;
@@ -185,11 +193,13 @@ public class ALGraph extends AbstractGraph {
 
 			@Override
 			public void remove() {
+//				concurrentCheck();
 				if (iPrev == -1)
 					throw new IllegalStateException();
 				removeEdge(edgeArray[iPrev], true, true, true);
 				iNext = iPrev;
 				iPrev = -1;
+//				modifCount = getModifCount();
 			}
 		};
 	}
@@ -200,13 +210,21 @@ public class ALGraph extends AbstractGraph {
 		return new Iterator<T>() {
 			int iNext = 0;
 			int iPrev = -1;
+//			int modifCount = getModifCount();
+//			
+//			protected void concurrentCheck() {
+//				if (modifCount != getModifCount())
+//					throw new ConcurrentModificationException();
+//			}
 
 			public boolean hasNext() {
+//				concurrentCheck();
 				return iNext < nodeCount;
 			}
 
 			@SuppressWarnings("unchecked")
 			public T next() {
+//				concurrentCheck();
 				if (iNext >= nodeCount)
 					throw new NoSuchElementException();
 				iPrev = iNext++;
@@ -215,11 +233,13 @@ public class ALGraph extends AbstractGraph {
 
 			@Override
 			public void remove() {
+//				concurrentCheck();
 				if (iPrev == -1)
 					throw new IllegalStateException();
 				removeNode(nodeArray[iPrev], true);
 				iNext = iPrev;
 				iPrev = -1;
+//				modifCount = getModifCount();
 			}
 		};
 	}
@@ -232,4 +252,5 @@ public class ALGraph extends AbstractGraph {
 			count += n.edges.length - n.degree;
 		return count;
 	}
+	
 }

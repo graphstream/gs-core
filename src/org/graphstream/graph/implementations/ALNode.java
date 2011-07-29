@@ -169,6 +169,12 @@ public class ALNode extends AbstractNode {
 	
 	protected class EdgeIterator<T extends Edge> implements Iterator<T> {
 		protected int iPrev, iNext, iEnd;
+//		int modifCount = graph.getModifCount();
+		
+//		protected void concurrentCheck() {
+//			if (modifCount != graph.getModifCount())
+//				throw new ConcurrentModificationException();
+//		}
 
 		protected EdgeIterator(char type) {
 			iPrev = -1;
@@ -181,11 +187,13 @@ public class ALNode extends AbstractNode {
 		}
 
 		public boolean hasNext() {
+//			concurrentCheck();
 			return iNext < iEnd;
 		}
 
 		@SuppressWarnings("unchecked")
 		public T next() {
+//			concurrentCheck();
 			if (iNext >= iEnd)
 				throw new NoSuchElementException();
 			iPrev = iNext++;
@@ -193,6 +201,7 @@ public class ALNode extends AbstractNode {
 		}
 
 		public void remove() {
+//			concurrentCheck();
 			if (iPrev == -1)
 				throw new IllegalStateException();
 			AbstractEdge e = edges[iPrev];
@@ -203,6 +212,7 @@ public class ALNode extends AbstractNode {
 			iNext = iPrev;
 			iPrev = -1;
 			iEnd--;
+//			modifCount = graph.getModifCount();
 		}
 	}
 
