@@ -1,7 +1,6 @@
 package org.graphstream.graph.implementations;
 
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -141,33 +140,23 @@ public class ToyNode extends AbstractNode {
 	 * way except through the iterator's own remove method, the iterator will
 	 * throw a ConcurrentModificationException instead of risking arbitrary,
 	 * non-deterministic behavior. To implement this, they can use the
-	 * getModifCount method of their graph.
-	 * </p>
+	 * getModifCount method of their graph. </p>
 	 * 
 	 * <p>
 	 * They are free to support remove or to throw
 	 * UnsupportedOperationException, but the first option is preferable. If
 	 * remove is supported, special care must be taken (see below).
 	 */
-	private class edgeIterator<T extends Edge> implements Iterator<T> {
+	private class EdgeIterator<T extends Edge> implements Iterator<T> {
 		private Iterator<AbstractEdge> it = edges.iterator();
-		AbstractGraph g = (AbstractGraph) ToyNode.this.getGraph();
-		private int modifCount = g.getModifCount();
 		AbstractEdge previous = null;
 
-		private void checkModifCount() {
-			if (g.getModifCount() != modifCount)
-				throw new ConcurrentModificationException();
-		}
-
 		public boolean hasNext() {
-			checkModifCount();
 			return it.hasNext();
 		}
 
 		@SuppressWarnings("unchecked")
 		public T next() {
-			checkModifCount();
 			previous = it.next();
 			return (T) previous;
 		}
@@ -182,33 +171,24 @@ public class ToyNode extends AbstractNode {
 		 * edges without calling their nodes' callback.
 		 */
 		public void remove() {
-			checkModifCount();
 			it.remove();
-			g.removeEdge(previous, true,
+			graph.removeEdge(previous, true,
 					previous.getSourceNode() != ToyNode.this, previous
 							.getTargetNode() != ToyNode.this);
-			modifCount++;
 		}
 	}
 
 	/**
 	 * Here we will use indices to show a different implementation
 	 */
-	private class directedEdgeIterator<T extends Edge> implements Iterator<T> {
-		private AbstractGraph g = (AbstractGraph) ToyNode.this.getGraph();
-		private int modifCount = g.getModifCount();
+	private class DirectedEdgeIterator<T extends Edge> implements Iterator<T> {
 		private int iPrev = -1;
 		private int iNext = -1;
 		private boolean entering;
 
-		protected directedEdgeIterator(boolean entering) {
+		protected DirectedEdgeIterator(boolean entering) {
 			this.entering = entering;
 			gotoNext();
-		}
-
-		private void checkModifCount() {
-			if (g.getModifCount() != modifCount)
-				throw new ConcurrentModificationException();
 		}
 
 		private void gotoNext() {
@@ -223,7 +203,6 @@ public class ToyNode extends AbstractNode {
 		}
 
 		public boolean hasNext() {
-			checkModifCount();
 			return iNext < edges.size();
 		}
 
@@ -237,30 +216,32 @@ public class ToyNode extends AbstractNode {
 		}
 
 		public void remove() {
-			checkModifCount();
 			if (iPrev == -1)
 				throw new IllegalStateException();
 			AbstractEdge e = edges.remove(iPrev);
 			iNext--;
-			g.removeEdge(e, true, e.getSourceNode() != ToyNode.this, e
+			graph.removeEdge(e, true, e.getSourceNode() != ToyNode.this, e
 					.getTargetNode() != ToyNode.this);
-			modifCount++;
 		}
 
 	}
 
+	/**
+	 * Don't forget to return fail-fast iterators
+	 */
 	@Override
 	public <T extends Edge> Iterator<T> getEdgeIterator() {
-		return new edgeIterator<T>();
+		return new FailFastIterator<T>(new EdgeIterator<T>(), graph);
 	}
 
 	@Override
 	public <T extends Edge> Iterator<T> getEnteringEdgeIterator() {
-		return new directedEdgeIterator<T>(true);
+		return new FailFastIterator<T>(new DirectedEdgeIterator<T>(true), graph);
 	}
 
 	@Override
 	public <T extends Edge> Iterator<T> getLeavingEdgeIterator() {
-		return new directedEdgeIterator<T>(false);
+		return new FailFastIterator<T>(new DirectedEdgeIterator<T>(false),
+				graph);
 	}
 }

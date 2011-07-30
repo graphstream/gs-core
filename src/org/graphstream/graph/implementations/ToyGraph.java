@@ -1,7 +1,6 @@
 package org.graphstream.graph.implementations;
 
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -185,38 +184,23 @@ public class ToyGraph extends AbstractGraph {
 	// Now let's take care of iterators
 
 	/**
-	 * Iterators are kindly invited to be fail-fast: if the graph is
-	 * structurally modified at any time after the iterator is created, in any
-	 * way except through the iterator's own remove method, the iterator will
-	 * throw a ConcurrentModificationException instead of risking arbitrary,
-	 * non-deterministic behavior. To implement this, they can use the
-	 * getModifCount method of their graph.
-	 * 
-	 * They are free to support remove or to throw
+	 * Iterators are free to support remove or to throw
 	 * UnsupportedOperationException, but the first option is preferable. If
 	 * remove is supported, special care must be taken (see below).
 	 * 
 	 * Here we will not use the list iterator because we have to maintain
 	 * indices when removing edges
 	 */
-	private class edgeIterator<T extends Edge> implements Iterator<T> {
+	private class EdgeIterator<T extends Edge> implements Iterator<T> {
 		private int iPrev = -1;
 		private int iNext = 0;
-		private int modifCount = getModifCount();
-
-		private void checkModif() {
-			if (modifCount != getModifCount())
-				throw new ConcurrentModificationException();
-		}
 
 		public boolean hasNext() {
-			checkModif();
 			return iNext < edgeList.size();
 		}
 
 		@SuppressWarnings("unchecked")
 		public T next() {
-			checkModif();
 			if (!hasNext())
 				throw new NoSuchElementException();
 			iPrev = iNext++;
@@ -239,7 +223,6 @@ public class ToyGraph extends AbstractGraph {
 		 * these done by removeEdgeCallback() so we will not block its call.
 		 */
 		public void remove() {
-			checkModif();
 			if (iPrev == -1)
 				throw new IllegalStateException();
 			removeEdge(edgeList.get(iPrev), true, true, true);
@@ -247,28 +230,19 @@ public class ToyGraph extends AbstractGraph {
 
 			iNext = iPrev; // !!! the last element is now at position iPrev
 			iPrev = -1;
-			modifCount++;
 		}
 	}
 
-	private class nodeIterator<T extends Node> implements Iterator<T> {
+	private class NodeIterator<T extends Node> implements Iterator<T> {
 		private int iPrev = -1;
 		private int iNext = 0;
-		private int modifCount = getModifCount();
-
-		private void checkModif() {
-			if (modifCount != getModifCount())
-				throw new ConcurrentModificationException();
-		}
 
 		public boolean hasNext() {
-			checkModif();
 			return iNext < nodeList.size();
 		}
 
 		@SuppressWarnings("unchecked")
 		public T next() {
-			checkModif();
 			if (!hasNext())
 				throw new NoSuchElementException();
 			iPrev = iNext++;
@@ -276,12 +250,9 @@ public class ToyGraph extends AbstractGraph {
 		}
 
 		public void remove() {
-			checkModif();
 			if (iPrev == -1)
 				throw new IllegalStateException();
 			AbstractNode removed = nodeList.get(iPrev);
-			modifCount += 1 + removed.getDegree(); // for the node and all it's
-													// adjacent edges
 			removeNode(removed, true);
 			// or just removeNode(nodeList.get(iPrev));
 
@@ -290,13 +261,22 @@ public class ToyGraph extends AbstractGraph {
 		}
 	}
 
+	/**
+	 * Iterators should be fail-fast : if the graph is structurally modified at
+	 * any time after the iterator is created, in any way except through the
+	 * iterator's own remove method, the iterator will throw a
+	 * {@link java.util.ConcurrentModificationException} instead of risking
+	 * arbitrary, non-deterministic behavior.
+	 * 
+	 * The class FailFastIterator takes care of this.
+	 */
 	@Override
 	public <T extends Edge> Iterator<T> getEdgeIterator() {
-		return new edgeIterator<T>();
+		return new FailFastIterator<T>(new EdgeIterator<T>(), this);
 	}
 
 	@Override
 	public <T extends Node> Iterator<T> getNodeIterator() {
-		return new nodeIterator<T>();
+		return new FailFastIterator<T>(new NodeIterator<T>(), this);
 	}
 }

@@ -61,12 +61,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	private NodeFactory<? extends AbstractNode> nodeFactory;
 	private EdgeFactory<? extends AbstractEdge> edgeFactory;
 
-	/**
-	 * The number of adds and removes of elements. Maintained because of
-	 * iterators
-	 */
-	private int modifCount = 0;
-
 	private double step = 0;
 
 	private boolean nullAttributesAreErrors;
@@ -592,7 +586,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		}
 		node = nodeFactory.newInstance(nodeId, this);
 		addNodeCallback(node);
-		modifCount++;
 		listeners.sendNodeAdded(sourceId, timeId, nodeId);
 		return (T) node;
 	}
@@ -653,7 +646,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		}
 		// now we can finally add it
 		addEdgeCallback(edge);
-		modifCount++;
 		listeners.sendEdgeAdded(sourceId, timeId, edgeId, srcId, dstId,
 				directed);
 		return (T) edge;
@@ -675,7 +667,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		removeAllEdges(node);
 		if (graphCallback)
 			removeNodeCallback(node);
-		modifCount++;
 
 		// XXX ugly fix waiting for better times
 		// see the big discussion "Is the Graph active or passive?"
@@ -705,7 +696,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 			dst.removeEdgeCallback(edge);
 		if (graphCallback)
 			removeEdgeCallback(edge);
-		modifCount++;
 		listeners.sendEdgeRemoved(sourceId, timeId, edgeId);
 		return (T) edge;
 	}
@@ -715,7 +705,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		while (it.hasNext())
 			it.next().clearCallback();
 		clearCallback();
-		modifCount++;
 		clearAttributes();
 		listeners.sendGraphCleared(sourceId, timeId);
 	}
@@ -795,21 +784,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 				graphCallback, sourceCallback, targetCallback);
 	}
 
-	/**
-	 * This method returns the number of structural modifications made in the
-	 * graph since its creation. Structural modifications are: adding an
-	 * element, removing an element, and clearing the graph. It can be useful
-	 * for iterators that want to have fail-fast behavior. They can remember
-	 * the value returned by this method when they are created. If this value is not the same
-	 * later this means that the graph structure has changed. In this case the
-	 * iterators can throw {@link java.util.ConcurrentModificationException}.
-	 * 
-	 * @return the number of structural modifications made in the
-	 * graph since its creation
-	 */
-	protected int getModifCount() {
-		return modifCount;
-	}
 
 	// *** Listeners ***
 
