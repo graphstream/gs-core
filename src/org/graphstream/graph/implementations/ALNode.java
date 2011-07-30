@@ -206,16 +206,16 @@ public class ALNode extends AbstractNode {
 
 	@Override
 	public <T extends Edge> Iterator<T> getEdgeIterator() {
-		return new FailFastIterator<T>(new EdgeIterator<T>(IO_EDGE), graph);
+		return new EdgeIterator<T>(IO_EDGE);
 	}
 
 	@Override
 	public <T extends Edge> Iterator<T> getEnteringEdgeIterator() {
-		return new FailFastIterator<T>(new EdgeIterator<T>(I_EDGE), graph);
+		return new EdgeIterator<T>(I_EDGE);
 	}
 
 	@Override
 	public <T extends Edge> Iterator<T> getLeavingEdgeIterator() {
-		return new FailFastIterator<T>(new EdgeIterator<T>(O_EDGE), graph);
+		return new EdgeIterator<T>(O_EDGE);
 	}
 }

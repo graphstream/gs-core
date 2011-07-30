@@ -261,22 +261,13 @@ public class ToyGraph extends AbstractGraph {
 		}
 	}
 
-	/**
-	 * Iterators should be fail-fast : if the graph is structurally modified at
-	 * any time after the iterator is created, in any way except through the
-	 * iterator's own remove method, the iterator will throw a
-	 * {@link java.util.ConcurrentModificationException} instead of risking
-	 * arbitrary, non-deterministic behavior.
-	 * 
-	 * The class FailFastIterator takes care of this.
-	 */
 	@Override
 	public <T extends Edge> Iterator<T> getEdgeIterator() {
-		return new FailFastIterator<T>(new EdgeIterator<T>(), this);
+		return new EdgeIterator<T>();
 	}
 
 	@Override
 	public <T extends Node> Iterator<T> getNodeIterator() {
-		return new FailFastIterator<T>(new NodeIterator<T>(), this);
+		return new NodeIterator<T>();
 	}
 }

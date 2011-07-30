@@ -226,22 +226,18 @@ public class ToyNode extends AbstractNode {
 
 	}
 
-	/**
-	 * Don't forget to return fail-fast iterators
-	 */
 	@Override
 	public <T extends Edge> Iterator<T> getEdgeIterator() {
-		return new FailFastIterator<T>(new EdgeIterator<T>(), graph);
+		return new EdgeIterator<T>();
 	}
 
 	@Override
 	public <T extends Edge> Iterator<T> getEnteringEdgeIterator() {
-		return new FailFastIterator<T>(new DirectedEdgeIterator<T>(true), graph);
+		return new DirectedEdgeIterator<T>(true);
 	}
 
 	@Override
 	public <T extends Edge> Iterator<T> getLeavingEdgeIterator() {
-		return new FailFastIterator<T>(new DirectedEdgeIterator<T>(false),
-				graph);
+		return new DirectedEdgeIterator<T>(false);
 	}
 }

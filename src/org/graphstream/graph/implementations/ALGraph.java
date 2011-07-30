@@ -220,12 +220,12 @@ public class ALGraph extends AbstractGraph {
 
 	@Override
 	public <T extends Edge> Iterator<T> getEdgeIterator() {
-		return new FailFastIterator<T>(new EdgeIterator<T>(), this);
+		return new EdgeIterator<T>();
 	}
 
 	@Override
 	public <T extends Node> Iterator<T> getNodeIterator() {
-		return new FailFastIterator<T>(new NodeIterator<T>(), this);
+		return new NodeIterator<T>();
 	}
 
 	/**

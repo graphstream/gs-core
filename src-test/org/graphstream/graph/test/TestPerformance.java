@@ -194,7 +194,7 @@ public class TestPerformance {
 		end = System.currentTimeMillis();
 		measureValues.put(Measures.NODE_NEIGHBOR_IT, end - start);
 
-		// For each node n, iterating on all edges of n using n.get(i)
+		// For each node n, iterating on all edges of n using n.getEdge(i)
 		start = System.currentTimeMillis();
 		nodeIt = g.getNodeIterator();
 		while (nodeIt.hasNext()) {
@@ -412,12 +412,12 @@ public class TestPerformance {
 		// String fileName = args[0];
 		String fileName = "/home/stefan/tmp/imdb/imdb-full.dgs";
 		// String fileName = "/home/stefan/tmp/yoann/test_cleaned.dgs";
-		int gCount = 4;
+		int gCount = 1;
 		Graph[] graphs = new Graph[gCount];
-		graphs[0] = new SingleGraph("Single");
-		graphs[1] = new MultiGraph("Multi");
-		graphs[2] = new AdjacencyListGraph("Adj");
-		graphs[3] = new ALGraph("AL");
+//		graphs[0] = new SingleGraph("Single");
+//		graphs[1] = new MultiGraph("Multi");
+//		graphs[2] = new AdjacencyListGraph("Adj");
+		graphs[0] = new ALGraph("AL");
 
 		TestPerformance[] tests = new TestPerformance[gCount];
 		for (int i = 0; i < gCount; i++) {
@@ -429,8 +429,10 @@ public class TestPerformance {
 			tests[i].testGraphIterators();
 			System.out.println("  Testing node iterators");
 			tests[i].testNodeIterators();
-			System.out.println("  Testing BFS and DFS iterators");
-			tests[i].testBfsDfs();
+//			System.out.println("  Testing BFS and DFS iterators");
+//			tests[i].testBfsDfs();
+			System.out.println("  Testing triangles");
+			tests[i].testTriangleCount();
 			System.out.println("  Testing finding edges");
 			tests[i].testFindEdge();
 			System.out.println("  Testing add / remove");
