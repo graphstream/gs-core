@@ -164,17 +164,9 @@ public class ALNode extends AbstractNode {
 	}
 
 	// *** Iterators ***
-	
-	// TODO concurrent modification check
-	
+
 	protected class EdgeIterator<T extends Edge> implements Iterator<T> {
 		protected int iPrev, iNext, iEnd;
-//		int modifCount = graph.getModifCount();
-		
-//		protected void concurrentCheck() {
-//			if (modifCount != graph.getModifCount())
-//				throw new ConcurrentModificationException();
-//		}
 
 		protected EdgeIterator(char type) {
 			iPrev = -1;
@@ -187,13 +179,11 @@ public class ALNode extends AbstractNode {
 		}
 
 		public boolean hasNext() {
-//			concurrentCheck();
 			return iNext < iEnd;
 		}
 
 		@SuppressWarnings("unchecked")
 		public T next() {
-//			concurrentCheck();
 			if (iNext >= iEnd)
 				throw new NoSuchElementException();
 			iPrev = iNext++;
@@ -201,7 +191,6 @@ public class ALNode extends AbstractNode {
 		}
 
 		public void remove() {
-//			concurrentCheck();
 			if (iPrev == -1)
 				throw new IllegalStateException();
 			AbstractEdge e = edges[iPrev];
@@ -212,22 +201,21 @@ public class ALNode extends AbstractNode {
 			iNext = iPrev;
 			iPrev = -1;
 			iEnd--;
-//			modifCount = graph.getModifCount();
 		}
 	}
 
 	@Override
 	public <T extends Edge> Iterator<T> getEdgeIterator() {
-		return new EdgeIterator<T>(IO_EDGE);
+		return new FailFastIterator<T>(new EdgeIterator<T>(IO_EDGE), graph);
 	}
 
 	@Override
 	public <T extends Edge> Iterator<T> getEnteringEdgeIterator() {
-		return new EdgeIterator<T>(I_EDGE);
+		return new FailFastIterator<T>(new EdgeIterator<T>(I_EDGE), graph);
 	}
 
 	@Override
 	public <T extends Edge> Iterator<T> getLeavingEdgeIterator() {
-		return new EdgeIterator<T>(O_EDGE);
+		return new FailFastIterator<T>(new EdgeIterator<T>(O_EDGE), graph);
 	}
 }
