@@ -218,4 +218,13 @@ public class ALNode extends AbstractNode {
 	public <T extends Edge> Iterator<T> getLeavingEdgeIterator() {
 		return new EdgeIterator<T>(O_EDGE);
 	}
+
+	protected void shrinkMemory() {
+		if (degree < edges.length) {
+			AbstractEdge[] tmp = new AbstractEdge[degree];
+			System.arraycopy(edges, 0, tmp, 0, degree);
+			Arrays.fill(edges, null);
+			edges = tmp;
+		}
+	}
 }

@@ -241,4 +241,44 @@ public class ALGraph extends AbstractGraph {
 			count += n.edges.length - n.degree;
 		return count;
 	}
+
+	/**
+	 * In order to make adding of new nodes and edges faster, this
+	 * implementation uses slightly more memory than needed (roughly about 10%
+	 * more). This method shrinks the memory used to exactly what is needed. Use
+	 * it if you have not enough heap memory and if you know that no new nodes
+	 * or edges will be added to the graph. After a call of this method it is
+	 * always possible to add new edges and nodes, but the first operations will
+	 * be slower than usual.
+	 */
+	public void shrinkMemory() {
+		for (ALNode n : this.<ALNode> getEachNode())
+			n.shrinkMemory();
+
+		if (nodeCount < nodeArray.length) {
+			AbstractNode[] tmp = new AbstractNode[nodeCount];
+			System.arraycopy(nodeArray, 0, tmp, 0, nodeCount);
+			Arrays.fill(nodeArray, null);
+			nodeArray = tmp;
+		}
+
+		if (edgeCount < edgeArray.length) {
+			AbstractEdge[] tmp = new AbstractEdge[edgeCount];
+			System.arraycopy(edgeArray, 0, tmp, 0, edgeCount);
+			Arrays.fill(edgeArray, null);
+			edgeArray = tmp;
+		}
+
+		nodeMap.clear();
+		nodeMap = new HashMap<String, AbstractNode>(4 * nodeCount / 3 + 1);
+		for (AbstractNode n : nodeArray)
+			nodeMap.put(n.getId(), n);
+
+		edgeMap.clear();
+		edgeMap = new HashMap<String, AbstractEdge>(4 * edgeCount / 3 + 1);
+		for (AbstractEdge e : edgeArray)
+			edgeMap.put(e.getId(), e);
+
+		System.gc();
+	}
 }
