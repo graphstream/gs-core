@@ -12,7 +12,9 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.ALGraph;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
+import org.graphstream.graph.implementations.MGraph;
 import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.graph.implementations.SGraph;
 import org.graphstream.graph.implementations.SingleGraph;
 
 public class TestPerformance {
@@ -412,12 +414,14 @@ public class TestPerformance {
 		// String fileName = args[0];
 		String fileName = "/home/stefan/tmp/imdb/imdb-full.dgs";
 		// String fileName = "/home/stefan/tmp/yoann/test_cleaned.dgs";
-		int gCount = 1;
+		int gCount = 3;
 		Graph[] graphs = new Graph[gCount];
 //		graphs[0] = new SingleGraph("Single");
 //		graphs[1] = new MultiGraph("Multi");
 //		graphs[2] = new AdjacencyListGraph("Adj");
 		graphs[0] = new ALGraph("AL");
+		graphs[1] = new SGraph("S");
+		graphs[2] = new MGraph("M");
 
 		TestPerformance[] tests = new TestPerformance[gCount];
 		for (int i = 0; i < gCount; i++) {
@@ -429,14 +433,14 @@ public class TestPerformance {
 			tests[i].testGraphIterators();
 			System.out.println("  Testing node iterators");
 			tests[i].testNodeIterators();
-			System.out.println("  Testing BFS and DFS iterators");
-			tests[i].testBfsDfs();
-			System.out.println("  Testing triangles");
-			tests[i].testTriangleCount();
-			System.out.println("  Testing finding edges");
-			tests[i].testFindEdge();
-			System.out.println("  Testing add / remove");
-			tests[i].testAddRemove();
+//			System.out.println("  Testing BFS and DFS iterators");
+//			tests[i].testBfsDfs();
+//			System.out.println("  Testing triangles");
+//			tests[i].testTriangleCount();
+//			System.out.println("  Testing finding edges");
+//			tests[i].testFindEdge();
+//			System.out.println("  Testing add / remove");
+//			tests[i].testAddRemove();
 			tests[i].g.clear();
 			tests[i].nodeIds.clear();
 			tests[i].nodeIds = null;

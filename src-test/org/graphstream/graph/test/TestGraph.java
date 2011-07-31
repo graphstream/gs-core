@@ -43,8 +43,10 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
+import org.graphstream.graph.implementations.MGraph;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.graph.implementations.MultiNode;
+import org.graphstream.graph.implementations.SGraph;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.graph.implementations.ALGraph;
 import org.junit.Test;
@@ -55,7 +57,9 @@ public class TestGraph {
 		testBasic(new SingleGraph("sg"));
 		testBasic(new MultiGraph("mg"));
 		testBasic(new AdjacencyListGraph("alg"));
-		testBasic(new ALGraph("toy")); // XXX
+		testBasic(new ALGraph("AL")); // XXX
+		testBasic(new SGraph("S")); // XXX
+		testBasic(new MGraph("M")); // XXX
 	}
 
 	protected void testBasic(Graph graph) {
@@ -167,7 +171,9 @@ public class TestGraph {
 		testDirected(new SingleGraph("sg"));
 		testDirected(new MultiGraph("mg"));
 		// testDirected( new AdjacencyListGraph( "alg" ) );
-		testDirected(new ALGraph("toy")); // XXX
+		testDirected(new ALGraph("AL")); // XXX
+		testDirected(new SGraph("S")); // XXX
+		testDirected(new MGraph("M")); // XXX
 	}
 
 	protected void testDirected(Graph graph) {
@@ -298,7 +304,9 @@ public class TestGraph {
 		testIterables(new SingleGraph("sg"));
 		testIterables(new MultiGraph("mg"));
 		// testIterables( new AdjacencyListGraph( "alg" ) );
-		testIterables(new ALGraph("toy")); // XXX
+		testIterables(new ALGraph("AL")); // XXX
+		testIterables(new SGraph("S")); // XXX
+		testIterables(new MGraph("M")); // XXX
 	}
 
 	protected void testIterables(Graph graph) {
@@ -439,7 +447,9 @@ public class TestGraph {
 		testRemoval(new SingleGraph("sg"));
 		testRemoval(new MultiGraph("mg"));
 		// testRemoval( new AdjacencyListGraph( "alg" ) );
-		testRemoval(new ALGraph("toy")); // XXX
+		testRemoval(new ALGraph("AL")); // XXX
+		testRemoval(new SGraph("S")); // XXX
+		testRemoval(new MGraph("M")); // XXX
 	}
 
 	public void testRemoval(Graph graph) {
@@ -522,7 +532,9 @@ public class TestGraph {
 		testGraphListener(new SingleGraph("sg"));
 		testGraphListener(new MultiGraph("mg"));
 		// testGraphListener( new AdjacencyListGraph( "alg" ) );
-		testGraphListener(new ALGraph("toy")); // XXX
+		testGraphListener(new ALGraph("AL")); // XXX
+		testGraphListener(new SGraph("S")); // XXX
+		testGraphListener(new MGraph("M")); // XXX
 	}
 
 	protected void testGraphListener(Graph input) {

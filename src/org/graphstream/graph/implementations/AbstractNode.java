@@ -2,7 +2,9 @@ package org.graphstream.graph.implementations;
 
 import java.util.AbstractCollection;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.graphstream.graph.BreadthFirstIteratorIndexed;
 import org.graphstream.graph.DepthFirstIteratorIndexed;
@@ -387,26 +389,64 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	public abstract <T extends Edge> T getEdge(int i);
 
 	/**
-	 * This implementation uses {@link #getEdgeIterator()}
+	 * This implementation uses {@link #getEdgeIterator()} and stores the
+	 * visited nodes in a set. In this way it ensures that each neighbor will be
+	 * visited exactly once, even in multi-graph.
 	 * 
 	 * @see org.graphstream.graph.Node#getNeighborNodeIterator()
 	 */
 	public <T extends Node> Iterator<T> getNeighborNodeIterator() {
 		return new Iterator<T>() {
-			Iterator<Edge> edgeIterator = getEdgeIterator();
+			Iterator<Edge> edgeIt = getEdgeIterator();
+			HashSet<T> visited = new HashSet<T>(getDegree());
+			T next;
+			{
+				gotoNext();
+			}
+
+			private void gotoNext() {
+				while (edgeIt.hasNext()) {
+					next = edgeIt.next().getOpposite(AbstractNode.this);
+					if (!visited.contains(next)) {
+						visited.add(next);
+						return;
+					}
+				}
+				next = null;
+			}
 
 			public boolean hasNext() {
-				return edgeIterator.hasNext();
+				return next != null;
 			}
 
 			public T next() {
-				return edgeIterator.next().getOpposite(AbstractNode.this);
+				if (next == null)
+					throw new NoSuchElementException();
+				T current = next;
+				gotoNext();
+				return current;
 			}
 
 			public void remove() {
 				throw new UnsupportedOperationException(
 						"This iterator does not support remove");
+
 			}
+
+			// Iterator<Edge> edgeIterator = getEdgeIterator();
+			//
+			// public boolean hasNext() {
+			// return edgeIterator.hasNext();
+			// }
+			//
+			// public T next() {
+			// return edgeIterator.next().getOpposite(AbstractNode.this);
+			// }
+			//
+			// public void remove() {
+			// throw new UnsupportedOperationException(
+			// "This iterator does not support remove");
+			// }
 		};
 	}
 
