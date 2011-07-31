@@ -22,17 +22,18 @@ public class ALNode extends AbstractNode {
 
 	protected ALNode(AbstractGraph graph, String id) {
 		super(graph, id);
-		edges = new ALEdge[INITIAL_EDGE_CAPACITY];
+		edges = new AbstractEdge[INITIAL_EDGE_CAPACITY];
 		ioStart = oStart = degree = 0;
 	}
 
 	// *** Helpers ***
+	
 	protected char edgeType(AbstractEdge e) {
 		if (!e.directed || e.source == e.target)
 			return IO_EDGE;
 		return e.source == this ? O_EDGE : I_EDGE;
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	protected <T extends Edge> T locateEdge(Node opposite, char type) {
 		// where to search ?

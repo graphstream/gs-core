@@ -18,7 +18,7 @@ import org.graphstream.stream.SourceBase.ElementType;
  * methods are executed in O(1) time.
  * </p>
  */
-public abstract class AbstractEdge extends AbstractElement implements Edge {
+public class AbstractEdge extends AbstractElement implements Edge {
 
 	// *** Fields ***
 
@@ -67,14 +67,6 @@ public abstract class AbstractEdge extends AbstractElement implements Edge {
 		this.graph = (AbstractGraph) source.getGraph();
 	}
 
-	/**
-	 * The same as {@code AbstractEdge(id, source, tatget, false)}
-	 * 
-	 * @see #AbstractEdge(String, AbstractNode, AbstractNode)
-	 */
-	protected AbstractEdge(String id, AbstractNode source, AbstractNode target) {
-		this(id, source, target, false);
-	}
 
 	// *** Inherited from AbstractElement ***
 

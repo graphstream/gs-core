@@ -38,10 +38,10 @@ public class ALGraph extends AbstractGraph {
 			}
 		});
 
-		setEdgeFactory(new EdgeFactory<ALEdge>() {
-			public ALEdge newInstance(String id, Node src, Node dst,
+		setEdgeFactory(new EdgeFactory<AbstractEdge>() {
+			public AbstractEdge newInstance(String id, Node src, Node dst,
 					boolean directed) {
-				return new ALEdge(id, (AbstractNode) src, (AbstractNode) dst,
+				return new AbstractEdge(id, (AbstractNode) src, (AbstractNode) dst,
 						directed);
 			}
 		});

@@ -429,8 +429,8 @@ public class TestPerformance {
 			tests[i].testGraphIterators();
 			System.out.println("  Testing node iterators");
 			tests[i].testNodeIterators();
-//			System.out.println("  Testing BFS and DFS iterators");
-//			tests[i].testBfsDfs();
+			System.out.println("  Testing BFS and DFS iterators");
+			tests[i].testBfsDfs();
 			System.out.println("  Testing triangles");
 			tests[i].testTriangleCount();
 			System.out.println("  Testing finding edges");
