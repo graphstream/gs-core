@@ -27,7 +27,7 @@ public class TestPerformance {
 	static enum Measures {
 		MEMORY, NODE_BY_ID, EDGE_BY_ID, GRAPH_NODE_IT, GRAPH_EDGE_IT, 
 		NODE_EDGE_IT, NODE_ENTERING_EDGE_IT, NODE_LEAVING_EDGE_IT, NODE_NEIGHBOR_IT, NODE_GET_EDGE, 
-		BFS_IT, DFS_IT, TRIANGLE, EDGE_BETWEEN, EDGE_FROM, EDGE_TOWARD, 
+		BFS_IT, DFS_IT, EDGE_BETWEEN, EDGE_FROM, EDGE_TOWARD, TRIANGLE, 
 		ADD_NODE, ADD_EDGE, REMOVE_NODE, REMOVE_EDGE
 	}
 
@@ -411,17 +411,17 @@ public class TestPerformance {
 	}
 
 	public static void main(String[] args) {
-		// String fileName = args[0];
-		String fileName = "/home/stefan/tmp/imdb/imdb-full.dgs";
+		String fileName = args[0];
+		// String fileName = "/home/stefan/tmp/imdb/imdb-full.dgs";
 		// String fileName = "/home/stefan/tmp/yoann/test_cleaned.dgs";
-		int gCount = 3;
+		int gCount = 6;
 		Graph[] graphs = new Graph[gCount];
-//		graphs[0] = new SingleGraph("Single");
-//		graphs[1] = new MultiGraph("Multi");
-//		graphs[2] = new AdjacencyListGraph("Adj");
-		graphs[0] = new ALGraph("AL");
+		graphs[0] = new SingleGraph("Single");
 		graphs[1] = new SGraph("S");
-		graphs[2] = new MGraph("M");
+		graphs[2] = new MultiGraph("Multi");
+		graphs[3] = new MGraph("M");
+		graphs[4] = new AdjacencyListGraph("Adj");
+		graphs[5] = new ALGraph("AL");
 
 		TestPerformance[] tests = new TestPerformance[gCount];
 		for (int i = 0; i < gCount; i++) {
@@ -433,14 +433,14 @@ public class TestPerformance {
 			tests[i].testGraphIterators();
 			System.out.println("  Testing node iterators");
 			tests[i].testNodeIterators();
-//			System.out.println("  Testing BFS and DFS iterators");
-//			tests[i].testBfsDfs();
-//			System.out.println("  Testing triangles");
-//			tests[i].testTriangleCount();
-//			System.out.println("  Testing finding edges");
-//			tests[i].testFindEdge();
-//			System.out.println("  Testing add / remove");
-//			tests[i].testAddRemove();
+			System.out.println("  Testing BFS and DFS iterators");
+			tests[i].testBfsDfs();
+			System.out.println("  Testing finding edges");
+			tests[i].testFindEdge();
+			System.out.println("  Testing triangles");
+			tests[i].testTriangleCount();
+			System.out.println("  Testing add / remove");
+			tests[i].testAddRemove();
 			tests[i].g.clear();
 			tests[i].nodeIds.clear();
 			tests[i].nodeIds = null;
