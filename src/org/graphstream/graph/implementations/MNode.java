@@ -1,10 +1,10 @@
 package org.graphstream.graph.implementations;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.graphstream.graph.Edge;
@@ -49,21 +49,17 @@ public class MNode extends ALNode {
 		super.removeEdge(i);
 	}
 
-	protected void addToMap(AbstractEdge edge) {
-		AbstractNode opposite = edge.getOpposite(this);
-		List<AbstractEdge> l = neighborMap.get(opposite);
-		if (l == null) {
-			l = new ArrayList<AbstractEdge>();
-			neighborMap.put(opposite, l);
-		}
-		l.add(edge);
-	}
-
 	// *** Callbacks ***
 
 	@Override
 	protected boolean addEdgeCallback(AbstractEdge edge) {
-		addToMap(edge);
+		AbstractNode opposite = edge.getOpposite(this);
+		List<AbstractEdge> l = neighborMap.get(opposite);
+		if (l == null) {
+			l = new LinkedList<AbstractEdge>();
+			neighborMap.put(opposite, l);
+		}
+		l.add(edge);
 		return super.addEdgeCallback(edge);
 	}
 
