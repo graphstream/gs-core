@@ -37,31 +37,38 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
-import org.graphstream.algorithm.generator.DorogovtsevMendesGenerator;
-import org.graphstream.algorithm.generator.Generator;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.DefaultGraph;
+import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.stream.Sink;
 
 /**
- *
- *
- *
+ * 
+ * 
+ * One client must send to only one identified stream (streamID, host, port)
+ * 
+ * 
  * @date Jul 10, 2011
- *
+ * 
  * @author Yoann Pigné
- *
+ * 
  */
 public class NetStreamClient implements Sink {
-
+	protected String stream;
+	byte[] streamIdArray;
 	protected String host;
 	protected int port;
 	protected Socket socket;
 	protected BufferedOutputStream out;
 
-	public NetStreamClient(String host, int port) {
+	ByteBuffer buffSizeBuff;
+
+	public NetStreamClient(String stream, String host, int port) {
+		this.stream = stream;
 		this.host = host;
 		this.port = port;
+		buffSizeBuff = ByteBuffer.allocate(4);
+		streamIdArray = stream.getBytes(Charset.forName("UTF-8"));
 
 		connect();
 	}
@@ -138,7 +145,7 @@ public class NetStreamClient implements Sink {
 				valueType = NetStreamConstants.TYPE_STRING;
 			}
 		}
-		//System.out.println("ValueType="+valueType+" "+value.getClass());
+		// System.out.println("ValueType="+valueType+" "+value.getClass());
 		return valueType;
 	}
 
@@ -338,7 +345,7 @@ public class NetStreamClient implements Sink {
 	 */
 	protected ByteBuffer encodeByte(Object in) {
 		return ByteBuffer.allocate(1).put((Byte) in);
-		}
+	}
 
 	/**
 	 * @param in
@@ -350,7 +357,7 @@ public class NetStreamClient implements Sink {
 				(short) data.length);
 
 		for (int i = 0; i < data.length; i++) {
-			b.put((byte) (data[i]==false?0:1));
+			b.put((byte) (data[i] == false ? 0 : 1));
 		}
 		return b;
 	}
@@ -360,7 +367,8 @@ public class NetStreamClient implements Sink {
 	 * @return
 	 */
 	protected ByteBuffer encodeBoolean(Object in) {
-		return ByteBuffer.allocate(1).put((byte)(((Boolean)in)==false?0:1));
+		return ByteBuffer.allocate(1).put(
+				(byte) (((Boolean) in) == false ? 0 : 1));
 	}
 
 	/*
@@ -381,14 +389,25 @@ public class NetStreamClient implements Sink {
 			int valueType = getType(value);
 			ByteBuffer bValue = encodeValue(value, valueType);
 			bValue.flip();
-			ByteBuffer buff = ByteBuffer.allocate(1+2 + attrArray.length + 1
-					+ bValue.capacity())
+			ByteBuffer buff = ByteBuffer.allocate(2 + streamIdArray.length + // stream
+																				// id
+					1 + // CMD
+					2 + attrArray.length + // attribute id
+					1 + // attr type
+					bValue.capacity()); // attr value
+
+			buff.putShort((short) streamIdArray.length).put(streamIdArray)
 					.put((byte) NetStreamConstants.CMD_ADD_GRAPH_ATTR)
-					.putShort((short) attrArray.length)
-					.put(attrArray)
-					.put((byte) valueType)
-					.put(bValue);
-			out.write(buff.array(),0,buff.capacity());
+
+					.putShort((short) attrArray.length).put(attrArray)
+					.put((byte) valueType).put(bValue);
+
+			buffSizeBuff.rewind();
+			buffSizeBuff.putInt(buff.capacity());
+			out.write(buffSizeBuff.array(), 0, 4);
+			// System.out.println("sending "+buff.capacity()+" bytes");
+
+			out.write(buff.array(), 0, buff.capacity());
 			out.flush();
 
 		} catch (IOException e) {
@@ -413,21 +432,26 @@ public class NetStreamClient implements Sink {
 		try {
 			byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
 			int valueType = getType(oldValue);
-			
+
 			ByteBuffer bOldValue = encodeValue(oldValue, valueType);
 			bOldValue.flip();
 			ByteBuffer bNewValue = encodeValue(oldValue, valueType);
 			bNewValue.flip();
-			
-			ByteBuffer buff = ByteBuffer.allocate(1+2 + attrArray.length + 1
-					+ bOldValue.capacity()+bNewValue.capacity())
+
+			ByteBuffer buff = ByteBuffer.allocate(2 + streamIdArray.length
+					+ // stream id
+					1 + 2 + attrArray.length + 1 + bOldValue.capacity()
+					+ bNewValue.capacity());
+			buff.putShort((short) streamIdArray.length).put(streamIdArray)
 					.put((byte) NetStreamConstants.CMD_CHG_GRAPH_ATTR)
-					.putShort((short) attrArray.length)
-					.put(attrArray)
-					.put((byte) valueType)
-					.put(bOldValue)
-					.put(bNewValue);
-			out.write(buff.array(),0,buff.capacity());
+					.putShort((short) attrArray.length).put(attrArray)
+					.put((byte) valueType).put(bOldValue).put(bNewValue);
+			buffSizeBuff.rewind();
+			buffSizeBuff.putInt(buff.capacity());
+			out.write(buffSizeBuff.array(), 0, 4);
+			// System.out.println("sending "+buff.capacity()+" bytes");
+
+			out.write(buff.array(), 0, buff.capacity());
 			out.flush();
 
 		} catch (IOException e) {
@@ -451,13 +475,20 @@ public class NetStreamClient implements Sink {
 		}
 		try {
 			byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
-			
-			
-			ByteBuffer buff = ByteBuffer.allocate(1+2 + attrArray.length)
+
+			ByteBuffer buff = ByteBuffer.allocate(2 + streamIdArray.length + // stream
+																				// id
+					1 + 2 + attrArray.length);
+
+			buff.putShort((short) streamIdArray.length).put(streamIdArray)
 					.put((byte) NetStreamConstants.CMD_DEL_GRAPH_ATTR)
-					.putShort((short) attrArray.length)
-					.put(attrArray);
-			out.write(buff.array(),0,buff.capacity());
+					.putShort((short) attrArray.length).put(attrArray);
+			buffSizeBuff.rewind();
+			buffSizeBuff.putInt(buff.capacity());
+			out.write(buffSizeBuff.array(), 0, 4);
+			// System.out.println("sending "+buff.capacity()+" bytes");
+
+			out.write(buff.array(), 0, buff.capacity());
 			out.flush();
 
 		} catch (IOException e) {
@@ -486,22 +517,29 @@ public class NetStreamClient implements Sink {
 			int valueType = getType(value);
 			ByteBuffer bValue = encodeValue(value, valueType);
 			bValue.flip();
-			ByteBuffer buff = ByteBuffer.allocate(
-					1+ //CMD
-					(2+nodeIdArray.length) + // nodeId 
-					(2+attrArray.length) + // attribute 
-					1+ // value type
-					bValue.capacity() //value
-					);
-			
-			buff
-			.put((byte) NetStreamConstants.CMD_ADD_NODE_ATTR) //CMD
-			.putShort((short) nodeIdArray.length).put(nodeIdArray) // nodeId
-			.putShort((short) attrArray.length).put(attrArray) // attribute
-			.put((byte) valueType) // value type
-			.put(bValue); // value
-			
-			out.write(buff.array(),0,buff.capacity());
+			ByteBuffer buff = ByteBuffer.allocate(2 + streamIdArray.length + // stream
+																				// id
+					1 + // CMD
+					(2 + nodeIdArray.length) + // nodeId
+					(2 + attrArray.length) + // attribute
+					1 + // value type
+					bValue.capacity() // value
+			);
+
+			buff.putShort((short) streamIdArray.length).put(streamIdArray) // Stream
+																			// ID
+					.put((byte) NetStreamConstants.CMD_ADD_NODE_ATTR) // CMD
+					.putShort((short) nodeIdArray.length).put(nodeIdArray) // nodeId
+					.putShort((short) attrArray.length).put(attrArray) // attribute
+					.put((byte) valueType) // value type
+					.put(bValue); // value
+
+			buffSizeBuff.rewind();
+			buffSizeBuff.putInt(buff.capacity());
+			out.write(buffSizeBuff.array(), 0, 4);
+			// System.out.println("sending "+buff.capacity()+" bytes");
+
+			out.write(buff.array(), 0, buff.capacity());
 			out.flush();
 
 		} catch (IOException e) {
@@ -528,29 +566,36 @@ public class NetStreamClient implements Sink {
 			byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
 			byte[] nodeIdArray = nodeId.getBytes(Charset.forName("UTF-8"));
 			int valueType = getType(oldValue);
-			
+
 			ByteBuffer bOldValue = encodeValue(oldValue, valueType);
 			bOldValue.flip();
 			ByteBuffer bNewValue = encodeValue(oldValue, valueType);
 			bNewValue.flip();
-			
-			ByteBuffer buff = ByteBuffer.allocate(
-					1+ //CMD
-					(2+nodeIdArray.length) + // nodeId 
-					(2+attrArray.length) + // attribute 
-					1+ // value type
-					bOldValue.capacity()+ //value
+
+			ByteBuffer buff = ByteBuffer.allocate(2 + streamIdArray.length + // stream
+																				// id
+					1 + // CMD
+					(2 + nodeIdArray.length) + // nodeId
+					(2 + attrArray.length) + // attribute
+					1 + // value type
+					bOldValue.capacity() + // value
 					bNewValue.capacity() // new value
-					);
-			
-			buff
-			.put((byte) NetStreamConstants.CMD_ADD_NODE_ATTR) //CMD
-			.putShort((short) nodeIdArray.length).put(nodeIdArray) // nodeId
-			.putShort((short) attrArray.length).put(attrArray) // attribute
-			.put((byte) valueType) // value type
-			.put(bOldValue) // value
-			.put(bNewValue); // value
-			out.write(buff.array(),0,buff.capacity());
+			);
+
+			buff.putShort((short) streamIdArray.length).put(streamIdArray) // Stream
+																			// ID
+					.put((byte) NetStreamConstants.CMD_ADD_NODE_ATTR) // CMD
+					.putShort((short) nodeIdArray.length).put(nodeIdArray) // nodeId
+					.putShort((short) attrArray.length).put(attrArray) // attribute
+					.put((byte) valueType) // value type
+					.put(bOldValue) // value
+					.put(bNewValue); // value
+			buffSizeBuff.rewind();
+			buffSizeBuff.putInt(buff.capacity());
+			out.write(buffSizeBuff.array(), 0, 4);
+			// System.out.println("sending "+buff.capacity()+" bytes");
+
+			out.write(buff.array(), 0, buff.capacity());
 			out.flush();
 
 		} catch (IOException e) {
@@ -575,26 +620,30 @@ public class NetStreamClient implements Sink {
 		try {
 			byte[] nodeIdArray = nodeId.getBytes(Charset.forName("UTF-8"));
 			byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
-			
-			
-			ByteBuffer buff = ByteBuffer.allocate(
-					1+ //CMD
-					(2+nodeIdArray.length) + // nodeId 
-					(2+attrArray.length)  // attribute 
-					);
-			
-			buff
-			.put((byte) NetStreamConstants.CMD_ADD_NODE_ATTR) //CMD
-			.putShort((short) nodeIdArray.length).put(nodeIdArray) // nodeId
-			.putShort((short) attrArray.length).put(attrArray); // attribute
 
-			out.write(buff.array(),0,buff.capacity());
+			ByteBuffer buff = ByteBuffer.allocate(2 + streamIdArray.length + // stream
+																				// id
+					1 + // CMD
+					(2 + nodeIdArray.length) + // nodeId
+					(2 + attrArray.length) // attribute
+			);
+
+			buff.putShort((short) streamIdArray.length).put(streamIdArray) // Stream
+																			// ID
+					.put((byte) NetStreamConstants.CMD_ADD_NODE_ATTR) // CMD
+					.putShort((short) nodeIdArray.length).put(nodeIdArray) // nodeId
+					.putShort((short) attrArray.length).put(attrArray); // attribute
+
+			buffSizeBuff.rewind();
+			buffSizeBuff.putInt(buff.capacity());
+			out.write(buffSizeBuff.array(), 0, 4);
+			// System.out.println("sending "+buff.capacity()+" bytes");
+			// System.out.println("sending "+buff.capacity()+" bytes");out.write(buff.array(),0,buff.capacity());
 			out.flush();
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 
 	}
 
@@ -617,21 +666,27 @@ public class NetStreamClient implements Sink {
 			int valueType = getType(value);
 			ByteBuffer bValue = encodeValue(value, valueType);
 			bValue.flip();
-			ByteBuffer buff = ByteBuffer.allocate(
-					1+ //CMD
-					(2+edgeIdArray.length) + // nodeId 
-					(2+attrArray.length) + // attribute 
-					1+ // value type
-					bValue.capacity() //value
-					);
-			
-			buff
-			.put((byte) NetStreamConstants.CMD_ADD_EDGE_ATTR) //CMD
-			.putShort((short) edgeIdArray.length).put(edgeIdArray) // nodeId
-			.putShort((short) attrArray.length).put(attrArray) // attribute
-			.put((byte) valueType) // value type
-			.put(bValue); // value
-			out.write(buff.array(),0,buff.capacity());
+			ByteBuffer buff = ByteBuffer.allocate(2 + streamIdArray.length + // stream
+																				// id
+					1 + // CMD
+					(2 + edgeIdArray.length) + // nodeId
+					(2 + attrArray.length) + // attribute
+					1 + // value type
+					bValue.capacity() // value
+			);
+
+			buff.putShort((short) streamIdArray.length).put(streamIdArray) // Stream
+																			// ID
+					.put((byte) NetStreamConstants.CMD_ADD_EDGE_ATTR) // CMD
+					.putShort((short) edgeIdArray.length).put(edgeIdArray) // nodeId
+					.putShort((short) attrArray.length).put(attrArray) // attribute
+					.put((byte) valueType) // value type
+					.put(bValue); // value
+			buffSizeBuff.rewind();
+			buffSizeBuff.putInt(buff.capacity());
+			out.write(buffSizeBuff.array(), 0, 4);
+			// System.out.println("sending "+buff.capacity()+" bytes");
+			// System.out.println("sending "+buff.capacity()+" bytes");out.write(buff.array(),0,buff.capacity());
 			out.flush();
 
 		} catch (IOException e) {
@@ -658,29 +713,36 @@ public class NetStreamClient implements Sink {
 			byte[] edgeIdArray = edgeId.getBytes(Charset.forName("UTF-8"));
 			byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
 			int valueType = getType(oldValue);
-			
+
 			ByteBuffer bOldValue = encodeValue(oldValue, valueType);
 			bOldValue.flip();
 			ByteBuffer bNewValue = encodeValue(oldValue, valueType);
 			bNewValue.flip();
-			
-			ByteBuffer buff = ByteBuffer.allocate(
-					1+ //CMD
-					(2+edgeIdArray.length) + // nodeId 
-					(2+attrArray.length) + // attribute 
-					1+ // value type
-					bOldValue.capacity()+ //value
+
+			ByteBuffer buff = ByteBuffer.allocate(2 + streamIdArray.length + // stream
+																				// id
+					1 + // CMD
+					(2 + edgeIdArray.length) + // nodeId
+					(2 + attrArray.length) + // attribute
+					1 + // value type
+					bOldValue.capacity() + // value
 					bNewValue.capacity() // new value
-					);
-			
-			buff
-			.put((byte) NetStreamConstants.CMD_ADD_EDGE_ATTR) //CMD
-			.putShort((short) edgeIdArray.length).put(edgeIdArray) // nodeId
-			.putShort((short) attrArray.length).put(attrArray) // attribute
-			.put((byte) valueType) // value type
-			.put(bOldValue) // value
-			.put(bNewValue); // value
-			out.write(buff.array(),0,buff.capacity());
+			);
+
+			buff.putShort((short) streamIdArray.length).put(streamIdArray) // Stream
+																			// ID
+					.put((byte) NetStreamConstants.CMD_ADD_EDGE_ATTR) // CMD
+					.putShort((short) edgeIdArray.length).put(edgeIdArray) // nodeId
+					.putShort((short) attrArray.length).put(attrArray) // attribute
+					.put((byte) valueType) // value type
+					.put(bOldValue) // value
+					.put(bNewValue); // value
+			buffSizeBuff.rewind();
+			buffSizeBuff.putInt(buff.capacity());
+			out.write(buffSizeBuff.array(), 0, 4);
+			// System.out.println("sending "+buff.capacity()+" bytes");
+
+			out.write(buff.array(), 0, buff.capacity());
 			out.flush();
 
 		} catch (IOException e) {
@@ -705,26 +767,31 @@ public class NetStreamClient implements Sink {
 		try {
 			byte[] edgeIdArray = edgeId.getBytes(Charset.forName("UTF-8"));
 			byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
-			
-			
-			ByteBuffer buff = ByteBuffer.allocate(
-					1+ //CMD
-					(2+edgeIdArray.length) + // nodeId 
-					(2+attrArray.length)  // attribute 
-					);
-			
-			buff
-			.put((byte) NetStreamConstants.CMD_ADD_NODE_ATTR) //CMD
-			.putShort((short) edgeIdArray.length).put(edgeIdArray) // nodeId
-			.putShort((short) attrArray.length).put(attrArray); // attribute
 
-			out.write(buff.array(),0,buff.capacity());
+			ByteBuffer buff = ByteBuffer.allocate(2 + streamIdArray.length + // stream
+																				// id
+					1 + // CMD
+					(2 + edgeIdArray.length) + // nodeId
+					(2 + attrArray.length) // attribute
+			);
+
+			buff.putShort((short) streamIdArray.length).put(streamIdArray) // Stream
+																			// ID
+					.put((byte) NetStreamConstants.CMD_ADD_NODE_ATTR) // CMD
+					.putShort((short) edgeIdArray.length).put(edgeIdArray) // nodeId
+					.putShort((short) attrArray.length).put(attrArray); // attribute
+
+			buffSizeBuff.rewind();
+			buffSizeBuff.putInt(buff.capacity());
+			out.write(buffSizeBuff.array(), 0, 4);
+			// System.out.println("sending "+buff.capacity()+" bytes");
+
+			out.write(buff.array(), 0, buff.capacity());
 			out.flush();
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 
 	}
 
@@ -741,23 +808,26 @@ public class NetStreamClient implements Sink {
 		}
 		try {
 			byte[] nodeIdArray = nodeId.getBytes(Charset.forName("UTF-8"));
-			
-			
-			ByteBuffer buff = ByteBuffer.allocate(
-					1
-					+2 + nodeIdArray.length
-					);
-			buff
-				.put((byte) NetStreamConstants.CMD_ADD_NODE)
-				.putShort((short) nodeIdArray.length).put(nodeIdArray);
-			
-			out.write(buff.array(),0,buff.capacity());
+
+			ByteBuffer buff = ByteBuffer.allocate(2 + streamIdArray.length + // stream
+																				// id
+					1 + 2 + nodeIdArray.length);
+			buff.putShort((short) streamIdArray.length).put(streamIdArray)
+					// Stream ID
+					.put((byte) NetStreamConstants.CMD_ADD_NODE)
+					.putShort((short) nodeIdArray.length).put(nodeIdArray);
+
+			buffSizeBuff.rewind();
+			buffSizeBuff.putInt(buff.capacity());
+			out.write(buffSizeBuff.array(), 0, 4);
+			// System.out.println("sending "+buff.capacity()+" bytes");
+
+			out.write(buff.array(), 0, buff.capacity());
 			out.flush();
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 
 	}
 
@@ -774,17 +844,21 @@ public class NetStreamClient implements Sink {
 		}
 		try {
 			byte[] nodeIdArray = nodeId.getBytes(Charset.forName("UTF-8"));
-			
-			
-			ByteBuffer buff = ByteBuffer.allocate(
-					1
-					+2 + nodeIdArray.length
-					);
-			buff
-				.put((byte) NetStreamConstants.CMD_DEL_NODE)
-				.putShort((short) nodeIdArray.length).put(nodeIdArray);
-			
-			out.write(buff.array(),0,buff.capacity());
+
+			ByteBuffer buff = ByteBuffer.allocate(2 + streamIdArray.length + // stream
+																				// id
+					1 + 2 + nodeIdArray.length);
+			buff.putShort((short) streamIdArray.length).put(streamIdArray)
+					// Stream ID
+					.put((byte) NetStreamConstants.CMD_DEL_NODE)
+					.putShort((short) nodeIdArray.length).put(nodeIdArray);
+
+			buffSizeBuff.rewind();
+			buffSizeBuff.putInt(buff.capacity());
+			out.write(buffSizeBuff.array(), 0, 4);
+			// System.out.println("sending "+buff.capacity()+" bytes");
+
+			out.write(buff.array(), 0, buff.capacity());
 			out.flush();
 
 		} catch (IOException e) {
@@ -806,25 +880,30 @@ public class NetStreamClient implements Sink {
 		}
 		try {
 			byte[] edgeIdArray = edgeId.getBytes(Charset.forName("UTF-8"));
-			byte[] fromNodeIdArray = fromNodeId.getBytes(Charset.forName("UTF-8"));
+			byte[] fromNodeIdArray = fromNodeId.getBytes(Charset
+					.forName("UTF-8"));
 			byte[] toNodeIdArray = toNodeId.getBytes(Charset.forName("UTF-8"));
-			
-			
-			ByteBuffer buff = ByteBuffer.allocate(
-					1
-					+2 + edgeIdArray.length
-					+2 + fromNodeIdArray.length
-					+2 + toNodeIdArray.length
-					+1
-					);
-			buff
-			.put((byte) NetStreamConstants.CMD_ADD_EDGE)
-			.putShort((short) edgeIdArray.length).put(edgeIdArray)
-			.putShort((short) fromNodeIdArray.length).put(fromNodeIdArray)
-			.putShort((short) toNodeIdArray.length).put(toNodeIdArray)
-			.put((byte) (directed==false?0:1));
-			
-			out.write(buff.array(),0,buff.capacity());
+
+			ByteBuffer buff = ByteBuffer.allocate(2 + streamIdArray.length
+					+ // stream id
+					1 + 2 + edgeIdArray.length + 2 + fromNodeIdArray.length + 2
+					+ toNodeIdArray.length + 1);
+			buff.putShort((short) streamIdArray.length)
+					.put(streamIdArray)
+					// Stream ID
+					.put((byte) NetStreamConstants.CMD_ADD_EDGE)
+					.putShort((short) edgeIdArray.length).put(edgeIdArray)
+					.putShort((short) fromNodeIdArray.length)
+					.put(fromNodeIdArray)
+					.putShort((short) toNodeIdArray.length).put(toNodeIdArray)
+					.put((byte) (directed == false ? 0 : 1));
+
+			buffSizeBuff.rewind();
+			buffSizeBuff.putInt(buff.capacity());
+			out.write(buffSizeBuff.array(), 0, 4);
+			// System.out.println("sending "+buff.capacity()+" bytes");
+
+			out.write(buff.array(), 0, buff.capacity());
 			out.flush();
 
 		} catch (IOException e) {
@@ -846,17 +925,21 @@ public class NetStreamClient implements Sink {
 		}
 		try {
 			byte[] edgeIdArray = edgeId.getBytes(Charset.forName("UTF-8"));
-			
-			
-			ByteBuffer buff = ByteBuffer.allocate(
-					1
-					+2 + edgeIdArray.length
-					);
-			buff
-				.put((byte) NetStreamConstants.CMD_DEL_EDGE)
-				.putShort((short) edgeIdArray.length).put(edgeIdArray);
-			
-			out.write(buff.array(),0,buff.capacity());
+
+			ByteBuffer buff = ByteBuffer.allocate(2 + streamIdArray.length + // stream
+																				// id
+					1 + 2 + edgeIdArray.length);
+			buff.putShort((short) streamIdArray.length).put(streamIdArray)
+					// Stream ID
+					.put((byte) NetStreamConstants.CMD_DEL_EDGE)
+					.putShort((short) edgeIdArray.length).put(edgeIdArray);
+
+			buffSizeBuff.rewind();
+			buffSizeBuff.putInt(buff.capacity());
+			out.write(buffSizeBuff.array(), 0, 4);
+			// System.out.println("sending "+buff.capacity()+" bytes");
+
+			out.write(buff.array(), 0, buff.capacity());
 			out.flush();
 
 		} catch (IOException e) {
@@ -877,14 +960,20 @@ public class NetStreamClient implements Sink {
 			connect();
 		}
 		try {
-						
-			ByteBuffer buff = ByteBuffer.allocate(
-					1
-					);
-			buff
-				.put((byte) NetStreamConstants.CMD_CLEARED);
-			
-			out.write(buff.array(),0,buff.capacity());
+
+			ByteBuffer buff = ByteBuffer.allocate(2 + streamIdArray.length + // stream
+																				// id
+					1);
+			buff.putShort((short) streamIdArray.length).put(streamIdArray) // Stream
+																			// ID
+					.put((byte) NetStreamConstants.CMD_CLEARED);
+
+			buffSizeBuff.rewind();
+			buffSizeBuff.putInt(buff.capacity());
+			out.write(buffSizeBuff.array(), 0, 4);
+			// System.out.println("sending "+buff.capacity()+" bytes");
+
+			out.write(buff.array(), 0, buff.capacity());
 			out.flush();
 
 		} catch (IOException e) {
@@ -905,16 +994,20 @@ public class NetStreamClient implements Sink {
 			connect();
 		}
 		try {
-						
-			ByteBuffer buff = ByteBuffer.allocate(
-					1
-					+8
-					);
-			buff
-				.put((byte) NetStreamConstants.CMD_STEP)
-				.putDouble(step);
-			
-			out.write(buff.array(),0,buff.capacity());
+
+			ByteBuffer buff = ByteBuffer.allocate(2 + streamIdArray.length + // stream
+																				// id
+					1 + 8);
+			buff.putShort((short) streamIdArray.length).put(streamIdArray) // Stream
+																			// ID
+					.put((byte) NetStreamConstants.CMD_STEP).putDouble(step);
+
+			buffSizeBuff.rewind();
+			buffSizeBuff.putInt(buff.capacity());
+			out.write(buffSizeBuff.array(), 0, 4);
+			// System.out.println("sending "+buff.capacity()+" bytes");
+
+			out.write(buff.array(), 0, buff.capacity());
 			out.flush();
 
 		} catch (IOException e) {
@@ -923,25 +1016,67 @@ public class NetStreamClient implements Sink {
 
 	}
 
-public static void main(String[] args) throws InterruptedException {
-	Graph g = new DefaultGraph("ok");
-	g.display();
-	NetStreamClient nsc = new NetStreamClient("localhost", 2001);
-	g.addSink(nsc);
-	
-	Generator gen = new DorogovtsevMendesGenerator();
+	public static void main(String[] args) throws InterruptedException {
 
-	gen.addSink(g);
-	gen.begin();
-	for (int i = 0; i < 5000; i++)
-		gen.nextEvents();
-	gen.end();
+		Graph g1_1 = new MultiGraph("G1_1");
+		Graph g1_2 = new MultiGraph("G1_2");
+		Graph g2 = new MultiGraph("G2");
 
-	String ss="node {fill-mode:plain;fill-color:#567;size:6px;}"
-		;
-	g.addAttribute("stylesheet", ss);
-	g.addAttribute("ui.antialias", true);
-	
-}
+		g1_1.display();
+		g1_2.display();
+
+		NetStreamClient nsc1_1 = new NetStreamClient("G1", "localhost", 2001);
+		NetStreamClient nsc1_2 = new NetStreamClient("G1", "localhost", 2001);
+		NetStreamClient nsc2 = new NetStreamClient("G2", "localhost", 2001);
+		
+		g1_1.addSink(nsc1_1);
+		g1_2.addSink(nsc1_2);
+		g2.addSink(nsc2);
+
+		String ss = "node{fill-mode:plain;fill-color:#567;size:6px;}";
+		g1_1.addAttribute("layout.stabilization-limit", 0);
+		g1_1.addAttribute("stylesheet", ss);
+		g1_1.addAttribute("ui.antialias", true);
+		g1_2.addAttribute("layout.stabilization-limit", 0);
+		g1_2.addAttribute("stylesheet", ss);
+		g1_2.addAttribute("ui.antialias", true);
+		
+		
+		String ss2 = "node{fill-mode:plain;fill-color:#765;size:6px;}";
+		g2.addAttribute("layout.stabilization-limit", 0);
+		g2.addAttribute("stylesheet", ss2);
+		g2.addAttribute("ui.antialias", true);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		for (int i = 0; i < 50; i++) {
+
+			g1_1.addNode(i + "");
+			if (i > 0) {
+				g1_1.addEdge(i + "-" + (i - 1), i + "", (i - 1) + "");
+				g1_1.addEdge(i + "--" + (i / 2), i + "", (i / 2) + "");
+
+			}
+			g1_2.addNode(i + "*");
+			if (i > 0) {
+				g1_2.addEdge(i + "-*" + (i - 1), i + "*", (i - 1) + "*");
+				g1_2.addEdge(i + "--*" + (i / 2), i + "*", (i / 2) + "*");
+			}
+			g2.addNode(i + "");
+			if (i > 0) {
+				g2.addEdge(i + "-" + (i - 1), i + "", (i - 1) + "");
+				g2.addEdge(i + "--" + (i / 2), i + "", (i / 2) + "");
+
+			}
+
+		}
+
+	}
 
 }
