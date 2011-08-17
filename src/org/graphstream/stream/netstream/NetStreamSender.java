@@ -53,7 +53,7 @@ import org.graphstream.stream.Sink;
  * @author Yoann Pigné
  * 
  */
-public class NetStreamClient implements Sink {
+public class NetStreamSender implements Sink {
 	protected String stream;
 	byte[] streamIdArray;
 	protected String host;
@@ -63,7 +63,14 @@ public class NetStreamClient implements Sink {
 
 	ByteBuffer buffSizeBuff;
 
-	public NetStreamClient(String stream, String host, int port) {
+	public NetStreamSender(String host, int port) {
+	this("default",host,port);
+	}
+	public NetStreamSender( int port) {
+	this("default","localhost",port);
+	}
+		
+	public NetStreamSender(String stream, String host, int port) {
 		this.stream = stream;
 		this.host = host;
 		this.port = port;
@@ -145,7 +152,7 @@ public class NetStreamClient implements Sink {
 				valueType = NetStreamConstants.TYPE_STRING;
 			}
 		}
-		// System.out.println("ValueType="+valueType+" "+value.getClass());
+		//System.out.println("ValueType="+valueType+" "+value.getClass());
 		return valueType;
 	}
 
@@ -193,9 +200,7 @@ public class NetStreamClient implements Sink {
 	 * @return
 	 */
 	protected ByteBuffer encodeArray(Object in) {
-
 		return null;
-
 	}
 
 	/**
@@ -214,12 +219,12 @@ public class NetStreamClient implements Sink {
 	 * @return
 	 */
 	protected ByteBuffer encodeDoubleArray(Object in) {
-		double[] data = (double[]) in;
+		Object[] data = (Object[]) in;
 		ByteBuffer b = ByteBuffer.allocate(2 + data.length * 8).putShort(
 				(short) data.length);
 
 		for (int i = 0; i < data.length; i++) {
-			b.putDouble(data[i]);
+			b.putDouble((Double) data[i]);
 		}
 		return b;
 	}
@@ -237,12 +242,12 @@ public class NetStreamClient implements Sink {
 	 * @return
 	 */
 	protected ByteBuffer encodeFloatArray(Object in) {
-		float[] data = (float[]) in;
+		Object[] data = (Object[]) in;
 		ByteBuffer b = ByteBuffer.allocate(2 + data.length * 4).putShort(
 				(short) data.length);
-
+		
 		for (int i = 0; i < data.length; i++) {
-			b.putFloat(data[i]);
+			b.putFloat((Float) data[i]);
 		}
 		return b;
 	}
@@ -260,12 +265,12 @@ public class NetStreamClient implements Sink {
 	 * @return
 	 */
 	protected ByteBuffer encodeLongArray(Object in) {
-		long[] data = (long[]) in;
+		Object[] data = (Object[]) in;
 		ByteBuffer b = ByteBuffer.allocate(2 + data.length * 8).putShort(
 				(short) data.length);
 
 		for (int i = 0; i < data.length; i++) {
-			b.putLong(data[i]);
+			b.putLong((Long) data[i]);
 		}
 		return b;
 	}
@@ -283,12 +288,12 @@ public class NetStreamClient implements Sink {
 	 * @return
 	 */
 	protected ByteBuffer encodeIntArray(Object in) {
-		int[] data = (int[]) in;
+		Object[] data = (Object[]) in;
 		ByteBuffer b = ByteBuffer.allocate(2 + data.length * 4).putShort(
 				(short) data.length);
 
 		for (int i = 0; i < data.length; i++) {
-			b.putInt(data[i]);
+			b.putInt((Integer)data[i]);
 		}
 		return b;
 	}
@@ -306,12 +311,12 @@ public class NetStreamClient implements Sink {
 	 * @return
 	 */
 	protected ByteBuffer encodeShortArray(Object in) {
-		short[] data = (short[]) in;
+		Object[] data = (Object[]) in;
 		ByteBuffer b = ByteBuffer.allocate(2 + data.length * 2).putShort(
 				(short) data.length);
 
 		for (int i = 0; i < data.length; i++) {
-			b.putShort(data[i]);
+			b.putShort((Short)data[i]);
 		}
 		return b;
 	}
@@ -329,12 +334,12 @@ public class NetStreamClient implements Sink {
 	 * @return
 	 */
 	protected ByteBuffer encodeByteArray(Object in) {
-		byte[] data = (byte[]) in;
+		Object[] data = (Object[]) in;
 		ByteBuffer b = ByteBuffer.allocate(2 + data.length).putShort(
 				(short) data.length);
 
 		for (int i = 0; i < data.length; i++) {
-			b.put(data[i]);
+			b.put((Byte) data[i]);
 		}
 		return b;
 	}
@@ -352,12 +357,12 @@ public class NetStreamClient implements Sink {
 	 * @return
 	 */
 	protected ByteBuffer encodeBooleanArray(Object in) {
-		boolean[] data = (boolean[]) in;
+		Object[] data = (Object[]) in;
 		ByteBuffer b = ByteBuffer.allocate(2 + data.length).putShort(
 				(short) data.length);
 
 		for (int i = 0; i < data.length; i++) {
-			b.put((byte) (data[i] == false ? 0 : 1));
+			b.put((byte) ((Boolean)data[i] == false ? 0 : 1));
 		}
 		return b;
 	}
@@ -1018,6 +1023,11 @@ public class NetStreamClient implements Sink {
 
 	public static void main(String[] args) throws InterruptedException {
 
+		
+		// ------------------------------
+		//           EXAMPLE 1 
+		// ------------------------------
+		
 		Graph g1_1 = new MultiGraph("G1_1");
 		Graph g1_2 = new MultiGraph("G1_2");
 		Graph g2 = new MultiGraph("G2");
@@ -1025,9 +1035,9 @@ public class NetStreamClient implements Sink {
 		g1_1.display();
 		g1_2.display();
 
-		NetStreamClient nsc1_1 = new NetStreamClient("G1", "localhost", 2001);
-		NetStreamClient nsc1_2 = new NetStreamClient("G1", "localhost", 2001);
-		NetStreamClient nsc2 = new NetStreamClient("G2", "localhost", 2001);
+		NetStreamSender nsc1_1 = new NetStreamSender("G1", "kvatch", 2001);
+		NetStreamSender nsc1_2 = new NetStreamSender("G1", "kvatch", 2001);
+		NetStreamSender nsc2 = new NetStreamSender("G2", "kvatch", 2001);
 		
 		g1_1.addSink(nsc1_1);
 		g1_2.addSink(nsc1_2);
@@ -1047,16 +1057,8 @@ public class NetStreamClient implements Sink {
 		g2.addAttribute("stylesheet", ss2);
 		g2.addAttribute("ui.antialias", true);
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		for (int i = 0; i < 50; i++) {
-
+		for (int i = 0; i < 5; i++) {
+			g1_1.addAttribute("ui.sprite."+i, i,i,0);
 			g1_1.addNode(i + "");
 			if (i > 0) {
 				g1_1.addEdge(i + "-" + (i - 1), i + "", (i - 1) + "");
@@ -1076,7 +1078,41 @@ public class NetStreamClient implements Sink {
 			}
 
 		}
+		
+		
 
+		
+		
+		
+		// ------------------------------
+		//           EXAMPLE 2 
+		// ------------------------------
+		/*
+		Graph g = new MultiGraph("G");
+		NetStreamClient nsc = new NetStreamClient("localhost", 2001);
+		g.addSink(nsc);
+		
+		g.addAttribute("intArray", 0,Integer.MAX_VALUE,Integer.MIN_VALUE);
+		g.addAttribute("floatArray", 0f,Float.MAX_VALUE,Float.MIN_VALUE);
+		g.addAttribute("doubleArray", 0.0,Double.MAX_VALUE,Double.MIN_VALUE);
+		g.addAttribute("shortArray", (short)0, Short.MAX_VALUE, Short.MIN_VALUE);
+		g.addAttribute("longArray", 0L,Long.MAX_VALUE,Long.MIN_VALUE);
+		g.addAttribute("byteArray",(byte)0, Byte.MAX_VALUE, Byte.MIN_VALUE);
+		g.addAttribute("booleanArray",true,false);
+		//Object[] three = {new Short((short) 3),new Long(3L),"3"};
+		//g.addAttribute("typeArray","one", 2 , three);
+		g.addAttribute("int", 1);
+		g.addAttribute("float", 1f);
+		g.addAttribute("double", 1.0);
+		g.addAttribute("short", (short)0);
+		g.addAttribute("long", 1L);
+		g.addAttribute("byte",(byte)0 );
+		g.addAttribute("boolean",true);
+		g.addAttribute("string","true");
+		*/
+		
+		
+		
 	}
 
 }
