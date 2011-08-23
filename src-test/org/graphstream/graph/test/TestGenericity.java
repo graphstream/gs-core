@@ -42,9 +42,6 @@ import org.graphstream.graph.Node;
 import org.graphstream.graph.NodeFactory;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeFactory;
-import org.graphstream.graph.implementations.ConcurrentEdge;
-import org.graphstream.graph.implementations.ConcurrentGraph;
-import org.graphstream.graph.implementations.ConcurrentNode;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.graph.implementations.AdjacencyListNode;
 import org.graphstream.graph.implementations.AdjacencyListEdge;
@@ -147,34 +144,6 @@ public class TestGenericity {
 		}
 	}
 
-	protected static class MyConcurrentNode extends ConcurrentNode {
-		public MyConcurrentNode(Graph graph, String id) {
-			super(graph, id);
-		}
-	}
-
-	protected static class MyConcurrentNodeFactory implements
-			NodeFactory<MyConcurrentNode> {
-		public MyConcurrentNode newInstance(String id, Graph graph) {
-			return new MyConcurrentNode(graph, id);
-		}
-	}
-
-	protected static class MyConcurrentEdge extends ConcurrentEdge {
-		protected MyConcurrentEdge(String id, Node src, Node dst,
-				boolean directed) {
-			super(id, src, dst, directed);
-		}
-	}
-
-	protected static class MyConcurrentEdgeFactory implements
-			EdgeFactory<MyConcurrentEdge> {
-		public MyConcurrentEdge newInstance(String id, Node src, Node dst,
-				boolean directed) {
-			return new MyConcurrentEdge(id, src, dst, directed);
-		}
-	}
-
 	@Test
 	public void checkAdjacencyListGraph() {
 		Graph g = new AdjacencyListGraph("g");
@@ -233,26 +202,6 @@ public class TestGenericity {
 		new TestNodeNeighborhood<MyMultiNode>(g);
 
 		new TestEdgeExtremities<MyMultiNode>(g);
-	}
-
-	@Test
-	public void checkConcurrentGraph() {
-		Graph g = new ConcurrentGraph("g");
-
-		g.setNodeFactory(new MyConcurrentNodeFactory());
-		g.setEdgeFactory(new MyConcurrentEdgeFactory());
-
-		new TestAddRemoveNode<MyConcurrentNode>(g);
-		new TestForEachNode<MyConcurrentNode>(g);
-		new TestNodeCollection<MyConcurrentNode>(g);
-		new TestAddRemoveEdge<MyConcurrentEdge>(g);
-		new TestForEachEdge<MyConcurrentEdge>(g);
-		new TestEdgeCollection<MyConcurrentEdge>(g);
-
-		new TestNodeEdgeSet<MyConcurrentEdge>(g);
-		new TestNodeNeighborhood<MyConcurrentNode>(g);
-
-		new TestEdgeExtremities<MyConcurrentNode>(g);
 	}
 
 	static class TestAddRemoveNode<A extends Node> {

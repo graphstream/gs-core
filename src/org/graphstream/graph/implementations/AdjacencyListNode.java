@@ -481,62 +481,52 @@ public class AdjacencyListNode extends AbstractElement implements Node {
 					event, oldValue, newValue);
 	}
 
-	@Override
 	public <T extends Edge> T getEdgeBetween(Node Node) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public <T extends Edge> T getEdgeBetween(int index) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public <T extends Edge> T getEdgeFrom(int index) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 
-	@Override
 	public <T extends Edge> T getEdgeToward(int index) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public boolean hasEdgeBetween(Node node) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	@Override
 	public boolean hasEdgeBetween(int index) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	@Override
 	public boolean hasEdgeFrom(Node node) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	@Override
 	public boolean hasEdgeFrom(int index) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	@Override
 	public boolean hasEdgeToward(int index) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	@Override
 	public boolean hasEdgeToward(Node node) {
 		// TODO Auto-generated method stub
 		return false;

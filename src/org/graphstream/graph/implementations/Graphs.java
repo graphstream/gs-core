@@ -57,7 +57,7 @@ import org.graphstream.stream.file.FileSource;
 import org.graphstream.ui.swingViewer.Viewer;
 
 public class Graphs {
-
+	
 	public static Graph unmutableGraph(Graph g) {
 		return null;
 	}

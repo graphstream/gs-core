@@ -182,7 +182,6 @@ public class ALGraph extends AbstractGraph {
 			return (T) edgeArray[iPrev];
 		}
 
-		@Override
 		public void remove() {
 			if (iPrev == -1)
 				throw new IllegalStateException();
@@ -208,7 +207,6 @@ public class ALGraph extends AbstractGraph {
 			return (T) nodeArray[iPrev];
 		}
 
-		@Override
 		public void remove() {
 			if (iPrev == -1)
 				throw new IllegalStateException();
