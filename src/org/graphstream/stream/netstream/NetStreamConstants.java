@@ -1,34 +1,34 @@
 package org.graphstream.stream.netstream;
 public class NetStreamConstants{	
-	/** Followed by an 32-bit signed integer for this protocol version
-	 * 
+	/** 
+	 *  Followed by an 32-bit signed integer for this protocol version. Certainly useless.
 	 */
-	public static int CMD_GETVERSION = 0x00;
+	public static int EVENT_GETVERSION = 0x00;
 	/**
-	 * 
+	 *  Not used.
 	 */
-	public static int CMD_START = 0x01;
-	/** Used by client to cleanly close a connection. Nothing followed
-	 * 
+	public static int EVENT_START = 0x01;
+	/** 
+	 *	Not used.
 	 */
- 	public static int CMD_END = 0x02;
+ 	public static int EVENT_END = 0x02;
 
 
 	//
  	// ----------------------------------
- 	// GS commands ...
-	//-----------------------------------
+ 	//     GraphStream's graph events
+ 	// ----------------------------------
  	//
  	
  	/**
  	 *  Followed by a node id (TYPE_STRING format)
  	 */
-	public static int CMD_ADD_NODE = 0x10;
+	public static int EVENT_ADD_NODE = 0x10;
 	
 	/**
 	 *  Followed by a node id (TYPE_STRING format)
 	 */
-	public static int CMD_DEL_NODE =0x11;
+	public static int EVENT_DEL_NODE =0x11;
 	
 	/**
 	 * Followed by 
@@ -37,21 +37,21 @@ public class NetStreamConstants{
 	 *  - a target node id (TYPE_STRING format
 	 *  - a boolean indicating if directed (TYPE_BOOLEAN format) 
 	 */
-	public static int CMD_ADD_EDGE = 0x12;
+	public static int EVENT_ADD_EDGE = 0x12;
 	
 	/**
 	 * Followed by an edge id (TYPE_STRING format) 
 	 */
-	public static int CMD_DEL_EDGE = 0x13; 
+	public static int EVENT_DEL_EDGE = 0x13; 
 	
 	/**
 	 * Followed by double (TYPE_DOUBLE format) 
 	 */
-	public static int CMD_STEP = 0x14;
+	public static int EVENT_STEP = 0x14;
 	/**
 	 * 
 	 */
-	public static int CMD_CLEARED = 0x15;
+	public static int EVENT_CLEARED = 0x15;
 	
 	/**
 	 * Followed by 
@@ -59,7 +59,7 @@ public class NetStreamConstants{
 	 *  - the attribute TYPE
 	 *  - the attribute value 
 	 */
-	public static int CMD_ADD_GRAPH_ATTR = 0x16;
+	public static int EVENT_ADD_GRAPH_ATTR = 0x16;
 	/**
 	 * Followed by 
 	 *  - an attribute id (TYPE_STRING format)
@@ -67,12 +67,12 @@ public class NetStreamConstants{
 	 *  - the attribute old value
 	 *  - the attribute new value 
 	 */
-	public static int CMD_CHG_GRAPH_ATTR = 0x17;
+	public static int EVENT_CHG_GRAPH_ATTR = 0x17;
 	/**
 	 * Followed by 
 	 *  - the attribute id (TYPE_STRING format)
 	 */
-	public static int CMD_DEL_GRAPH_ATTR = 0x18;
+	public static int EVENT_DEL_GRAPH_ATTR = 0x18;
 	
 	/**
 	 * Followed by 
@@ -80,7 +80,7 @@ public class NetStreamConstants{
 	 *  - the attribute TYPE
 	 *  - the attribute value 
 	 */
-	public static int CMD_ADD_NODE_ATTR = 0x19;
+	public static int EVENT_ADD_NODE_ATTR = 0x19;
 	/**
 	 * Followed by 
 	 *  - an attribute id (TYPE_STRING format)
@@ -88,13 +88,13 @@ public class NetStreamConstants{
 	 *  - the attribute old value
 	 *  - the attribute new value 
 	 */
-	public static int CMD_CHG_NODE_ATTR = 0x1a;
+	public static int EVENT_CHG_NODE_ATTR = 0x1a;
 	/**
 	 * Followed by 
 	 *  - the node id (TYPE_STRING format)
 	 *  - the attribute id (TYPE_STRING format)
 	 */
-	public static int CMD_DEL_NODE_ATTR = 0x1b;
+	public static int EVENT_DEL_NODE_ATTR = 0x1b;
 	
 	
 	/**
@@ -103,7 +103,7 @@ public class NetStreamConstants{
 	 *  - the attribute TYPE
 	 *  - the attribute value 
 	 */
-	public static int CMD_ADD_EDGE_ATTR = 0x1c;
+	public static int EVENT_ADD_EDGE_ATTR = 0x1c;
 	/**
 	 * Followed by 
 	 *  - an attribute id (TYPE_STRING format)
@@ -111,13 +111,13 @@ public class NetStreamConstants{
 	 *  - the attribute old value
 	 *  - the attribute new value 
 	 */
-	public static int CMD_CHG_EDGE_ATTR = 0x1d;
+	public static int EVENT_CHG_EDGE_ATTR = 0x1d;
 	/**
 	 * Followed by 
 	 *  - the edge id (TYPE_STRING format)
 	 *  - the attribute id (TYPE_STRING format)
 	 */
-	public static int CMD_DEL_EDGE_ATTR = 0x1e;
+	public static int EVENT_DEL_EDGE_ATTR = 0x1e;
 	
 	
 	
@@ -161,14 +161,14 @@ public class NetStreamConstants{
 	 */
 	public static int TYPE_INT_ARRAY = 0x57;
 	/**
-	 *  Followed by a double precision 64-bits floating point number
+	 *  Followed by an 64-bit signed integer
 	 */
-	public static int TYPE_DOUBLE = 0x58;
+	public static int TYPE_LONG = 0x58;
 	/**
-	 * Array of double. Followed by first, a 16-bits integer for the number of
-	 * doubles and then, a list of 64-bit doubles
+	 * An array of longs. Followed by first, a 16-bits integer for the number of
+	 * longs and then, a list of 62-bit signed integers
 	 */
-	public static int TYPE_DOUBLE_ARRAY = 0x59;
+	public static int TYPE_LONG_ARRAY = 0x59;
 	/**
 	 *  Followed by a single precision 32-bits floating point number
 	 */
@@ -179,14 +179,14 @@ public class NetStreamConstants{
 	 */
 	public static int TYPE_FLOAT_ARRAY = 0x5b;
 	/**
-	 *  Followed by an 64-bit signed integer
+	 *  Followed by a double precision 64-bits floating point number
 	 */
-	public static int TYPE_LONG = 0x5c;
+	public static int TYPE_DOUBLE = 0x5c;
 	/**
-	 * An array of longs. Followed by first, a 16-bits integer for the number of
-	 * longs and then, a list of 62-bit signed integers
+	 * Array of double. Followed by first, a 16-bits integer for the number of
+	 * doubles and then, a list of 64-bit doubles
 	 */
-	public static int TYPE_LONG_ARRAY = 0x5d;
+	public static int TYPE_DOUBLE_ARRAY = 0x5d;
 	/**
 	 * Array of characters. Followed by first, a 16-bits integer for the size in
 	 * bytes (not in number of characters) of the string, then by the unicode
@@ -202,7 +202,7 @@ public class NetStreamConstants{
 	/**
 	 * An type-unspecified array. Followed by first, a
 	 * 16-bits integer indicating the number of elements, and then, the elements
-	 * themselves. The elements themselves have to give their types.
+	 * themselves. The elements themselves have to give their type.
 	 */
 	public static byte TYPE_ARRAY = 0x60;
 

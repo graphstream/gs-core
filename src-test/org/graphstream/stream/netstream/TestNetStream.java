@@ -22,6 +22,7 @@ import java.util.Vector;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
+import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.SinkAdapter;
@@ -333,9 +334,13 @@ public class TestNetStream {
 		}.start();
 	}
 
+	
+	/**
+	 * Hopefully tests all possible graph events through the NetStream framework. 
+	 */
 	@Test
 	public void testNetStreamEvents() {
-		Graph g1 = new MultiGraph("G");
+		final Graph g1 = new DefaultGraph("G");
 		NetStreamReceiver net = null;
 		try {
 			net = new NetStreamReceiver("localhost", 2003, true);
@@ -426,6 +431,7 @@ public class TestNetStream {
 			}
 			@Override
 			public void graphCleared(String sourceId, long timeId) {
+				
 			}
 			@Override
 			public void stepBegins(String sourceId, long timeId, double step) {
@@ -437,7 +443,7 @@ public class TestNetStream {
 
 			@Override
 			public void run() {
-
+				
 				Graph g = new MultiGraph("G", false, true);
 
 				NetStreamSender nsc = null;
@@ -452,7 +458,6 @@ public class TestNetStream {
 				}
 				g.addSink(nsc);
 				Node node0 = g.addNode("node0");
-				// Node node1 = g.addNode("node1");
 				Edge edge = g.addEdge("edge", "node0", "node1", true);
 				node0.addAttribute("nodeAttribute", 0);
 				node0.changeAttribute("nodeAttribute", 1);
@@ -464,7 +469,10 @@ public class TestNetStream {
 				g.changeAttribute("graphAttribute", 1);
 				g.removeAttribute("graphAttribute");
 				g.stepBegins(1.1);
-
+				g.removeEdge("edge");
+				g.removeNode("node0");
+				g.clear();
+				
 			}
 		}.start();
 

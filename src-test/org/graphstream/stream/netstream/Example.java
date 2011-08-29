@@ -18,7 +18,7 @@ import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.stream.thread.ThreadProxyPipe;
 
 /**
- * A simple example of use of the NetStream sender a receiver.
+ * A simple example of use of the NetStream sender and receiver.
  * <p>
  * This is a dummy example where the Java Sender and Receiver are used together.
  * This is not the normal use of the NetStream, normally the receiver should be
@@ -31,14 +31,14 @@ import org.graphstream.stream.thread.ThreadProxyPipe;
  * and waits for events on the "default" stream, on port 2001 at "localhost". In
  * another thread, a Sender is created with a graph connected to its sink, so
  * that any event from the graph will end-up to the sender. The sender connects
- * to "localhost" on port 2001 and sends, on the default stream, any received event to the receiver,
- * through the network, using the NetStream protocol.
+ * to "localhost" on port 2001 and sends, on the default stream, any received
+ * event to the receiver, through the network, using the NetStream protocol.
  * </p>
  */
 public class Example {
 
-	public Example() throws UnknownHostException, IOException, InterruptedException {
-
+	public static void main(String[] args) throws UnknownHostException,
+			IOException, InterruptedException {
 		// ----- On the receiver side -----
 		//
 		// - a graph that will display the received events
@@ -67,9 +67,10 @@ public class Example {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				// - plug the graph to the sender so that graph events can be sent automatically
+				// - plug the graph to the sender so that graph events can be
+				// sent automatically
 				g.addSink(nsc);
-				// - generate some events on the cleint side
+				// - generate some events on the client side
 				String style = "node{fill-mode:plain;fill-color:#567;size:6px;}";
 				g.addAttribute("stylesheet", style);
 				g.addAttribute("ui.antialias", true);
@@ -83,17 +84,14 @@ public class Example {
 				}
 			}
 		}.start();
-		
+
 		// ----- Back to the receiver side -----
 		//
 		// -The receiver pro-actively checks for events on the ThreadProxyPipe
-		while(true){
+		while (true) {
 			pipe.pump();
 			Thread.sleep(100);
 		}
-		
-	}
-	public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException {
-		new Example();
+
 	}
 }
