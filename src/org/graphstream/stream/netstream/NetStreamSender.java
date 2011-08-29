@@ -28,7 +28,10 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
+
 package org.graphstream.stream.netstream;
+
+
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -37,20 +40,25 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
-import org.graphstream.graph.Edge;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
-import org.graphstream.graph.implementations.DefaultGraph;
-import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.stream.Sink;
 
 /**
+ * <p>
+ * This class implements a sender according to specifications the NetStream protocol.
+ * </p>
+ * 
+ * <p>
+ * See {@link NetStreamConstants} for a full description of the protocol, the sender and the receiver.
+ * </p>
+ * 
+ * @see NetStreamConstants
+ * @see NetStreamReceiver
  * 
  * 
- * One client must send to only one identified stream (streamID, host, port)
+ * Copyright (c) 2010 University of Luxembourg
  * 
- * 
- * @date Jul 10, 2011
+ * NetStreamSender.java
+ * @since Aug 10, 2011
  * 
  * @author Yoann Pigné
  * 
@@ -1009,154 +1017,6 @@ public class NetStreamSender implements Sink {
 
 	}
 
-	public static void main(String[] args) throws InterruptedException, UnknownHostException, IOException {
-
-		// ------------------------------
-		//           EXAMPLE 0 
-		// ------------------------------
-/*
-		Graph g = new MultiGraph("G");
-		g.display();
-		
-		NetStreamSender nsc = new NetStreamSender(2001);
-		g.addSink(nsc);
-		
-	
-		String ss = "node{fill-mode:plain;fill-color:#567;size:6px;}";
-		
-		g.addAttribute("stylesheet", ss);
-		g.addAttribute("ui.antialias", true);
-		g.addAttribute("layout.stabilization-limit", 0);
-		
-		for (int i = 0; i < 500; i++) {
-			//g.addAttribute("ui.sprite."+i, i,i,0);
-			g.addNode(i + "");
-			if (i > 0) {
-				g.addEdge(i + "-" + (i - 1), i + "", (i - 1) + "");
-				g.addEdge(i + "--" + (i / 2), i + "", (i / 2) + "");
-
-			}
-		}
-	*/	
-		// ------------------------------
-		//           EXAMPLE 1 
-		// ------------------------------
-		/*
-		Graph g1_1 = new MultiGraph("G1_1");
-		Graph g1_2 = new MultiGraph("G1_2");
-		Graph g2 = new MultiGraph("G2");
-
-		g1_1.display();
-		g1_2.display();
-
-		NetStreamSender nsc1_1 = new NetStreamSender("G1", "kvatch", 2001);
-		NetStreamSender nsc1_2 = new NetStreamSender("G1", "kvatch", 2001);
-		NetStreamSender nsc2 = new NetStreamSender("G2", "kvatch", 2001);
-		
-		g1_1.addSink(nsc1_1);
-		g1_2.addSink(nsc1_2);
-		g2.addSink(nsc2);
-
-		String ss = "node{fill-mode:plain;fill-color:#567;size:6px;}";
-		g1_1.addAttribute("layout.stabilization-limit", 0);
-		g1_1.addAttribute("stylesheet", ss);
-		g1_1.addAttribute("ui.antialias", true);
-		g1_2.addAttribute("layout.stabilization-limit", 0);
-		g1_2.addAttribute("stylesheet", ss);
-		g1_2.addAttribute("ui.antialias", true);
-		
-		
-		String ss2 = "node{fill-mode:plain;fill-color:#765;size:6px;}";
-		g2.addAttribute("layout.stabilization-limit", 0);
-		g2.addAttribute("stylesheet", ss2);
-		g2.addAttribute("ui.antialias", true);
-		
-		for (int i = 0; i < 5; i++) {
-			g1_1.addAttribute("ui.sprite."+i, i,i,0);
-			g1_1.addNode(i + "");
-			if (i > 0) {
-				g1_1.addEdge(i + "-" + (i - 1), i + "", (i - 1) + "");
-				g1_1.addEdge(i + "--" + (i / 2), i + "", (i / 2) + "");
-
-			}
-			g1_2.addNode(i + "*");
-			if (i > 0) {
-				g1_2.addEdge(i + "-*" + (i - 1), i + "*", (i - 1) + "*");
-				g1_2.addEdge(i + "--*" + (i / 2), i + "*", (i / 2) + "*");
-			}
-			g2.addNode(i + "");
-			if (i > 0) {
-				g2.addEdge(i + "-" + (i - 1), i + "", (i - 1) + "");
-				g2.addEdge(i + "--" + (i / 2), i + "", (i / 2) + "");
-
-			}
-
-		}
-		
-		*/
-
-		
-		
-		
-		// ------------------------------
-		//           EXAMPLE 2
-		// ------------------------------
-		/*
-		Graph g = new MultiGraph("G");
-		NetStreamSender nsc = new NetStreamSender("localhost", 2001);
-		g.addSink(nsc);
-		
-		g.addAttribute("intArray", 0,Integer.MAX_VALUE,Integer.MIN_VALUE);
-		g.addAttribute("floatArray", 0f,Float.MAX_VALUE,Float.MIN_VALUE);
-		g.addAttribute("doubleArray", 0.0,Double.MAX_VALUE,Double.MIN_VALUE);
-		g.addAttribute("shortArray", (short)0, Short.MAX_VALUE, Short.MIN_VALUE);
-		g.addAttribute("longArray", 0L,Long.MAX_VALUE,Long.MIN_VALUE);
-		g.addAttribute("byteArray",(byte)0, Byte.MAX_VALUE, Byte.MIN_VALUE);
-		g.addAttribute("booleanArray",true,false);
-		//Object[] three = {new Short((short) 3),new Long(3L),"3"};
-		//g.addAttribute("typeArray","one", 2 , three);
-		g.addAttribute("int", 1);
-		g.addAttribute("float", 1f);
-		g.addAttribute("double", 1.0);
-		g.addAttribute("short", (short)0);
-		g.addAttribute("long", 1L);
-		g.addAttribute("byte",(byte)0 );
-		g.addAttribute("boolean",true);
-		g.addAttribute("string","true");
-		*/
-
-		//---------------------------------------------
-		//      exemple 3
-		//----------------------------------
-		Graph g = new MultiGraph("G", false, true);
-		
-		NetStreamSender nsc=null;
-		try {
-			nsc = new NetStreamSender("localhost", 2001);
-		} catch (UnknownHostException e1) {
-			e1.printStackTrace();
-			return;
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			return;
-		}
-		g.addSink(nsc);
-		Node node0 = g.addNode("node0");
-		//Node node1 = g.addNode("node1");
-		Edge edge = g.addEdge("edge", "node0", "node1",true);
-		node0.addAttribute("nodeAttribute", 0);
-		node0.changeAttribute("nodeAttribute", 1);
-		node0.removeAttribute("nodeAttribute");
-		edge.addAttribute("edgeAttribute", 0);
-		edge.changeAttribute("edgeAttribute", 1);
-		edge.removeAttribute("edgeAttribute");
-		g.addAttribute("graphAttribute", 0);
-		g.changeAttribute("graphAttribute", 1);
-		g.removeAttribute("graphAttribute");
-		g.stepBegins(1.1);
-		
-		
-	}
 	/**
 	 * Force the connection to close (properly) with the server
 	 * @throws IOException 

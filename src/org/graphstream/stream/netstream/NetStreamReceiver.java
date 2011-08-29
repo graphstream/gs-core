@@ -1,13 +1,34 @@
-/**
+/*
+ * Copyright 2006 - 2011 
+ *     Julien Baudry	<julien.baudry@graphstream-project.org>
+ *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
+ *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
+ *     Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
  * 
- * Copyright (c) 2010 University of Luxembourg
+ * This file is part of GraphStream <http://graphstream-project.org>.
  * 
- * @file NetStreamReceiver.java
- * @date Aug 13, 2011
+ * GraphStream is a library whose purpose is to handle static or dynamic
+ * graph, create them from scratch, file or any source and display them.
  * 
- * @author Yoann Pigné
+ * This program is free software distributed under the terms of two licenses, the
+ * CeCILL-C license that fits European law, and the GNU Lesser General Public
+ * License. You can  use, modify and/ or redistribute the software under the terms
+ * of the CeCILL-C license as circulated by CEA, CNRS and INRIA at the following
+ * URL <http://www.cecill.info> or under the terms of the GNU LGPL as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
+
 package org.graphstream.stream.netstream;
 
 import java.io.IOException;
@@ -21,150 +42,45 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.stream.Sink;
-import org.graphstream.stream.SinkAdapter;
 import org.graphstream.stream.sync.SourceTime;
 import org.graphstream.stream.thread.ThreadProxyPipe;
-import org.miv.mbox.MBoxListener;
-import org.miv.mbox.net.IdAlreadyInUseException;
-import org.miv.mbox.net.MBoxLocator;
 import org.miv.mbox.net.PositionableByteArrayInputStream;
 
 /**
- * This one is responsible for receiving graph events from the network following
- * the "NetStream" protocol. Events are then dispatched to pipes according to a
- * given names.
- * 
  * <p>
- * The class is composed of both:
- * </p>
- * <ul>
- * <li>A server that handles multiples connections directed to multiple streams
- * (pipes). That part is mostly a copy/past from Antoine's "MBox Receiver" code.
- * </li>
- * <li>An implementation of the NetStream Protocol (see below) that parses the
- * received byte arrays and creates/sends graph events to specified pipes.</li>
- * </ul>
- * 
- * <h2>Receiver</h2>
- * The Receiver's general behavior is:
- * <ul>
- * <li>Wait for messages from any sender</li>
- * <li>received data is stored separately for each sender until a message is completely received. The reiceiver knows about a complete message because the first 4 bytes of the messages are an integer that gives the size of the message.</li>
- * <li>a complete message is decoded (according to the NetStream Protocol), an event is created and sent ton the specified stream (pipe)</li>
- * </ul>
-
- * <p>
- * The graph event receiver listens at a given address and port. It runs on its
- * own thread. Several senders can connect to it, the receiver will demultiplex
- * the data flow and dispatch incoming events to specified pipes. No extra
- * thread are created when client connect.
- * 
+ * This class implements a receiver according to specifications the NetStream protocol.
  * </p>
  * 
  * <p>
- * From the graph event stream point of view, the NetStream receiver can be seen
- * as a set of pipes identified by an id. When an event is received is is
- * directed to one specific stream. By default, senders not willing to handle
- * different streams may send to the stream called "default".
+ * See {@link NetStreamConstants} for a full description of the protocol, the sender and the receiver.
  * </p>
  * 
- * <p>
- * The only way to receive events from the network is to ask for a stream by
- * means of a ThreadProxyPipe to the Receiver. The {@link #getStream} and
- * {@link #getDefaultStream} give access to such pipe. Asking a non-existing
- * stream (with an unknown id) will create it, so those functions always return
- * a pipe. On the opposite, any new stream introduced by a sender will be created by the
- * receiver.
- * </p>
+ * @see NetStreamConstants
+ * @see NetStreamSender
  * 
  * 
+ * Copyright (c) 2010 University of Luxembourg
  * 
+ * NetStreamReceiver.java
+ * @since Aug 13, 2011
  * 
- * <h2>The NetStream Protocol</h2>
- * 
- * A messages sent by a sender is composed of two general parts : 
- * <ul>
- * <li>A 4 bytes integer that indicates the length (in bytes) of the remaining of this message.</li>
- * <li>The message itself that can be decode into a graph event, according to the NetStream Protocol.</li>
- * </ul>
- * 
- * 
- * 
- * 
- * <h3>Data types</h3>
- * 
- * <p>
- * Before sending a value who's type is unknown (integer, double, string,
- * table...) one have to specify its type (and if applicable, its length) to the
- * server. Value types are defined to allow the server to recognize the type of
- * a value. When applicable (strings, tables, raw data) types are followed by a
- * length. This length is always coded with a 16-bits signed short and usually
- * represents the number of elements (for arrays).
- * </p>
- * 
- * <ul>
- * <li><code>TYPE_BOOLEAN</code>: Announces a boolean value. Followed by a byte
- * who's value is 0 (false) or 1 (true).</li>
- * 
- * <li><code>TYPE_BOOLEAN_ARRAY</code>: Announces an array of boolean values.
- * Followed by first, a 16-bit short that indicates the length of this array,
- * and then, the actual sequence of booleans.</li>
- * 
- * <li><code>TYPE_INT</code>: Announces an integer. Followed by an 32-bit signed
- * integer.</li>
- * 
- * <li><code>TYPE_DOUBLE</code>: Announces a double. Followed by an 64-bit
- * double precision floating point number.</li>
- * 
- * <li><code>TYPE_INT_ARRAY</code>: Announces an array of integers. Followed by
- * first, a 16-bit short that indicates the length <b>in number of elements</b>
- * of this array, and then, the actual sequence of integers.</li>
- * 
- * <li><code>TYPE_DOUBLE_ARRAY</code>: Announces an array of doubles. Followed
- * by first, a 16-bit short that indicates the length <b>in number of
- * elements</b> of this array, and then, the actual sequence of doubles.</li>
- * 
- * <li><code>TYPE_STRING</code>: Announces an array of characters. Followed by
- * first, a 16-bits short for the size <b>in bytes</b> (not in number of
- * characters) of the string, then by the <b>unicode</b> string itself.</li>
- * 
- * <li><code>TYPE_RAW</code>: Announces raw data, good for serialization.
- * Followed by first, a 16-bits integer indicating the length in bytes of the
- * dataset, and then the data itself.</li>
- * 
- * <li><code>TYPE_COMPOUND</code>: Announces a compound data set, where arrays
- * contain other arrays mixed with native types. Each data piece in this case,
- * has to announce it's type (and length if applicable). May be useless because
- * hard to decode...</li>
- * 
- * <li><code>TYPE_ARRAY</code>: Announces an undefined-type array. Followed by
- * first, a 16-bits integer indicating the number of elements, and then, the
- * elements themselves. The elements themselves have to give their types.
- * <b>Should only be used in conjunction with <code>TYPE_COMPOUND</code></b>.</li>
- * </ul>
- * 
- * 
- * 
- * 
- * 
+ * @author Yoann Pigné
  * 
  */
 public class NetStreamReceiver extends Thread {
-	
+
 	/**
-	 * the source Id used to identify events in the following streams. Synchronization is not handled yet.
+	 * the source Id used to identify events in the following streams.
+	 * Synchronization is not handled yet.
 	 */
 	protected String sourceId = "NetStream";
 	/**
-	 *  This timestamp object is used to label received events. Synchronization is not handled yet.
+	 * This timestamp object is used to label received events. Synchronization
+	 * is not handled yet.
 	 */
 	protected SourceTime sourceTime;
 
@@ -172,12 +88,12 @@ public class NetStreamReceiver extends Thread {
 	 * the hostname this receiver is listening at.
 	 */
 	private String hostname;
-	
+
 	/**
 	 * the port listened to.
 	 */
 	private int port;
-	
+
 	/**
 	 * Receiver socket.
 	 */
@@ -227,12 +143,12 @@ public class NetStreamReceiver extends Thread {
 	 * Current active incoming connections.
 	 */
 	protected HashMap<SelectionKey, IncomingBuffer> incoming = new HashMap<SelectionKey, IncomingBuffer>();
-	
+
 	// Constructors
 
-	
 	/**
-	 * New NetStream Receiver, awaiting in its own thread at the given host name and port, for new graph events.
+	 * New NetStream Receiver, awaiting in its own thread at the given host name
+	 * and port, for new graph events.
 	 * 
 	 * @param hostname
 	 *            The host name to listen at messages.
@@ -245,19 +161,19 @@ public class NetStreamReceiver extends Thread {
 	}
 
 	/**
-	 * New NetStream Receiver, awaiting in its own thread at "localhost" on the given port, for new graph events.
+	 * New NetStream Receiver, awaiting in its own thread at "localhost" on the
+	 * given port, for new graph events.
 	 * 
 	 * @param port
 	 *            The port to listen at messages.
 	 */
-	public NetStreamReceiver(int port) throws IOException,
-			UnknownHostException {
+	public NetStreamReceiver(int port) throws IOException, UnknownHostException {
 		this("localhost", port, false);
 	}
 
-	
 	/**
-	 * New NetStream Receiver, awaiting in its own thread at the given host name and port, for new graph events.
+	 * New NetStream Receiver, awaiting in its own thread at the given host name
+	 * and port, for new graph events.
 	 * 
 	 * @param hostname
 	 *            The host name to listen at messages.
@@ -294,7 +210,7 @@ public class NetStreamReceiver extends Thread {
 	 *            Identifier of the stream.
 	 * @return the identified pipe
 	 */
-	public ThreadProxyPipe getStream(String name) {
+	public  synchronized ThreadProxyPipe getStream(String name) {
 		ThreadProxyPipe s = streams.get(name);
 		if (s == null) {
 			s = new ThreadProxyPipe();
@@ -309,7 +225,7 @@ public class NetStreamReceiver extends Thread {
 	 * @return the default pipe
 	 */
 
-	public ThreadProxyPipe getDefaultStream() {
+	public  synchronized ThreadProxyPipe getDefaultStream() {
 		ThreadProxyPipe s = streams.get("default");
 		if (s == null) {
 			s = new ThreadProxyPipe();
@@ -380,21 +296,22 @@ public class NetStreamReceiver extends Thread {
 	 */
 
 	/**
-	 * Register a stream. All events  with the given stream name will be directed
-	 * to it. The user has to ensure the ThreadProxyPipe can be safely written to by the Receiver's thread.
-	 *  
+	 * Register a stream. All events with the given stream name will be directed
+	 * to it. The user has to ensure the ThreadProxyPipe can be safely written
+	 * to by the Receiver's thread.
+	 * 
 	 * @param name
 	 *            Filter only message with this name to the given message box.
-	 * @param pipe
+	 * @param stream
 	 *            The ThreadProxyPipe to push the events to.
 	 * @throws IdAlreadyInUseException
-	 *             If another Pipe is already registered at the given
-	 *             name.
+	 *             If another Pipe is already registered at the given name.
 	 */
 	public synchronized void register(String name, ThreadProxyPipe stream)
 			throws Exception {
 		if (streams.containsKey(name))
-			throw new IdAlreadyInUseException("name " + name + " already registered");
+			throw new Exception("name " + name
+					+ " already registered");
 
 		streams.put(name, stream);
 
@@ -415,11 +332,10 @@ public class NetStreamReceiver extends Thread {
 	/**
 	 * Ask the receiver about its active connections
 	 */
-	public synchronized boolean hasActiveConnections(){
-		return ! incoming.isEmpty();
+	public synchronized boolean hasActiveConnections() {
+		return !incoming.isEmpty();
 	}
-	
-	
+
 	/**
 	 * Wait for connections, accept them, demultiplexes them and dispatch
 	 * messages to registered message boxes.
@@ -446,8 +362,8 @@ public class NetStreamReceiver extends Thread {
 			error("cannot close the server socket: " + e.getMessage(), e);
 		}
 
-		if(debug){
-			debug("receiver //" + hostname +":"+port+ " finished");
+		if (debug) {
+			debug("receiver //" + hostname + ":" + port + " finished");
 		}
 	}
 
@@ -498,8 +414,8 @@ public class NetStreamReceiver extends Thread {
 				}
 			}
 		} catch (IOException e) {
-			error(e, "I/O error in receiver //%s:%d thread: aborting: %s", hostname, port,
-					e.getMessage());
+			error(e, "I/O error in receiver //%s:%d thread: aborting: %s",
+					hostname, port, e.getMessage());
 
 			loop = false;
 		} catch (Throwable e) {
@@ -528,7 +444,7 @@ public class NetStreamReceiver extends Thread {
 
 		try {
 			buf.readDataChunk(key);
-			
+
 		} catch (IOException e) {
 			incoming.remove(key);
 			e.printStackTrace();
@@ -537,15 +453,15 @@ public class NetStreamReceiver extends Thread {
 					hostname, port, e.getMessage());
 			loop = false;
 		}
-		
-		if( ! buf.active){
+
+		if (!buf.active) {
 			incoming.remove(key);
-			if(debug)
-				debug("removing buffer %s from incoming for geting inactive. %d left",key.toString(), incoming.size());
-			
+			if (debug)
+				debug("removing buffer %s from incoming for geting inactive. %d left",
+						key.toString(), incoming.size());
+
 		}
-		
-		
+
 	}
 
 	// Utilities
@@ -669,8 +585,9 @@ public class NetStreamReceiver extends Thread {
 			if (nbytes <= 0)
 				return;
 
-			//debug("<chunk (%d bytes) from " + socket.socket().getInetAddress()
-			//		+ ":" + socket.socket().getPort() + ">", nbytes);
+			// debug("<chunk (%d bytes) from " +
+			// socket.socket().getInetAddress()
+			// + ":" + socket.socket().getPort() + ">", nbytes);
 
 			// Read the first header.
 
@@ -835,11 +752,11 @@ public class NetStreamReceiver extends Thread {
 
 			// First read the name of the stream that will be addressed.
 			String stream = readString(in);
-			if(debug){
+			if (debug) {
 				debug("Stream \"%s\" is addressed in this message.", stream);
 			}
 			currentStream = getStream(stream);
-			
+
 			cmd = in.read();
 			if (cmd != -1) {
 				if (cmd == NetStreamConstants.EVENT_ADD_NODE) {
@@ -932,7 +849,7 @@ public class NetStreamReceiver extends Thread {
 	 * @see NetStreamConstants.EVENT_DEL_EDGE
 	 */
 	protected void serve_EVENT_DEL_EDGE_ATTR(InputStream in) {
-		if(debug){
+		if (debug) {
 			debug("NetStreamServer: Received DEL_EDGE_ATTR command.");
 		}
 		String edgeId = readString(in);
@@ -945,7 +862,7 @@ public class NetStreamReceiver extends Thread {
 	 * @see NetStreamConstants.EVENT_CHG_EDGE_ATTR
 	 */
 	protected void serve_EVENT_CHG_EDGE_ATTR(InputStream in) {
-		if(debug){
+		if (debug) {
 			debug("NetStreamServer: Received CHG_EDGE_ATTR command.");
 		}
 		String edgeId = readString(in);
@@ -963,7 +880,7 @@ public class NetStreamReceiver extends Thread {
 	 * @see NetStreamConstants.EVENT_ADD_EDGE_ATTR
 	 */
 	protected void serve_EVENT_ADD_EDGE_ATTR(InputStream in) {
-		if(debug){
+		if (debug) {
 			debug("NetStreamServer: Received ADD_EDGE_ATTR command.");
 		}
 		String edgeId = readString(in);
@@ -979,7 +896,7 @@ public class NetStreamReceiver extends Thread {
 	 * @see NetStreamConstants.EVENT_DEL_NODE_ATTR
 	 */
 	protected void serve_EVENT_DEL_NODE_ATTR(InputStream in) {
-		if(debug){
+		if (debug) {
 			debug("NetStreamServer: Received DEL_NODE_ATTR command.");
 		}
 		String nodeId = readString(in);
@@ -994,7 +911,7 @@ public class NetStreamReceiver extends Thread {
 	 * @see NetStreamConstants.EVENT_CHG_NODE_ATTR
 	 */
 	protected void serve_EVENT_CHG_NODE_ATTR(InputStream in) {
-		if(debug){
+		if (debug) {
 			debug("NetStreamServer: Received EVENT_CHG_NODE_ATTR command.");
 		}
 		String nodeId = readString(in);
@@ -1011,7 +928,7 @@ public class NetStreamReceiver extends Thread {
 	 * @see NetStreamConstants.EVENT_ADD_NODE_ATTR
 	 */
 	protected void serve_EVENT_ADD_NODE_ATTR(InputStream in) {
-		if(debug){
+		if (debug) {
 			debug("NetStreamServer: Received EVENT_ADD_NODE_ATTR command.");
 		}
 		String nodeId = readString(in);
@@ -1026,7 +943,7 @@ public class NetStreamReceiver extends Thread {
 	 * @see NetStreamConstants.EVENT_DEL_GRAPH_ATTR
 	 */
 	protected void serve_EVENT_DEL_GRAPH_ATTR(InputStream in) {
-		if(debug){
+		if (debug) {
 			debug("NetStreamServer: Received EVENT_DEL_GRAPH_ATTR command.");
 		}
 		String attrId = readString(in);
@@ -1039,7 +956,7 @@ public class NetStreamReceiver extends Thread {
 	 * @see NetStreamConstants.EVENT_CHG_GRAPH_ATTR
 	 */
 	protected void serve_EVENT_CHG_GRAPH_ATTR(InputStream in) {
-		if(debug){
+		if (debug) {
 			debug("NetStreamServer: Received EVENT_CHG_GRAPH_ATTR command.");
 		}
 		String attrId = readString(in);
@@ -1056,14 +973,14 @@ public class NetStreamReceiver extends Thread {
 	 * @see NetStreamConstants.EVENT_ADD_GRAPH_ATTR
 	 */
 	protected void serve_EVENT_ADD_GRAPH_ATTR(InputStream in) {
-		if(debug){
+		if (debug) {
 			debug("NetStreamServer: Received EVENT_ADD_GRAPH_ATTR command.");
 		}
 		String attrId = readString(in);
 		Object value = readValue(in, readType(in));
-		if(debug){
-			debug("NetStreamServer | EVENT_ADD_GRAPH_ATTR | %s=%s", attrId, value
-				.toString());
+		if (debug) {
+			debug("NetStreamServer | EVENT_ADD_GRAPH_ATTR | %s=%s", attrId,
+					value.toString());
 		}
 		currentStream.graphAttributeAdded(sourceId, sourceTime.newEvent(),
 				attrId, value);
@@ -1074,7 +991,7 @@ public class NetStreamReceiver extends Thread {
 	 * @see NetStreamConstants.EVENT_CLEARED
 	 */
 	protected void serve_EVENT_CLEARED(InputStream in) {
-		if(debug){
+		if (debug) {
 			debug("NetStreamServer: Received EVENT_CLEARED command.");
 		}
 		currentStream.graphCleared(sourceId, sourceTime.newEvent());
@@ -1085,7 +1002,7 @@ public class NetStreamReceiver extends Thread {
 	 * @see NetStreamConstants.EVENT_STEP
 	 */
 	protected void serve_EVENT_STEP(InputStream in) {
-		if(debug){
+		if (debug) {
 			debug("NetStreamServer: Received EVENT_STEP command.");
 		}
 		double time = readDouble(in);
@@ -1096,7 +1013,7 @@ public class NetStreamReceiver extends Thread {
 	 * @see NetStreamConstants.EVENT_DEL_EDGE
 	 */
 	protected void serve_EVENT_DEL_EDGE(InputStream in) {
-		if(debug){
+		if (debug) {
 			debug("NetStreamServer: Received EVENT_DEL_EDGE command.");
 		}
 		String edgeId = readString(in);
@@ -1107,7 +1024,7 @@ public class NetStreamReceiver extends Thread {
 	 * @see NetStreamConstants.EVENT_ADD_EDGE
 	 */
 	protected void serve_EVENT_ADD_EDGE(InputStream in) {
-		if(debug){
+		if (debug) {
 			debug("NetStreamServer: Received ADD_EDGE command.");
 		}
 		String edgeId = readString(in);
@@ -1122,7 +1039,7 @@ public class NetStreamReceiver extends Thread {
 	 * @see NetStreamConstants.DEL_NODE
 	 */
 	protected void serve_DEL_NODE(InputStream in) {
-		if(debug){
+		if (debug) {
 			debug("NetStreamServer: Received DEL_NODE command.");
 		}
 		String nodeId = readString(in);
@@ -1133,7 +1050,7 @@ public class NetStreamReceiver extends Thread {
 	 * @see NetStreamConstants.EVENT_ADD_NODE
 	 */
 	protected void serve_EVENT_ADD_NODE(InputStream in) {
-		if(debug){
+		if (debug) {
 			debug("NetStreamServer: Received EVENT_ADD_NODE command");
 		}
 		String nodeId = readString(in);
@@ -1527,7 +1444,6 @@ public class NetStreamReceiver extends Thread {
 			bb.put(data);
 			bb.flip();
 			int len = bb.getInt();
-
 
 			data = new byte[len * 4];
 			if (in.read(data, 0, len * 4) != len * 4) {
