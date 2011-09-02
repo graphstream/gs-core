@@ -10,11 +10,11 @@ import java.util.List;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
-import org.graphstream.graph.implementations.ALGraph;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
-import org.graphstream.graph.implementations.MGraph;
+import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.graph.implementations.SGraph;
+import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.graph.implementations.SingleGraph;
 
 public class TestPerformance {
@@ -417,9 +417,9 @@ public class TestPerformance {
 		int gCount = 2;
 		Graph[] graphs = new Graph[gCount];
 //		graphs[0] = new SingleGraph("Single");
-		graphs[0] = new SGraph("S");
+		graphs[0] = new SingleGraph("S");
 //		graphs[2] = new MultiGraph("Multi");
-		graphs[1] = new MGraph("M");
+		graphs[1] = new MultiGraph("M");
 //		graphs[4] = new AdjacencyListGraph("Adj");
 //		graphs[2] = new ALGraph("AL");
 
