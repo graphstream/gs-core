@@ -36,8 +36,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-import java.util.HashSet;
 
 import org.graphstream.graph.CompoundAttribute;
 import org.graphstream.graph.Element;
@@ -58,12 +56,17 @@ import org.graphstream.graph.NullAttributeException;
 public abstract class AbstractElement implements Element {
 	// Attribute
 
-	protected static Set<String> emptySet = new HashSet<String>();
+//	protected static Set<String> emptySet = new HashSet<String>();
 	
 	/**
 	 * Tag of this element.
 	 */
 	private String id;
+	
+	/**
+	 * The index of this element.
+	 */
+	private int index;
 
 	/**
 	 * Attributes map. This map is created only when needed. It contains pairs
@@ -88,6 +91,19 @@ public abstract class AbstractElement implements Element {
 
 	public String getId() {
 		return id;
+	}
+	
+	public int getIndex() {
+		return index;
+	}
+	
+	/**
+	 * Used by subclasses to change the index of an element
+	 * 
+	 * @param index the new index
+	 */
+	protected void setIndex(int index) {
+		this.index = index;
 	}
 
 	// XXX UGLY. how to create events in the abstract element ?
@@ -412,14 +428,14 @@ public abstract class AbstractElement implements Element {
 		if (attributes != null)
 			return attributes.keySet();
 
-		return emptySet;
+		return Collections.emptySet();
 	}
 	
 	public Collection<String> getAttributeKeySet() {
 		if (attributes != null)
 			return (Collection<String>) Collections.unmodifiableCollection(attributes.keySet());
 		
-		return (Collection<String>) Collections.unmodifiableCollection(emptySet);
+		return Collections.emptySet();
 	}
 
 	// public Map<String,Object> getAttributeMap()

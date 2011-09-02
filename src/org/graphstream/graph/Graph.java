@@ -41,6 +41,9 @@ import org.graphstream.stream.Pipe;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSource;
 
+// TODO describe indices at the beginning
+// TODO review javadoc for methods that add/remove edges/nodes 
+
 /**
  * An Interface that advises general purpose methods for handling graphs.
  * 
@@ -318,12 +321,14 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 	 * @return True if enabled.
 	 */
 	boolean isAutoCreationEnabled();
-	
+
 	/**
-	 * If true, when accessing an attribute that does not exist (or is not of the
-	 * expected type), a {@link NullAttributeException} is thrown. Else null is
-	 * returned.
-	 * @return True if exceptions must be thrown when accessing a null attribute.
+	 * If true, when accessing an attribute that does not exist (or is not of
+	 * the expected type), a {@link NullAttributeException} is thrown. Else null
+	 * is returned.
+	 * 
+	 * @return True if exceptions must be thrown when accessing a null
+	 *         attribute.
 	 */
 	boolean nullAttributesAreErrors();
 
@@ -337,14 +342,16 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 	// Command
 
 	/**
-	 * Should a {@link NullAttributeException} be thrown when one tries to access
-	 * a non existing attribute, or an attribute whose type is not the expected one?.
+	 * Should a {@link NullAttributeException} be thrown when one tries to
+	 * access a non existing attribute, or an attribute whose type is not the
+	 * expected one?.
 	 * 
 	 * @param on
-	 * 			  if true, exceptions will be thrown when accessing a non existing attribute.
+	 *            if true, exceptions will be thrown when accessing a non
+	 *            existing attribute.
 	 */
 	void setNullAttributesAreErrors(boolean on);
-	
+
 	/**
 	 * Set the node factory used to create nodes.
 	 * 
@@ -488,9 +495,15 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 	 * @throws ElementNotFoundException
 	 *             If strict checking is enabled, and the 'from' or 'to' node is
 	 *             not registered in the graph.
+	 * @throws EdgeRejectedException
+	 *             If strict checking is enabled and the endpoints of the edge
+	 *             do not accept it. Typically this happens when trying to add
+	 *             an edge between two already connected nodes in a single
+	 *             graph.
 	 */
 	<T extends Edge> T addEdge(String id, String node1, String node2)
-			throws IdAlreadyInUseException, ElementNotFoundException;
+			throws IdAlreadyInUseException, ElementNotFoundException,
+			EdgeRejectedException;
 
 	/**
 	 * Like {@link #addEdge(String, String, String)}, but this edge can be
@@ -716,4 +729,64 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 	 */
 	org.graphstream.ui.swingViewer.Viewer display(boolean autoLayout);
 
+	// XXX Propositions of new methods
+
+	/**
+	 * Get a node by its index. This method is implicitly generic and
+	 * return something which extends Node. The return type is the one of the
+	 * left part of the assignment. For example, in the following call :
+	 * 
+	 * <pre>
+	 * ExtendedNode node = graph.getNode(index);
+	 * </pre>
+	 * 
+	 * the method will return an ExtendedNode node. If no left part exists,
+	 * method will just return a Node.
+	 * 
+	 * @param index
+	 *            Index of the node to find.
+	 * @return The searched node or null if the index is out of bounds.
+	 * @throws IndexOutOfBoundsException if strict checking is enabled and the index is less than 0 or greater
+	 * than {@code getNodeCount() - 1}.
+	 */
+	<T extends Node> T getNode(int index) throws IndexOutOfBoundsException;
+	
+	/**
+	 * Get an edge by its index. This method is implicitly generic and
+	 * return something which extends Edge. The return type is the one of the
+	 * left part of the assignment. For example, in the following call :
+	 * 
+	 * <pre>
+	 * ExtendedEdge edge = graph.getEdge(index);
+	 * </pre>
+	 * 
+	 * the method will return an ExtendedEdge edge. If no left part exists,
+	 * method will just return an Edge.
+	 * 
+	 * @param index
+	 *            Index of the edge to find.
+	 * @return The searched edge or null if not found.
+	 * @throws IndexOutOfBoundsException if strict checking is enabled and the index is less than 0 or greater
+	 * than {@code getNodeCount() - 1}.
+	 */
+	<T extends Edge> T getEdge(int index) throws IndexOutOfBoundsException;
+
+	<T extends Edge> T addEdge(String id, int index1, int index2);
+
+	<T extends Edge> T addEdge(String id, int fromIndex, int toIndex,
+			boolean directed);
+
+	<T extends Edge> T addEdge(String id, Node node1, Node node2);
+	<T extends Edge> T addEdge(String id, Node from, Node to, boolean directed);
+
+	<T extends Edge> T removeEdge(int index);
+
+	<T extends Edge> T removeEdge(int fromIndex, int toIndex);
+	<T extends Edge> T removeEdge(Node node1, Node node2);
+
+	<T extends Edge> T removeEdge(Edge edge);
+
+	<T extends Node> T removeNode(int index);
+
+	<T extends Node> T removeNode(Node node);
 }

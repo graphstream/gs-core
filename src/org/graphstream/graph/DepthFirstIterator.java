@@ -68,7 +68,7 @@ public class DepthFirstIterator<T extends Node> implements Iterator<T> {
 	 * @param startNode
 	 *            The node where the graph exploration begins.
 	 */
-	public DepthFirstIterator(T startNode) {
+	public DepthFirstIterator(Node startNode) {
 		this(startNode, true);
 	}
 
@@ -81,9 +81,10 @@ public class DepthFirstIterator<T extends Node> implements Iterator<T> {
 	 *            If true the iterator respects the edge direction (the
 	 *            default).
 	 */
-	public DepthFirstIterator(T startNode, boolean directed) {
-		lifo.add(startNode);
-		closed.add(startNode);
+	@SuppressWarnings("unchecked")
+	public DepthFirstIterator(Node startNode, boolean directed) {
+		lifo.add((T)startNode);
+		closed.add((T)startNode);
 		this.directed = directed;
 	}
 

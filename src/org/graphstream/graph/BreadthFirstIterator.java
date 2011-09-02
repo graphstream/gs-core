@@ -83,7 +83,7 @@ public class BreadthFirstIterator<T extends Node> implements Iterator<T> {
 	 * @param startNode
 	 *            The node where the graph exploration begins.
 	 */
-	public BreadthFirstIterator(T startNode) {
+	public BreadthFirstIterator(Node startNode) {
 		this(startNode, true);
 	}
 
@@ -96,9 +96,10 @@ public class BreadthFirstIterator<T extends Node> implements Iterator<T> {
 	 *            If true the iterator respects the edge direction (the
 	 *            default).
 	 */
-	public BreadthFirstIterator(T startNode, boolean directed) {
-		open.add(startNode);
-		closed.put(startNode,0);
+	@SuppressWarnings("unchecked")
+	public BreadthFirstIterator(Node startNode, boolean directed) {
+		open.add((T)startNode);
+		closed.put((T)startNode,0);
 		this.directed = directed;
 	}
 

@@ -517,4 +517,10 @@ public class Sprite implements Element {
 		manager.graph.removeAttribute(String.format("%s.%s", completeId,
 				attribute));
 	}
+	
+	// XXX -> UGLY FIX
+	// Sprites do not have unique index but is this useful?
+	public int getIndex() {
+		return 0;
+	}
 }

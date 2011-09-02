@@ -30,7 +30,10 @@
  */
 package org.graphstream.graph.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
@@ -56,6 +59,7 @@ public class TestGraphSynchronisation {
 		testGraphSyncBase(new AdjacencyListGraph("g1"), new AdjacencyListGraph(
 				"g2"));
 		testGraphSyncBase(new MultiGraph("g1"), new AdjacencyListGraph("g2"));
+		
 	}
 
 	protected void testGraphSyncBase(Graph g1, Graph g2) {

@@ -518,4 +518,26 @@ public interface Node extends Element, Iterable<Edge> {
 	 * Override the Object.toString() method.
 	 */
 	String toString();
+	
+	
+	// XXX Propositions for new methods
+	// TODO Write javadoc
+	boolean hasEdgeToward(Node node);	
+	boolean hasEdgeToward(int index);
+	
+	boolean hasEdgeFrom(Node node);
+	boolean hasEdgeFrom(int index);
+	
+	boolean hasEdgeBetween(Node node);
+	boolean hasEdgeBetween(int index);
+	
+	<T extends Edge> T getEdgeToward(Node Node);
+	<T extends Edge> T getEdgeToward(int index);
+	
+	<T extends Edge> T getEdgeFrom(Node Node);
+	<T extends Edge> T getEdgeFrom(int index);
+	
+	<T extends Edge> T getEdgeBetween(Node Node);
+	<T extends Edge> T getEdgeBetween(int index);
+
 }
