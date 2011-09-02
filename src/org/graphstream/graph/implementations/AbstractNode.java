@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.graphstream.graph.BreadthFirstIteratorIndexed;
-import org.graphstream.graph.DepthFirstIteratorIndexed;
+import org.graphstream.graph.BreadthFirstIterator;
+import org.graphstream.graph.DepthFirstIterator;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -461,7 +461,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	public <T extends Node> Iterator<T> getBreadthFirstIterator() {
 		// XXX change it when the old iterator disappears
 		// XXX change the return type to have access to the other methods
-		return new BreadthFirstIteratorIndexed<T>(this);
+		return new BreadthFirstIterator<T>(this);
 	}
 
 	/**
@@ -473,7 +473,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	public <T extends Node> Iterator<T> getBreadthFirstIterator(boolean directed) {
 		// XXX change it when the old iterator disappears
 		// XXX change the return type to have access to the other methods
-		return new BreadthFirstIteratorIndexed<T>(this, directed);
+		return new BreadthFirstIterator<T>(this, directed);
 	}
 
 	/**
@@ -485,7 +485,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	public <T extends Node> Iterator<T> getDepthFirstIterator() {
 		// XXX change it when the old iterator disappears
 		// XXX change the return type to have access to the other methods
-		return new DepthFirstIteratorIndexed<T>(this);
+		return new DepthFirstIterator<T>(this);
 	}
 
 	/**
@@ -497,7 +497,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	public <T extends Node> Iterator<T> getDepthFirstIterator(boolean directed) {
 		// XXX change it when the old iterator disappears
 		// XXX change the return type to have access to the other methods
-		return new DepthFirstIteratorIndexed<T>(this, directed);
+		return new DepthFirstIterator<T>(this, directed);
 	}
 
 	// *** Other methods ***
