@@ -470,8 +470,9 @@ public class Box3
 	
 // Misc.
 
+	@Override
 	public String
-	tostring()
+	toString()
 	{
 		StringBuffer buf;
 
