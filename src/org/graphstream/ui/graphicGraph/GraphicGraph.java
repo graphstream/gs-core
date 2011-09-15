@@ -1114,7 +1114,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 				}
 			} else if (values.length == 1) {
 				if (values[0] instanceof Number) {
-					sprite.setPosition(((Number) value).doubleValue());
+					sprite.setPosition(((Number) values[0]).doubleValue());
 				} else {
 					System.err
 							.printf("GraphicGraph : sprite position percent is not a number.%n");
