@@ -16,7 +16,6 @@ public class TestTwoGraphsInOneViewer {
 	}
 
 	public TestTwoGraphsInOneViewer() {
-		boolean loop = true;
 		Graph graph1 = new MultiGraph("g1");
 		Graph graph2 = new MultiGraph("g2");
 		Viewer viewer1 = new Viewer(new ThreadProxyPipe(graph1));
@@ -24,8 +23,9 @@ public class TestTwoGraphsInOneViewer {
 
 		graph1.addAttribute("ui.stylesheet", styleSheet1);
 		graph2.addAttribute("ui.stylesheet", styleSheet2);
-		View view1 = viewer1.addDefaultView(true);
-		View view2 = viewer2.addDefaultView(true);
+		//View view1 =
+				viewer1.addDefaultView(true);
+		viewer2.addDefaultView(true);
 		viewer1.enableAutoLayout();
 		viewer2.enableAutoLayout();
 

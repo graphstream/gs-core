@@ -48,6 +48,8 @@ import org.graphstream.ui.graphicGraph.GraphicGraph;
  * </p>
  */
 public abstract class View extends JPanel {
+	private static final long serialVersionUID = 4372240131578395549L;
+	
 	// Attribute
 
 	/**

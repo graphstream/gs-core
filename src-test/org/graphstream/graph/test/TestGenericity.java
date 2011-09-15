@@ -30,27 +30,6 @@
  */
 package org.graphstream.graph.test;
 
-import static org.junit.Assert.*;
-
-import java.util.Collection;
-import java.util.Iterator;
-
-import org.junit.Test;
-
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
-import org.graphstream.graph.NodeFactory;
-import org.graphstream.graph.Edge;
-import org.graphstream.graph.EdgeFactory;
-import org.graphstream.graph.implementations.AdjacencyListGraph;
-import org.graphstream.graph.implementations.AdjacencyListNode;
-//import org.graphstream.graph.implementations.AdjacencyListEdge;
-//import org.graphstream.graph.implementations.MultiEdge;
-import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.graph.implementations.MultiNode;
-import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.graph.implementations.SingleNode;
-//import org.graphstream.graph.implementations.SingleEdge;
 
 public class TestGenericity {
 //	protected static class BadTypedNode extends SingleNode {
