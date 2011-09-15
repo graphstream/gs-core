@@ -1016,7 +1016,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 						// exception.
 	}
 
-	// Ordre: Word | String | Symbol | Number | Eol | Eof
+	// Order: Word | String | Symbol | Number | Eol | Eof
 
 	/**
 	 * Read a word or number or string or EOL/EOF or generate a parse error. If
