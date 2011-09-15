@@ -198,7 +198,7 @@ public class Vector2 implements java.io.Serializable {
 	}
 
 	/**
-	 * Substract each element of other to the corresponding element of this.
+	 * Subtract each element of other to the corresponding element of this.
 	 */
 	public void sub(Vector2 other) {
 		data[0] -= other.data[0];
