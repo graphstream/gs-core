@@ -110,7 +110,7 @@ import java.util.Set;
  * @author Antoine Dutot
  * @version 1.0 (jdk 1.5)
  */
-public class Environment
+public class Environment implements Cloneable
 {
 	// ---------- Attributes -----------
 
