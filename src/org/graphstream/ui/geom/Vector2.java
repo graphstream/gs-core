@@ -108,13 +108,6 @@ public class Vector2 implements java.io.Serializable {
 	}
 
 	/**
-	 * Is this equal to other ?
-	 */
-	public boolean equals(Vector2 other) {
-		return (data[0] == other.data[0] && data[1] == other.data[1]);
-	}
-
-	/**
 	 * Is i the index of a component ?
 	 * 
 	 * In other words, is i &gt;= 0 &amp;&amp; &lt; than #count() ?
