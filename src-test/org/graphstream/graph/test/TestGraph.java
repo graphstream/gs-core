@@ -44,11 +44,8 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.graph.implementations.MultiNode;
 import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.junit.Test;
 
 public class TestGraph {

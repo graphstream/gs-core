@@ -32,6 +32,7 @@ package org.graphstream.ui.graphicGraph;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1114,7 +1115,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 				}
 			} else if (values.length == 1) {
 				if (values[0] instanceof Number) {
-					sprite.setPosition(((Number) value).doubleValue());
+					sprite.setPosition(((Number) values[0]).doubleValue());
 				} else {
 					System.err
 							.printf("GraphicGraph : sprite position percent is not a number.%n");
@@ -1122,7 +1123,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 			} else {
 				System.err
 						.printf("GraphicGraph : cannot transform value '%s' (length=%d) into a position%n",
-								values, values.length);
+								Arrays.toString(values), values.length);
 			}
 		} else if (value instanceof Number) {
 			// System.err.printf( " Number %f%n", ((Number)value).doubleValue()

@@ -616,7 +616,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 						String
 								.format(
 										"Cannot create edge %s[%s-%s%s]. Node '%s' does not exist.",
-										edgeId, srcId, directed ? ">" : "-",
+										edgeId, srcId, directed ? ">" : "-", dstId,
 										src == null ? srcId : dstId));
 			if (!autoCreate)
 				return null;
