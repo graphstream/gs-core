@@ -109,6 +109,7 @@ import org.graphstream.ui.swingViewer.util.ShortcutManager;
  */
 public class DefaultView extends View implements ComponentListener,
 		WindowListener {
+	private static final long serialVersionUID = - 4489484861592064398L;
 	// Attribute
 
 	/**

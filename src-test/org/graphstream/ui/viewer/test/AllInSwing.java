@@ -1,12 +1,13 @@
 package org.graphstream.ui.viewer.test;
 
 import java.awt.BorderLayout;
+
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import org.graphstream.graph.Graph;
-import org.graphstream.ui.swingViewer.Viewer;
 import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.ui.swingViewer.Viewer;
 
 public class AllInSwing {
 	public static void main(String args[]) {
@@ -33,6 +34,7 @@ public class AllInSwing {
 }
 
 class InitializeApplication extends JFrame implements Runnable {
+	private static final long serialVersionUID = - 804177406404724792L;
 	protected Graph graph;
 	protected Viewer viewer;
 	

@@ -36,7 +36,6 @@ import java.io.Writer;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.stream.Sink;
-import org.graphstream.stream.Source;
 
 /**
  * Output a graph or graph events to a file.

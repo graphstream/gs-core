@@ -276,8 +276,9 @@ public class Box2 implements java.io.Serializable {
 	}
 
 	// Misc.
-
-	public String tostring() {
+	
+	@Override
+	public String toString() {
 		StringBuffer buf;
 
 		buf = new StringBuffer("Box2[(");
