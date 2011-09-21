@@ -51,11 +51,6 @@ import javax.xml.stream.events.XMLEvent;
  */
 public class FileSourceGEXF extends FileSourceXML {
 
-	public static void main(String... args) throws Exception {
-		FileSourceGEXF reader = new FileSourceGEXF();
-		reader.readAll("/home/raziel/workspace/gs-labs/gexf1.xml");
-	}
-
 	protected GEXFParser parser;
 
 	/*
@@ -234,17 +229,14 @@ public class FileSourceGEXF extends FileSourceXML {
 					case CREATOR:
 						str = __creator();
 						sendGraphAttributeAdded(sourceId, "creator", str);
-						System.out.printf("creator is \"%s\"\n", str);
 						break;
 					case KEYWORDS:
 						str = __keywords();
 						sendGraphAttributeAdded(sourceId, "keywords", str);
-						System.out.printf("keywords is \"%s\"\n", str);
 						break;
 					case DESCRIPTION:
 						str = __description();
 						sendGraphAttributeAdded(sourceId, "description", str);
-						System.out.printf("description is \"%s\"\n", str);
 						break;
 					default:
 						throw newParseError(e,
@@ -467,9 +459,6 @@ public class FileSourceGEXF extends FileSourceXML {
 
 			theAttribute = new Attribute(id, title, type);
 
-			System.out.printf("new attribute \"%s\" (%s) with type %s\n", id,
-					title, type.name());
-
 			e = getNextEvent();
 
 			while (!isEvent(e, XMLEvent.END_ELEMENT, "attribute")) {
@@ -601,15 +590,9 @@ public class FileSourceGEXF extends FileSourceXML {
 			id = attributes.get(NODEAttribute.ID);
 			sendNodeAdded(sourceId, id);
 
-			System.out.printf("new node \"%s\"\n", id);
-
-			if (attributes.containsKey(NODEAttribute.LABEL)) {
+			if (attributes.containsKey(NODEAttribute.LABEL))
 				sendNodeAttributeAdded(sourceId, id, "ui.label", attributes
 						.get(NODEAttribute.LABEL));
-
-				System.out.printf("\"%s\".label = \"%s\"\n", id, attributes
-						.get(NODEAttribute.LABEL));
-			}
 
 			e = getNextEvent();
 
@@ -662,13 +645,9 @@ public class FileSourceGEXF extends FileSourceXML {
 			}
 
 			for (String key : nodeAttributesDefinition.keySet()) {
-				if (!defined.contains(key)) {
+				if (!defined.contains(key))
 					sendNodeAttributeAdded(sourceId, id, key,
 							nodeAttributesDefinition.get(key).def);
-
-					System.out.printf("node \"%s\".%s = %s\n", id, key,
-							nodeAttributesDefinition.get(key).def);
-				}
 			}
 
 			checkValid(e, XMLEvent.END_ELEMENT, "node");
@@ -734,7 +713,7 @@ public class FileSourceGEXF extends FileSourceXML {
 						.get(ATTVALUEAttribute.FOR));
 
 			if (theAttribute == null)
-				throw newParseError(e, "udefined attribute \"%s\"", attributes
+				throw newParseError(e, "undefined attribute \"%s\"", attributes
 						.get(ATTVALUEAttribute.FOR));
 
 			try {
@@ -746,11 +725,11 @@ public class FileSourceGEXF extends FileSourceXML {
 
 			switch (type) {
 			case NODE:
-				sendNodeAttributeAdded(sourceId, elementId, theAttribute.id,
+				sendNodeAttributeAdded(sourceId, elementId, theAttribute.title,
 						value);
 				break;
 			case EDGE:
-				sendEdgeAttributeAdded(sourceId, elementId, theAttribute.id,
+				sendEdgeAttributeAdded(sourceId, elementId, theAttribute.title,
 						value);
 				break;
 			}
@@ -1111,23 +1090,16 @@ public class FileSourceGEXF extends FileSourceXML {
 			switch (type) {
 			case DIRECTED:
 				sendEdgeAdded(sourceId, id, source, target, true);
-				System.out.printf("new edge \"%s\" : \"%s\" -> \"%s\"\n", id,
-						source, target);
 				break;
 			case MUTUAL:
 			case UNDIRECTED:
 				sendEdgeAdded(sourceId, id, source, target, false);
-				System.out.printf("new edge \"%s\" : \"%s\" -- \"%s\"\n", id,
-						source, target);
 				break;
 			}
 
-			if (attributes.containsKey(EDGEAttribute.LABEL)) {
+			if (attributes.containsKey(EDGEAttribute.LABEL))
 				sendEdgeAttributeAdded(sourceId, id, "ui.label", attributes
 						.get(EDGEAttribute.LABEL));
-				System.out.printf("edge \"%s\".label = \"%s\"\n", id,
-						attributes.get(EDGEAttribute.LABEL));
-			}
 
 			if (attributes.containsKey(EDGEAttribute.WEIGHT)) {
 				try {
@@ -1178,13 +1150,9 @@ public class FileSourceGEXF extends FileSourceXML {
 			}
 
 			for (String key : edgeAttributesDefinition.keySet()) {
-				if (!defined.contains(key)) {
+				if (!defined.contains(key))
 					sendEdgeAttributeAdded(sourceId, id, key,
 							edgeAttributesDefinition.get(key).def);
-
-					System.out.printf("edge \"%s\".%s = %s\n", id, key,
-							edgeAttributesDefinition.get(key).def);
-				}
 			}
 
 			checkValid(e, XMLEvent.END_ELEMENT, "edge");
