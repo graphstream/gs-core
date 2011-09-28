@@ -3,3 +3,5 @@
 .project
 bin/
 target/
+*.jar
+*.jardesc
