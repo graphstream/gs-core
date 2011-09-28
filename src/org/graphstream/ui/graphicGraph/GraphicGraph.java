@@ -31,6 +31,7 @@
 package org.graphstream.ui.graphicGraph;
 
 import java.io.IOException;
+import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -66,6 +67,15 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
  * Graph representation used in display classes.
  * 
  * <p>
+ * Warning: This class is NOT a general graph class, and it should NOT be used as it.
+ * This class is particularly dedicated to fast drawing of the graph and is internally
+ * arranged to be fast for this task only. It implements graph solely to be easily susceptible
+ * to be used as a sink and source for graph events. Some of the common methods
+ * of the Graph interface are not functional and will throw an exception if
+ * used (as documented in their respective javadoc).
+ * </p>
+ * 
+ * <p>
  * The purpose of the graphic graph is to represent a graph with some often used
  * graphic attributes (like position, label, etc.) stored as fields in the nodes
  * and edges and most of the style stored in styles pertaining to a style sheet
@@ -85,7 +95,7 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
  * </pre>
  * 
  * <p>
- * Note that the graphic graph does not completely duplicate a graph, it only
+ * The graphic graph does not completely duplicate a graph, it only
  * store things that are useful for drawing it. Although it implements "Graph",
  * some methods are not implemented and will throw a runtime exception. These
  * methods are mostly utility methods like write(), read(), and naturally
@@ -106,6 +116,12 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
  * graphic graph is used as an input (a source of graph events) some attributes
  * will not pass through the filter.
  * </p>
+ * 
+ * <p>The implementation of this graph relies on the StyleGroupSet class and this
+ * is indeed its way to store its elements (grouped by style and Z level).</p>
+ * 
+ * <p>In addition to this, it provides, as all graphs do, the relational information
+ * for edges.</p>
  * 
  * TODO : this graph cannot handle modification inside event listener methods !!
  */
@@ -306,8 +322,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 	}
 
 	/**
-	 * Does the graphic graph publish via attribute changes the XYZ changes on
-	 * nodes and sprites when changed ?.
+	 * Does the graphic graph publish via attribute changes the XYZ changes on nodes and sprites when changed ?.
 	 */
 	public boolean feedbackXYZ() {
 		return feedbackXYZ;
@@ -661,12 +676,32 @@ public class GraphicGraph extends AbstractElement implements Graph,
 		return styleGroups.nodes();
 	}
 
+	@SuppressWarnings("all")
 	public <T extends Node> Collection<T> getNodeSet() {
-		throw new RuntimeException("Not yet implemented");
+//		throw new RuntimeException("Not yet implemented");
+		return new AbstractCollection<T>() {
+			public Iterator<T> iterator() {
+				return getNodeIterator();
+			}
+
+			public int size() {
+				return getNodeCount();
+			}
+		};
 	}
 
+	@SuppressWarnings("all")
 	public <T extends Edge> Collection<T> getEdgeSet() {
-		throw new RuntimeException("Not yet implemented");
+//		throw new RuntimeException("Not yet implemented");
+		return new AbstractCollection<T>() {
+			public Iterator<T> iterator() {
+				return getEdgeIterator();
+			}
+
+			public int size() {
+				return getNodeCount();
+			}
+		};
 	}
 
 	@SuppressWarnings("unchecked")
@@ -744,11 +779,11 @@ public class GraphicGraph extends AbstractElement implements Graph,
 	}
 
 	public org.graphstream.ui.swingViewer.Viewer display() {
-		throw new RuntimeException("not implemented !");
+		throw new RuntimeException("GraphicGraph is used by display() and cannot recursively define display()");
 	}
 
 	public org.graphstream.ui.swingViewer.Viewer display(boolean autoLayout) {
-		throw new RuntimeException("not implemented !");
+		throw new RuntimeException("GraphicGraph is used by display() and cannot recursively define display()");
 	}
 
 	public void stepBegins(double step) {
@@ -756,7 +791,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 	}
 
 	public EdgeFactory<? extends Edge> edgeFactory() {
-		return null;
+		throw new RuntimeException("GraphicGraph does not support EdgeFactory");
 	}
 
 	public int getEdgeCount() {
@@ -764,8 +799,8 @@ public class GraphicGraph extends AbstractElement implements Graph,
 	}
 
 	@SuppressWarnings("unchecked")
-	public Iterator<? extends Edge> getEdgeIterator() {
-		return styleGroups.getEdgeIterator();
+	public <T extends Edge> Iterator<T> getEdgeIterator() {
+		return (Iterator<T>)styleGroups.getEdgeIterator();
 	}
 
 	public int getNodeCount() {
@@ -798,7 +833,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 	}
 
 	public NodeFactory<? extends Node> nodeFactory() {
-		return null;
+		throw new RuntimeException("GraphicGraph does not support NodeFactory");
 	}
 
 	public void setAutoCreate(boolean on) {
@@ -1168,69 +1203,57 @@ public class GraphicGraph extends AbstractElement implements Graph,
 	// stubs for the new methods
 
 	public <T extends Edge> T addEdge(String id, int index1, int index2) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented !");
 	}
 
 	public <T extends Edge> T addEdge(String id, int fromIndex, int toIndex,
 			boolean directed) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented !");
 	}
 
 	public <T extends Edge> T addEdge(String id, Node node1, Node node2) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented !");
 	}
 
 	public <T extends Edge> T addEdge(String id, Node from, Node to,
 			boolean directed) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented !");
 	}
 
 
 
 	public <T extends Edge> T getEdge(int index)
 			throws IndexOutOfBoundsException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented !");
 	}
 
 
 	public <T extends Node> T getNode(int index)
 			throws IndexOutOfBoundsException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented !");
 	}
 
 	public <T extends Edge> T removeEdge(int index) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented !");
 	}
 
 	public <T extends Edge> T removeEdge(int fromIndex, int toIndex) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented !");
 	}
 
 	public <T extends Edge> T removeEdge(Node node1, Node node2) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented !");
 	}
 
 	public <T extends Edge> T removeEdge(Edge edge) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented !");
 	}
 
 	public <T extends Node> T removeNode(int index) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented !");
 	}
 
 	public <T extends Node> T removeNode(Node node) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented !");
 	}
 }
