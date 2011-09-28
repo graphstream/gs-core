@@ -40,6 +40,7 @@ import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.graphstream.stream.SourceBase;
@@ -491,7 +492,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 		int tok = st.nextToken();
 
 		if (tok != StreamTokenizer.TT_WORD)
-			parseError("expecting one of `" + words + "', " + gotWhat(tok));
+			parseError("expecting one of `[" + Arrays.toString(words) + "]', " + gotWhat(tok));
 
 		boolean found = false;
 
@@ -503,7 +504,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 		}
 
 		if (!found)
-			parseError("expecting one of `" + words + ", got `" + st.sval + "'");
+			parseError("expecting one of `[" + Arrays.toString(words) + "]', got `" + st.sval + "'");
 	}
 
 	/**
@@ -1016,7 +1017,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 						// exception.
 	}
 
-	// Ordre: Word | String | Symbol | Number | Eol | Eof
+	// Order: Word | String | Symbol | Number | Eol | Eof
 
 	/**
 	 * Read a word or number or string or EOL/EOF or generate a parse error. If

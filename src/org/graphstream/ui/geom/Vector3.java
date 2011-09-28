@@ -107,13 +107,6 @@ public class Vector3 extends Vector2 {
 	}
 
 	/**
-	 * Is this equal to other ?
-	 */
-	public boolean equals(Vector3 other) {
-		return (data[0] == other.data[0] && data[1] == other.data[1] && data[2] == other.data[2]);
-	}
-
-	/**
 	 * Is i the index of a component ?
 	 * 
 	 * In other words, is i &gt;= 0 &amp;&amp; &lt; than #count() ?
