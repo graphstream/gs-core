@@ -1066,6 +1066,26 @@ public class Graphs {
 
 			return e;
 		}
+		
+		public <T extends Edge> T getEnteringEdge(int i) {
+			T e;
+
+			elementLock.lock();
+			e = sg.getEdge(wrappedElement.getEnteringEdge(i).getIndex());
+			elementLock.unlock();
+
+			return e;
+		}
+
+		public <T extends Edge> T getLeavingEdge(int i) {
+			T e;
+
+			elementLock.lock();
+			e = sg.getEdge(wrappedElement.getLeavingEdge(i).getIndex());
+			elementLock.unlock();
+
+			return e;
+		}
 
 		public <T extends Edge> T getEdgeBetween(String id) {
 			T e;

@@ -419,5 +419,14 @@ public class GraphicNode extends GraphicElement implements Node {
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	public <T extends Edge> T getEnteringEdge(int i) {
+		// TODO Auto-generated method stub
+		return null;		
+	}
 
+	public <T extends Edge> T getLeavingEdge(int i) {
+		// TODO Auto-generated method stub
+		return null;		
+	}
 }

@@ -153,6 +153,24 @@ public class AdjacencyListNode extends AbstractNode {
 		return (T) edges[i];
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends Edge> T getEnteringEdge(int i) {
+		if (i < 0 || i >= getInDegree())
+			throw new IndexOutOfBoundsException("Node \"" + this + "\""
+					+ " has no entering edge " + i);
+		return (T) edges[i];
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends Edge> T getLeavingEdge(int i) {
+		if (i < 0 || i >= getOutDegree())
+			throw new IndexOutOfBoundsException("Node \"" + this + "\""
+					+ " has no edge " + i);
+		return (T) edges[oStart + i];
+	}
+	
 	@Override
 	public <T extends Edge> T getEdgeBetween(Node node) {
 		return locateEdge(node, IO_EDGE);

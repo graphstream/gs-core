@@ -387,6 +387,8 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	}
 
 	public abstract <T extends Edge> T getEdge(int i);
+	public abstract <T extends Edge> T getEnteringEdge(int i);
+	public abstract <T extends Edge> T getLeavingEdge(int i);
 
 	/**
 	 * This implementation uses {@link #getEdgeIterator()} and stores the

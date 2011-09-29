@@ -106,13 +106,32 @@ import org.graphstream.stream.file.FileSource;
  * </pre>
  * 
  * </p>
+ * 
+ * <p>
+ * Graph elements (nodes and edges) can be accessed using their identifier or
+ * their index. Each node / edge has a unique string identifier assigned when
+ * the element is created. Each element has a unique index between 0 and
+ * {@link #getNodeCount()} - 1 or {@link #getEdgeCount()} - 1. When a new
+ * element is added, its index is <code>getNodeCount() - 1</code> or
+ * <code>getEdgeCount() - 1</code>. When an element is removed, the element with
+ * the biggest index takes its place. A loop of the form
+ * 
+ * <pre>
+ * 	for (int i = 0; i &lt; g.getNodeCount(); i++) {
+ * 		Node node = g.getNode(i);
+ * 		// Do something with node
+ * 	}
+ * </pre>
+ * 
+ * iterates on all the nodes of <code>g</code>.
+ * </p>
  */
 public interface Graph extends Element, Pipe, Iterable<Node> {
 	// Access
 
 	/**
 	 * Get a node by its identifier. This method is implicitly generic and
-	 * return something which extends Node. The return type is the one of the
+	 * returns something which extends Node. The return type is the one of the
 	 * left part of the assignment. For example, in the following call :
 	 * 
 	 * <pre>
@@ -130,7 +149,7 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 
 	/**
 	 * Get an edge by its identifier. This method is implicitly generic and
-	 * return something which extends Edge. The return type is the one of the
+	 * returns something which extends Edge. The return type is the one of the
 	 * left part of the assignment. For example, in the following call :
 	 * 
 	 * <pre>
@@ -162,7 +181,7 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 
 	/**
 	 * Iterator on the set of nodes, in an undefined order. This method is
-	 * implicitly generic and return an Iterator over something which extends
+	 * implicitly generic and returns an Iterator over something which extends
 	 * Node. The return type is the one of the left part of the assignment. For
 	 * example, in the following call :
 	 * 
@@ -179,7 +198,7 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 
 	/**
 	 * Iterator on the set of edges, in an undefined order. This method is
-	 * implicitly generic and return an Iterator over something which extends
+	 * implicitly generic and returns an Iterator over something which extends
 	 * Edge. The return type is the one of the left part of the assignment. For
 	 * example, in the following call :
 	 * 
@@ -196,7 +215,7 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 
 	/**
 	 * Set of nodes usable in a for-each instruction. This method is implicitly
-	 * generic and return an Iterable over something which extends Node. The
+	 * generic and returns an Iterable over something which extends Node. The
 	 * return type is the one of the left part of the assignment. For example,
 	 * in the following call :
 	 * 
@@ -222,7 +241,7 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 
 	/**
 	 * Set of edges usable in a for-each instruction. This method is implicitly
-	 * generic and return an Iterable over something which extends Edge. The
+	 * generic and returns an Iterable over something which extends Edge. The
 	 * return type is the one of the left part of the assignment. For example,
 	 * in the following call :
 	 * 
@@ -248,7 +267,7 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 
 	/**
 	 * Unmodifiable view of the set of nodes. This method is implicitly generic
-	 * and return a Collection of something which extends Node. The return type
+	 * and returns a Collection of something which extends Node. The return type
 	 * is the one of the left part of the assignment. For example, in the
 	 * following call :
 	 * 
@@ -267,7 +286,7 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 
 	/**
 	 * Unmodifiable view of the set of edges. This method is implicitly generic
-	 * and return a Collection of something which extends Edge. The return type
+	 * and returns a Collection of something which extends Edge. The return type
 	 * is the one of the left part of the assignment. For example, in the
 	 * following call :
 	 * 
@@ -314,7 +333,7 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 	boolean isStrict();
 
 	/**
-	 * Is the automatic creation of missing elements enabled?. If enabled, when
+	 * Is the automatic creation of missing elements enabled?. If strict checking is disabled and auto-creation is enabled, when
 	 * an edge is created and one or two of its nodes are not already present in
 	 * the graph, the nodes are automatically created.
 	 * 
@@ -402,11 +421,11 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 	 * This acts as a factory, creating the node instance automatically (and
 	 * eventually using the node factory provided). An event is generated toward
 	 * the listeners. If strict checking is enabled, and a node already exists
-	 * with this identifier, a singleton exception is raised. Else the error is
+	 * with this identifier, an {@link org.graphstream.graph.IdAlreadyInUseException} is raised. Else the error is
 	 * silently ignored and the already existing node is returned.
 	 * </p>
 	 * <p>
-	 * This method is implicitly generic and return something which extends
+	 * This method is implicitly generic and returns something which extends
 	 * Node. The return type is the one of the left part of the assignment. For
 	 * example, in the following call :
 	 * 
@@ -422,7 +441,7 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 	 *            Arbitrary and unique string identifying the node.
 	 * @return The created node (or the already existing node).
 	 * @throws IdAlreadyInUseException
-	 *             If the identifier is already used.
+	 *             If strict checking is enabled the identifier is already used.
 	 */
 	<T extends Node> T addNode(String id) throws IdAlreadyInUseException;
 
@@ -452,12 +471,32 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 	 *         null if the node to remove does not exist.
 	 * @complexity O(1)
 	 * @throws ElementNotFoundException
-	 *             If no node matches the given identifier.
+	 *             If no node matches the given identifier and strict checking is enabled.
 	 */
 	<T extends Node> T removeNode(String id) throws ElementNotFoundException;
 
 	/**
 	 * Add an undirected edge between nodes.
+	 * 
+	 * <p> 
+	 * The behavior of this method depends on many conditions. It can be summarized as follows.
+	 * </p>
+	 * 
+	 * <p>
+	 * First of all, the method checks if the graph already contains an edge with the same id.
+	 * If this is the case and strict checking is enabled, <code>IdAlreadyInUseException</code>
+	 * is thrown. If the strict checking is disabled the method returns a reference to the
+	 * existing edge if it has endpoints <code>node1</code> and </code>node2</code> 
+	 * or <code>null</code>	otherwise.
+	 * </p>
+	 * 
+	 * <p>
+	 * In the case when the graph does not contain an edge with the same id, the method checks
+	 * if <code>node1</code> and <code>node2</code> exist. If one or both of them do not exist,
+	 * and strict checking is enabled, <code>ElementNotFoundException</code> is thrown.
+	 * Otherwise if auto-creation is disabled, the method returns <code>null</code>. 
+	 * 
+	 *
 	 * <p>
 	 * An event is sent toward the listeners. If strict checking is enabled and
 	 * at least one of the two given nodes do not exist, a "not found" exception
@@ -732,9 +771,9 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 	// XXX Propositions of new methods
 
 	/**
-	 * Get a node by its index. This method is implicitly generic and
-	 * return something which extends Node. The return type is the one of the
-	 * left part of the assignment. For example, in the following call :
+	 * Get a node by its index. This method is implicitly generic and return
+	 * something which extends Node. The return type is the one of the left part
+	 * of the assignment. For example, in the following call :
 	 * 
 	 * <pre>
 	 * ExtendedNode node = graph.getNode(index);
@@ -746,15 +785,16 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 	 * @param index
 	 *            Index of the node to find.
 	 * @return The searched node or null if the index is out of bounds.
-	 * @throws IndexOutOfBoundsException if strict checking is enabled and the index is less than 0 or greater
-	 * than {@code getNodeCount() - 1}.
+	 * @throws IndexOutOfBoundsException
+	 *             if strict checking is enabled and the index is less than 0 or
+	 *             greater than {@code getNodeCount() - 1}.
 	 */
 	<T extends Node> T getNode(int index) throws IndexOutOfBoundsException;
-	
+
 	/**
-	 * Get an edge by its index. This method is implicitly generic and
-	 * return something which extends Edge. The return type is the one of the
-	 * left part of the assignment. For example, in the following call :
+	 * Get an edge by its index. This method is implicitly generic and return
+	 * something which extends Edge. The return type is the one of the left part
+	 * of the assignment. For example, in the following call :
 	 * 
 	 * <pre>
 	 * ExtendedEdge edge = graph.getEdge(index);
@@ -766,8 +806,9 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 	 * @param index
 	 *            Index of the edge to find.
 	 * @return The searched edge or null if not found.
-	 * @throws IndexOutOfBoundsException if strict checking is enabled and the index is less than 0 or greater
-	 * than {@code getNodeCount() - 1}.
+	 * @throws IndexOutOfBoundsException
+	 *             if strict checking is enabled and the index is less than 0 or
+	 *             greater than {@code getNodeCount() - 1}.
 	 */
 	<T extends Edge> T getEdge(int index) throws IndexOutOfBoundsException;
 
@@ -777,11 +818,13 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 			boolean directed);
 
 	<T extends Edge> T addEdge(String id, Node node1, Node node2);
+
 	<T extends Edge> T addEdge(String id, Node from, Node to, boolean directed);
 
 	<T extends Edge> T removeEdge(int index);
 
 	<T extends Edge> T removeEdge(int fromIndex, int toIndex);
+
 	<T extends Edge> T removeEdge(Node node1, Node node2);
 
 	<T extends Edge> T removeEdge(Edge edge);

@@ -101,10 +101,10 @@ public interface Node extends Element, Iterable<Edge> {
 	 * 
 	 * @param id
 	 *            Identifier of another node.
-	 * @return True if a  edge exists between this node and node 'id'.
+	 * @return True if a edge exists between this node and node 'id'.
 	 */
 	boolean hasEdgeBetween(String id);
-	
+
 	/**
 	 * Retrieve an edge that leaves this node toward 'id'.
 	 * <p>
@@ -160,8 +160,9 @@ public interface Node extends Element, Iterable<Edge> {
 	/**
 	 * Retrieve an edge between this node and the node 'id', if it exits.
 	 * <p>
-	 * This method selects directed or undirected edges. If the edge is directed, its direction
-	 * is not important and leaving or entering edges will be selected.
+	 * This method selects directed or undirected edges. If the edge is
+	 * directed, its direction is not important and leaving or entering edges
+	 * will be selected.
 	 * </p>
 	 * <p>
 	 * This method is implicitly generic and return something which extends
@@ -181,7 +182,7 @@ public interface Node extends Element, Iterable<Edge> {
 	 * @return Edge between node 'id' and this node if it exists, else null.
 	 */
 	<T extends Edge> T getEdgeBetween(String id);
-	
+
 	/**
 	 * Iterator on the set of connected edges.
 	 * <p>
@@ -285,8 +286,67 @@ public interface Node extends Element, Iterable<Edge> {
 	 * @param i
 	 *            Index of the edge.
 	 * @return The i-th edge.
+	 * @throws IndexOutOfBoundException
+	 *             if <code>i</code> is negative or greater than or equal to the
+	 *             degree
 	 */
 	<T extends Edge> T getEdge(int i);
+
+	/**
+	 * I-th entering edge. Edges are stored in no given order.
+	 * <p>
+	 * However this method allows to iterate very quickly on all entering edges,
+	 * or to choose a given entering edge with direct access.
+	 * </p>
+	 * <p>
+	 * This method is implicitly generic and return something which extends
+	 * Edge. The return type is the one of the left part of the assignment. For
+	 * example, in the following call :
+	 * 
+	 * <pre>
+	 * ExtendedEdge e = node.getEnteringEdge(i);
+	 * </pre>
+	 * 
+	 * the method will return an ExtendedEdge. If no left part exists, method
+	 * will just return an Edge.
+	 * </p>
+	 * 
+	 * @param i
+	 *            Index of the edge.
+	 * @return The i-th entering edge.
+	 * @throws IndexOutOfBoundException
+	 *             if <code>i</code> is negative or greater than or equal to the
+	 *             in-degree
+	 */
+	<T extends Edge> T getEnteringEdge(int i);
+
+	/**
+	 * I-th leaving edge. Edges are stored in no given order.
+	 * <p>
+	 * However this method allows to iterate very quickly on all leaving edges,
+	 * or to choose a given leaving edge with direct access.
+	 * </p>
+	 * <p>
+	 * This method is implicitly generic and return something which extends
+	 * Edge. The return type is the one of the left part of the assignment. For
+	 * example, in the following call :
+	 * 
+	 * <pre>
+	 * ExtendedEdge e = node.getLeavingEdge(i);
+	 * </pre>
+	 * 
+	 * the method will return an ExtendedEdge. If no left part exists, method
+	 * will just return an Edge.
+	 * </p>
+	 * 
+	 * @param i
+	 *            Index of the edge.
+	 * @return The i-th leaving edge.
+	 * @throws IndexOutOfBoundException
+	 *             if <code>i</code> is negative or greater than or equal to the
+	 *             out-degree
+	 */
+	<T extends Edge> T getLeavingEdge(int i);
 
 	/**
 	 * Iterator for breadth first exploration of the graph, starting at this
@@ -518,26 +578,31 @@ public interface Node extends Element, Iterable<Edge> {
 	 * Override the Object.toString() method.
 	 */
 	String toString();
-	
-	
+
 	// XXX Propositions for new methods
 	// TODO Write javadoc
-	boolean hasEdgeToward(Node node);	
+	boolean hasEdgeToward(Node node);
+
 	boolean hasEdgeToward(int index);
-	
+
 	boolean hasEdgeFrom(Node node);
+
 	boolean hasEdgeFrom(int index);
-	
+
 	boolean hasEdgeBetween(Node node);
+
 	boolean hasEdgeBetween(int index);
-	
+
 	<T extends Edge> T getEdgeToward(Node Node);
+
 	<T extends Edge> T getEdgeToward(int index);
-	
+
 	<T extends Edge> T getEdgeFrom(Node Node);
+
 	<T extends Edge> T getEdgeFrom(int index);
-	
+
 	<T extends Edge> T getEdgeBetween(Node Node);
+
 	<T extends Edge> T getEdgeBetween(int index);
 
 }
