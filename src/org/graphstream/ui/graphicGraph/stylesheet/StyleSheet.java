@@ -461,7 +461,7 @@ public class StyleSheet {
 		Style style = new Style();
 
 		try {
-			parser.styles(style);
+			parser.stylesStart(style);
 		} catch (ParseException e) {
 			throw new IOException(e.getMessage());
 		}

@@ -316,6 +316,12 @@ void styles( Style style ):
 	( style(style) )*
 }
 
+void stylesStart(Style style):
+{}
+{
+	(style(style))* <EOF>
+}
+
 Selector select():
 {
 	Token    t;
