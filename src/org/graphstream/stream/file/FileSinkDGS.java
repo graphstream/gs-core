@@ -30,6 +30,7 @@
  */
 package org.graphstream.stream.file;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Array;
@@ -188,15 +189,16 @@ public class FileSinkDGS extends FileSinkBase {
 		if (value != null && value.getClass().isArray()) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("{");
-			
+
 			if (Array.getLength(value) == 0)
 				sb.append("\"\"");
 			else
 				sb.append(arrayString(Array.get(value, 0)));
 
 			for (int i = 1; i < Array.getLength(value); ++i)
-				sb.append(String.format(",%s", arrayString(Array.get(value, i))));
-			
+				sb.append(String
+						.format(",%s", arrayString(Array.get(value, i))));
+
 			sb.append("}");
 			return sb.toString();
 		} else {
@@ -214,18 +216,18 @@ public class FileSinkDGS extends FileSinkBase {
 		} else if (value instanceof Number) {
 			if (value instanceof Integer || value instanceof Short
 					|| value instanceof Byte || value instanceof Long) {
-				return String.format(Locale.US, "%d",
-						((Number) value).longValue());
+				return String.format(Locale.US, "%d", ((Number) value)
+						.longValue());
 			} else if (value instanceof Float || value instanceof Double) {
-				return String.format(Locale.US, "%f",
-						((Number) value).doubleValue());
+				return String.format(Locale.US, "%f", ((Number) value)
+						.doubleValue());
 			} else if (value instanceof Character) {
 				return String.format("\"%c\"", ((Character) value).charValue());
 			} else if (value instanceof Boolean) {
 				return String.format(Locale.US, "\"%b\"", ((Boolean) value));
 			} else {
-				return String.format(Locale.US, " %f",
-						((Number) value).doubleValue());
+				return String.format(Locale.US, " %f", ((Number) value)
+						.doubleValue());
 			}
 		} else if (value == null) {
 			return "\"\"";
@@ -253,13 +255,17 @@ public class FileSinkDGS extends FileSinkBase {
 				hash = (HashMap<?, ?>) value;
 
 			return hashToString(hash);
+		} else if (value instanceof Color) {
+			Color c = (Color) value;
+			return String.format("#%02X%02X%02X%02X", c.getRed(), c.getGreen(),
+					c.getBlue(), c.getAlpha());
 		} else {
 			return String.format("\"%s\"", value.toString());
 		}
 	}
 
 	protected String hashToString(HashMap<?, ?> hash) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append("[ ");
 
