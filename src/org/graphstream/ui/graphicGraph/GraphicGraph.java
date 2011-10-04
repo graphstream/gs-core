@@ -606,6 +606,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 			// if( ! attrLock ) // The attrLock allows us to add/change/remove
 			// sprites attributes without entering in a recursive loop.
 			spriteAttribute(event, null, attribute, newValue);
+			graphChanged = true;
 		}
 
 		// We filter attributes.
