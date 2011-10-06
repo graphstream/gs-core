@@ -11,14 +11,19 @@ import org.graphstream.graph.Node;
  * Nodes used with {@link SingleGraph}
  *
  */
+
 public class SingleNode extends AdjacencyListNode {
-	protected HashMap<AbstractNode, AbstractEdge> neighborMap;
+	protected static class TwoEdges {
+		AbstractEdge in, out;
+	}
+	
+	protected HashMap<AbstractNode, TwoEdges> neighborMap;
 
 	// *** Constructor ***
 
 	protected SingleNode(AbstractGraph graph, String id) {
 		super(graph, id);
-		neighborMap = new HashMap<AbstractNode, AbstractEdge>(
+		neighborMap = new HashMap<AbstractNode, TwoEdges>(
 				4 * INITIAL_EDGE_CAPACITY / 3 + 1);
 	}
 
@@ -27,21 +32,23 @@ public class SingleNode extends AdjacencyListNode {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected <T extends Edge> T locateEdge(Node opposite, char type) {
-		AbstractEdge e = neighborMap.get(opposite);
-		if (e == null)
+		TwoEdges ee = neighborMap.get(opposite);
+		if (ee == null)
 			return null;
-
-		char etype = edgeType(e);
-
-		if ((type != I_EDGE || etype != O_EDGE)
-				&& (type != O_EDGE || etype != I_EDGE))
-			return (T) e;
-		return null;
+		return (T)(type == I_EDGE ? ee.in : ee.out);
 	}
 
 	@Override
 	protected void removeEdge(int i) {
-		neighborMap.remove(edges[i].getOpposite(this));
+		AbstractNode opposite = edges[i].getOpposite(this);
+		TwoEdges ee = neighborMap.get(opposite);
+		char type = edgeType(edges[i]);
+		if (type != O_EDGE)
+			ee.in = null;
+		if (type != I_EDGE)
+			ee.out = null;
+		if (ee.in == null && ee.out == null)
+			neighborMap.remove(opposite);
 		super.removeEdge(i);
 	}
 
@@ -50,9 +57,21 @@ public class SingleNode extends AdjacencyListNode {
 	@Override
 	protected boolean addEdgeCallback(AbstractEdge edge) {
 		AbstractNode opposite = edge.getOpposite(this);
-		if (neighborMap.containsKey(opposite))
-			return false;
-		neighborMap.put(opposite, edge);
+		TwoEdges ee = neighborMap.get(opposite);
+		if (ee == null)
+			ee = new TwoEdges();
+		char type = edgeType(edge);
+		if (type != O_EDGE) {
+			if (ee.in != null)
+				return false;
+			ee.in = edge;
+		}
+		if (type != I_EDGE) {
+			if (ee.out != null)
+				return false;
+			ee.out = edge;
+		}
+		neighborMap.put(opposite, ee);
 		return super.addEdgeCallback(edge);
 	}
 

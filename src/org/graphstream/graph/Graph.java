@@ -489,7 +489,8 @@ public interface Graph extends Element, Pipe, Iterable<Node> {
 	 * existing edge if it has endpoints <code>node1</code> and </code>node2</code> 
 	 * or <code>null</code>	otherwise.
 	 * </p>
-	 * 
+	 * XXX
+	 * XXX
 	 * <p>
 	 * In the case when the graph does not contain an edge with the same id, the method checks
 	 * if <code>node1</code> and <code>node2</code> exist. If one or both of them do not exist,
