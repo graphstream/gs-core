@@ -606,6 +606,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 			// if( ! attrLock ) // The attrLock allows us to add/change/remove
 			// sprites attributes without entering in a recursive loop.
 			spriteAttribute(event, null, attribute, newValue);
+			graphChanged = true;
 		}
 
 		// We filter attributes.
@@ -1035,13 +1036,23 @@ public class GraphicGraph extends AbstractElement implements Graph,
 			if (event == AttributeChangeEvent.ADD) {
 				GraphicSprite sprite = styleGroups.getSprite(spriteId);
 
-				if (sprite != null)
-					sprite.addAttribute(attr, value);
+				// We add the sprite, in case of a replay, some attributes of the sprite can be
+				// changed before the sprite is declared.
+				if (sprite == null) {
+					addOrChangeSprite(AttributeChangeEvent.ADD, element, spriteId, null);
+					sprite = styleGroups.getSprite(spriteId);
+				}
+				
+				sprite.addAttribute(attr, value);
 			} else if (event == AttributeChangeEvent.CHANGE) {
 				GraphicSprite sprite = styleGroups.getSprite(spriteId);
 
-				if (sprite != null)
-					sprite.changeAttribute(attr, value);
+				if (sprite == null) {
+					addOrChangeSprite(AttributeChangeEvent.ADD, element, spriteId, null);
+					sprite = styleGroups.getSprite(spriteId);
+				}
+				
+				sprite.changeAttribute(attr, value);
 			} else if (event == AttributeChangeEvent.REMOVE) {
 				GraphicSprite sprite = styleGroups.getSprite(spriteId);
 
@@ -1053,8 +1064,9 @@ public class GraphicGraph extends AbstractElement implements Graph,
 
 	protected void addOrChangeSprite(AttributeChangeEvent event,
 			Element element, String spriteId, Object value) {
+		
 		if (event == AttributeChangeEvent.ADD
-				|| event == AttributeChangeEvent.CHANGE) {
+		||  event == AttributeChangeEvent.CHANGE) {
 			GraphicSprite sprite = styleGroups.getSprite(spriteId);
 
 			if (sprite == null)
