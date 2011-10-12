@@ -74,60 +74,62 @@ public class ShortcutManager implements KeyListener {
 	 *            The event that generated the key.
 	 */
 	public void keyPressed(KeyEvent event) {
+		Camera camera = view.getCamera();
+		
 		if (event.getKeyCode() == KeyEvent.VK_PAGE_UP) {
-			view.setViewPercent(view.getViewPercent() - 0.05f);
+			camera.setViewPercent(camera.getViewPercent() - 0.05f);
 		} else if (event.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
-			view.setViewPercent(view.getViewPercent() + 0.05f);
+			camera.setViewPercent(camera.getViewPercent() + 0.05f);
 		} else if (event.getKeyCode() == KeyEvent.VK_LEFT) {
 			if ((event.getModifiers() & KeyEvent.ALT_MASK) != 0) {
-				double r = view.getViewRotation();
-				view.setViewRotation(r - 5);
+				double r = camera.getViewRotation();
+				camera.setViewRotation(r - 5);
 			} else {
 				double delta = 0;
 
 				if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0)
-					delta = view.getGraphDimension() * 0.1f;
+					delta = camera.getGraphDimension() * 0.1f;
 				else
-					delta = view.getGraphDimension() * 0.01f;
+					delta = camera.getGraphDimension() * 0.01f;
 
-				Point3 p = view.getViewCenter();
-				view.setViewCenter(p.x - delta, p.y, 0);
+				Point3 p = camera.getViewCenter();
+				camera.setViewCenter(p.x - delta, p.y, 0);
 			}
 		} else if (event.getKeyCode() == KeyEvent.VK_RIGHT) {
 			if ((event.getModifiers() & KeyEvent.ALT_MASK) != 0) {
-				double r = view.getViewRotation();
-				view.setViewRotation(r + 5);
+				double r = camera.getViewRotation();
+				camera.setViewRotation(r + 5);
 			} else {
 				double delta = 0;
 
 				if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0)
-					delta = view.getGraphDimension() * 0.1f;
+					delta = camera.getGraphDimension() * 0.1f;
 				else
-					delta = view.getGraphDimension() * 0.01f;
+					delta = camera.getGraphDimension() * 0.01f;
 
-				Point3 p = view.getViewCenter();
-				view.setViewCenter(p.x + delta, p.y, 0);
+				Point3 p = camera.getViewCenter();
+				camera.setViewCenter(p.x + delta, p.y, 0);
 			}
 		} else if (event.getKeyCode() == KeyEvent.VK_UP) {
 			double delta = 0;
 
 			if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0)
-				delta = view.getGraphDimension() * 0.1f;
+				delta = camera.getGraphDimension() * 0.1f;
 			else
-				delta = view.getGraphDimension() * 0.01f;
+				delta = camera.getGraphDimension() * 0.01f;
 
-			Point3 p = view.getViewCenter();
-			view.setViewCenter(p.x, p.y + delta, 0);
+			Point3 p = camera.getViewCenter();
+			camera.setViewCenter(p.x, p.y + delta, 0);
 		} else if (event.getKeyCode() == KeyEvent.VK_DOWN) {
 			double delta = 0;
 
 			if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0)
-				delta = view.getGraphDimension() * 0.1f;
+				delta = camera.getGraphDimension() * 0.1f;
 			else
-				delta = view.getGraphDimension() * 0.01f;
+				delta = camera.getGraphDimension() * 0.01f;
 
-			Point3 p = view.getViewCenter();
-			view.setViewCenter(p.x, p.y - delta, 0);
+			Point3 p = camera.getViewCenter();
+			camera.setViewCenter(p.x, p.y - delta, 0);
 		}
 	}
 
@@ -148,7 +150,7 @@ public class ShortcutManager implements KeyListener {
 	 */
 	public void keyTyped(KeyEvent event) {
 		if (event.getKeyChar() == 'R') {
-			view.resetView();
+			view.getCamera().resetView();
 		}
 		// else if( event.getKeyChar() == 'B' )
 		// {

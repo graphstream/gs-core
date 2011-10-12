@@ -48,7 +48,6 @@ import java.util.HashSet;
 import javax.imageio.ImageIO;
 
 import org.graphstream.graph.Element;
-import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.StyleGroup;
@@ -58,6 +57,7 @@ import org.graphstream.ui.graphicGraph.stylesheet.Value;
 import org.graphstream.ui.swingViewer.GraphRendererBase;
 import org.graphstream.ui.swingViewer.LayerRenderer;
 import org.graphstream.ui.swingViewer.util.Camera;
+import org.graphstream.ui.swingViewer.util.DefaultCamera;
 import org.graphstream.ui.swingViewer.util.GraphMetrics;
 
 /**
@@ -81,7 +81,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 	/**
 	 * Set the view on the view port defined by the metrics.
 	 */
-	protected Camera camera = new Camera();
+	protected DefaultCamera camera = new DefaultCamera();
 
 	protected NodeRenderer nodeRenderer = new NodeRenderer();
 
@@ -110,20 +110,8 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 
 	// Access
 
-	public Point3 getViewCenter() {
-		return camera.getViewCenter();
-	}
-
-	public double getViewPercent() {
-		return camera.getViewPercent();
-	}
-
-	public double getViewRotation() {
-		return camera.getViewRotation();
-	}
-
-	public double getGraphDimension() {
-		return camera.getMetrics().diagonal;
+	public Camera getCamera() {
+		return camera;
 	}
 
 	public ArrayList<GraphicElement> allNodesOrSpritesIn(double x1, double y1,
@@ -136,11 +124,6 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 	}
 
 	// Command
-
-	public void setBounds(double minx, double miny, double minz, double maxx,
-			double maxy, double maxz) {
-		camera.getMetrics().setBounds(minx, miny, minz, maxx, maxy, maxz);
-	}
 
 	public void render(Graphics2D g, int width, int height) {
 		if (graph != null) // If not closed, one or two renders can occur after
@@ -159,37 +142,6 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 				renderSelection(g);
 			}
 		}
-	}
-
-	public void resetView() {
-		camera.setAutoFitView(true);
-		camera.setRotation(0);
-	}
-
-	public void setViewCenter(double x, double y, double z) {
-		camera.setAutoFitView(false);
-		camera.setCenter(x, y /* ignore Z */);
-	}
-
-	public void setGraphViewport(double minx, double miny, double maxx, double maxy) {
-		camera.setAutoFitView(false);
-		camera.setCenter(minx + (maxx - minx), miny + (maxy - miny));
-		camera.setGraphViewport(minx, miny, maxx, maxy);
-		camera.setZoom(1);
-	}
-
-	public void removeGraphViewport() {
-		camera.removeGraphViewport();
-		resetView();
-	}
-
-	public void setViewPercent(double percent) {
-		camera.setAutoFitView(false);
-		camera.setZoom(percent);
-	}
-
-	public void setViewRotation(double theta) {
-		camera.setRotation(theta);
 	}
 
 	public void moveElementAtPx(GraphicElement element, double x, double y) {
