@@ -651,7 +651,9 @@ public class DGSParser implements Parser {
 	protected String string() throws IOException, ParseException {
 		int c, s;
 		StringBuilder builder;
+		boolean slash;
 
+		slash = false;
 		builder = new StringBuilder();
 		c = nextChar();
 
@@ -660,8 +662,15 @@ public class DGSParser implements Parser {
 
 		s = c;
 
-		while ((c = nextChar()) != s)
-			builder.appendCodePoint(c);
+		while ((c = nextChar()) != s || slash) {
+			if (slash && c != s)
+				builder.append("\\");
+
+			slash = c == '\\';
+
+			if (!slash)
+				builder.appendCodePoint(c);
+		}
 
 		return builder.toString();
 	}

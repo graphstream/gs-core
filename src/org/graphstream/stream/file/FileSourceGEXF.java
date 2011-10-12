@@ -51,6 +51,9 @@ import javax.xml.stream.events.XMLEvent;
  */
 public class FileSourceGEXF extends FileSourceXML {
 
+	/**
+	 * The GEXF parser.
+	 */
 	protected GEXFParser parser;
 
 	/*
@@ -591,7 +594,7 @@ public class FileSourceGEXF extends FileSourceXML {
 			sendNodeAdded(sourceId, id);
 
 			if (attributes.containsKey(NODEAttribute.LABEL))
-				sendNodeAttributeAdded(sourceId, id, "ui.label", attributes
+				sendNodeAttributeAdded(sourceId, id, "label", attributes
 						.get(NODEAttribute.LABEL));
 
 			e = getNextEvent();
@@ -644,10 +647,11 @@ public class FileSourceGEXF extends FileSourceXML {
 				e = getNextEvent();
 			}
 
-			for (String key : nodeAttributesDefinition.keySet()) {
-				if (!defined.contains(key))
-					sendNodeAttributeAdded(sourceId, id, key,
-							nodeAttributesDefinition.get(key).def);
+			for (Attribute theAttribute : nodeAttributesDefinition.values()) {
+				if (!defined.contains(theAttribute.id)) {
+					sendNodeAttributeAdded(sourceId, id, theAttribute.title,
+							theAttribute.def);
+				}
 			}
 
 			checkValid(e, XMLEvent.END_ELEMENT, "node");

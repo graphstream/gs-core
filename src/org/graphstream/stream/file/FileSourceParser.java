@@ -53,7 +53,7 @@ public abstract class FileSourceParser extends SourceBase implements FileSource 
 	 * Factory used to create parser.
 	 */
 	protected ParserFactory factory;
-	
+
 	/**
 	 * Parser opened by a call to {@link #begin(Reader)}.
 	 */
@@ -69,14 +69,14 @@ public abstract class FileSourceParser extends SourceBase implements FileSource 
 	protected FileSourceParser() {
 		factory = getNewParserFactory();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.graphstream.stream.file.FileSource#readAll(java.lang.String)
 	 */
 	public void readAll(String fileName) throws IOException {
-		Parser parser = factory.newParser(new FileReader(fileName));
+		Parser parser = factory.newParser(createReaderForFile(fileName));
 
 		try {
 			parser.all();
@@ -139,8 +139,8 @@ public abstract class FileSourceParser extends SourceBase implements FileSource 
 	public void begin(String fileName) throws IOException {
 		if (parser != null)
 			end();
-		
-		parser = factory.newParser(new FileReader(fileName));
+
+		parser = factory.newParser(createReaderForFile(fileName));
 
 		try {
 			parser.open();
@@ -223,5 +223,9 @@ public abstract class FileSourceParser extends SourceBase implements FileSource 
 	public void end() throws IOException {
 		parser.close();
 		parser = null;
+	}
+
+	protected Reader createReaderForFile(String filename) throws IOException {
+		return new FileReader(filename);
 	}
 }

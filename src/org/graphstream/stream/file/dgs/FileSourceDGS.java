@@ -30,8 +30,13 @@
  */
 package org.graphstream.stream.file.dgs;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.zip.GZIPInputStream;
 
 import org.graphstream.stream.file.FileSource;
 import org.graphstream.stream.file.FileSourceParser;
@@ -56,6 +61,7 @@ import org.graphstream.util.parser.ParserFactory;
 public class FileSourceDGS extends FileSourceParser {
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.graphstream.stream.file.FileSourceParser#getNewParserFactory()
 	 */
 	public ParserFactory getNewParserFactory() {
@@ -65,7 +71,7 @@ public class FileSourceDGS extends FileSourceParser {
 			}
 		};
 	}
-	
+
 	@Override
 	public boolean nextStep() throws IOException {
 		try {
@@ -73,5 +79,48 @@ public class FileSourceDGS extends FileSourceParser {
 		} catch (ParseException e) {
 			throw new IOException(e);
 		}
+	}
+
+	@Override
+	protected Reader createReaderForFile(String filename) throws IOException {
+		InputStream is = null;
+
+		is = new FileInputStream(filename);
+
+		if (is.markSupported())
+			is.mark(128);
+
+		try {
+			is = new GZIPInputStream(is);
+		} catch (IOException e1) {
+			//
+			// This is not a gzip input.
+			// But gzip has eat some bytes so we reset the stream
+			// or close and open it again.
+			//
+			if (is.markSupported()) {
+				try {
+					is.reset();
+				} catch (IOException e2) {
+					//
+					// Dirty but we hope do not get there
+					//
+					e2.printStackTrace();
+				}
+			} else {
+				try {
+					is.close();
+				} catch (IOException e2) {
+					//
+					// Dirty but we hope do not get there
+					//
+					e2.printStackTrace();
+				}
+				
+				is = new FileInputStream(filename);
+			}
+		}
+
+		return new BufferedReader(new InputStreamReader(is));
 	}
 }
