@@ -30,7 +30,10 @@
  */
 package org.graphstream.ui.swingViewer.util;
 
+import java.awt.geom.Point2D;
+
 import org.graphstream.ui.geom.Point3;
+import org.graphstream.ui.graphicGraph.GraphicElement;
 
 public interface Camera {
 	/**
@@ -148,4 +151,48 @@ public interface Camera {
 	 * @return a GraphMetrics instance
 	 */
 	GraphMetrics getMetrics();
+	
+	/**
+	 * Enable or disable automatic adjustment of the view to see the entire
+	 * graph.
+	 * 
+	 * @param on
+	 *            If true, automatic adjustment is enabled.
+	 */
+	void setAutoFitView(boolean on);
+
+	/**
+	 * Transform a point in graph units into pixels.
+	 * 
+	 * @return The transformed point.
+	 */
+	Point2D.Double transform(double x, double y);
+	
+	/**
+	 * Return the given point in pixels converted in graph units (GU) using the
+	 * inverse transformation of the current projection matrix. The inverse
+	 * matrix is computed only once each time a new projection matrix is
+	 * created.
+	 * 
+	 * @param x
+	 *            The source point abscissa in pixels.
+	 * @param y
+	 *            The source point ordinate in pixels.
+	 * @return The resulting points in graph units.
+	 */
+	Point2D.Double inverseTransform(double x, double y);
+	
+	/**
+	 * True if the element would be visible on screen. The method used is to
+	 * transform the centre of the element (which is always in graph units)
+	 * using the camera actual transformation to put it in pixel units. Then to
+	 * look in the style sheet the size of the element and to test if its
+	 * enclosing rectangle intersects the view port. For edges, its two nodes
+	 * are used.
+	 * 
+	 * @param element
+	 *            The element to test.
+	 * @return True if the element is visible and therefore must be rendered.
+	 */
+	boolean isVisible(GraphicElement element);
 }
