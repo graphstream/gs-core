@@ -43,6 +43,7 @@ import org.graphstream.ui.graphicGraph.stylesheet.Values;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.FillMode;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.SizeMode;
 import org.graphstream.ui.swingViewer.util.Camera;
+import org.graphstream.ui.swingViewer.util.DefaultCamera;
 import org.graphstream.ui.swingViewer.util.GraphMetrics;
 
 public class SpriteRenderer extends ElementRenderer {
@@ -103,7 +104,7 @@ public class SpriteRenderer extends ElementRenderer {
 	protected void renderElement(StyleGroup group, Graphics2D g, Camera camera,
 			GraphicElement element) {
 		GraphicSprite sprite = (GraphicSprite) element;
-		Point2D.Double pos = camera.getSpritePosition(sprite,
+		Point2D.Double pos = ((DefaultCamera) camera).getSpritePosition(sprite,
 				new Point2D.Double(), StyleConstants.Units.GU);
 
 		shape.setFrame(pos.x - w2, pos.y - h2, width, height);
