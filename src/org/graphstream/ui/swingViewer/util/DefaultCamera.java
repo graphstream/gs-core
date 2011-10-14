@@ -264,17 +264,9 @@ public class DefaultCamera implements Camera {
 		}
 	}
 
-	/**
-	 * Return the given point in pixels converted in graph units (GU) using the
-	 * inverse transformation of the current projection matrix. The inverse
-	 * matrix is computed only once each time a new projection matrix is
-	 * created.
-	 * 
-	 * @param x
-	 *            The source point abscissa in pixels.
-	 * @param y
-	 *            The source point ordinate in pixels.
-	 * @return The resulting points in graph units.
+	/*
+	 * (non-Javadoc)
+	 * @see org.graphstream.ui.swingViewer.util.Camera#inverseTransform(double, double)
 	 */
 	public Point2D.Double inverseTransform(double x, double y) {
 		Point2D.Double p = new Point2D.Double(x, y);
@@ -284,10 +276,9 @@ public class DefaultCamera implements Camera {
 		return p;
 	}
 
-	/**
-	 * Transform a point in graph units into pixels.
-	 * 
-	 * @return The transformed point.
+	/*
+	 * (non-Javadoc)
+	 * @see org.graphstream.ui.swingViewer.util.Camera#transform(double, double)
 	 */
 	public Point2D.Double transform(double x, double y) {
 		Point2D.Double p = new Point2D.Double(x, y);
@@ -861,6 +852,10 @@ public class DefaultCamera implements Camera {
 			return false;
 
 		return true;
+	}
+	
+	protected boolean edgeContains(GraphicElement elt, double x, double y) {
+		return false;
 	}
 
 	/**
