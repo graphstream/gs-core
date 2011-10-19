@@ -665,14 +665,16 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		int deg = node.getDegree();
 
 		removeAllEdges(node);
-		if (graphCallback)
-			removeNodeCallback(node);
 
 		// XXX ugly fix waiting for better times
 		// see the big discussion "Is the Graph active or passive?"
 		if (deg > 0 && sourceId.equals(getId()))
 			timeId = listeners.newEvent();
 		listeners.sendNodeRemoved(sourceId, timeId, nodeId);
+		
+		if (graphCallback)
+			removeNodeCallback(node);
+		
 		return (T) node;
 	}
 
@@ -689,6 +691,9 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 
 		AbstractNode src = edge.getSourceNode();
 		AbstractNode dst = edge.getTargetNode();
+		
+		listeners.sendEdgeRemoved(sourceId, timeId, edgeId);
+		
 		if (srcCallback)
 			src.removeEdgeCallback(edge);
 		// note that the callback is called only once for loop edges
@@ -696,7 +701,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 			dst.removeEdgeCallback(edge);
 		if (graphCallback)
 			removeEdgeCallback(edge);
-		listeners.sendEdgeRemoved(sourceId, timeId, edgeId);
+		
 		return (T) edge;
 	}
 
