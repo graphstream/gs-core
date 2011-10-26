@@ -268,25 +268,35 @@ public class DefaultCamera implements Camera {
 	 * (non-Javadoc)
 	 * @see org.graphstream.ui.swingViewer.util.Camera#inverseTransform(double, double)
 	 */
-	public Point2D.Double inverseTransform(double x, double y) {
+	public Point3 inverseTransform(double x, double y) {
 		Point2D.Double p = new Point2D.Double(x, y);
-
 		xT.transform(p, p);
-
-		return p;
+		return new Point3(p.x, p.y, 0);
 	}
+//	public Point2D.Double inverseTransform(double x, double y) {
+//		Point2D.Double p = new Point2D.Double(x, y);
+//
+//		xT.transform(p, p);
+//
+//		return p;
+//	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see org.graphstream.ui.swingViewer.util.Camera#transform(double, double)
 	 */
-	public Point2D.Double transform(double x, double y) {
+	public Point3 transform(double x, double y, double z) {
 		Point2D.Double p = new Point2D.Double(x, y);
-
 		Tx.transform(p, p);
-
-		return p;
+		return new Point3(p.x, p.y, 0);
 	}
+//	public Point2D.Double transform(double x, double y) {
+//		Point2D.Double p = new Point2D.Double(x, y);
+//
+//		Tx.transform(p, p);
+//
+//		return p;
+//	}
 
 	/**
 	 * Process each node to check if it is in the actual view port, and mark

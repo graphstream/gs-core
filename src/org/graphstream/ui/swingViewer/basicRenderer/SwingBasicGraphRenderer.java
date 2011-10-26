@@ -37,7 +37,6 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -48,6 +47,7 @@ import java.util.HashSet;
 import javax.imageio.ImageIO;
 
 import org.graphstream.graph.Element;
+import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.StyleGroup;
@@ -145,7 +145,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 	}
 
 	public void moveElementAtPx(GraphicElement element, double x, double y) {
-		Point2D.Double p = camera.inverseTransform(x, y);
+		Point3 p = camera.inverseTransform(x, y);
 		element.move(p.x, p.y, element.getZ());
 	}
 

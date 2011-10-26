@@ -166,7 +166,8 @@ public interface Camera {
 	 * 
 	 * @return The transformed point.
 	 */
-	Point2D.Double transform(double x, double y);
+//	Point2D.Double transform(double x, double y);
+	Point3 transform(double x, double y, double z);
 	
 	/**
 	 * Return the given point in pixels converted in graph units (GU) using the
@@ -180,7 +181,8 @@ public interface Camera {
 	 *            The source point ordinate in pixels.
 	 * @return The resulting points in graph units.
 	 */
-	Point2D.Double inverseTransform(double x, double y);
+//	Point2D.Double inverseTransform(double x, double y);
+	Point3 inverseTransform(double x, double y);
 	
 	/**
 	 * True if the element would be visible on screen. The method used is to

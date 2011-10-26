@@ -34,9 +34,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 
 import org.graphstream.graph.Element;
+import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicSprite;
 import org.graphstream.ui.graphicGraph.StyleGroup;
@@ -173,7 +173,7 @@ public abstract class ElementRenderer {
 
 	/**
 	 * Called during rendering in place of
-	 * {@link #renderElement(StyleGroup, Graphics2D, DefaultCamera, GraphicElement)}
+	 * {@link #renderElement(StyleGroup, Graphics2D, Camera, GraphicElement)}
 	 * to signal that the given element is not inside the view. The
 	 * renderElement() method will be called as soon as the element becomes
 	 * visible anew.
@@ -207,7 +207,7 @@ public abstract class ElementRenderer {
 			String label = element.getLabel();
 
 			if (label != null) {
-				Point2D.Double p = null;
+				Point3 p = null;
 				GraphicSprite s = null;
 
 				if (element instanceof GraphicSprite)
@@ -216,13 +216,13 @@ public abstract class ElementRenderer {
 				if (s != null && s.getUnits() == Units.PX) {
 					double w = camera.getMetrics().lengthToPx(group.getSize(),
 							0);
-					p = new Point2D.Double();
+					p = new Point3();
 					p.x = element.getX() + (w / 2);
 					p.y = element.getY();
 				} else if (s != null && s.getUnits() == Units.PERCENTS) {
 					double w = camera.getMetrics().lengthToPx(group.getSize(),
 							0);
-					p = new Point2D.Double();
+					p = new Point3();
 					p.x = camera.getMetrics().viewport.data[1] * element.getX()
 							+ (w / 2);
 					p.y = camera.getMetrics().viewport.data[2] * element.getY();
@@ -230,7 +230,7 @@ public abstract class ElementRenderer {
 					double w = camera.getMetrics().lengthToGu(group.getSize(),
 							0);
 					p = camera.transform(element.getX() + (w / 2), element
-							.getY());
+							.getY(), 0);
 				}
 
 				AffineTransform Tx = g.getTransform();
