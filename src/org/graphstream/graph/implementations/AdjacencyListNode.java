@@ -168,7 +168,7 @@ public class AdjacencyListNode extends AbstractNode {
 		if (i < 0 || i >= getOutDegree())
 			throw new IndexOutOfBoundsException("Node \"" + this + "\""
 					+ " has no edge " + i);
-		return (T) edges[oStart + i];
+		return (T) edges[ioStart + i];
 	}
 	
 	@Override
