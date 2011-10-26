@@ -108,8 +108,8 @@ public interface Node extends Element, Iterable<Edge> {
 	/**
 	 * Retrieve an edge that leaves this node toward 'id'.
 	 * <p>
-	 * This method selects only directed edges leaving this node an pointing at
-	 * node 'id' (this also selects undirected edges).
+	 * This method selects only edges leaving this node an pointing at node 'id'
+	 * (this also selects undirected edges).
 	 * </p>
 	 * <p>
 	 * This method is implicitly generic and return something which extends
@@ -134,8 +134,8 @@ public interface Node extends Element, Iterable<Edge> {
 	/**
 	 * Retrieve an edge that leaves node 'id' toward this node.
 	 * <p>
-	 * This method selects only directed edges leaving node 'id an pointing at
-	 * this node (this also selects undirected edges).
+	 * This method selects only edges leaving node 'id' an pointing at this node
+	 * (this also selects undirected edges).
 	 * </p>
 	 * <p>
 	 * This method is implicitly generic and return something which extends
@@ -170,7 +170,7 @@ public interface Node extends Element, Iterable<Edge> {
 	 * example, in the following call :
 	 * 
 	 * <pre>
-	 * ExtendedEdge e = node.getEdgeFrom(&quot;...&quot;);
+	 * ExtendedEdge e = node.getEdgeBetween(&quot;...&quot;);
 	 * </pre>
 	 * 
 	 * the method will return an ExtendedEdge. If no left part exists, method
@@ -254,13 +254,13 @@ public interface Node extends Element, Iterable<Edge> {
 	<T extends Edge> Iterator<T> getLeavingEdgeIterator();
 
 	/**
-	 * Iterator on the set of neighbour nodes connected to this node via one or
-	 * more edges. This iterator iterate across any leaving, entering and non
-	 * directed edge (nodes are neighbour even if they only have a directed edge
-	 * from them toward this node). If there are mutliple edges connecting the
-	 * same none, it is iterated several times.
+	 * Iterator on the set of neighbor nodes connected to this node via one or
+	 * more edges. This iterator iterates across any leaving, entering and non
+	 * directed edges (nodes are neighbors even if they only have a directed
+	 * edge from them toward this node). If there are multiple edges connecting
+	 * the same node, it might be iterated several times.
 	 * 
-	 * @return The iterator, neighbour are iterated in arbitrary order.
+	 * @return The iterator, neighbors are iterated in arbitrary order.
 	 */
 	<T extends Node> Iterator<T> getNeighborNodeIterator();
 
@@ -579,30 +579,243 @@ public interface Node extends Element, Iterable<Edge> {
 	 */
 	String toString();
 
-	// XXX Propositions for new methods
-	// TODO Write javadoc
+	// New methods
+
+	/**
+	 * True if an edge leaves this node toward a given node.
+	 * 
+	 * @param node
+	 *            The target node.
+	 * @return True if a directed edge goes from this node to the other node or
+	 *         if an undirected edge exists.
+	 */
 	boolean hasEdgeToward(Node node);
 
-	boolean hasEdgeToward(int index);
+	/**
+	 * True if an edge leaves this node toward a node with given index.
+	 * 
+	 * @param index
+	 *            Index of the target node.
+	 * @return True if a directed edge goes from this node to the other node or
+	 *         if an undirected edge exists.
+	 * @throws IndexOutOfBoundsException
+	 *             if the index is negative or greater than {@code
+	 *             getNodeCount() - 1}.
+	 */
+	boolean hasEdgeToward(int index) throws IndexOutOfBoundsException;
 
+	/**
+	 * True if an edge enters this node from a given node.
+	 * 
+	 * @param node
+	 *            The source node.
+	 * @return True if a directed edge goes from the other node to this node or
+	 *         if an undirected edge exists.
+	 */
 	boolean hasEdgeFrom(Node node);
 
-	boolean hasEdgeFrom(int index);
+	/**
+	 * True if an edge enters this node from a node with given index.
+	 * 
+	 * @param index
+	 *            Index of the source node.
+	 * @return True if a directed edge goes from the other node to this node or
+	 *         if an undirected edge exists.
+	 * @throws IndexOutOfBoundsException
+	 *             if the index is negative or greater than {@code
+	 *             getNodeCount() - 1}.
+	 */
+	boolean hasEdgeFrom(int index) throws IndexOutOfBoundsException;
 
+	/**
+	 * True if an edge exists between this node and another node.
+	 * 
+	 * @param node
+	 *            Another node.
+	 * @return True if an edge exists between this node and the other node.
+	 */
 	boolean hasEdgeBetween(Node node);
 
-	boolean hasEdgeBetween(int index);
+	/**
+	 * True if an edge exists between this node and a node with given index.
+	 * 
+	 * @param index
+	 *            Index of another node.
+	 * @return True if an edge exists between this node and the other node.
+	 * @throws IndexOutOfBoundsException
+	 *             if the index is negative or greater than {@code
+	 *             getNodeCount() - 1}.
+	 */
+	boolean hasEdgeBetween(int index) throws IndexOutOfBoundsException;
 
-	<T extends Edge> T getEdgeToward(Node Node);
+	/**
+	 * Retrieves an edge that leaves this node toward another node.
+	 * <p>
+	 * This method selects only edges leaving this node an pointing at the
+	 * parameter node (this also selects undirected edges).
+	 * </p>
+	 * <p>
+	 * This method is implicitly generic and returns something which extends
+	 * Edge. The return type is the one of the left part of the assignment. For
+	 * example, in the following call :
+	 * 
+	 * <pre>
+	 * ExtendedEdge e = node.getEdgeToward(...);
+	 * </pre>
+	 * 
+	 * the method will return an ExtendedEdge. If no left part exists, method
+	 * will just return an Edge.
+	 * </p>
+	 * 
+	 * @param node
+	 *            The target node.
+	 * @return Directed edge going from this node to the parameter node, or
+	 *         undirected edge if it exists, else null.
+	 */
+	<T extends Edge> T getEdgeToward(Node node);
 
-	<T extends Edge> T getEdgeToward(int index);
+	/**
+	 * Retrieves an edge that leaves this node toward the node with given index.
+	 * <p>
+	 * This method selects only edges leaving this node an pointing at the
+	 * parameter node (this also selects undirected edges).
+	 * </p>
+	 * <p>
+	 * This method is implicitly generic and returns something which extends
+	 * Edge. The return type is the one of the left part of the assignment. For
+	 * example, in the following call :
+	 * 
+	 * <pre>
+	 * ExtendedEdge e = node.getEdgeToward(...);
+	 * </pre>
+	 * 
+	 * the method will return an ExtendedEdge. If no left part exists, method
+	 * will just return an Edge.
+	 * </p>
+	 * 
+	 * @param index
+	 *            Index of the target node.
+	 * @return Directed edge going from this node to the parameter node, or
+	 *         undirected edge if it exists, else null.
+	 * @throws IndexOutOfBoundsException
+	 *             if the index is negative or greater than {@code
+	 *             getNodeCount() - 1}.
+	 */
+	<T extends Edge> T getEdgeToward(int index)
+			throws IndexOutOfBoundsException;
 
-	<T extends Edge> T getEdgeFrom(Node Node);
+	/**
+	 * Retrieves an edge that leaves given node toward this node.
+	 * <p>
+	 * This method selects only edges leaving the other node an pointing at this
+	 * node (this also selects undirected edges).
+	 * </p>
+	 * <p>
+	 * This method is implicitly generic and returns something which extends
+	 * Edge. The return type is the one of the left part of the assignment. For
+	 * example, in the following call :
+	 * 
+	 * <pre>
+	 * ExtendedEdge e = node.getEdgeFrom(...);
+	 * </pre>
+	 * 
+	 * the method will return an ExtendedEdge. If no left part exists, method
+	 * will just return an Edge.
+	 * </p>
+	 * 
+	 * @param node
+	 *            The source node.
+	 * @return Directed edge going from the parameter node to this node, or
+	 *         undirected edge if it exists, else null.
+	 */
+	<T extends Edge> T getEdgeFrom(Node node);
 
-	<T extends Edge> T getEdgeFrom(int index);
+	/**
+	 * Retrieves an edge that leaves node with given index toward this node.
+	 * <p>
+	 * This method selects only edges leaving the other node an pointing at this
+	 * node (this also selects undirected edges).
+	 * </p>
+	 * <p>
+	 * This method is implicitly generic and returns something which extends
+	 * Edge. The return type is the one of the left part of the assignment. For
+	 * example, in the following call :
+	 * 
+	 * <pre>
+	 * ExtendedEdge e = node.getEdgeFrom(&quot;...&quot;);
+	 * </pre>
+	 * 
+	 * the method will return an ExtendedEdge. If no left part exists, method
+	 * will just return an Edge.
+	 * </p>
+	 * 
+	 * @param index
+	 *            Index of the source node.
+	 * @return Directed edge going from the parameter node to this node, or
+	 *         undirected edge if it exists, else null.
+	 * @throws IndexOutOfBoundsException
+	 *             if the index is negative or greater than {@code
+	 *             getNodeCount() - 1}.
+	 */
+	<T extends Edge> T getEdgeFrom(int index) throws IndexOutOfBoundsException;
 
-	<T extends Edge> T getEdgeBetween(Node Node);
+	/**
+	 * Retrieves an edge between this node and and another node if one exists.
+	 * <p>
+	 * This method selects directed or undirected edges. If the edge is
+	 * directed, its direction is not important and leaving or entering edges
+	 * will be selected.
+	 * </p>
+	 * <p>
+	 * This method is implicitly generic and return something which extends
+	 * Edge. The return type is the one of the left part of the assignment. For
+	 * example, in the following call :
+	 * 
+	 * <pre>
+	 * ExtendedEdge e = node.getEdgeBetween(...);
+	 * </pre>
+	 * 
+	 * the method will return an ExtendedEdge. If no left part exists, method
+	 * will just return an Edge.
+	 * </p>
+	 * 
+	 * @param node
+	 *            The opposite node.
+	 * @return Edge between this node and the parameter node if it exists, else
+	 *         null.
+	 */
+	<T extends Edge> T getEdgeBetween(Node node);
 
-	<T extends Edge> T getEdgeBetween(int index);
+	/**
+	 * Retrieves an edge between this node and the node with index i if one
+	 * exists.
+	 * <p>
+	 * This method selects directed or undirected edges. If the edge is
+	 * directed, its direction is not important and leaving or entering edges
+	 * will be selected.
+	 * </p>
+	 * <p>
+	 * This method is implicitly generic and return something which extends
+	 * Edge. The return type is the one of the left part of the assignment. For
+	 * example, in the following call :
+	 * 
+	 * <pre>
+	 * ExtendedEdge e = node.getEdgeBetween(...);
+	 * </pre>
+	 * 
+	 * the method will return an ExtendedEdge. If no left part exists, method
+	 * will just return an Edge.
+	 * </p>
+	 * 
+	 * @param index
+	 *            The index of the opposite node.
+	 * @return Edge between node with index i and this node if it exists, else
+	 *         null.
+	 * @throws IndexOutOfBoundsException
+	 *             if the index is negative or greater than {@code
+	 *             getNodeCount() - 1}.
+	 */
+	<T extends Edge> T getEdgeBetween(int index)
+			throws IndexOutOfBoundsException;
 
 }
