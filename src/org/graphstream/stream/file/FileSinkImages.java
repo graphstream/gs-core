@@ -547,19 +547,19 @@ public class FileSinkImages implements FileSink, LayoutListener {
 	}
 
 	public Point3 getViewCenter() {
-		return renderer.getViewCenter();
+		return renderer.getCamera().getViewCenter();
 	}
 
 	public void setViewCenter(double x, double y) {
-		renderer.setViewCenter(x, y, 0);
+		renderer.getCamera().setViewCenter(x, y, 0);
 	}
 
 	public double getViewPercent() {
-		return renderer.getViewPercent();
+		return renderer.getCamera().getViewPercent();
 	}
 
 	public void setViewPercent(double zoom) {
-		renderer.setViewPercent(zoom);
+		renderer.getCamera().setViewPercent(zoom);
 	}
 
 	public void setClearImageBeforeOutputEnabled(boolean on) {
@@ -607,7 +607,7 @@ public class FileSinkImages implements FileSink, LayoutListener {
 			Point3 lo = gg.getMinPos();
 			Point3 hi = gg.getMaxPos();
 
-			renderer.setBounds(lo.x, lo.y, lo.z, hi.x, hi.y, hi.z);
+			renderer.getCamera().setBounds(lo.x, lo.y, lo.z, hi.x, hi.y, hi.z);
 			renderer.render(g2d, resolution.getWidth(), resolution.getHeight());
 		}
 

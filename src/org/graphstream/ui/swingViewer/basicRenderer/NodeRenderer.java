@@ -52,7 +52,7 @@ public class NodeRenderer extends ElementRenderer {
 	protected Ellipse2D shape;
 
 	protected double width, height, w2, h2;
-	
+
 	@Override
 	protected void setupRenderingPass(StyleGroup group, Graphics2D g,
 			Camera camera) {
@@ -72,8 +72,8 @@ public class NodeRenderer extends ElementRenderer {
 
 		if (group.getSizeMode() == SizeMode.DYN_SIZE) {
 			Object s = element.getAttribute("ui.size");
-			
-			if(s != null) {
+
+			if (s != null) {
 				width = metrics.lengthToGu(StyleConstants.convertValue(s));
 				height = width;
 				w2 = width / 2;

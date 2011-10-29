@@ -532,7 +532,7 @@ public class Viewer implements ActionListener {
 			Point3 hi = graph.getMaxPos();
 
 			for (View view : views.values())
-				view.setBounds(lo.x, lo.y, lo.z, hi.x, hi.y, hi.z);
+				view.getCamera().setBounds(lo.x, lo.y, lo.z, hi.x, hi.y, hi.z);
 		}
 	}
 
