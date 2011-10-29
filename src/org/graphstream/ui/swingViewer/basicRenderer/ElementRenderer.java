@@ -229,7 +229,7 @@ public abstract class ElementRenderer {
 				} else {
 					double w = camera.getMetrics().lengthToGu(group.getSize(),
 							0);
-					p = camera.transform(element.getX() + (w / 2), element
+					p = camera.transformGuToPx(element.getX() + (w / 2), element
 							.getY(), 0);
 				}
 

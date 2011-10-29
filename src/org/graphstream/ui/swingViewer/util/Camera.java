@@ -30,8 +30,6 @@
  */
 package org.graphstream.ui.swingViewer.util;
 
-import java.awt.geom.Point2D;
-
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 
@@ -166,8 +164,7 @@ public interface Camera {
 	 * 
 	 * @return The transformed point.
 	 */
-//	Point2D.Double transform(double x, double y);
-	Point3 transform(double x, double y, double z);
+	Point3 transformGuToPx(double x, double y, double z);
 	
 	/**
 	 * Return the given point in pixels converted in graph units (GU) using the
@@ -181,12 +178,11 @@ public interface Camera {
 	 *            The source point ordinate in pixels.
 	 * @return The resulting points in graph units.
 	 */
-//	Point2D.Double inverseTransform(double x, double y);
-	Point3 inverseTransform(double x, double y);
+	Point3 transformPxToGu(double x, double y);
 	
 	/**
 	 * True if the element would be visible on screen. The method used is to
-	 * transform the centre of the element (which is always in graph units)
+	 * transform the center of the element (which is always in graph units)
 	 * using the camera actual transformation to put it in pixel units. Then to
 	 * look in the style sheet the size of the element and to test if its
 	 * enclosing rectangle intersects the view port. For edges, its two nodes
