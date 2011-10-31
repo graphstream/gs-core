@@ -190,6 +190,7 @@ TOKEN: { < DYNICON           : "dyn-icon" > }
 
 TOKEN: { < DASHES            : "dashes" > }
 TOKEN: { < DOTS              : "dots" > }
+TOKEN: { < DOUBLE            : "double" > }
 
 TOKEN: { < GRADIENTDIAGONAL1 : "gradient-diagonal1" > }
 TOKEN: { < GRADIENTDIAGONAL2 : "gradient-diagonal2" > }
@@ -552,6 +553,7 @@ Style.StrokeMode strokeMode():
 	| ( <PLAIN>              { m = Style.StrokeMode.PLAIN;  } )
 	| ( <DASHES>             { m = Style.StrokeMode.DASHES; } )
 	| ( <DOTS>               { m = Style.StrokeMode.DOTS;   } )
+	| ( <DOUBLE>             { m = Style.StrokeMode.DOUBLE; } )
 	)
 	{ return m; }
 }

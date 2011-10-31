@@ -176,147 +176,149 @@ public interface StyleSheetParserConstants {
   /** RegularExpression Id. */
   int DOTS = 71;
   /** RegularExpression Id. */
-  int GRADIENTDIAGONAL1 = 72;
+  int DOUBLE = 72;
   /** RegularExpression Id. */
-  int GRADIENTDIAGONAL2 = 73;
+  int GRADIENTDIAGONAL1 = 73;
   /** RegularExpression Id. */
-  int GRADIENTHORIZONTAL = 74;
+  int GRADIENTDIAGONAL2 = 74;
   /** RegularExpression Id. */
-  int GRADIENTRADIAL = 75;
+  int GRADIENTHORIZONTAL = 75;
   /** RegularExpression Id. */
-  int GRADIENTVERTICAL = 76;
+  int GRADIENTRADIAL = 76;
   /** RegularExpression Id. */
-  int HIDDEN = 77;
+  int GRADIENTVERTICAL = 77;
   /** RegularExpression Id. */
-  int IMAGETILED = 78;
+  int HIDDEN = 78;
   /** RegularExpression Id. */
-  int IMAGESCALED = 79;
+  int IMAGETILED = 79;
   /** RegularExpression Id. */
-  int IMAGESCALEDRATIOMAX = 80;
+  int IMAGESCALED = 80;
   /** RegularExpression Id. */
-  int IMAGESCALEDRATIOMIN = 81;
+  int IMAGESCALEDRATIOMAX = 81;
   /** RegularExpression Id. */
-  int NONE = 82;
+  int IMAGESCALEDRATIOMIN = 82;
   /** RegularExpression Id. */
-  int NORMAL = 83;
+  int NONE = 83;
   /** RegularExpression Id. */
-  int TRUNCATED = 84;
+  int NORMAL = 84;
   /** RegularExpression Id. */
-  int ZOOMRANGE = 85;
+  int TRUNCATED = 85;
   /** RegularExpression Id. */
-  int ATZOOM = 86;
+  int ZOOMRANGE = 86;
   /** RegularExpression Id. */
-  int UNDERZOOM = 87;
+  int ATZOOM = 87;
   /** RegularExpression Id. */
-  int OVERZOOM = 88;
+  int UNDERZOOM = 88;
   /** RegularExpression Id. */
-  int ZOOMS = 89;
+  int OVERZOOM = 89;
   /** RegularExpression Id. */
-  int FIT = 90;
+  int ZOOMS = 90;
   /** RegularExpression Id. */
-  int BOLD = 91;
+  int FIT = 91;
   /** RegularExpression Id. */
-  int BOLD_ITALIC = 92;
+  int BOLD = 92;
   /** RegularExpression Id. */
-  int ITALIC = 93;
+  int BOLD_ITALIC = 93;
   /** RegularExpression Id. */
-  int ALONG = 94;
+  int ITALIC = 94;
   /** RegularExpression Id. */
-  int ATLEFT = 95;
+  int ALONG = 95;
   /** RegularExpression Id. */
-  int ATRIGHT = 96;
+  int ATLEFT = 96;
   /** RegularExpression Id. */
-  int CENTER = 97;
+  int ATRIGHT = 97;
   /** RegularExpression Id. */
-  int LEFT = 98;
+  int CENTER = 98;
   /** RegularExpression Id. */
-  int RIGHT = 99;
+  int LEFT = 99;
   /** RegularExpression Id. */
-  int UNDER = 100;
+  int RIGHT = 100;
   /** RegularExpression Id. */
-  int ABOVE = 101;
+  int UNDER = 101;
   /** RegularExpression Id. */
-  int JUSTIFY = 102;
+  int ABOVE = 102;
   /** RegularExpression Id. */
-  int CIRCLE = 103;
+  int JUSTIFY = 103;
   /** RegularExpression Id. */
-  int TRIANGLE = 104;
+  int CIRCLE = 104;
   /** RegularExpression Id. */
-  int FREEPLANE = 105;
+  int TRIANGLE = 105;
   /** RegularExpression Id. */
-  int TEXTBOX = 106;
+  int FREEPLANE = 106;
   /** RegularExpression Id. */
-  int TEXTROUNDEDBOX = 107;
+  int TEXTBOX = 107;
   /** RegularExpression Id. */
-  int TEXTCIRCLE = 108;
+  int TEXTROUNDEDBOX = 108;
   /** RegularExpression Id. */
-  int TEXTDIAMOND = 109;
+  int TEXTCIRCLE = 109;
   /** RegularExpression Id. */
-  int TEXTPARAGRAPH = 110;
+  int TEXTDIAMOND = 110;
   /** RegularExpression Id. */
-  int BOX = 111;
+  int TEXTPARAGRAPH = 111;
   /** RegularExpression Id. */
-  int ROUNDEDBOX = 112;
+  int BOX = 112;
   /** RegularExpression Id. */
-  int CROSS = 113;
+  int ROUNDEDBOX = 113;
   /** RegularExpression Id. */
-  int DIAMOND = 114;
+  int CROSS = 114;
   /** RegularExpression Id. */
-  int POLYGON = 115;
+  int DIAMOND = 115;
   /** RegularExpression Id. */
-  int BUTTON = 116;
+  int POLYGON = 116;
   /** RegularExpression Id. */
-  int TEXTFIELD = 117;
+  int BUTTON = 117;
   /** RegularExpression Id. */
-  int PANEL = 118;
+  int TEXTFIELD = 118;
   /** RegularExpression Id. */
-  int LINE = 119;
+  int PANEL = 119;
   /** RegularExpression Id. */
-  int POLYLINE = 120;
+  int LINE = 120;
   /** RegularExpression Id. */
-  int POLYLINESCALED = 121;
+  int POLYLINE = 121;
   /** RegularExpression Id. */
-  int ANGLE = 122;
+  int POLYLINESCALED = 122;
   /** RegularExpression Id. */
-  int CUBICCURVE = 123;
+  int ANGLE = 123;
   /** RegularExpression Id. */
-  int BLOB = 124;
+  int CUBICCURVE = 124;
   /** RegularExpression Id. */
-  int SQUARELINE = 125;
+  int BLOB = 125;
   /** RegularExpression Id. */
-  int LSQUARELINE = 126;
+  int SQUARELINE = 126;
   /** RegularExpression Id. */
-  int HSQUARELINE = 127;
+  int LSQUARELINE = 127;
   /** RegularExpression Id. */
-  int VSQUARELINE = 128;
+  int HSQUARELINE = 128;
   /** RegularExpression Id. */
-  int ARROW = 129;
+  int VSQUARELINE = 129;
   /** RegularExpression Id. */
-  int FLOW = 130;
+  int ARROW = 130;
   /** RegularExpression Id. */
-  int PIECHART = 131;
+  int FLOW = 131;
   /** RegularExpression Id. */
-  int IMAGE = 132;
+  int PIECHART = 132;
   /** RegularExpression Id. */
-  int IMAGES = 133;
+  int IMAGE = 133;
   /** RegularExpression Id. */
-  int FROM = 134;
+  int IMAGES = 134;
   /** RegularExpression Id. */
-  int NODE0 = 135;
+  int FROM = 135;
   /** RegularExpression Id. */
-  int TO = 136;
+  int NODE0 = 136;
   /** RegularExpression Id. */
-  int NODE1 = 137;
+  int TO = 137;
   /** RegularExpression Id. */
-  int PROJECTION = 138;
+  int NODE1 = 138;
   /** RegularExpression Id. */
-  int CLICKED = 139;
+  int PROJECTION = 139;
   /** RegularExpression Id. */
-  int SELECTED = 140;
+  int CLICKED = 140;
   /** RegularExpression Id. */
-  int IDENTIFIER = 141;
+  int SELECTED = 141;
   /** RegularExpression Id. */
-  int COMMENT = 142;
+  int IDENTIFIER = 142;
+  /** RegularExpression Id. */
+  int COMMENT = 143;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -395,6 +397,7 @@ public interface StyleSheetParserConstants {
     "\"dyn-icon\"",
     "\"dashes\"",
     "\"dots\"",
+    "\"double\"",
     "\"gradient-diagonal1\"",
     "\"gradient-diagonal2\"",
     "\"gradient-horizontal\"",

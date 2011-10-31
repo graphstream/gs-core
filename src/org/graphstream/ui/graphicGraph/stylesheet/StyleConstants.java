@@ -63,7 +63,7 @@ public class StyleConstants {
 	 * How to draw the contour of the element.
 	 */
 	public static enum StrokeMode {
-		NONE, PLAIN, DASHES, DOTS
+		NONE, PLAIN, DASHES, DOTS, DOUBLE
 	}
 
 	/**

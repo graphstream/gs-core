@@ -1,53 +1,48 @@
 The style sheet mechanism
 =========================
 
-I suppose such a way of doing is applicable to many "viewers" so I will try to broaden the
-discussion when possible. However, most of the time we deal with the graphical representation of
-a graph.
+I suppose such a way of doing is applicable to many "viewers" so I will try to broaden the discussion when possible. However, most of the time we deal with the graphical representation of a graph.
 
-The style sheet is a collection of styles that apply to graph elements (hereafter just "elements")
-to produce a visual representation of the elements data.
+The style sheet is a collection of styles that apply to graph elements (hereafter just "elements") to produce a visual representation of the elements data.
 
-Therefore, at the style sheet level, styles describe :
-	- styles that apply to one precise element ;
-	- styles that apply to a class of elements ;
-	- styles that apply to a kind of elements ;
-	- styles that alternatively apply to elements when a special condition occur.
+Therefore, at the style sheet level, styles describe:
 
-The classes are arbitrary groups created by the user of the style sheet to define a style once for
-many elements. It allows a dynamic rebinding of styles by adding or removing an element to or from
-a class attribute ("ui.class").
+- styles that apply to one precise element 
+- styles that apply to a class of elements;
+- styles that apply to a kind of elements;
+- styles that alternatively apply to elements when a special condition occur.
+
+The classes are arbitrary groups created by the user of the style sheet to define a style once for many elements. It allows a dynamic rebinding of styles by adding or removing an element to or from a class attribute ("ui.class").
 
 The kinds of elements are fixed, they are :
-	- graph ;
-	- node ;
-	- edge ;
-	- sprite.
+
+- graph;
+- node;
+- edge;
+- sprite.
 	
-In the style sheet, the selectors can therefore be :
-	- Kind -> apply to all elements of that kind :
-		- graph {}
-		- node {}
-		- edge {}
-		- sprite {}
-	- Class -> apply to all elements of a kind with a given class :
-		- node.foo {}
-		- edge.bar {}
-	- Specific -> apply to a precise element of a precise kind :
-		- node#A {}
-		- edge#AB {}
-	- Event -> apply to an element when a condition is met :
-		- node:clicked {}
-		- node#A:clicked {}
-		- node.foo:clicked {}
+In the style sheet, the selectors can therefore be:
+
+- Kind -> apply to all elements of that kind :
+	- graph {}
+	- node {}
+	- edge {}
+	- sprite {}
+- Class -> apply to all elements of a kind with a given class :
+	- node.foo {}
+	- edge.bar {}
+- Specific -> apply to a precise element of a precise kind :
+	- node#A {}
+	- edge#AB {}
+- Event -> apply to an element when a condition is met :
+	- node:clicked {}
+	- node#A:clicked {}
+	- node.foo:clicked {}
 		
-The events are special styles, because in fact they enlarge an existing style by providing an
-alternative set of (property,value) pairs to a style. That is, when the style sheet is parsed,
-all styles are mapped to a selector to match elements of the graph, excepted event styles that
-match another style and extend it.
+The events are special styles, because in fact they enlarge an existing style by providing an alternative set of (property,value) pairs to a style. That is, when the style sheet is parsed, all styles are mapped to a selector to match elements of the graph, excepted event styles that match another style and extend it.
 		
 Dynamic values
-==============
+--------------
 		
 Some styles have dynamic values. The dynamic values allows to change very quickly some styles
 values like widths and colours, without having to parse anew a style or style sheet. For example
@@ -63,10 +58,9 @@ with a numeric value in [0..1], this value is used to intepolate the colour in t
 colours of the colour map. For example if there are three colours, 0 means the first colour, 0.5
 means the second colour and 1 the third colour. But 0.25 gives a mix between the first and second
 colour.   
-
 	
 Architecture for the style sheet mechanism
-==========================================
+------------------------------------------
 
 We plan to display a styled graph as fast as possible. Most of the time, with many viewers, the
 fastest way to draw things is to drawn all elements with the same style at once. This is due to
@@ -80,11 +74,12 @@ style sheet is organised to help such a way of drawing elements.
 
 First the style sheet contains a set of basic styles. A basic style is a set of pairs
 (property,value). The basic styles can inherit one another. The inheritance model is fixed. This
-means that :
-	- Kind styles all inherit a default root style having all default values set.
-	- Class styles inherit the kind styles.
-	- Specific styles inherit the kind styles.
-	- Event styles inherit the style for which they provide an alternative.
+means that:
+
+- Kind styles all inherit a default root style having all default values set.
+- Class styles inherit the kind styles.
+- Specific styles inherit the kind styles.
+- Event styles inherit the style for which they provide an alternative.
 	
 This inheritance is said "vertical".
 	
@@ -111,15 +106,12 @@ follow this style.
 
 In other words, the style sheet will only store the various basic styles and the matching rules
 (the rules tell to which elements a style apply). When given an element, the style sheet will be
-able to answer by a list of styles that apply :
-	- One "main" style that necessarily apply to the element. This main style is a kind style
-	  or a specific style.
-	- Zero or more class style, with a specific order (the one given by the user in the
-	  "ui.class" attribute), that have a higher priority than the main style. When there are
-	  several class styles, their order place the first class style as being at the highest
-	  priority.
+able to answer by a list of styles that apply:
+
+- One "main" style that necessarily apply to the element. This main style is a kind style or a specific style.
+- Zero or more class style, with a specific order (the one given by the user in the "ui.class" attribute), that have a higher priority than the main style. When there are several class styles, their order place the first class style as being at the highest priority.
 	  
-	  Style group =  [MainStyle] + [ClassStyle1, ClassStyle2, etc.]
+	Style group =  [MainStyle] + [ClassStyle1, ClassStyle2, etc.]
 	  
 As the class styles always inherit the kind styles, and as the specific styles also always
 inherit the kind styles. The classes necessarily inherit the same styles than the main style
@@ -129,24 +121,24 @@ used.
 Therefore, when we look at the value of style property in a style group, we look horizontally
 to the classes (aggregative style), and then vertically to the main style and its parents.
 
-         ^
-         |
-     5 default
-         |
-      4 kind
-         |
-  -- 3 specific -- 1 class -- 2 class -->
-         |
+	         ^
+	         |
+	     5 default
+	         |
+	      4 kind
+	         |
+	  -- 3 specific -- 1 class -- 2 class -->
+	         |
        
 The diagram above shows how we look for the value of a property in the style group of an element
 that have a specific style. It also give the order of the search.
 
-         ^
-         |
-     4 default
-         |
-   -- 3 kind -- 1 class -- 2 class -->
-         |
+	         ^
+	         |
+	     4 default
+	         |
+	   -- 3 kind -- 1 class -- 2 class -->
+	         |
          
 The same diagram when looking at elements that have a style that apply to all elements of their
 kind, and some classes.
@@ -154,20 +146,20 @@ kind, and some classes.
 In presence of events, we merely replace the styles by their alternative style if there is one
 (here considering the specific style and all classes have alternative styles for events) :
 
-         ^
-         |
-     8 default
-         |
-      7 kind
-         |
-    6 specific      2 class     4 class
-         |             |           |
-   -- 5 event ----- 1 event --- 3 event -->
-         |
+	         ^
+	         |
+	     8 default
+	         |
+	      7 kind
+	         |
+	    6 specific      2 class     4 class
+	         |             |           |
+	   -- 5 event ----- 1 event --- 3 event -->
+	         |
         
 
 The special case of event styles
-================================
+--------------------------------
 
 Event styles are alternative styles to a given style. Therefore these styles are somewhat like
 classes, they aggregate to the style, but they do it temporarily, and moreover, as said above,
@@ -176,19 +168,21 @@ style groups, but inside styles. In fact, they participate to the definition of 
 event is specified, it enlarges a style by an alternative set of (property,value) pairs.
 
 An example of the style sheet internal organisation
-===================================================
+---------------------------------------------------
 
-Given a the following graph :
-         ab
-    (A)------(B)           B: ui.class=foo
-     |        |            C: ui.class=foo
-   ad|        |bc          D: ui.class=foo,bar
-	 |        |
-    (D)------(C)
-         dc
+Given a the following graph:
 
-And the style sheet :
-    default        { <style0>; }       <- The default style is a root style with all its properties
+	         ab
+	    (A)------(B)           B: ui.class=foo
+	     |        |            C: ui.class=foo
+	   ad|        |bc          D: ui.class=foo,bar
+	     |        |
+	    (D)------(C)
+	         dc
+
+And the style sheet:
+
+	default        { <style0>; }       <- The default style is a root style with all its properties
 	graph          { <style1>; }       having a default value. All styles inherit it.
 	node           { <style2>; }
 	edge           { <style3>; }
@@ -199,7 +193,8 @@ And the style sheet :
 	node:clicked   { <style8>; }
 	node#A:clicked { <style9>; }
 	
-This creates the following rules :
+This creates the following rules:
+
 	rule1: { graph,    <style1> }
 	rule2: { node,     <style2,style8> }
 	rule3: { edge,     <style3> }
@@ -208,11 +203,12 @@ This creates the following rules :
 	rule6: { node.foo, <style6> }
 	rule7: { node.bar, <style7> }
 	
-This creates the following style groups :
-             +---------+----------------+-------+--------------+------------+
-             | Element | Element        | Main  | Aggregates   | Unique     |
-             | kind    | matches        | style | styles       | identifier |
-    +--------+---------- +--------------+-------+--------------+------------+
+This creates the following style groups:
+
+	         +---------+----------------+-------+--------------+------------+
+	         | Element | Element        | Main  | Aggregates   | Unique     |
+	         | kind    | matches        | style | styles       | identifier |
+	+--------+---------- +--------------+-------+--------------+------------+
 	| group1 | graphs  | /              | rule1 | /            | g          |
 	| group2 | edges   | ab, bc, dc, ad | rule3 | /            | e          |
 	| group3 | nodes   | A              | rule4 | /            | n_A        |
@@ -226,7 +222,7 @@ by the "unique-id" column. You can also see, for each group, the kind of element
 the elements that match the group, aggregate of style rules.
 
 Determining the value of a style property for style groups
-==========================================================
+----------------------------------------------------------
 
 Here is the inheritance hierarchy :
 
@@ -275,43 +271,42 @@ fixed hierarchy), and also because we must first look at the main rule anyway.
 When an event is occurring, the process is the same, but if a class style or main style has an
 alternative for the event, this one is used instead. 
 
-Therefore, here is the general algorithm to find the value of a property for a given style group :
-	- If an event is actually occurring, push it on the main style and any of the aggregate styles
-	  when we look at them.
-	- If the group has classes (aggregate styles)
-		- for each class in order
-			- if the class has the property use its value and stop searching following classes.
-			- else look at the next class.
-		- if a class as the property use this value
-		- do not look at classes parents, since they inherit the same parent as the main style.
-	- Else if the property was not found or there are no classes
-		- look at the value in the main style.
-			- If the main style has a value, use it.
-			- Else look at its parent.
+Therefore, here is the general algorithm to find the value of a property for a given style group:
 
-Example for edges :
-	- The value for edges is easy to obtain. There is only one rule, which contains only one style.
-	- The value is the one in the <style3>
-	- If the <style3> defines the value for the property we use it
-	- Else if look at the <style3> parent in the inheritance hierarchy, that is the default style.
+- If an event is actually occurring, push it on the main style and any of the aggregate styles when we look at them.
+- If the group has classes (aggregate styles)
+	- for each class in order
+		- if the class has the property use its value and stop searching following classes.
+		- else look at the next class.
+	- if a class as the property use this value
+	- do not look at classes parents, since they inherit the same parent as the main style.
+- Else if the property was not found or there are no classes
+	- look at the value in the main style.
+		- If the main style has a value, use it.
+		- Else look at its parent.
 
-Example for node A :
-	- The A node has only one main style <style4>. However if there is a "clicked" event, the
-	  <style4> is overridden by <style9>.
-	- Depending on the event, the style 4 or 9 is searched for the given property.
-	- If it has it, it is used, else the parent style is searched. For <style4> the parent style
-	  is the default node style, for <style9> the parent style is <style4>.
+Example for edges:
 
-Example for node B :
-	- The B node has one main style <syle5> and one aggregate style <style6>.
-	- If there is a "clicked" event, the alternative styles are searched. There is not alternative
-	  style for <style5> and <style6>, but <style5> and <style6> inherits <style2> that have an alternative
-	  style. This one can be picked in there is an event.
-	- Else we first look at <style6>, and then else at <style5>.
-	- Else we look at their parents.
+- The value for edges is easy to obtain. There is only one rule, which contains only one style.
+- The value is the one in the <style3>
+- If the <style3> defines the value for the property we use it
+- Else if look at the <style3> parent in the inheritance hierarchy, that is the default style.
+
+Example for node A:
+
+- The A node has only one main style <style4>. However if there is a "clicked" event, the <style4> is overridden by <style9>.
+- Depending on the event, the style 4 or 9 is searched for the given property.
+- If it has it, it is used, else the parent style is searched. For <style4> the parent style is the default node style, for <style9> the parent style is <style4>.
+
+Example for node B:
+
+- The B node has one main style <syle5> and one aggregate style <style6>.
+- If there is a "clicked" event, the alternative styles are searched. There is not alternative style for <style5> and <style6>, but <style5> and <style6> inherits <style2> that have an alternative style. This one can be picked in there is an event.
+- Else we first look at <style6>, and then else at <style5>.
+- Else we look at their parents.
 	
 Style group structure
-=====================
+---------------------
 	
 Now lets see how the groups can be organised. We need something that allows to insert and remove
 elements in groups as fast as possible.
@@ -319,47 +314,45 @@ elements in groups as fast as possible.
 One possibility is to use the unique identifiers. The graph is a set of groups, each with a given
 unique identifier. The groups are constructed this way, if we keep the example above :
 
-	Assigning a group identifier to an element :
-		- Start with an empty identifier.
-		- Add the element kind : g, n, e or s (for graph, node, edge or
-		  sprite)
-		- If a rule for the identifier of the element exists add the element identifier prefixed
-		  by a "_" character.
-		- If the element has classes add a "(" character, then the name of all classes in order,
-		  separated by commas "," characters, and then add a ")" character.
-	
-		Note : the name of the classes are used in order. This means that the order in which the
-		user put classes in the "ui.class" attribute matters. To convince oneself of this,
-		consider an element which has a style and two classes that both define the
-		"color" property. Which colour do we use ? Only the one of the first class in the "ui.class"
-		attribute order. We need this order to know which class to use when a conflict occurs. 
-	
-	Adding an element :
-		- Find the element group identifier.
-		- If the group does not exist :
-			- Create a new group.
-			- Assign it the group identifier found for the element.
-			- Add it all the rules the element matches.
-			- Insert the group in the group set.
-			- Add the element to the group.
-		- Else merely add the element to the group.
+Assigning a group identifier to an element:
 
-	Removing an element :
-		- Get the group of the element, knowing its group identifier.
-		- Remove the element from the group.
-		- If the group is empty, destroy it ?
-			(maybe we can conserve the group for a while, to avoid recreating groups, but we need
-			a way to be sure that an empty group will ultimately disappear).
+- Start with an empty identifier.
+- Add the element kind : g, n, e or s (for graph, node, edge or sprite)
+- If a rule for the identifier of the element exists add the element identifier prefixed by a "_" character.
+- If the element has classes add a "(" character, then the name of all classes in order, separated by commas "," characters, and then add a ")" character.
+	
+Note : the name of the classes are used in order. This means that the order in which the
+user put classes in the "ui.class" attribute matters. To convince oneself of this,
+consider an element which has a style and two classes that both define the
+"color" property. Which colour do we use ? Only the one of the first class in the "ui.class"
+attribute order. We need this order to know which class to use when a conflict occurs. 
+	
+Adding an element:
+		
+- Find the element group identifier.
+- If the group does not exist :
+	- Create a new group.
+	- Assign it the group identifier found for the element.
+	- Add it all the rules the element matches.
+	- Insert the group in the group set.
+	- Add the element to the group.
+- Else merely add the element to the group.
+
+Removing an element:
+
+- Get the group of the element, knowing its group identifier.
+- Remove the element from the group.
+- If the group is empty, destroy it ? (maybe we can conserve the group for a while, to avoid recreating groups, but we need a way to be sure that an empty group will ultimately disappear).
 	
 Proposition
-===========
+-----------
 
 Instead of storing the graph as a usual graph structure, we can store it as a set of style groups,
 as defined above plus the connectivity between nodes. This is what is done in the graphic graph
 package.
 
 Drawing the elements
-====================
+--------------------
 
 The idea is to explore the style groups. We do this in a specific order however. The order follows
 the "z-index" property. All groups are not only stored in a map (unique-id,group), but also in what
@@ -370,7 +363,7 @@ group, we push the graphic attributes corresponding to the style group in the gr
 iterate on the elements of the group to draw them with these graphic attributes.
 
 A note on the cascade
-=====================
+---------------------
 
 In addition to inheritance, style can cascade in HTML/CSS. However here the cascade is not this
 important, since elements of the graph are not really nested one in another. Indeed nodes and edges
@@ -381,7 +374,7 @@ The part of the cascade that concerns addition of styles (several style sheets a
 however possible.
 
 How all these things are tied
-=============================
+-----------------------------
 
 At the heart of the package is the StyleSheet class that contains all the styles. The styles are
 added by the parser. The Style inherits the StyleConstants that define the possible values for some
