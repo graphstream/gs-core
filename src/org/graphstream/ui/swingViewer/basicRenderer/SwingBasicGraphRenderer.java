@@ -41,6 +41,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -92,6 +93,10 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 	protected LayerRenderer backRenderer = null;
 
 	protected LayerRenderer foreRenderer = null;
+	
+	protected PrintStream fpsLog = null;
+	
+	protected long T1 = 0;
 
 	// Construction
 
@@ -105,6 +110,12 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 
 	@Override
 	public void close() {
+		if(fpsLog != null) {
+			fpsLog.flush();
+			fpsLog.close();
+			fpsLog = null;
+		}
+		
 		super.close();
 	}
 
@@ -126,9 +137,10 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 	// Command
 
 	public void render(Graphics2D g, int width, int height) {
-		if (graph != null) // If not closed, one or two renders can occur after
-							// closed.
-		{
+		// If not closed, one or two renders can occur after closed.
+		if (graph != null) {
+			beginFrame();
+			
 			if (camera.getGraphViewport() == null
 					&& camera.getMetrics().diagonal == 0
 					&& (graph.getNodeCount() == 0 && graph.getSpriteCount() == 0)) {
@@ -136,11 +148,35 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 			} else {
 				camera.setPadding(graph);
 				camera.setViewport(width, height);
-				// System.err.printf( "%s", camera );
-				// debugVisibleArea( g );
 				renderGraph(g);
 				renderSelection(g);
 			}
+			
+			endFrame();
+		}
+	}
+	
+	protected void beginFrame() {
+		if(graph.hasLabel("ui.log") && fpsLog == null) {
+			try {
+				fpsLog = new PrintStream(graph.getLabel("ui.log").toString());
+			} catch(IOException e) {
+				fpsLog = null;
+				e.printStackTrace();
+			}
+		}
+		
+		if(fpsLog != null) {
+			T1 = System.currentTimeMillis();
+		}
+	}
+	
+	protected void endFrame() {
+		if(fpsLog != null) {
+			long T2 = System.currentTimeMillis();
+			long time = T2 - T1;
+			double fps = 1000.0 / time;
+			fpsLog.printf("%.2f   %d%n", fps, time);
 		}
 	}
 
