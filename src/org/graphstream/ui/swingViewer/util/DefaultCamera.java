@@ -240,27 +240,32 @@ public class DefaultCamera implements Camera {
 	}
 	
 	/**
-	 * True if the element would be visible on screen. The method used is to
-	 * transform the centre of the element (which is always in graph units)
+	 * True if the element should be visible on screen. The method used is to
+	 * transform the center of the element (which is always in graph units)
 	 * using the camera actual transformation to put it in pixel units. Then to
 	 * look in the style sheet the size of the element and to test if its
 	 * enclosing rectangle intersects the view port. For edges, its two nodes
-	 * are used.
+	 * are used. As a speed-up by default if the camera is in automatic fitting
+	 * mode, all element should be visible, and the test always returns true.
 	 * 
 	 * @param element
 	 *            The element to test.
 	 * @return True if the element is visible and therefore must be rendered.
 	 */
 	public boolean isVisible(GraphicElement element) {
-		switch (element.getSelectorType()) {
-		case NODE:
-			return !nodeInvisible.contains(element.getId());
-		case EDGE:
-			return isEdgeVisible((GraphicEdge) element);
-		case SPRITE:
-			return isSpriteVisible((GraphicSprite) element);
-		default:
-			return false;
+		if(autoFit) {
+			return true;
+		} else {
+			switch (element.getSelectorType()) {
+				case NODE:
+					return !nodeInvisible.contains(element.getId());
+				case EDGE:
+					return isEdgeVisible((GraphicEdge) element);
+				case SPRITE:
+					return isSpriteVisible((GraphicSprite) element);
+				default:
+					return false;
+			}
 		}
 	}
 

@@ -35,6 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.graphstream.graph.implementations.AbstractElement;
+import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.stylesheet.Selector;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 
@@ -68,12 +69,10 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
  * </p>
  */
 public abstract class GraphicElement extends AbstractElement {
-	// Nested interfaces
-
-	public interface SwingElementRenderer {
-	}
-
-	// Attribute
+	/**
+	 * Interface for renderers registered in each style group.
+	 */
+	public interface SwingElementRenderer {}
 
 	/**
 	 * Graph containing this element.
@@ -100,8 +99,6 @@ public abstract class GraphicElement extends AbstractElement {
 	 */
 	public boolean hidden = false;
 	
-	// Construction
-
 	/**
 	 * New element.
 	 */
@@ -110,20 +107,18 @@ public abstract class GraphicElement extends AbstractElement {
 		this.mygraph = graph;
 	}
 
-	// Access
-
 	public GraphicGraph myGraph() {
 		return mygraph;
 	}
 
 	@Override
-	protected String myGraphId() // XXX
+	protected String myGraphId()
 	{
 		return mygraph.getId();
 	}
 
 	@Override
-	protected long newEvent() // XXX
+	protected long newEvent()
 	{
 		return mygraph.newEvent();
 	}
@@ -149,41 +144,22 @@ public abstract class GraphicElement extends AbstractElement {
 
 	/**
 	 * Label or null if not set.
-	 * 
-	 * @return A string or null.
 	 */
 	public String getLabel() {
 		return label;
 	}
 
 	/**
-	 * Abscissa of the element, always in GU (graph units). For edges this is
-	 * the X of the "from" node.
+	 * The element center.
 	 */
-	public abstract double getX();
-
+	public abstract Point3 getCenter();
+	
 	/**
-	 * Ordinate of the element, always in GU (graph units). For edges this is
-	 * the Y of the "from" node.
-	 */
-	public abstract double getY();
-
-	/**
-	 * Depth of the element, always in GU (graph units). For edges this is the Z
-	 * of the "from" node.
-	 */
-	public abstract double getZ();
-
-	/**
-	 * The associated GUI component.
-	 * 
-	 * @return An object.
+	 * The associated GUI component, or null if none.
 	 */
 	public Object getComponent() {
 		return component;
 	}
-
-	// Commands
 
 	/**
 	 * The graphic element was removed from the graphic graph, clean up.

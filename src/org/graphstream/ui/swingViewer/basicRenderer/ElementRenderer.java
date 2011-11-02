@@ -202,48 +202,47 @@ public abstract class ElementRenderer {
 
 	protected void renderText(StyleGroup group, Graphics2D g, Camera camera,
 			GraphicElement element) {
-		if (group.getTextMode() != StyleConstants.TextMode.HIDDEN
+		String label = element.getLabel();
+		
+		if (label != null && group.getTextMode() != StyleConstants.TextMode.HIDDEN
 				&& group.getTextVisibilityMode() != StyleConstants.TextVisibilityMode.HIDDEN) {
-			String label = element.getLabel();
 
-			if (label != null) {
-				Point3 p = null;
-				GraphicSprite s = null;
+			Point3 p = null;
+			GraphicSprite s = null;
 
-				if (element instanceof GraphicSprite)
-					s = (GraphicSprite) element;
+			if (element instanceof GraphicSprite)
+				s = (GraphicSprite) element;
 
-				if (s != null && s.getUnits() == Units.PX) {
-					double w = camera.getMetrics().lengthToPx(group.getSize(),
-							0);
-					p = new Point3();
-					p.x = element.getX() + (w / 2);
-					p.y = element.getY();
-				} else if (s != null && s.getUnits() == Units.PERCENTS) {
-					double w = camera.getMetrics().lengthToPx(group.getSize(),
-							0);
-					p = new Point3();
-					p.x = camera.getMetrics().viewport.data[1] * element.getX()
-							+ (w / 2);
-					p.y = camera.getMetrics().viewport.data[2] * element.getY();
-				} else {
-					double w = camera.getMetrics().lengthToGu(group.getSize(),
-							0);
-					p = camera.transformGuToPx(element.getX() + (w / 2), element
-							.getY(), 0);
-				}
-
-				AffineTransform Tx = g.getTransform();
-				Color c = g.getColor();
-
-				g.setColor(textColor);
-				g.setFont(textFont);
-				g.setTransform(new AffineTransform());
-				g.drawString(label, (float) p.x, (float) (p.y + textSize / 3)); // approximation
-				// to gain time.
-				g.setTransform(Tx);
-				g.setColor(c);
+			if (s != null && s.getUnits() == Units.PX) {
+				double w = camera.getMetrics().lengthToPx(group.getSize(),
+						0);
+				p = new Point3();
+				p.x = element.getX() + (w / 2);
+				p.y = element.getY();
+			} else if (s != null && s.getUnits() == Units.PERCENTS) {
+				double w = camera.getMetrics().lengthToPx(group.getSize(),
+						0);
+				p = new Point3();
+				p.x = camera.getMetrics().viewport.data[1] * element.getX()
+						+ (w / 2);
+				p.y = camera.getMetrics().viewport.data[2] * element.getY();
+			} else {
+				double w = camera.getMetrics().lengthToGu(group.getSize(),
+						0);
+				p = camera.transformGuToPx(element.getX() + (w / 2), element
+						.getY(), 0);
 			}
+
+			AffineTransform Tx = g.getTransform();
+			Color c = g.getColor();
+
+			g.setColor(textColor);
+			g.setFont(textFont);
+			g.setTransform(new AffineTransform());
+			g.drawString(label, (float) p.x, (float) (p.y + textSize / 3)); // approximation
+			// to gain time.
+			g.setTransform(Tx);
+			g.setColor(c);
 		}
 	}
 
