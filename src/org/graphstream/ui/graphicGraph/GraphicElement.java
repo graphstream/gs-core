@@ -150,16 +150,33 @@ public abstract class GraphicElement extends AbstractElement {
 	}
 
 	/**
-	 * The element center.
+	 * Abscissa of the element, always in GU (graph units). For edges this is
+	 * the X of the "from" node.
 	 */
-	public abstract Point3 getCenter();
-	
+	public abstract double getX();
+
 	/**
-	 * The associated GUI component, or null if none.
+	 * Ordinate of the element, always in GU (graph units). For edges this is
+	 * the Y of the "from" node.
+	 */
+	public abstract double getY();
+
+	/**
+	 * Depth of the element, always in GU (graph units). For edges this is the Z
+	 * of the "from" node.
+	 */
+	public abstract double getZ();
+
+	/**
+	 * The associated GUI component.
+	 * 
+	 * @return An object.
 	 */
 	public Object getComponent() {
 		return component;
 	}
+
+	// Commands
 
 	/**
 	 * The graphic element was removed from the graphic graph, clean up.
