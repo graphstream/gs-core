@@ -407,6 +407,10 @@ public class GraphicGraph extends AbstractElement implements Graph,
 				}
 			}
 
+			if((hi.x - lo.x < 0.000001)) { hi.x = 1; lo.x = -1; }   
+			if((hi.y - lo.y < 0.000001)) { hi.y = 1; lo.y = -1; }   
+			if((hi.z - lo.z < 0.000001)) { hi.z = 1; lo.z = -1; }   
+			
 			boundsChanged = false;
 		}
 	}
