@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -31,7 +32,7 @@
 package org.graphstream.stream.file.test;
 
 import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.stream.file.FileSourceDGS;
+import org.graphstream.stream.file.dgs.FileSourceDGS;
 import org.junit.*;
 
 /**
@@ -72,7 +73,7 @@ public class TestFileSourceDGS extends TestFileSourceBase {
 	}
 
 	protected static String TEST3_ATTRIBUTES = "DGS004\n" + "\"test3\" 0 0\n"
-			+ "an A a:1 b:\"truc\" c:true\n"
+			+ "an A a:1 b:\"truc\" c:\"true\"\n"
 			+ "an B aa:1,2,3,4 bb:foo cc:bar\n" + "an C aaa=1.234\n"
 			+ "ae AB A B\n" + "ae BC B C\n" + "ae CA C A\n";
 

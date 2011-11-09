@@ -21,7 +21,7 @@
 
 	<groupId>org.graphstream</groupId>
 	<artifactId>gs-core</artifactId>
-	<version>1.0</version>
+	<version>1.x-git</version>
 
 	<name>gs-core</name>
 	<description>
@@ -35,7 +35,6 @@
 	<!-- Source code of GraphStream is hosted on GitHub. -->
 	<scm>
 		<connection>scm:git:git://github.com/graphstream/gs-core.git</connection>
-		<tag>1.0</tag>
 		<url>https://github.com/graphstream/gs-core</url>
 	</scm>
 

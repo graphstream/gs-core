@@ -151,10 +151,11 @@ void all() throws IOException:
 {
 	( graphStart()         { inGraph = true; ctx.setDirected(false); }
 	| diGraphStart()       { inGraph = true; ctx.setDirected(true); }
-	| graphEnd()           { values.key = null; inGraph = false; }
 	)
 	
 	( key=keyValue(values) { values.key = key; ctx.handleKeyValues(values); values.clear(); } )*
+
+	graphEnd()           { values.key = null; inGraph = false; }
 	
 	<EOF>
 }

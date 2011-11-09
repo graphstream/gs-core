@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -35,6 +36,7 @@ import org.graphstream.ui.geom.Vector3;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.graphicGraph.stylesheet.Value;
 import org.graphstream.ui.graphicGraph.stylesheet.Values;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
 
 /**
  * p Various geometric informations on the graphic graph.
@@ -261,10 +263,31 @@ public class GraphMetrics {
 		return lengthToPx(values.get(index), values.units);
 	}
 
+	public double positionPixelToGu(int pixels, int index) {
+		double l = lengthToGu(pixels, Units.PX);
+
+		switch (index) {
+		case 0:
+			l -= graphWidthGU() / 2.0;
+			l = (hi.x + lo.x) / 2.0 + l;
+			break;
+		case 1:
+			l -= graphHeightGU() / 2.0;
+			l = (hi.y + lo.y) / 2.0 + l;
+			break;
+		default:
+			throw new IllegalArgumentException();
+		}
+
+		System.out.printf("%spixel[%d] %d --> %fgu\n", this, index, pixels, l);
+		
+		return l;
+	}
+
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder(
-				String.format("Graph Metrics :%n"));
+		StringBuilder builder = new StringBuilder(String
+				.format("Graph Metrics :%n"));
 
 		builder.append(String.format("        lo         = %s%n", lo));
 		builder.append(String.format("        hi         = %s%n", hi));
@@ -335,7 +358,7 @@ public class GraphMetrics {
 		size.data[0] = hi.x - lo.x;
 		size.data[1] = hi.y - lo.y;
 		size.data[2] = hi.z - lo.z;
-		diagonal =  Math.sqrt(size.data[0] * size.data[0] + size.data[1]
+		diagonal = Math.sqrt(size.data[0] * size.data[0] + size.data[1]
 				* size.data[1] + size.data[2] * size.data[2]);
 
 		// System.err.printf( "lo=%s hi=%s%n", lo, hi );

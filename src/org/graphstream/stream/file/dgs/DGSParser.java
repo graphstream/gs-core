@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -338,7 +339,7 @@ public class DGSParser implements Parser {
 			ParseException {
 		int c;
 
-		while ((c = nextChar()) != '\n' && c != '#') {
+		while ((c = nextChar()) != '\n' && c != '#' && c >= 0) {
 			pushback(c);
 			attribute(type, id);
 			skipWhitespaces();
@@ -668,8 +669,12 @@ public class DGSParser implements Parser {
 
 			slash = c == '\\';
 
-			if (!slash)
+			if (!slash) {
+				if (!Character.isValidCodePoint(c))
+					throw parseException("invalid code-point 0x%X", c);
+
 				builder.appendCodePoint(c);
+			}
 		}
 
 		return builder.toString();
