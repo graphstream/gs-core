@@ -80,6 +80,7 @@ public abstract class FileSourceParser extends SourceBase implements FileSource 
 
 		try {
 			parser.all();
+			parser.close();
 		} catch (ParseException e) {
 			throw new IOException(e);
 		}
@@ -96,6 +97,7 @@ public abstract class FileSourceParser extends SourceBase implements FileSource 
 
 		try {
 			parser.all();
+			parser.close();
 		} catch (ParseException e) {
 			throw new IOException(e);
 		}
@@ -111,6 +113,7 @@ public abstract class FileSourceParser extends SourceBase implements FileSource 
 
 		try {
 			parser.all();
+			parser.close();
 		} catch (ParseException e) {
 			throw new IOException(e);
 		}
@@ -126,6 +129,7 @@ public abstract class FileSourceParser extends SourceBase implements FileSource 
 
 		try {
 			parser.all();
+			parser.close();
 		} catch (ParseException e) {
 			throw new IOException(e);
 		}
