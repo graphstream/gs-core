@@ -131,24 +131,31 @@ public class DOTParser implements Parser {
 	}
 	
 	private void addNode(String nodeId, String [] port, 
-			HashMap<String, Object> attr) { 
-		dot.sendNodeAdded(sourceId, nodeId);
-		nodeAdded.add(nodeId);
+			HashMap<String, Object> attr) {
+		if (nodeAdded.contains(nodeId)) {
+		  if (attr != null) {			for (String key : attr.keySet())
+					dot.sendAttributeChangedEvent( sourceId, nodeId, ElementType.NODE,
+						key, AttributeChangeEvent.ADD, null, attr.get(key));
+		  }		}
+		else {
+			dot.sendNodeAdded(sourceId, nodeId);
+			nodeAdded.add(nodeId);
 			
-		if (attr == null) {
-			for (String key : globalNodesAttributes.keySet())
-				dot.sendAttributeChangedEvent( sourceId, nodeId, ElementType.NODE,
-					key, AttributeChangeEvent.ADD, null, globalNodesAttributes.get(key));
-		} else {
-			for (String key : globalNodesAttributes.keySet()) {
-				if (!attr.containsKey(key))
+			if (attr == null) {
+				for (String key : globalNodesAttributes.keySet())
 					dot.sendAttributeChangedEvent( sourceId, nodeId, ElementType.NODE,
 						key, AttributeChangeEvent.ADD, null, globalNodesAttributes.get(key));
-			}
+			} else {
+				for (String key : globalNodesAttributes.keySet()) {
+					if (!attr.containsKey(key))
+						dot.sendAttributeChangedEvent( sourceId, nodeId, ElementType.NODE,
+							key, AttributeChangeEvent.ADD, null, globalNodesAttributes.get(key));
+				}
 		
-			for (String key : attr.keySet())
-				dot.sendAttributeChangedEvent( sourceId, nodeId, ElementType.NODE,
-					key, AttributeChangeEvent.ADD, null, attr.get(key));
+				for (String key : attr.keySet())
+					dot.sendAttributeChangedEvent( sourceId, nodeId, ElementType.NODE,
+						key, AttributeChangeEvent.ADD, null, attr.get(key));
+			}
 		}
 	}
 	

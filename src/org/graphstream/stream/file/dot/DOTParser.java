@@ -130,26 +130,36 @@ public class DOTParser implements Parser, DOTParserConstants {
 
 	private void addNode(String nodeId, String[] port,
 			HashMap<String, Object> attr) {
-		dot.sendNodeAdded(sourceId, nodeId);
-		nodeAdded.add(nodeId);
-
-		if (attr == null) {
-			for (String key : globalNodesAttributes.keySet())
-				dot.sendAttributeChangedEvent(sourceId, nodeId,
-						ElementType.NODE, key, AttributeChangeEvent.ADD, null,
-						globalNodesAttributes.get(key));
+		if (nodeAdded.contains(nodeId)) {
+			if (attr != null) {
+				for (String key : attr.keySet())
+					dot.sendAttributeChangedEvent(sourceId, nodeId,
+							ElementType.NODE, key, AttributeChangeEvent.ADD,
+							null, attr.get(key));
+			}
 		} else {
-			for (String key : globalNodesAttributes.keySet()) {
-				if (!attr.containsKey(key))
+			dot.sendNodeAdded(sourceId, nodeId);
+			nodeAdded.add(nodeId);
+
+			if (attr == null) {
+				for (String key : globalNodesAttributes.keySet())
 					dot.sendAttributeChangedEvent(sourceId, nodeId,
 							ElementType.NODE, key, AttributeChangeEvent.ADD,
 							null, globalNodesAttributes.get(key));
-			}
+			} else {
+				for (String key : globalNodesAttributes.keySet()) {
+					if (!attr.containsKey(key))
+						dot.sendAttributeChangedEvent(sourceId, nodeId,
+								ElementType.NODE, key,
+								AttributeChangeEvent.ADD, null,
+								globalNodesAttributes.get(key));
+				}
 
-			for (String key : attr.keySet())
-				dot.sendAttributeChangedEvent(sourceId, nodeId,
-						ElementType.NODE, key, AttributeChangeEvent.ADD, null,
-						attr.get(key));
+				for (String key : attr.keySet())
+					dot.sendAttributeChangedEvent(sourceId, nodeId,
+							ElementType.NODE, key, AttributeChangeEvent.ADD,
+							null, attr.get(key));
+			}
 		}
 	}
 
@@ -671,6 +681,26 @@ public class DOTParser implements Parser, DOTParserConstants {
 		}
 	}
 
+	private boolean jj_3R_6() {
+		Token xsp;
+		xsp = jj_scanpos;
+		if (jj_3R_8()) {
+			jj_scanpos = xsp;
+			if (jj_3R_9()) {
+				jj_scanpos = xsp;
+				if (jj_3R_10())
+					return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean jj_3_2() {
+		if (jj_scan_token(REAL))
+			return true;
+		return false;
+	}
+
 	private boolean jj_3R_8() {
 		if (jj_scan_token(STRING))
 			return true;
@@ -707,26 +737,6 @@ public class DOTParser implements Parser, DOTParserConstants {
 
 	private boolean jj_3_1() {
 		if (jj_3R_5())
-			return true;
-		return false;
-	}
-
-	private boolean jj_3R_6() {
-		Token xsp;
-		xsp = jj_scanpos;
-		if (jj_3R_8()) {
-			jj_scanpos = xsp;
-			if (jj_3R_9()) {
-				jj_scanpos = xsp;
-				if (jj_3R_10())
-					return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean jj_3_2() {
-		if (jj_scan_token(REAL))
 			return true;
 		return false;
 	}
