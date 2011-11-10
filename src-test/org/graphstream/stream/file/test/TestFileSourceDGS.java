@@ -32,7 +32,7 @@
 package org.graphstream.stream.file.test;
 
 import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.stream.file.dgs.FileSourceDGS;
+import org.graphstream.stream.file.FileSourceDGS;
 import org.junit.*;
 
 /**

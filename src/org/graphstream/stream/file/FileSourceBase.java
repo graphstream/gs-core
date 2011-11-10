@@ -115,7 +115,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	/**
 	 * No-op constructor.
 	 */
-	FileSourceBase() {
+	protected FileSourceBase() {
 	}
 
 	/**
@@ -124,7 +124,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	 * @param eol_is_significant
 	 *            If true EOL will be returned as a token, else it is ignored.
 	 */
-	FileSourceBase(boolean eol_is_significant) {
+	protected FileSourceBase(boolean eol_is_significant) {
 		this.eol_is_significant = eol_is_significant;
 	}
 
@@ -139,7 +139,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	 * @param quoteChar
 	 *            Character used to enclose quotations.
 	 */
-	FileSourceBase(boolean eol_is_significant, int commentChar, int quoteChar) {
+	protected FileSourceBase(boolean eol_is_significant, int commentChar, int quoteChar) {
 		this.eol_is_significant = eol_is_significant;
 
 		this.COMMENT_CHAR = commentChar;

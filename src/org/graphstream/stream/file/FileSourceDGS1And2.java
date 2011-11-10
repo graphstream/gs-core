@@ -55,7 +55,7 @@ import java.util.zip.GZIPInputStream;
  * href="http://graphstream-project.org/">http://graphstream-project.org/</a>
  * </p>
  * 
- * @see FileSourceDGS
+ * @see OldFileSourceDGS
  * @see FileSource
  */
 public class FileSourceDGS1And2 extends FileSourceBase {

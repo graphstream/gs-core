@@ -51,6 +51,7 @@ import org.graphstream.graph.Graph;
 import org.graphstream.stream.GraphReplay;
 import org.graphstream.stream.ProxyPipe;
 import org.graphstream.stream.Sink;
+import org.graphstream.stream.file.FileSourceDGS;
 import org.graphstream.stream.thread.ThreadProxyPipe;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicGraph;

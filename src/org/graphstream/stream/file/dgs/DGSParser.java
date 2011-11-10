@@ -40,6 +40,7 @@ import java.util.LinkedList;
 
 import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
 import org.graphstream.stream.SourceBase.ElementType;
+import org.graphstream.stream.file.FileSourceDGS;
 import org.graphstream.util.parser.ParseException;
 import org.graphstream.util.parser.Parser;
 
