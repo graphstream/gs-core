@@ -328,10 +328,17 @@ public class DGSParser implements Parser {
 
 	public boolean nextStep() throws IOException, ParseException {
 		boolean r;
+		Token next;
 
 		do {
 			r = next();
-		} while (lastDirective != Token.ST && lastDirective != Token.EOF);
+			next = directive();
+
+			if (next != Token.EOF) {
+				pushback(next.name().charAt(0));
+				pushback(next.name().charAt(1));
+			}
+		} while (next != Token.ST && next != Token.EOF);
 
 		return r;
 	}
