@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.Reader;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 import org.graphstream.stream.SourceBase.ElementType;
@@ -90,7 +91,12 @@ public class DOTParser implements Parser {
 	 * Global attributes of edges.
 	 */
 	private HashMap<String, Object> globalEdgesAttributes;
-  
+
+	/**
+	 * IDs of added nodes.
+	 */
+  	private HashSet<String> nodeAdded;
+  	
   	/**
   	 * Create a new parser associated with a DOT source from an input stream.
   	 */
@@ -120,12 +126,15 @@ public class DOTParser implements Parser {
 		
 		globalNodesAttributes = new HashMap<String, Object>();
 		globalEdgesAttributes = new HashMap<String, Object>();
+
+		nodeAdded = new HashSet<String>();
 	}
 	
 	private void addNode(String nodeId, String [] port, 
-			HashMap<String, Object> attr) {
+			HashMap<String, Object> attr) { 
 		dot.sendNodeAdded(sourceId, nodeId);
-		
+		nodeAdded.add(nodeId);
+			
 		if (attr == null) {
 			for (String key : globalNodesAttributes.keySet())
 				dot.sendAttributeChangedEvent( sourceId, nodeId, ElementType.NODE,
@@ -153,6 +162,12 @@ public class DOTParser implements Parser {
 		for (int i = 0; i < edges.size() - 1; i += 2) {
 			String from = edges.get(i);
 			String to = edges.get(i+2);
+
+			if (!nodeAdded.contains(from))
+				addNode(from, null, null);
+			if (!nodeAdded.contains(to))
+				addNode(to, null, null);
+			
 			String edgeId = String.format("(%s;%s)", from, to);
 			String rev = String.format("(%s;%s)", to, from);
 			 
@@ -161,7 +176,7 @@ public class DOTParser implements Parser {
 			 } else {
 			 	hash.put(edgeId, count);
 			 	ids [count] = edgeId;
-			 	directed [count] = edges.get(i).equals("->");
+			 	directed [count] = edges.get(i+1).equals("->");
 			 	
 			 	count++;
 			 }
@@ -320,14 +335,17 @@ private void subgraph():
 private String id():
 {
 	Token t;
+	String id;
 }
 {
 (
-	t = <STRING>
-| 	t = <REAL>
-| 	t = <WORD>
+	t = <STRING>{  id = t.image.substring(1, t.image.length() - 1);}
+| 	t = <REAL>{  id = t.image;
+}
+| 	t = <WORD>{  id = t.image;
+}
 )
-	{ return t.image; }
+	{ return id; }
 }
 
 private void statement():
