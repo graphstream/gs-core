@@ -184,7 +184,7 @@ public class GMLContext {
 			id = String.format("%s_%s_%d", src, trg, edgeid++);
 
 		String dir = edge.optString("directed");
-
+		
 		boolean directed = this.directed;
 
 		if (dir != null) {
@@ -592,6 +592,9 @@ class KeyValues extends HashMap<String, Object> {
 		if (o == null)
 			return null;
 
+		if (o instanceof Number)
+			o = o.toString();
+		
 		if (!(o instanceof String))
 			throw new IOException(
 					String.format(
