@@ -35,6 +35,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.graphstream.util.Environment;
+import org.junit.Ignore;
 
 /**
  * Tests the {@link org.util.Environment} class and shows an example of use.
@@ -43,6 +44,8 @@ import org.graphstream.util.Environment;
  * @author Antoine Dutot
  * @since  20061108
  */
+
+@Ignore
 public class TestEnvironment
 {
 // Attributes

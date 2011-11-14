@@ -37,7 +37,9 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.stream.file.FileSinkDynamicGML;
 import org.graphstream.stream.file.FileSinkGML;
+import org.junit.Ignore;
 
+@Ignore
 public class TestSinkGML {
 	public static void main(String args[]) {
 		try {

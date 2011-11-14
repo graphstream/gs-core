@@ -32,12 +32,14 @@
 package org.graphstream.util.test;
 
 import org.graphstream.util.Random;
+import org.junit.Ignore;
 
 /**
  * Tests The {@link Random} class.
  * @author yoann
  * 
  */
+@Ignore
 public class TestRandom
 {
 	public static void main(String[] str)

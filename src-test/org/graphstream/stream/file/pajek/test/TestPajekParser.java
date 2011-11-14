@@ -39,7 +39,9 @@ import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.stream.file.FileSourcePajek;
 import org.graphstream.ui.swingViewer.Viewer;
 import org.graphstream.ui.swingViewer.Viewer.CloseFramePolicy;
+import org.junit.Ignore;
 
+@Ignore
 public class TestPajekParser {
 	static class TestEntry {
 		String ressourceName;
