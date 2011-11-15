@@ -121,6 +121,58 @@
 		</license>
 	</licenses>
 
+	<profiles>
+		<profile>
+			<!-- This profile includes classes of mbox2 and pherd project
+				to create a fully usable jar. You need to have a valid gs-deps
+				folder at the same hierarchic level that the one of your project
+				with mbox2 and pherd compiled (mvn compile). -->
+			<id>nodeps</id>
+			<build>
+				<resources>
+					<resource>
+						<directory>../gs-deps/mbox2/target/classes</directory>
+						<includes>
+							<include>org/**/*.class</include>
+						</includes>
+					</resource>
+					<resource>
+						<directory>../gs-deps/pherd/target/classes</directory>
+						<includes>
+							<include>org/**/*.class</include>
+						</includes>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+		<profile>
+			<!--
+				This profile has to be enabled when releasing the package. It will
+				enable the sign phase.
+			-->
+			<id>release</id>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-gpg-plugin</artifactId>
+					<configuration>
+						<keyname><![CDATA[GraphStream Team <team@graphstream-project.org>]]></keyname>
+						<skip>false</skip>
+					</configuration>
+					<executions>
+						<execution>
+							<id>sign-artifacts</id>
+							<phase>package</phase>
+							<goals>
+								<goal>sign</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</profile>
+	</profiles>
+
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<outputDirectory>bin</outputDirectory>
@@ -213,24 +265,6 @@
 						<exclude>**/*$*</exclude>
 					</excludes>
 				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-gpg-plugin</artifactId>
-				<configuration>
-					<keyname><![CDATA[GraphStream Team <team@graphstream-project.org>]]></keyname>
-					<skip>true</skip>
-				</configuration>
-				<executions>
-					<execution>
-						<id>sign-artifacts</id>
-						<phase>package</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
