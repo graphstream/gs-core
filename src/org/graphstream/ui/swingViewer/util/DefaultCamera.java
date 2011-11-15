@@ -48,6 +48,7 @@ import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.GraphicNode;
 import org.graphstream.ui.graphicGraph.GraphicSprite;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.graphicGraph.stylesheet.Values;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
 
@@ -255,7 +256,7 @@ public class DefaultCamera implements Camera {
 	 */
 	public boolean isVisible(GraphicElement element) {
 		if(autoFit) {
-			return true;
+  	        return ((! element.hidden) && (element.style.getVisibilityMode() != StyleConstants.VisibilityMode.HIDDEN));
 		} else {
 			switch (element.getSelectorType()) {
 				case NODE:

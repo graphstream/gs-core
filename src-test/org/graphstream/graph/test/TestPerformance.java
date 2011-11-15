@@ -43,7 +43,9 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.graph.implementations.SingleGraph;
+import org.junit.Ignore;
 
+@Ignore
 public class TestPerformance {
 	Graph g;
 	Runtime r;
