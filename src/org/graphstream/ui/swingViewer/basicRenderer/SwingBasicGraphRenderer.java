@@ -83,7 +83,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 	/**
 	 * Set the view on the view port defined by the metrics.
 	 */
-	protected DefaultCamera camera = new DefaultCamera();
+	protected DefaultCamera camera = null;
 
 	protected NodeRenderer nodeRenderer = new NodeRenderer();
 
@@ -107,6 +107,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 	@Override
 	public void open(GraphicGraph graph, Container renderingSurface) {
 		super.open(graph, renderingSurface);
+		camera = new DefaultCamera(graph);
 	}
 
 	@Override
@@ -117,6 +118,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 			fpsLog = null;
 		}
 		
+		camera = null;
 		super.close();
 	}
 
