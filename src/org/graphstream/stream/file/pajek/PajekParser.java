@@ -127,11 +127,8 @@ public class PajekParser implements Parser, PajekParserConstants {
 			jj_consume_token(-1);
 			throw new ParseException();
 		}
-		{
-			if (true)
-				return ok;
-		}
-		throw new Error("Missing return statement in function");
+
+		return ok;
 	}
 
 	final public void network() throws ParseException {
@@ -725,11 +722,8 @@ public class PajekParser implements Parser, PajekParserConstants {
 			}
 		}
 		EO();
-		{
-			if (true)
-				return line;
-		}
-		throw new Error("Missing return statement in function");
+
+		return line;
 	}
 
 	// Various
@@ -746,11 +740,8 @@ public class PajekParser implements Parser, PajekParserConstants {
 			jj_consume_token(-1);
 			throw new ParseException();
 		}
-		{
-			if (true)
-				return value;
-		}
-		throw new Error("Missing return statement in function");
+
+		return value;
 	}
 
 	final public String number() throws ParseException {
@@ -763,11 +754,8 @@ public class PajekParser implements Parser, PajekParserConstants {
 			jj_consume_token(-1);
 			throw new ParseException();
 		}
-		{
-			if (true)
-				return k.image;
-		}
-		throw new Error("Missing return statement in function");
+
+		return k.image;
 	}
 
 	final public String color() throws ParseException {
@@ -789,11 +777,8 @@ public class PajekParser implements Parser, PajekParserConstants {
 			jj_consume_token(-1);
 			throw new ParseException();
 		}
-		{
-			if (true)
-				return value;
-		}
-		throw new Error("Missing return statement in function");
+
+		return value;
 	}
 
 	final public void EO() throws ParseException {
@@ -886,11 +871,8 @@ public class PajekParser implements Parser, PajekParserConstants {
 			jj_consume_token(-1);
 			throw new ParseException();
 		}
-		{
-			if (true)
-				return k;
-		}
-		throw new Error("Missing return statement in function");
+
+		return k;
 	}
 
 	final public Token validIdentifier() throws ParseException {
@@ -965,11 +947,8 @@ public class PajekParser implements Parser, PajekParserConstants {
 			jj_consume_token(-1);
 			throw new ParseException();
 		}
-		{
-			if (true)
-				return k;
-		}
-		throw new Error("Missing return statement in function");
+
+		return k;
 	}
 
 	private boolean jj_2_1(int xla) {
