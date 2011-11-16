@@ -256,11 +256,8 @@ public class TLPParser implements Parser, TLPParserConstants {
 			jj_consume_token(-1);
 			throw new ParseException();
 		}
-		{
-			if (true)
-				return hasMore;
-		}
-		throw new Error("Missing return statement in function");
+
+		return hasMore;
 	}
 
 	final public void open() throws ParseException {
@@ -454,31 +451,22 @@ public class TLPParser implements Parser, TLPParserConstants {
 	final private PropertyType type() throws ParseException {
 		Token t;
 		t = jj_consume_token(PTYPE);
-		{
-			if (true)
-				return PropertyType.valueOf(t.image.toUpperCase());
-		}
-		throw new Error("Missing return statement in function");
+
+		return PropertyType.valueOf(t.image.toUpperCase());
 	}
 
 	final private String string() throws ParseException {
 		Token t;
 		t = jj_consume_token(STRING);
-		{
-			if (true)
-				return t.image.substring(1, t.image.length() - 1);
-		}
-		throw new Error("Missing return statement in function");
+
+		return t.image.substring(1, t.image.length() - 1);
 	}
 
 	final private Integer integer() throws ParseException {
 		Token t;
 		t = jj_consume_token(INTEGER);
-		{
-			if (true)
-				return Integer.valueOf(t.image);
-		}
-		throw new Error("Missing return statement in function");
+
+		return Integer.valueOf(t.image);
 	}
 
 	private boolean jj_2_1(int xla) {
