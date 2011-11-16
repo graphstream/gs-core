@@ -80,6 +80,11 @@ public class DefaultCamera implements Camera {
 	// Attribute
 
 	/**
+	 * The graph.
+	 */
+	protected GraphicGraph graph = null;
+	
+	/**
 	 * Information on the graph overall dimension and position.
 	 */
 	protected GraphMetrics metrics = new GraphMetrics();
@@ -142,7 +147,8 @@ public class DefaultCamera implements Camera {
 	/**
 	 * New camera.
 	 */
-	public DefaultCamera() {
+	public DefaultCamera(GraphicGraph graph) {
+		this.graph = graph;
 	}
 
 	// Access
@@ -162,6 +168,7 @@ public class DefaultCamera implements Camera {
 	public void setViewCenter(double x, double y, double z) {
 		setAutoFitView(false);
 		center.set(x, y, z);
+		graph.graphChanged = true;
 	}
 	
 	public void setViewCenter(double x, double y) {
@@ -183,6 +190,7 @@ public class DefaultCamera implements Camera {
 	public void setViewPercent(double percent) {
 		setAutoFitView(false);
 		setZoom(percent);
+		graph.graphChanged = true;
 	}
 
 	/*
@@ -606,6 +614,7 @@ public class DefaultCamera implements Camera {
 	 */
 	public void setZoom(double z) {
 		zoom = z;
+		graph.graphChanged = true;
 	}
 
 	/**
@@ -616,6 +625,7 @@ public class DefaultCamera implements Camera {
 	 */
 	public void setViewRotation(double theta) {
 		rotation = theta;
+		graph.graphChanged = true;
 	}
 
 	/**
