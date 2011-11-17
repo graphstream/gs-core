@@ -129,10 +129,6 @@ import org.graphstream.stream.file.FileSource;
  * will always iterate on all the nodes of <code>g</code>.
  * </p>
  */
-/**
- * @author stefan
- * 
- */
 public interface Graph extends Element, Pipe, Iterable<Node> {
 	// Access
 
