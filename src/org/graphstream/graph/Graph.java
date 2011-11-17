@@ -42,8 +42,6 @@ import org.graphstream.stream.Pipe;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSource;
 
-// TODO describe indices at the beginning
-// TODO review javadoc for methods that add/remove edges/nodes 
 
 /**
  * An Interface that advises general purpose methods for handling graphs.
