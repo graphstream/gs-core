@@ -98,6 +98,10 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 	protected PrintStream fpsLog = null;
 	
 	protected long T1 = 0;
+	
+	protected long steps = 0;
+	
+	protected double sumFps = 0;
 
 	// Construction
 
@@ -176,10 +180,12 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 	
 	protected void endFrame() {
 		if(fpsLog != null) {
+			steps += 1;
 			long T2 = System.currentTimeMillis();
 			long time = T2 - T1;
 			double fps = 1000.0 / time;
-			fpsLog.printf("%.2f   %d%n", fps, time);
+			sumFps += fps;
+			fpsLog.printf("%.3f   %d   %.3f%n", fps, time, (sumFps/steps));
 		}
 	}
 
