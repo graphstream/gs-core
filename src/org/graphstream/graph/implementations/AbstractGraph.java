@@ -629,6 +629,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	protected <T extends Edge> T addEdge_(String sourceId, long timeId,
 			String edgeId, AbstractNode src, String srcId, AbstractNode dst,
 			String dstId, boolean directed) {
+		// used for the ugly fix below
+		boolean nodesCreated = false;
 		AbstractEdge edge = getEdge(edgeId);
 		if (edge != null) {
 			if (strictChecking)
@@ -651,10 +653,14 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 										src == null ? srcId : dstId));
 			if (!autoCreate)
 				return null;
-			if (src == null)
+			if (src == null) {
 				src = addNode(srcId);
-			if (dst == null)
+				nodesCreated = true;
+			}
+			if (dst == null) {
 				dst = addNode(dstId);
+				nodesCreated = true;
+			}
 		}
 		// at this point edgeId is not in use and both src and dst are not null
 		edge = edgeFactory.newInstance(edgeId, src, dst, directed);
@@ -677,6 +683,10 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		}
 		// now we can finally add it
 		addEdgeCallback(edge);
+		// XXX ugly fix
+		// see the big discussion "Is the Graph active or passive?"
+		if (nodesCreated)
+			timeId = listeners.newEvent();
 		listeners.sendEdgeAdded(sourceId, timeId, edgeId, srcId, dstId,
 				directed);
 		return (T) edge;
