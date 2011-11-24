@@ -45,7 +45,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import org.graphstream.stream.SourceBase;
-import org.graphstream.ui.geom.Bounds3;
 import org.graphstream.ui.geom.Point3;
 
 /**
@@ -1223,10 +1222,9 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 				+ "' not in a valid point3 format");
 	}
 
-	/**
+	/*
 	 * Get a number triplet with numbers separated by comas and return new
 	 * bounds for it. For example "0,1,2".
-	 */
 	protected Bounds3 getBounds3(String value) throws NumberFormatException {
 		int p0 = value.indexOf(',');
 		int p1 = value.indexOf(',', p0 + 1);
@@ -1249,6 +1247,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 		throw new NumberFormatException("value '" + value
 				+ "' not in a valid point3 format");
 	}
+	 */
 
 	// Nested classes
 
