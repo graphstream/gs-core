@@ -56,7 +56,7 @@ public abstract class ISODateComponent {
 	 * Build a new component composed of a directive name ("%.") and a
 	 * replacement value.
 	 * 
-	 * @param shortcut
+	 * @param directive
 	 *            directive name, should start with a leading '%'.
 	 * @param replace
 	 *            replace the directive with the value given here.
