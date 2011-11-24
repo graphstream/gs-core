@@ -292,17 +292,17 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	}
 
 	public void stepBegins(double time) {
-		stepBegins_(getId(), listeners.newEvent(), time);
+		stepBegins_(getId(), -1, time);
 	}
 
 	// adding and removing elements
 
 	public void clear() {
-		clear_(getId(), listeners.newEvent());
+		clear_(getId(), -1);
 	}
 
 	public <T extends Node> T addNode(String id) {
-		return addNode_(getId(), listeners.newEvent(), id);
+		return addNode_(getId(), -1, id);
 	}
 
 	public <T extends Edge> T addEdge(String id, String node1, String node2) {
@@ -311,7 +311,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 
 	public <T extends Edge> T addEdge(String id, String from, String to,
 			boolean directed) {
-		return addEdge_(getId(), listeners.newEvent(), id,
+		return addEdge_(getId(), -1, id,
 				(AbstractNode) getNode(from), from, (AbstractNode) getNode(to),
 				to, directed);
 	}
@@ -331,12 +331,12 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 
 	public <T extends Edge> T addEdge(String id, Node from, Node to,
 			boolean directed) {
-		return addEdge_(getId(), listeners.newEvent(), id, (AbstractNode) from,
+		return addEdge_(getId(), -1, id, (AbstractNode) from,
 				from.getId(), (AbstractNode) to, to.getId(), directed);
 	}
 
 	public <T extends Node> T removeNode(String id) {
-		return removeNode_(getId(), listeners.newEvent(),
+		return removeNode_(getId(), -1,
 				(AbstractNode) getNode(id), id, true);
 	}
 
@@ -345,12 +345,12 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	}
 
 	public <T extends Node> T removeNode(Node node) {
-		return removeNode_(getId(), listeners.newEvent(), (AbstractNode) node,
+		return removeNode_(getId(), -1, (AbstractNode) node,
 				node.getId(), true);
 	}
 
 	public <T extends Edge> T removeEdge(String id) {
-		return removeEdge_(getId(), listeners.newEvent(),
+		return removeEdge_(getId(), -1,
 				(AbstractEdge) getEdge(id), id, true, true, true);
 	}
 
@@ -359,7 +359,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	}
 
 	public <T extends Edge> T removeEdge(Edge edge) {
-		return removeEdge_(getId(), listeners.newEvent(), (AbstractEdge) edge,
+		return removeEdge_(getId(), -1, (AbstractEdge) edge,
 				edge.getId(), true, true, true);
 	}
 
@@ -390,7 +390,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 						+ "\". Cannot remove it.");
 			return null;
 		}
-		return removeEdge_(getId(), listeners.newEvent(), edge, edge.getId(),
+		return removeEdge_(getId(), -1, edge, edge.getId(),
 				true, true, true);
 	}
 
@@ -617,6 +617,9 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		}
 		node = nodeFactory.newInstance(nodeId, this);
 		addNodeCallback(node);
+		// If the event comes from the graph itself, create timeId
+		if (timeId == -1)
+			timeId = newEvent();
 		listeners.sendNodeAdded(sourceId, timeId, nodeId);
 		return (T) node;
 	}
@@ -629,8 +632,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	protected <T extends Edge> T addEdge_(String sourceId, long timeId,
 			String edgeId, AbstractNode src, String srcId, AbstractNode dst,
 			String dstId, boolean directed) {
-		// used for the ugly fix below
-		boolean nodesCreated = false;
 		AbstractEdge edge = getEdge(edgeId);
 		if (edge != null) {
 			if (strictChecking)
@@ -653,14 +654,10 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 										src == null ? srcId : dstId));
 			if (!autoCreate)
 				return null;
-			if (src == null) {
+			if (src == null)
 				src = addNode(srcId);
-				nodesCreated = true;
-			}
-			if (dst == null) {
+			if (dst == null)
 				dst = addNode(dstId);
-				nodesCreated = true;
-			}
 		}
 		// at this point edgeId is not in use and both src and dst are not null
 		edge = edgeFactory.newInstance(edgeId, src, dst, directed);
@@ -683,10 +680,9 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		}
 		// now we can finally add it
 		addEdgeCallback(edge);
-		// XXX ugly fix
-		// see the big discussion "Is the Graph active or passive?"
-		if (nodesCreated)
-			timeId = listeners.newEvent();
+		// If the event comes from the graph itself, create timeId
+		if (timeId == -1)
+			timeId = newEvent();
 		listeners.sendEdgeAdded(sourceId, timeId, edgeId, srcId, dstId,
 				directed);
 		return (T) edge;
@@ -703,14 +699,11 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 			return null;
 		}
 
-		int deg = node.getDegree();
-
 		removeAllEdges(node);
-
-		// XXX ugly fix waiting for better times
-		// see the big discussion "Is the Graph active or passive?"
-		if (deg > 0 && sourceId.equals(getId()))
-			timeId = listeners.newEvent();
+		
+		// If the event comes from the graph itself, create timeId
+		if (timeId == -1)
+			timeId = newEvent();
 		listeners.sendNodeRemoved(sourceId, timeId, nodeId);
 		
 		if (graphCallback)
@@ -733,6 +726,9 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		AbstractNode src = edge.getSourceNode();
 		AbstractNode dst = edge.getTargetNode();
 		
+		// If the event comes from the graph itself, create timeId
+		if (timeId == -1)
+			timeId = newEvent();
 		listeners.sendEdgeRemoved(sourceId, timeId, edgeId);
 		
 		if (srcCallback)
@@ -752,11 +748,17 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 			it.next().clearCallback();
 		clearCallback();
 		clearAttributes();
+		// If the event comes from the graph itself, create timeId
+		if (timeId == -1)
+			timeId = newEvent();
 		listeners.sendGraphCleared(sourceId, timeId);
 	}
 
 	protected void stepBegins_(String sourceId, long timeId, double step) {
 		this.step = step;
+		// If the event comes from the graph itself, create timeId
+		if (timeId == -1)
+			timeId = newEvent();
 		listeners.sendStepBegins(sourceId, timeId, step);
 	}
 
@@ -800,7 +802,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	 *            called
 	 */
 	protected void removeNode(AbstractNode node, boolean graphCallback) {
-		removeNode_(getId(), listeners.newEvent(), node, node.getId(),
+		removeNode_(getId(), -1, node, node.getId(),
 				graphCallback);
 	}
 
@@ -826,7 +828,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	 */
 	protected void removeEdge(AbstractEdge edge, boolean graphCallback,
 			boolean sourceCallback, boolean targetCallback) {
-		removeEdge_(getId(), listeners.newEvent(), edge, edge.getId(),
+		removeEdge_(getId(), -1, edge, edge.getId(),
 				graphCallback, sourceCallback, targetCallback);
 	}
 
