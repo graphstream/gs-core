@@ -423,7 +423,7 @@ public class DGSParser implements Parser {
 				if (word == null)
 					throw parseException("missing value");
 
-				if (c >= '0' && c <= '9') {
+				if ((c >= '0' && c <= '9') || c == '-') {
 					try {
 						if (word.indexOf('.') > 0)
 							o = Double.valueOf(word);
