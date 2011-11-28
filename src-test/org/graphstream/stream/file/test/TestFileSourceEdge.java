@@ -111,6 +111,6 @@ public class TestFileSourceEdge extends TestFileSourceBase {
 
 	@Override
 	public String anUndirectedTriangleHttpURL() {
-		return "http://graphstream.sourceforge.net/data/undirectedTriangle.edge";
+		return "http://graphstream-project.org/media/data/undirectedTriangle.edge";
 	}
 }
