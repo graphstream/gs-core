@@ -126,22 +126,28 @@ public class DGSParser implements Parser {
 			buffer.clear();
 			c = reader.read(buffer);
 
-			if (c < 0)
+			buffer.position(0);
+
+			if (c < 0) {
+				buffer.limit(0);
 				return -1;
+			}
 
 			buffer.limit(c);
-			buffer.position(0);
 		}
 
 		if (!buffer.hasRemaining()) {
 			buffer.clear();
 			c = reader.read(buffer);
 
-			if (c < 0)
+			buffer.position(0);
+
+			if (c < 0) {
+				buffer.limit(0);
 				return -1;
+			}
 
 			buffer.limit(c);
-			buffer.position(0);
 		}
 
 		if (!buffer.hasRemaining())
@@ -161,15 +167,11 @@ public class DGSParser implements Parser {
 	protected void pushback(int c) throws IOException {
 		if (c < 0)
 			return;
+		
+		if (pushbackOffset + 1 >= pushback.length)
+			throw new IOException("pushback buffer overflow");
 
-		if (buffer.position() == 0) {
-			if (pushbackOffset + 1 >= pushback.length)
-				throw new IOException("pushback buffer overflow");
-
-			pushback[++pushbackOffset] = c;
-		} else {
-			buffer.position(buffer.position() - 1);
-		}
+		pushback[++pushbackOffset] = c;
 
 		if (column == 0)
 			line--;
@@ -335,8 +337,8 @@ public class DGSParser implements Parser {
 			next = directive();
 
 			if (next != Token.EOF) {
-				pushback(next.name().charAt(0));
 				pushback(next.name().charAt(1));
+				pushback(next.name().charAt(0));
 			}
 		} while (next != Token.ST && next != Token.EOF);
 
@@ -760,6 +762,7 @@ public class DGSParser implements Parser {
 
 	protected ParseException parseException(String message, Object... args) {
 		return new ParseException(String.format(String.format(
-				"parse error at (%d;%d) : %s", line, column, message), args));
+				"parse error at (%d;%d) : %s (%d|%d)", line, column, message,
+				buffer.position(), buffer.limit()), args));
 	}
 }
