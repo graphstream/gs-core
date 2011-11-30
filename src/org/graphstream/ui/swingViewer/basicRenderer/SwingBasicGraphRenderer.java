@@ -453,6 +453,18 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+			} else if(filename.toLowerCase().endsWith("svg")) {
+				String plugin = "org.graphstream.ui.batik.BatikGraphics2D";
+				Class<?> c = Class.forName(plugin);
+				Object o = c.newInstance();
+				if(o instanceof Graphics2DOutput) {
+					Graphics2DOutput out = (Graphics2DOutput) o;
+					Graphics2D g2 = out.getGraphics();
+					render(g2, (int)camera.metrics.viewport.data[0], (int)camera.metrics.viewport.data[1]);
+					out.outputTo(filename);
+				} else {
+					System.err.printf("plugin %s is not an instance of Graphics2DOutput (%s)%n", plugin, o.getClass().getName());
+				}
 			}
 		}
 	}
