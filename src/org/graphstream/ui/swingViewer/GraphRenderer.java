@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -34,9 +35,9 @@ import java.awt.Container;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
+import org.graphstream.ui.swingViewer.util.Camera;
 
 /**
  * Interface for classes that draw a GraphicGraph in a swing component.
@@ -64,36 +65,11 @@ public interface GraphRenderer {
 	// Access
 
 	/**
-	 * The view centre (a point in graph units).
+	 * Get a camera object to provide control commands on the view.
 	 * 
-	 * @return The view centre.
+	 * @return a Camera instance
 	 */
-	public abstract Point3 getViewCenter();
-
-	/**
-	 * The portion of the graph visible.
-	 * 
-	 * @return A real for which value 1 means the graph is fully visible and
-	 *         uses the whole view port.
-	 */
-	public abstract double getViewPercent();
-
-	/**
-	 * The current rotation angle.
-	 * 
-	 * @return The rotation angle in degrees.
-	 */
-	public abstract double getViewRotation();
-
-	/**
-	 * A number in GU that gives the approximate graph size (often the diagonal
-	 * of the graph). This allows to compute displacements in the graph as
-	 * percent of its overall size. For example this can be used to move the
-	 * view centre.
-	 * 
-	 * @return The graph estimated size in graph units.
-	 */
-	public abstract double getGraphDimension();
+	public abstract Camera getCamera();
 
 	/**
 	 * Search for the first node or sprite (in that order) that contains the
@@ -128,86 +104,9 @@ public interface GraphRenderer {
 	// Command
 
 	/**
-	 * Set the bounds of the graphic graph in GU.
-	 * 
-	 * @param minx
-	 *            Lowest abscissa.
-	 * @param miny
-	 *            Lowest ordinate.
-	 * @param minz
-	 *            Lowest depth.
-	 * @param maxx
-	 *            Highest abscissa.
-	 * @param maxy
-	 *            Highest ordinate.
-	 * @param maxz
-	 *            Highest depth.
-	 */
-	public abstract void setBounds(double minx, double miny, double minz,
-			double maxx, double maxy, double maxz);
-
-	/**
 	 * Redisplay or update the graph.
 	 */
 	public abstract void render(Graphics2D g, int width, int height);
-
-	/**
-	 * Reset the view to the automatic mode.
-	 */
-	public abstract void resetView();
-
-	/**
-	 * Change the view centre.
-	 * 
-	 * @param x
-	 *            The new abscissa.
-	 * @param y
-	 *            The new ordinate.
-	 * @param z
-	 *            The new depth.
-	 */
-	public abstract void setViewCenter(double x, double y, double z);
-
-	/**
-	 * Specify exactly the minimum and maximum points in GU that are visible
-	 * (more points may be visible due to aspect-ratio constraints).
-	 * 
-	 * @param minx
-	 *            The minimum abscissa visible.
-	 * @param miny
-	 *            The minimum ordinate visible.
-	 * @param maxx
-	 *            The maximum abscissa visible.
-	 * @param maxy
-	 *            The maximum abscissa visible.
-	 * @see #removeGraphViewport()
-	 */
-	public abstract void setGraphViewport(double minx, double miny, double maxx,
-			double maxy);
-
-	/**
-	 * Remove the specified graph view port.
-	 * 
-	 * @see #setGraphViewport(double, double, double, double)
-	 */
-	public abstract void removeGraphViewport();
-
-	/**
-	 * Zoom the view.
-	 * 
-	 * @param percent
-	 *            Percent of the graph visible.
-	 */
-	public abstract void setViewPercent(double percent);
-
-	/**
-	 * Rotate the view around its centre point by a given theta angles (in
-	 * degrees).
-	 * 
-	 * @param theta
-	 *            The rotation angle in degrees.
-	 */
-	public abstract void setViewRotation(double theta);
 
 	/**
 	 * Called by the mouse manager to specify where a node and sprite selection

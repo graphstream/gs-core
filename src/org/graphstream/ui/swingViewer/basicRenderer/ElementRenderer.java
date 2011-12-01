@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -34,9 +35,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 
 import org.graphstream.graph.Element;
+import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicSprite;
 import org.graphstream.ui.graphicGraph.StyleGroup;
@@ -173,9 +174,10 @@ public abstract class ElementRenderer {
 
 	/**
 	 * Called during rendering in place of
-	 * {@link #renderElement(StyleGroup, Graphics2D, Camera, GraphicElement)} to
-	 * signal that the given element is not inside the view. The renderElement()
-	 * method will be called as soon as the element becomes visible anew.
+	 * {@link #renderElement(StyleGroup, Graphics2D, Camera, GraphicElement)}
+	 * to signal that the given element is not inside the view. The
+	 * renderElement() method will be called as soon as the element becomes
+	 * visible anew.
 	 * 
 	 * @param g
 	 *            The Swing graphics.
@@ -201,48 +203,47 @@ public abstract class ElementRenderer {
 
 	protected void renderText(StyleGroup group, Graphics2D g, Camera camera,
 			GraphicElement element) {
-		if (group.getTextMode() != StyleConstants.TextMode.HIDDEN
-		 && group.getTextVisibilityMode() != StyleConstants.TextVisibilityMode.HIDDEN) {
-			String label = element.getLabel();
+		String label = element.getLabel();
+		
+		if (label != null && group.getTextMode() != StyleConstants.TextMode.HIDDEN
+				&& group.getTextVisibilityMode() != StyleConstants.TextVisibilityMode.HIDDEN) {
 
-			if (label != null) {
-				Point2D.Double p = null;
-				GraphicSprite s = null;
+			Point3 p = null;
+			GraphicSprite s = null;
 
-				if (element instanceof GraphicSprite)
-					s = (GraphicSprite) element;
+			if (element instanceof GraphicSprite)
+				s = (GraphicSprite) element;
 
-				if (s != null && s.getUnits() == Units.PX) {
-					double w = camera.getMetrics()
-							.lengthToPx(group.getSize(), 0);
-					p = new Point2D.Double();
-					p.x = element.getX() + (w / 2);
-					p.y = element.getY();
-				} else if (s != null && s.getUnits() == Units.PERCENTS) {
-					double w = camera.getMetrics()
-							.lengthToPx(group.getSize(), 0);
-					p = new Point2D.Double();
-					p.x = camera.getMetrics().viewport.data[1] * element.getX()
-							+ (w / 2);
-					p.y = camera.getMetrics().viewport.data[2] * element.getY();
-				} else {
-					double w = camera.getMetrics()
-							.lengthToGu(group.getSize(), 0);
-					p = camera.transform(element.getX() + (w / 2),
-							element.getY());
-				}
-
-				AffineTransform Tx = g.getTransform();
-				Color c = g.getColor();
-
-				g.setColor(textColor);
-				g.setFont(textFont);
-				g.setTransform(new AffineTransform());
-				g.drawString(label, (float)p.x, (float)(p.y + textSize / 3)); // approximation
-																// to gain time.
-				g.setTransform(Tx);
-				g.setColor(c);
+			if (s != null && s.getUnits() == Units.PX) {
+				double w = camera.getMetrics().lengthToPx(group.getSize(),
+						0);
+				p = new Point3();
+				p.x = element.getX() + (w / 2);
+				p.y = element.getY();
+			} else if (s != null && s.getUnits() == Units.PERCENTS) {
+				double w = camera.getMetrics().lengthToPx(group.getSize(),
+						0);
+				p = new Point3();
+				p.x = camera.getMetrics().viewport.data[1] * element.getX()
+						+ (w / 2);
+				p.y = camera.getMetrics().viewport.data[2] * element.getY();
+			} else {
+				double w = camera.getMetrics().lengthToGu(group.getSize(),
+						0);
+				p = camera.transformGuToPx(element.getX() + (w / 2), element
+						.getY(), 0);
 			}
+
+			AffineTransform Tx = g.getTransform();
+			Color c = g.getColor();
+
+			g.setColor(textColor);
+			g.setFont(textFont);
+			g.setTransform(new AffineTransform());
+			g.drawString(label, (float) p.x, (float) (p.y + textSize / 3)); // approximation
+			// to gain time.
+			g.setTransform(Tx);
+			g.setColor(c);
 		}
 	}
 
@@ -253,7 +254,7 @@ public abstract class ElementRenderer {
 
 		if (n > 1) {
 			if (element.hasNumber("ui.color") && n > 1) {
-				double value =  element.getNumber("ui.color");
+				double value = element.getNumber("ui.color");
 
 				if (value < 0)
 					value = 0;
@@ -262,9 +263,9 @@ public abstract class ElementRenderer {
 
 				if (value == 1) {
 					color = group.getFillColor(n - 1); // Simplification,
-														// faster.
+					// faster.
 				} else if (value != 0) // If value == 0, color is already set
-										// above.
+				// above.
 				{
 					double div = 1f / (n - 1);
 					int col = (int) (value / div);
@@ -283,12 +284,13 @@ public abstract class ElementRenderer {
 					double alpha = ((color0.getAlpha() * (1 - div)) + (color1
 							.getAlpha() * div)) / 255f;
 
-					color = new Color((float)red, (float)green, (float)blue, (float)alpha);
+					color = new Color((float) red, (float) green, (float) blue,
+							(float) alpha);
 				}
-			} else if(element.hasAttribute("ui.color", Color.class)) {
+			} else if (element.hasAttribute("ui.color", Color.class)) {
 				color = element.getAttribute("ui.color");
 			}
-		} else if(element.hasAttribute("ui.color", Color.class)) {
+		} else if (element.hasAttribute("ui.color", Color.class)) {
 			color = element.getAttribute("ui.color");
 		}
 

@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -30,101 +31,73 @@
  */
 package org.graphstream.graph.implementations;
 
-import org.graphstream.graph.EdgeFactory;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
 import org.graphstream.graph.NodeFactory;
 
 /**
  * A graph implementation that supports multiple edges between two nodes.
- * 
- * <p>
- * This implementation is only a subclass of {@link DefaultGraph} that renames
- * it and add no behaviour excepted changing the node and edge factories to use
- * the {@link MultiNode} and {@link MultiEdge} classes.
- * </p>
  */
-public class MultiGraph extends DefaultGraph {
-	/**
-	 * New empty graph, with a default identifier.
-	 * 
-	 * @see #MultiGraph(String)
-	 * @see #MultiGraph(boolean, boolean)
-	 * @see #MultiGraph(String, boolean, boolean)
-	 */
-	@Deprecated
-	public MultiGraph() {
-		this("MultiGraph");
-	}
+
+public class MultiGraph extends AdjacencyListGraph {
 
 	/**
-	 * New empty graph.
+	 * Creates an empty graph.
 	 * 
 	 * @param id
 	 *            Unique identifier of the graph.
-	 * @see #MultiGraph(boolean, boolean)
-	 * @see #MultiGraph(String, boolean, boolean)
+	 * @param strictChecking
+	 *            If true any non-fatal error throws an exception.
+	 * @param autoCreate
+	 *            If true (and strict checking is false), nodes are
+	 *            automatically created when referenced when creating a edge,
+	 *            even if not yet inserted in the graph.
+	 * @param initialNodeCapacity
+	 *            Initial capacity of the node storage data structures. Use this
+	 *            if you know the approximate maximum number of nodes of the
+	 *            graph. The graph can grow beyond this limit, but storage
+	 *            reallocation is expensive operation.
+	 * @param initialEdgeCapacity
+	 *            Initial capacity of the edge storage data structures. Use this
+	 *            if you know the approximate maximum number of edges of the
+	 *            graph. The graph can grow beyond this limit, but storage
+	 *            reallocation is expensive operation.
+	 */
+	public MultiGraph(String id, boolean strictChecking, boolean autoCreate,
+			int initialNodeCapacity, int initialEdgeCapacity) {
+		super(id, strictChecking, autoCreate, initialNodeCapacity,
+				initialEdgeCapacity);
+		// All we need to do is to change the node factory
+		setNodeFactory(new NodeFactory<MultiNode>() {
+			public MultiNode newInstance(String id, Graph graph) {
+				return new MultiNode((AbstractGraph) graph, id);
+			}
+		});
+	}
+
+	/**
+	 * Creates an empty graph with default edge and node capacity.
+	 * 
+	 * @param id
+	 *            Unique identifier of the graph.
+	 * @param strictChecking
+	 *            If true any non-fatal error throws an exception.
+	 * @param autoCreate
+	 *            If true (and strict checking is false), nodes are
+	 *            automatically created when referenced when creating a edge,
+	 *            even if not yet inserted in the graph.
+	 */
+	public MultiGraph(String id, boolean strictChecking, boolean autoCreate) {
+		this(id, strictChecking, autoCreate, DEFAULT_NODE_CAPACITY,
+				DEFAULT_EDGE_CAPACITY);
+	}
+
+	/**
+	 * Creates an empty graph with strict checking and without auto-creation.
+	 * 
+	 * @param id
+	 *            Unique identifier of the graph.
 	 */
 	public MultiGraph(String id) {
 		this(id, true, false);
-	}
-
-	/**
-	 * New empty graph, with a default identifier.
-	 * 
-	 * @param strictChecking
-	 *            If true any non-fatal error throws an exception.
-	 * @param autoCreate
-	 *            If true (and strict checking is false), nodes are
-	 *            automatically created when referenced when creating a edge,
-	 *            even if not yet inserted in the graph.
-	 * @see #MultiGraph(String, boolean, boolean)
-	 * @see #setStrict(boolean)
-	 * @see #setAutoCreate(boolean)
-	 */
-	@Deprecated
-	public MultiGraph(boolean strictChecking, boolean autoCreate) {
-		this("MultiGraph", strictChecking, autoCreate);
-	}
-
-	/**
-	 * New empty graph.
-	 * 
-	 * @param id
-	 *            Unique identifier of this graph.
-	 * @param strictChecking
-	 *            If true any non-fatal error throws an exception.
-	 * @param autoCreate
-	 *            If true (and strict checking is false), nodes are
-	 *            automatically created when referenced when creating a edge,
-	 *            even if not yet inserted in the graph.
-	 * @see #setStrict(boolean)
-	 * @see #setAutoCreate(boolean)
-	 */
-	public MultiGraph(String id, boolean strictChecking, boolean autoCreate) {
-		super(id, strictChecking, autoCreate);
-
-		nodeFactory = new NodeFactory<MultiNode>() {
-			public MultiNode newInstance(String id, Graph graph) {
-				return new MultiNode(graph, id);
-			}
-		};
-		edgeFactory = new EdgeFactory<MultiEdge>() {
-			public MultiEdge newInstance(String id, Node src, Node dst,
-					boolean directed) {
-				return new MultiEdge(id, src, dst, directed);
-			}
-		};
-
-		addAttribute("ui.multigraph"); // XXX a trick, this allows to inform the
-										// viewer
-										// That multi-edges will be drawn. When
-										// drawing
-										// simple edges, the viewer may be
-										// faster.
-										// XXX We should not see this here !!!
-										// See the source code for GraphicGraph
-										// for the
-										// corresponding code.
 	}
 }

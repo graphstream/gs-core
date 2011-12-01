@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -30,246 +31,93 @@
  */
 package org.graphstream.graph.implementations;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import org.graphstream.graph.Edge;
-import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
-import org.graphstream.graph.IdAlreadyInUseException;
 
 /**
- * Full implementation of {@link org.graphstream.graph.Node} that allows only
- * one edge between two nodes.
+ * Nodes used with {@link SingleGraph}
+ *
  */
-public class SingleNode extends DefaultNode {
-	// Attribute
 
-	/**
-	 * Map of leaving edges toward nodes. Each element of the map is a pair
-	 * (key,value) where the key is the id of a node that can be reached
-	 * following a leaving edge, and the value is the leaving edge.
-	 */
-	protected HashMap<String, Edge> to = new HashMap<String, Edge>();
+public class SingleNode extends AdjacencyListNode {
+	protected static class TwoEdges {
+		AbstractEdge in, out;
+	}
+	
+	protected HashMap<AbstractNode, TwoEdges> neighborMap;
 
-	/**
-	 * Map of entering edges from nodes. Each element of the map is a pair
-	 * (key,value) where the key is the id of a node that can be reached
-	 * following an entering edge, and the value is the entering edge.
-	 */
-	protected HashMap<String, Edge> from = new HashMap<String, Edge>();
+	// *** Constructor ***
 
-	// Constructor
-
-	/**
-	 * New unconnected node.
-	 * 
-	 * @param graph
-	 *            The graph containing the node.
-	 * @param id
-	 *            Tag of the node.
-	 */
-	public SingleNode(Graph graph, String id) {
+	protected SingleNode(AbstractGraph graph, String id) {
 		super(graph, id);
+		neighborMap = new HashMap<AbstractNode, TwoEdges>(
+				4 * INITIAL_EDGE_CAPACITY / 3 + 1);
 	}
 
-	// Access
+	// *** Helpers ***
 
-	@Override
-	public int getOutDegree() {
-		return to.size();
-	}
-
-	@Override
-	public int getInDegree() {
-		return from.size();
-	}
-
-	@Override
-	public boolean hasEdgeToward(String id) {
-		return (to.get(id) != null);
-	}
-
-	@Override
-	public boolean hasEdgeFrom(String id) {
-		return (from.get(id) != null);
-	}
-
-	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> T getEdgeToward(String id) {
-		return (T) to.get(id);
+	@Override
+	protected <T extends Edge> T locateEdge(Node opposite, char type) {
+		TwoEdges ee = neighborMap.get(opposite);
+		if (ee == null)
+			return null;
+		return (T)(type == I_EDGE ? ee.in : ee.out);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public <T extends Edge> T getEdgeFrom(String id) {
-		return (T) from.get(id);
+	protected void removeEdge(int i) {
+		AbstractNode opposite = edges[i].getOpposite(this);
+		TwoEdges ee = neighborMap.get(opposite);
+		char type = edgeType(edges[i]);
+		if (type != O_EDGE)
+			ee.in = null;
+		if (type != I_EDGE)
+			ee.out = null;
+		if (ee.in == null && ee.out == null)
+			neighborMap.remove(opposite);
+		super.removeEdge(i);
 	}
 
-	@Override
-	public <T extends Edge> T getEdgeBetween(String id) {
-		if (hasEdgeToward(id))
-			return getEdgeToward(id);
-		else
-			return getEdgeFrom(id);
-	}
+	// *** Callbacks ***
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterator<T> getEnteringEdgeIterator() {
-		return new ElementIterator<T>((HashMap<String, T>) from);
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterator<T> getLeavingEdgeIterator() {
-		return new ElementIterator<T>((HashMap<String, T>) to);
-	}
-
-	// Access -- Not in Node interface
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<T> getEachLeavingEdge() {
-		return (Iterable<T>) to.values();
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<T> getEachEnteringEdge() {
-		return (Iterable<T>) from.values();
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public <T extends Edge> Collection<T> getLeavingEdgeSet() {
-		return (Collection<T>) Collections.unmodifiableCollection(to.values());
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public <T extends Edge> Collection<T> getEnteringEdgeSet() {
-		return (Collection<T>) Collections
-				.unmodifiableCollection(from.values());
-	}
-
-	// Command
-
-	/**
-	 * Add an edge between this node and the given target.
-	 * 
-	 * @param tag
-	 *            Tag of the edge.
-	 * @param target
-	 *            Target node.
-	 * @param directed
-	 *            If the edge is directed only from this node to the target.
-	 */
-	@Override
-	@SuppressWarnings("unchecked")
-	protected <T extends Edge> T addEdgeToward(String tag, DefaultNode target,
-			boolean directed) throws IllegalArgumentException {
-		// Some checks.
-
-		if (target.G == null)
-			throw new IllegalArgumentException("cannot add edge to node `"
-					+ target.getId()
-					+ "' since this node is not yet part of a graph");
-
-		if (G == null)
-			throw new IllegalArgumentException("cannot add edge to node `"
-					+ getId() + "' since this node is not yet part of a graph");
-
-		if (G != target.G)
-			throw new IllegalArgumentException("cannot add edge between node `"
-					+ getId() + "' and node `" + target.getId()
-					+ "' since they pertain to distinct graphs");
-
-		// Register the edge.
-
-		Edge edge = target.getEdgeToward(getId());
-
-		if (edge != null) {
-			throw new IllegalArgumentException(new IdAlreadyInUseException(tag));
-		} else {
-			T e = (T) G.edgeFactory.newInstance(tag, this, target, directed);
-			// e.setDirected(directed);
-			// return new CheckedEdge( tag, this, target, directed );
-			return e;
+	protected boolean addEdgeCallback(AbstractEdge edge) {
+		AbstractNode opposite = edge.getOpposite(this);
+		TwoEdges ee = neighborMap.get(opposite);
+		if (ee == null)
+			ee = new TwoEdges();
+		char type = edgeType(edge);
+		if (type != O_EDGE) {
+			if (ee.in != null)
+				return false;
+			ee.in = edge;
 		}
-	}
-
-	/**
-	 * Called by an edge to bind it.
-	 */
-	@Override
-	protected void registerEdge(Edge edge) throws IllegalArgumentException,
-			IdAlreadyInUseException {
-		// If the edge or an edge with the same id is already registered.
-
-		Node other = edge.getOpposite(this);
-
-		if (other != this) // case of loop edges
-		{
-			if (getEdgeToward((other).getId()) != null
-					|| getEdgeFrom((other).getId()) != null)
-				throw new IdAlreadyInUseException(
-						"multi edges are not supported: edge between node '"
-								+ getId() + "' and '" + (other).getId()
-								+ "' already exists");
+		if (type != I_EDGE) {
+			if (ee.out != null)
+				return false;
+			ee.out = edge;
 		}
-
-		// Add the edge.
-
-		edges.add(edge);
-
-		String otherId = other.getId();
-
-		if (edge.isDirected()) {
-			if (edge.getSourceNode() == this)
-				to.put(otherId, edge);
-			else
-				from.put(otherId, edge);
-		} else {
-
-			to.put(otherId, edge);
-			from.put(otherId, edge);
-		}
+		neighborMap.put(opposite, ee);
+		return super.addEdgeCallback(edge);
 	}
 
 	@Override
-	protected void unregisterEdge(Edge edge) {
-		Node other = edge.getOpposite(this);
-
-		to.remove(other.getId());
-		from.remove(other.getId());
-
-		int pos = edges.indexOf(edge);
-
-		if (pos >= 0)
-			edges.remove(pos);
+	protected void clearCallback() {
+		neighborMap.clear();
+		super.clearCallback();
 	}
 
-	/**
-	 * When a node is unregistered from a graph, it must not keep edges
-	 * connected to nodes still in the graph. This methods untie all edges
-	 * connected to this node (this also unregister them from the graph).
-	 */
+	// *** Others ***
+
+	@SuppressWarnings("unchecked")
 	@Override
-	protected void disconnectAllEdges() throws IllegalStateException {
-		int n = edges.size();
-
-		// We cannot use a "for" since untying an edge removes this edge from
-		// the node. The number of edges will change continuously.
-
-		while (n > 0) {
-			Edge e = edges.get(0);
-			G.removeEdge(((AbstractElement) e).getId());
-			// e.unbind();
-			n = edges.size();
-		}
+	public <T extends Node> Iterator<T> getNeighborNodeIterator() {
+		return (Iterator<T>) Collections.unmodifiableSet(neighborMap.keySet())
+				.iterator();
 	}
 }

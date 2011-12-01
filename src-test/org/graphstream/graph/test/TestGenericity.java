@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -30,47 +31,43 @@
  */
 package org.graphstream.graph.test;
 
-import static org.junit.Assert.*;
-
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.junit.Test;
-
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.EdgeFactory;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.NodeFactory;
-import org.graphstream.graph.Edge;
-import org.graphstream.graph.EdgeFactory;
-import org.graphstream.graph.implementations.ConcurrentEdge;
-import org.graphstream.graph.implementations.ConcurrentGraph;
-import org.graphstream.graph.implementations.ConcurrentNode;
+import org.graphstream.graph.implementations.AbstractEdge;
+import org.graphstream.graph.implementations.AbstractGraph;
+import org.graphstream.graph.implementations.AbstractNode;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.graph.implementations.AdjacencyListNode;
-import org.graphstream.graph.implementations.AdjacencyListEdge;
-import org.graphstream.graph.implementations.MultiEdge;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.graph.implementations.MultiNode;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.graph.implementations.SingleNode;
-import org.graphstream.graph.implementations.SingleEdge;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 
 public class TestGenericity {
 	protected static class BadTypedNode extends SingleNode {
 		public BadTypedNode(Graph graph, String id) {
-			super(graph, id);
+			super((AbstractGraph) graph, id);
 		}
 	}
 
-	protected static class BadTypedEdge extends SingleEdge {
+	protected static class BadTypedEdge extends AbstractEdge {
 		protected BadTypedEdge(String id, Node src, Node dst, boolean directed) {
-			super(id, src, dst, directed);
+			super(id, (AbstractNode)src, (AbstractNode)dst, directed);
 		}
 	}
 
 	protected static class MyALGNode extends AdjacencyListNode {
 		public MyALGNode(Graph graph, String id) {
-			super(graph, id);
+			super((AbstractGraph)graph, id);
 		}
 	}
 
@@ -80,9 +77,9 @@ public class TestGenericity {
 		}
 	}
 
-	protected static class MyALGEdge extends AdjacencyListEdge {
+	protected static class MyALGEdge extends AbstractEdge {
 		protected MyALGEdge(String id, Node src, Node dst, boolean directed) {
-			super(id, src, dst, directed);
+			super(id, (AbstractNode)src, (AbstractNode)dst, directed);
 		}
 	}
 
@@ -95,7 +92,7 @@ public class TestGenericity {
 
 	protected static class MySingleNode extends SingleNode {
 		public MySingleNode(Graph graph, String id) {
-			super(graph, id);
+			super((AbstractGraph)graph, id);
 		}
 	}
 
@@ -106,9 +103,9 @@ public class TestGenericity {
 		}
 	}
 
-	protected static class MySingleEdge extends SingleEdge {
+	protected static class MySingleEdge extends AbstractEdge {
 		protected MySingleEdge(String id, Node src, Node dst, boolean directed) {
-			super(id, src, dst, directed);
+			super(id, (AbstractNode)src, (AbstractNode)dst, directed);
 		}
 	}
 
@@ -122,7 +119,7 @@ public class TestGenericity {
 
 	protected static class MyMultiNode extends MultiNode {
 		public MyMultiNode(Graph graph, String id) {
-			super(graph, id);
+			super((AbstractGraph)graph, id);
 		}
 	}
 
@@ -133,9 +130,9 @@ public class TestGenericity {
 		}
 	}
 
-	protected static class MyMultiEdge extends MultiEdge {
+	protected static class MyMultiEdge extends AbstractEdge {
 		protected MyMultiEdge(String id, Node src, Node dst, boolean directed) {
-			super(id, src, dst, directed);
+			super(id, (AbstractNode)src, (AbstractNode)dst, directed);
 		}
 	}
 
@@ -144,34 +141,6 @@ public class TestGenericity {
 		public MyMultiEdge newInstance(String id, Node src, Node dst,
 				boolean directed) {
 			return new MyMultiEdge(id, src, dst, directed);
-		}
-	}
-
-	protected static class MyConcurrentNode extends ConcurrentNode {
-		public MyConcurrentNode(Graph graph, String id) {
-			super(graph, id);
-		}
-	}
-
-	protected static class MyConcurrentNodeFactory implements
-			NodeFactory<MyConcurrentNode> {
-		public MyConcurrentNode newInstance(String id, Graph graph) {
-			return new MyConcurrentNode(graph, id);
-		}
-	}
-
-	protected static class MyConcurrentEdge extends ConcurrentEdge {
-		protected MyConcurrentEdge(String id, Node src, Node dst,
-				boolean directed) {
-			super(id, src, dst, directed);
-		}
-	}
-
-	protected static class MyConcurrentEdgeFactory implements
-			EdgeFactory<MyConcurrentEdge> {
-		public MyConcurrentEdge newInstance(String id, Node src, Node dst,
-				boolean directed) {
-			return new MyConcurrentEdge(id, src, dst, directed);
 		}
 	}
 
@@ -233,26 +202,6 @@ public class TestGenericity {
 		new TestNodeNeighborhood<MyMultiNode>(g);
 
 		new TestEdgeExtremities<MyMultiNode>(g);
-	}
-
-	@Test
-	public void checkConcurrentGraph() {
-		Graph g = new ConcurrentGraph("g");
-
-		g.setNodeFactory(new MyConcurrentNodeFactory());
-		g.setEdgeFactory(new MyConcurrentEdgeFactory());
-
-		new TestAddRemoveNode<MyConcurrentNode>(g);
-		new TestForEachNode<MyConcurrentNode>(g);
-		new TestNodeCollection<MyConcurrentNode>(g);
-		new TestAddRemoveEdge<MyConcurrentEdge>(g);
-		new TestForEachEdge<MyConcurrentEdge>(g);
-		new TestEdgeCollection<MyConcurrentEdge>(g);
-
-		new TestNodeEdgeSet<MyConcurrentEdge>(g);
-		new TestNodeNeighborhood<MyConcurrentNode>(g);
-
-		new TestEdgeExtremities<MyConcurrentNode>(g);
 	}
 
 	static class TestAddRemoveNode<A extends Node> {

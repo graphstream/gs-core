@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.Reader;
 
 import org.graphstream.stream.file.FileSourceGML;
+
 import org.graphstream.util.parser.ParseException;
 import org.graphstream.util.parser.Parser;
 import org.graphstream.util.parser.SimpleCharStream;
@@ -108,18 +109,13 @@ public class GMLParser implements Parser, GMLParserConstants {
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
 		case GRAPH:
 			graphStart();
-			inGraph = true;
+			ctx.setIsInGraph(true);
 			ctx.setDirected(false);
 			break;
 		case DIGRAPH:
 			diGraphStart();
-			inGraph = true;
+			ctx.setIsInGraph(true);
 			ctx.setDirected(true);
-			break;
-		case RSQBR:
-			graphEnd();
-			values.key = null;
-			inGraph = false;
 			break;
 		default:
 			jj_la1[0] = jj_gen;
@@ -142,6 +138,9 @@ public class GMLParser implements Parser, GMLParserConstants {
 			ctx.handleKeyValues(values);
 			values.clear();
 		}
+		graphEnd();
+		values.key = null;
+		inGraph = false;
 		jj_consume_token(0);
 	}
 
@@ -202,11 +201,8 @@ public class GMLParser implements Parser, GMLParserConstants {
 			jj_consume_token(-1);
 			throw new ParseException();
 		}
-		{
-			if (true)
-				return values;
-		}
-		throw new Error("Missing return statement in function");
+
+		return values;
 	}
 
 	/**
@@ -227,11 +223,8 @@ public class GMLParser implements Parser, GMLParserConstants {
 			}
 			keyValue(values);
 		}
-		{
-			if (true)
-				return values;
-		}
-		throw new Error("Missing return statement in function");
+
+		return values;
 	}
 
 	/**
@@ -276,11 +269,8 @@ public class GMLParser implements Parser, GMLParserConstants {
 		values.put(key, v);
 		values.line = k.beginLine;
 		values.column = k.beginColumn;
-		{
-			if (true)
-				return key;
-		}
-		throw new Error("Missing return statement in function");
+
+		return key;
 	}
 
 	/**
@@ -294,7 +284,10 @@ public class GMLParser implements Parser, GMLParserConstants {
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
 		case REAL:
 			t = jj_consume_token(REAL);
-			val = t.image;
+			if (t.image.indexOf('.') < 0)
+				val = Integer.valueOf(t.image);
+			else
+				val = Double.valueOf(t.image);
 			break;
 		case STRING:
 			t = jj_consume_token(STRING);
@@ -315,11 +308,8 @@ public class GMLParser implements Parser, GMLParserConstants {
 			jj_consume_token(-1);
 			throw new ParseException();
 		}
-		{
-			if (true)
-				return val;
-		}
-		throw new Error("Missing return statement in function");
+
+		return val;
 	}
 
 	/** Generated Token Manager. */
@@ -338,7 +328,7 @@ public class GMLParser implements Parser, GMLParserConstants {
 	}
 
 	private static void jj_la1_init_0() {
-		jj_la1_0 = new int[] { 0x3200, 0xc800, 0xfa01, 0xc800, 0x8000, 0x4800,
+		jj_la1_0 = new int[] { 0x3000, 0xc800, 0xfa01, 0xc800, 0x8000, 0x4800,
 				0x4d00, };
 	}
 

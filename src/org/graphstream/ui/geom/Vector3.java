@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -104,13 +105,6 @@ public class Vector3 extends Vector2 {
 		v = (Vector3) other;
 
 		return (data[0] == v.data[0] && data[1] == v.data[1] && data[2] == v.data[2]);
-	}
-
-	/**
-	 * Is this equal to other ?
-	 */
-	public boolean equals(Vector3 other) {
-		return (data[0] == other.data[0] && data[1] == other.data[1] && data[2] == other.data[2]);
 	}
 
 	/**

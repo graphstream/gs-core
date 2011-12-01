@@ -1,6 +1,6 @@
 /*
  * Copyright 2006 - 2011 
- *     Stefan Balev        <stefan.balev@graphstream-project.org>
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -110,7 +110,7 @@ import java.util.Set;
  * @author Antoine Dutot
  * @version 1.0 (jdk 1.5)
  */
-public class Environment
+public class Environment implements Cloneable
 {
 	// ---------- Attributes -----------
 

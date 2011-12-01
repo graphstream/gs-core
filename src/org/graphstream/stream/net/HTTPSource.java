@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -44,20 +45,81 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 /**
- * This source allows to control a graph from a web browser. Available actions
- * are:
+ * This source allows to control a graph from a web browser. Control is done
+ * calling the following url :
+ * <code>http://host/graphId/edit?q=ACTION&...</code>. ACTION is one of the
+ * following action :
  * <ul>
- * <li>http://localhost/graphId/edit?q=an&nodeId=xxx</li>
- * <li>http://localhost/graphId/edit?q=cn&nodeId=xxx&key=k&value=v</li>
- * <li>http://localhost/graphId/edit?q=dn&nodeId=xxx</li>
- * <li>
- * http://localhost/graphId/edit?q=ae&edgeId=xxx&fromId=xxx&toId=xxx[&directed]</li>
- * <li>http://localhost/graphId/edit?q=ce&edgeId=xxx&key=k&value=v</li>
- * <li>http://localhost/graphId/edit?q=de&edgeId=xxx</li>
- * <li>http://localhost/graphId/edit?q=cg&key=k&value=v</li>
- * <li>http://localhost/graphId/edit?q=st&step=real</li>
- * <li>http://localhost/graphId/edit?q=clear</li>
+ * <li>an : add node</li>
+ * <li>cn : change node</li>
+ * <li>dn : delete node</li>
+ * <li>ae : add edge</li>
+ * <li>ce : change edge</li>
+ * <li>de : delete edge</li>
+ * <li>cg : change graph</li>
+ * <li>st : step begins</li>
+ * <li>clear : clear the whole graph</li>
  * </ul>
+ * 
+ * Each of these actions needs some argument.
+ * <dl>
+ * <dt>an</dt>
+ * <dd>
+ * <ul>
+ * <li>id</li>
+ * </ul>
+ * </dd>
+ * <dt>cn</dt>
+ * <dd>
+ * <ul>
+ * <li>id</li>
+ * <li>key</li>
+ * <li>value</li>
+ * </ul>
+ * </dd>
+ * <dt>dn</dt>
+ * <dd>
+ * <ul>
+ * <li>id</li>
+ * </ul>
+ * </dd>
+ * <dt>ae</dt>
+ * <dd>
+ * <ul>
+ * <li>id</li>
+ * <li>from</li>
+ * <li>to</li>
+ * <li>[directed]</li>
+ * </ul>
+ * </dd>
+ * <dt>ce</dt>
+ * <dd>
+ * <ul>
+ * <li>id</li>
+ * <li>key</li>
+ * <li>value</li>
+ * </ul>
+ * </dd>
+ * <dt>de</dt>
+ * <dd>
+ * <ul>
+ * <li>id</li>
+ * </ul>
+ * </dd>
+ * <dt>cg</dt>
+ * <dd>
+ * <ul>
+ * <li>key</li>
+ * <li>value</li>
+ * </ul>
+ * </dd>
+ * <dt>st</dt>
+ * <dd>
+ * <ul>
+ * <li>step</li>
+ * </ul>
+ * </dd>
+ * </dl>
  */
 public class HTTPSource extends SourceBase {
 
@@ -116,24 +178,24 @@ public class HTTPSource extends SourceBase {
 
 			switch (a) {
 			case AN:
-				HTTPSource.this.sendNodeAdded(sourceId, get.get("nodeId")
+				HTTPSource.this.sendNodeAdded(sourceId, get.get("id")
 						.toString());
 				break;
 			case CN:
 				break;
 			case DN:
-				HTTPSource.this.sendNodeRemoved(sourceId, get.get("nodeId")
+				HTTPSource.this.sendNodeRemoved(sourceId, get.get("id")
 						.toString());
 				break;
 			case AE:
-				HTTPSource.this.sendEdgeAdded(sourceId, get.get("edgeId")
-						.toString(), get.get("fromId").toString(), get.get(
-						"toId").toString(), get.containsKey("directed"));
+				HTTPSource.this.sendEdgeAdded(sourceId, get.get("id")
+						.toString(), get.get("from").toString(), get.get("to")
+						.toString(), get.containsKey("directed"));
 				break;
 			case CE:
 				break;
 			case DE:
-				HTTPSource.this.sendEdgeRemoved(sourceId, get.get("edgeId")
+				HTTPSource.this.sendEdgeRemoved(sourceId, get.get("id")
 						.toString());
 				break;
 			case CG:

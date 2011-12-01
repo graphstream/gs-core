@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -30,6 +31,7 @@
  */
 package org.graphstream.ui.spriteManager;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -362,7 +364,7 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 				}
 			} else if (values.length == 1) {
 				if (values[0] instanceof Number) {
-					return new Values(Units.GU, ((Number) value).floatValue());
+					return new Values(Units.GU, ((Number) values[0]).floatValue());
 				} else {
 					System.err
 							.printf("GraphicGraph : sprite position percent is not a number.%n");
@@ -370,7 +372,7 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 			} else {
 				System.err
 						.printf("GraphicGraph : cannot transform value '%s' (length=%d) into a position%n",
-								values, values.length);
+								Arrays.toString(values), values.length);
 			}
 		} else if (value instanceof Number) {
 			return new Values(Units.GU, ((Number) value).floatValue());

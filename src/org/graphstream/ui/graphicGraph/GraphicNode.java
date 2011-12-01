@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -356,5 +357,77 @@ public class GraphicNode extends GraphicElement implements Node {
 
 	public void setHost(String newHost) {
 		throw new RuntimeException("impossible with GraphicGraph");
+	}
+	
+	// XXX stubs for the new methods
+	
+	public <T extends Edge> T getEdgeBetween(Node Node) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T getEdgeBetween(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T getEdgeFrom(Node Node) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T getEdgeFrom(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T getEdgeToward(Node Node) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends Edge> T getEdgeToward(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean hasEdgeBetween(Node node) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean hasEdgeBetween(int index) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean hasEdgeFrom(Node node) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean hasEdgeFrom(int index) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean hasEdgeToward(Node node) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean hasEdgeToward(int index) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	public <T extends Edge> T getEnteringEdge(int i) {
+		// TODO Auto-generated method stub
+		return null;		
+	}
+
+	public <T extends Edge> T getLeavingEdge(int i) {
+		// TODO Auto-generated method stub
+		return null;		
 	}
 }

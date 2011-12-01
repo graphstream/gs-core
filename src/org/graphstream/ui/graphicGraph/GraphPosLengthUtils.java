@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -319,18 +320,75 @@ public class GraphPosLengthUtils {
 			if (o == null)
 				o = node.getAttribute("xy");
 
-			if (o != null && o instanceof Object[]) {
-				Object oo[] = (Object[]) o;
+			if (o != null) {
+				if(o instanceof Object[]) {
+					Object oo[] = (Object[]) o;
 
-				if (oo.length > 0 && oo[0] instanceof Number) {
-					pos.x = ((Number) oo[0]).doubleValue();
-
-					if (oo.length > 1)
-						pos.y = ((Number) oo[1]).doubleValue();
-					if (oo.length > 2)
-						pos.z = ((Number) oo[2]).doubleValue();
+					if (oo.length > 0 && oo[0] instanceof Number) {
+						pos.x = ((Number) oo[0]).doubleValue();
+						if (oo.length > 1) pos.y = ((Number) oo[1]).doubleValue();
+						if (oo.length > 2) pos.z = ((Number) oo[2]).doubleValue();
+					}
+				} else if(o instanceof Double[]) {
+					Double oo[] = (Double[]) o;
+					if(oo.length > 0) pos.x = oo[0];
+					if(oo.length > 1) pos.y = oo[1];
+					if(oo.length > 2) pos.z = oo[2];
+				} else if(o instanceof Float[]) {
+					Float oo[] = (Float[]) o;
+					if(oo.length > 0) pos.x = oo[0];
+					if(oo.length > 1) pos.y = oo[1];
+					if(oo.length > 2) pos.z = oo[2];
+				} else if(o instanceof Integer[]) {
+					Integer oo[] = (Integer[]) o;
+					if(oo.length > 0) pos.x = oo[0];
+					if(oo.length > 1) pos.y = oo[1];
+					if(oo.length > 2) pos.z = oo[2];
+				} else if(o instanceof double[]) {
+					double oo[] = (double[]) o;
+					if(oo.length > 0) pos.x = oo[0];
+					if(oo.length > 1) pos.y = oo[1];
+					if(oo.length > 2) pos.z = oo[2];
+				} else if(o instanceof float[]) {
+					float oo[] = (float[]) o;
+					if(oo.length > 0) pos.x = oo[0];
+					if(oo.length > 1) pos.y = oo[1];
+					if(oo.length > 2) pos.z = oo[2];
+				} else if(o instanceof int[]) {
+					int oo[] = (int[]) o;
+					if(oo.length > 0) pos.x = oo[0];
+					if(oo.length > 1) pos.y = oo[1];
+					if(oo.length > 2) pos.z = oo[2];
+				} else if(o instanceof Number[]) {
+					Number oo[] = (Number[]) o;
+					if(oo.length > 0) pos.x = oo[0].doubleValue();
+					if(oo.length > 1) pos.y = oo[1].doubleValue();
+					if(oo.length > 2) pos.z = oo[2].doubleValue();
+				} else if(o instanceof Point3) {
+					Point3 oo = (Point3) o;
+					pos.x = oo.x;
+					pos.y = oo.y;
+					pos.z = oo.z;
+				} else if(o instanceof Vector3) {
+					Vector3 oo = (Vector3) o;
+					pos.x = oo.data[0];
+					pos.y = oo.data[1];
+					pos.z = oo.data[2];
+				} else if(o instanceof Point2) {
+					Point2 oo = (Point2) o;
+					pos.x = oo.x;
+					pos.y = oo.y;
+					pos.z = 0;
+				} else if(o instanceof Vector2) {
+					Vector2 oo = (Vector2) o;
+					pos.x = oo.data[0];
+					pos.y = oo.data[1];
+					pos.z = 0;
+				} else {
+					System.err.printf("Do not know how to handle xyz attribute %s%n", o.getClass().getName());
 				}
 			}
+			
 		} else if (node.hasAttribute("x")) {
 			pos.x = (double) node.getNumber("x");
 
@@ -340,6 +398,34 @@ public class GraphPosLengthUtils {
 			if (node.hasAttribute("z"))
 				pos.z = (double) node.getNumber("z");
 		}
+
+//		if (node.hasAttribute("xyz") || node.hasAttribute("xy")) {
+//			Object o = node.getAttribute("xyz");
+//
+//			if (o == null)
+//				o = node.getAttribute("xy");
+//
+//			if (o != null && o instanceof Object[]) {
+//				Object oo[] = (Object[]) o;
+//
+//				if (oo.length > 0 && oo[0] instanceof Number) {
+//					pos.x = ((Number) oo[0]).doubleValue();
+//
+//					if (oo.length > 1)
+//						pos.y = ((Number) oo[1]).doubleValue();
+//					if (oo.length > 2)
+//						pos.z = ((Number) oo[2]).doubleValue();
+//				}
+//			}
+//		} else if (node.hasAttribute("x")) {
+//			pos.x = (double) node.getNumber("x");
+//
+//			if (node.hasAttribute("y"))
+//				pos.y = (double) node.getNumber("y");
+//
+//			if (node.hasAttribute("z"))
+//				pos.z = (double) node.getNumber("z");
+//		}
 	}
 
 	/**

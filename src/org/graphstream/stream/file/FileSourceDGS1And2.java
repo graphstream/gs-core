@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -54,7 +55,7 @@ import java.util.zip.GZIPInputStream;
  * href="http://graphstream-project.org/">http://graphstream-project.org/</a>
  * </p>
  * 
- * @see FileSourceDGS
+ * @see OldFileSourceDGS
  * @see FileSource
  */
 public class FileSourceDGS1And2 extends FileSourceBase {

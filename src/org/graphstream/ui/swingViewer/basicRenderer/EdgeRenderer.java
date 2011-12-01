@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -74,14 +75,13 @@ public class EdgeRenderer extends ElementRenderer {
 		g.setColor(color);
 
 		if (group.getSizeMode() == SizeMode.DYN_SIZE) {
-			width = camera.getMetrics()
-					.lengthToGu(
-							StyleConstants.convertValue(element
-									.getAttribute("ui.size")));
+			width = camera.getMetrics().lengthToGu(
+					StyleConstants
+							.convertValue(element.getAttribute("ui.size")));
 			// width = camera.getMetrics().lengthToGu( (double)
 			// element.getNumber( "ui.size" ), Units.PX );
 
-			g.setStroke(new BasicStroke((float)width, BasicStroke.CAP_BUTT,
+			g.setStroke(new BasicStroke((float) width, BasicStroke.CAP_BUTT,
 					BasicStroke.JOIN_BEVEL));
 		}
 	}
@@ -94,7 +94,7 @@ public class EdgeRenderer extends ElementRenderer {
 				group.getArrowSize().size() > 1 ? 1 : 0);
 
 		g.setColor(group.getFillColor(0));
-		g.setStroke(new BasicStroke((float)width, BasicStroke.CAP_BUTT,
+		g.setStroke(new BasicStroke((float) width, BasicStroke.CAP_BUTT,
 				BasicStroke.JOIN_BEVEL));
 	}
 
@@ -119,27 +119,27 @@ public class EdgeRenderer extends ElementRenderer {
 	protected void renderArrow(StyleGroup group, Graphics2D g, Camera camera,
 			GraphicEdge edge) {
 		if (edge.isDirected() && arrowWidth > 0 && arrowLength > 0) {
-			if (group.getArrowShape()!=ArrowShape.NONE) {
+			if (group.getArrowShape() != ArrowShape.NONE) {
 				Path2D shape = new Path2D.Double();
 				GraphicNode node0 = (GraphicNode) edge.getNode0();
 				GraphicNode node1 = (GraphicNode) edge.getNode1();
 				double off = evalEllipseRadius(edge, node0, node1, camera);
 				Vector2 theDirection = new Vector2(node1.getX() - node0.getX(),
 						node1.getY() - node0.getY());
-	
+
 				theDirection.normalize();
-	
+
 				double x = node1.x - (theDirection.data[0] * off);
 				double y = node1.y - (theDirection.data[1] * off);
 				Vector2 perp = new Vector2(theDirection.data[1],
 						-theDirection.data[0]);
-	
+
 				perp.normalize();
 				theDirection.scalarMult(arrowLength);
 				perp.scalarMult(arrowWidth);
-	
+
 				// Create a polygon.
-	
+
 				shape.reset();
 				shape.moveTo(x, y);
 				shape.lineTo(x - theDirection.data[0] + perp.data[0], y
@@ -147,7 +147,7 @@ public class EdgeRenderer extends ElementRenderer {
 				shape.lineTo(x - theDirection.data[0] - perp.data[0], y
 						- theDirection.data[1] - perp.data[1]);
 				shape.closePath();
-	
+
 				g.fill(shape);
 			}
 		}
@@ -157,8 +157,8 @@ public class EdgeRenderer extends ElementRenderer {
 			GraphicNode node1, Camera camera) {
 		Values size = node0.getStyle().getSize();
 		double w = camera.getMetrics().lengthToGu(size.get(0), size.getUnits());
-		double h = size.size() > 1 ? camera.getMetrics().lengthToGu(size.get(1),
-				size.getUnits()) : w;
+		double h = size.size() > 1 ? camera.getMetrics().lengthToGu(
+				size.get(1), size.getUnits()) : w;
 
 		if (w == h)
 			return w / 2; // Welcome simplification for circles ...
@@ -181,7 +181,7 @@ public class EdgeRenderer extends ElementRenderer {
 		// Compute the coordinates at which the entering vector and the ellipse
 		// cross.
 
-		a  = Math.acos(a);
+		a = Math.acos(a);
 		dx = Math.cos(a) * w;
 		dy = Math.sin(a) * h;
 

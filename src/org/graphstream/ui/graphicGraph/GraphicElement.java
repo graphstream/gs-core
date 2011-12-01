@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -68,12 +69,10 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
  * </p>
  */
 public abstract class GraphicElement extends AbstractElement {
-	// Nested interfaces
-
-	public interface SwingElementRenderer {
-	}
-
-	// Attribute
+	/**
+	 * Interface for renderers registered in each style group.
+	 */
+	public interface SwingElementRenderer {}
 
 	/**
 	 * Graph containing this element.
@@ -100,8 +99,6 @@ public abstract class GraphicElement extends AbstractElement {
 	 */
 	public boolean hidden = false;
 	
-	// Construction
-
 	/**
 	 * New element.
 	 */
@@ -110,20 +107,18 @@ public abstract class GraphicElement extends AbstractElement {
 		this.mygraph = graph;
 	}
 
-	// Access
-
 	public GraphicGraph myGraph() {
 		return mygraph;
 	}
 
 	@Override
-	protected String myGraphId() // XXX
+	protected String myGraphId()
 	{
 		return mygraph.getId();
 	}
 
 	@Override
-	protected long newEvent() // XXX
+	protected long newEvent()
 	{
 		return mygraph.newEvent();
 	}
@@ -149,8 +144,6 @@ public abstract class GraphicElement extends AbstractElement {
 
 	/**
 	 * Label or null if not set.
-	 * 
-	 * @return A string or null.
 	 */
 	public String getLabel() {
 		return label;

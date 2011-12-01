@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -40,10 +41,10 @@ import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.graphstream.stream.SourceBase;
-import org.graphstream.ui.geom.Bounds3;
 import org.graphstream.ui.geom.Point3;
 
 /**
@@ -113,7 +114,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	/**
 	 * No-op constructor.
 	 */
-	FileSourceBase() {
+	protected FileSourceBase() {
 	}
 
 	/**
@@ -122,7 +123,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	 * @param eol_is_significant
 	 *            If true EOL will be returned as a token, else it is ignored.
 	 */
-	FileSourceBase(boolean eol_is_significant) {
+	protected FileSourceBase(boolean eol_is_significant) {
 		this.eol_is_significant = eol_is_significant;
 	}
 
@@ -137,7 +138,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	 * @param quoteChar
 	 *            Character used to enclose quotations.
 	 */
-	FileSourceBase(boolean eol_is_significant, int commentChar, int quoteChar) {
+	protected FileSourceBase(boolean eol_is_significant, int commentChar, int quoteChar) {
 		this.eol_is_significant = eol_is_significant;
 
 		this.COMMENT_CHAR = commentChar;
@@ -491,7 +492,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 		int tok = st.nextToken();
 
 		if (tok != StreamTokenizer.TT_WORD)
-			parseError("expecting one of `" + words + "', " + gotWhat(tok));
+			parseError("expecting one of `[" + Arrays.toString(words) + "]', " + gotWhat(tok));
 
 		boolean found = false;
 
@@ -503,7 +504,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 		}
 
 		if (!found)
-			parseError("expecting one of `" + words + ", got `" + st.sval + "'");
+			parseError("expecting one of `[" + Arrays.toString(words) + "]', got `" + st.sval + "'");
 	}
 
 	/**
@@ -1016,7 +1017,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 						// exception.
 	}
 
-	// Ordre: Word | String | Symbol | Number | Eol | Eof
+	// Order: Word | String | Symbol | Number | Eol | Eof
 
 	/**
 	 * Read a word or number or string or EOL/EOF or generate a parse error. If
@@ -1221,10 +1222,9 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 				+ "' not in a valid point3 format");
 	}
 
-	/**
+	/*
 	 * Get a number triplet with numbers separated by comas and return new
 	 * bounds for it. For example "0,1,2".
-	 */
 	protected Bounds3 getBounds3(String value) throws NumberFormatException {
 		int p0 = value.indexOf(',');
 		int p1 = value.indexOf(',', p0 + 1);
@@ -1247,6 +1247,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 		throw new NumberFormatException("value '" + value
 				+ "' not in a valid point3 format");
 	}
+	 */
 
 	// Nested classes
 

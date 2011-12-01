@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -211,11 +212,13 @@ public class Viewer implements ActionListener {
 		case GRAPH_IN_SWING_THREAD:
 			graphInAnotherThread = false;
 			init(new GraphicGraph(newGGId()), (ProxyPipe) null, graph);
+			enableXYZfeedback(true);
 			break;
 		case GRAPH_IN_ANOTHER_THREAD:
 			graphInAnotherThread = true;
 			init(new GraphicGraph(newGGId()), new ThreadProxyPipe(graph, true),
 					(Source) null);
+			enableXYZfeedback(false);
 			break;
 		case GRAPH_ON_NETWORK:
 			throw new RuntimeException("TO DO, sorry !:-)");
@@ -350,6 +353,7 @@ public class Viewer implements ActionListener {
 	 * @return The new viewer pipe.
 	 */
 	public ViewerPipe newViewerPipe() {
+		enableXYZfeedback(true);
 		return new ViewerPipe(String.format("viewer_%d",
 				(int) (Math.random() * 10000)), new ThreadProxyPipe(graph,
 				false));
@@ -529,7 +533,7 @@ public class Viewer implements ActionListener {
 			Point3 hi = graph.getMaxPos();
 
 			for (View view : views.values())
-				view.setBounds(lo.x, lo.y, lo.z, hi.x, hi.y, hi.z);
+				view.getCamera().setBounds(lo.x, lo.y, lo.z, hi.x, hi.y, hi.z);
 		}
 	}
 
@@ -550,6 +554,14 @@ public class Viewer implements ActionListener {
 	/**
 	 * Enable or disable the "xyz" attribute change when a node is moved in the
 	 * views. By default the "xyz" attribute is changed.
+	 * 
+	 * By default, each time a node of the graphic graph is moved, its "xyz" attribute is reset
+	 * to follow the node position. This is useful only if someone listen at the graphic graph
+	 * or use the graphic graph directly. But this operation is quite costly. Therefore by default
+	 * if this viewer runs in its own thread, and the main graph is in another thread, xyz attribute
+	 * change will be disabled until a listener is added.
+	 * 
+	 * When the viewer is created to be used only in the swing thread, this feature is always on.
 	 */
 	public void enableXYZfeedback(boolean on) {
 		synchronized(views) {

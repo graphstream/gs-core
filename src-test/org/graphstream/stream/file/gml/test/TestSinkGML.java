@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -28,7 +29,6 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-
 package org.graphstream.stream.file.gml.test;
 
 import java.io.IOException;
@@ -37,7 +37,9 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.stream.file.FileSinkDynamicGML;
 import org.graphstream.stream.file.FileSinkGML;
+import org.junit.Ignore;
 
+@Ignore
 public class TestSinkGML {
 	public static void main(String args[]) {
 		try {

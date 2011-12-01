@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -37,11 +38,11 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -58,6 +59,7 @@ import org.graphstream.ui.graphicGraph.stylesheet.Value;
 import org.graphstream.ui.swingViewer.GraphRendererBase;
 import org.graphstream.ui.swingViewer.LayerRenderer;
 import org.graphstream.ui.swingViewer.util.Camera;
+import org.graphstream.ui.swingViewer.util.DefaultCamera;
 import org.graphstream.ui.swingViewer.util.GraphMetrics;
 
 /**
@@ -81,7 +83,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 	/**
 	 * Set the view on the view port defined by the metrics.
 	 */
-	protected Camera camera = new Camera();
+	protected DefaultCamera camera = null;
 
 	protected NodeRenderer nodeRenderer = new NodeRenderer();
 
@@ -92,6 +94,14 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 	protected LayerRenderer backRenderer = null;
 
 	protected LayerRenderer foreRenderer = null;
+	
+	protected PrintStream fpsLog = null;
+	
+	protected long T1 = 0;
+	
+	protected long steps = 0;
+	
+	protected double sumFps = 0;
 
 	// Construction
 
@@ -101,29 +111,25 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 	@Override
 	public void open(GraphicGraph graph, Container renderingSurface) {
 		super.open(graph, renderingSurface);
+		camera = new DefaultCamera(graph);
 	}
 
 	@Override
 	public void close() {
+		if(fpsLog != null) {
+			fpsLog.flush();
+			fpsLog.close();
+			fpsLog = null;
+		}
+		
+		camera = null;
 		super.close();
 	}
 
 	// Access
 
-	public Point3 getViewCenter() {
-		return camera.getViewCenter();
-	}
-
-	public double getViewPercent() {
-		return camera.getViewPercent();
-	}
-
-	public double getViewRotation() {
-		return camera.getViewRotation();
-	}
-
-	public double getGraphDimension() {
-		return camera.getMetrics().diagonal;
+	public Camera getCamera() {
+		return camera;
 	}
 
 	public ArrayList<GraphicElement> allNodesOrSpritesIn(double x1, double y1,
@@ -137,15 +143,11 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 
 	// Command
 
-	public void setBounds(double minx, double miny, double minz, double maxx,
-			double maxy, double maxz) {
-		camera.getMetrics().setBounds(minx, miny, minz, maxx, maxy, maxz);
-	}
-
 	public void render(Graphics2D g, int width, int height) {
-		if (graph != null) // If not closed, one or two renders can occur after
-							// closed.
-		{
+		// If not closed, one or two renders can occur after closed.
+		if (graph != null) {
+			beginFrame();
+			
 			if (camera.getGraphViewport() == null
 					&& camera.getMetrics().diagonal == 0
 					&& (graph.getNodeCount() == 0 && graph.getSpriteCount() == 0)) {
@@ -153,47 +155,42 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 			} else {
 				camera.setPadding(graph);
 				camera.setViewport(width, height);
-				// System.err.printf( "%s", camera );
-				// debugVisibleArea( g );
 				renderGraph(g);
 				renderSelection(g);
 			}
+			
+			endFrame();
+		}
+	}
+	
+	protected void beginFrame() {
+		if(graph.hasLabel("ui.log") && fpsLog == null) {
+			try {
+				fpsLog = new PrintStream(graph.getLabel("ui.log").toString());
+			} catch(IOException e) {
+				fpsLog = null;
+				e.printStackTrace();
+			}
+		}
+		
+		if(fpsLog != null) {
+			T1 = System.currentTimeMillis();
+		}
+	}
+	
+	protected void endFrame() {
+		if(fpsLog != null) {
+			steps += 1;
+			long T2 = System.currentTimeMillis();
+			long time = T2 - T1;
+			double fps = 1000.0 / time;
+			sumFps += fps;
+			fpsLog.printf("%.3f   %d   %.3f%n", fps, time, (sumFps/steps));
 		}
 	}
 
-	public void resetView() {
-		camera.setAutoFitView(true);
-		camera.setRotation(0);
-	}
-
-	public void setViewCenter(double x, double y, double z) {
-		camera.setAutoFitView(false);
-		camera.setCenter(x, y /* ignore Z */);
-	}
-
-	public void setGraphViewport(double minx, double miny, double maxx, double maxy) {
-		camera.setAutoFitView(false);
-		camera.setCenter(minx + (maxx - minx), miny + (maxy - miny));
-		camera.setGraphViewport(minx, miny, maxx, maxy);
-		camera.setZoom(1);
-	}
-
-	public void removeGraphViewport() {
-		camera.removeGraphViewport();
-		resetView();
-	}
-
-	public void setViewPercent(double percent) {
-		camera.setAutoFitView(false);
-		camera.setZoom(percent);
-	}
-
-	public void setViewRotation(double theta) {
-		camera.setRotation(theta);
-	}
-
 	public void moveElementAtPx(GraphicElement element, double x, double y) {
-		Point2D.Double p = camera.inverseTransform(x, y);
+		Point3 p = camera.transformPxToGu(x, y);
 		element.move(p.x, p.y, element.getZ());
 	}
 

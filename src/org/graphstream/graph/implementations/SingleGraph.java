@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -30,92 +31,73 @@
  */
 package org.graphstream.graph.implementations;
 
-import org.graphstream.graph.EdgeFactory;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
 import org.graphstream.graph.NodeFactory;
 
 /**
- * A graph implementation that supports only one edge between two nodes.
- * 
- * <p>
- * This implementation is only a subclass of {@link DefaultGraph} that renames
- * it and add no behaviour. It is here for clarity only, you can use
- * {@link DefaultGraph} instead. If you use both multi-graphs and single-graphs,
- * it can be cleaner to use the classes named {@link MultiGraph} and
- * {@link SingleGraph}.
- * </p>
+ * An implementation of graph that supports only one edge between two nodes.
  */
-public class SingleGraph extends DefaultGraph {
-	/**
-	 * New empty graph, with a default identifier.
-	 * 
-	 * @see #SingleGraph(String)
-	 * @see #SingleGraph(boolean, boolean)
-	 * @see #SingleGraph(String, boolean, boolean)
-	 */
-	@Deprecated
-	public SingleGraph() {
-		this("SingleGraph");
-	}
+public class SingleGraph extends AdjacencyListGraph {
 
 	/**
-	 * New empty graph.
+	 * Creates an empty graph.
 	 * 
 	 * @param id
 	 *            Unique identifier of the graph.
-	 * @see #SingleGraph(boolean, boolean)
-	 * @see #SingleGraph(String, boolean, boolean)
+	 * @param strictChecking
+	 *            If true any non-fatal error throws an exception.
+	 * @param autoCreate
+	 *            If true (and strict checking is false), nodes are
+	 *            automatically created when referenced when creating a edge,
+	 *            even if not yet inserted in the graph.
+	 * @param initialNodeCapacity
+	 *            Initial capacity of the node storage data structures. Use this
+	 *            if you know the approximate maximum number of nodes of the
+	 *            graph. The graph can grow beyond this limit, but storage
+	 *            reallocation is expensive operation.
+	 * @param initialEdgeCapacity
+	 *            Initial capacity of the edge storage data structures. Use this
+	 *            if you know the approximate maximum number of edges of the
+	 *            graph. The graph can grow beyond this limit, but storage
+	 *            reallocation is expensive operation.
+	 */
+	public SingleGraph(String id, boolean strictChecking, boolean autoCreate,
+			int initialNodeCapacity, int initialEdgeCapacity) {
+		super(id, strictChecking, autoCreate, initialNodeCapacity,
+				initialEdgeCapacity);
+		// All we need to do is to change the node factory
+		setNodeFactory(new NodeFactory<SingleNode>() {
+			public SingleNode newInstance(String id, Graph graph) {
+				return new SingleNode((AbstractGraph) graph, id);
+			}
+		});
+	}
+
+	/**
+	 * Creates an empty graph with default edge and node capacity.
+	 * 
+	 * @param id
+	 *            Unique identifier of the graph.
+	 * @param strictChecking
+	 *            If true any non-fatal error throws an exception.
+	 * @param autoCreate
+	 *            If true (and strict checking is false), nodes are
+	 *            automatically created when referenced when creating a edge,
+	 *            even if not yet inserted in the graph.
+	 */
+	public SingleGraph(String id, boolean strictChecking, boolean autoCreate) {
+		this(id, strictChecking, autoCreate, DEFAULT_NODE_CAPACITY,
+				DEFAULT_EDGE_CAPACITY);
+	}
+
+	/**
+	 * Creates an empty graph with strict checking and without auto-creation.
+	 * 
+	 * @param id
+	 *            Unique identifier of the graph.
 	 */
 	public SingleGraph(String id) {
 		this(id, true, false);
 	}
 
-	/**
-	 * New empty graph, with a default identifier.
-	 * 
-	 * @param strictChecking
-	 *            If true any non-fatal error throws an exception.
-	 * @param autoCreate
-	 *            If true (and strict checking is false), nodes are
-	 *            automatically created when referenced when creating a edge,
-	 *            even if not yet inserted in the graph.
-	 * @see #SingleGraph(String, boolean, boolean)
-	 * @see #setStrict(boolean)
-	 * @see #setAutoCreate(boolean)
-	 */
-	@Deprecated
-	public SingleGraph(boolean strictChecking, boolean autoCreate) {
-		this("SingleGraph", strictChecking, autoCreate);
-	}
-
-	/**
-	 * New empty graph.
-	 * 
-	 * @param id
-	 *            Unique identifier of this graph.
-	 * @param strictChecking
-	 *            If true any non-fatal error throws an exception.
-	 * @param autoCreate
-	 *            If true (and strict checking is false), nodes are
-	 *            automatically created when referenced when creating a edge,
-	 *            even if not yet inserted in the graph.
-	 * @see #setStrict(boolean)
-	 * @see #setAutoCreate(boolean)
-	 */
-	public SingleGraph(String id, boolean strictChecking, boolean autoCreate) {
-		super(id, strictChecking, autoCreate);
-
-		nodeFactory = new NodeFactory<SingleNode>() {
-			public SingleNode newInstance(String id, Graph graph) {
-				return new SingleNode(graph, id);
-			}
-		};
-		edgeFactory = new EdgeFactory<SingleEdge>() {
-			public SingleEdge newInstance(String id, Node src, Node dst,
-					boolean directed) {
-				return new SingleEdge(id, src, dst, directed);
-			}
-		};
-	}
 }

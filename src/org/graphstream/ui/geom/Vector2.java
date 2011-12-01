@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -108,13 +109,6 @@ public class Vector2 implements java.io.Serializable {
 	}
 
 	/**
-	 * Is this equal to other ?
-	 */
-	public boolean equals(Vector2 other) {
-		return (data[0] == other.data[0] && data[1] == other.data[1]);
-	}
-
-	/**
 	 * Is i the index of a component ?
 	 * 
 	 * In other words, is i &gt;= 0 &amp;&amp; &lt; than #count() ?
@@ -198,7 +192,7 @@ public class Vector2 implements java.io.Serializable {
 	}
 
 	/**
-	 * Substract each element of other to the corresponding element of this.
+	 * Subtract each element of other to the corresponding element of this.
 	 */
 	public void sub(Vector2 other) {
 		data[0] -= other.data[0];

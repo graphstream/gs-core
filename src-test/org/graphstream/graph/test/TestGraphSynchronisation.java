@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -30,7 +31,10 @@
  */
 package org.graphstream.graph.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
@@ -56,6 +60,7 @@ public class TestGraphSynchronisation {
 		testGraphSyncBase(new AdjacencyListGraph("g1"), new AdjacencyListGraph(
 				"g2"));
 		testGraphSyncBase(new MultiGraph("g1"), new AdjacencyListGraph("g2"));
+		
 	}
 
 	protected void testGraphSyncBase(Graph g1, Graph g2) {

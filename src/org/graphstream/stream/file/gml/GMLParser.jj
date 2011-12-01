@@ -149,12 +149,13 @@ void all() throws IOException:
 	String key;
 }
 {
-	( graphStart()         { inGraph = true; ctx.setDirected(false); }
-	| diGraphStart()       { inGraph = true; ctx.setDirected(true); }
-	| graphEnd()           { values.key = null; inGraph = false; }
+	( graphStart()         { ctx.setIsInGraph(true); ctx.setDirected(false); }
+	| diGraphStart()       { ctx.setIsInGraph(true); ctx.setDirected(true); }
 	)
 	
 	( key=keyValue(values) { values.key = key; ctx.handleKeyValues(values); values.clear(); } )*
+
+	graphEnd()           { values.key = null; inGraph = false; }
 	
 	<EOF>
 }
@@ -237,7 +238,7 @@ Object value(String key):
 	KeyValues kv;
 }
 {
-	( t=<REAL>   { val = t.image; }
+	( t=<REAL>   { if (t.image.indexOf('.') < 0) val = Integer.valueOf(t.image); else val = Double.valueOf(t.image); }
 	| t=<STRING> { val = t.image.substring(1, t.image.length()-1); }
 	| t=<KEY>    { val = t.image; }
 	| <LSQBR>  kv = list() { val = kv; } <RSQBR>

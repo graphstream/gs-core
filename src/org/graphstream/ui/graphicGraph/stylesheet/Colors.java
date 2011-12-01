@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -37,6 +38,8 @@ import java.util.ArrayList;
  * Ordered set of colours.
  */
 public class Colors extends ArrayList<Color> {
+	private static final long serialVersionUID = - 7218092114483593610L;
+
 	/**
 	 * New empty colour set.
 	 */

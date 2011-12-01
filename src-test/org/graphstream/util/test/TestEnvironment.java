@@ -1,6 +1,6 @@
 /*
  * Copyright 2006 - 2011 
- *     Stefan Balev        <stefan.balev@graphstream-project.org>
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -35,6 +35,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.graphstream.util.Environment;
+import org.junit.Ignore;
 
 /**
  * Tests the {@link org.util.Environment} class and shows an example of use.
@@ -43,6 +44,8 @@ import org.graphstream.util.Environment;
  * @author Antoine Dutot
  * @since  20061108
  */
+
+@Ignore
 public class TestEnvironment
 {
 // Attributes

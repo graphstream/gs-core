@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -41,9 +42,9 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
-import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
+import org.graphstream.ui.swingViewer.util.Camera;
 import org.graphstream.ui.swingViewer.util.MouseManager;
 import org.graphstream.ui.swingViewer.util.ShortcutManager;
 
@@ -109,6 +110,7 @@ import org.graphstream.ui.swingViewer.util.ShortcutManager;
  */
 public class DefaultView extends View implements ComponentListener,
 		WindowListener {
+	private static final long serialVersionUID = - 4489484861592064398L;
 	// Attribute
 
 	/**
@@ -173,6 +175,11 @@ public class DefaultView extends View implements ComponentListener,
 
 	// Command
 
+	@Override
+	public Camera getCamera() {
+		return renderer.getCamera();
+	}
+	
 	@Override
 	public void display(GraphicGraph graph, boolean graphChanged) {
 		this.graphChanged = graphChanged;
@@ -361,70 +368,8 @@ public class DefaultView extends View implements ComponentListener,
 	}
 
 	@Override
-	public double getGraphDimension() {
-		return renderer.getGraphDimension();
-	}
-
-	@Override
-	public Point3 getViewCenter() {
-		return renderer.getViewCenter();
-	}
-
-	@Override
-	public double getViewPercent() {
-		return renderer.getViewPercent();
-	}
-
-	@Override
-	public double getViewRotation() {
-		return renderer.getViewRotation();
-	}
-
-	@Override
 	public void moveElementAtPx(GraphicElement element, double x, double y) {
 		renderer.moveElementAtPx(element, x, y);
-	}
-
-	@Override
-	public void resetView() {
-		renderer.resetView();
-		canvasChanged = true;
-	}
-
-	@Override
-	public void setBounds(double minx, double miny, double minz, double maxx,
-			double maxy, double maxz) {
-		renderer.setBounds(minx, miny, minz, maxx, maxy, maxz);
-	}
-
-	@Override
-	public void setViewCenter(double x, double y, double z) {
-		renderer.setViewCenter(x, y, z);
-		canvasChanged = true;
-	}
-
-	@Override
-	public void setGraphViewport(double minx, double miny, double maxx, double maxy) {
-		renderer.setGraphViewport(minx, miny, maxx, maxy);
-		canvasChanged = true;
-	}
-
-	@Override
-	public void removeGraphViewport() {
-		renderer.removeGraphViewport();
-		canvasChanged = true;
-	}
-
-	@Override
-	public void setViewPercent(double percent) {
-		renderer.setViewPercent(percent);
-		canvasChanged = true;
-	}
-
-	@Override
-	public void setViewRotation(double theta) {
-		renderer.setViewRotation(theta);
-		canvasChanged = true;
 	}
 
 	@Override
