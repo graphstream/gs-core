@@ -155,6 +155,13 @@ public class DGSParser implements Parser {
 
 		c = buffer.get();
 
+		if (c == '\r') {
+			if (buffer.hasRemaining())
+				return buffer.get();
+			
+			return nextChar();
+		}
+		
 		if (c == '\n') {
 			line++;
 			column = 0;
