@@ -127,7 +127,7 @@ public class TestGraphSynchronisationProxyThread {
 		// ****************************************************************************************
 		// Now we can begin the real test. We ensure the timer in the Swing
 		// graph stopped and check
-		// If the two graphs (main and graphic) synchronised correctly.
+		// If the two graphs (main and graphic) synchronized correctly.
 
 		GraphicGraph graphic = viewerThread.graphic;
 
@@ -137,8 +137,8 @@ public class TestGraphSynchronisationProxyThread {
 		assertTrue(main.hasAttribute("ui.STOP"));
 		assertTrue(graphic.hasAttribute("ui.STOP"));
 
-		assertEquals(3, graphic.getStep());
-		assertEquals(2, main.getStep()); // We do not listen at elements events
+		assertEquals(3, graphic.getStep(), 0);
+		assertEquals(2, main.getStep(), 0); // We do not listen at elements events
 											// the step 3
 											// of the graphic graph did not
 											// reached us.
@@ -164,9 +164,9 @@ public class TestGraphSynchronisationProxyThread {
 
 		// Assert attributes passed back to the graph from the graphic graph.
 
-		Object xyz1[] = { new Float(4), new Float(3), new Float(2) };
-		Object xyz2[] = { new Float(2), new Float(1), new Float(0) };
-		Object xyz3[] = { new Float(3), new Float(2), new Float(1) };
+		Object xyz1[] = { 4, 3, 2 };
+		Object xyz2[] = { 2, 1, 0 };
+		Object xyz3[] = { 3, 2, 1 };
 
 		assertArrayEquals(xyz1, (Object[]) main.getNode("A")
 				.getAttribute("xyz"));
@@ -179,16 +179,16 @@ public class TestGraphSynchronisationProxyThread {
 
 		GraphicSprite gs3 = graphic.getSprite("S3");
 
-		assertEquals(0.5f, S1.getX());
-		assertEquals(0, S1.getY());
-		assertEquals(0, S1.getZ());
-		assertEquals(1, S2.getX());
-		assertEquals(2, S2.getY());
-		assertEquals(3, S2.getZ());
+		assertEquals(0.5f, S1.getX(),0);
+		assertEquals(0, S1.getY(),0);
+		assertEquals(0, S1.getZ(),0);
+		assertEquals(1, S2.getX(),0);
+		assertEquals(2, S2.getY(),0);
+		assertEquals(3, S2.getZ(),0);
 
-		assertEquals(3, gs3.getX());
-		assertEquals(2, gs3.getY());
-		assertEquals(1, gs3.getZ());
+		assertEquals(3, gs3.getX(),0);
+		assertEquals(2, gs3.getY(),0);
+		assertEquals(1, gs3.getZ(),0);
 	}
 
 	protected void sleep(int millis) {
