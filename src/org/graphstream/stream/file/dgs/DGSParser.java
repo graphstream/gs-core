@@ -158,10 +158,10 @@ public class DGSParser implements Parser {
 		if (c == '\r') {
 			if (buffer.hasRemaining())
 				return buffer.get();
-			
+
 			return nextChar();
 		}
-		
+
 		if (c == '\n') {
 			line++;
 			column = 0;
@@ -174,7 +174,7 @@ public class DGSParser implements Parser {
 	protected void pushback(int c) throws IOException {
 		if (c < 0)
 			return;
-		
+
 		if (pushbackOffset + 1 >= pushback.length)
 			throw new IOException("pushback buffer overflow");
 
@@ -385,12 +385,15 @@ public class DGSParser implements Parser {
 
 		if (key == null)
 			throw parseException("attribute key expected");
-
+		
 		if (ch != AttributeChangeEvent.REMOVE) {
+
+			skipWhitespaces();
 			c = nextChar();
 
 			if (c == '=' || c == ':') {
-				value = value();
+				skipWhitespaces();
+				value = value(true);
 			} else {
 				value = Boolean.TRUE;
 				pushback(c);
@@ -401,12 +404,13 @@ public class DGSParser implements Parser {
 				value);
 	}
 
-	protected Object value() throws IOException, ParseException {
+	protected Object value(boolean array) throws IOException, ParseException {
 		int c;
 		LinkedList<Object> l = null;
 		Object o;
 
 		do {
+			skipWhitespaces();
 			c = nextChar();
 			pushback(c);
 
@@ -419,7 +423,21 @@ public class DGSParser implements Parser {
 				o = color();
 				break;
 			case ARRAY_OPEN:
-				o = array();
+				//
+				// Skip ARRAY_OPEN
+				nextChar();
+				//
+
+				skipWhitespaces();
+				o = value(true);
+				skipWhitespaces();
+				
+				//
+				// Check if next char is ARRAY_CLOSE
+				if (nextChar() != ARRAY_CLOSE)
+					throw parseException("'%c' expected", ARRAY_CLOSE);
+				//
+				
 				break;
 			case MAP_OPEN:
 				o = map();
@@ -454,12 +472,12 @@ public class DGSParser implements Parser {
 
 			c = nextChar();
 
-			if (l == null && c == ',') {
+			if (l == null && array && c == ',') {
 				l = new LinkedList<Object>();
 				l.add(o);
 			} else if (l != null)
 				l.add(o);
-		} while (c == ',');
+		} while (array && c == ',');
 
 		pushback(c);
 
@@ -530,7 +548,7 @@ public class DGSParser implements Parser {
 
 		while (c != ARRAY_CLOSE) {
 			pushback(c);
-			array.add(value());
+			array.add(value(false));
 
 			skipWhitespaces();
 			c = nextChar();
@@ -575,7 +593,8 @@ public class DGSParser implements Parser {
 			c = nextChar();
 
 			if (c == '=' || c == ':') {
-				value = value();
+				skipWhitespaces();
+				value = value(false);
 			} else {
 				value = Boolean.TRUE;
 				pushback(c);
@@ -605,6 +624,9 @@ public class DGSParser implements Parser {
 	protected Token directive() throws IOException, ParseException {
 		int c1, c2;
 
+		//
+		// Skip comment and empty lines
+		//
 		do {
 			c1 = nextChar();
 
@@ -613,7 +635,7 @@ public class DGSParser implements Parser {
 
 			if (c1 < 0)
 				return Token.EOF;
-		} while (c1 == '#');
+		} while (c1 == '#' || c1 == '\n');
 
 		c2 = nextChar();
 
