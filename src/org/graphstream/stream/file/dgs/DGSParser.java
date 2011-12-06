@@ -217,7 +217,7 @@ public class DGSParser implements Parser {
 					dgs[0], dgs[1], dgs[2]));
 
 		if (nextChar() != '\n')
-			throw new IOException("end-of-line is missing");
+			throw parseException("end-of-line is missing");
 
 		skipLine();
 	}
@@ -385,7 +385,7 @@ public class DGSParser implements Parser {
 
 		if (key == null)
 			throw parseException("attribute key expected");
-		
+
 		if (ch != AttributeChangeEvent.REMOVE) {
 
 			skipWhitespaces();
@@ -431,13 +431,16 @@ public class DGSParser implements Parser {
 				skipWhitespaces();
 				o = value(true);
 				skipWhitespaces();
-				
+
 				//
 				// Check if next char is ARRAY_CLOSE
 				if (nextChar() != ARRAY_CLOSE)
 					throw parseException("'%c' expected", ARRAY_CLOSE);
 				//
-				
+
+				if (!o.getClass().isArray())
+					o = new Object[] { o };
+
 				break;
 			case MAP_OPEN:
 				o = map();

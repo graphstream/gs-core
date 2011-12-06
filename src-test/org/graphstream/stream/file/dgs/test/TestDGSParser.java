@@ -41,6 +41,7 @@ import static org.junit.Assert.fail;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +51,7 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.stream.file.FileSourceDGS;
+import org.graphstream.util.parser.ParseException;
 import org.junit.Test;
 
 public class TestDGSParser {
@@ -65,10 +67,10 @@ public class TestDGSParser {
 		in.addSink(g);
 		in.readAll(getClass().getResourceAsStream(resource));
 		in.removeSink(g);
-		
+
 		return g;
 	}
-	
+
 	@Test
 	public void testArrayAttribute() throws IOException {
 		Graph g = getGraph("data/attributes_array.dgs");
@@ -101,10 +103,10 @@ public class TestDGSParser {
 
 		void check(Element e) {
 			Object obj = e.getAttribute(key);
-			
+
 			if (expected.getClass().isArray()) {
 				Object[] objArray = (Object[]) obj;
-				
+
 				assertTrue(clazz.isAssignableFrom(objArray[0].getClass()));
 				assertArrayEquals((Object[]) expected, objArray);
 			} else {
@@ -117,11 +119,13 @@ public class TestDGSParser {
 	@Test
 	public void testAttributes() throws IOException {
 		Graph g = getGraph("data/attributes.dgs");
-		HashMap<String,Integer> map = new HashMap<String,Integer>();
-		
+
+		HashMap<String, Integer> map = new HashMap<String, Integer>();
 		map.put("a", 1);
 		map.put("b", 2);
 		map.put("c", 3);
+
+		Object[][] aoa = { { 1, 2 }, { 3 }, { 4, 5 } };
 
 		Attribute[] attributes = {
 				new Attribute("int", Integer.class, Integer.valueOf(123)),
@@ -130,52 +134,113 @@ public class TestDGSParser {
 				new Attribute("word", String.class, "aWord"),
 				new Attribute("color", Color.class, Color.RED),
 				new Attribute("map", Map.class, map),
-				new Attribute("array", Integer.class,
-						new Object[] { 1, 2, 3 })
-		};
+				new Attribute("array", Integer.class, new Object[] { 1, 2, 3 }),
+				new Attribute("aoa", Object[].class, aoa) };
 
 		for (Node n : g) {
-			for(Attribute a : attributes)
+			for (Attribute a : attributes)
 				a.check(n);
 		}
 	}
-	
+
 	@Test
 	public void testElements() throws IOException {
 		Graph g = getGraph("data/elements.dgs");
-		
+
 		Node A, B, C;
 		Edge AB, AC, BC;
-		
+
 		A = g.getNode("A");
 		B = g.getNode("B");
 		C = g.getNode("C");
-		
+
 		assertEquals(g.getNodeCount(), 3);
-		
+
 		assertNotNull(A);
 		assertNotNull(B);
 		assertNotNull(C);
-		
+
 		AB = g.getEdge("AB");
 		AC = g.getEdge("AC");
 		BC = g.getEdge("BC");
-		
+
 		assertEquals(g.getEdgeCount(), 3);
-		
+
 		assertNotNull(AB);
 		assertNotNull(AC);
 		assertNotNull(BC);
-		
+
 		assertFalse(AB.isDirected());
 		assertTrue(AC.isDirected());
 		assertTrue(BC.isDirected());
-		
+
 		assertEquals(A, AB.getNode0());
 		assertEquals(B, AB.getNode1());
 		assertEquals(A, AC.getSourceNode());
 		assertEquals(C, AC.getTargetNode());
 		assertEquals(B, BC.getSourceNode());
 		assertEquals(C, BC.getTargetNode());
+	}
+
+	@Test
+	public void testBadExamples() throws IOException {
+		String[] data = { "bad1.dgs", "bad2.dgs" };
+
+		for (int i = 0; i < data.length; i++) {
+			try {
+				getGraph("data/" + data[i]);
+				fail();
+			} catch (Exception e) {
+				if (!(e.getCause() instanceof ParseException)) {
+
+					if (e instanceof IOException)
+						throw (IOException) e;
+					else
+						fail();
+				}
+			}
+		}
+	}
+
+	/**
+	 * <pre>
+	 * LF:    Line Feed, U+000A
+	 * VT:    Vertical Tab, U+000B
+	 * FF:    Form Feed, U+000C
+	 * CR:    Carriage Return, U+000D
+	 * CR+LF: CR (U+000D) followed by LF (U+000A)
+	 * NEL:   Next Line, U+0085
+	 * LS:    Line Separator, U+2028
+	 * PS:    Paragraph Separator, U+2029
+	 * </pre>
+	 * 
+	 * Current supported EOL are LF and CR+LF.
+	 * 
+	 * @throws IOException
+	 */
+	@Test
+	public void testEOL() throws IOException {
+		String base = "DGS004%neol 0 0%n%nan A%n";
+		String[] eols = { "\n", "\r\n" };
+		FileSourceDGS source = new FileSourceDGS();
+		Graph g = new AdjacencyListGraph("eol");
+
+		source.addSink(g);
+
+		for (String eol : eols) {
+			String dgs = base.replace("%n", eol);
+			StringReader in = new StringReader(dgs);
+
+			try {
+				source.readAll(in);
+				assertNotNull(g.getNode("A"));
+				g.clear();
+			} catch (IOException e) {
+				if (e.getCause() instanceof ParseException)
+					fail();
+				else
+					throw e;
+			}
+		}
 	}
 }
