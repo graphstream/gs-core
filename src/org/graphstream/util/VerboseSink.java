@@ -1,4 +1,3 @@
-package org.graphstream.util;
 /*
  * Copyright 2006 - 2011 
  *     Stefan Balev 	<stefan.balev@graphstream-project.org>
@@ -30,6 +29,8 @@ package org.graphstream.util;
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
+package org.graphstream.util;
+
 import java.io.PrintStream;
 import java.util.EnumMap;
 import java.util.HashMap;
