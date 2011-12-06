@@ -34,7 +34,6 @@ package org.graphstream.stream.file.dgs;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.Reader;
-import java.nio.CharBuffer;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -51,6 +50,8 @@ public class DGSParser implements Parser {
 		AN, CN, DN, AE, CE, DE, CG, ST, CL, TF, EOF
 	}
 
+	protected static final int BUFFER_SIZE = 4096;
+
 	public static final int ARRAY_OPEN = '{';
 	public static final int ARRAY_CLOSE = '}';
 
@@ -59,8 +60,8 @@ public class DGSParser implements Parser {
 
 	Reader reader;
 	int line, column;
-	int bufferCapacity;
-	CharBuffer buffer;
+	int bufferCapacity, bufferPosition;
+	char[] buffer;
 	int[] pushback;
 	int pushbackOffset;
 	FileSourceDGS dgs;
@@ -72,8 +73,8 @@ public class DGSParser implements Parser {
 	public DGSParser(FileSourceDGS dgs, Reader reader) {
 		this.dgs = dgs;
 		this.reader = reader;
-		bufferCapacity = 1024;
-		buffer = null;
+		bufferCapacity = 0;
+		buffer = new char[BUFFER_SIZE];
 		pushback = new int[10];
 		pushbackOffset = -1;
 		this.sourceId = String.format("<DGS stream %x>", System.nanoTime());
@@ -121,45 +122,34 @@ public class DGSParser implements Parser {
 		if (pushbackOffset >= 0)
 			return pushback[pushbackOffset--];
 
-		if (buffer == null) {
-			buffer = CharBuffer.allocate(bufferCapacity);
-			buffer.clear();
-			c = reader.read(buffer);
-
-			buffer.position(0);
-
-			if (c < 0) {
-				buffer.limit(0);
-				return -1;
-			}
-
-			buffer.limit(c);
+		if (bufferCapacity == 0 || bufferPosition >= bufferCapacity) {
+			bufferCapacity = reader.read(buffer, 0, BUFFER_SIZE);
+			bufferPosition = 0;
 		}
 
-		if (!buffer.hasRemaining()) {
-			buffer.clear();
-			c = reader.read(buffer);
-
-			buffer.position(0);
-
-			if (c < 0) {
-				buffer.limit(0);
-				return -1;
-			}
-
-			buffer.limit(c);
-		}
-
-		if (!buffer.hasRemaining())
+		if (bufferCapacity <= 0)
 			return -1;
 
-		c = buffer.get();
+		c = buffer[bufferPosition++];
 
+		//
+		// Handle special EOL
+		// - LF
+		// - CR
+		// - CR+LF
+		//
 		if (c == '\r') {
-			if (buffer.hasRemaining())
-				return buffer.get();
+			if (bufferPosition < bufferCapacity) {
+				if (buffer[bufferPosition] == '\n')
+					bufferPosition++;
+			} else {
+				c = nextChar();
 
-			return nextChar();
+				if (c != '\n')
+					pushback(c);
+			}
+
+			c = '\n';
 		}
 
 		if (c == '\n') {
@@ -794,7 +784,6 @@ public class DGSParser implements Parser {
 
 	protected ParseException parseException(String message, Object... args) {
 		return new ParseException(String.format(String.format(
-				"parse error at (%d;%d) : %s (%d|%d)", line, column, message,
-				buffer.position(), buffer.limit()), args));
+				"parse error at (%d;%d) : %s", line, column, message), args));
 	}
 }
