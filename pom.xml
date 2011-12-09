@@ -202,7 +202,7 @@
 			<testResource>
 				<directory>src-test</directory>
 				<includes>
-					<include>org/graphstream/stream/file/test/data/**</include>
+					<include>org/graphstream/**/test/data/**</include>
 				</includes>
 			</testResource>
 		</testResources>
