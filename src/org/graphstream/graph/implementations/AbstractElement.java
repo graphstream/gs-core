@@ -505,7 +505,7 @@ public abstract class AbstractElement implements Element {
 		if (attributes == null)
 			attributes = new HashMap<String, Object>(1);
 
-		Object old_value = attributes.get(attribute);
+		Object oldValue;
 		Object value;
 
 		if (values.length == 0)
@@ -520,8 +520,8 @@ public abstract class AbstractElement implements Element {
 		if (attributes.containsKey(attribute)) // In case the value is null,
 			event = AttributeChangeEvent.CHANGE; // but the attribute exists.
 
-		attributes.put(attribute, value);
-		attributeChanged(sourceId, timeId, attribute, event, old_value, value);
+		oldValue = attributes.put(attribute, value);
+		attributeChanged(sourceId, timeId, attribute, event, oldValue, value);
 	}
 
 	/**
