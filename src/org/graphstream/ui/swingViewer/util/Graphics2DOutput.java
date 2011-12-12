@@ -29,61 +29,33 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.stream.file.test;
 
-import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.stream.file.FileSourceDGS;
-import org.junit.*;
+package org.graphstream.ui.swingViewer.util;
+
+import java.awt.Graphics2D;
+import java.io.IOException;
 
 /**
- * Test the file input in DGS format.
+ * A special interface for renderers that allows to replace the Graphics2D.
+ *
+ * <p>
+ * Several external libraries use to replace the {@link Graphics2D} of AWT in
+ * order to produce a file or on a printer in a given format. However it is not possible to
+ * link such libraries in the gs-core module of GraphStream. To avoid this
+ * problem, this interface defines a plug-in that must implement be able to
+ * yield a {@link Graphics2D} usable instead of the default one. 
+ * </p>
  */
-public class TestFileSourceDGS extends TestFileSourceBase {
-	// Before
+public interface Graphics2DOutput {
+	/**
+	 * The graphics to use instead of the default {@link Graphics2D} of AWT.
+	 */
+	Graphics2D getGraphics();
 
-	@Before
-	public void setUp() {
-		graph = new MultiGraph("g1");
-		input = new FileSourceDGS();
-	}
-
-	// Test
-
-	@Override
-	public String anUndirectedTriangle() {
-		return TEST1_TRIANGLE;
-	}
-
-	protected static String TEST1_TRIANGLE = "DGS004\n" + "\"test1\" 0 0\n"
-			+ "an A\n" + "an B\n" + "an C\n" + "ae AB A B\n" + "ae BC B C\n"
-			+ "ae CA C A\n";
-
-	@Override
-	public String aDirectedTriangle() {
-		return TEST2_DIRECTED_TRIANGLE;
-	}
-
-	protected static String TEST2_DIRECTED_TRIANGLE = "DGS004\n"
-			+ "\"test2\" 0 0\n" + "an A\n" + "an B\n" + "an C\n"
-			+ "ae AB A > B\n" + "ae BC B C\n" + "ae CA C < A\n";
-
-	@Override
-	public String basicAttributes() {
-		return TEST3_ATTRIBUTES;
-	}
-
-	protected static String TEST3_ATTRIBUTES = "DGS004\n" + "\"test3\" 0 0\n"
-			+ "an A a:1 b:\"truc\" c:\"true\"\n"
-			+ "an B aa:1,2,3,4 bb:foo cc:bar\n" + "an C aaa=1.234\n"
-			+ "ae AB A B\n" + "ae BC B C\n" + "ae CA C A\n";
-
-	@Override
-	public String anUndirectedTriangleFileName() {
-		return "src-test/org/graphstream/stream/file/test/data/undirectedTriangle.dgs";
-	}
-
-	@Override
-	public String anUndirectedTriangleHttpURL() {
-		return "http://graphstream-project.org/media/data/undirectedTriangle.dgs";
-	}
+	/**
+	 * Output (if needed) the results of the last painting done with the {@link Graphics2D}.
+	 * @param outputName The name of the output to use, for some renderers it is a file,
+	 * for others it is an URL, a string description of the output, etc. 
+	 */
+	void outputTo(String outputName) throws IOException;
 }

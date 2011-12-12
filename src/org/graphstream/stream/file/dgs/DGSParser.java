@@ -34,7 +34,6 @@ package org.graphstream.stream.file.dgs;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.Reader;
-import java.nio.CharBuffer;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -51,6 +50,8 @@ public class DGSParser implements Parser {
 		AN, CN, DN, AE, CE, DE, CG, ST, CL, TF, EOF
 	}
 
+	protected static final int BUFFER_SIZE = 4096;
+
 	public static final int ARRAY_OPEN = '{';
 	public static final int ARRAY_CLOSE = '}';
 
@@ -59,8 +60,8 @@ public class DGSParser implements Parser {
 
 	Reader reader;
 	int line, column;
-	int bufferCapacity;
-	CharBuffer buffer;
+	int bufferCapacity, bufferPosition;
+	char[] buffer;
 	int[] pushback;
 	int pushbackOffset;
 	FileSourceDGS dgs;
@@ -72,8 +73,8 @@ public class DGSParser implements Parser {
 	public DGSParser(FileSourceDGS dgs, Reader reader) {
 		this.dgs = dgs;
 		this.reader = reader;
-		bufferCapacity = 1024;
-		buffer = null;
+		bufferCapacity = 0;
+		buffer = new char[BUFFER_SIZE];
 		pushback = new int[10];
 		pushbackOffset = -1;
 		this.sourceId = String.format("<DGS stream %x>", System.nanoTime());
@@ -121,33 +122,35 @@ public class DGSParser implements Parser {
 		if (pushbackOffset >= 0)
 			return pushback[pushbackOffset--];
 
-		if (buffer == null) {
-			buffer = CharBuffer.allocate(bufferCapacity);
-			buffer.clear();
-			c = reader.read(buffer);
-
-			if (c < 0)
-				return -1;
-
-			buffer.limit(c);
-			buffer.position(0);
+		if (bufferCapacity == 0 || bufferPosition >= bufferCapacity) {
+			bufferCapacity = reader.read(buffer, 0, BUFFER_SIZE);
+			bufferPosition = 0;
 		}
 
-		if (!buffer.hasRemaining()) {
-			buffer.clear();
-			c = reader.read(buffer);
-
-			if (c < 0)
-				return -1;
-
-			buffer.limit(c);
-			buffer.position(0);
-		}
-
-		if (!buffer.hasRemaining())
+		if (bufferCapacity <= 0)
 			return -1;
 
-		c = buffer.get();
+		c = buffer[bufferPosition++];
+
+		//
+		// Handle special EOL
+		// - LF
+		// - CR
+		// - CR+LF
+		//
+		if (c == '\r') {
+			if (bufferPosition < bufferCapacity) {
+				if (buffer[bufferPosition] == '\n')
+					bufferPosition++;
+			} else {
+				c = nextChar();
+
+				if (c != '\n')
+					pushback(c);
+			}
+
+			c = '\n';
+		}
 
 		if (c == '\n') {
 			line++;
@@ -162,14 +165,10 @@ public class DGSParser implements Parser {
 		if (c < 0)
 			return;
 
-		if (buffer.position() == 0) {
-			if (pushbackOffset + 1 >= pushback.length)
-				throw new IOException("pushback buffer overflow");
+		if (pushbackOffset + 1 >= pushback.length)
+			throw new IOException("pushback buffer overflow");
 
-			pushback[++pushbackOffset] = c;
-		} else {
-			buffer.position(buffer.position() - 1);
-		}
+		pushback[++pushbackOffset] = c;
 
 		if (column == 0)
 			line--;
@@ -208,7 +207,7 @@ public class DGSParser implements Parser {
 					dgs[0], dgs[1], dgs[2]));
 
 		if (nextChar() != '\n')
-			throw new IOException("end-of-line is missing");
+			throw parseException("end-of-line is missing");
 
 		skipLine();
 	}
@@ -335,8 +334,8 @@ public class DGSParser implements Parser {
 			next = directive();
 
 			if (next != Token.EOF) {
-				pushback(next.name().charAt(0));
 				pushback(next.name().charAt(1));
+				pushback(next.name().charAt(0));
 			}
 		} while (next != Token.ST && next != Token.EOF);
 
@@ -378,10 +377,13 @@ public class DGSParser implements Parser {
 			throw parseException("attribute key expected");
 
 		if (ch != AttributeChangeEvent.REMOVE) {
+
+			skipWhitespaces();
 			c = nextChar();
 
 			if (c == '=' || c == ':') {
-				value = value();
+				skipWhitespaces();
+				value = value(true);
 			} else {
 				value = Boolean.TRUE;
 				pushback(c);
@@ -392,12 +394,13 @@ public class DGSParser implements Parser {
 				value);
 	}
 
-	protected Object value() throws IOException, ParseException {
+	protected Object value(boolean array) throws IOException, ParseException {
 		int c;
 		LinkedList<Object> l = null;
 		Object o;
 
 		do {
+			skipWhitespaces();
 			c = nextChar();
 			pushback(c);
 
@@ -410,7 +413,24 @@ public class DGSParser implements Parser {
 				o = color();
 				break;
 			case ARRAY_OPEN:
-				o = array();
+				//
+				// Skip ARRAY_OPEN
+				nextChar();
+				//
+
+				skipWhitespaces();
+				o = value(true);
+				skipWhitespaces();
+
+				//
+				// Check if next char is ARRAY_CLOSE
+				if (nextChar() != ARRAY_CLOSE)
+					throw parseException("'%c' expected", ARRAY_CLOSE);
+				//
+
+				if (!o.getClass().isArray())
+					o = new Object[] { o };
+
 				break;
 			case MAP_OPEN:
 				o = map();
@@ -421,7 +441,7 @@ public class DGSParser implements Parser {
 				if (word == null)
 					throw parseException("missing value");
 
-				if (c >= '0' && c <= '9') {
+				if ((c >= '0' && c <= '9') || c == '-') {
 					try {
 						if (word.indexOf('.') > 0)
 							o = Double.valueOf(word);
@@ -445,12 +465,12 @@ public class DGSParser implements Parser {
 
 			c = nextChar();
 
-			if (l == null && c == ',') {
+			if (l == null && array && c == ',') {
 				l = new LinkedList<Object>();
 				l.add(o);
 			} else if (l != null)
 				l.add(o);
-		} while (c == ',');
+		} while (array && c == ',');
 
 		pushback(c);
 
@@ -521,7 +541,7 @@ public class DGSParser implements Parser {
 
 		while (c != ARRAY_CLOSE) {
 			pushback(c);
-			array.add(value());
+			array.add(value(false));
 
 			skipWhitespaces();
 			c = nextChar();
@@ -566,7 +586,8 @@ public class DGSParser implements Parser {
 			c = nextChar();
 
 			if (c == '=' || c == ':') {
-				value = value();
+				skipWhitespaces();
+				value = value(false);
 			} else {
 				value = Boolean.TRUE;
 				pushback(c);
@@ -596,6 +617,9 @@ public class DGSParser implements Parser {
 	protected Token directive() throws IOException, ParseException {
 		int c1, c2;
 
+		//
+		// Skip comment and empty lines
+		//
 		do {
 			c1 = nextChar();
 
@@ -604,7 +628,7 @@ public class DGSParser implements Parser {
 
 			if (c1 < 0)
 				return Token.EOF;
-		} while (c1 == '#');
+		} while (c1 == '#' || c1 == '\n');
 
 		c2 = nextChar();
 

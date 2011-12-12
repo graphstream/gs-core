@@ -1,6 +1,8 @@
 GraphStream
 ===========
 
+.. image:: http://graphstream-project.org/media/img/gs-110.png
+
 Welcome to GraphStream, and thank you for your download, we hope you will find it
 useful and practical.
 

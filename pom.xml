@@ -26,7 +26,7 @@
 
 	<groupId>org.graphstream</groupId>
 	<artifactId>gs-core</artifactId>
-	<version>1.x-git</version>
+	<version>1.2-git</version>
 
 	<name>gs-core</name>
 	<description>
@@ -202,7 +202,7 @@
 			<testResource>
 				<directory>src-test</directory>
 				<includes>
-					<include>org/graphstream/stream/file/test/data/**</include>
+					<include>org/graphstream/**/test/data/**</include>
 				</includes>
 			</testResource>
 		</testResources>

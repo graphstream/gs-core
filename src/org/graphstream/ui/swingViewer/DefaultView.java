@@ -110,7 +110,7 @@ import org.graphstream.ui.swingViewer.util.ShortcutManager;
  */
 public class DefaultView extends View implements ComponentListener,
 		WindowListener {
-	private static final long serialVersionUID = - 4489484861592064398L;
+	private static final long serialVersionUID = -4489484861592064398L;
 	// Attribute
 
 	/**
@@ -164,7 +164,20 @@ public class DefaultView extends View implements ComponentListener,
 		shortcuts = new ShortcutManager(this);
 		mouseClicks = new MouseManager(this.graph, this);
 
-		addComponentListener(this);
+		//
+		// Disable background drawing
+		//
+		setOpaque(false);
+		
+		//
+		// Be sure that double buffering is enabled
+		//
+		setDoubleBuffered(true);
+		
+		//
+		// Unused if canvasChanged flag not used
+		//
+		//addComponentListener(this);
 		addKeyListener(shortcuts);
 		addMouseListener(mouseClicks);
 		addMouseMotionListener(mouseClicks);
@@ -179,7 +192,7 @@ public class DefaultView extends View implements ComponentListener,
 	public Camera getCamera() {
 		return renderer.getCamera();
 	}
-	
+
 	@Override
 	public void display(GraphicGraph graph, boolean graphChanged) {
 		this.graphChanged = graphChanged;
@@ -188,18 +201,20 @@ public class DefaultView extends View implements ComponentListener,
 	}
 
 	@Override
-	public void paint(Graphics g) {
-		if (graphChanged || canvasChanged) {
-			checkTitle();
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
 
-			Graphics2D g2 = (Graphics2D) g;
+		// if (graphChanged || canvasChanged) {
+		checkTitle();
 
-			// super.paint( g );
-			render(g2);
-			paintChildren(g2);
+		Graphics2D g2 = (Graphics2D) g;
 
-			graphChanged = canvasChanged = false;
-		}
+		// super.paint( g );
+		render(g2);
+		//paintChildren(g2);
+
+		// graphChanged = canvasChanged = false;
+		// }
 	}
 
 	protected void checkTitle() {
@@ -207,12 +222,13 @@ public class DefaultView extends View implements ComponentListener,
 			String titleAttr = String.format("ui.%s.title", getId());
 			String title = (String) graph.getLabel(titleAttr);
 
-			if (title == null)
+			if (title == null) {
 				title = (String) graph.getLabel("ui.default.title");
 
-			if (title == null)
-				title = (String) graph.getLabel("ui.title");
-			
+				if (title == null)
+					title = (String) graph.getLabel("ui.title");
+			}
+
 			if (title != null)
 				frame.setTitle(title);
 		}
@@ -228,10 +244,10 @@ public class DefaultView extends View implements ComponentListener,
 		removeMouseMotionListener(mouseClicks);
 		openInAFrame(false);
 	}
-	
+
 	@Override
 	public void resizeFrame(int width, int height) {
-		if(frame != null) {
+		if (frame != null) {
 			frame.setSize(width, height);
 		}
 	}
@@ -333,9 +349,11 @@ public class DefaultView extends View implements ComponentListener,
 			System.exit(0);
 		default:
 			throw new RuntimeException(
-					String.format(
-							"The %s view is not up to date, do not know %s CloseFramePolicy.",
-							getClass().getName(), viewer.getCloseFramePolicy()));
+					String
+							.format(
+									"The %s view is not up to date, do not know %s CloseFramePolicy.",
+									getClass().getName(), viewer
+											.getCloseFramePolicy()));
 		}
 	}
 

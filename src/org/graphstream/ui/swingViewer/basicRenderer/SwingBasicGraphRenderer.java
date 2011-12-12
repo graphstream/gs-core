@@ -61,6 +61,7 @@ import org.graphstream.ui.swingViewer.LayerRenderer;
 import org.graphstream.ui.swingViewer.util.Camera;
 import org.graphstream.ui.swingViewer.util.DefaultCamera;
 import org.graphstream.ui.swingViewer.util.GraphMetrics;
+import org.graphstream.ui.swingViewer.util.Graphics2DOutput;
 
 /**
  * A very simple view of the graph that respect only a subset of CSS.
@@ -451,6 +452,23 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 				try {
 					ImageIO.write(img, "jpg", file);
 				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else if(filename.toLowerCase().endsWith("svg")) {
+				try {
+					String plugin = "org.graphstream.ui.batik.BatikGraphics2D";
+					Class<?> c = Class.forName(plugin);
+					Object o = c.newInstance();
+					if(o instanceof Graphics2DOutput) {
+						Graphics2DOutput out = (Graphics2DOutput) o;
+						Graphics2D g2 = out.getGraphics();
+						render(g2, (int)camera.getMetrics().viewport.data[0], (int)camera.getMetrics().viewport.data[1]);
+						out.outputTo(filename);
+					} else {
+						System.err.printf("plugin %s is not an instance of Graphics2DOutput (%s)%n", plugin, o.getClass().getName());
+					}
+				}
+				catch(Exception e) {
 					e.printStackTrace();
 				}
 			}
