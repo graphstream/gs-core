@@ -362,6 +362,7 @@ public class DGSParser implements Parser {
 		int c;
 		AttributeChangeEvent ch = AttributeChangeEvent.CHANGE;
 
+		skipWhitespaces();
 		c = nextChar();
 
 		if (c == '+')

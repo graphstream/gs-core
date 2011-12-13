@@ -26,7 +26,7 @@
 
 	<groupId>org.graphstream</groupId>
 	<artifactId>gs-core</artifactId>
-	<version>1.x-git</version>
+	<version>1.2-git</version>
 
 	<name>gs-core</name>
 	<description>

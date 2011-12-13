@@ -112,7 +112,6 @@ import org.graphstream.ui.swingViewer.util.ShortcutManager;
 public class DefaultView extends View implements WindowListener
 {
 	private static final long serialVersionUID = - 4489484861592064398L;
-	// Attribute
 
 	/**
 	 * Parent viewer.
@@ -155,6 +154,8 @@ public class DefaultView extends View implements WindowListener
 		shortcuts = new ShortcutManager(this);
 		mouseClicks = new MouseManager(this.graph, this);
 
+		setOpaque(false);
+		setDoubleBuffered(true);
 		addKeyListener(shortcuts);
 		addMouseListener(mouseClicks);
 		addMouseMotionListener(mouseClicks);
@@ -169,15 +170,10 @@ public class DefaultView extends View implements WindowListener
 	public Camera getCamera() {
 		return renderer.getCamera();
 	}
-	
+
 	@Override
 	public void display(GraphicGraph graph, boolean graphChanged) {
 		repaint();
-	}
-	
-	@Override
-	public void repaint() {
-		super.repaint();
 	}
 	
 	@Override
@@ -193,12 +189,13 @@ public class DefaultView extends View implements WindowListener
 			String titleAttr = String.format("ui.%s.title", getId());
 			String title = (String) graph.getLabel(titleAttr);
 
-			if (title == null)
+			if (title == null) {
 				title = (String) graph.getLabel("ui.default.title");
 
-			if (title == null)
-				title = (String) graph.getLabel("ui.title");
-			
+				if (title == null)
+					title = (String) graph.getLabel("ui.title");
+			}
+
 			if (title != null)
 				frame.setTitle(title);
 		}
@@ -213,10 +210,10 @@ public class DefaultView extends View implements WindowListener
 		removeMouseMotionListener(mouseClicks);
 		openInAFrame(false);
 	}
-	
+
 	@Override
 	public void resizeFrame(int width, int height) {
-		if(frame != null) {
+		if (frame != null) {
 			frame.setSize(width, height);
 		}
 	}
@@ -300,9 +297,11 @@ public class DefaultView extends View implements WindowListener
 			System.exit(0);
 		default:
 			throw new RuntimeException(
-					String.format(
-							"The %s view is not up to date, do not know %s CloseFramePolicy.",
-							getClass().getName(), viewer.getCloseFramePolicy()));
+					String
+							.format(
+									"The %s view is not up to date, do not know %s CloseFramePolicy.",
+									getClass().getName(), viewer
+											.getCloseFramePolicy()));
 		}
 	}
 

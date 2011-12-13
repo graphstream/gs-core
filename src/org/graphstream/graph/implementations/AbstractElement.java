@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Stack;
 
 import org.graphstream.graph.CompoundAttribute;
 import org.graphstream.graph.Element;
@@ -57,13 +58,13 @@ import org.graphstream.graph.NullAttributeException;
 public abstract class AbstractElement implements Element {
 	// Attribute
 
-//	protected static Set<String> emptySet = new HashSet<String>();
-	
+	// protected static Set<String> emptySet = new HashSet<String>();
+
 	/**
 	 * Tag of this element.
 	 */
 	private String id;
-	
+
 	/**
 	 * The index of this element.
 	 */
@@ -74,6 +75,11 @@ public abstract class AbstractElement implements Element {
 	 * (key,value) where the key is the attribute name and the value an Object.
 	 */
 	protected HashMap<String, Object> attributes = null;
+
+	/**
+	 * Vector used when removing attributes to avoid recursive removing.
+	 */
+	protected Stack<String> attributesBeingRemoved = null;
 
 	// Construction
 
@@ -93,15 +99,16 @@ public abstract class AbstractElement implements Element {
 	public String getId() {
 		return id;
 	}
-	
+
 	public int getIndex() {
 		return index;
 	}
-	
+
 	/**
 	 * Used by subclasses to change the index of an element
 	 * 
-	 * @param index the new index
+	 * @param index
+	 *            the new index
 	 */
 	protected void setIndex(int index) {
 		this.index = index;
@@ -120,8 +127,8 @@ public abstract class AbstractElement implements Element {
 	protected abstract String myGraphId(); // XXX
 
 	protected abstract long newEvent(); // XXX
-	
-	protected abstract boolean nullAttributesAreErrors();	// XXX
+
+	protected abstract boolean nullAttributesAreErrors(); // XXX
 
 	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this
@@ -132,7 +139,7 @@ public abstract class AbstractElement implements Element {
 	public <T> T getAttribute(String key) {
 		if (attributes != null) {
 			T value = (T) attributes.get(key);
-			
+
 			if (value != null)
 				return value;
 		}
@@ -161,9 +168,9 @@ public abstract class AbstractElement implements Element {
 			}
 		}
 
-		if(o==null && nullAttributesAreErrors())
+		if (o == null && nullAttributesAreErrors())
 			throw new NullAttributeException();
-		
+
 		return (T) o;
 	}
 
@@ -238,14 +245,14 @@ public abstract class AbstractElement implements Element {
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
-			if (o != null ) {
+			if (o != null) {
 				if (o instanceof Number)
 					return ((Number) o).doubleValue();
-				
+
 				if (o instanceof String) {
 					try {
-						return Double.parseDouble((String)o);
-					} catch(NumberFormatException e) {
+						return Double.parseDouble((String) o);
+					} catch (NumberFormatException e) {
 					}
 				}
 			}
@@ -431,11 +438,12 @@ public abstract class AbstractElement implements Element {
 
 		return Collections.emptySet();
 	}
-	
+
 	public Collection<String> getAttributeKeySet() {
 		if (attributes != null)
-			return (Collection<String>) Collections.unmodifiableCollection(attributes.keySet());
-		
+			return (Collection<String>) Collections
+					.unmodifiableCollection(attributes.keySet());
+
 		return Collections.emptySet();
 	}
 
@@ -503,7 +511,7 @@ public abstract class AbstractElement implements Element {
 		if (attributes == null)
 			attributes = new HashMap<String, Object>(1);
 
-		Object old_value = attributes.get(attribute);
+		Object oldValue;
 		Object value;
 
 		if (values.length == 0)
@@ -518,8 +526,8 @@ public abstract class AbstractElement implements Element {
 		if (attributes.containsKey(attribute)) // In case the value is null,
 			event = AttributeChangeEvent.CHANGE; // but the attribute exists.
 
-		attributes.put(attribute, value);
-		attributeChanged(sourceId, timeId, attribute, event, old_value, value);
+		oldValue = attributes.put(attribute, value);
+		attributeChanged(sourceId, timeId, attribute, event, oldValue, value);
 	}
 
 	/**
@@ -579,13 +587,25 @@ public abstract class AbstractElement implements Element {
 	protected void removeAttribute_(String sourceId, long timeId,
 			String attribute) {
 		if (attributes != null) {
-			if (attributes.containsKey(attribute)) // Avoid recursive calls when
-													// synchronising graphs.
-			{
-				attributes.remove(attribute);
+			//
+			// 'attributesBeingRemoved' is created only if this is required.
+			//
+			if (attributesBeingRemoved == null)
+				attributesBeingRemoved = new Stack<String>();
+
+			//
+			// Avoid recursive calls when synchronising graphs.
+			//
+			if (attributes.containsKey(attribute)
+					&& !attributesBeingRemoved.contains(attribute)) {
+				attributesBeingRemoved.push(attribute);
+
 				attributeChanged(sourceId, timeId, attribute,
 						AttributeChangeEvent.REMOVE, attributes.get(attribute),
 						null);
+
+				attributesBeingRemoved.pop();
+				attributes.remove(attribute);
 			}
 		}
 	}
