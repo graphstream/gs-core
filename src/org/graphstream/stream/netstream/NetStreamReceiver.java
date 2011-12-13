@@ -46,7 +46,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.graphstream.stream.sync.SourceTime;
 import org.graphstream.stream.thread.ThreadProxyPipe;
 import org.miv.mbox.net.PositionableByteArrayInputStream;
 
@@ -72,17 +71,6 @@ import org.miv.mbox.net.PositionableByteArrayInputStream;
  * 
  */
 public class NetStreamReceiver extends Thread {
-
-	/**
-	 * the source Id used to identify events in the following streams.
-	 * Synchronization is not handled yet.
-	 */
-	protected String sourceId = "NetStream";
-	/**
-	 * This timestamp object is used to label received events. Synchronization
-	 * is not handled yet.
-	 */
-	protected SourceTime sourceTime;
 
 	/**
 	 * the hostname this receiver is listening at.
@@ -186,8 +174,7 @@ public class NetStreamReceiver extends Thread {
 			throws IOException, UnknownHostException {
 		this.hostname = hostname;
 		this.port = port;
-		sourceTime = new SourceTime(0);
-
+	
 		setDebugOn(debug);
 		init();
 		start();
@@ -852,9 +839,11 @@ public class NetStreamReceiver extends Thread {
 		if (debug) {
 			debug("NetStreamServer: Received DEL_EDGE_ATTR command.");
 		}
+		String sourceId = readString(in);
+		long timeId = readLong(in);
 		String edgeId = readString(in);
 		String attrId = readString(in);
-		currentStream.edgeAttributeRemoved(sourceId, sourceTime.newEvent(),
+		currentStream.edgeAttributeRemoved(sourceId, timeId,
 				edgeId, attrId);
 	}
 
@@ -865,13 +854,15 @@ public class NetStreamReceiver extends Thread {
 		if (debug) {
 			debug("NetStreamServer: Received CHG_EDGE_ATTR command.");
 		}
+		String sourceId = readString(in);
+		long timeId = readLong(in);
 		String edgeId = readString(in);
 		String attrId = readString(in);
 		int valueType = readType(in);
 		Object oldValue = readValue(in, valueType);
 		Object newValue = readValue(in, valueType);
 
-		currentStream.edgeAttributeChanged(sourceId, sourceTime.newEvent(),
+		currentStream.edgeAttributeChanged(sourceId, timeId,
 				edgeId, attrId, oldValue, newValue);
 
 	}
@@ -883,11 +874,13 @@ public class NetStreamReceiver extends Thread {
 		if (debug) {
 			debug("NetStreamServer: Received ADD_EDGE_ATTR command.");
 		}
+		String sourceId = readString(in);
+		long timeId = readLong(in);
 		String edgeId = readString(in);
 		String attrId = readString(in);
 		Object value = readValue(in, readType(in));
 
-		currentStream.edgeAttributeAdded(sourceId, sourceTime.newEvent(),
+		currentStream.edgeAttributeAdded(sourceId, timeId,
 				edgeId, attrId, value);
 
 	}
@@ -899,10 +892,12 @@ public class NetStreamReceiver extends Thread {
 		if (debug) {
 			debug("NetStreamServer: Received DEL_NODE_ATTR command.");
 		}
+		String sourceId = readString(in);
+		long timeId = readLong(in);
 		String nodeId = readString(in);
 		String attrId = readString(in);
 
-		currentStream.nodeAttributeRemoved(sourceId, sourceTime.newEvent(),
+		currentStream.nodeAttributeRemoved(sourceId, timeId,
 				nodeId, attrId);
 
 	}
@@ -914,13 +909,15 @@ public class NetStreamReceiver extends Thread {
 		if (debug) {
 			debug("NetStreamServer: Received EVENT_CHG_NODE_ATTR command.");
 		}
+		String sourceId = readString(in);
+		long timeId = readLong(in);
 		String nodeId = readString(in);
 		String attrId = readString(in);
 		int valueType = readType(in);
 		Object oldValue = readValue(in, valueType);
 		Object newValue = readValue(in, valueType);
 
-		currentStream.nodeAttributeChanged(sourceId, sourceTime.newEvent(),
+		currentStream.nodeAttributeChanged(sourceId, timeId,
 				nodeId, attrId, oldValue, newValue);
 	}
 
@@ -931,11 +928,13 @@ public class NetStreamReceiver extends Thread {
 		if (debug) {
 			debug("NetStreamServer: Received EVENT_ADD_NODE_ATTR command.");
 		}
+		String sourceId = readString(in);
+		long timeId = readLong(in);
 		String nodeId = readString(in);
 		String attrId = readString(in);
 		Object value = readValue(in, readType(in));
 
-		currentStream.nodeAttributeAdded(sourceId, sourceTime.newEvent(),
+		currentStream.nodeAttributeAdded(sourceId, timeId,
 				nodeId, attrId, value);
 	}
 
@@ -946,9 +945,11 @@ public class NetStreamReceiver extends Thread {
 		if (debug) {
 			debug("NetStreamServer: Received EVENT_DEL_GRAPH_ATTR command.");
 		}
+		String sourceId = readString(in);
+		long timeId = readLong(in);
 		String attrId = readString(in);
 
-		currentStream.graphAttributeRemoved(sourceId, sourceTime.newEvent(),
+		currentStream.graphAttributeRemoved(sourceId, timeId,
 				attrId);
 	}
 
@@ -959,12 +960,14 @@ public class NetStreamReceiver extends Thread {
 		if (debug) {
 			debug("NetStreamServer: Received EVENT_CHG_GRAPH_ATTR command.");
 		}
+		String sourceId = readString(in);
+		long timeId = readLong(in);
 		String attrId = readString(in);
 		int valueType = readType(in);
 		Object oldValue = readValue(in, valueType);
 		Object newValue = readValue(in, valueType);
 
-		currentStream.graphAttributeChanged(sourceId, sourceTime.newEvent(),
+		currentStream.graphAttributeChanged(sourceId, timeId,
 				attrId, oldValue, newValue);
 
 	}
@@ -976,13 +979,15 @@ public class NetStreamReceiver extends Thread {
 		if (debug) {
 			debug("NetStreamServer: Received EVENT_ADD_GRAPH_ATTR command.");
 		}
+		String sourceId = readString(in);
+		long timeId = readLong(in);
 		String attrId = readString(in);
 		Object value = readValue(in, readType(in));
 		if (debug) {
 			debug("NetStreamServer | EVENT_ADD_GRAPH_ATTR | %s=%s", attrId,
 					value.toString());
 		}
-		currentStream.graphAttributeAdded(sourceId, sourceTime.newEvent(),
+		currentStream.graphAttributeAdded(sourceId, timeId,
 				attrId, value);
 
 	}
@@ -994,7 +999,9 @@ public class NetStreamReceiver extends Thread {
 		if (debug) {
 			debug("NetStreamServer: Received EVENT_CLEARED command.");
 		}
-		currentStream.graphCleared(sourceId, sourceTime.newEvent());
+		String sourceId = readString(in);
+		long timeId = readLong(in);
+		currentStream.graphCleared(sourceId, timeId);
 
 	}
 
@@ -1005,8 +1012,10 @@ public class NetStreamReceiver extends Thread {
 		if (debug) {
 			debug("NetStreamServer: Received EVENT_STEP command.");
 		}
+		String sourceId = readString(in);
+		long timeId = readLong(in);
 		double time = readDouble(in);
-		currentStream.stepBegins(sourceId, sourceTime.newEvent(), time);
+		currentStream.stepBegins(sourceId, timeId, time);
 	}
 
 	/**
@@ -1016,8 +1025,10 @@ public class NetStreamReceiver extends Thread {
 		if (debug) {
 			debug("NetStreamServer: Received EVENT_DEL_EDGE command.");
 		}
+		String sourceId = readString(in);
+		long timeId = readLong(in);
 		String edgeId = readString(in);
-		currentStream.edgeRemoved(sourceId, sourceTime.newEvent(), edgeId);
+		currentStream.edgeRemoved(sourceId, timeId, edgeId);
 	}
 
 	/**
@@ -1027,11 +1038,13 @@ public class NetStreamReceiver extends Thread {
 		if (debug) {
 			debug("NetStreamServer: Received ADD_EDGE command.");
 		}
+		String sourceId = readString(in);
+		long timeId = readLong(in);
 		String edgeId = readString(in);
 		String from = readString(in);
 		String to = readString(in);
 		boolean directed = readBoolean(in);
-		currentStream.edgeAdded(sourceId, sourceTime.newEvent(), edgeId, from,
+		currentStream.edgeAdded(sourceId, timeId, edgeId, from,
 				to, directed);
 	}
 
@@ -1042,8 +1055,10 @@ public class NetStreamReceiver extends Thread {
 		if (debug) {
 			debug("NetStreamServer: Received DEL_NODE command.");
 		}
+		String sourceId = readString(in);
+		long timeId = readLong(in);
 		String nodeId = readString(in);
-		currentStream.nodeRemoved(sourceId, sourceTime.newEvent(), nodeId);
+		currentStream.nodeRemoved(sourceId, timeId, nodeId);
 	}
 
 	/**
@@ -1053,8 +1068,10 @@ public class NetStreamReceiver extends Thread {
 		if (debug) {
 			debug("NetStreamServer: Received EVENT_ADD_NODE command");
 		}
+		String sourceId = readString(in);
+		long timeId = readLong(in);
 		String nodeId = readString(in);
-		currentStream.nodeAdded(sourceId, sourceTime.newEvent(), nodeId);
+		currentStream.nodeAdded(sourceId, timeId, nodeId);
 
 	}
 

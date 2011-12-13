@@ -328,7 +328,7 @@ public class TestNetStream {
 			@Override
 			public void run() {
 
-				Graph g = new MultiGraph(id);
+				Graph g = new MultiGraph(id+prefix);
 
 				NetStreamSender nsc = null;
 				try {
