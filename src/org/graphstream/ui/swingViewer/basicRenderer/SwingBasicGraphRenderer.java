@@ -272,7 +272,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 
 		g.setColor(group.getFillColor(0));
 		g.fillRect(0, 0, (int) camera.getMetrics().viewport.data[0],
-				(int) camera.getMetrics().viewport.data[1]);
+			(int) camera.getMetrics().viewport.data[1]);
 	}
 
 	/**

@@ -441,14 +441,16 @@ public class DefaultCamera implements Camera {
 	 */
 	public void pushView(GraphicGraph graph, Graphics2D g2) {
 		if (oldTx == null) {
-			oldTx = g2.getTransform();
-
+			oldTx = g2.getTransform();	// Backup the Swing transform.
+			Tx = g2.getTransform();		// Copy the Swing transform to apply more transforms to it.
+			
 			if (autoFit)
-				Tx = autoFitView(g2, Tx);
-			else
-				Tx = userView(g2, Tx);
+				 autoFitView(g2);
+			else userView(g2);
 
-			g2.setTransform(Tx);
+			g2.setTransform(Tx);		// Set the final transform, a composition of the old Swing transform and our new coordinate system. 
+		} else {
+			throw new RuntimeException("DefaultCamera.pushView() / popView() wrongly nested");
 		}
 		
 		checkVisibility(graph);
@@ -463,7 +465,7 @@ public class DefaultCamera implements Camera {
 	 */
 	public void popView(Graphics2D g2) {
 		if (oldTx != null) {
-			g2.setTransform(oldTx);
+			g2.setTransform(oldTx);	// Set back the old Swing Transform.
 			oldTx = null;
 		}
 	}
@@ -474,11 +476,8 @@ public class DefaultCamera implements Camera {
 	 * 
 	 * @param g2
 	 *            The Swing graphics.
-	 * @param Tx
-	 *            The transformation to modify.
-	 * @return The transformation modified.
 	 */
-	protected AffineTransform autoFitView(Graphics2D g2, AffineTransform Tx) {
+	protected void autoFitView(Graphics2D g2) {
 		double sx, sy;
 		double tx, ty;
 		double padXgu = getPaddingXgu() * 2;
@@ -498,7 +497,7 @@ public class DefaultCamera implements Camera {
 		else
 			sy = sx;
 
-		Tx.setToIdentity();
+//		Tx.setToIdentity();
 		Tx.translate(metrics.viewport.data[0] / 2, metrics.viewport.data[1] / 2);
 		if (rotation != 0)
 			Tx.rotate(rotation / (180 / Math.PI));
@@ -518,8 +517,6 @@ public class DefaultCamera implements Camera {
 		metrics.setRatioPx2Gu(sx);
 		metrics.loVisible.copy(metrics.lo);
 		metrics.hiVisible.copy(metrics.hi);
-
-		return Tx;
 	}
 
 	/**
@@ -529,11 +526,8 @@ public class DefaultCamera implements Camera {
 	 * 
 	 * @param g2
 	 *            The Swing graphics.
-	 * @param Tx
-	 *            The transformation to modify.
-	 * @return The transformation modified.
 	 */
-	protected AffineTransform userView(Graphics2D g2, AffineTransform Tx) {
+	protected void userView(Graphics2D g2) {
 		double sx, sy;
 		double tx, ty;
 		double padXgu = getPaddingXgu() * 2;
@@ -559,7 +553,7 @@ public class DefaultCamera implements Camera {
 		else
 			sy = sx;
 
-		Tx.setToIdentity();
+//		Tx.setToIdentity();
 		Tx.translate(metrics.viewport.data[0] / 2, metrics.viewport.data[1] / 2); 
 		if (rotation != 0)
 			Tx.rotate(rotation / (180 / Math.PI));
@@ -580,8 +574,6 @@ public class DefaultCamera implements Camera {
 
 		metrics.loVisible.set(center.x - w2, center.y - h2);
 		metrics.hiVisible.set(center.x + w2, center.y + h2);
-
-		return Tx;
 	}
 
 	/**
