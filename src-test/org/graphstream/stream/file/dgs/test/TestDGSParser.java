@@ -52,6 +52,7 @@ import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.stream.SinkAdapter;
 import org.graphstream.stream.file.FileSourceDGS;
+import org.graphstream.util.VerboseSink;
 import org.graphstream.util.parser.ParseException;
 import org.junit.Test;
 
@@ -252,7 +253,8 @@ public class TestDGSParser {
 
 		source.addSink(g);
 		g.addSink(new TestAttributeRemoved("A", g));
-
+		g.addSink(new VerboseSink());
+		
 		source.begin(getClass().getResourceAsStream("data/removeAttribute.dgs"));
 		
 		while (source.nextStep())
@@ -264,11 +266,13 @@ public class TestDGSParser {
 	private static class TestAttributeRemoved extends SinkAdapter {
 		String nodeId;
 		boolean added;
+		boolean changed;
+		boolean removed;
 		Object value;
 		Graph g;
 
 		TestAttributeRemoved(String nodeId, Graph g) {
-			added = false;
+			added = changed = removed = false;
 			value = null;
 			this.nodeId = nodeId;
 			this.g = g;
@@ -278,6 +282,8 @@ public class TestDGSParser {
 				String nodeId, String attributeId, Object value) {
 			if (this.nodeId.equals(nodeId)) {
 				assertFalse(added);
+				assertFalse(changed);
+				assertFalse(removed);
 
 				added = true;
 				this.value = value;
@@ -289,8 +295,11 @@ public class TestDGSParser {
 				Object newValue) {
 			if (this.nodeId.equals(nodeId)) {
 				assertTrue(added);
+				assertFalse(changed);
+				assertFalse(removed);
 				assertEquals(value, oldValue);
 
+				changed = true;
 				value = newValue;
 			}
 		}
@@ -299,7 +308,11 @@ public class TestDGSParser {
 				String nodeId, String attributeId) {
 			if (this.nodeId.equals(nodeId)) {
 				assertTrue(added);
+				assertTrue(changed);
+				assertFalse(removed);
 				assertEquals(value, g.getNode(nodeId).getAttribute(attributeId));
+				
+				removed = true;
 				value = null;
 			}
 		}

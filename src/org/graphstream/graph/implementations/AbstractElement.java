@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Stack;
 
 import org.graphstream.graph.CompoundAttribute;
 import org.graphstream.graph.Element;
@@ -74,6 +75,11 @@ public abstract class AbstractElement implements Element {
 	 * (key,value) where the key is the attribute name and the value an Object.
 	 */
 	protected HashMap<String, Object> attributes = null;
+
+	/**
+	 * Vector used when removing attributes to avoid recursive removing.
+	 */
+	protected Stack<String> attributesBeingRemoved = null;
 
 	// Construction
 
@@ -581,12 +587,24 @@ public abstract class AbstractElement implements Element {
 	protected void removeAttribute_(String sourceId, long timeId,
 			String attribute) {
 		if (attributes != null) {
+			//
+			// 'attributesBeingRemoved' is created only if this is required.
+			//
+			if (attributesBeingRemoved == null)
+				attributesBeingRemoved = new Stack<String>();
+
+			//
 			// Avoid recursive calls when synchronising graphs.
-			if (attributes.containsKey(attribute)) {
+			//
+			if (attributes.containsKey(attribute)
+					&& !attributesBeingRemoved.contains(attribute)) {
+				attributesBeingRemoved.push(attribute);
+
 				attributeChanged(sourceId, timeId, attribute,
 						AttributeChangeEvent.REMOVE, attributes.get(attribute),
 						null);
 
+				attributesBeingRemoved.pop();
 				attributes.remove(attribute);
 			}
 		}
