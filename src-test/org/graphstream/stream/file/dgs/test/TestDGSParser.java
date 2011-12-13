@@ -50,6 +50,7 @@ import org.graphstream.graph.Element;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
+import org.graphstream.stream.SinkAdapter;
 import org.graphstream.stream.file.FileSourceDGS;
 import org.graphstream.util.parser.ParseException;
 import org.junit.Test;
@@ -221,7 +222,7 @@ public class TestDGSParser {
 	@Test
 	public void testEOL() throws IOException {
 		String base = "DGS004%neol 0 0%n%nan A%n";
-		String[] eols = { "\n", "\r\n" };
+		String[] eols = { /* LF */ "\n", /* CR+LF */ "\r\n" };
 		FileSourceDGS source = new FileSourceDGS();
 		Graph g = new AdjacencyListGraph("eol");
 
@@ -240,6 +241,66 @@ public class TestDGSParser {
 					fail();
 				else
 					throw e;
+			}
+		}
+	}
+
+	@Test
+	public void testAttributeRemoved() throws IOException {
+		FileSourceDGS source = new FileSourceDGS();
+		Graph g = new AdjacencyListGraph("eol");
+
+		source.addSink(g);
+		g.addSink(new TestAttributeRemoved("A", g));
+
+		source.begin(getClass().getResourceAsStream("data/removeAttribute.dgs"));
+		
+		while (source.nextStep())
+			;
+		
+		source.end();
+	}
+
+	private static class TestAttributeRemoved extends SinkAdapter {
+		String nodeId;
+		boolean added;
+		Object value;
+		Graph g;
+
+		TestAttributeRemoved(String nodeId, Graph g) {
+			added = false;
+			value = null;
+			this.nodeId = nodeId;
+			this.g = g;
+		}
+
+		public void nodeAttributeAdded(String sourceId, long timeId,
+				String nodeId, String attributeId, Object value) {
+			if (this.nodeId.equals(nodeId)) {
+				assertFalse(added);
+
+				added = true;
+				this.value = value;
+			}
+		}
+
+		public void nodeAttributeChanged(String sourceId, long timeId,
+				String nodeId, String attributeId, Object oldValue,
+				Object newValue) {
+			if (this.nodeId.equals(nodeId)) {
+				assertTrue(added);
+				assertEquals(value, oldValue);
+
+				value = newValue;
+			}
+		}
+
+		public void nodeAttributeRemoved(String sourceId, long timeId,
+				String nodeId, String attributeId) {
+			if (this.nodeId.equals(nodeId)) {
+				assertTrue(added);
+				assertEquals(value, g.getNode(nodeId).getAttribute(attributeId));
+				value = null;
 			}
 		}
 	}
