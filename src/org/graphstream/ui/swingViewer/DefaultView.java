@@ -32,11 +32,8 @@
 package org.graphstream.ui.swingViewer;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
@@ -67,14 +64,6 @@ import org.graphstream.ui.swingViewer.util.ShortcutManager;
  * </p>
  * 
  * <h3>The painting mechanism</h3>
- * 
- * <p>
- * This mechanism pushes a repaint query each time the viewer asks us to
- * repaint. Two flags are provided to know what to repaint :
- * {@link #graphChanged} allows to know when the graph needs to be rendered anew
- * because its structure changed and {@link #canvasChanged} allows to know one
- * must repaint because the rendering canvas was resized, shown, etc.
- * </p>
  * 
  * <p>
  * The main method to implement is {@link #render(Graphics2D)}. This method is
@@ -244,7 +233,7 @@ public class DefaultView extends View implements WindowListener
 	}
 
 	public void render(Graphics2D g) {
-		renderer.render(g, getWidth(), getHeight());
+		renderer.render(g, getX(), getY(), getWidth(), getHeight());
 
 		String screenshot = (String) graph.getLabel("ui.screenshot");
 

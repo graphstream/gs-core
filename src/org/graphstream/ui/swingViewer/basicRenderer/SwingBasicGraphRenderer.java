@@ -144,7 +144,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 
 	// Command
 
-	public void render(Graphics2D g, int width, int height) {
+	public void render(Graphics2D g, int x, int y, int width, int height) {
 		// If not closed, one or two renders can occur after closed.
 		if (graph != null) {
 			beginFrame();
@@ -155,7 +155,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 				displayNothingToDo(g, width, height);
 			} else {
 				camera.setPadding(graph);
-				camera.setViewport(width, height);
+				camera.setViewport(x, y, width, height);
 				renderGraph(g);
 				renderSelection(g);
 			}
@@ -199,10 +199,6 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 
 	protected void renderGraph(Graphics2D g) {
 		StyleGroup style = graph.getStyle();
-		Rectangle2D rect = new Rectangle2D.Double();
-		GraphMetrics metrics = camera.getMetrics();
-		double px1 = metrics.px1;
-		Value stroke = style.getShadowWidth();
 
 		setupGraphics(g);
 		renderGraphBackground(g);
@@ -210,10 +206,13 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 		camera.pushView(graph, g);
 		renderGraphElements(g);
 
-		if (style.getStrokeMode() != StyleConstants.StrokeMode.NONE
-				&& style.getStrokeWidth().value != 0) {
-			rect.setFrame(metrics.lo.x, metrics.lo.y + px1,
-					metrics.size.data[0] - px1, metrics.size.data[1] - px1);
+		if (style.getStrokeMode() != StyleConstants.StrokeMode.NONE && style.getStrokeWidth().value != 0) {
+			GraphMetrics metrics = camera.getMetrics();
+			Rectangle2D rect     = new Rectangle2D.Double();
+			double px1           = metrics.px1;
+			Value stroke         = style.getShadowWidth();
+
+			rect.setFrame(metrics.lo.x, metrics.lo.y + px1, metrics.size.data[0] - px1, metrics.size.data[1] - px1);
 			g.setStroke(new BasicStroke((float)metrics.lengthToGu(stroke)));
 			g.setColor(graph.getStyle().getStrokeColor(0));
 			g.draw(rect);
@@ -271,8 +270,8 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 		StyleGroup group = graph.getStyle();
 
 		g.setColor(group.getFillColor(0));
-		g.fillRect(0, 0, (int) camera.getMetrics().viewport.data[0],
-			(int) camera.getMetrics().viewport.data[1]);
+		g.fillRect(0, 0, (int) camera.getMetrics().viewport[2],
+			(int) camera.getMetrics().viewport[3]);
 	}
 
 	/**
@@ -379,7 +378,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 		GraphMetrics metrics = camera.getMetrics();
 
 		renderer.render(g, graph, metrics.ratioPx2Gu,
-				(int) metrics.viewport.data[0], (int) metrics.viewport.data[1],
+				(int) metrics.viewport[2], (int) metrics.viewport[3],
 				metrics.loVisible.x, metrics.loVisible.y, metrics.hiVisible.x,
 				metrics.hiVisible.y);
 	}
@@ -462,7 +461,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 					if(o instanceof Graphics2DOutput) {
 						Graphics2DOutput out = (Graphics2DOutput) o;
 						Graphics2D g2 = out.getGraphics();
-						render(g2, (int)camera.getMetrics().viewport.data[0], (int)camera.getMetrics().viewport.data[1]);
+						render(g2, (int)camera.getMetrics().viewport[0], (int)camera.getMetrics().viewport[1], (int)camera.getMetrics().viewport[2], (int)camera.getMetrics().viewport[3]);
 						out.outputTo(filename);
 					} else {
 						System.err.printf("plugin %s is not an instance of Graphics2DOutput (%s)%n", plugin, o.getClass().getName());

@@ -610,7 +610,7 @@ public class FileSinkImages implements FileSink, LayoutListener {
 			Point3 hi = gg.getMaxPos();
 
 			renderer.getCamera().setBounds(lo.x, lo.y, lo.z, hi.x, hi.y, hi.z);
-			renderer.render(g2d, resolution.getWidth(), resolution.getHeight());
+			renderer.render(g2d, 0, 0, resolution.getWidth(), resolution.getHeight());
 		}
 
 		for (PostRenderer action : postRenderers)
