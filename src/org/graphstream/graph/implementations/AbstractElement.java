@@ -603,7 +603,8 @@ public abstract class AbstractElement implements Element {
 						AttributeChangeEvent.REMOVE, attributes.get(attribute),
 						null);
 
-				attributesBeingRemoved.remove(attributesBeingRemoved.size());
+				attributesBeingRemoved
+						.remove(attributesBeingRemoved.size() - 1);
 				attributes.remove(attribute);
 			}
 		}
