@@ -150,24 +150,24 @@ import org.graphstream.stream.Sink;
  * </dl>
  */
 public class VerboseSink implements Sink {
-	public static final String DEFAULT_AN_FORMAT = "[%sourceId%:%timeId%] add node \"%nodeId%\"";
-	public static final String DEFAULT_CNA_FORMAT = "[%sourceId%:%timeId%] set node \"%nodeId%\" +\"%attributeId%\"=%value%";
-	public static final String DEFAULT_CNC_FORMAT = "[%sourceId%:%timeId%] set node \"%nodeId%\" \"%attributeId%\"=%value%";
-	public static final String DEFAULT_CNR_FORMAT = "[%sourceId%:%timeId%] set node \"%nodeId%\" -\"%attributeId%\"";
-	public static final String DEFAULT_DN_FORMAT = "[%sourceId%:%timeId%] remove node \"%nodeId%\"";
+	public static final String DEFAULT_AN_FORMAT = "%prefix%[%sourceId%:%timeId%] add node \"%nodeId%\"%suffix%";
+	public static final String DEFAULT_CNA_FORMAT = "%prefix%[%sourceId%:%timeId%] set node \"%nodeId%\" +\"%attributeId%\"=%value%%suffix%";
+	public static final String DEFAULT_CNC_FORMAT = "%prefix%[%sourceId%:%timeId%] set node \"%nodeId%\" \"%attributeId%\"=%value%%suffix%";
+	public static final String DEFAULT_CNR_FORMAT = "%prefix%[%sourceId%:%timeId%] set node \"%nodeId%\" -\"%attributeId%\"%suffix%";
+	public static final String DEFAULT_DN_FORMAT = "%prefix%[%sourceId%:%timeId%] remove node \"%nodeId%\"%suffix%";
 
-	public static final String DEFAULT_AE_FORMAT = "[%sourceId%:%timeId%] add edge \"%edgeId%\" : \"%source%\" -- \"%target%\"";
-	public static final String DEFAULT_CEA_FORMAT = "[%sourceId%:%timeId%] set edge \"%edgeId%\" +\"%attributeId%\"=%value%";
-	public static final String DEFAULT_CEC_FORMAT = "[%sourceId%:%timeId%] set edge \"%edgeId%\" \"%attributeId%\"=%value%";
-	public static final String DEFAULT_CER_FORMAT = "[%sourceId%:%timeId%] set edge \"%edgeId%\" -\"%attributeId%\"";
-	public static final String DEFAULT_DE_FORMAT = "[%sourceId%:%timeId%] remove edge \"%edgeId%\"";
+	public static final String DEFAULT_AE_FORMAT = "%prefix%[%sourceId%:%timeId%] add edge \"%edgeId%\" : \"%source%\" -- \"%target%\"%suffix%";
+	public static final String DEFAULT_CEA_FORMAT = "%prefix%[%sourceId%:%timeId%] set edge \"%edgeId%\" +\"%attributeId%\"=%value%%suffix%";
+	public static final String DEFAULT_CEC_FORMAT = "%prefix%[%sourceId%:%timeId%] set edge \"%edgeId%\" \"%attributeId%\"=%value%%suffix%";
+	public static final String DEFAULT_CER_FORMAT = "%prefix%[%sourceId%:%timeId%] set edge \"%edgeId%\" -\"%attributeId%\"%suffix%";
+	public static final String DEFAULT_DE_FORMAT = "%prefix%[%sourceId%:%timeId%] remove edge \"%edgeId%\"%suffix%";
 
-	public static final String DEFAULT_CGA_FORMAT = "[%sourceId%:%timeId%] set +\"%attributeId%\"=%value%";
-	public static final String DEFAULT_CGC_FORMAT = "[%sourceId%:%timeId%] set \"%attributeId%\"=%value%";
-	public static final String DEFAULT_CGR_FORMAT = "[%sourceId%:%timeId%] set -\"%attributeId%\"";
+	public static final String DEFAULT_CGA_FORMAT = "%prefix%[%sourceId%:%timeId%] set +\"%attributeId%\"=%value%%suffix%";
+	public static final String DEFAULT_CGC_FORMAT = "%prefix%[%sourceId%:%timeId%] set \"%attributeId%\"=%value%%suffix%";
+	public static final String DEFAULT_CGR_FORMAT = "%prefix%[%sourceId%:%timeId%] set -\"%attributeId%\"%suffix%";
 
-	public static final String DEFAULT_CL_FORMAT = "[%sourceId%:%timeId%] clear";
-	public static final String DEFAULT_ST_FORMAT = "[%sourceId%:%timeId%] step %step% begins";
+	public static final String DEFAULT_CL_FORMAT = "%prefix%[%sourceId%:%timeId%] clear%suffix%";
+	public static final String DEFAULT_ST_FORMAT = "%prefix%[%sourceId%:%timeId%] step %step% begins%suffix%";
 
 	/*
 	 * Shortcut to use HashMap<String, Object>.
@@ -205,6 +205,10 @@ public class VerboseSink implements Sink {
 	 * Used to avoid to create a lot of hashmap when passing event arguments.
 	 */
 	private final Stack<Args> argsStack;
+
+	protected String prefix;
+
+	protected String suffix;
 
 	/**
 	 * Create a new verbose sink using System.out.
@@ -246,6 +250,9 @@ public class VerboseSink implements Sink {
 
 		for (EventType t : EventType.values())
 			enable.put(t, Boolean.TRUE);
+
+		suffix = "";
+		prefix = "";
 	}
 
 	/**
@@ -314,6 +321,26 @@ public class VerboseSink implements Sink {
 		enable.put(EventType.CLEAR, on);
 	}
 
+	/**
+	 * Set prefix used in messages.
+	 * 
+	 * @param prefix
+	 *            new prefix
+	 */
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+
+	/**
+	 * Set suffix used in messages.
+	 * 
+	 * @param suffix
+	 *            new suffix
+	 */
+	public void setSuffix(String suffix) {
+		this.suffix = suffix;
+	}
+
 	private void print(EventType type, Args args) {
 		if (!enable.get(type))
 			return;
@@ -338,9 +365,14 @@ public class VerboseSink implements Sink {
 	private Args argsPnP(Args args) {
 		if (args == null) {
 			if (argsStack.size() > 0)
-				return argsStack.pop();
+				args = argsStack.pop();
+			else
+				args = new Args();
 
-			return new Args();
+			args.put("prefix", prefix);
+			args.put("suffix", suffix);
+
+			return args;
 		} else {
 			args.clear();
 			argsStack.push(args);
@@ -351,7 +383,10 @@ public class VerboseSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#edgeAttributeAdded(java.lang.String, long, java.lang.String, java.lang.String, java.lang.Object)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#edgeAttributeAdded(java.lang.String,
+	 * long, java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
 			String attribute, Object value) {
@@ -368,7 +403,11 @@ public class VerboseSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#edgeAttributeChanged(java.lang.String, long, java.lang.String, java.lang.String, java.lang.Object, java.lang.Object)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#edgeAttributeChanged(java.lang.String
+	 * , long, java.lang.String, java.lang.String, java.lang.Object,
+	 * java.lang.Object)
 	 */
 	public void edgeAttributeChanged(String sourceId, long timeId,
 			String edgeId, String attribute, Object oldValue, Object newValue) {
@@ -385,7 +424,10 @@ public class VerboseSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#edgeAttributeRemoved(java.lang.String, long, java.lang.String, java.lang.String)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#edgeAttributeRemoved(java.lang.String
+	 * , long, java.lang.String, java.lang.String)
 	 */
 	public void edgeAttributeRemoved(String sourceId, long timeId,
 			String edgeId, String attribute) {
@@ -401,7 +443,10 @@ public class VerboseSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#graphAttributeAdded(java.lang.String, long, java.lang.String, java.lang.Object)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#graphAttributeAdded(java.lang.String
+	 * , long, java.lang.String, java.lang.Object)
 	 */
 	public void graphAttributeAdded(String sourceId, long timeId,
 			String attribute, Object value) {
@@ -417,7 +462,10 @@ public class VerboseSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#graphAttributeChanged(java.lang.String, long, java.lang.String, java.lang.Object, java.lang.Object)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#graphAttributeChanged(java.lang.
+	 * String, long, java.lang.String, java.lang.Object, java.lang.Object)
 	 */
 	public void graphAttributeChanged(String sourceId, long timeId,
 			String attribute, Object oldValue, Object newValue) {
@@ -433,7 +481,10 @@ public class VerboseSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#graphAttributeRemoved(java.lang.String, long, java.lang.String)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#graphAttributeRemoved(java.lang.
+	 * String, long, java.lang.String)
 	 */
 	public void graphAttributeRemoved(String sourceId, long timeId,
 			String attribute) {
@@ -448,7 +499,10 @@ public class VerboseSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#nodeAttributeAdded(java.lang.String, long, java.lang.String, java.lang.String, java.lang.Object)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#nodeAttributeAdded(java.lang.String,
+	 * long, java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
 			String attribute, Object value) {
@@ -465,7 +519,11 @@ public class VerboseSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#nodeAttributeChanged(java.lang.String, long, java.lang.String, java.lang.String, java.lang.Object, java.lang.Object)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#nodeAttributeChanged(java.lang.String
+	 * , long, java.lang.String, java.lang.String, java.lang.Object,
+	 * java.lang.Object)
 	 */
 	public void nodeAttributeChanged(String sourceId, long timeId,
 			String nodeId, String attribute, Object oldValue, Object newValue) {
@@ -482,7 +540,10 @@ public class VerboseSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#nodeAttributeRemoved(java.lang.String, long, java.lang.String, java.lang.String)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#nodeAttributeRemoved(java.lang.String
+	 * , long, java.lang.String, java.lang.String)
 	 */
 	public void nodeAttributeRemoved(String sourceId, long timeId,
 			String nodeId, String attribute) {
@@ -498,7 +559,9 @@ public class VerboseSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.ElementSink#edgeAdded(java.lang.String, long, java.lang.String, java.lang.String, java.lang.String, boolean)
+	 * 
+	 * @see org.graphstream.stream.ElementSink#edgeAdded(java.lang.String, long,
+	 * java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
 			String fromNodeId, String toNodeId, boolean directed) {
@@ -515,7 +578,9 @@ public class VerboseSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.ElementSink#edgeRemoved(java.lang.String, long, java.lang.String)
+	 * 
+	 * @see org.graphstream.stream.ElementSink#edgeRemoved(java.lang.String,
+	 * long, java.lang.String)
 	 */
 	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 		Args args = argsPnP(null);
@@ -529,7 +594,9 @@ public class VerboseSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.ElementSink#graphCleared(java.lang.String, long)
+	 * 
+	 * @see org.graphstream.stream.ElementSink#graphCleared(java.lang.String,
+	 * long)
 	 */
 	public void graphCleared(String sourceId, long timeId) {
 		Args args = argsPnP(null);
@@ -542,7 +609,9 @@ public class VerboseSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.ElementSink#nodeAdded(java.lang.String, long, java.lang.String)
+	 * 
+	 * @see org.graphstream.stream.ElementSink#nodeAdded(java.lang.String, long,
+	 * java.lang.String)
 	 */
 	public void nodeAdded(String sourceId, long timeId, String nodeId) {
 		Args args = argsPnP(null);
@@ -556,7 +625,9 @@ public class VerboseSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.ElementSink#nodeRemoved(java.lang.String, long, java.lang.String)
+	 * 
+	 * @see org.graphstream.stream.ElementSink#nodeRemoved(java.lang.String,
+	 * long, java.lang.String)
 	 */
 	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 		Args args = argsPnP(null);
@@ -570,7 +641,9 @@ public class VerboseSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.ElementSink#stepBegins(java.lang.String, long, double)
+	 * 
+	 * @see org.graphstream.stream.ElementSink#stepBegins(java.lang.String,
+	 * long, double)
 	 */
 	public void stepBegins(String sourceId, long timeId, double step) {
 		Args args = argsPnP(null);

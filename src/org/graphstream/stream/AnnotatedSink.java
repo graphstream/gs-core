@@ -119,7 +119,7 @@ public abstract class AnnotatedSink implements Sink {
 			for (int i = 0; i < ms.length; i++) {
 				Method m = ms[i];
 				Bind b = m.getAnnotation(Bind.class);
-
+				
 				if (b != null)
 					methods.get(b.type()).put(b.value(), m);
 			}
