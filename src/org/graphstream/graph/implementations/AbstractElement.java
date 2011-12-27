@@ -251,8 +251,11 @@ public abstract class AbstractElement implements Element {
 				if (o instanceof String) {
 					try {
 						return Double.parseDouble((String) o);
-					} catch (NumberFormatException e) {
-					}
+					} catch (NumberFormatException e) {}
+				} else if(o instanceof CharSequence) {
+					try {
+						return Double.parseDouble(((CharSequence)o).toString());
+					} catch (NumberFormatException e) {}
 				}
 			}
 		}

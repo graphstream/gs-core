@@ -360,9 +360,9 @@ public class GraphicGraph extends AbstractElement implements Graph,
 	 */
 	public void computeBounds() {
 		if (boundsChanged) {
-			lo.x = lo.y = lo.z = 10000000; // A bug with Float.MAX_VALUE during
+			lo.x = lo.y = lo.z = Double.POSITIVE_INFINITY;//1000000000; // A bug with Double.MAX_VALUE during
 											// comparisons ?
-			hi.x = hi.y = hi.z = -10000000; // A bug with Float.MIN_VALUE during
+			hi.x = hi.y = hi.z = Double.NEGATIVE_INFINITY;//-1000000000; // A bug with Double.MIN_VALUE during
 											// comparisons ?
 
 			for (Node n : getEachNode()) {

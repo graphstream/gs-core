@@ -144,7 +144,6 @@ public class GraphicNode extends GraphicElement implements Node {
 				moveFromEvent(x, y, numberAttribute(newValue));
 			} else if (attribute.equals("xy") || attribute.equals("xyz")) {
 				double pos[] = nodePosition(this);
-
 				moveFromEvent(pos[0], pos[1], pos[2]);
 			}
 		}
