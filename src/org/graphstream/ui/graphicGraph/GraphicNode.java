@@ -163,13 +163,14 @@ public class GraphicNode extends GraphicElement implements Node {
 	protected double numberAttribute(Object value) {
 		if (value instanceof Number) {
 			return ((Number) value).doubleValue();
-		} else if (value instanceof CharSequence) {
-			String xs = ((CharSequence) value).toString();
-
+		} else if(value instanceof String) {
 			try {
-				return Float.parseFloat(xs);
-			} catch (NumberFormatException e) {
-			}
+				return Double.parseDouble((String)value);
+			} catch (NumberFormatException e) {}
+		} else if (value instanceof CharSequence) {
+			try {
+				return Double.parseDouble(((CharSequence)value).toString());
+			} catch (NumberFormatException e) {}
 		}
 
 		return 0;
