@@ -52,7 +52,7 @@ public class ElementNotFoundException extends RuntimeException {
 	 * @param message
 	 *            The message to throw.
 	 */
-	public ElementNotFoundException(String message) {
-		super("not found: " + message);
+	public ElementNotFoundException(String message, Object... args) {
+		super(String.format(message, args));
 	}
 }
