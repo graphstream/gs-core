@@ -1,5 +1,6 @@
 /*
  * Copyright 2006 - 2011 
+ *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -34,22 +35,4 @@ import org.graphstream.graph.Element;
 
 public interface Filter<T extends Element> {
 	boolean isAvailable(T e);
-
-	public static class ByAttributeFilter<T extends Element> implements
-			Filter<T> {
-
-		protected String key;
-		protected Object value;
-
-		public ByAttributeFilter(String key, Object value) {
-			this.key = key;
-			this.value = value;
-		}
-
-		public boolean isAvailable(T e) {
-			return e.hasAttribute(key)
-					&& (value == null ? e.getAttribute(key) == null : value
-							.equals(e.getAttribute(key)));
-		}
-	}
 }

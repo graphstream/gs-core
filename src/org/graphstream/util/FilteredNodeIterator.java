@@ -35,14 +35,18 @@ import java.util.Iterator;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 
-public class FilteredNodeIterator implements Iterator<Node> {
+public class FilteredNodeIterator<T extends Node> implements Iterator<T> {
 
-	protected Iterator<Node> globalIterator;
+	protected Iterator<T> globalIterator;
 	protected Filter<Node> filter;
-	protected Node next;
+	protected T next;
 
 	public FilteredNodeIterator(Graph g, Filter<Node> filter) {
-		this.globalIterator = g.getNodeIterator();
+		this(g.<T>getNodeIterator(), filter);
+	}
+	
+	public FilteredNodeIterator(Iterator<T> ite, Filter<Node> filter) {
+		this.globalIterator = ite;
 		this.filter = filter;
 
 		findNext();
@@ -71,8 +75,8 @@ public class FilteredNodeIterator implements Iterator<Node> {
 	 * (non-Javadoc)
 	 * @see java.util.Iterator#next()
 	 */
-	public Node next() {
-		Node tmp = next;
+	public T next() {
+		T tmp = next;
 		findNext();
 
 		return tmp;

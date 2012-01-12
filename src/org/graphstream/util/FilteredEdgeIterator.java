@@ -35,15 +35,19 @@ import java.util.Iterator;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Edge;
 
-public class FilteredEdgeIterator implements Iterator<Edge> {
+public class FilteredEdgeIterator<T extends Edge> implements Iterator<T> {
 
-	protected Iterator<Edge> globalIterator;
+	protected Iterator<T> globalIterator;
 	protected Filter<Edge> filter;
-	protected Edge next;
+	protected T next;
 
 	public FilteredEdgeIterator(Graph g, Filter<Edge> filter) {
-		this.globalIterator = g.getEdgeIterator();
-		this.filter = filter;
+		this(g.<T>getEdgeIterator(), filter);
+	}
+	
+	public FilteredEdgeIterator(Iterator<T> ite, Filter<Edge> filter) {
+		this.globalIterator = ite;
+		this.filter = (Filter<Edge>) filter;
 
 		findNext();
 	}
@@ -71,8 +75,8 @@ public class FilteredEdgeIterator implements Iterator<Edge> {
 	 * (non-Javadoc)
 	 * @see java.util.Iterator#next()
 	 */
-	public Edge next() {
-		Edge tmp = next;
+	public T next() {
+		T tmp = next;
 		findNext();
 
 		return tmp;
