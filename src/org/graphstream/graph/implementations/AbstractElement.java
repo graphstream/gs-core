@@ -37,7 +37,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Stack;
 
 import org.graphstream.graph.CompoundAttribute;
 import org.graphstream.graph.Element;
@@ -79,7 +78,7 @@ public abstract class AbstractElement implements Element {
 	/**
 	 * Vector used when removing attributes to avoid recursive removing.
 	 */
-	protected Stack<String> attributesBeingRemoved = null;
+	protected ArrayList<String> attributesBeingRemoved = null;
 
 	// Construction
 
@@ -252,8 +251,11 @@ public abstract class AbstractElement implements Element {
 				if (o instanceof String) {
 					try {
 						return Double.parseDouble((String) o);
-					} catch (NumberFormatException e) {
-					}
+					} catch (NumberFormatException e) {}
+				} else if(o instanceof CharSequence) {
+					try {
+						return Double.parseDouble(((CharSequence)o).toString());
+					} catch (NumberFormatException e) {}
 				}
 			}
 		}
@@ -591,20 +593,21 @@ public abstract class AbstractElement implements Element {
 			// 'attributesBeingRemoved' is created only if this is required.
 			//
 			if (attributesBeingRemoved == null)
-				attributesBeingRemoved = new Stack<String>();
+				attributesBeingRemoved = new ArrayList<String>();
 
 			//
 			// Avoid recursive calls when synchronising graphs.
 			//
 			if (attributes.containsKey(attribute)
 					&& !attributesBeingRemoved.contains(attribute)) {
-				attributesBeingRemoved.push(attribute);
+				attributesBeingRemoved.add(attribute);
 
 				attributeChanged(sourceId, timeId, attribute,
 						AttributeChangeEvent.REMOVE, attributes.get(attribute),
 						null);
 
-				attributesBeingRemoved.pop();
+				attributesBeingRemoved
+						.remove(attributesBeingRemoved.size() - 1);
 				attributes.remove(attribute);
 			}
 		}

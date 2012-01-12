@@ -106,7 +106,7 @@ public interface GraphRenderer {
 	/**
 	 * Redisplay or update the graph.
 	 */
-	public abstract void render(Graphics2D g, int width, int height);
+	public abstract void render(Graphics2D g, int x, int y, int width, int height);
 
 	/**
 	 * Called by the mouse manager to specify where a node and sprite selection

@@ -43,8 +43,13 @@ import org.graphstream.graph.Node;
  * 
  */
 public class AdjacencyListNode extends AbstractNode {
-	protected static final int INITIAL_EDGE_CAPACITY = 16;
+	protected static final int INITIAL_EDGE_CAPACITY;
 	protected static final double GROWTH_FACTOR = 1.1;
+
+	static {
+		String p = "org.graphstream.graph.node.initialEdgeCapacity";
+		INITIAL_EDGE_CAPACITY = Integer.valueOf(System.getProperty(p, "16"));
+	}
 
 	protected static final char I_EDGE = 0;
 	protected static final char IO_EDGE = 1;
@@ -201,7 +206,7 @@ public class AdjacencyListNode extends AbstractNode {
 					+ " has no edge " + i);
 		return (T) edges[ioStart + i];
 	}
-	
+
 	@Override
 	public <T extends Edge> T getEdgeBetween(Node node) {
 		return locateEdge(node, IO_EDGE);

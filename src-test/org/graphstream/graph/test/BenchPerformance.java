@@ -46,7 +46,7 @@ import org.graphstream.graph.implementations.SingleGraph;
 import org.junit.Ignore;
 
 @Ignore
-public class TestPerformance {
+public class BenchPerformance {
 	Graph g;
 	Runtime r;
 	List<String> nodeIds;
@@ -74,7 +74,7 @@ public class TestPerformance {
 		}
 	}
 
-	public TestPerformance(String fileName, Graph graph) {
+	public BenchPerformance(String fileName, Graph graph) {
 		r = Runtime.getRuntime();
 		forceGC();
 		long used1 = r.totalMemory() - r.freeMemory();
@@ -406,7 +406,7 @@ public class TestPerformance {
 	}
 
 
-	public static void latexOutput(TestPerformance[] tests, PrintStream ps) {
+	public static void latexOutput(BenchPerformance[] tests, PrintStream ps) {
 		String header = "\\begin{tabular}{|l|";
 		for (int i = 0; i < tests.length; i++)
 			header += "r";
@@ -415,7 +415,7 @@ public class TestPerformance {
 		ps.println("\\hline");
 
 		ps.printf("%35s ", "measure");
-		for (TestPerformance t : tests)
+		for (BenchPerformance t : tests)
 			ps.printf("& %10s ", t.g.getId());
 		ps.println("\\\\");
 		ps.println("\\hline");
@@ -425,7 +425,7 @@ public class TestPerformance {
 			if (!tests[0].measureValues.containsKey(m))
 				continue;
 			ps.printf("%35s ", "\\lstinline~" + m.name() + "~");
-			for (TestPerformance t : tests) {
+			for (BenchPerformance t : tests) {
 				double val = t.measureValues.get(m);
 				if (m == Measures.MEMORY)
 					val /= 1 << 20;
@@ -448,10 +448,10 @@ public class TestPerformance {
 		graphs[0] = new SingleGraph("Single");
 		graphs[2] = new AdjacencyListGraph("Adj");
 
-		TestPerformance[] tests = new TestPerformance[gCount];
+		BenchPerformance[] tests = new BenchPerformance[gCount];
 		for (int i = 0; i < gCount; i++) {
 			System.out.println("Loading graph " + graphs[i].getId());
-			tests[i] = new TestPerformance(fileName, graphs[i]);
+			tests[i] = new BenchPerformance(fileName, graphs[i]);
 			System.out.println("  Testing access by id");
 			tests[i].testAccessById();
 			System.out.println("  Testing graph iterators");

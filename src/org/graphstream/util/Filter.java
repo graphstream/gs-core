@@ -29,30 +29,10 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.graph;
+package org.graphstream.util;
 
-/**
- * Thrown when a searched object is not found.
- * 
- * @since 20020615
- */
-public class ElementNotFoundException extends RuntimeException {
-	private static final long serialVersionUID = 5089958436773409615L;
+import org.graphstream.graph.Element;
 
-	/**
-	 * Throws the message "not found".
-	 */
-	public ElementNotFoundException() {
-		super("not found");
-	}
-
-	/**
-	 * Throws <code>message</code>.
-	 * 
-	 * @param message
-	 *            The message to throw.
-	 */
-	public ElementNotFoundException(String message, Object... args) {
-		super(String.format(message, args));
-	}
+public interface Filter<T extends Element> {
+	boolean isAvailable(T e);
 }

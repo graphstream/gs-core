@@ -1,6 +1,5 @@
 /*
  * Copyright 2006 - 2011 
- *     Stefan Balev 	<stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
  *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
@@ -29,30 +28,64 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.graph;
+package org.graphstream.util;
 
-/**
- * Thrown when a searched object is not found.
- * 
- * @since 20020615
- */
-public class ElementNotFoundException extends RuntimeException {
-	private static final long serialVersionUID = 5089958436773409615L;
+import java.util.Iterator;
 
-	/**
-	 * Throws the message "not found".
-	 */
-	public ElementNotFoundException() {
-		super("not found");
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Edge;
+
+public class FilteredEdgeIterator<T extends Edge> implements Iterator<T> {
+
+	protected Iterator<T> globalIterator;
+	protected Filter<Edge> filter;
+	protected T next;
+
+	public FilteredEdgeIterator(Graph g, Filter<Edge> filter) {
+		this(g.<T>getEdgeIterator(), filter);
+	}
+	
+	public FilteredEdgeIterator(Iterator<T> ite, Filter<Edge> filter) {
+		this.globalIterator = ite;
+		this.filter = (Filter<Edge>) filter;
+
+		findNext();
 	}
 
-	/**
-	 * Throws <code>message</code>.
-	 * 
-	 * @param message
-	 *            The message to throw.
+	protected void findNext() {
+		next = null;
+
+		while (globalIterator.hasNext() && next == null) {
+			next = globalIterator.next();
+
+			if (!filter.isAvailable(next))
+				next = null;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.Iterator#hasNext()
 	 */
-	public ElementNotFoundException(String message, Object... args) {
-		super(String.format(message, args));
+	public boolean hasNext() {
+		return next != null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.Iterator#next()
+	 */
+	public T next() {
+		T tmp = next;
+		findNext();
+
+		return tmp;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.Iterator#remove()
+	 */
+	public void remove() {
 	}
 }

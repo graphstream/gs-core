@@ -306,13 +306,15 @@ public class DefaultCamera implements Camera {
 	 * rendering (if the view port changed).
 	 */
 	public void checkVisibility(GraphicGraph graph) {
-		double W = metrics.viewport.data[0];
-		double H = metrics.viewport.data[1];
+		double X = metrics.viewport[0];
+		double Y = metrics.viewport[1];
+		double W = metrics.viewport[2];
+		double H = metrics.viewport[3];
 
 		nodeInvisible.clear();
 
 		for (Node node : graph) {
-			boolean visible = isNodeIn((GraphicNode) node, 0, 0, W, H) && (! ((GraphicNode)node).hidden) && ((GraphicNode)node).positionned;
+			boolean visible = isNodeIn((GraphicNode) node, X, Y, X+W, Y+H) && (! ((GraphicNode)node).hidden) && ((GraphicNode)node).positionned;
 
 			if (!visible)
 				nodeInvisible.add(node.getId());
@@ -441,14 +443,15 @@ public class DefaultCamera implements Camera {
 	 */
 	public void pushView(GraphicGraph graph, Graphics2D g2) {
 		if (oldTx == null) {
-			oldTx = g2.getTransform();
-
+			oldTx = g2.getTransform();	// Backup the Swing transform.
+			
 			if (autoFit)
-				Tx = autoFitView(g2, Tx);
-			else
-				Tx = userView(g2, Tx);
+				 autoFitView(g2);
+			else userView(g2);
 
-			g2.setTransform(Tx);
+			//g2.setTransform(Tx);		// Set the final transform, a composition of the old Swing transform and our new coordinate system. 
+		} else {
+			throw new RuntimeException("DefaultCamera.pushView() / popView() wrongly nested");
 		}
 		
 		checkVisibility(graph);
@@ -463,7 +466,7 @@ public class DefaultCamera implements Camera {
 	 */
 	public void popView(Graphics2D g2) {
 		if (oldTx != null) {
-			g2.setTransform(oldTx);
+			g2.setTransform(oldTx);	// Set back the old Swing Transform.
 			oldTx = null;
 		}
 	}
@@ -474,11 +477,8 @@ public class DefaultCamera implements Camera {
 	 * 
 	 * @param g2
 	 *            The Swing graphics.
-	 * @param Tx
-	 *            The transformation to modify.
-	 * @return The transformation modified.
 	 */
-	protected AffineTransform autoFitView(Graphics2D g2, AffineTransform Tx) {
+	protected void autoFitView(Graphics2D g2) {
 		double sx, sy;
 		double tx, ty;
 		double padXgu = getPaddingXgu() * 2;
@@ -486,10 +486,8 @@ public class DefaultCamera implements Camera {
 		double padXpx = getPaddingXpx() * 2;
 		double padYpx = getPaddingYpx() * 2;
 
-		sx = (metrics.viewport.data[0] - padXpx)
-				/ (metrics.size.data[0] + padXgu); // Ratio along X
-		sy = (metrics.viewport.data[1] - padYpx)
-				/ (metrics.size.data[1] + padYgu); // Ratio along Y
+		sx = (metrics.viewport[2] - padXpx) / (metrics.size.data[0] + padXgu); // Ratio along X
+		sy = (metrics.viewport[3] - padYpx) / (metrics.size.data[1] + padYgu); // Ratio along Y
 		tx = metrics.lo.x + (metrics.size.data[0] / 2); // Centre of graph in X
 		ty = metrics.lo.y + (metrics.size.data[1] / 2); // Centre of graph in Y
 
@@ -498,13 +496,13 @@ public class DefaultCamera implements Camera {
 		else
 			sy = sx;
 
-		Tx.setToIdentity();
-		Tx.translate(metrics.viewport.data[0] / 2, metrics.viewport.data[1] / 2);
+		g2.translate(metrics.viewport[2] / 2, metrics.viewport[3] / 2);
 		if (rotation != 0)
-			Tx.rotate(rotation / (180 / Math.PI));
-		Tx.scale(sx, -sy);
-		Tx.translate(-tx, -ty);
+			g2.rotate(rotation / (180 / Math.PI));
+		g2.scale(sx, -sy);
+		g2.translate(-tx, -ty);
 
+		Tx = g2.getTransform();
 		xT = new AffineTransform(Tx);
 		try {
 			xT.invert();
@@ -518,8 +516,6 @@ public class DefaultCamera implements Camera {
 		metrics.setRatioPx2Gu(sx);
 		metrics.loVisible.copy(metrics.lo);
 		metrics.hiVisible.copy(metrics.hi);
-
-		return Tx;
 	}
 
 	/**
@@ -529,43 +525,34 @@ public class DefaultCamera implements Camera {
 	 * 
 	 * @param g2
 	 *            The Swing graphics.
-	 * @param Tx
-	 *            The transformation to modify.
-	 * @return The transformation modified.
 	 */
-	protected AffineTransform userView(Graphics2D g2, AffineTransform Tx) {
+	protected void userView(Graphics2D g2) {
 		double sx, sy;
 		double tx, ty;
 		double padXgu = getPaddingXgu() * 2;
 		double padYgu = getPaddingYgu() * 2;
 		double padXpx = getPaddingXpx() * 2;
 		double padYpx = getPaddingYpx() * 2;
-		double gw = gviewport != null ? gviewport[2] - gviewport[0]
-				: metrics.size.data[0];
-		double gh = gviewport != null ? gviewport[3] - gviewport[1]
-				: metrics.size.data[1];
-		// double diag = ((double)Math.max( metrics.size.data[0]+padXgu,
-		// metrics.size.data[1]+padYgu )) * zoom;
-		//
-		// sx = ( metrics.viewport.data[0] - padXpx ) / diag;
-		// sy = ( metrics.viewport.data[1] - padYpx ) / diag;
-		sx = (metrics.viewport.data[0] - padXpx) / ((gw + padXgu) * zoom);
-		sy = (metrics.viewport.data[1] - padYpx) / ((gh + padYgu) * zoom);
+		double gw = gviewport != null ? gviewport[2] - gviewport[0] : metrics.size.data[0];
+		double gh = gviewport != null ? gviewport[3] - gviewport[1] : metrics.size.data[1];
+
+		sx = (metrics.viewport[2] - padXpx) / ((gw + padXgu) * zoom);
+		sy = (metrics.viewport[3] - padYpx) / ((gh + padYgu) * zoom);
 		tx = center.x;
 		ty = center.y;
-
+		
 		if (sx > sy) // The least ratio.
 			sx = sy;
 		else
 			sy = sx;
 
-		Tx.setToIdentity();
-		Tx.translate(metrics.viewport.data[0] / 2, metrics.viewport.data[1] / 2); 
+		g2.translate((metrics.viewport[2] / 2), (metrics.viewport[3] / 2)); 
 		if (rotation != 0)
-			Tx.rotate(rotation / (180 / Math.PI));
-		Tx.scale(sx, -sy);
-		Tx.translate(-tx, -ty);
+			g2.rotate(rotation / (180 / Math.PI));
+		g2.scale(sx, -sy);
+		g2.translate(-tx, -ty);
 
+		Tx = g2.getTransform();
 		xT = new AffineTransform(Tx);
 		try {
 			xT.invert();
@@ -575,13 +562,11 @@ public class DefaultCamera implements Camera {
 
 		metrics.setRatioPx2Gu(sx);
 
-		double w2 = (metrics.viewport.data[0] / sx) / 2;
-		double h2 = (metrics.viewport.data[1] / sx) / 2;
+		double w2 = (metrics.viewport[2] / sx) / 2;
+		double h2 = (metrics.viewport[3] / sx) / 2;
 
 		metrics.loVisible.set(center.x - w2, center.y - h2);
 		metrics.hiVisible.set(center.x + w2, center.y + h2);
-
-		return Tx;
 	}
 
 	/**
@@ -636,8 +621,8 @@ public class DefaultCamera implements Camera {
 	 * @param viewportHeight
 	 *            The width in pixels of the view port.
 	 */
-	public void setViewport(double viewportWidth, double viewportHeight) {
-		metrics.setViewport(viewportWidth, viewportHeight);
+	public void setViewport(double viewportX, double viewportY, double viewportWidth, double viewportHeight) {
+		metrics.setViewport(viewportX, viewportY, viewportWidth, viewportHeight);
 	}
 
 	/**
@@ -688,8 +673,8 @@ public class DefaultCamera implements Camera {
 	 * @return True if visible.
 	 */
 	protected boolean isSpriteVisible(GraphicSprite sprite) {
-		return isSpriteIn(sprite, 0, 0, metrics.viewport.data[0],
-				metrics.viewport.data[1]);
+		return isSpriteIn(sprite, metrics.viewport[0], metrics.viewport[1], metrics.viewport[0]+metrics.viewport[2],
+				metrics.viewport[1]+metrics.viewport[3]);
 	}
 
 	/**
@@ -948,8 +933,8 @@ public class DefaultCamera implements Camera {
 			pos.y = metrics.lo.y + (sprite.getY() / 100f)
 					* metrics.graphHeightGU();
 		} else if (units == Units.PX && sprite.getUnits() == Units.PERCENTS) {
-			pos.x = (sprite.getX() / 100f) * metrics.viewport.data[0];
-			pos.y = (sprite.getY() / 100f) * metrics.viewport.data[1];
+			pos.x = (sprite.getX() / 100f) * metrics.viewport[2];
+			pos.y = (sprite.getY() / 100f) * metrics.viewport[3];
 		} else {
 			throw new RuntimeException("Unhandled yet sprite positioning.");
 		}

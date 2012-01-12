@@ -486,7 +486,9 @@ public class Viewer implements ActionListener {
 	}
 
 	/**
-	 * Never call this method.
+	 * Called on a regular basis by the timer. Checks if some events occurred from the graph pipe
+	 * or from the layout pipe, and if the graph changed, triggers a repaint.
+	 * Never call this method, it is called by a Swing Timer automatically.
 	 */
 	public void actionPerformed(ActionEvent e) {
 		synchronized (views) {
@@ -503,12 +505,13 @@ public class Viewer implements ActionListener {
 
 			boolean changed = graph.graphChangedFlag();
 
-			if (changed)
+			if (changed) {
 				computeGraphMetrics();
 //long t4=System.currentTimeMillis();
 
-			for (View view : views.values())
-				view.display(graph, changed);
+				for (View view : views.values())
+					view.display(graph, changed);
+			}
 //long t5=System.currentTimeMillis();
 
 			graph.resetGraphChangedFlag();

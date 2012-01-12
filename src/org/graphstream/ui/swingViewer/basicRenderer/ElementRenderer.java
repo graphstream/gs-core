@@ -224,9 +224,9 @@ public abstract class ElementRenderer {
 				double w = camera.getMetrics().lengthToPx(group.getSize(),
 						0);
 				p = new Point3();
-				p.x = camera.getMetrics().viewport.data[1] * element.getX()
+				p.x = camera.getMetrics().viewport[2] * element.getX()
 						+ (w / 2);
-				p.y = camera.getMetrics().viewport.data[2] * element.getY();
+				p.y = camera.getMetrics().viewport[3] * element.getY();
 			} else {
 				double w = camera.getMetrics().lengthToGu(group.getSize(),
 						0);

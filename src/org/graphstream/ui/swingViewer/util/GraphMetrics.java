@@ -88,7 +88,7 @@ public class GraphMetrics {
 	/**
 	 * The view port size.
 	 */
-	public Vector3 viewport = new Vector3();
+	public double viewport[] = new double[4];
 
 	/**
 	 * The scaling factor to pass from graph units to pixels.
@@ -312,8 +312,11 @@ public class GraphMetrics {
 	 * @param viewportHeight
 	 *            The width in pixels of the view port.
 	 */
-	public void setViewport(double viewportWidth, double viewportHeight) {
-		viewport.set(viewportWidth, viewportHeight, 0);
+	public void setViewport(double viewportX, double viewportY, double viewportWidth, double viewportHeight) {
+		viewport[0] = viewportX;
+		viewport[1] = viewportY;
+		viewport[2] = viewportWidth;
+		viewport[3] = viewportHeight;
 	}
 
 	/**

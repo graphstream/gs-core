@@ -34,8 +34,6 @@ package org.graphstream.ui.swingViewer;
 import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
@@ -66,14 +64,6 @@ import org.graphstream.ui.swingViewer.util.ShortcutManager;
  * </p>
  * 
  * <h3>The painting mechanism</h3>
- * 
- * <p>
- * This mechanism pushes a repaint query each time the viewer asks us to
- * repaint. Two flags are provided to know what to repaint :
- * {@link #graphChanged} allows to know when the graph needs to be rendered anew
- * because its structure changed and {@link #canvasChanged} allows to know one
- * must repaint because the rendering canvas was resized, shown, etc.
- * </p>
  * 
  * <p>
  * The main method to implement is {@link #render(Graphics2D)}. This method is
@@ -108,10 +98,9 @@ import org.graphstream.ui.swingViewer.util.ShortcutManager;
  * graph attribute is the identifier of the view.
  * </p>
  */
-public class DefaultView extends View implements ComponentListener,
-		WindowListener {
-	private static final long serialVersionUID = -4489484861592064398L;
-	// Attribute
+public class DefaultView extends View implements WindowListener
+{
+	private static final long serialVersionUID = - 4489484861592064398L;
 
 	/**
 	 * Parent viewer.
@@ -129,11 +118,6 @@ public class DefaultView extends View implements ComponentListener,
 	protected JFrame frame;
 
 	/**
-	 * The graph changed since the last repaint.
-	 */
-	protected boolean graphChanged;
-
-	/**
 	 * Manager for events with the keyboard.
 	 */
 	protected ShortcutManager shortcuts;
@@ -148,11 +132,6 @@ public class DefaultView extends View implements ComponentListener,
 	 */
 	protected GraphRenderer renderer;
 
-	/**
-	 * Set to true each time the drawing canvas changed.
-	 */
-	protected boolean canvasChanged = true;
-
 	// Construction
 
 	public DefaultView(Viewer viewer, String identifier, GraphRenderer renderer) {
@@ -164,20 +143,8 @@ public class DefaultView extends View implements ComponentListener,
 		shortcuts = new ShortcutManager(this);
 		mouseClicks = new MouseManager(this.graph, this);
 
-		//
-		// Disable background drawing
-		//
 		setOpaque(false);
-		
-		//
-		// Be sure that double buffering is enabled
-		//
 		setDoubleBuffered(true);
-		
-		//
-		// Unused if canvasChanged flag not used
-		//
-		//addComponentListener(this);
 		addKeyListener(shortcuts);
 		addMouseListener(mouseClicks);
 		addMouseMotionListener(mouseClicks);
@@ -195,26 +162,15 @@ public class DefaultView extends View implements ComponentListener,
 
 	@Override
 	public void display(GraphicGraph graph, boolean graphChanged) {
-		this.graphChanged = graphChanged;
-
 		repaint();
 	}
-
+	
 	@Override
-	protected void paintComponent(Graphics g) {
+	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-
-		// if (graphChanged || canvasChanged) {
 		checkTitle();
-
 		Graphics2D g2 = (Graphics2D) g;
-
-		// super.paint( g );
 		render(g2);
-		//paintChildren(g2);
-
-		// graphChanged = canvasChanged = false;
-		// }
 	}
 
 	protected void checkTitle() {
@@ -238,7 +194,6 @@ public class DefaultView extends View implements ComponentListener,
 	public void close(GraphicGraph graph) {
 		renderer.close();
 		graph.addAttribute("ui.viewClosed", getId());
-		removeComponentListener(this);
 		removeKeyListener(shortcuts);
 		removeMouseListener(mouseClicks);
 		removeMouseMotionListener(mouseClicks);
@@ -278,8 +233,7 @@ public class DefaultView extends View implements ComponentListener,
 	}
 
 	public void render(Graphics2D g) {
-		setBackground(graph.getStyle().getFillColor(0));
-		renderer.render(g, getWidth(), getHeight());
+		renderer.render(g, getX(), getY(), getWidth(), getHeight());
 
 		String screenshot = (String) graph.getLabel("ui.screenshot");
 
@@ -294,41 +248,24 @@ public class DefaultView extends View implements ComponentListener,
 	@Override
 	public void beginSelectionAt(double x1, double y1) {
 		renderer.beginSelectionAt(x1, y1);
-		canvasChanged = true;
+		repaint();
 	}
 
 	@Override
 	public void selectionGrowsAt(double x, double y) {
 		renderer.selectionGrowsAt(x, y);
-		canvasChanged = true;
+		repaint();
 	}
 
 	@Override
 	public void endSelectionAt(double x2, double y2) {
 		renderer.endSelectionAt(x2, y2);
-		canvasChanged = true;
-	}
-
-	// Component listener
-
-	public void componentShown(ComponentEvent e) {
-		canvasChanged = true;
-	}
-
-	public void componentHidden(ComponentEvent e) {
-	}
-
-	public void componentMoved(ComponentEvent e) {
-	}
-
-	public void componentResized(ComponentEvent e) {
-		canvasChanged = true;
+		repaint();
 	}
 
 	// Window Listener
 
 	public void windowActivated(WindowEvent e) {
-		canvasChanged = true;
 	}
 
 	public void windowClosed(WindowEvent e) {
@@ -361,7 +298,6 @@ public class DefaultView extends View implements ComponentListener,
 	}
 
 	public void windowDeiconified(WindowEvent e) {
-		canvasChanged = true;
 	}
 
 	public void windowIconified(WindowEvent e) {
@@ -369,7 +305,6 @@ public class DefaultView extends View implements ComponentListener,
 
 	public void windowOpened(WindowEvent e) {
 		graph.removeAttribute("ui.viewClosed");
-		canvasChanged = true;
 	}
 
 	// Methods deferred to the renderer
@@ -393,12 +328,12 @@ public class DefaultView extends View implements ComponentListener,
 	@Override
 	public void setBackLayerRenderer(LayerRenderer renderer) {
 		this.renderer.setBackLayerRenderer(renderer);
-		canvasChanged = true;
+		repaint();
 	}
 
 	@Override
 	public void setForeLayoutRenderer(LayerRenderer renderer) {
 		this.renderer.setForeLayoutRenderer(renderer);
-		canvasChanged = true;
+		repaint();
 	}
 }
