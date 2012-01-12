@@ -1,37 +1,35 @@
 /*
- * Copyright 2006 - 2011 
- *     Julien Baudry	<julien.baudry@graphstream-project.org>
- *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
- *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
- *     Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
+ * Copyright 2006 - 2011 Julien Baudry <julien.baudry@graphstream-project.org>
+ * Antoine Dutot <antoine.dutot@graphstream-project.org> Yoann Pigné
+ * <yoann.pigne@graphstream-project.org> Guilhelm Savin
+ * <guilhelm.savin@graphstream-project.org>
  * 
  * This file is part of GraphStream <http://graphstream-project.org>.
  * 
- * GraphStream is a library whose purpose is to handle static or dynamic
- * graph, create them from scratch, file or any source and display them.
+ * GraphStream is a library whose purpose is to handle static or dynamic graph,
+ * create them from scratch, file or any source and display them.
  * 
- * This program is free software distributed under the terms of two licenses, the
- * CeCILL-C license that fits European law, and the GNU Lesser General Public
- * License. You can  use, modify and/ or redistribute the software under the terms
- * of the CeCILL-C license as circulated by CEA, CNRS and INRIA at the following
- * URL <http://www.cecill.info> or under the terms of the GNU LGPL as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * This program is free software distributed under the terms of two licenses,
+ * the CeCILL-C license that fits European law, and the GNU Lesser General
+ * Public License. You can use, modify and/ or redistribute the software under
+ * the terms of the CeCILL-C license as circulated by CEA, CNRS and INRIA at the
+ * following URL <http://www.cecill.info> or under the terms of the GNU LGPL as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * 
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
 
 package org.graphstream.stream.netstream;
-
-
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -41,23 +39,26 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 import org.graphstream.stream.Sink;
+import org.graphstream.stream.netstream.packing.NetStreamPacker;
 
 /**
  * <p>
- * This class implements a sender according to specifications the NetStream protocol.
+ * This class implements a sender according to specifications the NetStream
+ * protocol.
  * </p>
  * 
  * <p>
- * See {@link NetStreamConstants} for a full description of the protocol, the sender and the receiver.
+ * See {@link NetStreamConstants} for a full description of the protocol, the
+ * sender and the receiver.
  * </p>
  * 
  * @see NetStreamConstants
  * @see NetStreamReceiver
  * 
  * 
- * Copyright (c) 2010 University of Luxembourg
+ *      Copyright (c) 2010 University of Luxembourg
  * 
- * NetStreamSender.java
+ *      NetStreamSender.java
  * @since Aug 10, 2011
  * 
  * @author Yoann Pigné
@@ -70,34 +71,69 @@ public class NetStreamSender implements Sink {
 	protected int port;
 	protected Socket socket;
 	protected BufferedOutputStream out;
-	
-	protected String sourceId="";
-	protected byte[] sourceIdBuff;
-	
-	ByteBuffer buffSizeBuff;
 
-	public NetStreamSender(String host, int port) throws UnknownHostException, IOException {
-	this("default",host,port);
+	protected String sourceId = "";
+	protected byte[] sourceIdBuff;
+
+	class DefaultPacker extends NetStreamPacker {
+		ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
+
+		@Override
+		public ByteBuffer packMessage(ByteBuffer buffer, int startIndex,
+				int endIndex) {
+			return buffer;
+		}
+
+		@Override
+		public ByteBuffer packMessageSize(int capacity) {
+			sizeBuffer.rewind();
+			sizeBuffer.putInt(capacity);
+			return sizeBuffer;
+		}
+
+	};
+
+	protected NetStreamPacker packer = new DefaultPacker();
+
+	public NetStreamSender(String host, int port) throws UnknownHostException,
+			IOException {
+		this("default", host, port);
 	}
-	public NetStreamSender( int port) throws UnknownHostException, IOException {
-	this("default","localhost",port);
+	public NetStreamSender(int port) throws UnknownHostException, IOException {
+		this("default", "localhost", port);
 	}
-		
-	public NetStreamSender(String stream, String host, int port) throws UnknownHostException, IOException {
+
+	public NetStreamSender(String stream, String host, int port)
+			throws UnknownHostException, IOException {
 		this.stream = stream;
 		this.host = host;
 		this.port = port;
-		buffSizeBuff = ByteBuffer.allocate(4);
 		streamIdArray = stream.getBytes(Charset.forName("UTF-8"));
 
 		connect();
 	}
 
+	/**
+	 * Sets an optional NetStreamPaker whose "pack" method will be called on
+	 * each message.
+	 * 
+	 * a Packer can do extra encoding on the all byte array message, it may also
+	 * crypt things.
+	 * 
+	 * @param paker
+	 *            The packer object
+	 */
+	public void setPacker(NetStreamPacker paker) {
+		this.packer = paker;
+	}
+	public void removePacker() {
+		packer = new DefaultPacker();
+	}
+
 	protected void connect() throws UnknownHostException, IOException {
 
-		
-			socket = new Socket(host, port);
-			out = new BufferedOutputStream(socket.getOutputStream());
+		socket = new Socket(host, port);
+		out = new BufferedOutputStream(socket.getOutputStream());
 
 	}
 
@@ -158,7 +194,7 @@ public class NetStreamSender implements Sink {
 				valueType = NetStreamConstants.TYPE_STRING;
 			}
 		}
-		//System.out.println("ValueType="+valueType+" "+value.getClass());
+		// System.out.println("ValueType="+valueType+" "+value.getClass());
 		return valueType;
 	}
 
@@ -217,8 +253,7 @@ public class NetStreamSender implements Sink {
 	protected ByteBuffer encodeString(Object in) {
 		String s = (String) in;
 		byte[] data = s.getBytes(Charset.forName("UTF-8"));
-		return ByteBuffer.allocate(4 + data.length)
-				.putInt( data.length)
+		return ByteBuffer.allocate(4 + data.length).putInt(data.length)
 				.put(data);
 	}
 
@@ -228,9 +263,9 @@ public class NetStreamSender implements Sink {
 	 */
 	protected ByteBuffer encodeDoubleArray(Object in) {
 		Object[] data = (Object[]) in;
-		
+
 		ByteBuffer b = ByteBuffer.allocate(4 + data.length * 8);
-		
+
 		b.putInt(data.length);
 
 		for (int i = 0; i < data.length; i++) {
@@ -254,8 +289,8 @@ public class NetStreamSender implements Sink {
 	protected ByteBuffer encodeFloatArray(Object in) {
 		Object[] data = (Object[]) in;
 		ByteBuffer b = ByteBuffer.allocate(4 + data.length * 4).putInt(
-			 data.length);
-		
+				data.length);
+
 		for (int i = 0; i < data.length; i++) {
 			b.putFloat((Float) data[i]);
 		}
@@ -303,7 +338,7 @@ public class NetStreamSender implements Sink {
 		b.putInt(data.length);
 
 		for (int i = 0; i < data.length; i++) {
-			b.putInt((Integer)data[i]);
+			b.putInt((Integer) data[i]);
 		}
 		return b;
 	}
@@ -326,7 +361,7 @@ public class NetStreamSender implements Sink {
 		b.putInt(data.length);
 
 		for (int i = 0; i < data.length; i++) {
-			b.putShort((Short)data[i]);
+			b.putShort((Short) data[i]);
 		}
 		return b;
 	}
@@ -372,7 +407,7 @@ public class NetStreamSender implements Sink {
 		b.putInt(data.length);
 
 		for (int i = 0; i < data.length; i++) {
-			b.put((byte) ((Boolean)data[i] == false ? 0 : 1));
+			b.put((byte) ((Boolean) data[i] == false ? 0 : 1));
 		}
 		return b;
 	}
@@ -386,6 +421,29 @@ public class NetStreamSender implements Sink {
 				(byte) (((Boolean) in) == false ? 0 : 1));
 	}
 
+	/**
+	 * @param buff
+	 */
+	private void doSend(ByteBuffer buff) {
+
+		if (socket.isClosed()) {
+			System.err
+					.println("NetStreamSender : can't send. The socket is closed.");
+		} else {
+			ByteBuffer buffer = packer.packMessage(buff);
+			ByteBuffer sizeBuffer = packer.packMessageSize(buffer.capacity());
+			buff.rewind();
+			// real sending
+			try {
+				out.write(sizeBuffer.array(), 0, sizeBuffer.capacity());
+				out.write(buffer.array(), 0, buffer.capacity());
+				out.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -396,44 +454,31 @@ public class NetStreamSender implements Sink {
 	@Override
 	public void graphAttributeAdded(String sourceId, long timeId,
 			String attribute, Object value) {
-		
-		try {
-			if(!sourceId.equals(this.sourceId)){
-				this.sourceId= sourceId;
-				sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
-			}
-			byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
-			int valueType = getType(value);
-			ByteBuffer bValue = encodeValue(value, valueType);
-			bValue.flip();
-			ByteBuffer buff = ByteBuffer.allocate(
-					4 + streamIdArray.length + // stream id
-					1 + // CMD
-					4 + sourceIdBuff.length + // source id
-					8 + // timeId
-					4 + attrArray.length + // attribute id
-					1 + // attr type
-					bValue.capacity()); // attr value
 
-			buff
-				.putInt(streamIdArray.length).put(streamIdArray)
-				.put((byte) NetStreamConstants.EVENT_ADD_GRAPH_ATTR)
-				.putInt(sourceIdBuff.length).put(sourceIdBuff)
-				.putLong(timeId)
-				.putInt(attrArray.length).put(attrArray)
-				.put((byte) valueType).put(bValue);
-
-			buffSizeBuff.rewind();
-			buffSizeBuff.putInt(buff.capacity());
-			out.write(buffSizeBuff.array(), 0, 4);
-			// System.out.println("sending "+buff.capacity()+" bytes");
-
-			out.write(buff.array(), 0, buff.capacity());
-			out.flush();
-
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (!sourceId.equals(this.sourceId)) {
+			this.sourceId = sourceId;
+			sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
 		}
+		byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
+		int valueType = getType(value);
+		ByteBuffer bValue = encodeValue(value, valueType);
+		bValue.flip();
+		ByteBuffer buff = ByteBuffer.allocate(4 + streamIdArray.length + // stream
+																			// id
+				1 + // CMD
+				4 + sourceIdBuff.length + // source id
+				8 + // timeId
+				4 + attrArray.length + // attribute id
+				1 + // attr type
+				bValue.capacity()); // attr value
+
+		buff.putInt(streamIdArray.length).put(streamIdArray)
+				.put((byte) NetStreamConstants.EVENT_ADD_GRAPH_ATTR)
+				.putInt(sourceIdBuff.length).put(sourceIdBuff).putLong(timeId)
+				.putInt(attrArray.length).put(attrArray).put((byte) valueType)
+				.put(bValue);
+
+		doSend(buff);
 
 	}
 
@@ -447,49 +492,34 @@ public class NetStreamSender implements Sink {
 	@Override
 	public void graphAttributeChanged(String sourceId, long timeId,
 			String attribute, Object oldValue, Object newValue) {
-		
-		try {
-			if(!sourceId.equals(this.sourceId)){
-				this.sourceId= sourceId;
-				sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
-			}
-			byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
-			int valueType = getType(oldValue);
 
-			ByteBuffer bOldValue = encodeValue(oldValue, valueType);
-			bOldValue.flip();
-			ByteBuffer bNewValue = encodeValue(newValue, valueType);
-			bNewValue.flip();
-
-			ByteBuffer buff = ByteBuffer.allocate(
-					4 + streamIdArray.length + // Stream id 
-					1 + // CMD
-					4 + sourceIdBuff.length + // source id
-					8 + // timeId
-					4 + attrArray.length + // attr name  
-					1 + bOldValue.capacity() + bNewValue.capacity()); // values
-			
-			buff
-				.putInt( streamIdArray.length).put(streamIdArray)
-				.put((byte) NetStreamConstants.EVENT_CHG_GRAPH_ATTR)
-				.putInt(sourceIdBuff.length).put(sourceIdBuff)
-				.putLong(timeId)
-				.putInt( attrArray.length).put(attrArray)
-				.put((byte) valueType)
-				.put(bOldValue)
-				.put(bNewValue);
-			
-			buffSizeBuff.rewind();
-			buffSizeBuff.putInt(buff.capacity());
-			out.write(buffSizeBuff.array(), 0, 4);
-			// System.out.println("sending "+buff.capacity()+" bytes");
-
-			out.write(buff.array(), 0, buff.capacity());
-			out.flush();
-
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (!sourceId.equals(this.sourceId)) {
+			this.sourceId = sourceId;
+			sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
 		}
+		byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
+		int valueType = getType(oldValue);
+
+		ByteBuffer bOldValue = encodeValue(oldValue, valueType);
+		bOldValue.flip();
+		ByteBuffer bNewValue = encodeValue(newValue, valueType);
+		bNewValue.flip();
+
+		ByteBuffer buff = ByteBuffer.allocate(4 + streamIdArray.length + // Stream
+																			// id
+				1 + // CMD
+				4 + sourceIdBuff.length + // source id
+				8 + // timeId
+				4 + attrArray.length + // attr name
+				1 + bOldValue.capacity() + bNewValue.capacity()); // values
+
+		buff.putInt(streamIdArray.length).put(streamIdArray)
+				.put((byte) NetStreamConstants.EVENT_CHG_GRAPH_ATTR)
+				.putInt(sourceIdBuff.length).put(sourceIdBuff).putLong(timeId)
+				.putInt(attrArray.length).put(attrArray).put((byte) valueType)
+				.put(bOldValue).put(bNewValue);
+
+		doSend(buff);
 
 	}
 
@@ -503,41 +533,27 @@ public class NetStreamSender implements Sink {
 	@Override
 	public void graphAttributeRemoved(String sourceId, long timeId,
 			String attribute) {
-		
-		try {
-			if(!sourceId.equals(this.sourceId)){
-				this.sourceId= sourceId;
-				sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
-			}
-			byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
 
-			ByteBuffer buff = ByteBuffer.allocate(
-					4 + streamIdArray.length + // stream id
-					1 + // CMD
-					4 + sourceIdBuff.length + // source id
-					8 + // timeId
-					4 + attrArray.length // ATTR name
-					);
-
-			buff
-				.putInt(streamIdArray.length)
-				.put(streamIdArray)
-				.put((byte) NetStreamConstants.EVENT_DEL_GRAPH_ATTR)
-				.putInt(sourceIdBuff.length).put(sourceIdBuff)
-				.putLong(timeId)
-				.putInt(attrArray.length).put(attrArray);
-			
-			buffSizeBuff.rewind();
-			buffSizeBuff.putInt(buff.capacity());
-			out.write(buffSizeBuff.array(), 0, 4);
-			// System.out.println("sending "+buff.capacity()+" bytes");
-
-			out.write(buff.array(), 0, buff.capacity());
-			out.flush();
-
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (!sourceId.equals(this.sourceId)) {
+			this.sourceId = sourceId;
+			sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
 		}
+		byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
+
+		ByteBuffer buff = ByteBuffer.allocate(4 + streamIdArray.length + // stream
+																			// id
+				1 + // CMD
+				4 + sourceIdBuff.length + // source id
+				8 + // timeId
+				4 + attrArray.length // ATTR name
+		);
+
+		buff.putInt(streamIdArray.length).put(streamIdArray)
+				.put((byte) NetStreamConstants.EVENT_DEL_GRAPH_ATTR)
+				.putInt(sourceIdBuff.length).put(sourceIdBuff).putLong(timeId)
+				.putInt(attrArray.length).put(attrArray);
+
+		doSend(buff);
 
 	}
 
@@ -552,49 +568,38 @@ public class NetStreamSender implements Sink {
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
 			String attribute, Object value) {
 		// TODO Auto-generated method stub
-		
-		try {
-			if(!sourceId.equals(this.sourceId)){
-				this.sourceId= sourceId;
-				sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
-			}
-			byte[] nodeIdArray = nodeId.getBytes(Charset.forName("UTF-8"));
-			byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
-			int valueType = getType(value);
-			ByteBuffer bValue = encodeValue(value, valueType);
-			bValue.flip();
-			ByteBuffer buff = ByteBuffer.allocate(
-					4 + streamIdArray.length + // stream ID
-					1 + // CMD
-					4 + sourceIdBuff.length + // source id
-					8 + // timeId
-					(4 + nodeIdArray.length) + // nodeId
-					(4 + attrArray.length) + // attribute
-					1 + // value type
-					bValue.capacity() // value
-			);
 
-			buff
-				.putInt( streamIdArray.length).put(streamIdArray) // Stream
-				.put((byte) NetStreamConstants.EVENT_ADD_NODE_ATTR) // CMD
-				.putInt(sourceIdBuff.length).put(sourceIdBuff)
-				.putLong(timeId)
+		if (!sourceId.equals(this.sourceId)) {
+			this.sourceId = sourceId;
+			sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
+		}
+		byte[] nodeIdArray = nodeId.getBytes(Charset.forName("UTF-8"));
+		byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
+		int valueType = getType(value);
+		ByteBuffer bValue = encodeValue(value, valueType);
+		bValue.flip();
+		ByteBuffer buff = ByteBuffer.allocate(4 + streamIdArray.length + // stream
+																			// ID
+				1 + // CMD
+				4 + sourceIdBuff.length + // source id
+				8 + // timeId
+				(4 + nodeIdArray.length) + // nodeId
+				(4 + attrArray.length) + // attribute
+				1 + // value type
+				bValue.capacity() // value
+		);
+
+		buff.putInt(streamIdArray.length).put(streamIdArray)
+				// Stream
+				.put((byte) NetStreamConstants.EVENT_ADD_NODE_ATTR)
+				// CMD
+				.putInt(sourceIdBuff.length).put(sourceIdBuff).putLong(timeId)
 				.putInt(nodeIdArray.length).put(nodeIdArray) // nodeId
 				.putInt(attrArray.length).put(attrArray) // attribute
 				.put((byte) valueType) // value type
 				.put(bValue); // value
 
-			buffSizeBuff.rewind();
-			buffSizeBuff.putInt(buff.capacity());
-			out.write(buffSizeBuff.array(), 0, 4);
-			// System.out.println("sending "+buff.capacity()+" bytes");
-
-			out.write(buff.array(), 0, buff.capacity());
-			out.flush();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		doSend(buff);
 
 	}
 
@@ -609,54 +614,41 @@ public class NetStreamSender implements Sink {
 	@Override
 	public void nodeAttributeChanged(String sourceId, long timeId,
 			String nodeId, String attribute, Object oldValue, Object newValue) {
-		try {
-			if(!sourceId.equals(this.sourceId)){
-				this.sourceId= sourceId;
-				sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
-			}
-			byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
-			byte[] nodeIdArray = nodeId.getBytes(Charset.forName("UTF-8"));
-			int valueType = getType(oldValue);
+		if (!sourceId.equals(this.sourceId)) {
+			this.sourceId = sourceId;
+			sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
+		}
+		byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
+		byte[] nodeIdArray = nodeId.getBytes(Charset.forName("UTF-8"));
+		int valueType = getType(oldValue);
 
-			ByteBuffer bOldValue = encodeValue(oldValue, valueType);
-			bOldValue.flip();
-			ByteBuffer bNewValue = encodeValue(newValue, valueType);
-			bNewValue.flip();
+		ByteBuffer bOldValue = encodeValue(oldValue, valueType);
+		bOldValue.flip();
+		ByteBuffer bNewValue = encodeValue(newValue, valueType);
+		bNewValue.flip();
 
-			ByteBuffer buff = ByteBuffer.allocate(
-					4 + streamIdArray.length + // stream
-					1 + // CMD
-					4 + sourceIdBuff.length + // source id
-					8 + // timeId
-					(4 + nodeIdArray.length) + // nodeId
-					(4 + attrArray.length) + // attribute
-					1 + // value type
-					bOldValue.capacity() + // value
-					bNewValue.capacity() // new value
-			);
+		ByteBuffer buff = ByteBuffer.allocate(4 + streamIdArray.length + // stream
+				1 + // CMD
+				4 + sourceIdBuff.length + // source id
+				8 + // timeId
+				(4 + nodeIdArray.length) + // nodeId
+				(4 + attrArray.length) + // attribute
+				1 + // value type
+				bOldValue.capacity() + // value
+				bNewValue.capacity() // new value
+		);
 
-			buff
-				.putInt(streamIdArray.length).put(streamIdArray) // Stream id
-				.put((byte) NetStreamConstants.EVENT_CHG_NODE_ATTR) // CMD
-				.putInt(sourceIdBuff.length).put(sourceIdBuff)
-				.putLong(timeId)
+		buff.putInt(streamIdArray.length).put(streamIdArray)
+				// Stream id
+				.put((byte) NetStreamConstants.EVENT_CHG_NODE_ATTR)
+				// CMD
+				.putInt(sourceIdBuff.length).put(sourceIdBuff).putLong(timeId)
 				.putInt(nodeIdArray.length).put(nodeIdArray) // nodeId
 				.putInt(attrArray.length).put(attrArray) // attribute
 				.put((byte) valueType) // value type
 				.put(bOldValue) // value
 				.put(bNewValue); // value
-			buffSizeBuff.rewind();
-			buffSizeBuff.putInt(buff.capacity());
-			out.write(buffSizeBuff.array(), 0, 4);
-			// System.out.println("sending "+buff.capacity()+" bytes");
-
-			out.write(buff.array(), 0, buff.capacity());
-			out.flush();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+		doSend(buff);
 	}
 
 	/*
@@ -669,42 +661,32 @@ public class NetStreamSender implements Sink {
 	@Override
 	public void nodeAttributeRemoved(String sourceId, long timeId,
 			String nodeId, String attribute) {
-		
-		try {
-			if(!sourceId.equals(this.sourceId)){
-				this.sourceId= sourceId;
-				sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
-			}
-			byte[] nodeIdArray = nodeId.getBytes(Charset.forName("UTF-8"));
-			byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
 
-			ByteBuffer buff = ByteBuffer.allocate(
-					4 + streamIdArray.length + // stream id
-					1 + // CMD
-					4 + sourceIdBuff.length + // source id
-					8 + // timeId
-					(4 + nodeIdArray.length) + // nodeId
-					(4 + attrArray.length) // attribute
-			);
+		if (!sourceId.equals(this.sourceId)) {
+			this.sourceId = sourceId;
+			sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
+		}
+		byte[] nodeIdArray = nodeId.getBytes(Charset.forName("UTF-8"));
+		byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
 
-			buff
-				.putInt (streamIdArray.length).put(streamIdArray) // Stream id
-				.put((byte) NetStreamConstants.EVENT_DEL_NODE_ATTR) // CMD
-				.putInt(sourceIdBuff.length).put(sourceIdBuff)
-				.putLong(timeId)
+		ByteBuffer buff = ByteBuffer.allocate(4 + streamIdArray.length + // stream
+																			// id
+				1 + // CMD
+				4 + sourceIdBuff.length + // source id
+				8 + // timeId
+				(4 + nodeIdArray.length) + // nodeId
+				(4 + attrArray.length) // attribute
+		);
+
+		buff.putInt(streamIdArray.length).put(streamIdArray)
+				// Stream id
+				.put((byte) NetStreamConstants.EVENT_DEL_NODE_ATTR)
+				// CMD
+				.putInt(sourceIdBuff.length).put(sourceIdBuff).putLong(timeId)
 				.putInt(nodeIdArray.length).put(nodeIdArray) // nodeId
 				.putInt(attrArray.length).put(attrArray); // attribute
 
-			buffSizeBuff.rewind();
-			buffSizeBuff.putInt(buff.capacity());
-			out.write(buffSizeBuff.array(), 0, 4);
-
-			out.write(buff.array(), 0, buff.capacity());
-			out.flush();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		doSend(buff);
 
 	}
 
@@ -718,49 +700,37 @@ public class NetStreamSender implements Sink {
 	@Override
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
 			String attribute, Object value) {
-		
-		try {
-			if(!sourceId.equals(this.sourceId)){
-				this.sourceId= sourceId;
-				sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
-			}
-			byte[] edgeIdArray = edgeId.getBytes(Charset.forName("UTF-8"));
-			byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
-			int valueType = getType(value);
-			ByteBuffer bValue = encodeValue(value, valueType);
-			bValue.flip();
-			ByteBuffer buff = ByteBuffer.allocate(
-					4 + streamIdArray.length + // stream
-					1 + // CMD
-					4 + sourceIdBuff.length + // source id
-					8 + // timeId
-					(4 + edgeIdArray.length) + // nodeId
-					(4 + attrArray.length) + // attribute
-					1 + // value type
-					bValue.capacity() // value
-			);
 
-			buff
-				.putInt(streamIdArray.length).put(streamIdArray) // Stream id
-				.put((byte) NetStreamConstants.EVENT_ADD_EDGE_ATTR) // CMD
-				.putInt(sourceIdBuff.length).put(sourceIdBuff)
-				.putLong(timeId)
+		if (!sourceId.equals(this.sourceId)) {
+			this.sourceId = sourceId;
+			sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
+		}
+		byte[] edgeIdArray = edgeId.getBytes(Charset.forName("UTF-8"));
+		byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
+		int valueType = getType(value);
+		ByteBuffer bValue = encodeValue(value, valueType);
+		bValue.flip();
+		ByteBuffer buff = ByteBuffer.allocate(4 + streamIdArray.length + // stream
+				1 + // CMD
+				4 + sourceIdBuff.length + // source id
+				8 + // timeId
+				(4 + edgeIdArray.length) + // nodeId
+				(4 + attrArray.length) + // attribute
+				1 + // value type
+				bValue.capacity() // value
+		);
+
+		buff.putInt(streamIdArray.length).put(streamIdArray)
+				// Stream id
+				.put((byte) NetStreamConstants.EVENT_ADD_EDGE_ATTR)
+				// CMD
+				.putInt(sourceIdBuff.length).put(sourceIdBuff).putLong(timeId)
 				.putInt(edgeIdArray.length).put(edgeIdArray) // nodeId
 				.putInt(attrArray.length).put(attrArray) // attribute
 				.put((byte) valueType) // value type
 				.put(bValue); // value
-			
-			buffSizeBuff.rewind();
-			buffSizeBuff.putInt(buff.capacity());
-			out.write(buffSizeBuff.array(), 0, 4);
 
-			out.write(buff.array(), 0, buff.capacity());
-			out.flush();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+		doSend(buff);
 	}
 
 	/*
@@ -774,54 +744,44 @@ public class NetStreamSender implements Sink {
 	@Override
 	public void edgeAttributeChanged(String sourceId, long timeId,
 			String edgeId, String attribute, Object oldValue, Object newValue) {
-		
-		try {
-			if(!sourceId.equals(this.sourceId)){
-				this.sourceId= sourceId;
-				sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
-			}
-			byte[] edgeIdArray = edgeId.getBytes(Charset.forName("UTF-8"));
-			byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
-			int valueType = getType(oldValue);
 
-			ByteBuffer bOldValue = encodeValue(oldValue, valueType);
-			bOldValue.flip();
-			ByteBuffer bNewValue = encodeValue(newValue, valueType);
-			bNewValue.flip();
+		if (!sourceId.equals(this.sourceId)) {
+			this.sourceId = sourceId;
+			sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
+		}
+		byte[] edgeIdArray = edgeId.getBytes(Charset.forName("UTF-8"));
+		byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
+		int valueType = getType(oldValue);
 
-			ByteBuffer buff = ByteBuffer.allocate(
-					4 + streamIdArray.length + // stream id
-					1 + // CMD
-					4 + sourceIdBuff.length + // source id
-					8 + // timeId
-					(4 + edgeIdArray.length) + // nodeId
-					(4 + attrArray.length) + // attribute
-					1 + // value type
-					bOldValue.capacity() + // value
-					bNewValue.capacity() // new value
-			);
+		ByteBuffer bOldValue = encodeValue(oldValue, valueType);
+		bOldValue.flip();
+		ByteBuffer bNewValue = encodeValue(newValue, valueType);
+		bNewValue.flip();
 
-			buff
-				.putInt(streamIdArray.length).put(streamIdArray) // Stream
-				.put((byte) NetStreamConstants.EVENT_CHG_EDGE_ATTR) // CMD
-				.putInt(sourceIdBuff.length).put(sourceIdBuff)
-				.putLong(timeId)
+		ByteBuffer buff = ByteBuffer.allocate(4 + streamIdArray.length + // stream
+																			// id
+				1 + // CMD
+				4 + sourceIdBuff.length + // source id
+				8 + // timeId
+				(4 + edgeIdArray.length) + // nodeId
+				(4 + attrArray.length) + // attribute
+				1 + // value type
+				bOldValue.capacity() + // value
+				bNewValue.capacity() // new value
+		);
+
+		buff.putInt(streamIdArray.length).put(streamIdArray)
+				// Stream
+				.put((byte) NetStreamConstants.EVENT_CHG_EDGE_ATTR)
+				// CMD
+				.putInt(sourceIdBuff.length).put(sourceIdBuff).putLong(timeId)
 				.putInt(edgeIdArray.length).put(edgeIdArray) // nodeId
 				.putInt(attrArray.length).put(attrArray) // attribute
 				.put((byte) valueType) // value type
 				.put(bOldValue) // value
 				.put(bNewValue); // value
 
-			buffSizeBuff.rewind();
-			buffSizeBuff.putInt(buff.capacity());
-			out.write(buffSizeBuff.array(), 0, 4);
-
-			out.write(buff.array(), 0, buff.capacity());
-			out.flush();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		doSend(buff);
 
 	}
 
@@ -835,43 +795,32 @@ public class NetStreamSender implements Sink {
 	@Override
 	public void edgeAttributeRemoved(String sourceId, long timeId,
 			String edgeId, String attribute) {
-		
-		try {
-			if(!sourceId.equals(this.sourceId)){
-				this.sourceId= sourceId;
-				sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
-			}
-			byte[] edgeIdArray = edgeId.getBytes(Charset.forName("UTF-8"));
-			byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
 
-			ByteBuffer buff = ByteBuffer.allocate(
-					4 + streamIdArray.length + // stream id
-					1 + // CMD
-					4 + sourceIdBuff.length + // source id
-					8 + // timeId
-					(4 + edgeIdArray.length) + // nodeId
-					(4 + attrArray.length) // attribute
-			);
+		if (!sourceId.equals(this.sourceId)) {
+			this.sourceId = sourceId;
+			sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
+		}
+		byte[] edgeIdArray = edgeId.getBytes(Charset.forName("UTF-8"));
+		byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
 
-			buff
-				.putInt(streamIdArray.length).put(streamIdArray) // Stream id
-				.put((byte) NetStreamConstants.EVENT_DEL_EDGE_ATTR) // CMD
-				.putInt(sourceIdBuff.length).put(sourceIdBuff)
-				.putLong(timeId)
+		ByteBuffer buff = ByteBuffer.allocate(4 + streamIdArray.length + // stream
+																			// id
+				1 + // CMD
+				4 + sourceIdBuff.length + // source id
+				8 + // timeId
+				(4 + edgeIdArray.length) + // nodeId
+				(4 + attrArray.length) // attribute
+		);
+
+		buff.putInt(streamIdArray.length).put(streamIdArray)
+				// Stream id
+				.put((byte) NetStreamConstants.EVENT_DEL_EDGE_ATTR)
+				// CMD
+				.putInt(sourceIdBuff.length).put(sourceIdBuff).putLong(timeId)
 				.putInt(edgeIdArray.length).put(edgeIdArray) // nodeId
 				.putInt(attrArray.length).put(attrArray); // attribute
 
-			buffSizeBuff.rewind();
-			buffSizeBuff.putInt(buff.capacity());
-			out.write(buffSizeBuff.array(), 0, 4);
-			
-
-			out.write(buff.array(), 0, buff.capacity());
-			out.flush();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		doSend(buff);
 
 	}
 
@@ -883,39 +832,28 @@ public class NetStreamSender implements Sink {
 	 */
 	@Override
 	public void nodeAdded(String sourceId, long timeId, String nodeId) {
-		
-		try {
-			if(!sourceId.equals(this.sourceId)){
-				this.sourceId= sourceId;
-				sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
-			}
-			byte[] nodeIdArray = nodeId.getBytes(Charset.forName("UTF-8"));
 
-			ByteBuffer buff = ByteBuffer.allocate(
-					4 + streamIdArray.length + // stream
-					1 + // CMD 
-					4 + sourceIdBuff.length + // source id
-					8 + // timeId
-					4 + nodeIdArray.length // node id
-					);
-			
-			buff
-				.putInt(streamIdArray.length).put(streamIdArray)// Stream ID
+		if (!sourceId.equals(this.sourceId)) {
+			this.sourceId = sourceId;
+			sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
+		}
+		byte[] nodeIdArray = nodeId.getBytes(Charset.forName("UTF-8"));
+
+		ByteBuffer buff = ByteBuffer.allocate(4 + streamIdArray.length + // stream
+				1 + // CMD
+				4 + sourceIdBuff.length + // source id
+				8 + // timeId
+				4 + nodeIdArray.length // node id
+		);
+
+		buff.putInt(streamIdArray.length)
+				.put(streamIdArray)
+				// Stream ID
 				.put((byte) NetStreamConstants.EVENT_ADD_NODE)
-				.putInt(sourceIdBuff.length).put(sourceIdBuff)
-				.putLong(timeId)
+				.putInt(sourceIdBuff.length).put(sourceIdBuff).putLong(timeId)
 				.putInt(nodeIdArray.length).put(nodeIdArray);
 
-			buffSizeBuff.rewind();
-			buffSizeBuff.putInt(buff.capacity());
-			out.write(buffSizeBuff.array(), 0, 4);
-			
-			out.write(buff.array(), 0, buff.capacity());
-			out.flush();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		doSend(buff);
 
 	}
 
@@ -927,37 +865,27 @@ public class NetStreamSender implements Sink {
 	 */
 	@Override
 	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
-		try {
-			if(!sourceId.equals(this.sourceId)){
-				this.sourceId= sourceId;
-				sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
-			}
-			byte[] nodeIdArray = nodeId.getBytes(Charset.forName("UTF-8"));
+		if (!sourceId.equals(this.sourceId)) {
+			this.sourceId = sourceId;
+			sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
+		}
+		byte[] nodeIdArray = nodeId.getBytes(Charset.forName("UTF-8"));
 
-			ByteBuffer buff = ByteBuffer.allocate(
-					4 + streamIdArray.length + // stream id
-					1 +  // CMD
-					4 + sourceIdBuff.length + // source id
-					8 + // timeId
-					4 + nodeIdArray.length // node id
-					);
-			buff
-				.putInt(streamIdArray.length).put(streamIdArray)// Stream ID
+		ByteBuffer buff = ByteBuffer.allocate(4 + streamIdArray.length + // stream
+																			// id
+				1 + // CMD
+				4 + sourceIdBuff.length + // source id
+				8 + // timeId
+				4 + nodeIdArray.length // node id
+		);
+		buff.putInt(streamIdArray.length)
+				.put(streamIdArray)
+				// Stream ID
 				.put((byte) NetStreamConstants.EVENT_DEL_NODE)
-				.putInt(sourceIdBuff.length).put(sourceIdBuff)
-				.putLong(timeId)
+				.putInt(sourceIdBuff.length).put(sourceIdBuff).putLong(timeId)
 				.putInt(nodeIdArray.length).put(nodeIdArray);
 
-			buffSizeBuff.rewind();
-			buffSizeBuff.putInt(buff.capacity());
-			out.write(buffSizeBuff.array(), 0, 4);
-			
-			out.write(buff.array(), 0, buff.capacity());
-			out.flush();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		doSend(buff);
 	}
 
 	/*
@@ -969,47 +897,36 @@ public class NetStreamSender implements Sink {
 	@Override
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
 			String fromNodeId, String toNodeId, boolean directed) {
-		
-		try {
-			if(!sourceId.equals(this.sourceId)){
-				this.sourceId= sourceId;
-				sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
-			}
-			byte[] edgeIdArray = edgeId.getBytes(Charset.forName("UTF-8"));
-			byte[] fromNodeIdArray = fromNodeId.getBytes(Charset
-					.forName("UTF-8"));
-			byte[] toNodeIdArray = toNodeId.getBytes(Charset.forName("UTF-8"));
 
-			ByteBuffer buff = ByteBuffer.allocate(
-					4 + streamIdArray.length + // stream id
-					1 + // CMD 
-					4 + sourceIdBuff.length + // source id
-					8 + // timeId
-					4 + edgeIdArray.length + // edge 
-					4 + fromNodeIdArray.length + // node from
-					4 + toNodeIdArray.length +  // node to 
-					1 // direction
-					);
-			buff
-				.putInt(streamIdArray.length).put(streamIdArray) // Stream ID
+		if (!sourceId.equals(this.sourceId)) {
+			this.sourceId = sourceId;
+			sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
+		}
+		byte[] edgeIdArray = edgeId.getBytes(Charset.forName("UTF-8"));
+		byte[] fromNodeIdArray = fromNodeId.getBytes(Charset.forName("UTF-8"));
+		byte[] toNodeIdArray = toNodeId.getBytes(Charset.forName("UTF-8"));
+
+		ByteBuffer buff = ByteBuffer.allocate(4 + streamIdArray.length + // stream
+																			// id
+				1 + // CMD
+				4 + sourceIdBuff.length + // source id
+				8 + // timeId
+				4 + edgeIdArray.length + // edge
+				4 + fromNodeIdArray.length + // node from
+				4 + toNodeIdArray.length + // node to
+				1 // direction
+		);
+		buff.putInt(streamIdArray.length)
+				.put(streamIdArray)
+				// Stream ID
 				.put((byte) NetStreamConstants.EVENT_ADD_EDGE)
-				.putInt(sourceIdBuff.length).put(sourceIdBuff)
-				.putLong(timeId)
+				.putInt(sourceIdBuff.length).put(sourceIdBuff).putLong(timeId)
 				.putInt(edgeIdArray.length).put(edgeIdArray)
 				.putInt(fromNodeIdArray.length).put(fromNodeIdArray)
 				.putInt(toNodeIdArray.length).put(toNodeIdArray)
 				.put((byte) (directed == false ? 0 : 1));
 
-			buffSizeBuff.rewind();
-			buffSizeBuff.putInt(buff.capacity());
-			out.write(buffSizeBuff.array(), 0, 4);
-			
-			out.write(buff.array(), 0, buff.capacity());
-			out.flush();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		doSend(buff);
 
 	}
 
@@ -1021,38 +938,27 @@ public class NetStreamSender implements Sink {
 	 */
 	@Override
 	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
-		
-		try {
-			if(!sourceId.equals(this.sourceId)){
-				this.sourceId= sourceId;
-				sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
-			}
-			byte[] edgeIdArray = edgeId.getBytes(Charset.forName("UTF-8"));
 
-			ByteBuffer buff = ByteBuffer.allocate(
-					4 + streamIdArray.length + // stream
-					1 + // CMD 
-					4 + sourceIdBuff.length + // source id
-					8 + // timeId
-					4 + edgeIdArray.length // edge
-					);
-			buff
-				.putInt(streamIdArray.length).put(streamIdArray)// Stream ID
+		if (!sourceId.equals(this.sourceId)) {
+			this.sourceId = sourceId;
+			sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
+		}
+		byte[] edgeIdArray = edgeId.getBytes(Charset.forName("UTF-8"));
+
+		ByteBuffer buff = ByteBuffer.allocate(4 + streamIdArray.length + // stream
+				1 + // CMD
+				4 + sourceIdBuff.length + // source id
+				8 + // timeId
+				4 + edgeIdArray.length // edge
+		);
+		buff.putInt(streamIdArray.length)
+				.put(streamIdArray)
+				// Stream ID
 				.put((byte) NetStreamConstants.EVENT_DEL_EDGE)
-				.putInt(sourceIdBuff.length).put(sourceIdBuff)
-				.putLong(timeId)
+				.putInt(sourceIdBuff.length).put(sourceIdBuff).putLong(timeId)
 				.putInt(edgeIdArray.length).put(edgeIdArray);
 
-			buffSizeBuff.rewind();
-			buffSizeBuff.putInt(buff.capacity());
-			out.write(buffSizeBuff.array(), 0, 4);
-			
-			out.write(buff.array(), 0, buff.capacity());
-			out.flush();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		doSend(buff);
 
 	}
 
@@ -1064,37 +970,23 @@ public class NetStreamSender implements Sink {
 	 */
 	@Override
 	public void graphCleared(String sourceId, long timeId) {
-		
-		try {
 
-			if(!sourceId.equals(this.sourceId)){
-				this.sourceId= sourceId;
-				sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
-			}
-			ByteBuffer buff = ByteBuffer.allocate(
-					4 + streamIdArray.length + // stream id
-					1 +// CMD
-					4 + sourceIdBuff.length + // source id
-					8 // timeId
-					);
-			buff
-				.putInt(streamIdArray.length).put(streamIdArray) // Stream id
-				.put((byte) NetStreamConstants.EVENT_CLEARED)
-				.putInt(sourceIdBuff.length).put(sourceIdBuff)
-				.putLong(timeId)
-				;
-
-			buffSizeBuff.rewind();
-			buffSizeBuff.putInt(buff.capacity());
-			out.write(buffSizeBuff.array(), 0, 4);
-			// System.out.println("sending "+buff.capacity()+" bytes");
-
-			out.write(buff.array(), 0, buff.capacity());
-			out.flush();
-
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (!sourceId.equals(this.sourceId)) {
+			this.sourceId = sourceId;
+			sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
 		}
+		ByteBuffer buff = ByteBuffer.allocate(4 + streamIdArray.length + // stream
+																			// id
+				1 + // CMD
+				4 + sourceIdBuff.length + // source id
+				8 // timeId
+		);
+		buff.putInt(streamIdArray.length).put(streamIdArray)
+				// Stream id
+				.put((byte) NetStreamConstants.EVENT_CLEARED)
+				.putInt(sourceIdBuff.length).put(sourceIdBuff).putLong(timeId);
+
+		doSend(buff);
 
 	}
 
@@ -1106,44 +998,32 @@ public class NetStreamSender implements Sink {
 	 */
 	@Override
 	public void stepBegins(String sourceId, long timeId, double step) {
-		
-		try {
 
-			if(!sourceId.equals(this.sourceId)){
-				this.sourceId= sourceId;
-				sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
-			}
-			ByteBuffer buff = ByteBuffer.allocate(
-					4 + streamIdArray.length + // stream id
-					1 + //CMD 
-					4 + sourceIdBuff.length + // source id
-					8 + // timeId
-					8 // time
-					);
-			buff
-				.putInt(streamIdArray.length).put(streamIdArray) // Stream
+		if (!sourceId.equals(this.sourceId)) {
+			this.sourceId = sourceId;
+			sourceIdBuff = sourceId.getBytes(Charset.forName("UTF-8"));
+		}
+		ByteBuffer buff = ByteBuffer.allocate(4 + streamIdArray.length + // stream
+																			// id
+				1 + // CMD
+				4 + sourceIdBuff.length + // source id
+				8 + // timeId
+				8 // time
+		);
+		buff.putInt(streamIdArray.length)
+				.put(streamIdArray)
+				// Stream
 				.put((byte) NetStreamConstants.EVENT_STEP)
-				.putInt(sourceIdBuff.length).put(sourceIdBuff)
-				.putLong(timeId)
+				.putInt(sourceIdBuff.length).put(sourceIdBuff).putLong(timeId)
 				.putDouble(step);
 
-			buffSizeBuff.rewind();
-			buffSizeBuff.putInt(buff.capacity());
-			out.write(buffSizeBuff.array(), 0, 4);
-			// System.out.println("sending "+buff.capacity()+" bytes");
-
-			out.write(buff.array(), 0, buff.capacity());
-			out.flush();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+		doSend(buff);
 	}
 
 	/**
 	 * Force the connection to close (properly) with the server
-	 * @throws IOException 
+	 * 
+	 * @throws IOException
 	 */
 	public void close() throws IOException {
 		socket.close();

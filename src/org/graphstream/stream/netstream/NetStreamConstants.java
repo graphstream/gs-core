@@ -619,8 +619,9 @@ public class NetStreamConstants {
 	 * Not used.
 	 */
 	public static int EVENT_START = 0x01;
+	
 	/**
-	 * Not used.
+	 * Constant indicating that the client has disconnected. 
 	 */
 	public static int EVENT_END = 0x02;
 
@@ -791,5 +792,17 @@ public class NetStreamConstants {
 	 * elements themselves have to give their type.
 	 */
 	public static byte TYPE_ARRAY = 0x60;
+	
+	
+	
+	/**
+	 *  Constant that indicates that this message is a COMMAND, not and EVENT.
+	 *  
+	 *  For now it is followed by a string that has to be parssed at the application level.
+	 *  
+	 *  THIS IS EXPERIMENTAL AND MAY (WILL) CHANGE ! 
+	 */
+	public static int COMMAND = 0x70;
+	
 
 }

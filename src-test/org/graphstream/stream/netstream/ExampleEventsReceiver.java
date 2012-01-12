@@ -43,15 +43,14 @@ import org.graphstream.stream.thread.ThreadProxyPipe;
 
 /**
  * 
- * Copyright (c) 2010 University of Luxembourg
- *
- * @file ReceiverEventsTest.java
+ * 
+ * @file ExampleEventsReceiver.java
  * @date Aug 21, 2011
  *
  * @author Yoann Pigné
  *
  */
-public class ReceiverEventsTest {
+public class ExampleEventsReceiver {
 
 	/**
 	 * @param args

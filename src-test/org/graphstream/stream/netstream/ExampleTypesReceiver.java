@@ -43,14 +43,13 @@ import org.graphstream.stream.SinkAdapter;
 import org.graphstream.stream.thread.ThreadProxyPipe;
 
 /**
- * Copyright (c) 2010 University of Luxembourg
- *
- * ReceiverTypesTest.java
+ * 
+ * ExampleTypesReceiver.java
  * @since Aug 21, 2011
  *
  * @author Yoann Pigné
  */
-public class ReceiverTypesTest {
+public class ExampleTypesReceiver {
 
 	/**
 	 * @param args

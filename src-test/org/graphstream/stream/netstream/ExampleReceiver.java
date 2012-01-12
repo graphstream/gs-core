@@ -29,6 +29,7 @@
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
 
+
 package org.graphstream.stream.netstream;
 
 import java.io.IOException;
@@ -36,46 +37,40 @@ import java.net.UnknownHostException;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.stream.netstream.packing.Base64;
+import org.graphstream.stream.netstream.packing.Base64Unpacker;
+import org.graphstream.stream.thread.ThreadProxyPipe;
 
 /**
- *  A simple example of use of the NetStream sender.
- *  
- * Copyright (c) 2010 University of Luxembourg
+ *  A simple example of use of the NetStream receiver.
  *
- * SenderExample.java
- * @since Aug 19, 2011
+ *  ExampleReceiver.java
+ *  @since Aug 19, 2011
  *
- * @author Yoann Pigné
- * 
+ *  @author Yoann Pigné
+ *
  */
-public class SenderExample {
+public class ExampleReceiver {
 
-	public static void main(String[] args) {
-		Graph g = new MultiGraph("G");
-		// - the sender
-		NetStreamSender nsc = null;
-		try {
-			nsc = new NetStreamSender(2001);
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		// - plug the graph to the sender so that graph events can be
-		// sent automatically
-		g.addSink(nsc);
-		// - generate some events on the client side
-		String style = "node{fill-mode:plain;fill-color:#567;size:6px;}";
-		g.addAttribute("stylesheet", style);
-		g.addAttribute("ui.antialias", true);
-		g.addAttribute("layout.stabilization-limit", 0);
-		for (int i = 0; i < 500; i++) {
-			g.addNode(i + "");
-			if (i > 0) {
-				g.addEdge(i + "-" + (i - 1), i + "", (i - 1) + "");
-				g.addEdge(i + "--" + (i / 2), i + "", (i / 2) + "");
-			}
+	public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException {
+		// ----- On the receiver side -----
+		//
+		// - a graph that will display the received events
+		Graph g = new MultiGraph("G",false,true);
+		g.display();
+		// - the receiver that waits for events
+		NetStreamReceiver net = new NetStreamReceiver("localhost",2001,false);
+		
+		net.setUnpacker(new  Base64Unpacker());
+		
+		// - received events end up in the "default" pipe
+		ThreadProxyPipe pipe = net.getStream("default");
+		// - plug the pipe to the sink of the graph
+		pipe.addSink(g);
+		// -The receiver pro-actively checks for events on the ThreadProxyPipe
+		while (true) {
+			pipe.pump();
+			Thread.sleep(100);
 		}
 	}
-
 }

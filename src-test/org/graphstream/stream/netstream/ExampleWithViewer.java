@@ -37,6 +37,8 @@ import java.net.UnknownHostException;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.stream.netstream.packing.Base64Packer;
+import org.graphstream.stream.netstream.packing.Base64Unpacker;
 import org.graphstream.stream.thread.ThreadProxyPipe;
 
 /**
@@ -57,15 +59,14 @@ import org.graphstream.stream.thread.ThreadProxyPipe;
  * event to the receiver, through the network, using the NetStream protocol.
  * </p>
  * 
- * Copyright (c) 2011 University of Luxembourg
  * 
- * Example.java
+ * ExampleWithViewer.java
  * @since Aug 17, 2011
  * 
  * @author Yoann Pigné
 
  */
-public class Example {
+public class ExampleWithViewer {
 
 	public static void main(String[] args) throws UnknownHostException,
 			IOException, InterruptedException {
@@ -76,6 +77,9 @@ public class Example {
 		g.display();
 		// - the receiver that waits for events
 		NetStreamReceiver net = new NetStreamReceiver(2001);
+		
+		net.setUnpacker(new Base64Unpacker());
+		
 		// - received events end up in the "default" pipe
 		ThreadProxyPipe pipe = net.getDefaultStream();
 		// - plug the pipe to the sink of the graph
@@ -97,6 +101,9 @@ public class Example {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+				
+				nsc.setPacker(new Base64Packer());
+			
 				// - plug the graph to the sender so that graph events can be
 				// sent automatically
 				g.addSink(nsc);

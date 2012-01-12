@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.graphstream.stream.netstream.packing.NetStreamUnpacker;
 import org.graphstream.stream.thread.ThreadProxyPipe;
 import org.miv.mbox.net.PositionableByteArrayInputStream;
 
@@ -122,7 +123,7 @@ public class NetStreamReceiver extends Thread {
 	 * of the listener. This can be modified by other threads and must be
 	 * properly locked.
 	 * 
-	 * @see #register(String,MBoxListener)
+	 * @see #register(String,ThreadProxyPipe)
 	 */
 	// protected HashMap<String,MBox> boxes = new HashMap<String,MBox>();
 	protected HashMap<String, ThreadProxyPipe> streams = new HashMap<String, ThreadProxyPipe>();
@@ -132,6 +133,31 @@ public class NetStreamReceiver extends Thread {
 	 */
 	protected HashMap<SelectionKey, IncomingBuffer> incoming = new HashMap<SelectionKey, IncomingBuffer>();
 
+	
+	class DefaultUnpacker extends NetStreamUnpacker{
+
+		@Override
+		public ByteBuffer unpackMessage(ByteBuffer buffer, int startIndex,
+				int endIndex) {
+			return buffer;
+		}
+
+		@Override
+		public int unpackMessageSize(ByteBuffer buffer) {
+			return buffer.getInt();
+		}
+
+		/* (non-Javadoc)
+		 * @see org.graphstream.stream.netstream.packing.NetStreamUnpacker#sizeOfInt()
+		 */
+		@Override
+		public int sizeOfInt() {
+			return 4;
+		}
+	};
+	private NetStreamUnpacker unpacker;
+
+	
 	// Constructors
 
 	/**
@@ -174,7 +200,7 @@ public class NetStreamReceiver extends Thread {
 			throws IOException, UnknownHostException {
 		this.hostname = hostname;
 		this.port = port;
-	
+		this.unpacker = new DefaultUnpacker();
 		setDebugOn(debug);
 		init();
 		start();
@@ -254,33 +280,7 @@ public class NetStreamReceiver extends Thread {
 		debug = on;
 	}
 
-	/**
-	 * Register a message box listener for incoming messages. All messages with
-	 * the given name will be directed to it. The listener can then call
-	 * {@link org.miv.mbox.MBoxBase#processMessages()} to receive its pending
-	 * messages.
-	 * 
-	 * @param name
-	 *            Filter only message with this name to the given listener.
-	 * @param listener
-	 *            The listener to register.
-	 * @throws IdAlreadyInUseException
-	 *             If another message box is already registered at the given
-	 *             name.
-	 */
-	/*
-	 * public synchronized MBoxStandalone register( String name, MBoxListener
-	 * listener ) throws IdAlreadyInUseException { if( boxes.containsKey( name )
-	 * ) throw new IdAlreadyInUseException( "name "+name+" already registered"
-	 * );
-	 * 
-	 * MBoxStandalone mbox = new MBoxStandalone( listener ); boxes.put( name,
-	 * mbox );
-	 * 
-	 * if( debug ) debug( "registered message box %s", name );
-	 * 
-	 * return mbox; }
-	 */
+	
 
 	/**
 	 * Register a stream. All events with the given stream name will be directed
@@ -291,7 +291,7 @@ public class NetStreamReceiver extends Thread {
 	 *            Filter only message with this name to the given message box.
 	 * @param stream
 	 *            The ThreadProxyPipe to push the events to.
-	 * @throws IdAlreadyInUseException
+	 * @throws Exception
 	 *             If another Pipe is already registered at the given name.
 	 */
 	public synchronized void register(String name, ThreadProxyPipe stream)
@@ -323,6 +323,27 @@ public class NetStreamReceiver extends Thread {
 		return !incoming.isEmpty();
 	}
 
+	
+	
+
+	/**
+	 *  Sets an optional NetStreamUnpaker whose "unpack" method will be called on each message.
+	 * 
+	 *  It allows to do extra decoding on the all byte array message. You can also decrypt things.
+	 *  
+	 * @param unpaker
+	 */
+	public void setUnpacker(NetStreamUnpacker unpaker){
+		this.unpacker = unpaker;
+	}
+	public void removeUnpacker(){
+		unpacker = new DefaultUnpacker();
+	}
+	
+
+	
+	
+	
 	/**
 	 * Wait for connections, accept them, demultiplexes them and dispatch
 	 * messages to registered message boxes.
@@ -544,6 +565,7 @@ public class NetStreamReceiver extends Thread {
 		 */
 		protected boolean active = true;
 
+		
 		// Constructors
 
 		public IncomingBuffer() {
@@ -564,6 +586,7 @@ public class NetStreamReceiver extends Thread {
 			int nbytes = 0; // Number of bytes read.
 			SocketChannel socket = (SocketChannel) key.channel();
 
+			int sizeOfInt = unpacker.sizeOfInt();
 			// Buffers the data.
 
 			nbytes = bufferize(pos, socket);
@@ -579,7 +602,7 @@ public class NetStreamReceiver extends Thread {
 			// Read the first header.
 
 			if (end < 0) {
-				if ((limit - beg) >= 4) {
+				if ((limit - beg) >= sizeOfInt) {
 					// If no data has been read yet in the buffer or if the
 					// buffer
 					// was emptied completely at previous call: prepare to read
@@ -587,8 +610,8 @@ public class NetStreamReceiver extends Thread {
 					// new message by decoding its header.
 
 					buf.position(0);
-					end = buf.getInt() + 4;
-					beg = 4;
+					end = unpacker.unpackMessageSize(buf) + sizeOfInt;
+					beg = sizeOfInt;
 				} else {
 					// The header is incomplete, wait next call to complete it.
 
@@ -611,19 +634,19 @@ public class NetStreamReceiver extends Thread {
 					decodeMessage(limit);
 					buf.position(end);
 
-					if (end + 4 <= limit) {
+					if (end + sizeOfInt <= limit) {
 						// There is a following message.
 
-						beg = end + 4;
-						end = end + buf.getInt() + 4;
+						beg = end + sizeOfInt;
+						end = end + unpacker.unpackMessageSize(buf) + sizeOfInt;
 					} else {
 						// There is the beginning of a following message
 						// but the header is incomplete. Compact the buffer
 						// and stop here.
-						assert (beg >= 4);
+						assert (beg >= sizeOfInt);
 
 						beg = end;
-						int p = 4 - ((end + 4) - limit);
+						int p = sizeOfInt - ((end + sizeOfInt) - limit);
 						compactBuffer();
 						pos = p;
 						beg = 0;
@@ -718,23 +741,24 @@ public class NetStreamReceiver extends Thread {
 			}
 		}
 
+		
+		
+		
+		
 		/**
 		 * Decode one message.
 		 */
 		protected void decodeMessage(int limit) throws IOException {
 
-			if (in == null) {
-				in = new PositionableByteArrayInputStream(buf.array(), beg, end); // Only
-																					// a
-																					// wrapping.
-				// bin = new PositionableByteArrayInputStream( buf.array(), beg,
-				// end ); // Only a wrapping.
-				// in = new BufferedInputStream( bin );
-			} else {
-				in.setPos(beg, end);
-				// in = new BufferedInputStream(bin);
+				
+			ByteBuffer unpackedBuffer= unpacker.unpackMessage(buf, beg,end);
+			if(unpackedBuffer == buf){
+				in = new PositionableByteArrayInputStream(buf.array(), beg,end-beg);
 			}
-
+			else{
+				in = new PositionableByteArrayInputStream(unpackedBuffer.array(), 0, unpackedBuffer.capacity());
+			}
+							
 			int cmd = 0;
 
 			// First read the name of the stream that will be addressed.
@@ -796,7 +820,7 @@ public class NetStreamReceiver extends Thread {
 		 * @return the offset.
 		 */
 		protected int compactBuffer() {
-			if (beg > 4) {
+			if (beg > unpacker.sizeOfInt()) {
 				int off = beg;
 
 				buf.position(beg);

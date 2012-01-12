@@ -29,45 +29,42 @@
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
 
-
-package org.graphstream.stream.netstream;
-
-import java.io.IOException;
-import java.net.UnknownHostException;
-
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.stream.thread.ThreadProxyPipe;
+package org.graphstream.stream.netstream.packing;
 
 /**
- *  A simple example of use of the NetStream receiver.
- *
- *  Copyright (c) 2010 University of Luxembourg
- *
- *  ReceiverExample.java
- *  @since Aug 19, 2011
- *
- *  @author Yoann Pigné
- *
- */
-public class ReceiverExample {
+*
+* @file Base64Packer.java
+* @date Dec 14, 2011
+*
+* @author Yoann Pigné
+*
+*/
 
-	public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException {
-		// ----- On the receiver side -----
-		//
-		// - a graph that will display the received events
-		Graph g = new MultiGraph("G",false,true);
-		g.display();
-		// - the receiver that waits for events
-		NetStreamReceiver net = new NetStreamReceiver("10.91.100.76",2001,false);
-		// - received events end up in the "default" pipe
-		ThreadProxyPipe pipe = net.getStream("default");
-		// - plug the pipe to the sink of the graph
-		pipe.addSink(g);
-		// -The receiver pro-actively checks for events on the ThreadProxyPipe
-		while (true) {
-			pipe.pump();
-			Thread.sleep(100);
-		}
+import java.nio.ByteBuffer;
+
+
+public class Base64Packer extends NetStreamPacker {
+
+	
+
+	/* (non-Javadoc)
+	 * @see org.graphstream.stream.netstream.packing.NetStreamPacker#packMessage(java.nio.ByteBuffer, int, int)
+	 */
+	@Override
+	public ByteBuffer packMessage(ByteBuffer buffer, int startIndex,
+			int endIndex) {
+		String encoded = Base64.encodeBytes(buffer.array(),startIndex,endIndex-startIndex);
+		return ByteBuffer.wrap(encoded.getBytes());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.graphstream.stream.netstream.packing.NetStreamPacker#packMessageSize(int)
+	 */
+	@Override
+	public ByteBuffer packMessageSize(int capacity) {
+		ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
+		sizeBuffer.putInt(capacity);
+		String encoded = Base64.encodeBytes(sizeBuffer.array());
+		return ByteBuffer.wrap(encoded.getBytes());
 	}
 }

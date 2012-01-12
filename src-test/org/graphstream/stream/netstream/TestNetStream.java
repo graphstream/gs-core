@@ -47,13 +47,13 @@ import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.SinkAdapter;
+import org.graphstream.stream.netstream.packing.Base64Packer;
+import org.graphstream.stream.netstream.packing.Base64Unpacker;
 import org.graphstream.stream.thread.ThreadProxyPipe;
 import org.junit.Test;
 
 /**
  * Test of the NetStream protocol, sender and receiver.
- * 
- *  * Copyright (c) 2010 University of Luxembourg
  * 
  * TestNetStream.java
  * @since Aug 16, 2011
@@ -80,9 +80,13 @@ public class TestNetStream {
 			fail(e1.toString());
 		}
 
+		net.setUnpacker(new Base64Unpacker());
+		
 		ThreadProxyPipe pipe = net.getDefaultStream();
 
+		
 		pipe.addSink(new SinkAdapter() {
+			
 			public void graphAttributeAdded(String sourceId, long timeId,
 					String attribute, Object value) {
 				validate(attribute, value);
@@ -92,6 +96,7 @@ public class TestNetStream {
 				validate(attribute, newValue);
 			}
 			private void validate(String attribute, Object value) {
+				
 				String valueType = null;
 				@SuppressWarnings("rawtypes")
 				Class valueClass = value.getClass();
@@ -212,6 +217,9 @@ public class TestNetStream {
 					error(e1.toString());
 					return;
 				}
+				
+				nsc.setPacker(new Base64Packer());
+				
 				g.addSink(nsc);
 
 				g.addAttribute("intArray", 0, Integer.MAX_VALUE,
@@ -262,7 +270,6 @@ public class TestNetStream {
 		try {
 			Thread.sleep(50);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -523,6 +530,6 @@ public class TestNetStream {
 	}
 
 	public static void main(String[] args) {
-		new TestNetStream().testNetStreamEvents();
+		new TestNetStream().testNetStreamTypes();
 	}
 }
