@@ -2,7 +2,7 @@ options { JDK_VERSION = "1.5"; STATIC = false; IGNORE_CASE = true; }
 
 PARSER_BEGIN(TLPParser)
 /*
- * Copyright 2006 - 2011 
+ * Copyright 2006 - 2012
  *     Stefan Balev     <stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
