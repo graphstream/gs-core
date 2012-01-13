@@ -67,69 +67,67 @@ public class ExampleEventsReceiver {
 		ThreadProxyPipe pipe = net.getDefaultStream();
 
 		pipe.addSink(new Sink() {
-
-			@Override
 			public void graphAttributeAdded(String sourceId, long timeId,
 					String attribute, Object value) {
 				assertEquals(0, value);
 				assertEquals("graphAttribute", attribute);
 			}
-			@Override
+			
 			public void graphAttributeChanged(String sourceId, long timeId,
 					String attribute, Object oldValue, Object newValue) {
 				assertTrue((Integer) newValue == 0 || (Integer) newValue == 1);
 				assertEquals("graphAttribute", attribute);
 			}
-			@Override
+			
 			public void graphAttributeRemoved(String sourceId, long timeId,
 					String attribute) {
 				assertEquals("graphAttribute", attribute);
 			}
-			@Override
+			
 			public void nodeAttributeAdded(String sourceId, long timeId,
 					String nodeId, String attribute, Object value) {
 				assertEquals(0, value);
 				assertEquals("nodeAttribute", attribute);
 			}
-			@Override
+			
 			public void nodeAttributeChanged(String sourceId, long timeId,
 					String nodeId, String attribute, Object oldValue,
 					Object newValue) {
 				assertTrue((Integer) newValue == 0 || (Integer) newValue == 1);
 				assertEquals("nodeAttribute", attribute);
 			}
-			@Override
+			
 			public void nodeAttributeRemoved(String sourceId, long timeId,
 					String nodeId, String attribute) {
 				assertEquals("nodeAttribute", attribute);
 			}
-			@Override
+			
 			public void edgeAttributeAdded(String sourceId, long timeId,
 					String edgeId, String attribute, Object value) {
 				assertEquals(0, value);
 				assertEquals("edgeAttribute", attribute);
 			}
-			@Override
+			
 			public void edgeAttributeChanged(String sourceId, long timeId,
 					String edgeId, String attribute, Object oldValue,
 					Object newValue) {
 				assertTrue((Integer) newValue == 0 || (Integer) newValue == 1);
 				assertEquals("edgeAttribute", attribute);
 			}
-			@Override
+			
 			public void edgeAttributeRemoved(String sourceId, long timeId,
 					String edgeId, String attribute) {
 				assertEquals("edgeAttribute", attribute);
 			}
-			@Override
+			
 			public void nodeAdded(String sourceId, long timeId, String nodeId) {
 				assertTrue("node0".equals(nodeId) || "node1".equals(nodeId));
 			}
-			@Override
+			
 			public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 				assertTrue("node0".equals(nodeId) || "node1".equals(nodeId));
 			}
-			@Override
+			
 			public void edgeAdded(String sourceId, long timeId, String edgeId,
 					String fromNodeId, String toNodeId, boolean directed) {
 				assertEquals("edge", edgeId);
@@ -137,15 +135,15 @@ public class ExampleEventsReceiver {
 				assertEquals("node1", toNodeId);
 				assertEquals(true, directed);
 			}
-			@Override
+			
 			public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 				assertEquals("edge", edgeId);
 			}
-			@Override
+			
 			public void graphCleared(String sourceId, long timeId) {
 				
 			}
-			@Override
+			
 			public void stepBegins(String sourceId, long timeId, double step) {
 				assertEquals(1.1, step);
 			}

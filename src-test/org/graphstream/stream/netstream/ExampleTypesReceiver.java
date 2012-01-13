@@ -75,8 +75,7 @@ public class ExampleTypesReceiver {
 			}
 			private void validate(String attribute, Object value) {
 				String valueType = null;
-				@SuppressWarnings("rawtypes")
-				Class valueClass = value.getClass();
+				Class<?> valueClass = value.getClass();
 				boolean isArray = valueClass.isArray();
 				if (isArray) {
 					valueClass = ((Object[]) value)[0].getClass();
