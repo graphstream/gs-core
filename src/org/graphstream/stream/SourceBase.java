@@ -88,14 +88,10 @@ public abstract class SourceBase implements Source {
 	protected boolean eventProcessing = false;
 
 	/**
-	 * List of sinks to remove if the {@link #removeSink(Sink)} is called inside
-	 * from the sink. This can happen !! We create this list on demand.
-	 */
-	protected ArrayList<Object> sinksToRemove;
-	/**
 	 * Id of this source.
 	 */
 	protected String sourceId;
+	
 	/**
 	 * Time of this source.
 	 */
