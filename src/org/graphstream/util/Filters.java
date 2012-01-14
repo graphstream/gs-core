@@ -80,6 +80,15 @@ public class Filters {
 		};
 	}
 
+	public static <T extends Element> Filter<T> isIdContained(
+			final Collection<String> set) {
+		return new Filter<T>() {
+			public boolean isAvailable(T e) {
+				return set.contains(e.getId());
+			}
+		};
+	}
+
 	public static <T extends Element> Filter<T> and(Filter<T> f1, Filter<T> f2) {
 		return new AndFilter<T>(f1, f2);
 	}
