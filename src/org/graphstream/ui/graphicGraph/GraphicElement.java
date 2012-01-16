@@ -272,7 +272,9 @@ public abstract class GraphicElement extends AbstractElement {
 		} else // REMOVE
 		{
 			if (attribute.equals("ui.class")) {
+			    Object o = attributes.remove("ui.class");	// Not yet removed at this point !
 				mygraph.styleGroups.checkElementStyleGroup(this);
+				attributes.put("ui.class", o);
 				mygraph.graphChanged = true;
 			} else if (attribute.equals("label")
 					|| attribute.equals("ui.label")) {
