@@ -1,13 +1,11 @@
 /*
- * Copyright 2006 - 2011 
- *     Stefan Balev 	<stefan.balev@graphstream-project.org>
- *     Julien Baudry	<julien.baudry@graphstream-project.org>
- *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
- *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
- *     Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
- * 
- * This file is part of GraphStream <http://graphstream-project.org>.
- * 
+ * Copyright 2006 - 2012
+ *      Stefan Balev       <stefan.balev@graphstream-project.org>
+ *      Julien Baudry	<julien.baudry@graphstream-project.org>
+ *      Antoine Dutot	<antoine.dutot@graphstream-project.org>
+ *      Yoann Pigné	<yoann.pigne@graphstream-project.org>
+ *      Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
+ *  
  * GraphStream is a library whose purpose is to handle static or dynamic
  * graph, create them from scratch, file or any source and display them.
  * 
@@ -33,6 +31,7 @@ package org.graphstream.stream;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
 import org.graphstream.stream.sync.SourceTime;
@@ -89,14 +88,10 @@ public abstract class SourceBase implements Source {
 	protected boolean eventProcessing = false;
 
 	/**
-	 * List of sinks to remove if the {@link #removeSink(Sink)} is called inside
-	 * from the sink. This can happen !! We create this list on demand.
-	 */
-	protected ArrayList<Object> sinksToRemove;
-	/**
 	 * Id of this source.
 	 */
 	protected String sourceId;
+	
 	/**
 	 * Time of this source.
 	 */
@@ -128,79 +123,103 @@ public abstract class SourceBase implements Source {
 	// Command
 
 	public void addSink(Sink sink) {
-		attrSinks.add(sink);
-		eltsSinks.add(sink);
+		addAttributeSink(sink);
+		addElementSink(sink);
 	}
 
 	public void addAttributeSink(AttributeSink sink) {
-		attrSinks.add(sink);
-	}
+		if (!eventProcessing) {
+			eventProcessing = true;
+			manageEvents();
 
-	public void addElementSink(ElementSink sink) {
-		eltsSinks.add(sink);
-	}
+			attrSinks.add(sink);
 
-	public void clearSinks() {
-		eltsSinks.clear();
-		attrSinks.clear();
-	}
-
-	public void clearElementSinks() {
-		eltsSinks.clear();
-	}
-
-	public void clearAttributeSinks() {
-		attrSinks.clear();
-	}
-
-	public void removeSink(Sink sink) {
-		if (eventProcessing) {
-			// We cannot remove the sink while processing events !!!
-			removesinkLater(sink);
+			manageEvents();
+			eventProcessing = false;
 		} else {
-			attrSinks.remove(sink);
-			eltsSinks.remove(sink);
+			eventQueue.add(new AddToListEvent<AttributeSink>(attrSinks, sink));
 		}
 	}
 
-	public void removeAttributeSink(AttributeSink sink) {
-		if (eventProcessing) {
-			// We cannot remove the sink while processing events !!!
-			removesinkLater(sink);
+	public void addElementSink(ElementSink sink) {
+		if (!eventProcessing) {
+			eventProcessing = true;
+			manageEvents();
+
+			eltsSinks.add(sink);
+
+			manageEvents();
+			eventProcessing = false;
 		} else {
+			eventQueue.add(new AddToListEvent<ElementSink>(eltsSinks, sink));
+		}
+	}
+
+	public void clearSinks() {
+		clearElementSinks();
+		clearAttributeSinks();
+	}
+
+	public void clearElementSinks() {
+		if (!eventProcessing) {
+			eventProcessing = true;
+			manageEvents();
+
+			eltsSinks.clear();
+
+			manageEvents();
+			eventProcessing = false;
+		} else {
+			eventQueue.add(new ClearListEvent<ElementSink>(eltsSinks));
+		}
+	}
+
+	public void clearAttributeSinks() {
+		if (!eventProcessing) {
+			eventProcessing = true;
+			manageEvents();
+
+			attrSinks.clear();
+
+			manageEvents();
+			eventProcessing = false;
+		} else {
+			eventQueue.add(new ClearListEvent<AttributeSink>(attrSinks));
+		}
+	}
+
+	public void removeSink(Sink sink) {
+		removeAttributeSink(sink);
+		removeElementSink(sink);
+	}
+
+	public void removeAttributeSink(AttributeSink sink) {
+		if (!eventProcessing) {
+			eventProcessing = true;
+			manageEvents();
+
 			attrSinks.remove(sink);
+
+			manageEvents();
+			eventProcessing = false;
+		} else {
+			eventQueue.add(new RemoveFromListEvent<AttributeSink>(attrSinks,
+					sink));
 		}
 	}
 
 	public void removeElementSink(ElementSink sink) {
-		if (eventProcessing) {
-			// We cannot remove the sink while processing events !!!
-			removesinkLater(sink);
-		} else {
+		if (!eventProcessing) {
+			eventProcessing = true;
+			manageEvents();
+
 			eltsSinks.remove(sink);
-		}
-	}
 
-	protected void removesinkLater(Object sink) {
-		if (sinksToRemove == null)
-			sinksToRemove = new ArrayList<Object>();
-
-		sinksToRemove.add(sink);
-	}
-
-	protected void checkSinksToRemove() {
-		if (sinksToRemove != null && sinksToRemove.size() > 0) {
-			for (Object sink : sinksToRemove) {
-				if (sink instanceof Sink)
-					removeSink((Sink) sink);
-				else if (sink instanceof AttributeSink)
-					removeAttributeSink((AttributeSink) sink);
-				else if (sink instanceof ElementSink)
-					removeElementSink((ElementSink) sink);
-			}
-
-			sinksToRemove.clear();
-			sinksToRemove = null;
+			manageEvents();
+			eventProcessing = false;
+		} else {
+			eventQueue
+					.add(new RemoveFromListEvent<ElementSink>(eltsSinks, sink));
 		}
 	}
 
@@ -222,8 +241,18 @@ public abstract class SourceBase implements Source {
 	 * @param timeId
 	 */
 	public void sendGraphCleared(String sourceId, long timeId) {
-		for (ElementSink sink : eltsSinks)
-			sink.graphCleared(sourceId, timeId);
+		if (!eventProcessing) {
+			eventProcessing = true;
+			manageEvents();
+
+			for (int i = 0; i < eltsSinks.size(); i++)
+				eltsSinks.get(i).graphCleared(sourceId, timeId);
+
+			manageEvents();
+			eventProcessing = false;
+		} else {
+			eventQueue.add(new BeforeGraphClearEvent(sourceId, timeId));
+		}
 	}
 
 	/**
@@ -248,8 +277,18 @@ public abstract class SourceBase implements Source {
 	 *            The step time stamp.
 	 */
 	public void sendStepBegins(String sourceId, long timeId, double step) {
-		for (ElementSink l : eltsSinks)
-			l.stepBegins(sourceId, timeId, step);
+		if (!eventProcessing) {
+			eventProcessing = true;
+			manageEvents();
+
+			for (int i = 0; i < eltsSinks.size(); i++)
+				eltsSinks.get(i).stepBegins(sourceId, timeId, step);
+
+			manageEvents();
+			eventProcessing = false;
+		} else {
+			eventQueue.add(new StepBeginsEvent(sourceId, timeId, step));
+		}
 	}
 
 	/**
@@ -278,12 +317,11 @@ public abstract class SourceBase implements Source {
 			eventProcessing = true;
 			manageEvents();
 
-			for (ElementSink l : eltsSinks)
-				l.nodeAdded(sourceId, timeId, nodeId);
+			for (int i = 0; i < eltsSinks.size(); i++)
+				eltsSinks.get(i).nodeAdded(sourceId, timeId, nodeId);
 
 			manageEvents();
 			eventProcessing = false;
-			checkSinksToRemove();
 		} else {
 			eventQueue.add(new AfterNodeAddEvent(sourceId, timeId, nodeId));
 		}
@@ -315,12 +353,11 @@ public abstract class SourceBase implements Source {
 			eventProcessing = true;
 			manageEvents();
 
-			for (ElementSink l : eltsSinks)
-				l.nodeRemoved(sourceId, timeId, nodeId);
+			for (int i = 0; i < eltsSinks.size(); i++)
+				eltsSinks.get(i).nodeRemoved(sourceId, timeId, nodeId);
 
 			manageEvents();
 			eventProcessing = false;
-			checkSinksToRemove();
 		} else {
 			eventQueue.add(new BeforeNodeRemoveEvent(sourceId, timeId, nodeId));
 		}
@@ -367,15 +404,13 @@ public abstract class SourceBase implements Source {
 			eventProcessing = true;
 			manageEvents();
 
-			for (ElementSink l : eltsSinks)
-				l.edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId,
-						directed);
+			for (int i = 0; i < eltsSinks.size(); i++)
+				eltsSinks.get(i).edgeAdded(sourceId, timeId, edgeId,
+						fromNodeId, toNodeId, directed);
 
 			manageEvents();
 			eventProcessing = false;
-			checkSinksToRemove();
 		} else {
-			// printPosition( "AddEdge in EventProc" );
 			eventQueue.add(new AfterEdgeAddEvent(sourceId, timeId, edgeId,
 					fromNodeId, toNodeId, directed));
 		}
@@ -407,14 +442,12 @@ public abstract class SourceBase implements Source {
 			eventProcessing = true;
 			manageEvents();
 
-			for (ElementSink l : eltsSinks)
-				l.edgeRemoved(sourceId, timeId, edgeId);
+			for (int i = 0; i < eltsSinks.size(); i++)
+				eltsSinks.get(i).edgeRemoved(sourceId, timeId, edgeId);
 
 			manageEvents();
 			eventProcessing = false;
-			checkSinksToRemove();
 		} else {
-			// printPosition( "DelEdge in EventProc" );
 			eventQueue.add(new BeforeEdgeRemoveEvent(sourceId, timeId, edgeId));
 		}
 	}
@@ -431,7 +464,7 @@ public abstract class SourceBase implements Source {
 	 * @param value
 	 *            The attribute value.
 	 */
-	protected void sendEdgeAttributeAdded(String sourceId, String edgeId,
+	public void sendEdgeAttributeAdded(String sourceId, String edgeId,
 			String attribute, Object value) {
 		sendAttributeChangedEvent(sourceId, edgeId, ElementType.EDGE,
 				attribute, AttributeChangeEvent.ADD, null, value);
@@ -450,7 +483,7 @@ public abstract class SourceBase implements Source {
 	 * @param value
 	 *            The attribute value.
 	 */
-	protected void sendEdgeAttributeAdded(String sourceId, long timeId,
+	public void sendEdgeAttributeAdded(String sourceId, long timeId,
 			String edgeId, String attribute, Object value) {
 		sendAttributeChangedEvent(sourceId, timeId, edgeId, ElementType.EDGE,
 				attribute, AttributeChangeEvent.ADD, null, value);
@@ -470,7 +503,7 @@ public abstract class SourceBase implements Source {
 	 * @param newValue
 	 *            The new attribute value.
 	 */
-	protected void sendEdgeAttributeChanged(String sourceId, String edgeId,
+	public void sendEdgeAttributeChanged(String sourceId, String edgeId,
 			String attribute, Object oldValue, Object newValue) {
 		sendAttributeChangedEvent(sourceId, edgeId, ElementType.EDGE,
 				attribute, AttributeChangeEvent.CHANGE, oldValue, newValue);
@@ -491,7 +524,7 @@ public abstract class SourceBase implements Source {
 	 * @param newValue
 	 *            The new attribute value.
 	 */
-	protected void sendEdgeAttributeChanged(String sourceId, long timeId,
+	public void sendEdgeAttributeChanged(String sourceId, long timeId,
 			String edgeId, String attribute, Object oldValue, Object newValue) {
 		sendAttributeChangedEvent(sourceId, timeId, edgeId, ElementType.EDGE,
 				attribute, AttributeChangeEvent.CHANGE, oldValue, newValue);
@@ -507,7 +540,7 @@ public abstract class SourceBase implements Source {
 	 * @param attribute
 	 *            The attribute name.
 	 */
-	protected void sendEdgeAttributeRemoved(String sourceId, String edgeId,
+	public void sendEdgeAttributeRemoved(String sourceId, String edgeId,
 			String attribute) {
 		sendAttributeChangedEvent(sourceId, edgeId, ElementType.EDGE,
 				attribute, AttributeChangeEvent.REMOVE, null, null);
@@ -524,7 +557,7 @@ public abstract class SourceBase implements Source {
 	 * @param attribute
 	 *            The attribute name.
 	 */
-	protected void sendEdgeAttributeRemoved(String sourceId, long timeId,
+	public void sendEdgeAttributeRemoved(String sourceId, long timeId,
 			String edgeId, String attribute) {
 		sendAttributeChangedEvent(sourceId, timeId, edgeId, ElementType.EDGE,
 				attribute, AttributeChangeEvent.REMOVE, null, null);
@@ -540,7 +573,7 @@ public abstract class SourceBase implements Source {
 	 * @param value
 	 *            The attribute value.
 	 */
-	protected void sendGraphAttributeAdded(String sourceId, String attribute,
+	public void sendGraphAttributeAdded(String sourceId, String attribute,
 			Object value) {
 		sendAttributeChangedEvent(sourceId, null, ElementType.GRAPH, attribute,
 				AttributeChangeEvent.ADD, null, value);
@@ -557,7 +590,7 @@ public abstract class SourceBase implements Source {
 	 * @param value
 	 *            The attribute value.
 	 */
-	protected void sendGraphAttributeAdded(String sourceId, long timeId,
+	public void sendGraphAttributeAdded(String sourceId, long timeId,
 			String attribute, Object value) {
 		sendAttributeChangedEvent(sourceId, timeId, null, ElementType.GRAPH,
 				attribute, AttributeChangeEvent.ADD, null, value);
@@ -575,7 +608,7 @@ public abstract class SourceBase implements Source {
 	 * @param newValue
 	 *            The attribute new value.
 	 */
-	protected void sendGraphAttributeChanged(String sourceId, String attribute,
+	public void sendGraphAttributeChanged(String sourceId, String attribute,
 			Object oldValue, Object newValue) {
 		sendAttributeChangedEvent(sourceId, null, ElementType.GRAPH, attribute,
 				AttributeChangeEvent.CHANGE, oldValue, newValue);
@@ -594,7 +627,7 @@ public abstract class SourceBase implements Source {
 	 * @param newValue
 	 *            The attribute new value.
 	 */
-	protected void sendGraphAttributeChanged(String sourceId, long timeId,
+	public void sendGraphAttributeChanged(String sourceId, long timeId,
 			String attribute, Object oldValue, Object newValue) {
 		sendAttributeChangedEvent(sourceId, timeId, null, ElementType.GRAPH,
 				attribute, AttributeChangeEvent.CHANGE, oldValue, newValue);
@@ -608,7 +641,7 @@ public abstract class SourceBase implements Source {
 	 * @param attribute
 	 *            The attribute name.
 	 */
-	protected void sendGraphAttributeRemoved(String sourceId, String attribute) {
+	public void sendGraphAttributeRemoved(String sourceId, String attribute) {
 		sendAttributeChangedEvent(sourceId, null, ElementType.GRAPH, attribute,
 				AttributeChangeEvent.REMOVE, null, null);
 	}
@@ -622,7 +655,7 @@ public abstract class SourceBase implements Source {
 	 * @param attribute
 	 *            The attribute name.
 	 */
-	protected void sendGraphAttributeRemoved(String sourceId, long timeId,
+	public void sendGraphAttributeRemoved(String sourceId, long timeId,
 			String attribute) {
 		sendAttributeChangedEvent(sourceId, timeId, null, ElementType.GRAPH,
 				attribute, AttributeChangeEvent.REMOVE, null, null);
@@ -640,7 +673,7 @@ public abstract class SourceBase implements Source {
 	 * @param value
 	 *            The attribute value.
 	 */
-	protected void sendNodeAttributeAdded(String sourceId, String nodeId,
+	public void sendNodeAttributeAdded(String sourceId, String nodeId,
 			String attribute, Object value) {
 		sendAttributeChangedEvent(sourceId, nodeId, ElementType.NODE,
 				attribute, AttributeChangeEvent.ADD, null, value);
@@ -659,7 +692,7 @@ public abstract class SourceBase implements Source {
 	 * @param value
 	 *            The attribute value.
 	 */
-	protected void sendNodeAttributeAdded(String sourceId, long timeId,
+	public void sendNodeAttributeAdded(String sourceId, long timeId,
 			String nodeId, String attribute, Object value) {
 		sendAttributeChangedEvent(sourceId, timeId, nodeId, ElementType.NODE,
 				attribute, AttributeChangeEvent.ADD, null, value);
@@ -679,7 +712,7 @@ public abstract class SourceBase implements Source {
 	 * @param newValue
 	 *            The attribute new value.
 	 */
-	protected void sendNodeAttributeChanged(String sourceId, String nodeId,
+	public void sendNodeAttributeChanged(String sourceId, String nodeId,
 			String attribute, Object oldValue, Object newValue) {
 		sendAttributeChangedEvent(sourceId, nodeId, ElementType.NODE,
 				attribute, AttributeChangeEvent.CHANGE, oldValue, newValue);
@@ -700,7 +733,7 @@ public abstract class SourceBase implements Source {
 	 * @param newValue
 	 *            The attribute new value.
 	 */
-	protected void sendNodeAttributeChanged(String sourceId, long timeId,
+	public void sendNodeAttributeChanged(String sourceId, long timeId,
 			String nodeId, String attribute, Object oldValue, Object newValue) {
 		sendAttributeChangedEvent(sourceId, timeId, nodeId, ElementType.NODE,
 				attribute, AttributeChangeEvent.CHANGE, oldValue, newValue);
@@ -716,7 +749,7 @@ public abstract class SourceBase implements Source {
 	 * @param attribute
 	 *            The attribute name.
 	 */
-	protected void sendNodeAttributeRemoved(String sourceId, String nodeId,
+	public void sendNodeAttributeRemoved(String sourceId, String nodeId,
 			String attribute) {
 		sendAttributeChangedEvent(sourceId, nodeId, ElementType.NODE,
 				attribute, AttributeChangeEvent.REMOVE, null, null);
@@ -733,7 +766,7 @@ public abstract class SourceBase implements Source {
 	 * @param attribute
 	 *            The attribute name.
 	 */
-	protected void sendNodeAttributeRemoved(String sourceId, long timeId,
+	public void sendNodeAttributeRemoved(String sourceId, long timeId,
 			String nodeId, String attribute) {
 		sendAttributeChangedEvent(sourceId, timeId, nodeId, ElementType.NODE,
 				attribute, AttributeChangeEvent.REMOVE, null, null);
@@ -776,52 +809,51 @@ public abstract class SourceBase implements Source {
 
 			if (event == AttributeChangeEvent.ADD) {
 				if (eltType == ElementType.NODE) {
-					for (AttributeSink l : attrSinks)
-						l.nodeAttributeAdded(sourceId, timeId, eltId,
-								attribute, newValue);
+					for (int i = 0; i < attrSinks.size(); i++)
+						attrSinks.get(i).nodeAttributeAdded(sourceId, timeId,
+								eltId, attribute, newValue);
 				} else if (eltType == ElementType.EDGE) {
-					for (AttributeSink l : attrSinks)
-						l.edgeAttributeAdded(sourceId, timeId, eltId,
-								attribute, newValue);
+					for (int i = 0; i < attrSinks.size(); i++)
+						attrSinks.get(i).edgeAttributeAdded(sourceId, timeId,
+								eltId, attribute, newValue);
 				} else {
-					for (AttributeSink l : attrSinks)
-						l.graphAttributeAdded(sourceId, timeId, attribute,
-								newValue);
+					for (int i = 0; i < attrSinks.size(); i++)
+						attrSinks.get(i).graphAttributeAdded(sourceId, timeId,
+								attribute, newValue);
 				}
 			} else if (event == AttributeChangeEvent.REMOVE) {
 				if (eltType == ElementType.NODE) {
-					for (AttributeSink l : attrSinks)
-						l.nodeAttributeRemoved(sourceId, timeId, eltId,
-								attribute);
+					for (int i = 0; i < attrSinks.size(); i++)
+						attrSinks.get(i).nodeAttributeRemoved(sourceId, timeId,
+								eltId, attribute);
 				} else if (eltType == ElementType.EDGE) {
-					for (AttributeSink l : attrSinks)
-						l.edgeAttributeRemoved(sourceId, timeId, eltId,
-								attribute);
+					for (int i = 0; i < attrSinks.size(); i++)
+						attrSinks.get(i).edgeAttributeRemoved(sourceId, timeId,
+								eltId, attribute);
 				} else {
-					for (AttributeSink l : attrSinks)
-						l.graphAttributeRemoved(sourceId, timeId, attribute);
+					for (int i = 0; i < attrSinks.size(); i++)
+						attrSinks.get(i).graphAttributeRemoved(sourceId,
+								timeId, attribute);
 				}
 			} else {
 				if (eltType == ElementType.NODE) {
-					for (AttributeSink l : attrSinks)
-						l.nodeAttributeChanged(sourceId, timeId, eltId,
-								attribute, oldValue, newValue);
+					for (int i = 0; i < attrSinks.size(); i++)
+						attrSinks.get(i).nodeAttributeChanged(sourceId, timeId,
+								eltId, attribute, oldValue, newValue);
 				} else if (eltType == ElementType.EDGE) {
-					for (AttributeSink l : attrSinks)
-						l.edgeAttributeChanged(sourceId, timeId, eltId,
-								attribute, oldValue, newValue);
+					for (int i = 0; i < attrSinks.size(); i++)
+						attrSinks.get(i).edgeAttributeChanged(sourceId, timeId,
+								eltId, attribute, oldValue, newValue);
 				} else {
-					for (AttributeSink l : attrSinks)
-						l.graphAttributeChanged(sourceId, timeId, attribute,
-								oldValue, newValue);
+					for (int i = 0; i < attrSinks.size(); i++)
+						attrSinks.get(i).graphAttributeChanged(sourceId,
+								timeId, attribute, oldValue, newValue);
 				}
 			}
 
 			manageEvents();
 			eventProcessing = false;
-			checkSinksToRemove();
 		} else {
-			// printPosition( "ChgEdge in EventProc" );
 			eventQueue.add(new AttributeChangedEvent(sourceId, timeId, eltId,
 					eltType, attribute, event, oldValue, newValue));
 		}
@@ -835,91 +867,7 @@ public abstract class SourceBase implements Source {
 	protected void manageEvents() {
 		if (eventProcessing) {
 			while (!eventQueue.isEmpty())
-				manageEvent(eventQueue.remove());
-		}
-	}
-
-	/**
-	 * Private method that manages the events stored in the {@link #eventQueue}.
-	 * These event where created while being invoked from another event
-	 * invocation.
-	 * 
-	 * @param event
-	 */
-	private void manageEvent(GraphEvent event) {
-		if (event.getClass() == AttributeChangedEvent.class) {
-			AttributeChangedEvent ev = (AttributeChangedEvent) event;
-
-			if (ev.event == AttributeChangeEvent.ADD) {
-				if (ev.eltType == ElementType.NODE) {
-					for (AttributeSink l : attrSinks)
-						l.nodeAttributeAdded(ev.sourceId, ev.timeId, ev.eltId,
-								ev.attribute, ev.newValue);
-				} else if (ev.eltType == ElementType.EDGE) {
-					for (AttributeSink l : attrSinks)
-						l.edgeAttributeAdded(ev.sourceId, ev.timeId, ev.eltId,
-								ev.attribute, ev.newValue);
-				} else {
-					for (AttributeSink l : attrSinks)
-						l.graphAttributeAdded(ev.sourceId, ev.timeId,
-								ev.attribute, ev.newValue);
-				}
-			} else if (ev.event == AttributeChangeEvent.REMOVE) {
-				if (ev.eltType == ElementType.NODE) {
-					for (AttributeSink l : attrSinks)
-						l.nodeAttributeRemoved(ev.sourceId, ev.timeId,
-								ev.eltId, ev.attribute);
-				} else if (ev.eltType == ElementType.EDGE) {
-					for (AttributeSink l : attrSinks)
-						l.edgeAttributeRemoved(ev.sourceId, ev.timeId,
-								ev.eltId, ev.attribute);
-				} else {
-					for (AttributeSink l : attrSinks)
-						l.graphAttributeRemoved(ev.sourceId, ev.timeId,
-								ev.attribute);
-				}
-			} else {
-				if (ev.eltType == ElementType.NODE) {
-					for (AttributeSink l : attrSinks)
-						l.nodeAttributeChanged(ev.sourceId, ev.timeId,
-								ev.eltId, ev.attribute, ev.oldValue,
-								ev.newValue);
-				} else if (ev.eltType == ElementType.EDGE) {
-					for (AttributeSink l : attrSinks)
-						l.edgeAttributeChanged(ev.sourceId, ev.timeId,
-								ev.eltId, ev.attribute, ev.oldValue,
-								ev.newValue);
-				} else {
-					for (AttributeSink l : attrSinks)
-						l.graphAttributeChanged(ev.sourceId, ev.timeId,
-								ev.attribute, ev.oldValue, ev.newValue);
-				}
-			}
-		}
-
-		// Elements events
-
-		else if (event.getClass() == AfterEdgeAddEvent.class) {
-			AfterEdgeAddEvent e = (AfterEdgeAddEvent) event;
-
-			for (ElementSink l : eltsSinks)
-				l.edgeAdded(e.sourceId, e.timeId, e.edgeId, e.fromNodeId,
-						e.toNodeId, e.directed);
-		} else if (event.getClass() == AfterNodeAddEvent.class) {
-			AfterNodeAddEvent e = (AfterNodeAddEvent) event;
-
-			for (ElementSink l : eltsSinks)
-				l.nodeAdded(e.sourceId, e.timeId, e.nodeId);
-		} else if (event.getClass() == BeforeEdgeRemoveEvent.class) {
-			BeforeEdgeRemoveEvent e = (BeforeEdgeRemoveEvent) event;
-
-			for (ElementSink l : eltsSinks)
-				l.edgeRemoved(e.sourceId, e.timeId, e.edgeId);
-		} else if (event.getClass() == BeforeNodeRemoveEvent.class) {
-			BeforeNodeRemoveEvent e = (BeforeNodeRemoveEvent) event;
-
-			for (ElementSink l : eltsSinks)
-				l.nodeRemoved(e.sourceId, e.timeId, e.nodeId);
+				eventQueue.remove().trigger();
 		}
 	}
 
@@ -929,7 +877,7 @@ public abstract class SourceBase implements Source {
 	 * Interface that provide general purpose classification for evens involved
 	 * in graph modifications
 	 */
-	class GraphEvent {
+	abstract class GraphEvent {
 		String sourceId;
 		long timeId;
 
@@ -937,6 +885,8 @@ public abstract class SourceBase implements Source {
 			this.sourceId = sourceId;
 			this.timeId = timeId;
 		}
+
+		abstract void trigger();
 	}
 
 	class AfterEdgeAddEvent extends GraphEvent {
@@ -953,6 +903,12 @@ public abstract class SourceBase implements Source {
 			this.toNodeId = toNodeId;
 			this.directed = directed;
 		}
+
+		void trigger() {
+			for (int i = 0; i < eltsSinks.size(); i++)
+				eltsSinks.get(i).edgeAdded(sourceId, timeId, edgeId,
+						fromNodeId, toNodeId, directed);
+		}
 	}
 
 	class BeforeEdgeRemoveEvent extends GraphEvent {
@@ -961,6 +917,11 @@ public abstract class SourceBase implements Source {
 		BeforeEdgeRemoveEvent(String sourceId, long timeId, String edgeId) {
 			super(sourceId, timeId);
 			this.edgeId = edgeId;
+		}
+
+		void trigger() {
+			for (int i = 0; i < eltsSinks.size(); i++)
+				eltsSinks.get(i).edgeRemoved(sourceId, timeId, edgeId);
 		}
 	}
 
@@ -971,6 +932,11 @@ public abstract class SourceBase implements Source {
 			super(sourceId, timeId);
 			this.nodeId = nodeId;
 		}
+
+		void trigger() {
+			for (int i = 0; i < eltsSinks.size(); i++)
+				eltsSinks.get(i).nodeAdded(sourceId, timeId, nodeId);
+		}
 	}
 
 	class BeforeNodeRemoveEvent extends GraphEvent {
@@ -980,11 +946,35 @@ public abstract class SourceBase implements Source {
 			super(sourceId, timeId);
 			this.nodeId = nodeId;
 		}
+
+		void trigger() {
+			for (int i = 0; i < eltsSinks.size(); i++)
+				eltsSinks.get(i).nodeRemoved(sourceId, timeId, nodeId);
+		}
 	}
 
 	class BeforeGraphClearEvent extends GraphEvent {
 		BeforeGraphClearEvent(String sourceId, long timeId) {
 			super(sourceId, timeId);
+		}
+
+		void trigger() {
+			for (int i = 0; i < eltsSinks.size(); i++)
+				eltsSinks.get(i).graphCleared(sourceId, timeId);
+		}
+	}
+
+	class StepBeginsEvent extends GraphEvent {
+		double step;
+
+		StepBeginsEvent(String sourceId, long timeId, double step) {
+			super(sourceId, timeId);
+			this.step = step;
+		}
+
+		void trigger() {
+			for (int i = 0; i < eltsSinks.size(); i++)
+				eltsSinks.get(i).stepBegins(sourceId, timeId, step);
 		}
 	}
 
@@ -1011,6 +1001,107 @@ public abstract class SourceBase implements Source {
 			this.event = event;
 			this.oldValue = oldValue;
 			this.newValue = newValue;
+		}
+
+		void trigger() {
+			switch (event) {
+			case ADD:
+				switch (eltType) {
+				case NODE:
+					for (int i = 0; i < attrSinks.size(); i++)
+						attrSinks.get(i).nodeAttributeAdded(sourceId, timeId,
+								eltId, attribute, newValue);
+					break;
+				case EDGE:
+					for (int i = 0; i < attrSinks.size(); i++)
+						attrSinks.get(i).edgeAttributeAdded(sourceId, timeId,
+								eltId, attribute, newValue);
+					break;
+				default:
+					for (int i = 0; i < attrSinks.size(); i++)
+						attrSinks.get(i).graphAttributeAdded(sourceId, timeId,
+								attribute, newValue);
+				}
+				break;
+			case REMOVE:
+				switch (eltType) {
+				case NODE:
+					for (int i = 0; i < attrSinks.size(); i++)
+						attrSinks.get(i).nodeAttributeRemoved(sourceId, timeId,
+								eltId, attribute);
+					break;
+				case EDGE:
+					for (int i = 0; i < attrSinks.size(); i++)
+						attrSinks.get(i).edgeAttributeRemoved(sourceId, timeId,
+								eltId, attribute);
+					break;
+				default:
+					for (int i = 0; i < attrSinks.size(); i++)
+						attrSinks.get(i).graphAttributeRemoved(sourceId,
+								timeId, attribute);
+				}
+				break;
+			default:
+				switch (eltType) {
+				case NODE:
+					for (int i = 0; i < attrSinks.size(); i++)
+						attrSinks.get(i).nodeAttributeChanged(sourceId, timeId,
+								eltId, attribute, oldValue, newValue);
+					break;
+				case EDGE:
+					for (int i = 0; i < attrSinks.size(); i++)
+						attrSinks.get(i).edgeAttributeChanged(sourceId, timeId,
+								eltId, attribute, oldValue, newValue);
+					break;
+				default:
+					for (int i = 0; i < attrSinks.size(); i++)
+						attrSinks.get(i).graphAttributeChanged(sourceId,
+								timeId, attribute, oldValue, newValue);
+				}
+			}
+		}
+	}
+
+	class AddToListEvent<T> extends GraphEvent {
+		List<T> l;
+		T obj;
+
+		AddToListEvent(List<T> l, T obj) {
+			super(null, -1);
+			this.l = l;
+			this.obj = obj;
+		}
+
+		void trigger() {
+			l.add(obj);
+		}
+	}
+
+	class RemoveFromListEvent<T> extends GraphEvent {
+		List<T> l;
+		T obj;
+
+		RemoveFromListEvent(List<T> l, T obj) {
+			super(null, -1);
+			this.l = l;
+			this.obj = obj;
+		}
+
+		void trigger() {
+			l.remove(obj);
+		}
+	}
+
+	class ClearListEvent<T> extends GraphEvent {
+		List<T> l;
+
+		ClearListEvent(List<T> l) {
+			super(null, -1);
+			this.l = l;
+		}
+
+		void trigger() {
+			l.clear();
 		}
 	}
 }

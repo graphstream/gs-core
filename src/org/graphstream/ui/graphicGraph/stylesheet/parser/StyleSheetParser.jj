@@ -2,7 +2,7 @@ options { JDK_VERSION = "1.5"; STATIC = false; }
 
 PARSER_BEGIN(StyleSheetParser)
 /*
- * Copyright 2006 - 2011 
+ * Copyright 2006 - 2012
  *     Stefan Balev     <stefan.balev@graphstream-project.org>
  *     Julien Baudry	<julien.baudry@graphstream-project.org>
  *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
@@ -129,7 +129,9 @@ TOKEN: { < SPRITE            : "sprite" > }
 //
 TOKEN: { < FILLMODE          : "fill-mode" > }
 TOKEN: { < FILLCOLOR         : "fill-color" > }
-TOKEN: { < FILLIMAGE         : "fill-image" > }TOKEN: { < STROKEMODE        : "stroke-mode" > }
+TOKEN: { < FILLIMAGE         : "fill-image" > }
+
+TOKEN: { < STROKEMODE        : "stroke-mode" > }
 TOKEN: { < STROKECOLOR       : "stroke-color" > } 	 
 TOKEN: { < STROKEWIDTH       : "stroke-width" > }
 
@@ -145,7 +147,8 @@ TOKEN: { < TEXTFONT          : "text-font" > }
 TOKEN: { < TEXTSIZE          : "text-size" > }
 TOKEN: { < TEXTVISIBILITYMODE: "text-visibility-mode" > }
 TOKEN: { < TEXTVISIBILITY    : "text-visibility" > }
-TOKEN: { < TEXTBACKGROUNDMODE: "text-background-mode" > }TOKEN: { < TEXTBACKGROUNDCOLOR: "text-background-color" > }
+TOKEN: { < TEXTBACKGROUNDMODE: "text-background-mode" > }
+TOKEN: { < TEXTBACKGROUNDCOLOR: "text-background-color" > }
 TOKEN: { < TEXTOFFSET        : "text-offset" > }
 TOKEN: { < TEXTPADDING       : "text-padding" > }
 
@@ -475,8 +478,10 @@ String url():
 
 String icon():
 {
-  String s;}
-{	( <DYNICON > { return "dynamic"; }
+  String s;
+}
+{
+	( <DYNICON > { return "dynamic"; }
 	| s = url()   { return s; }
 	) 
 }
@@ -537,7 +542,8 @@ Style.FillMode fillMode():
 	| ( <GRADIENTHORIZONTAL>  { m = Style.FillMode.GRADIENT_HORIZONTAL;    } )
 	| ( <GRADIENTDIAGONAL1>   { m = Style.FillMode.GRADIENT_DIAGONAL1;     } )
 	| ( <GRADIENTDIAGONAL2>   { m = Style.FillMode.GRADIENT_DIAGONAL2;     } )
-	| ( <IMAGETILED>          { m = Style.FillMode.IMAGE_TILED;            } )	| ( <IMAGESCALED>         { m = Style.FillMode.IMAGE_SCALED;           } )
+	| ( <IMAGETILED>          { m = Style.FillMode.IMAGE_TILED;            } )
+	| ( <IMAGESCALED>         { m = Style.FillMode.IMAGE_SCALED;           } )
 	| ( <IMAGESCALEDRATIOMAX> { m = Style.FillMode.IMAGE_SCALED_RATIO_MAX; } )
 	| ( <IMAGESCALEDRATIOMIN> { m = Style.FillMode.IMAGE_SCALED_RATIO_MIN; } )
 	)
@@ -611,7 +617,8 @@ Style.TextBackgroundMode textBgMode():
 	| ( <PLAIN>      { m = Style.TextBackgroundMode.PLAIN;      } )
 	| ( <ROUNDEDBOX> { m = Style.TextBackgroundMode.ROUNDEDBOX; } )
 	)
-	{ return m; } }
+	{ return m; } 
+}
 
 Style.TextStyle textStyle():
 {
