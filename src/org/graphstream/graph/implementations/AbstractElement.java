@@ -60,7 +60,7 @@ public abstract class AbstractElement implements Element {
 	/**
 	 * Tag of this element.
 	 */
-	private String id;
+	protected final String id;
 
 	/**
 	 * The index of this element.
