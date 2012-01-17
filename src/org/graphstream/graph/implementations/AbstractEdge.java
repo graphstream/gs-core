@@ -103,7 +103,7 @@ public class AbstractEdge extends AbstractElement implements Edge {
 	protected void attributeChanged(String sourceId, long timeId,
 			String attribute, AttributeChangeEvent event, Object oldValue,
 			Object newValue) {
-		graph.listeners.sendAttributeChangedEvent(sourceId, timeId, getId(),
+		graph.listeners.sendAttributeChangedEvent(sourceId, timeId, id,
 				ElementType.EDGE, attribute, event, oldValue,
 				newValue);
 	}

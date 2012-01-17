@@ -90,7 +90,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	protected void attributeChanged(String sourceId, long timeId,
 			String attribute, AttributeChangeEvent event, Object oldValue,
 			Object newValue) {
-		graph.listeners.sendAttributeChangedEvent(sourceId, timeId, getId(),
+		graph.listeners.sendAttributeChangedEvent(sourceId, timeId, id,
 				SourceBase.ElementType.NODE, attribute, event, oldValue,
 				newValue);
 
@@ -416,7 +416,9 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	}
 
 	public abstract <T extends Edge> T getEdge(int i);
+
 	public abstract <T extends Edge> T getEnteringEdge(int i);
+
 	public abstract <T extends Edge> T getLeavingEdge(int i);
 
 	/**

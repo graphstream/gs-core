@@ -128,7 +128,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	protected void attributeChanged(String sourceId, long timeId,
 			String attribute, AttributeChangeEvent event, Object oldValue,
 			Object newValue) {
-		listeners.sendAttributeChangedEvent(sourceId, timeId, getId(),
+		listeners.sendAttributeChangedEvent(sourceId, timeId, id,
 				SourceBase.ElementType.GRAPH, attribute, event, oldValue,
 				newValue);
 	}
@@ -388,7 +388,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 						+ "\". Cannot remove it.");
 			return null;
 		}
-		return removeEdge_(getId(), -1, edge, edge.getId(),
+		return removeEdge_(id, -1, edge, edge.getId(),
 				true, true, true);
 	}
 
@@ -800,7 +800,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	 *            called
 	 */
 	protected void removeNode(AbstractNode node, boolean graphCallback) {
-		removeNode_(getId(), -1, node, node.getId(),
+		removeNode_(id, -1, node, node.getId(),
 				graphCallback);
 	}
 
@@ -826,7 +826,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	 */
 	protected void removeEdge(AbstractEdge edge, boolean graphCallback,
 			boolean sourceCallback, boolean targetCallback) {
-		removeEdge_(getId(), -1, edge, edge.getId(),
+		removeEdge_(id, -1, edge, edge.getId(),
 				graphCallback, sourceCallback, targetCallback);
 	}
 
