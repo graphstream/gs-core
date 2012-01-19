@@ -423,9 +423,11 @@ public class GraphicGraph extends AbstractElement implements Graph,
 			GraphicNode n1 = (GraphicNode) styleGroups.getNode(from);
 			GraphicNode n2 = (GraphicNode) styleGroups.getNode(to);
 
-			if (n1 == null || n2 == null)
-				throw new RuntimeException(
-						"org.miv.graphstream.ui.graphicGraph.GraphicGraph.addEdge() : ERROR : one of the nodes does not exist");
+			if (n1 == null)
+				throw new ElementNotFoundException("node \"%s\"", from);
+
+			if (n2 == null)
+				throw new ElementNotFoundException("node \"%s\"", to);
 
 			edge = new GraphicEdge(id, n1, n2, directed, attributes);
 
