@@ -734,7 +734,9 @@ public class FileSinkImages implements FileSink, LayoutListener {
 			throws IOException {
 		gg.clear();
 
-		GraphReplay replay = new GraphReplay("file_sink_image-write_all-replay");
+		GraphReplay replay = new GraphReplay(String.format(
+				"file_sink_image-write_all-replay-%x", System.nanoTime()));
+		
 		replay.addSink(gg);
 		replay.replay(g);
 		replay.removeSink(gg);
