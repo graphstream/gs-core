@@ -449,6 +449,7 @@ public class FileSinkImages implements FileSink, LayoutListener {
 				layout = Layouts.newLayoutAlgorithm();
 				optLayout = new InnerLayoutRunner();
 				break;
+			case COMPUTED_FULLY_AT_NEW_IMAGE:
 			case COMPUTED_ONCE_AT_NEW_IMAGE:
 				layout = Layouts.newLayoutAlgorithm();
 				gg.addSink(layout);
