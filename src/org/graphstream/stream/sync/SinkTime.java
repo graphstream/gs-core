@@ -29,6 +29,7 @@
  */
 package org.graphstream.stream.sync;
 
+import java.security.AccessControlException;
 import java.util.HashMap;
 
 public class SinkTime {
@@ -39,8 +40,23 @@ public class SinkTime {
 	/**
 	 * Flag used to disable sync.
 	 */
-	protected static final boolean disableSync = System
-			.getProperty(SYNC_DISABLE_KEY) != null;
+	protected static final boolean disableSync;
+
+	/*
+	 * The following code is used to prevent AccessControlException to be thrown
+	 * when trying to get the value of the property (in applets for example).
+	 */
+	static {
+		boolean off;
+
+		try {
+			off = System.getProperty(SYNC_DISABLE_KEY) != null;
+		} catch (AccessControlException ex) {
+			off = false;
+		}
+
+		disableSync = off;
+	}
 
 	/**
 	 * Map storing times of sources.
