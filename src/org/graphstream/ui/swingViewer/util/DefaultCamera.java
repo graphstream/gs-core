@@ -81,7 +81,7 @@ public class DefaultCamera implements Camera {
 	 * The graph.
 	 */
 	protected GraphicGraph graph = null;
-	
+
 	/**
 	 * Information on the graph overall dimension and position.
 	 */
@@ -139,7 +139,7 @@ public class DefaultCamera implements Camera {
 	 * of the graph space instead of the graph dimensions.
 	 */
 	protected double gviewport[] = null;
-	
+
 	// Construction
 
 	/**
@@ -153,6 +153,7 @@ public class DefaultCamera implements Camera {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.graphstream.ui.swingViewer.util.Camera#getViewCenter()
 	 */
 	public Point3 getViewCenter() {
@@ -161,28 +162,32 @@ public class DefaultCamera implements Camera {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.ui.swingViewer.util.Camera#setViewCenter(double, double, double)
+	 * 
+	 * @see org.graphstream.ui.swingViewer.util.Camera#setViewCenter(double,
+	 * double, double)
 	 */
 	public void setViewCenter(double x, double y, double z) {
 		setAutoFitView(false);
 		center.set(x, y, z);
 		graph.graphChanged = true;
 	}
-	
+
 	public void setViewCenter(double x, double y) {
 		setViewCenter(x, y, 0);
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.graphstream.ui.swingViewer.util.Camera#getViewPercent()
 	 */
 	public double getViewPercent() {
 		return zoom;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.graphstream.ui.swingViewer.util.Camera#setViewPercent(double)
 	 */
 	public void setViewPercent(double percent) {
@@ -193,6 +198,7 @@ public class DefaultCamera implements Camera {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.graphstream.ui.swingViewer.util.Camera#getViewRotation()
 	 */
 	public double getViewRotation() {
@@ -201,6 +207,7 @@ public class DefaultCamera implements Camera {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.graphstream.ui.swingViewer.util.Camera#getMetrics()
 	 */
 	public GraphMetrics getMetrics() {
@@ -223,16 +230,19 @@ public class DefaultCamera implements Camera {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.graphstream.ui.swingViewer.util.Camera#resetView()
 	 */
 	public void resetView() {
 		setAutoFitView(true);
 		setViewRotation(0);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.ui.swingViewer.util.Camera#setBounds(double, double, double, double, double, double)
+	 * 
+	 * @see org.graphstream.ui.swingViewer.util.Camera#setBounds(double, double,
+	 * double, double, double, double)
 	 */
 	public void setBounds(double minx, double miny, double minz, double maxx,
 			double maxy, double maxz) {
@@ -241,12 +251,13 @@ public class DefaultCamera implements Camera {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.graphstream.ui.swingViewer.util.Camera#getGraphDimension()
 	 */
 	public double getGraphDimension() {
 		return metrics.diagonal;
 	}
-	
+
 	/**
 	 * True if the element should be visible on screen. The method used is to
 	 * transform the center of the element (which is always in graph units)
@@ -261,25 +272,27 @@ public class DefaultCamera implements Camera {
 	 * @return True if the element is visible and therefore must be rendered.
 	 */
 	public boolean isVisible(GraphicElement element) {
-		if(autoFit) {
-  	        return ((! element.hidden) && (element.style.getVisibilityMode() != StyleConstants.VisibilityMode.HIDDEN));
+		if (autoFit) {
+			return ((!element.hidden) && (element.style.getVisibilityMode() != StyleConstants.VisibilityMode.HIDDEN));
 		} else {
 			switch (element.getSelectorType()) {
-				case NODE:
-					return !nodeInvisible.contains(element.getId());
-				case EDGE:
-					return isEdgeVisible((GraphicEdge) element);
-				case SPRITE:
-					return isSpriteVisible((GraphicSprite) element);
-				default:
-					return false;
+			case NODE:
+				return !nodeInvisible.contains(element.getId());
+			case EDGE:
+				return isEdgeVisible((GraphicEdge) element);
+			case SPRITE:
+				return isSpriteVisible((GraphicSprite) element);
+			default:
+				return false;
 			}
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.ui.swingViewer.util.Camera#inverseTransform(double, double)
+	 * 
+	 * @see org.graphstream.ui.swingViewer.util.Camera#inverseTransform(double,
+	 * double)
 	 */
 	public Point3 transformPxToGu(double x, double y) {
 		Point2D.Double p = new Point2D.Double(x, y);
@@ -289,6 +302,7 @@ public class DefaultCamera implements Camera {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.graphstream.ui.swingViewer.util.Camera#transform(double, double)
 	 */
 	public Point3 transformGuToPx(double x, double y, double z) {
@@ -312,7 +326,9 @@ public class DefaultCamera implements Camera {
 		nodeInvisible.clear();
 
 		for (Node node : graph) {
-			boolean visible = isNodeIn((GraphicNode) node, X, Y, X+W, Y+H) && (! ((GraphicNode)node).hidden) && ((GraphicNode)node).positionned;
+			boolean visible = isNodeIn((GraphicNode) node, X, Y, X + W, Y + H)
+					&& (!((GraphicNode) node).hidden)
+					&& ((GraphicNode) node).positionned;
 
 			if (!visible)
 				nodeInvisible.add(node.getId());
@@ -413,16 +429,17 @@ public class DefaultCamera implements Camera {
 
 	// Command
 
-	public void setGraphViewport(double minx, double miny, double maxx, double maxy) {
+	public void setGraphViewport(double minx, double miny, double maxx,
+			double maxy) {
 		setAutoFitView(false);
-		setViewCenter(minx + (maxx - minx), miny + (maxy - miny));
-		
+		setViewCenter(minx + (maxx - minx) / 2.0, miny + (maxy - miny) / 2.0);
+
 		gviewport = new double[4];
 		gviewport[0] = minx;
 		gviewport[1] = miny;
 		gviewport[2] = maxx;
 		gviewport[3] = maxy;
-		
+
 		setZoom(1);
 	}
 
@@ -441,30 +458,33 @@ public class DefaultCamera implements Camera {
 	 */
 	public void pushView(GraphicGraph graph, Graphics2D g2) {
 		if (oldTx == null) {
-			oldTx = g2.getTransform();	// Backup the Swing transform.
-			
-			if (autoFit)
-				 autoFitView(g2);
-			else userView(g2);
+			oldTx = g2.getTransform(); // Backup the Swing transform.
 
-			//g2.setTransform(Tx);		// Set the final transform, a composition of the old Swing transform and our new coordinate system. 
+			if (autoFit)
+				autoFitView(g2);
+			else
+				userView(g2);
+
+			// g2.setTransform(Tx); // Set the final transform, a composition of
+			// the old Swing transform and our new coordinate system.
 		} else {
-			throw new RuntimeException("DefaultCamera.pushView() / popView() wrongly nested");
+			throw new RuntimeException(
+					"DefaultCamera.pushView() / popView() wrongly nested");
 		}
-		
+
 		checkVisibility(graph);
 	}
 
 	/**
-	 * Restore the transform that was used before {@link #pushView(GraphicGraph, Graphics2D)}
-	 * is used.
+	 * Restore the transform that was used before
+	 * {@link #pushView(GraphicGraph, Graphics2D)} is used.
 	 * 
 	 * @param g2
 	 *            The Swing graphics to restore.
 	 */
 	public void popView(Graphics2D g2) {
 		if (oldTx != null) {
-			g2.setTransform(oldTx);	// Set back the old Swing Transform.
+			g2.setTransform(oldTx); // Set back the old Swing Transform.
 			oldTx = null;
 		}
 	}
@@ -484,8 +504,12 @@ public class DefaultCamera implements Camera {
 		double padXpx = getPaddingXpx() * 2;
 		double padYpx = getPaddingYpx() * 2;
 
-		sx = (metrics.viewport[2] - padXpx) / (metrics.size.data[0] + padXgu); // Ratio along X
-		sy = (metrics.viewport[3] - padYpx) / (metrics.size.data[1] + padYgu); // Ratio along Y
+		sx = (metrics.viewport[2] - padXpx) / (metrics.size.data[0] + padXgu); // Ratio
+																				// along
+																				// X
+		sy = (metrics.viewport[3] - padYpx) / (metrics.size.data[1] + padYgu); // Ratio
+																				// along
+																				// Y
 		tx = metrics.lo.x + (metrics.size.data[0] / 2); // Centre of graph in X
 		ty = metrics.lo.y + (metrics.size.data[1] / 2); // Centre of graph in Y
 
@@ -531,20 +555,22 @@ public class DefaultCamera implements Camera {
 		double padYgu = getPaddingYgu() * 2;
 		double padXpx = getPaddingXpx() * 2;
 		double padYpx = getPaddingYpx() * 2;
-		double gw = gviewport != null ? gviewport[2] - gviewport[0] : metrics.size.data[0];
-		double gh = gviewport != null ? gviewport[3] - gviewport[1] : metrics.size.data[1];
+		double gw = gviewport != null ? gviewport[2] - gviewport[0]
+				: metrics.size.data[0];
+		double gh = gviewport != null ? gviewport[3] - gviewport[1]
+				: metrics.size.data[1];
 
 		sx = (metrics.viewport[2] - padXpx) / ((gw + padXgu) * zoom);
 		sy = (metrics.viewport[3] - padYpx) / ((gh + padYgu) * zoom);
 		tx = center.x;
 		ty = center.y;
-		
+
 		if (sx > sy) // The least ratio.
 			sx = sy;
 		else
 			sy = sx;
 
-		g2.translate((metrics.viewport[2] / 2), (metrics.viewport[3] / 2)); 
+		g2.translate((metrics.viewport[2] / 2), (metrics.viewport[3] / 2));
 		if (rotation != 0)
 			g2.rotate(rotation / (180 / Math.PI));
 		g2.scale(sx, -sy);
@@ -619,8 +645,11 @@ public class DefaultCamera implements Camera {
 	 * @param viewportHeight
 	 *            The width in pixels of the view port.
 	 */
-	public void setViewport(double viewportX, double viewportY, double viewportWidth, double viewportHeight) {
-		metrics.setViewport(viewportX, viewportY, viewportWidth, viewportHeight);
+	public void setViewport(double viewportX, double viewportY,
+			double viewportWidth, double viewportHeight) {
+		metrics
+				.setViewport(viewportX, viewportY, viewportWidth,
+						viewportHeight);
 	}
 
 	/**
@@ -671,8 +700,9 @@ public class DefaultCamera implements Camera {
 	 * @return True if visible.
 	 */
 	protected boolean isSpriteVisible(GraphicSprite sprite) {
-		return isSpriteIn(sprite, metrics.viewport[0], metrics.viewport[1], metrics.viewport[0]+metrics.viewport[2],
-				metrics.viewport[1]+metrics.viewport[3]);
+		return isSpriteIn(sprite, metrics.viewport[0], metrics.viewport[1],
+				metrics.viewport[0] + metrics.viewport[2], metrics.viewport[1]
+						+ metrics.viewport[3]);
 	}
 
 	/**
@@ -685,13 +715,13 @@ public class DefaultCamera implements Camera {
 	protected boolean isEdgeVisible(GraphicEdge edge) {
 		GraphicNode node0 = edge.getNode0();
 		GraphicNode node1 = edge.getNode1();
-		
-		if(edge.hidden)
+
+		if (edge.hidden)
 			return false;
-		
-		if((!node1.positionned) || (!node0.positionned))
+
+		if ((!node1.positionned) || (!node0.positionned))
 			return false;
-		
+
 		boolean node0Invis = nodeInvisible.contains(node0.getId());
 		boolean node1Invis = nodeInvisible.contains(node1.getId());
 
@@ -713,8 +743,8 @@ public class DefaultCamera implements Camera {
 	 *            The max ordinate of the area.
 	 * @return True if the node lies in the given area.
 	 */
-	protected boolean isNodeIn(GraphicNode node, double X1, double Y1, double X2,
-			double Y2) {
+	protected boolean isNodeIn(GraphicNode node, double X1, double Y1,
+			double X2, double Y2) {
 		Values size = node.getStyle().getSize();
 		double w2 = metrics.lengthToPx(size, 0) / 2;
 		double h2 = size.size() > 1 ? metrics.lengthToPx(size, 1) / 2 : w2;
@@ -768,8 +798,8 @@ public class DefaultCamera implements Camera {
 			double w2 = metrics.lengthToPx(size, 0) / 2;
 			double h2 = size.size() > 1 ? metrics.lengthToPx(size, 1) / 2 : w2;
 			Point2D.Double src = spritePositionPx(sprite);// new Point2D.Double(
-															// sprite.getX(),
-															// sprite.getY() );
+			// sprite.getX(),
+			// sprite.getY() );
 
 			// Tx.transform( src, src );
 
@@ -849,7 +879,7 @@ public class DefaultCamera implements Camera {
 
 		return true;
 	}
-	
+
 	protected boolean edgeContains(GraphicElement elt, double x, double y) {
 		return false;
 	}
@@ -870,10 +900,10 @@ public class DefaultCamera implements Camera {
 		double w2 = metrics.lengthToPx(size, 0) / 2;
 		double h2 = size.size() > 1 ? metrics.lengthToPx(size, 1) / 2 : w2;
 		Point2D.Double dst = spritePositionPx((GraphicSprite) elt); // new
-																	// Point2D.Double(
-																	// elt.getX(),
-																	// elt.getY()
-																	// );
+		// Point2D.Double(
+		// elt.getX(),
+		// elt.getY()
+		// );
 		// Point2D.Double dst = new Point2D.Double();
 
 		// Tx.transform( src, dst );
@@ -995,8 +1025,8 @@ public class DefaultCamera implements Camera {
 			Point2 p1 = new Point2(ctrl[0], ctrl[1]);
 			Point2 p2 = new Point2(ctrl[1], ctrl[2]);
 			Point2 p3 = new Point2(edge.to.getX(), edge.to.getY());
-			Vector2 perp = CubicCurve.perpendicular(p0, p1, p2, p3,
-					sprite.getX());
+			Vector2 perp = CubicCurve.perpendicular(p0, p1, p2, p3, sprite
+					.getX());
 			double y = metrics.lengthToGu(sprite.getY(), sprite.getUnits());
 
 			perp.normalize();
