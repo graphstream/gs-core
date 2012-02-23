@@ -338,14 +338,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 
 	public <T extends Node> T removeNode(int index) {
 		Node node = getNode(index);
-
-		if (node == null) {
-			if (strictChecking)
-				throw new ElementNotFoundException(
-						"Node #%d not found. Cannot remove it.", index);
-			return null;
-		}
-
 		return removeNode(node);
 	}
 
@@ -361,14 +353,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 
 	public <T extends Edge> T removeEdge(int index) {
 		Edge edge = getEdge(index);
-
-		if (edge == null) {
-			if (strictChecking)
-				throw new ElementNotFoundException(
-						"Edge #%d not found. Cannot remove it.", index);
-			return null;
-		}
-
 		return removeEdge(edge);
 	}
 
@@ -395,15 +379,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	public <T extends Edge> T removeEdge(int fromIndex, int toIndex) {
 		Node fromNode = getNode(fromIndex);
 		Node toNode = getNode(toIndex);
-
-		if (fromNode == null || toNode == null) {
-			if (strictChecking)
-				throw new ElementNotFoundException(
-						"Cannot remove the edge. The node #%d does not exist",
-						fromNode == null ? fromIndex : toIndex);
-			return null;
-		}
-
+		
 		return removeEdge(fromNode, toNode);
 	}
 
