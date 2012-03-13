@@ -601,7 +601,7 @@ package org.graphstream.stream.netstream;
  * 
  * 
  * 
- * Copyright (c) 2010 University of Luxembourg
+ * Copyright (c) 2010-2012 University of Luxembourg - University of Le Havre
  * 
  * NetStreamConstants.java
  * @since Aug 3, 2011
