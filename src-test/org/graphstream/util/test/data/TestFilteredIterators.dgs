@@ -1,0 +1,30 @@
+DGS004
+null 0 0
+
+an "A0" type:"A"
+an "A1" type:"A"
+an "A2" type:"A"
+
+ae "A01" "A0" "A1" type:"A"
+ae "A02" "A0" "A2" type:"A"
+ae "A12" "A1" "A2" type:"A"
+
+an "B0" type:"B"
+an "B1" type:"B"
+an "B2" type:"B"
+
+ae "B01" "B0" "B1" type:"B"
+ae "B02" "B0" "B2" type:"B"
+ae "B12" "B1" "B2" type:"B"
+
+an "C0" type:"C"
+an "C1" type:"C"
+an "C2" type:"C"
+
+ae "C01" "C0" "C1" type:"C"
+ae "C02" "C0" "C2" type:"C"
+ae "C12" "C1" "C2" type:"C"
+
+ae "AB" "A0" "B0"
+ae "AC" "A0" "C0"
+ae "BC" "B0" "C0"

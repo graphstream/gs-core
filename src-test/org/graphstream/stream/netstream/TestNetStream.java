@@ -1,12 +1,11 @@
 /*
- * Copyright 2006 - 2011 
- *     Julien Baudry	<julien.baudry@graphstream-project.org>
- *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
- *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
- *     Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
- * 
- * This file is part of GraphStream <http://graphstream-project.org>.
- * 
+ * Copyright 2006 - 2012
+ *      Stefan Balev       <stefan.balev@graphstream-project.org>
+ *      Julien Baudry	<julien.baudry@graphstream-project.org>
+ *      Antoine Dutot	<antoine.dutot@graphstream-project.org>
+ *      Yoann Pigné	<yoann.pigne@graphstream-project.org>
+ *      Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
+ *  
  * GraphStream is a library whose purpose is to handle static or dynamic
  * graph, create them from scratch, file or any source and display them.
  * 
@@ -28,7 +27,6 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-
 package org.graphstream.stream.netstream;
 
 import static org.junit.Assert.assertEquals;
@@ -98,8 +96,7 @@ public class TestNetStream {
 			private void validate(String attribute, Object value) {
 				
 				String valueType = null;
-				@SuppressWarnings("rawtypes")
-				Class valueClass = value.getClass();
+				Class<?> valueClass = value.getClass();
 				boolean isArray = valueClass.isArray();
 				if (isArray) {
 					valueClass = ((Object[]) value)[0].getClass();
@@ -392,68 +389,67 @@ public class TestNetStream {
 
 		g1.addSink(new Sink() {
 
-			@Override
 			public void graphAttributeAdded(String sourceId, long timeId,
 					String attribute, Object value) {
 				assertEquals(0, value);
 				assertEquals("graphAttribute", attribute);
 			}
-			@Override
+			
 			public void graphAttributeChanged(String sourceId, long timeId,
 					String attribute, Object oldValue, Object newValue) {
 				assertTrue((Integer) newValue == 0 || (Integer) newValue == 1);
 				assertEquals("graphAttribute", attribute);
 			}
-			@Override
+			
 			public void graphAttributeRemoved(String sourceId, long timeId,
 					String attribute) {
 				assertEquals("graphAttribute", attribute);
 			}
-			@Override
+			
 			public void nodeAttributeAdded(String sourceId, long timeId,
 					String nodeId, String attribute, Object value) {
 				assertEquals(0, value);
 				assertEquals("nodeAttribute", attribute);
 			}
-			@Override
+			
 			public void nodeAttributeChanged(String sourceId, long timeId,
 					String nodeId, String attribute, Object oldValue,
 					Object newValue) {
 				assertTrue((Integer) newValue == 0 || (Integer) newValue == 1);
 				assertEquals("nodeAttribute", attribute);
 			}
-			@Override
+			
 			public void nodeAttributeRemoved(String sourceId, long timeId,
 					String nodeId, String attribute) {
 				assertEquals("nodeAttribute", attribute);
 			}
-			@Override
+			
 			public void edgeAttributeAdded(String sourceId, long timeId,
 					String edgeId, String attribute, Object value) {
 				assertEquals(0, value);
 				assertEquals("edgeAttribute", attribute);
 			}
-			@Override
+			
 			public void edgeAttributeChanged(String sourceId, long timeId,
 					String edgeId, String attribute, Object oldValue,
 					Object newValue) {
 				assertTrue((Integer) newValue == 0 || (Integer) newValue == 1);
 				assertEquals("edgeAttribute", attribute);
 			}
-			@Override
+			
 			public void edgeAttributeRemoved(String sourceId, long timeId,
 					String edgeId, String attribute) {
 				assertEquals("edgeAttribute", attribute);
 			}
-			@Override
+			
 			public void nodeAdded(String sourceId, long timeId, String nodeId) {
 				assertTrue("node0".equals(nodeId) || "node1".equals(nodeId));
 			}
-			@Override
+			
 			public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 				assertTrue("node0".equals(nodeId) || "node1".equals(nodeId));
 			}
-			@Override
+			
 			public void edgeAdded(String sourceId, long timeId, String edgeId,
 					String fromNodeId, String toNodeId, boolean directed) {
 				assertEquals("edge", edgeId);
@@ -461,15 +457,15 @@ public class TestNetStream {
 				assertEquals("node1", toNodeId);
 				assertEquals(true, directed);
 			}
-			@Override
+			
 			public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 				assertEquals("edge", edgeId);
 			}
-			@Override
+			
 			public void graphCleared(String sourceId, long timeId) {
 				
 			}
-			@Override
+			
 			public void stepBegins(String sourceId, long timeId, double step) {
 				assertEquals(1.1, step);
 			}

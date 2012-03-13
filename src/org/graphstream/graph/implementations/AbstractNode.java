@@ -1,13 +1,11 @@
 /*
- * Copyright 2006 - 2011 
- *     Stefan Balev 	<stefan.balev@graphstream-project.org>
- *     Julien Baudry	<julien.baudry@graphstream-project.org>
- *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
- *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
- *     Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
- * 
- * This file is part of GraphStream <http://graphstream-project.org>.
- * 
+ * Copyright 2006 - 2012
+ *      Stefan Balev       <stefan.balev@graphstream-project.org>
+ *      Julien Baudry	<julien.baudry@graphstream-project.org>
+ *      Antoine Dutot	<antoine.dutot@graphstream-project.org>
+ *      Yoann Pigné	<yoann.pigne@graphstream-project.org>
+ *      Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
+ *  
  * GraphStream is a library whose purpose is to handle static or dynamic
  * graph, create them from scratch, file or any source and display them.
  * 
@@ -92,7 +90,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	protected void attributeChanged(String sourceId, long timeId,
 			String attribute, AttributeChangeEvent event, Object oldValue,
 			Object newValue) {
-		graph.listeners.sendAttributeChangedEvent(sourceId, timeId, getId(),
+		graph.listeners.sendAttributeChangedEvent(sourceId, timeId, id,
 				SourceBase.ElementType.NODE, attribute, event, oldValue,
 				newValue);
 
@@ -418,7 +416,9 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	}
 
 	public abstract <T extends Edge> T getEdge(int i);
+
 	public abstract <T extends Edge> T getEnteringEdge(int i);
+
 	public abstract <T extends Edge> T getLeavingEdge(int i);
 
 	/**

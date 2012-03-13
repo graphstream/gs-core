@@ -1,13 +1,11 @@
 /*
- * Copyright 2006 - 2011 
- *     Stefan Balev 	<stefan.balev@graphstream-project.org>
- *     Julien Baudry	<julien.baudry@graphstream-project.org>
- *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
- *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
- *     Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
- * 
- * This file is part of GraphStream <http://graphstream-project.org>.
- * 
+ * Copyright 2006 - 2012
+ *      Stefan Balev       <stefan.balev@graphstream-project.org>
+ *      Julien Baudry	<julien.baudry@graphstream-project.org>
+ *      Antoine Dutot	<antoine.dutot@graphstream-project.org>
+ *      Yoann Pigné	<yoann.pigne@graphstream-project.org>
+ *      Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
+ *  
  * GraphStream is a library whose purpose is to handle static or dynamic
  * graph, create them from scratch, file or any source and display them.
  * 
@@ -31,6 +29,7 @@
  */
 package org.graphstream.stream.sync;
 
+import java.security.AccessControlException;
 import java.util.HashMap;
 
 public class SinkTime {
@@ -41,8 +40,23 @@ public class SinkTime {
 	/**
 	 * Flag used to disable sync.
 	 */
-	protected static final boolean disableSync = System
-			.getProperty(SYNC_DISABLE_KEY) != null;
+	protected static final boolean disableSync;
+
+	/*
+	 * The following code is used to prevent AccessControlException to be thrown
+	 * when trying to get the value of the property (in applets for example).
+	 */
+	static {
+		boolean off;
+
+		try {
+			off = System.getProperty(SYNC_DISABLE_KEY) != null;
+		} catch (AccessControlException ex) {
+			off = false;
+		}
+
+		disableSync = off;
+	}
 
 	/**
 	 * Map storing times of sources.

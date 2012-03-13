@@ -1,12 +1,11 @@
 /*
- * Copyright 2006 - 2011 
- *     Julien Baudry	<julien.baudry@graphstream-project.org>
- *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
- *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
- *     Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
- * 
- * This file is part of GraphStream <http://graphstream-project.org>.
- * 
+ * Copyright 2006 - 2012
+ *      Stefan Balev       <stefan.balev@graphstream-project.org>
+ *      Julien Baudry	<julien.baudry@graphstream-project.org>
+ *      Antoine Dutot	<antoine.dutot@graphstream-project.org>
+ *      Yoann Pigné	<yoann.pigne@graphstream-project.org>
+ *      Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
+ *  
  * GraphStream is a library whose purpose is to handle static or dynamic
  * graph, create them from scratch, file or any source and display them.
  * 
@@ -27,17 +26,6 @@
  * 
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
- */
-
-/**
- *
- * Copyright (c) 2011 University of Le Havre
- *
- * @file NetStreamPacker.java
- * @date Dec 14, 2011
- *
- * @author Yoann Pigné
- *
  */
 package org.graphstream.stream.netstream.packing;
 

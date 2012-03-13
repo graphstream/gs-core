@@ -1,13 +1,11 @@
 /*
- * Copyright 2006 - 2011 
- *     Stefan Balev 	<stefan.balev@graphstream-project.org>
- *     Julien Baudry	<julien.baudry@graphstream-project.org>
- *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
- *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
- *     Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
- * 
- * This file is part of GraphStream <http://graphstream-project.org>.
- * 
+ * Copyright 2006 - 2012
+ *      Stefan Balev       <stefan.balev@graphstream-project.org>
+ *      Julien Baudry	<julien.baudry@graphstream-project.org>
+ *      Antoine Dutot	<antoine.dutot@graphstream-project.org>
+ *      Yoann Pigné	<yoann.pigne@graphstream-project.org>
+ *      Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
+ *  
  * GraphStream is a library whose purpose is to handle static or dynamic
  * graph, create them from scratch, file or any source and display them.
  * 
@@ -198,7 +196,7 @@ public class FileSinkImages implements FileSink, LayoutListener {
 	 * rendered. This will smooth the move of nodes in the movie.
 	 */
 	public static enum LayoutPolicy {
-		NO_LAYOUT, COMPUTED_IN_LAYOUT_RUNNER, COMPUTED_AT_NEW_IMAGE
+		NO_LAYOUT, COMPUTED_IN_LAYOUT_RUNNER, COMPUTED_ONCE_AT_NEW_IMAGE, COMPUTED_FULLY_AT_NEW_IMAGE
 	}
 
 	/**
@@ -438,7 +436,7 @@ public class FileSinkImages implements FileSink, LayoutListener {
 				layoutPipeIn = null;
 				layout = null;
 				break;
-			case COMPUTED_AT_NEW_IMAGE:
+			case COMPUTED_ONCE_AT_NEW_IMAGE:
 				layout.removeListener(this);
 				gg.removeSink(layout);
 				layout.removeAttributeSink(gg);
@@ -451,7 +449,8 @@ public class FileSinkImages implements FileSink, LayoutListener {
 				layout = Layouts.newLayoutAlgorithm();
 				optLayout = new InnerLayoutRunner();
 				break;
-			case COMPUTED_AT_NEW_IMAGE:
+			case COMPUTED_FULLY_AT_NEW_IMAGE:
+			case COMPUTED_ONCE_AT_NEW_IMAGE:
 				layout = Layouts.newLayoutAlgorithm();
 				gg.addSink(layout);
 				layout.addAttributeSink(gg);
@@ -482,6 +481,21 @@ public class FileSinkImages implements FileSink, LayoutListener {
 	 */
 	public void setLayoutStepAfterStabilization(int sas) {
 		this.layoutStepAfterStabilization = sas;
+	}
+
+	/**
+	 * Set the stabilization limit of the layout used to compute coordinates of
+	 * nodes. See
+	 * {@link org.graphstream.ui.layout.Layout#setStabilizationLimit(double)}
+	 * for more informations about this limit.
+	 * 
+	 * @param limit
+	 */
+	public void setLayoutStabilizationLimit(double limit) {
+		if (layout == null)
+			throw new NullPointerException("did you enable layout ?");
+
+		layout.setStabilizationLimit(limit);
 	}
 
 	/**
@@ -588,9 +602,13 @@ public class FileSinkImages implements FileSink, LayoutListener {
 		case COMPUTED_IN_LAYOUT_RUNNER:
 			layoutPipeIn.pump();
 			break;
-		case COMPUTED_AT_NEW_IMAGE:
+		case COMPUTED_ONCE_AT_NEW_IMAGE:
 			if (layout != null)
 				layout.compute();
+			break;
+		case COMPUTED_FULLY_AT_NEW_IMAGE:
+			stabilizeLayout(layout.getStabilizationLimit());
+			break;
 		}
 
 		if (resolution.getWidth() != image.getWidth()
@@ -610,7 +628,8 @@ public class FileSinkImages implements FileSink, LayoutListener {
 			Point3 hi = gg.getMaxPos();
 
 			renderer.getCamera().setBounds(lo.x, lo.y, lo.z, hi.x, hi.y, hi.z);
-			renderer.render(g2d, 0, 0, resolution.getWidth(), resolution.getHeight());
+			renderer.render(g2d, 0, 0, resolution.getWidth(), resolution
+					.getHeight());
 		}
 
 		for (PostRenderer action : postRenderers)
@@ -716,7 +735,9 @@ public class FileSinkImages implements FileSink, LayoutListener {
 			throws IOException {
 		gg.clear();
 
-		GraphReplay replay = new GraphReplay("file_sink_image-write_all-replay");
+		GraphReplay replay = new GraphReplay(String.format(
+				"file_sink_image-write_all-replay-%x", System.nanoTime()));
+		
 		replay.addSink(gg);
 		replay.replay(g);
 		replay.removeSink(gg);
@@ -896,7 +917,9 @@ public class FileSinkImages implements FileSink, LayoutListener {
 	 */
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
 			String fromNodeId, String toNodeId, boolean directed) {
-		sink.edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId, directed);
+		sink
+				.edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId,
+						directed);
 
 		switch (outputPolicy) {
 		case BY_EVENT:
@@ -1155,10 +1178,8 @@ public class FileSinkImages implements FileSink, LayoutListener {
 							Matcher m = valueGetter.matcher(args[i]);
 
 							if (m.matches()) {
-								options.put(
-										option,
-										m.group(1) == null ? m.group(2) : m
-												.group(1));
+								options.put(option, m.group(1) == null ? m
+										.group(2) : m.group(1));
 							}
 
 							found = true;
@@ -1167,8 +1188,8 @@ public class FileSinkImages implements FileSink, LayoutListener {
 					}
 
 					if (!found) {
-						System.err.printf("unknown option: %s%n",
-								args[i].substring(0, args[i].indexOf('=')));
+						System.err.printf("unknown option: %s%n", args[i]
+								.substring(0, args[i].indexOf('=')));
 						System.exit(1);
 					}
 				} else if (args[i].matches("^-\\w$")) {
@@ -1269,8 +1290,8 @@ public class FileSinkImages implements FileSink, LayoutListener {
 		{
 			File test = new File(others.peek());
 			if (!test.exists())
-				errors.add(String.format("file \"%s\" does not exist",
-						others.peek()));
+				errors.add(String.format("file \"%s\" does not exist", others
+						.peek()));
 		}
 
 		if (errors.size() > 0) {
