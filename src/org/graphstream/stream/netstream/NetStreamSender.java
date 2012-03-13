@@ -111,6 +111,7 @@ public class NetStreamSender implements Sink {
 		streamIdArray = stream.getBytes(Charset.forName("UTF-8"));
 
 		connect();
+		
 	}
 
 	/**
@@ -275,16 +276,16 @@ public class NetStreamSender implements Sink {
 	}
 
 	/**
-	 * @param in
-	 * @return
+	 * @param in The double to encode
+	 * @return ByteBuffer with encoded double in it
 	 */
 	protected ByteBuffer encodeDouble(Object in) {
 		return ByteBuffer.allocate(8).putDouble((Double) in);
 	}
 
 	/**
-	 * @param in
-	 * @return
+	 * @param in The flaot array to encode
+	 * @return ByteBuffer with encoded flaot array in it
 	 */
 	protected ByteBuffer encodeFloatArray(Object in) {
 		Object[] data = (Object[]) in;
@@ -298,16 +299,16 @@ public class NetStreamSender implements Sink {
 	}
 
 	/**
-	 * @param in
-	 * @return
+	 * @param in The flaot to encode
+	 * @return ByteBuffer with encoded float in it
 	 */
 	protected ByteBuffer encodeFloat(Object in) {
 		return ByteBuffer.allocate(4).putFloat(((Float) in));
 	}
 
 	/**
-	 * @param in
-	 * @return
+	 * @param in The long array to encode
+	 * @return ByteBuffer with encoded long array in it
 	 */
 	protected ByteBuffer encodeLongArray(Object in) {
 		Object[] data = (Object[]) in;
@@ -321,31 +322,31 @@ public class NetStreamSender implements Sink {
 	}
 
 	/**
-	 * @param in
-	 * @return
+	 * @param in The long to encode
+	 * @return ByteBuffer with encoded long in it
 	 */
 	protected ByteBuffer encodeLong(Object in) {
 		return ByteBuffer.allocate(8).putLong((Long) in);
 	}
 
 	/**
-	 * @param in
-	 * @return
+	 * @param in The integer array to encode
+	 * @return ByteBuffer with encoded integer array in it
 	 */
 	protected ByteBuffer encodeIntArray(Object in) {
 		Object[] data = (Object[]) in;
 		ByteBuffer b = ByteBuffer.allocate(4 + data.length * 4);
 		b.putInt(data.length);
 
-		for (int i = 0; i < data.length; i++) {
-			b.putInt((Integer) data[i]);
-		}
+        for (Object aData : data) {
+            b.putInt((Integer) aData);
+        }
 		return b;
 	}
 
 	/**
-	 * @param in
-	 * @return
+	 * @param in The integer to encode
+	 * @return ByteBuffer with encoded integer in it
 	 */
 	protected ByteBuffer encodeInt(Object in) {
 		return ByteBuffer.allocate(4).putInt((Integer) in);
@@ -451,7 +452,7 @@ public class NetStreamSender implements Sink {
 	 * org.graphstream.stream.AttributeSink#graphAttributeAdded(java.lang.String
 	 * , long, java.lang.String, java.lang.Object)
 	 */
-	@Override
+	@Override()
 	public void graphAttributeAdded(String sourceId, long timeId,
 			String attribute, Object value) {
 
@@ -489,7 +490,7 @@ public class NetStreamSender implements Sink {
 	 * org.graphstream.stream.AttributeSink#graphAttributeChanged(java.lang.
 	 * String, long, java.lang.String, java.lang.Object, java.lang.Object)
 	 */
-	@Override
+	@Override()
 	public void graphAttributeChanged(String sourceId, long timeId,
 			String attribute, Object oldValue, Object newValue) {
 
@@ -530,7 +531,7 @@ public class NetStreamSender implements Sink {
 	 * org.graphstream.stream.AttributeSink#graphAttributeRemoved(java.lang.
 	 * String, long, java.lang.String)
 	 */
-	@Override
+	@Override()
 	public void graphAttributeRemoved(String sourceId, long timeId,
 			String attribute) {
 
@@ -567,7 +568,6 @@ public class NetStreamSender implements Sink {
 	@Override
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
 			String attribute, Object value) {
-		// TODO Auto-generated method stub
 
 		if (!sourceId.equals(this.sourceId)) {
 			this.sourceId = sourceId;
@@ -924,7 +924,7 @@ public class NetStreamSender implements Sink {
 				.putInt(edgeIdArray.length).put(edgeIdArray)
 				.putInt(fromNodeIdArray.length).put(fromNodeIdArray)
 				.putInt(toNodeIdArray.length).put(toNodeIdArray)
-				.put((byte) (directed == false ? 0 : 1));
+				.put((byte) (!directed ? 0 : 1));
 
 		doSend(buff);
 

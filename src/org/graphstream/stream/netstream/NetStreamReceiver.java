@@ -595,10 +595,15 @@ public class NetStreamReceiver extends Thread {
 			if (nbytes <= 0)
 				return;
 
-			// debug("<chunk (%d bytes) from " +
-			// socket.socket().getInetAddress()
-			// + ":" + socket.socket().getPort() + ">", nbytes);
-
+			if (debug){
+				debug("<chunk (%d bytes) from " + socket.socket().getInetAddress() + ":" + socket.socket().getPort() + ">", nbytes);
+				int at = buf.position();
+				for(int i=0; i< nbytes; i++){
+					System.err.printf("%d ", buf.get(at+i));
+				}
+				System.err.println();
+				buf.position(at);
+			}
 			// Read the first header.
 
 			if (end < 0) {
@@ -610,8 +615,12 @@ public class NetStreamReceiver extends Thread {
 					// new message by decoding its header.
 
 					buf.position(0);
-					end = unpacker.unpackMessageSize(buf) + sizeOfInt;
+					int size = unpacker.unpackMessageSize(buf);
+					end = size + sizeOfInt;
 					beg = sizeOfInt;
+					if (debug)
+						debug("start to bufferize a %d byte long messsage", size);
+					
 				} else {
 					// The header is incomplete, wait next call to complete it.
 
@@ -857,7 +866,8 @@ public class NetStreamReceiver extends Thread {
 	}
 
 	/**
-	 * @see NetStreamConstants.EVENT_DEL_EDGE
+	 * @param in
+     * @see NetStreamConstants.EVENT_DEL_EDGE
 	 */
 	protected void serve_EVENT_DEL_EDGE_ATTR(InputStream in) {
 		if (debug) {
