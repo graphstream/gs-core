@@ -447,7 +447,7 @@ public class DGSParser implements Parser {
 						else
 							o = Integer.valueOf(word);
 					} catch (NumberFormatException e) {
-						throw parseException("invalid number format");
+						throw parseException("invalid number format '%s'", word);
 					}
 				} else {
 					if (word.equalsIgnoreCase("true"))

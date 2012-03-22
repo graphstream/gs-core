@@ -27,72 +27,69 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.stream.sync;
+package org.graphstream.util;
 
-import java.security.AccessControlException;
-import java.util.HashMap;
+import java.io.IOException;
 
-public class SinkTime {
+import org.graphstream.stream.SinkAdapter;
+import org.graphstream.stream.file.FileSource;
+import org.graphstream.stream.file.FileSourceFactory;
+
+/**
+ * Count the step of a stream.
+ */
+public class StepCounter extends SinkAdapter {
 	/**
-	 * Key used to disable synchro. Just run : java -DSYNC_DISABLE_KEY ...
+	 * Count step contains in a file.
+	 * 
+	 * @param path
+	 *            path to the file
+	 * @return count of step event in the file
+	 * @throws IOException
+	 * @see org.graphstream.stream.file.FileSourceFactory
 	 */
-	public static final String SYNC_DISABLE_KEY = "org.graphstream.stream.sync.disable";
+	public static int countStepInFile(String path) throws IOException {
+		StepCounter counter = new StepCounter();
+		FileSource source = FileSourceFactory.sourceFor(path);
+
+		source.addElementSink(counter);
+		source.readAll(path);
+
+		return counter.getStepCount();
+	}
+	
+	protected int step;
+
 	/**
-	 * Flag used to disable sync.
+	 * Default constructor. Count is set to zero.
 	 */
-	protected static final boolean disableSync;
+	public StepCounter() {
+		reset();
+	}
+
+	/**
+	 * Reset the step count to zero.
+	 */
+	public void reset() {
+		step = 0;
+	}
+
+	/**
+	 * Get the step count.
+	 * 
+	 * @return the count of step
+	 */
+	public int getStepCount() {
+		return step;
+	}
 
 	/*
-	 * The following code is used to prevent AccessControlException to be thrown
-	 * when trying to get the value of the property (in applets for example).
-	 */
-	static {
-		boolean off;
-
-		try {
-			off = System.getProperty(SYNC_DISABLE_KEY) != null;
-		} catch (AccessControlException ex) {
-			off = false;
-		}
-
-		disableSync = off;
-	}
-
-	/**
-	 * Map storing times of sources.
-	 */
-	protected HashMap<String, Long> times = new HashMap<String, Long>();
-
-	/**
-	 * Update timeId for a source.
+	 * (non-Javadoc)
 	 * 
-	 * @param sourceId
-	 * @param timeId
-	 * @return true if time has been updated
+	 * @see org.graphstream.stream.SinkAdapter#stepBegins(java.lang.String,
+	 * long, double)
 	 */
-	protected boolean setTimeFor(String sourceId, long timeId) {
-		Long knownTimeId = times.get(sourceId);
-
-		if (knownTimeId == null) {
-			times.put(sourceId, timeId);
-			return true;
-		} else if (timeId > knownTimeId) {
-			times.put(sourceId, timeId);
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * Allow to know if event is new for this source. This updates the timeId
-	 * mapped to the source.
-	 * 
-	 * @param sourceId
-	 * @param timeId
-	 * @return true if event is new for the source
-	 */
-	public boolean isNewEvent(String sourceId, long timeId) {
-		return disableSync || setTimeFor(sourceId, timeId);
+	public void stepBegins(String sourceId, long timeId, double time) {
+		step++;
 	}
 }
