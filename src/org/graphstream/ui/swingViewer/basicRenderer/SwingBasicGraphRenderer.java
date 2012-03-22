@@ -189,7 +189,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 	}
 
 	public void moveElementAtPx(GraphicElement element, double x, double y) {
-		Point3 p = camera.transformPxToGu(x, y);
+		Point3 p = camera.transformPxToGu(camera.getMetrics().viewport[0]+x, camera.getMetrics().viewport[1]+y);
 		element.move(p.x, p.y, element.getZ());
 	}
 
