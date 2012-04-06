@@ -862,6 +862,9 @@ public class DefaultCamera implements Camera {
 		Point2D.Double dst = new Point2D.Double();
 
 		Tx.transform(src, dst);
+		
+  		dst.x -= metrics.viewport[0];
+  		dst.y -= metrics.viewport[1];
 
 		double x1 = dst.x - w2;
 		double x2 = dst.x + w2;
@@ -907,6 +910,8 @@ public class DefaultCamera implements Camera {
 		// Point2D.Double dst = new Point2D.Double();
 
 		// Tx.transform( src, dst );
+  		dst.x -= metrics.viewport[0];
+  		dst.y -= metrics.viewport[1];
 
 		double x1 = dst.x - w2;
 		double x2 = dst.x + w2;
