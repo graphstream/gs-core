@@ -583,7 +583,9 @@ public class GraphicGraph extends AbstractElement implements Graph,
 		// One of the most important method. Most of the communication comes
 		// from attributes.
 
-		if (attribute.equals("ui.stylesheet") || attribute.equals("stylesheet")) {
+		if (attribute.equals("ui.repaint")) {
+			graphChanged = true;
+		} else if (attribute.equals("ui.stylesheet") || attribute.equals("stylesheet")) {
 			if (event == AttributeChangeEvent.ADD
 					|| event == AttributeChangeEvent.CHANGE) {
 				if (newValue instanceof String) {
