@@ -29,131 +29,26 @@
  */
 package org.graphstream.ui.swingViewer.util;
 
-import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import org.graphstream.ui.geom.Point3;
+import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.swingViewer.View;
 
 /**
  * Utility to centralise the shortcuts and actions for all view instances.
  */
-public class ShortcutManager implements KeyListener {
-	// Attributes
-
+public interface ShortcutManager extends KeyListener {
 	/**
-	 * The viewer to control.
-	 */
-	protected View view;
-
-	protected double viewPercent = 1;
-
-	protected Point3 viewPos = new Point3();
-
-	protected double rotation = 0;
-
-	// Construction
-
-	/**
-	 * New manager operating on the given viewer.
-	 * 
+	 * Make the manager active on the given graph and view.
+	 * @param graph
+	 *            The graph to control.
 	 * @param view
-	 *            The graph view to control.
+	 *            The view to control.
 	 */
-	public ShortcutManager(View view) {
-		this.view = view;
-	}
-
-	// Events
-
+	void init(GraphicGraph graph, View view);
+	
 	/**
-	 * A key has been pressed.
-	 * 
-	 * @param event
-	 *            The event that generated the key.
+	 * Release the links between this manager and the view and the graph.
 	 */
-	public void keyPressed(KeyEvent event) {
-		Camera camera = view.getCamera();
-		
-		if (event.getKeyCode() == KeyEvent.VK_PAGE_UP) {
-			camera.setViewPercent(camera.getViewPercent() - 0.05f);
-		} else if (event.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
-			camera.setViewPercent(camera.getViewPercent() + 0.05f);
-		} else if (event.getKeyCode() == KeyEvent.VK_LEFT) {
-			if ((event.getModifiers() & KeyEvent.ALT_MASK) != 0) {
-				double r = camera.getViewRotation();
-				camera.setViewRotation(r - 5);
-			} else {
-				double delta = 0;
-
-				if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0)
-					delta = camera.getGraphDimension() * 0.1f;
-				else
-					delta = camera.getGraphDimension() * 0.01f;
-
-				Point3 p = camera.getViewCenter();
-				camera.setViewCenter(p.x - delta, p.y, 0);
-			}
-		} else if (event.getKeyCode() == KeyEvent.VK_RIGHT) {
-			if ((event.getModifiers() & KeyEvent.ALT_MASK) != 0) {
-				double r = camera.getViewRotation();
-				camera.setViewRotation(r + 5);
-			} else {
-				double delta = 0;
-
-				if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0)
-					delta = camera.getGraphDimension() * 0.1f;
-				else
-					delta = camera.getGraphDimension() * 0.01f;
-
-				Point3 p = camera.getViewCenter();
-				camera.setViewCenter(p.x + delta, p.y, 0);
-			}
-		} else if (event.getKeyCode() == KeyEvent.VK_UP) {
-			double delta = 0;
-
-			if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0)
-				delta = camera.getGraphDimension() * 0.1f;
-			else
-				delta = camera.getGraphDimension() * 0.01f;
-
-			Point3 p = camera.getViewCenter();
-			camera.setViewCenter(p.x, p.y + delta, 0);
-		} else if (event.getKeyCode() == KeyEvent.VK_DOWN) {
-			double delta = 0;
-
-			if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0)
-				delta = camera.getGraphDimension() * 0.1f;
-			else
-				delta = camera.getGraphDimension() * 0.01f;
-
-			Point3 p = camera.getViewCenter();
-			camera.setViewCenter(p.x, p.y - delta, 0);
-		}
-	}
-
-	/**
-	 * A key has been pressed.
-	 * 
-	 * @param event
-	 *            The event that generated the key.
-	 */
-	public void keyReleased(KeyEvent event) {
-	}
-
-	/**
-	 * A key has been typed.
-	 * 
-	 * @param event
-	 *            The event that generated the key.
-	 */
-	public void keyTyped(KeyEvent event) {
-		if (event.getKeyChar() == 'R') {
-			view.getCamera().resetView();
-		}
-		// else if( event.getKeyChar() == 'B' )
-		// {
-		// view.setModeFPS( ! view.getModeFPS() );
-		// }
-	}
+	void release();
 }

@@ -36,6 +36,8 @@ import javax.swing.JPanel;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.swingViewer.util.Camera;
+import org.graphstream.ui.swingViewer.util.MouseManager;
+import org.graphstream.ui.swingViewer.util.ShortcutManager;
 
 /**
  * A view on a graphic graph.
@@ -215,4 +217,22 @@ public abstract class View extends JPanel {
 	 *            The renderer (or null to remove it).
 	 */
 	public abstract void setForeLayoutRenderer(LayerRenderer renderer);
+	
+	/**
+	 * Change the manager for mouse events on this view. If the value for the new manager is
+	 * null, a default manager is installed. The {@link MouseManager#init(GraphicGraph, View)}
+	 * method must not yet have been called.
+	 * @param manager The new manager, or null to set the default manager.
+	 * @see MouseManager
+	 */
+	public abstract void setMouseManager(MouseManager manager);
+	
+	/**
+	 * Change the manager for key and shortcuts events on this view. If the value for the new
+	 * manager is null, a default manager is installed. The {@link ShortcutManager#init(GraphicGraph, View)}
+	 * method must not yet have been called.
+	 * @param manager The new manager, or null to set the default manager
+	 * @see ShortcutManager
+	 */
+	public abstract void setShortcutManager(ShortcutManager manager);
 }

@@ -41,6 +41,8 @@ import javax.swing.JFrame;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.swingViewer.util.Camera;
+import org.graphstream.ui.swingViewer.util.DefaultMouseManager;
+import org.graphstream.ui.swingViewer.util.DefaultShortcutManager;
 import org.graphstream.ui.swingViewer.util.MouseManager;
 import org.graphstream.ui.swingViewer.util.ShortcutManager;
 
@@ -138,14 +140,11 @@ public class DefaultView extends View implements WindowListener
 		this.viewer = viewer;
 		this.graph = viewer.getGraphicGraph();
 		this.renderer = renderer;
-		shortcuts = new ShortcutManager(this);
-		mouseClicks = new MouseManager(this.graph, this);
 
 		setOpaque(false);
 		setDoubleBuffered(true);
-		addKeyListener(shortcuts);
-		addMouseListener(mouseClicks);
-		addMouseMotionListener(mouseClicks);
+		setMouseManager(null);
+		setShortcutManager(null);
 		renderer.open(graph, this);
 	}
 
@@ -192,9 +191,11 @@ public class DefaultView extends View implements WindowListener
 	public void close(GraphicGraph graph) {
 		renderer.close();
 		graph.addAttribute("ui.viewClosed", getId());
+	
 		removeKeyListener(shortcuts);
-		removeMouseListener(mouseClicks);
-		removeMouseMotionListener(mouseClicks);
+		shortcuts.release();
+		mouseClicks.release();
+		
 		openInAFrame(false);
 	}
 
@@ -333,5 +334,31 @@ public class DefaultView extends View implements WindowListener
 	public void setForeLayoutRenderer(LayerRenderer renderer) {
 		this.renderer.setForeLayoutRenderer(renderer);
 		repaint();
+	}
+
+	@Override
+	public void setMouseManager(MouseManager manager) {
+		if(mouseClicks != null)
+			mouseClicks.release();
+		
+		if(manager == null)
+			manager = new DefaultMouseManager();
+
+		manager.init(graph, this);
+		
+		mouseClicks = manager;
+	}
+
+	@Override
+	public void setShortcutManager(ShortcutManager manager) {
+		if(shortcuts != null)
+			shortcuts.release();
+		
+		if(manager == null)
+			manager = new DefaultShortcutManager();
+		
+		manager.init(graph, this);
+		
+		shortcuts = manager;
 	}
 }
