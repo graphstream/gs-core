@@ -132,7 +132,6 @@ public class Rule {
 	public void addGroup(String groupId) {
 		if (groups == null)
 			groups = new HashSet<String>();
-
 		groups.add(groupId);
 	}
 

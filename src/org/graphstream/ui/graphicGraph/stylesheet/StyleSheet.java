@@ -769,7 +769,7 @@ public class StyleSheet {
 		 * <li>If the rule has an ID or class but the rule already exists,
 		 * augment to already existing rule.</li>
 		 * <li>If the rule has no ID or class and is not an event, augment the
-		 * default styele.</li>
+		 * default style.</li>
 		 * <li>If the rule is an event, the corresponding normal rule is
 		 * searched, if it does not exists, it is created then or else, the
 		 * event is added to the found rule.</li>
