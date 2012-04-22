@@ -621,12 +621,12 @@ public class GraphicGraph extends AbstractElement implements Graph,
 	}
 
 	public void clear(String sourceId, long timeId) {
+		clearAttributes();
 		listeners.sendGraphCleared(sourceId, timeId);
 		connectivity.clear();
 		styleGroups.clear();
 		styleSheet.clear();
-		attributes.clear();
-
+//		attributes.clear();
 		step = 0;
 		graphChanged = true;
 	}
