@@ -621,7 +621,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 	}
 
 	public void clear(String sourceId, long timeId) {
-		clearAttributes();
+		clearAttributes_(sourceId, timeId);
 		listeners.sendGraphCleared(sourceId, timeId);
 		connectivity.clear();
 		styleGroups.clear();
