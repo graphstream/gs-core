@@ -38,6 +38,8 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Vector;
 
+import junit.framework.Assert;
+
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -63,6 +65,74 @@ public class TestNetStream {
 
 	Vector<String> errors;
 
+	@Test
+	public void testNetStreamAttributesChanges() {
+		
+		try{
+		NetStreamReceiver net = null;
+		try {
+			net = new NetStreamReceiver("localhost", 2000, true);
+		} catch (UnknownHostException e1) {
+			fail(e1.toString());
+		} catch (IOException e1) {
+			fail(e1.toString());
+		}
+		
+		ThreadProxyPipe pipe = net.getDefaultStream();
+
+		pipe.addSink(new SinkAdapter() {
+			
+			public void graphAttributeAdded(String sourceId, long timeId,
+					String attribute, Object value) {
+			}
+		});
+		
+		new Thread() {
+
+			@Override
+			public void run() {
+
+				Graph g = new MultiGraph("G",false,true);
+				NetStreamSender nsc = null;
+				try {
+					nsc = new NetStreamSender("localhost", 2000);
+				} catch (UnknownHostException e1) {
+					error(e1.toString());
+					return;
+				} catch (IOException e1) {
+					error(e1.toString());
+					return;
+				}
+				
+				g.addSink(nsc);
+
+				g.addAttribute("attribute","foo");
+				g.changeAttribute("attribute",false);
+				Edge e = g.addEdge("AB", "A", "B");
+				e.addAttribute("attribute","foo");
+				e.changeAttribute("attribute",false);
+				Node n = e.getNode0();
+				n.addAttribute("attribute","foo");
+				n.changeAttribute("attribute",false);
+
+
+			}
+		}.start();
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		pipe.pump();	
+			
+		
+		}
+		catch(ClassCastException cce){
+			fail("Bad cast in attribute change.");
+		}
+		
+	}	
 	/**
 	 * Tests (almost) all the possible data types encoding and decoding.
 	 */
@@ -526,6 +596,6 @@ public class TestNetStream {
 	}
 
 	public static void main(String[] args) {
-		new TestNetStream().testNetStreamTypes();
+		new TestNetStream().testNetStreamAttributesChanges();
 	}
 }

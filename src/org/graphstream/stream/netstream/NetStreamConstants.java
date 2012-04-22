@@ -485,10 +485,12 @@ package org.graphstream.stream.netstream;
  * </p>
  * <ul class="simple">
  * <li>the attribute name (TYPE_STRING format)</li>
- * <li>the attribute value type (one of the bytes shown in the &quot;Data
+ * <li>the attribute'd old value type (one of the bytes shown in the &quot;Data
  * Types&quot; section)</li>
  * <li>the old attribute value, encoded according to its value type (see the
  * &quot;Data Types&quot; section)</li>
+ * <li>the attribute's new value type (one of the bytes shown in the &quot;Data
+ * Types&quot; section)</li>
  * <li>the new attribute value, encoded according to its value type (see the
  * &quot;Data Types&quot; section)</li>
  * </ul>
@@ -528,10 +530,12 @@ package org.graphstream.stream.netstream;
  * <ul class="simple">
  * <li>the ID of the considered node (TYPE_STRING format)</li>
  * <li>the attribute name (TYPE_STRING format)</li>
- * <li>the attribute value type (one of the bytes shown in the &quot;Data
+ * <li>the attribute's old value type (one of the bytes shown in the &quot;Data
  * Types&quot; section)</li>
  * <li>the old attribute value, encoded according to its value type (see the
  * &quot;Data Types&quot; section)</li>
+ * <li>the attribute's new value type (one of the bytes shown in the &quot;Data
+ * Types&quot; section)</li>
  * <li>the new attribute value, encoded according to its value type (see the
  * &quot;Data Types&quot; section)</li>
  * </ul>
@@ -553,10 +557,10 @@ package org.graphstream.stream.netstream;
  * <tt class="docutils literal">EVENT_ADD_EDGE_ATTR</tt> [0x1C]
  * </p>
  * <p>
- * Add an attribute to a node. Followed by:
+ * Add an attribute to an edge. Followed by:
  * </p>
  * <ul class="simple">
- * <li>the ID of the considered node (TYPE_STRING format)</li>
+ * <li>the ID of the considered edge (TYPE_STRING format)</li>
  * <li>the attribute name (TYPE_STRING format)</li>
  * <li>the attribute value type (one of the bytes shown in the &quot;Data
  * Types&quot; section)</li>
@@ -569,15 +573,17 @@ package org.graphstream.stream.netstream;
  * <tt class="docutils literal">EVENT_CHG_EDGE_ATTR</tt> [0x1D]
  * </p>
  * <p>
- * Change an existing attribute on a given node. Followed by:
+ * Change an existing attribute on a given edge. Followed by:
  * </p>
  * <ul class="simple">
- * <li>the ID of the considered node (TYPE_STRING format)</li>
+ * <li>the ID of the considered edge (TYPE_STRING format)</li>
  * <li>the attribute name (TYPE_STRING format)</li>
- * <li>the attribute value type (one of the bytes shown in the &quot;Data
+ * <li>the attribute's old value type (one of the bytes shown in the &quot;Data
  * Types&quot; section)</li>
  * <li>the old attribute value, encoded according to its value type (see the
  * &quot;Data Types&quot; section)</li>
+ * <li>the attribute's new value type (one of the bytes shown in the &quot;Data
+ * Types&quot; section)</li>
  * <li>the new attribute value, encoded according to its value type (see the
  * &quot;Data Types&quot; section)</li>
  * </ul>
@@ -587,10 +593,10 @@ package org.graphstream.stream.netstream;
  * <tt class="docutils literal">EVENT_DEL_EDGE_ATTR</tt> [0x1E]
  * </p>
  * <p>
- * Remove an attribute from a given node. Followed by:
+ * Remove an attribute from a given edge. Followed by:
  * </p>
  * <ul class="simple">
- * <li>the ID of the considered node (TYPE_STRING format)</li>
+ * <li>the ID of the considered edge (TYPE_STRING format)</li>
  * <li>the attribute name (encoded with the TYPE_STRING format).</li>
  * </ul>
  * </li>

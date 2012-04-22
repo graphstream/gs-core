@@ -891,9 +891,10 @@ public class NetStreamReceiver extends Thread {
 		long timeId = readLong(in);
 		String edgeId = readString(in);
 		String attrId = readString(in);
-		int valueType = readType(in);
-		Object oldValue = readValue(in, valueType);
-		Object newValue = readValue(in, valueType);
+		int oldValueType = readType(in);
+		Object oldValue = readValue(in, oldValueType);
+		int newValueType = readType(in);
+		Object newValue = readValue(in, newValueType);
 
 		currentStream.edgeAttributeChanged(sourceId, timeId,
 				edgeId, attrId, oldValue, newValue);
@@ -946,9 +947,10 @@ public class NetStreamReceiver extends Thread {
 		long timeId = readLong(in);
 		String nodeId = readString(in);
 		String attrId = readString(in);
-		int valueType = readType(in);
-		Object oldValue = readValue(in, valueType);
-		Object newValue = readValue(in, valueType);
+		int oldValueType = readType(in);
+		Object oldValue = readValue(in, oldValueType);
+		int newValueType = readType(in);
+		Object newValue = readValue(in, newValueType);
 
 		currentStream.nodeAttributeChanged(sourceId, timeId,
 				nodeId, attrId, oldValue, newValue);
@@ -996,9 +998,10 @@ public class NetStreamReceiver extends Thread {
 		String sourceId = readString(in);
 		long timeId = readLong(in);
 		String attrId = readString(in);
-		int valueType = readType(in);
-		Object oldValue = readValue(in, valueType);
-		Object newValue = readValue(in, valueType);
+		int oldValueType = readType(in);
+		Object oldValue = readValue(in, oldValueType);
+		int newValueType = readType(in);
+		Object newValue = readValue(in, newValueType);
 
 		currentStream.graphAttributeChanged(sourceId, timeId,
 				attrId, oldValue, newValue);
