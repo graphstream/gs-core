@@ -309,6 +309,7 @@ public class NetStreamReceiver extends Thread {
 	 */
 	public synchronized void quit() {
 		loop = false;
+		key.selector().wakeup();
 
 		if (debug)
 			debug("stopped");
