@@ -702,7 +702,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 			}
 
 			public int size() {
-				return getNodeCount();
+				return getEdgeCount();
 			}
 		};
 	}
