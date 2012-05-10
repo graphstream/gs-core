@@ -229,7 +229,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 			}
 
 			public int size() {
-				return getNodeCount();
+				return getEdgeCount();
 			}
 		};
 	}
