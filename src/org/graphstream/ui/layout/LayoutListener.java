@@ -29,13 +29,26 @@
  */
 package org.graphstream.ui.layout;
 
-import java.util.Map;
+//import java.util.Map;
 
 /**
  * Listener for layout algorithms.
  * 
  * <p>
- * This listener allows to be notified of each position change in the graph.
+ * This listener allows to be notified of each node and edge (if available) position change in the graph.
+ * </p>
+ * 
+ * <p>
+ * Some layout algorithms can produce more informations than others. By default only node positions are
+ * updated. On request in the layout algorithm, more informations may be produced, indicating the nodes
+ * displacement vector, edge breakpoints, etc.
+ * </p>
+ * 
+ * <p>
+ * If requested, the layout can also invoke the listener regularly during one single step of
+ * computation, to specify the percentage of achievement of the step. This can be useful for
+ * very long computations. This process must be optional in the layout (as it can generate
+ * a lots of method calls).
  * </p>
  */
 public interface LayoutListener {
@@ -50,8 +63,8 @@ public interface LayoutListener {
 	 *            new ordinate of the node.
 	 * @param z
 	 *            new depth of the node.
-	 */
 	void nodeMoved(String id, double x, double y, double z);
+	 */
 
 	/**
 	 * Only if requested in the layout algorithm, this reports various
@@ -76,24 +89,24 @@ public interface LayoutListener {
 	 * @param points
 	 *            The points description. This description is specific to the
 	 *            layout algorithm.
-	 */
 	void edgeChanged(String id, double points[]);
+	 */
 
 	/**
 	 * Several nodes moved at once.
 	 * 
 	 * @param nodes
 	 *            The new node positions.
-	 */
 	void nodesMoved(final Map<String, double[]> nodes);
+	 */
 
 	/**
 	 * Several edges changed at once.
 	 * 
 	 * @param edges
 	 *            The new edges description.
-	 */
 	void edgesChanged(final Map<String, double[]> edges);
+	 */
 
 	/**
 	 * The current step is completed at the given percent. This allows to

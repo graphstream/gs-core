@@ -37,29 +37,32 @@ import org.graphstream.ui.geom.Point3;
  * 
  * <p>
  * The layout algorithm role is to compute the best possible positions of nodes
- * in a given space (2D or 3D). As there are many such algorithms with distinct
+ * in a given space (2D or 3D) and eventually break points for edges if
+ * supported. As there are many such algorithms with distinct
  * qualities and uses, this interface defines what is awaited from a layout
  * algorithm.
  * </p>
  * 
  * <p>
- * The algorithm follows a graph by being a {@link org.graphstream.stream.Sink}.
- * However, at the contrary of several other algorithms, it does not work on the
- * graph itself. It works on a description of the graph and maintains its own
- * vision of this graph. In return, it does not modify the graph, but sends
- * events to listeners telling the new positions of nodes in the graph.
+ * The algorithm can follow a graph by being a {@link org.graphstream.stream.Sink}.
+ * However, at the contrary of several other algorithms, it may or not work on the
+ * graph itself. It can work on a description of the graph and maintains its own
+ * vision of this graph. In return, it may or not modify the graph
+ * but instead can send events to listeners telling the new 
+ * positions of nodes in the graph. In any case, the layout will also acts as a
+ * source for events on the graph (mainly attributes to position nodes and edges).
  * </p>
  * 
  * <p>
- * Here a layout algorithm continuously updates its internal representation of
- * the graph following a given method and outputs its computations to a listener
- * for each element of the graph (iterative algorithm). Such a layout algorithm
+ * A layout algorithm is iterative. It continuously updates its internal representation of
+ * the graph following a given method and may outputs its computations to a listener
+ * for each element of the graph or directly modify the graph. Such a layout algorithm
  * is not made to compute a layout once and for all. This is the best way to
  * handle evolving graphs.
  * </p>
  * 
  * <p>
- * This behaviour has been chosen because this algorithm is often run aside the
+ * This behavior has been chosen because this algorithm is often run aside the
  * main thread that works on the graph. We want a thread to be able to compute a
  * new layout on its side, without disturbing the main algorithm run on the
  * graph. See the {@link org.graphstream.ui.layout.LayoutRunner} for an
@@ -67,9 +70,11 @@ import org.graphstream.ui.geom.Point3;
  * </p>
  * 
  * <p>
- * To be notified of the layout changes dynamically, you must register a
+ * To be notified of the layout changes dynamically, you may register a
  * {@link LayoutListener} that will be called each time a node changes its
- * position.
+ * position. The layout may or not modify directly the graph. This allows
+ * to either put the layout in another thread (in which case a copy of the
+ * graph will be done) or to run the layout directly on the main graph.
  * </p>
  * 
  * <p>
@@ -77,17 +82,9 @@ import org.graphstream.ui.geom.Point3;
  * graphs on screen.
  * </p>
  * 
- * <p>
- * TODO: would it be interesting, for some layouts, to have edges that contain
- * "break points" or curve points (Bezier for example) that are also moved by
- * the layout algorithm ?
- * </p>
- * 
  * @since 20050706
  */
 public interface Layout extends Pipe {
-	// Access
-
 	/**
 	 * Name of the layout algorithm.
 	 */
@@ -95,19 +92,19 @@ public interface Layout extends Pipe {
 
 	/**
 	 * How many nodes moved during the last step?. When this method returns
-	 * zero, the layout stabilised.
+	 * zero, the layout stabilized.
 	 */
 	int getNodeMoved();
 
 	/**
-	 * How close to stabilisation the layout algorithm is.
-	 * @return a value between 0 and 1. 1 means fully stabilised.
+	 * How close to stabilization the layout algorithm is.
+	 * @return a value between 0 and 1. 1 means fully stabilized.
 	 */
 	double getStabilization();
 	
 	/**
-	 * Above which value a correct stabilisation is achieved?
-	 * @return The stabilisation limit.
+	 * Above which value a correct stabilization is achieved?
+	 * @return The stabilization limit.
 	 */
 	double getStabilizationLimit();
 
@@ -146,8 +143,6 @@ public interface Layout extends Pipe {
 	 */
 	double getForce();
 
-	// Commands
-
 	/**
 	 * Clears the whole nodes and edges structures
 	 */
@@ -165,7 +160,7 @@ public interface Layout extends Pipe {
 
 	/**
 	 * The general "speed" of the algorithm. For some algorithm this will have no effect. For most
-	 * "dynamic" algorithms, this change the way iterations toward stabilisation are done.
+	 * "dynamic" algorithms, this change the way iterations toward stabilization are done.
 	 * 
 	 * @param value
 	 *            A number in [0..1].
@@ -173,34 +168,34 @@ public interface Layout extends Pipe {
 	void setForce(double value);
 	
 	/**
-	 * Change the stabilisation limit for this layout algorithm.
+	 * Change the stabilization limit for this layout algorithm.
 	 * 
 	 * <p> 
-	 * The stabilisation is a number
-	 * between 0 and 1 that indicates how close to stabilisation (no nodes need to move) the
-	 * layout is. The value 1 means the layout is fully stabilised. Naturally this is often only
+	 * The stabilization is a number
+	 * between 0 and 1 that indicates how close to stabilization (no nodes need to move) the
+	 * layout is. The value 1 means the layout is fully stabilized. Naturally this is often only
 	 * an indication only, for some algorithms, it is difficult to determine if the layout is
-	 * correct or acceptable enough. You can get the actual stabilisation limit using
-	 * {@link #getStabilizationLimit()}. You can get the actual stabilisation using
+	 * correct or acceptable enough. You can get the actual stabilization limit using
+	 * {@link #getStabilizationLimit()}. You can get the actual stabilization using
 	 * {@link #getStabilization()}.
 	 * </p> 
 	 * 
 	 * <p>
-	 * Be careful, most layout classes do not use the stabilisation limit, this number is mostly
+	 * Be careful, most layout classes do not use the stabilization limit, this number is mostly
 	 * used the process that control the layout, like the {@link LayoutRunner} for example. The
-	 * stabilisation limit is only an indication with a default set for each layout algorithm.
+	 * stabilization limit is only an indication with a default set for each layout algorithm.
 	 * However this default can be changed using this method, or by storing on the graph an
 	 * attribute "layout.stabilization-limit" (or "layout.stabilisation-limit").
 	 * </p>
 	 * 
 	 * <p>
 	 * The convention is that the value 0 means that the process controlling the layout will not
-	 * stop the layout (will therefore not consider the stabilisation limit). In other words the
+	 * stop the layout (will therefore not consider the stabilization limit). In other words the
 	 * layout will compute endlessly.
 	 * </p>
 	 * 
 	 * @param value
-	 * 			The new stabilisation limit, 0 means no need to stabilise. Else a value larger than
+	 * 			The new stabilization limit, 0 means no need to stabilize. Else a value larger than
 	 * 			zero or equal to 1 is accepted.
 	 */
 	void setStabilizationLimit(double value);
@@ -257,7 +252,7 @@ public interface Layout extends Pipe {
 	 * 
 	 * <p>
 	 * This method implements the layout algorithm proper. It must be called in
-	 * a loop, until the layout stabilises. You can know if the layout is stable
+	 * a loop, until the layout stabilizes. You can know if the layout is stable
 	 * by using the {@link #getNodeMoved()} method that returns the number of
 	 * node that have moved during the last call to step().
 	 * </p>
@@ -266,13 +261,11 @@ public interface Layout extends Pipe {
 	 * The listener is called by this method, therefore each call to step() will
 	 * also trigger layout events, allowing to reproduce the layout process
 	 * graphically for example. You can insert the listener only when the layout
-	 * stabilised, and then call step() anew if you do not want to observe the
+	 * stabilized, and then call step() anew if you do not want to observe the
 	 * layout process.
 	 * </p>
 	 */
 	void compute();
-
-	// Output
 
 	/**
 	 * Read the nodes positions from a file. See {@link #outputPos(String)} for

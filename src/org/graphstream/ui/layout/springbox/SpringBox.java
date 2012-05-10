@@ -597,8 +597,8 @@ public class SpringBox extends SourceBase implements Layout,
 
 	public void particleMoved(Object id, double x, double y, double z) {
 		if ((time % sendMoveEventsEvery) == 0) {
-			for (LayoutListener listener : listeners)
-				listener.nodeMoved((String) id, x, y, z);
+//			for (LayoutListener listener : listeners)
+//				listener.nodeMoved((String) id, x, y, z);
 
 			Object xyz[] = new Object[3];
 			xyz[0] = x;

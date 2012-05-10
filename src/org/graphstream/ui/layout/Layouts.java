@@ -29,7 +29,22 @@
  */
 package org.graphstream.ui.layout;
 
+/**
+ * A factory in charge or creating various layout implementations. 
+ * 
+ * This class is mainly used to create the default layout for the graph viewer. You can
+ * also use layouts directly on your graphs, but in this case you do not need this
+ * factory.
+ * 
+ * This class looks at the "gs.ui.layout" system property to create a layout class.
+ * You can change this property using <code>System.setProperty("gs.ui.layout", you_layout_class_name)</code>.
+ */
 public class Layouts {
+	/**
+	 * Creates a layout according to the "gs.ui.layout" system property.
+	 * @return The new layout or the default "spring-box" layout if the "gs.ui.layout"
+	 * system property is either not set or contains a class that cannot be found.
+	 */
 	public static Layout newLayoutAlgorithm() {
 		String layoutClassName = System.getProperty("gs.ui.layout");
 
@@ -63,5 +78,4 @@ public class Layouts {
 
 		return new org.graphstream.ui.layout.springbox.SpringBox(false);
 	}
-
 }
