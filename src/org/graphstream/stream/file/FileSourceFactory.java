@@ -160,6 +160,10 @@ public class FileSourceFactory {
 			return new FileSourceGraphML();
 		}
 
+		if (flc.endsWith(".gexf")) {
+			return new FileSourceGEXF();
+		}
+
 		return null;
 	}
 }
