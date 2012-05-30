@@ -37,7 +37,7 @@ import java.util.Iterator;
 import java.util.Locale;
 
 import org.graphstream.ui.geom.Vector3;
-import org.graphstream.ui.layout.LayoutListener;
+//import org.graphstream.ui.layout.LayoutListener;
 import org.miv.pherd.Particle;
 import org.miv.pherd.ntree.BarycenterCellData;
 import org.miv.pherd.ntree.Cell;
@@ -195,14 +195,6 @@ public class NodeParticle extends Particle {
 
 	@Override
 	public void nextStep(int time) {
-		// Apply it to the position:
-		// We apply the movement vector only if this vector moves from a
-		// significant
-		// length (relative to the graph total area). Else we do nothing and let
-		// the
-		// node in place. This is another mechanism to allow the layout to
-		// stabilise...
-
 		// if( len > box.area * 0.0000001f )
 		{
 			nextPos.x = pos.x + disp.data[0];
@@ -217,12 +209,12 @@ public class NodeParticle extends Particle {
 
 		// Eventually output movement information to the listeners.
 
-		if (box.sendNodeInfos) {
-			for (LayoutListener listener : box.listeners)
-				listener.nodeInfos((String) id, disp.data[0],
-						disp.data[1], box.is3D ? disp.data[2]
-								: 0);
-		}
+//		if (box.sendNodeInfos) {
+//			for (LayoutListener listener : box.listeners)
+//				listener.nodeInfos((String) id, disp.data[0],
+//						disp.data[1], box.is3D ? disp.data[2]
+//								: 0);
+//		}
 
 		if (out != null) {
 			out.printf(Locale.US, "%s %f %f %f%n", getId(), len, attE, repE);

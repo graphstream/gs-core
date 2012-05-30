@@ -76,7 +76,7 @@ import org.miv.pherd.ntree.QuadtreeCellSpace;
  * You can also put the following attributes on nodes :
  * <ul>
  * <li>layout.weight : The force of repulsion of a node. The larger the value,
- * the more the node repulses its neighbours.</li>
+ * the more the node repulses its neighbors.</li>
  * </ul>
  * And on edges :
  * <ul>
@@ -85,7 +85,7 @@ import org.miv.pherd.ntree.QuadtreeCellSpace;
  * lowest energy for a spring. This coefficient allows to modify this target
  * spring length. Value larger than one will make the edge longer. Values
  * between 0 and 1 will make the edge smaller.</li>
- * <li>layout.stabilization-limit : the stabilisation of a layout is a
+ * <li>layout.stabilization-limit : the stabilization of a layout is a
  * number between 0 and 1. 1 means fully stable, but this value is rare.
  * Therefore one can consider the layout stable at a lower value. The
  * default is 0.9. You can fix it with this attribute.</li>
@@ -110,7 +110,7 @@ public class SpringBox extends SourceBase implements Layout,
 	protected HashMap<String, EdgeSpring> edges = new HashMap<String, EdgeSpring>();
 
 	/**
-	 * Used to avoid stabilising if an event occurred.
+	 * Used to avoid stabilizing if an event occurred.
 	 */
 	protected int lastElementCount = 0;
 	
@@ -234,7 +234,7 @@ public class SpringBox extends SourceBase implements Layout,
 	protected boolean sendNodeInfos = false;
 
 	/**
-	 * If true a file is created to output the statistics of the elastic box
+	 * If true a file is created to output the statistics of the spring box
 	 * algorithm.
 	 */
 	protected boolean outputStats = false;
