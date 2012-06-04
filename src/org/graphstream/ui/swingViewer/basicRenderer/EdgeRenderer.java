@@ -158,11 +158,13 @@ public class EdgeRenderer extends ElementRenderer {
 		double h = size.size() > 1 ? camera.getMetrics().lengthToGu(
 				size.get(1), size.getUnits()) : w;
 
+		w /= 2;
+		h /= 2;
+				
 		if (w == h)
-			return w / 2; // Welcome simplification for circles ...
+			return w; // Welcome simplification for circles ...
 
 		// Vector of the entering edge.
-
 		double dx = node1.getX() - node0.getX();
 		double dy = node1.getY() - node0.getY();
 
@@ -183,9 +185,8 @@ public class EdgeRenderer extends ElementRenderer {
 		dx = Math.cos(a) * w;
 		dy = Math.sin(a) * h;
 
-		// The distance from the ellipse centre to the crossing point of the
-		// ellipse and
-		// vector. Yo !
+		// The distance from the ellipse center to the crossing point of the
+		// ellipse and vector:
 
 		return Math.sqrt(dx * dx + dy * dy);
 	}
