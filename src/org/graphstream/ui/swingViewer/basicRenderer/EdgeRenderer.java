@@ -153,7 +153,7 @@ public class EdgeRenderer extends ElementRenderer {
 
 	protected double evalEllipseRadius(GraphicEdge edge, GraphicNode node0,
 			GraphicNode node1, Camera camera) {
-		Values size = node0.getStyle().getSize();
+		Values size = node1.getStyle().getSize();
 		double w = camera.getMetrics().lengthToGu(size.get(0), size.getUnits());
 		double h = size.size() > 1 ? camera.getMetrics().lengthToGu(
 				size.get(1), size.getUnits()) : w;
