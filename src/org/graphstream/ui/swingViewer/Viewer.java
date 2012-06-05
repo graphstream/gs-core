@@ -35,7 +35,9 @@ import java.util.HashMap;
 
 import javax.swing.Timer;
 
+import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
 import org.graphstream.stream.ProxyPipe;
 import org.graphstream.stream.Source;
 import org.graphstream.stream.thread.ThreadProxyPipe;
@@ -253,8 +255,11 @@ public class Viewer implements ActionListener {
 
 		if (pumpPipe != null)
 			pumpPipe.addSink(graph);
-		if (sourceInSameThread != null)
+		if (sourceInSameThread != null) {
+			if(source instanceof Graph)
+				replayGraph((Graph) source);
 			sourceInSameThread.addSink(graph);
+		}
 
 		timer.setCoalesce(true);
 		timer.setRepeats(true);
@@ -607,6 +612,45 @@ public class Viewer implements ActionListener {
 				layoutPipeIn = null;
 				optLayout.release();
 				optLayout = null;
+			}
+		}
+	}
+
+	/** Dirty replay of the graph. */
+	protected void replayGraph(Graph graph) {
+		// Replay all graph attributes.
+
+		if (graph.getAttributeKeySet() != null)
+			for (String key : graph.getAttributeKeySet()) {
+				if(key.startsWith("ui."))
+					this.graph.addAttribute(key, graph.getAttribute(key));
+			}
+
+		// Replay all nodes and their attributes.
+
+		for (Node node : graph) {
+			Node n = this.graph.addNode(node.getId());
+
+			if (node.getAttributeKeySet() != null) {
+				for (String key : node.getAttributeKeySet()) {
+					if(key.startsWith("ui.") || key.equals("label") || key.equals("x") || key.equals("y") || key.equals("xy") || key.equals("xyz")) {
+						n.addAttribute(key, node.getAttribute(key));
+					}
+				}
+			}
+		}
+
+		// Replay all edges and their attributes.
+
+		for (Edge edge : graph.getEachEdge()) {
+			Edge e = this.graph.addEdge(edge.getId(), edge.getSourceNode().getId(), edge.getTargetNode().getId(), edge.isDirected());
+			
+			if (edge.getAttributeKeySet() != null) {
+				for (String key : edge.getAttributeKeySet()) {
+					if(key.startsWith("ui.") || key.equals("label")) {
+						e.addAttribute(key, e.getAttribute(key));
+					}
+				}
 			}
 		}
 	}
