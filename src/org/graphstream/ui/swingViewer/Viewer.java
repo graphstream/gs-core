@@ -55,7 +55,8 @@ import org.graphstream.ui.swingViewer.basicRenderer.SwingBasicGraphRenderer;
  * The viewer class is in charge of maintaining :
  * <ul>
  * <li>A "graphic graph" (a special graph that internally stores the graph under
- * the form of style sets of "graphic" elements),</li>
+ * the form of style sets of "graphic" elements, suitable to draw the graph, but
+ * not to adapted to used it as a general graph),</li>
  * <li>The eventual proxy pipe from which the events come from (but graph events
  * can come from any kind of source),</li>
  * <li>A default view, and eventually more views on the graphic graph.</li>
@@ -70,18 +71,27 @@ import org.graphstream.ui.swingViewer.basicRenderer.SwingBasicGraphRenderer;
  * </p>
  * 
  * <p>
- * Once created, the viewer runs in a loop inside the Swing thread. You cannot
- * call methods on it directly if you are not in this thread. The only operation
+ * <u>Once created, the viewer runs in a loop inside the Swing thread. You cannot
+ * call methods on it directly if you are not in this thread</u>. The only operation
  * that you can use in other threads is the constructor, the
  * {@link #addView(View)}, {@link #removeView(String)} and the {@link #close()}
  * methods. Other methods are not protected from concurrent accesses.
  * </p>
  * 
  * <p>
- * Some constructors allow a "ProxyPipe" as argument. If given, the graphic
+ * Some constructors allow a {@link ProxyPipe} as argument. If given, the graphic
  * graph is made listener of this pipe and the pipe is "pumped" during the view
  * loop. This allows to run algorithms on a graph in the main thread (or any
  * other thread) while letting the viewer run in the swing thread.
+ * </p>
+ * 
+ * <p>
+ * Be very careful: due to the nature of graph events in GraphStream, the viewer
+ * is not aware of events that occured on the graph <u>before</u> its creation.
+ * There is a special mechanism that replay the graph if you use a proxy pipe or
+ * if you pass the graph directly. However, when you create the viewer by yourself
+ * and only pass a {@link Source}, the viewer <u>will not</u> display the events
+ * that occured on the source before it is connected to it.
  * </p>
  */
 public class Viewer implements ActionListener {
@@ -622,8 +632,7 @@ public class Viewer implements ActionListener {
 
 		if (graph.getAttributeKeySet() != null)
 			for (String key : graph.getAttributeKeySet()) {
-				if(key.startsWith("ui."))
-					this.graph.addAttribute(key, graph.getAttribute(key));
+				this.graph.addAttribute(key, graph.getAttribute(key));
 			}
 
 		// Replay all nodes and their attributes.
@@ -633,9 +642,7 @@ public class Viewer implements ActionListener {
 
 			if (node.getAttributeKeySet() != null) {
 				for (String key : node.getAttributeKeySet()) {
-					if(key.startsWith("ui.") || key.equals("label") || key.equals("x") || key.equals("y") || key.equals("xy") || key.equals("xyz")) {
-						n.addAttribute(key, node.getAttribute(key));
-					}
+					n.addAttribute(key, node.getAttribute(key));
 				}
 			}
 		}
@@ -647,9 +654,7 @@ public class Viewer implements ActionListener {
 			
 			if (edge.getAttributeKeySet() != null) {
 				for (String key : edge.getAttributeKeySet()) {
-					if(key.startsWith("ui.") || key.equals("label")) {
-						e.addAttribute(key, e.getAttribute(key));
-					}
+					e.addAttribute(key, e.getAttribute(key));
 				}
 			}
 		}
