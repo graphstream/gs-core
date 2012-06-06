@@ -654,7 +654,7 @@ public class Viewer implements ActionListener {
 			
 			if (edge.getAttributeKeySet() != null) {
 				for (String key : edge.getAttributeKeySet()) {
-					e.addAttribute(key, e.getAttribute(key));
+					e.addAttribute(key, edge.getAttribute(key));
 				}
 			}
 		}
