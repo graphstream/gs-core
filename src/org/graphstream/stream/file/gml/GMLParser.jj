@@ -211,8 +211,8 @@ KeyValues list():
 }
 {
 	( (<COMMENT>)*
-  	  ( k=<KEY>    { key=k.image.toLowerCase(); if (key.equals("step")) step = true; }
-  	  | k=<STRING> { key=k.image.substring(1,k.image.length()-2).toLowerCase(); }
+  	  ( k=<KEY>    { key=k.image; if (key.equalsIgnoreCase("step")) step = true; }
+  	  | k=<STRING> { key=k.image.substring(1,k.image.length()-2); }
   	  )
 	  v=value(key) { values.put(key, v); values.line = k.beginLine; values.column = k.beginColumn; }
 	)
