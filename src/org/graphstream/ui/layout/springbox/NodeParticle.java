@@ -95,8 +95,7 @@ public class NodeParticle extends Particle {
 	 *            The node identifier.
 	 */
 	public NodeParticle(SpringBox box, String id) {
-		this(box, id,
-				(box.random.nextDouble() * 2 * box.k) - box.k,
+		this(box, id, (box.random.nextDouble() * 2 * box.k) - box.k,
 				(box.random.nextDouble() * 2 * box.k) - box.k,
 				box.is3D ? (box.random.nextDouble() * 2 * box.k) - box.k : 0);
 
@@ -178,15 +177,12 @@ public class NodeParticle extends Particle {
 
 			if (len > box.maxMoveLength)
 				box.maxMoveLength = len;
-		} else {
-			disp.set(0, 0, 0);
 		}
 	}
 
 	@Override
 	public void nextStep(int time) {
-		if(! frozen) 
-		{
+		if (!frozen) {
 			nextPos.x = pos.x + disp.data[0];
 			nextPos.y = pos.y + disp.data[1];
 
@@ -198,10 +194,9 @@ public class NodeParticle extends Particle {
 		} else {
 			nextPos.x = pos.x;
 			nextPos.y = pos.y;
-			if(box.is3D)
+			if (box.is3D)
 				nextPos.z = pos.z;
 		}
-
 
 		if (out != null) {
 			out.printf(Locale.US, "%s %f %f %f%n", getId(), len, attE, repE);
@@ -213,19 +208,27 @@ public class NodeParticle extends Particle {
 
 	/**
 	 * Force a node to move from a given vector.
-	 * @param dx The x component.
-	 * @param dy The y component.
-	 * @param dz The z component.
+	 * 
+	 * @param dx
+	 *            The x component.
+	 * @param dy
+	 *            The y component.
+	 * @param dz
+	 *            The z component.
 	 */
 	public void moveOf(double dx, double dy, double dz) {
 		pos.set(pos.x + dx, pos.y + dy, pos.z + dz);
 	}
-	
+
 	/**
 	 * Force a node to move at a given position.
-	 * @param x The new x.
-	 * @param y The new y.
-	 * @param z The new z.
+	 * 
+	 * @param x
+	 *            The new x.
+	 * @param y
+	 *            The new y.
+	 * @param z
+	 *            The new z.
 	 */
 	public void moveTo(double x, double y, double z) {
 		pos.set(x, y, z);
@@ -359,15 +362,15 @@ public class NodeParticle extends Particle {
 
 				double len = delta.normalize();
 				double k = box.k * edge.weight;
-
 				double factor = box.K1 * (len - k);
 
 				// delta.scalarMult( factor );
 				delta.scalarMult(factor * (1f / (neighbours.size() * 0.1f)));
 				// ^^^ XXX NEW inertia based on the node degree. This is one
 				// of the amelioration of the Spring-Box algorithm. Compare
-				// it to the Force-Atlas algorithm that does this on **repulsion**.
-				
+				// it to the Force-Atlas algorithm that does this on
+				// **repulsion**.
+
 				disp.add(delta);
 				attE += factor;
 				box.energies.accumulateEnergy(factor);

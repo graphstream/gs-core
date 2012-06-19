@@ -48,47 +48,6 @@ import org.graphstream.ui.geom.Vector3;
  * </p>
  */
 public class GraphPosLengthUtils {
-	// Access
-
-	/**
-	 * Choose a node at random.
-	 * 
-	 * @return A node chosen at random.
-	 * @complexity at worse O(n) where n is the number of nodes.
-	 */
-	public static Node randomNode(Graph graph) {
-		return randomNode(graph, new Random());
-	}
-
-	/**
-	 * Choose a node at random.
-	 * 
-	 * @param random
-	 *            The random number generator to use.
-	 * @return A node chosen at random.
-	 * @complexity at worse O(n) where n is the number of nodes.
-	 */
-	public static Node randomNode(Graph graph, Random random) {
-		int n = graph.getNodeCount();
-		int r = random.nextInt(n);
-		int i = 0;
-
-		Iterator<? extends Node> nodes = graph.getNodeIterator();
-
-		while (nodes.hasNext()) {
-			Node node = nodes.next();
-
-			if (r == i) {
-				return node;
-			}
-
-			i++;
-		}
-
-		throw new RuntimeException("Outch !!");
-	}
-
-
 	/**
 	 * Retrieve a node position from its attributes ("x", "y", "z", or "xy", or
 	 * "xyz").
@@ -223,72 +182,7 @@ public class GraphPosLengthUtils {
 				o = node.getAttribute("xy");
 
 			if (o != null) {
-				if(o instanceof Object[]) {
-					Object oo[] = (Object[]) o;
-
-					if (oo.length > 0 && oo[0] instanceof Number) {
-						xyz[0] = ((Number) oo[0]).doubleValue();
-						if (oo.length > 1) xyz[1] = ((Number) oo[1]).doubleValue();
-						if (oo.length > 2) xyz[2] = ((Number) oo[2]).doubleValue();
-					}
-				} else if(o instanceof Double[]) {
-					Double oo[] = (Double[]) o;
-					if(oo.length > 0) xyz[0] = oo[0];
-					if(oo.length > 1) xyz[1] = oo[1];
-					if(oo.length > 2) xyz[2] = oo[2];
-				} else if(o instanceof Float[]) {
-					Float oo[] = (Float[]) o;
-					if(oo.length > 0) xyz[0] = oo[0];
-					if(oo.length > 1) xyz[1] = oo[1];
-					if(oo.length > 2) xyz[2] = oo[2];
-				} else if(o instanceof Integer[]) {
-					Integer oo[] = (Integer[]) o;
-					if(oo.length > 0) xyz[0] = oo[0];
-					if(oo.length > 1) xyz[1] = oo[1];
-					if(oo.length > 2) xyz[2] = oo[2];
-				} else if(o instanceof double[]) {
-					double oo[] = (double[]) o;
-					if(oo.length > 0) xyz[0] = oo[0];
-					if(oo.length > 1) xyz[1] = oo[1];
-					if(oo.length > 2) xyz[2] = oo[2];
-				} else if(o instanceof float[]) {
-					float oo[] = (float[]) o;
-					if(oo.length > 0) xyz[0] = oo[0];
-					if(oo.length > 1) xyz[1] = oo[1];
-					if(oo.length > 2) xyz[2] = oo[2];
-				} else if(o instanceof int[]) {
-					int oo[] = (int[]) o;
-					if(oo.length > 0) xyz[0] = oo[0];
-					if(oo.length > 1) xyz[1] = oo[1];
-					if(oo.length > 2) xyz[2] = oo[2];
-				} else if(o instanceof Number[]) {
-					Number oo[] = (Number[]) o;
-					if(oo.length > 0) xyz[0] = oo[0].doubleValue();
-					if(oo.length > 1) xyz[1] = oo[1].doubleValue();
-					if(oo.length > 2) xyz[2] = oo[2].doubleValue();
-				} else if(o instanceof Point3) {
-					Point3 oo = (Point3) o;
-					xyz[0] = oo.x;
-					xyz[1] = oo.y;
-					xyz[2] = oo.z;
-				} else if(o instanceof Vector3) {
-					Vector3 oo = (Vector3) o;
-					xyz[0] = oo.data[0];
-					xyz[1] = oo.data[1];
-					xyz[2] = oo.data[2];
-				} else if(o instanceof Point2) {
-					Point2 oo = (Point2) o;
-					xyz[0] = oo.x;
-					xyz[1] = oo.y;
-					xyz[2] = 0;
-				} else if(o instanceof Vector2) {
-					Vector2 oo = (Vector2) o;
-					xyz[0] = oo.data[0];
-					xyz[1] = oo.data[1];
-					xyz[2] = 0;
-				} else {
-					System.err.printf("Do not know how to handle xyz attribute %s%n", o.getClass().getName());
-				}
+				positionFromObject(o, xyz);
 			}
 			
 		} else if (node.hasAttribute("x")) {
@@ -319,74 +213,8 @@ public class GraphPosLengthUtils {
 				o = node.getAttribute("xy");
 
 			if (o != null) {
-				if(o instanceof Object[]) {
-					Object oo[] = (Object[]) o;
-
-					if (oo.length > 0 && oo[0] instanceof Number) {
-						pos.x = ((Number) oo[0]).doubleValue();
-						if (oo.length > 1) pos.y = ((Number) oo[1]).doubleValue();
-						if (oo.length > 2) pos.z = ((Number) oo[2]).doubleValue();
-					}
-				} else if(o instanceof Double[]) {
-					Double oo[] = (Double[]) o;
-					if(oo.length > 0) pos.x = oo[0];
-					if(oo.length > 1) pos.y = oo[1];
-					if(oo.length > 2) pos.z = oo[2];
-				} else if(o instanceof Float[]) {
-					Float oo[] = (Float[]) o;
-					if(oo.length > 0) pos.x = oo[0];
-					if(oo.length > 1) pos.y = oo[1];
-					if(oo.length > 2) pos.z = oo[2];
-				} else if(o instanceof Integer[]) {
-					Integer oo[] = (Integer[]) o;
-					if(oo.length > 0) pos.x = oo[0];
-					if(oo.length > 1) pos.y = oo[1];
-					if(oo.length > 2) pos.z = oo[2];
-				} else if(o instanceof double[]) {
-					double oo[] = (double[]) o;
-					if(oo.length > 0) pos.x = oo[0];
-					if(oo.length > 1) pos.y = oo[1];
-					if(oo.length > 2) pos.z = oo[2];
-				} else if(o instanceof float[]) {
-					float oo[] = (float[]) o;
-					if(oo.length > 0) pos.x = oo[0];
-					if(oo.length > 1) pos.y = oo[1];
-					if(oo.length > 2) pos.z = oo[2];
-				} else if(o instanceof int[]) {
-					int oo[] = (int[]) o;
-					if(oo.length > 0) pos.x = oo[0];
-					if(oo.length > 1) pos.y = oo[1];
-					if(oo.length > 2) pos.z = oo[2];
-				} else if(o instanceof Number[]) {
-					Number oo[] = (Number[]) o;
-					if(oo.length > 0) pos.x = oo[0].doubleValue();
-					if(oo.length > 1) pos.y = oo[1].doubleValue();
-					if(oo.length > 2) pos.z = oo[2].doubleValue();
-				} else if(o instanceof Point3) {
-					Point3 oo = (Point3) o;
-					pos.x = oo.x;
-					pos.y = oo.y;
-					pos.z = oo.z;
-				} else if(o instanceof Vector3) {
-					Vector3 oo = (Vector3) o;
-					pos.x = oo.data[0];
-					pos.y = oo.data[1];
-					pos.z = oo.data[2];
-				} else if(o instanceof Point2) {
-					Point2 oo = (Point2) o;
-					pos.x = oo.x;
-					pos.y = oo.y;
-					pos.z = 0;
-				} else if(o instanceof Vector2) {
-					Vector2 oo = (Vector2) o;
-					pos.x = oo.data[0];
-					pos.y = oo.data[1];
-					pos.z = 0;
-				} else {
-					System.err.printf("Do not know how to handle xyz attribute %s%n", o.getClass().getName());
-				}
+				positionFromObject(o, pos);
 			}
-			
 		} else if (node.hasAttribute("x")) {
 			pos.x = (double) node.getNumber("x");
 
@@ -424,6 +252,156 @@ public class GraphPosLengthUtils {
 //			if (node.hasAttribute("z"))
 //				pos.z = (double) node.getNumber("z");
 //		}
+	}
+	
+	/**
+	 * Try to convert an object to a position. The object can be an array of 
+	 * numbers, an array of base numeric types or their object counterparts.
+	 * @param o The object to try to convert.
+	 * @param xyz The result.
+	 */
+	public static void positionFromObject(Object o, double xyz[]) {
+		if(o instanceof Object[]) {
+			Object oo[] = (Object[]) o;
+
+			if (oo.length > 0 && oo[0] instanceof Number) {
+				xyz[0] = ((Number) oo[0]).doubleValue();
+				if (oo.length > 1) xyz[1] = ((Number) oo[1]).doubleValue();
+				if (oo.length > 2) xyz[2] = ((Number) oo[2]).doubleValue();
+			}
+		} else if(o instanceof Double[]) {
+			Double oo[] = (Double[]) o;
+			if(oo.length > 0) xyz[0] = oo[0];
+			if(oo.length > 1) xyz[1] = oo[1];
+			if(oo.length > 2) xyz[2] = oo[2];
+		} else if(o instanceof Float[]) {
+			Float oo[] = (Float[]) o;
+			if(oo.length > 0) xyz[0] = oo[0];
+			if(oo.length > 1) xyz[1] = oo[1];
+			if(oo.length > 2) xyz[2] = oo[2];
+		} else if(o instanceof Integer[]) {
+			Integer oo[] = (Integer[]) o;
+			if(oo.length > 0) xyz[0] = oo[0];
+			if(oo.length > 1) xyz[1] = oo[1];
+			if(oo.length > 2) xyz[2] = oo[2];
+		} else if(o instanceof double[]) {
+			double oo[] = (double[]) o;
+			if(oo.length > 0) xyz[0] = oo[0];
+			if(oo.length > 1) xyz[1] = oo[1];
+			if(oo.length > 2) xyz[2] = oo[2];
+		} else if(o instanceof float[]) {
+			float oo[] = (float[]) o;
+			if(oo.length > 0) xyz[0] = oo[0];
+			if(oo.length > 1) xyz[1] = oo[1];
+			if(oo.length > 2) xyz[2] = oo[2];
+		} else if(o instanceof int[]) {
+			int oo[] = (int[]) o;
+			if(oo.length > 0) xyz[0] = oo[0];
+			if(oo.length > 1) xyz[1] = oo[1];
+			if(oo.length > 2) xyz[2] = oo[2];
+		} else if(o instanceof Number[]) {
+			Number oo[] = (Number[]) o;
+			if(oo.length > 0) xyz[0] = oo[0].doubleValue();
+			if(oo.length > 1) xyz[1] = oo[1].doubleValue();
+			if(oo.length > 2) xyz[2] = oo[2].doubleValue();
+		} else if(o instanceof Point3) {
+			Point3 oo = (Point3) o;
+			xyz[0] = oo.x;
+			xyz[1] = oo.y;
+			xyz[2] = oo.z;
+		} else if(o instanceof Vector3) {
+			Vector3 oo = (Vector3) o;
+			xyz[0] = oo.data[0];
+			xyz[1] = oo.data[1];
+			xyz[2] = oo.data[2];
+		} else if(o instanceof Point2) {
+			Point2 oo = (Point2) o;
+			xyz[0] = oo.x;
+			xyz[1] = oo.y;
+			xyz[2] = 0;
+		} else if(o instanceof Vector2) {
+			Vector2 oo = (Vector2) o;
+			xyz[0] = oo.data[0];
+			xyz[1] = oo.data[1];
+			xyz[2] = 0;
+		} else {
+			System.err.printf("Do not know how to handle xyz attribute %s%n", o.getClass().getName());
+		}
+	}
+	
+	/**
+	 * Try to convert an object to a position. The object can be an array of 
+	 * numbers, an array of base numeric types or their object counterparts.
+	 * @param o The object to try to convert.
+	 * @param pos The result.
+	 */
+	public static void positionFromObject(Object o, Point3 pos) {
+		if(o instanceof Object[]) {
+			Object oo[] = (Object[]) o;
+
+			if (oo.length > 0 && oo[0] instanceof Number) {
+				pos.x = ((Number) oo[0]).doubleValue();
+				if (oo.length > 1) pos.y = ((Number) oo[1]).doubleValue();
+				if (oo.length > 2) pos.z = ((Number) oo[2]).doubleValue();
+			}
+		} else if(o instanceof Double[]) {
+			Double oo[] = (Double[]) o;
+			if(oo.length > 0) pos.x = oo[0];
+			if(oo.length > 1) pos.y = oo[1];
+			if(oo.length > 2) pos.z = oo[2];
+		} else if(o instanceof Float[]) {
+			Float oo[] = (Float[]) o;
+			if(oo.length > 0) pos.x = oo[0];
+			if(oo.length > 1) pos.y = oo[1];
+			if(oo.length > 2) pos.z = oo[2];
+		} else if(o instanceof Integer[]) {
+			Integer oo[] = (Integer[]) o;
+			if(oo.length > 0) pos.x = oo[0];
+			if(oo.length > 1) pos.y = oo[1];
+			if(oo.length > 2) pos.z = oo[2];
+		} else if(o instanceof double[]) {
+			double oo[] = (double[]) o;
+			if(oo.length > 0) pos.x = oo[0];
+			if(oo.length > 1) pos.y = oo[1];
+			if(oo.length > 2) pos.z = oo[2];
+		} else if(o instanceof float[]) {
+			float oo[] = (float[]) o;
+			if(oo.length > 0) pos.x = oo[0];
+			if(oo.length > 1) pos.y = oo[1];
+			if(oo.length > 2) pos.z = oo[2];
+		} else if(o instanceof int[]) {
+			int oo[] = (int[]) o;
+			if(oo.length > 0) pos.x = oo[0];
+			if(oo.length > 1) pos.y = oo[1];
+			if(oo.length > 2) pos.z = oo[2];
+		} else if(o instanceof Number[]) {
+			Number oo[] = (Number[]) o;
+			if(oo.length > 0) pos.x = oo[0].doubleValue();
+			if(oo.length > 1) pos.y = oo[1].doubleValue();
+			if(oo.length > 2) pos.z = oo[2].doubleValue();
+		} else if(o instanceof Point3) {
+			Point3 oo = (Point3) o;
+			pos.x = oo.x;
+			pos.y = oo.y;
+			pos.z = oo.z;
+		} else if(o instanceof Vector3) {
+			Vector3 oo = (Vector3) o;
+			pos.x = oo.data[0];
+			pos.y = oo.data[1];
+			pos.z = oo.data[2];
+		} else if(o instanceof Point2) {
+			Point2 oo = (Point2) o;
+			pos.x = oo.x;
+			pos.y = oo.y;
+			pos.z = 0;
+		} else if(o instanceof Vector2) {
+			Vector2 oo = (Vector2) o;
+			pos.x = oo.data[0];
+			pos.y = oo.data[1];
+			pos.z = 0;
+		} else {
+			System.err.printf("Do not know how to handle xyz attribute %s%n", o.getClass().getName());
+		}
 	}
 
 	/**

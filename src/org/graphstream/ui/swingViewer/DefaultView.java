@@ -321,7 +321,14 @@ public class DefaultView extends View implements WindowListener
 
 	@Override
 	public void moveElementAtPx(GraphicElement element, double x, double y) {
+		// The feedback on the node positions is often off since not needed
+		// and generating lots of events. We activate it here since the
+		// movement of the node is decided by the viewer. This is one of the
+		// only moment when the viewer really moves a node.
+		boolean on = graph.feedbackXYZ();
+		graph.feedbackXYZ(true);
 		renderer.moveElementAtPx(element, x, y);
+		graph.feedbackXYZ(on);
 	}
 	
 	@Override
