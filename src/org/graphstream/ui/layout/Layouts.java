@@ -42,40 +42,39 @@ package org.graphstream.ui.layout;
 public class Layouts {
 	/**
 	 * Creates a layout according to the "gs.ui.layout" system property.
-	 * @return The new layout or the default "spring-box" layout if the "gs.ui.layout"
+	 * @return The new layout or the default GraphStream "Spring-Box" layout if the "gs.ui.layout"
 	 * system property is either not set or contains a class that cannot be found.
 	 */
 	public static Layout newLayoutAlgorithm() {
 		String layoutClassName = System.getProperty("gs.ui.layout");
 
-		if (layoutClassName == null)
-			return new org.graphstream.ui.layout.springbox.SpringBox(false);
-
-		try {
-			Class<?> c = Class.forName(layoutClassName);
-			Object object = c.newInstance();
-
-			if (object instanceof Layout) {
-				return (Layout) object;
-			} else {
-				System.err.printf("class '%s' is not a 'GraphRenderer'%n",
-						object);
+		if (layoutClassName != null) {
+			try {
+				Class<?> c = Class.forName(layoutClassName);
+				Object object = c.newInstance();
+	
+				if (object instanceof Layout) {
+					return (Layout) object;
+				} else {
+					System.err.printf("class '%s' is not a 'GraphRenderer'%n",
+							object);
+				}
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+				System.err
+						.printf("Cannot create layout, 'GraphRenderer' class not found : "
+								+ e.getMessage());
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+				System.err.printf("Cannot create layout, class '" + layoutClassName
+						+ "' error : " + e.getMessage());
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+				System.err.printf("Cannot create layout, class '" + layoutClassName
+						+ "' illegal access : " + e.getMessage());
 			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			System.err
-					.printf("Cannot create layout, 'GraphRenderer' class not found : "
-							+ e.getMessage());
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-			System.err.printf("Cannot create layout, class '" + layoutClassName
-					+ "' error : " + e.getMessage());
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-			System.err.printf("Cannot create layout, class '" + layoutClassName
-					+ "' illegal access : " + e.getMessage());
 		}
 
-		return new org.graphstream.ui.layout.springbox.SpringBox(false);
+		return new org.graphstream.ui.layout.springbox.implementations.SpringBox(false);
 	}
 }

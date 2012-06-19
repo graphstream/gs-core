@@ -37,7 +37,7 @@ import org.graphstream.stream.ProxyPipe;
 import org.graphstream.stream.file.FileSourceDGS;
 import org.graphstream.stream.thread.ThreadProxyPipe;
 import org.graphstream.ui.layout.Layout;
-import org.graphstream.ui.layout.springbox.SpringBox;
+import org.graphstream.ui.layout.springbox.implementations.SpringBox;
 import org.graphstream.ui.swingViewer.Viewer;
 
 public class TestLayoutAndViewer {

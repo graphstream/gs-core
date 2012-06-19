@@ -29,9 +29,6 @@
  */
 package org.graphstream.ui.graphicGraph;
 
-import java.util.Iterator;
-import java.util.Random;
-
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;

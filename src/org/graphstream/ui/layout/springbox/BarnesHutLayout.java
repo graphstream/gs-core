@@ -92,7 +92,7 @@ import org.miv.pherd.ntree.QuadtreeCellSpace;
  * </ul>
  * </p>
  */
-public class SpringBox extends SourceBase implements Layout,
+public abstract class BarnesHutLayout extends SourceBase implements Layout,
 		ParticleBoxListener {
 
 	/**
@@ -158,7 +158,7 @@ public class SpringBox extends SourceBase implements Layout,
 	/**
 	 * The quality level.
 	 */
-	protected int quality = 1;
+	protected double quality = 1;
 
 	/**
 	 * Number of nodes per space-cell.
@@ -174,23 +174,6 @@ public class SpringBox extends SourceBase implements Layout,
 	 * The stabilization limit of this algorithm.
 	 */
 	protected double stabilizationLimit = 0.9;
-
-	// TODO specific Frutcherman Reingold attributes
-
-	/**
-	 * The optimal distance between nodes.
-	 */
-	protected double k = 1f;
-
-	/**
-	 * Default attraction.
-	 */
-	protected double K1 = 0.06f; // 0.3 ??
-
-	/**
-	 * Default repulsion.
-	 */
-	protected double K2 = 0.024f; // 0.12 ??
 
 	// Attributes -- Statistics
 
@@ -248,12 +231,15 @@ public class SpringBox extends SourceBase implements Layout,
 	 */
 	protected int sendMoveEventsEvery = 1;
 
+	/**
+	 * Sink time.
+	 */
 	protected SinkTime sinkTime;
 
 	/**
 	 * New 2D Barnes-Hut simulation.
 	 */
-	public SpringBox() {
+	public BarnesHutLayout() {
 		this(false);
 	}
 
@@ -263,7 +249,7 @@ public class SpringBox extends SourceBase implements Layout,
 	 * @param is3D
 	 *            If true the simulation dimensions count is 3 else 2.
 	 */
-	public SpringBox(boolean is3D) {
+	public BarnesHutLayout(boolean is3D) {
 		this(is3D, new Random(System.currentTimeMillis()));
 	}
 
@@ -275,7 +261,7 @@ public class SpringBox extends SourceBase implements Layout,
 	 * @param randomNumberGenerator
 	 *            The random number generator to use.
 	 */
-	public SpringBox(boolean is3D, Random randomNumberGenerator) {
+	public BarnesHutLayout(boolean is3D, Random randomNumberGenerator) {
 		CellSpace space;
 
 		this.is3D = is3D;
@@ -294,7 +280,7 @@ public class SpringBox extends SourceBase implements Layout,
 
 		nodes.addParticleBoxListener(this);
 		setQuality(quality);
-		
+
 		sinkTime = new SinkTime();
 		sourceTime.setSinkTime(sinkTime);
 	}
@@ -313,6 +299,7 @@ public class SpringBox extends SourceBase implements Layout,
 
 	/**
 	 * The spatial index as a n-tree.
+	 * 
 	 * @return The n-tree.
 	 */
 	public ParticleBox getSpatialIndex() {
@@ -350,16 +337,54 @@ public class SpringBox extends SourceBase implements Layout,
 		return time;
 	}
 
-	public int getQuality() {
+	public double getQuality() {
 		return quality;
+	}
+
+	public boolean is3D() {
+		return is3D;
 	}
 
 	public double getForce() {
 		return force;
 	}
 
+	public Random getRandom() {
+		return random;
+	}
+
+	public Energies getEnergies() {
+		return energies;
+	}
+
+	/**
+	 * The Barnes-Hut theta value used to know if we use a pole or not.
+	 * 
+	 * @return The theta value (between 0 and 1).
+	 */
+	public double getBarnesHutTheta() {
+		return theta;
+	}
+
+	public double getViewZone() {
+		return viewZone;
+	}
+
 	public void setSendNodeInfos(boolean on) {
 		sendNodeInfos = on;
+	}
+
+	/**
+	 * Change the barnes-hut theta parameter allowing to know if we use a pole
+	 * or not.
+	 * 
+	 * @param theta
+	 *            The new value for theta (between 0 and 1).
+	 */
+	public void setBarnesHutTheta(double theta) {
+		if (theta > 0 && theta < 1) {
+			this.theta = theta;
+		}
 	}
 
 	public void setForce(double value) {
@@ -370,30 +395,12 @@ public class SpringBox extends SourceBase implements Layout,
 		this.stabilizationLimit = value;
 	}
 
-	public void setQuality(int qualityLevel) {
+	public void setQuality(double qualityLevel) {
+		if (qualityLevel > 1)
+			qualityLevel = 1;
+		else if (qualityLevel < 0)
+			qualityLevel = 0;
 		quality = qualityLevel;
-
-		switch (qualityLevel) {
-		case 0:
-			viewZone = k;
-			break;
-		case 1:
-			viewZone = 2 * k;
-			break;
-		case 2:
-			viewZone = 5 * k;
-			break;
-		case 3:
-			viewZone = 10 * k;
-			break;
-		case 4:
-			System.err.printf("viewZone = -1%n");
-			viewZone = -1;
-			break;
-		default:
-			System.err.printf("invalid quality level %d%n", qualityLevel);
-			break;
-		}
 	}
 
 	public void clear() {
@@ -413,7 +420,7 @@ public class SpringBox extends SourceBase implements Layout,
 		t1 = System.currentTimeMillis();
 		nodeMoveCount = 0;
 		avgLength = 0;
-		
+
 		// All the movement computation is done in this call.
 		nodes.step();
 
@@ -468,7 +475,7 @@ public class SpringBox extends SourceBase implements Layout,
 	}
 
 	protected void addNode(String sourceId, String id) {
-		nodes.addParticle(new NodeParticle(this, id));
+		nodes.addParticle(newNodeParticle(id));
 	}
 
 	public void moveNode(String id, double x, double y, double z) {
@@ -501,7 +508,9 @@ public class SpringBox extends SourceBase implements Layout,
 		if (node != null) {
 			node.removeNeighborEdges();
 		} else {
-			System.err.printf("layout %s: cannot remove non existing node %s%n", getLayoutAlgorithmName(), id);
+			System.err.printf(
+					"layout %s: cannot remove non existing node %s%n",
+					getLayoutAlgorithmName(), id);
 		}
 	}
 
@@ -517,7 +526,8 @@ public class SpringBox extends SourceBase implements Layout,
 			if (o != null) {
 				// throw new SingletonException(
 				// "edge '"+id+"' already exists");
-				System.err.printf("layout %s: edge '%s' already exists%n", getLayoutAlgorithmName(), id);
+				System.err.printf("layout %s: edge '%s' already exists%n",
+						getLayoutAlgorithmName(), id);
 			} else {
 				n0.registerEdge(e);
 				n1.registerEdge(e);
@@ -525,30 +535,32 @@ public class SpringBox extends SourceBase implements Layout,
 
 			chooseNodePosition(n0, n1);
 		} else {
-			if(n0 == null) System.err.printf("layout %s: node '%s' does not exist, cannot create edge %s%n", getLayoutAlgorithmName(), from, id);
-			if(n1 == null) System.err.printf("layout %s: node '%s' does not exist, cannot create edge %s%n", getLayoutAlgorithmName(), to, id);
+			if (n0 == null)
+				System.err
+						.printf("layout %s: node '%s' does not exist, cannot create edge %s%n",
+								getLayoutAlgorithmName(), from, id);
+			if (n1 == null)
+				System.err
+						.printf("layout %s: node '%s' does not exist, cannot create edge %s%n",
+								getLayoutAlgorithmName(), to, id);
 		}
 	}
 
 	/**
-	 * Choose the best position for a node that was just connected by only one edge
-	 * to a cluster of nodes.
-	 * @param n0 source node of the edge.
-	 * @param n1 target node of the edge.
+	 * Choose the best position for a node that was just connected by only one
+	 * edge to a cluster of nodes.
+	 * 
+	 * @param n0
+	 *            source node of the edge.
+	 * @param n1
+	 *            target node of the edge.
 	 */
-	protected void chooseNodePosition(NodeParticle n0, NodeParticle n1) {
-		double delta = k*0.0001;
-		if (n0.getEdges().size() == 1 && n1.getEdges().size() > 1) {
-			org.miv.pherd.geom.Point3 pos = n1.getPosition();
-			n0.moveTo(pos.x+delta, pos.y+delta, pos.z+delta);
-		} else if (n1.getEdges().size() == 1 && n0.getEdges().size() > 1) {
-			org.miv.pherd.geom.Point3 pos = n0.getPosition();
-			n1.moveTo(pos.x+delta, pos.y+delta, pos.z+delta);
-		}
-	}
+	protected abstract void chooseNodePosition(NodeParticle n0, NodeParticle n1);
 
 	protected void addEdgeBreakPoint(String edgeId, int points) {
-		System.err.printf("layout %s: edge break points are not handled yet.%n", getLayoutAlgorithmName());
+		System.err.printf(
+				"layout %s: edge break points are not handled yet.%n",
+				getLayoutAlgorithmName());
 	}
 
 	protected void ignoreEdge(String edgeId, boolean on) {
@@ -573,7 +585,9 @@ public class SpringBox extends SourceBase implements Layout,
 			e.node0.unregisterEdge(e);
 			e.node1.unregisterEdge(e);
 		} else {
-			System.err.printf("layout %s: cannot remove non existing edge %s%n", getLayoutAlgorithmName(), id);
+			System.err.printf(
+					"layout %s: cannot remove non existing edge %s%n",
+					getLayoutAlgorithmName(), id);
 		}
 	}
 
@@ -596,8 +610,7 @@ public class SpringBox extends SourceBase implements Layout,
 			xyz[1] = y;
 			xyz[2] = z;
 
-			sendNodeAttributeChanged(sourceId, (String) id,
-					"xyz", xyz, xyz);
+			sendNodeAttributeChanged(sourceId, (String) id, "xyz", xyz, xyz);
 		}
 	}
 
@@ -612,52 +625,52 @@ public class SpringBox extends SourceBase implements Layout,
 	}
 
 	// SourceBase interface
-	
+
 	public void edgeAdded(String graphId, long time, String edgeId,
 			String fromNodeId, String toNodeId, boolean directed) {
-		if(sinkTime.isNewEvent(graphId, time)) {
+		if (sinkTime.isNewEvent(graphId, time)) {
 			addEdge(graphId, edgeId, fromNodeId, toNodeId, directed);
 			sendEdgeAdded(graphId, time, edgeId, fromNodeId, toNodeId, directed);
 		}
 	}
 
 	public void nodeAdded(String graphId, long time, String nodeId) {
-		if(sinkTime.isNewEvent(graphId, time)) {
+		if (sinkTime.isNewEvent(graphId, time)) {
 			addNode(graphId, nodeId);
 			sendNodeAdded(graphId, time, nodeId);
 		}
 	}
 
 	public void edgeRemoved(String graphId, long time, String edgeId) {
-		if(sinkTime.isNewEvent(graphId, time)) {
+		if (sinkTime.isNewEvent(graphId, time)) {
 			removeEdge(graphId, edgeId);
 			sendEdgeRemoved(graphId, time, edgeId);
 		}
 	}
 
 	public void nodeRemoved(String graphId, long time, String nodeId) {
-		if(sinkTime.isNewEvent(graphId, time)) {
-				removeNode(graphId, nodeId);
-				sendNodeRemoved(graphId, time, nodeId);
+		if (sinkTime.isNewEvent(graphId, time)) {
+			removeNode(graphId, nodeId);
+			sendNodeRemoved(graphId, time, nodeId);
 		}
 	}
 
 	public void graphCleared(String graphId, long time) {
-		if(sinkTime.isNewEvent(graphId, time)) {
+		if (sinkTime.isNewEvent(graphId, time)) {
 			clear();
 			sendGraphCleared(graphId, time);
 		}
 	}
 
 	public void stepBegins(String graphId, long time, double step) {
-		if(sinkTime.isNewEvent(graphId, time)) {
+		if (sinkTime.isNewEvent(graphId, time)) {
 			sendStepBegins(graphId, time, step);
 		}
 	}
 
 	public void graphAttributeAdded(String graphId, long time,
 			String attribute, Object value) {
-		if(sinkTime.isNewEvent(graphId, time)) {
+		if (sinkTime.isNewEvent(graphId, time)) {
 			graphAttributeChanged_(graphId, attribute, null, value);
 			sendGraphAttributeAdded(graphId, time, attribute, value);
 		}
@@ -665,9 +678,10 @@ public class SpringBox extends SourceBase implements Layout,
 
 	public void graphAttributeChanged(String graphId, long time,
 			String attribute, Object oldValue, Object newValue) {
-		if(sinkTime.isNewEvent(graphId, time)) {
+		if (sinkTime.isNewEvent(graphId, time)) {
 			graphAttributeChanged_(graphId, attribute, oldValue, newValue);
-			sendGraphAttributeChanged(graphId, time, attribute, oldValue, newValue);
+			sendGraphAttributeChanged(graphId, time, attribute, oldValue,
+					newValue);
 		}
 	}
 
@@ -729,14 +743,14 @@ public class SpringBox extends SourceBase implements Layout,
 
 	public void graphAttributeRemoved(String graphId, long time,
 			String attribute) {
-		if(sinkTime.isNewEvent(graphId, time)) {
+		if (sinkTime.isNewEvent(graphId, time)) {
 			sendGraphAttributeRemoved(graphId, time, attribute);
 		}
 	}
 
 	public void nodeAttributeAdded(String graphId, long time, String nodeId,
 			String attribute, Object value) {
-		if(sinkTime.isNewEvent(graphId, time)) {
+		if (sinkTime.isNewEvent(graphId, time)) {
 			nodeAttributeChanged_(graphId, nodeId, attribute, null, value);
 			sendNodeAttributeAdded(graphId, time, nodeId, attribute, value);
 		}
@@ -744,10 +758,11 @@ public class SpringBox extends SourceBase implements Layout,
 
 	public void nodeAttributeChanged(String graphId, long time, String nodeId,
 			String attribute, Object oldValue, Object newValue) {
-		if(sinkTime.isNewEvent(graphId, time)) {
-			nodeAttributeChanged_(graphId, nodeId, attribute, oldValue, newValue);
-			sendNodeAttributeChanged(graphId, time, nodeId, attribute, oldValue,
-				newValue);
+		if (sinkTime.isNewEvent(graphId, time)) {
+			nodeAttributeChanged_(graphId, nodeId, attribute, oldValue,
+					newValue);
+			sendNodeAttributeChanged(graphId, time, nodeId, attribute,
+					oldValue, newValue);
 		}
 	}
 
@@ -760,18 +775,30 @@ public class SpringBox extends SourceBase implements Layout,
 				setNodeWeight(nodeId, 1);
 
 			energies.clearEnergies();
-		} else if(attribute.equals("layout.frozen")) {
+		} else if (attribute.equals("layout.frozen")) {
 			freezeNode(nodeId, (newValue != null));
-		} else if(attribute.equals("xyz")) {
+		} else if (attribute.equals("xyz") || attribute.equals("xy")) {
 			double xyz[] = new double[3];
 			GraphPosLengthUtils.positionFromObject(newValue, xyz);
 			moveNode(nodeId, xyz[0], xyz[1], xyz[2]);
+		} else if (attribute.equals("x") && newValue instanceof Number) {
+			NodeParticle node = (NodeParticle) nodes.getParticle(nodeId);
+			if (node != null) {
+				moveNode(nodeId, ((Number) newValue).doubleValue(),
+						node.getPosition().y, node.getPosition().z);
+			}
+		} else if (attribute.equals("y") && newValue instanceof Number) {
+			NodeParticle node = (NodeParticle) nodes.getParticle(nodeId);
+			if (node != null) {
+				moveNode(nodeId, node.getPosition().x,
+						((Number) newValue).doubleValue(), node.getPosition().z);
+			}
 		}
 	}
 
 	public void nodeAttributeRemoved(String graphId, long time, String nodeId,
 			String attribute) {
-		if(sinkTime.isNewEvent(graphId, time)) {
+		if (sinkTime.isNewEvent(graphId, time)) {
 			nodeAttributeChanged_(graphId, nodeId, attribute, null, null);
 			sendNodeAttributeRemoved(graphId, time, nodeId, attribute);
 		}
@@ -779,7 +806,7 @@ public class SpringBox extends SourceBase implements Layout,
 
 	public void edgeAttributeAdded(String graphId, long time, String edgeId,
 			String attribute, Object value) {
-		if(sinkTime.isNewEvent(graphId, time)) {
+		if (sinkTime.isNewEvent(graphId, time)) {
 			edgeAttributeChanged_(graphId, edgeId, attribute, null, value);
 			sendEdgeAttributeAdded(graphId, time, edgeId, attribute, value);
 		}
@@ -787,10 +814,11 @@ public class SpringBox extends SourceBase implements Layout,
 
 	public void edgeAttributeChanged(String graphId, long time, String edgeId,
 			String attribute, Object oldValue, Object newValue) {
-		if(sinkTime.isNewEvent(graphId, time)) {
-			edgeAttributeChanged_(graphId, edgeId, attribute, oldValue, newValue);
-			sendEdgeAttributeChanged(graphId, time, edgeId, attribute, oldValue,
-				newValue);
+		if (sinkTime.isNewEvent(graphId, time)) {
+			edgeAttributeChanged_(graphId, edgeId, attribute, oldValue,
+					newValue);
+			sendEdgeAttributeChanged(graphId, time, edgeId, attribute,
+					oldValue, newValue);
 		}
 	}
 
@@ -812,9 +840,18 @@ public class SpringBox extends SourceBase implements Layout,
 
 	public void edgeAttributeRemoved(String graphId, long time, String edgeId,
 			String attribute) {
-		if(sinkTime.isNewEvent(graphId, time)) {
+		if (sinkTime.isNewEvent(graphId, time)) {
 			edgeAttributeChanged_(graphId, edgeId, attribute, null, null);
 			sendEdgeRemoved(attribute, time, edgeId);
 		}
 	}
+
+	/**
+	 * Factory method to create node particles.
+	 * 
+	 * @param id
+	 *            The identifier of the new node/particle.
+	 * @return The new node/particle.
+	 */
+	public abstract NodeParticle newNodeParticle(String id);
 }

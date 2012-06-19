@@ -131,12 +131,12 @@ public interface Layout extends Pipe {
 	long getLastStepTime();
 
 	/**
-	 * The current layout algorithm quality. There are five quality levels. The
-	 * higher the level, the higher the quality.
+	 * The current layout algorithm quality. A number between 0 and 1
+	 * with 1 the highest (but probably slowest) quality.
 	 * 
-	 * @return A number between 0 and 4.
+	 * @return A number between 0 and 1.
 	 */
-	int getQuality();
+	double getQuality();
 
 	/**
 	 * The current layout force.
@@ -195,12 +195,13 @@ public interface Layout extends Pipe {
 	void setStabilizationLimit(double value);
 
 	/**
-	 * Set the overall quality level. There are five quality levels.
+	 * Set the overall quality level, a number between 0 and 1 with 1 the highest
+	 * quality available, but often with a slower computation.
 	 * 
 	 * @param qualityLevel
-	 *            The quality level in [0..4].
+	 *            The quality level, a number between 0 and 1.
 	 */
-	void setQuality(int qualityLevel);
+	void setQuality(double qualityLevel);
 
 	/**
 	 * If true, node informations messages are sent for every node. This is

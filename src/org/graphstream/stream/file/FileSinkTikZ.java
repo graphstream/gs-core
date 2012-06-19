@@ -47,7 +47,7 @@ import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.GraphicNode;
 import org.graphstream.ui.graphicGraph.StyleGroup;
 import org.graphstream.ui.graphicGraph.StyleGroupSet;
-import org.graphstream.ui.layout.springbox.SpringBox;
+import org.graphstream.ui.layout.springbox.implementations.SpringBox;
 
 /**
  * An export of a graph to PGF/TikZ format.
