@@ -186,6 +186,16 @@ public abstract class View extends JPanel {
 	public abstract void endSelectionAt(double x2, double y2);
 
 	/**
+	 * Freeze an element so that the optional layout cannot move it.
+	 * 
+	 * @param element
+	 * 			The element.
+	 * @param frozen
+	 * 			If true the element cannot be moved automatically.
+	 */
+	public abstract void freezeElement(GraphicElement element, boolean frozen);
+	
+	/**
 	 * Force an element to move at the given location in pixels.
 	 * 
 	 * @param element

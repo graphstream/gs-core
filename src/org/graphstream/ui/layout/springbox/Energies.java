@@ -30,13 +30,35 @@
 package org.graphstream.ui.layout.springbox;
 
 /**
- * Represent the history of energy values for a layout algorithm.
+ * Represent the history of energy values for a force-based layout algorithm.
+ * 
+ * <p>
+ * The main intended usage is with the various force layout algorithms that use a
+ * an "energy" minimization process to compute a layout. This class allows to store
+ * the energy at a current step of layout computation and to remember a history of
+ * such steps.
+ * </p>
+ * 
+ * <p>
+ * At a current step of layout computation, one can accumulate energy in the current
+ * cell of the energies buffer using {@link #accumulateEnergy(double)}. When the step
+ * finishes, one calls {@link #storeEnergy()} to store this accumulated energy in 
+ * a cell of the memory, push a new cell on the memory and therefore start a new step.
+ * </p>
+ * 
+ * <p>
+ * At any time you can get the last energy value computed with {@link #getEnergy()}.
+ * Be careful this is not the energy currently accumulated but the value of the last
+ * energy stored with {@link #storeEnergy()}. You can also get at any time the average
+ * energy in the memory with {@link #getAverageEnergy()}, as well as an estimate of
+ * the stabilization (how much the energies are varying) using {@link #getStabilization()}.
+ * </p>
  */
 public class Energies {
-	// Attributes
-
 	/**
-	 * Global current energy (maybe actually updated).
+	 * Global current energy (maybe actually updated). This is where users of this
+	 * class add energy for their current computation step. When finished this
+	 * energy value is stored in the energy buffer and cleared.
 	 */
 	protected double energy;
 
@@ -46,7 +68,7 @@ public class Energies {
 	protected double lastEnergy;
 
 	/**
-	 * The number of energy values remembered.
+	 * Memory. The number of energy values remembered.
 	 */
 	protected int energiesBuffer = 256;
 
@@ -60,11 +82,10 @@ public class Energies {
 	 */
 	protected int energiesPos = 0;
 	
+	/**
+	 * The sum of all memorized energies.
+	 */
 	protected double energySum = 0;
-
-	// Constructor
-
-	// Access
 
 	/**
 	 * The last computed energy value.
@@ -76,16 +97,16 @@ public class Energies {
 	}
 
 	/**
-	 * The number of energy values remembered.
+	 * The number of energy values remembered, the memory.
 	 */
 	public int getBufferSize() {
 		return energiesBuffer;
 	}
 
 	/**
-	 * A number in [0..1] with 1 meaning fully stabilised.
+	 * A number in [0..1] with 1 meaning fully stabilized.
 	 * 
-	 * @return A value that indicates the level of stabilisation in [0-1].
+	 * @return A value that indicates the level of stabilization in [0-1].
 	 */
 	public double getStabilization() {
 		// The stability is attained when the global energy of the graph do not
@@ -115,7 +136,8 @@ public class Energies {
 	 * A previous energy value.
 	 * 
 	 * @param stepsBack
-	 *            The number of steps back in history.
+	 *            The number of steps back in history. This number must not be larger than
+	 *            the size of the memory (energy buffer) else it is set to this size.
 	 * @return The energy value at stepsBack in time.
 	 */
 	public double getPreviousEnergyValue(int stepsBack) {
@@ -128,13 +150,11 @@ public class Energies {
 		return energies[pos];
 	}
 
-	// Command
-
 	/**
-	 * Accumulate some energy in the current energy.
+	 * Accumulate some energy in the current energy cell.
 	 * 
 	 * @param value
-	 *            The value to accumulate.
+	 *            The value to accumulate to the current cell.
 	 */
 	public void accumulateEnergy(double value) {
 		energy += value;
@@ -154,7 +174,7 @@ public class Energies {
 	}
 
 	/**
-	 * Randomise the energies array.
+	 * Randomize the energies array.
 	 */
 	protected void clearEnergies() {
 		for (int i = 0; i < energies.length; ++i)

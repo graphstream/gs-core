@@ -303,7 +303,7 @@ public abstract class GraphicElement extends AbstractElement {
 
 	static {
 		acceptedAttribute = Pattern
-				.compile("(ui\\..*)|x|y|z|xy|xyz|label|stylesheet");
+				.compile("(ui\\..*)|(layout\\..*)|x|y|z|xy|xyz|label|stylesheet");
 	}
 
 	@Override

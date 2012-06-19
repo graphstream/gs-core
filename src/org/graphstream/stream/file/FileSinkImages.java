@@ -429,7 +429,7 @@ public class FileSinkImages implements FileSink, LayoutListener {
 		if (policy != layoutPolicy) {
 			switch (layoutPolicy) {
 			case COMPUTED_IN_LAYOUT_RUNNER:
-				layout.removeListener(this);
+//				layout.removeListener(this);
 				optLayout.release();
 				optLayout = null;
 				layoutPipeIn.removeAttributeSink(gg);
@@ -437,7 +437,7 @@ public class FileSinkImages implements FileSink, LayoutListener {
 				layout = null;
 				break;
 			case COMPUTED_ONCE_AT_NEW_IMAGE:
-				layout.removeListener(this);
+//				layout.removeListener(this);
 				gg.removeSink(layout);
 				layout.removeAttributeSink(gg);
 				layout = null;
@@ -457,7 +457,7 @@ public class FileSinkImages implements FileSink, LayoutListener {
 				break;
 			}
 
-			layout.addListener(this);
+//			layout.addListener(this);
 			layoutPolicy = policy;
 		}
 	}

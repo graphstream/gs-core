@@ -66,8 +66,11 @@ public class TestLayoutAndViewer {
 		dgs.addSink(graph);
 		try {
 			dgs.begin(getClass().getResourceAsStream(GRAPH));
-			for (int i = 0; i < 5000 && dgs.nextEvents(); i++)
-				;
+			for (int i = 0; i < 5000 && dgs.nextEvents(); i++) {
+				fromViewer.pump();
+				layout.compute();
+				//sleep(5);
+			}
 			dgs.end();
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -80,15 +83,16 @@ public class TestLayoutAndViewer {
 			if (graph.hasAttribute("ui.viewClosed")) {
 				loop = false;
 			} else {
-				try {
-					Thread.sleep(20);
-				} catch (Exception e) {
-				}
+				sleep(20);
 				layout.compute();
 			}
 		}
 
 		System.exit(0);
+	}
+	
+	protected static void sleep(long ms) {
+		try { Thread.sleep(ms); } catch(Exception e) {} 
 	}
 
 	protected static String styleSheet = "node { size: 3px; fill-color: rgb(150,150,150); }"

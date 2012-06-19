@@ -323,6 +323,15 @@ public class DefaultView extends View implements WindowListener
 	public void moveElementAtPx(GraphicElement element, double x, double y) {
 		renderer.moveElementAtPx(element, x, y);
 	}
+	
+	@Override
+	public void freezeElement(GraphicElement element, boolean frozen) {
+		if(frozen) {
+			element.addAttribute("layout.frozen");
+		} else {
+			element.removeAttribute("layout.frozen");
+		}
+	}
 
 	@Override
 	public void setBackLayerRenderer(LayerRenderer renderer) {

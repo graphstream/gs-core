@@ -37,14 +37,11 @@ import java.util.Iterator;
 import java.util.Locale;
 
 import org.graphstream.ui.geom.Vector3;
-//import org.graphstream.ui.layout.LayoutListener;
 import org.miv.pherd.Particle;
 import org.miv.pherd.ntree.BarycenterCellData;
 import org.miv.pherd.ntree.Cell;
 
 public class NodeParticle extends Particle {
-	// Attributes
-
 	/**
 	 * Set of edge connected to this node.
 	 */
@@ -89,6 +86,8 @@ public class NodeParticle extends Particle {
 
 	/**
 	 * New node.
+	 * 
+	 * The node is placed at random in the space of the simulation.
 	 * 
 	 * @param box
 	 *            The spring box.
@@ -140,8 +139,6 @@ public class NodeParticle extends Particle {
 		}
 	}
 
-	// Access
-
 	/**
 	 * All the edges connected to this node.
 	 * 
@@ -150,8 +147,6 @@ public class NodeParticle extends Particle {
 	public Collection<EdgeSpring> getEdges() {
 		return neighbours;
 	}
-
-	// Commands
 
 	@Override
 	public void move(int time) {
@@ -170,13 +165,6 @@ public class NodeParticle extends Particle {
 
 			attraction(delta);
 
-			// int N = neighbours.size();
-			// if( N > 40 )
-			// System.err.printf( "* BIG ** [%05d] rep=%05.5f att=%05.5f%n", N,
-			// repE, attE );
-			// else System.err.printf(
-			// "  Small  [%05d] rep=%05.5f att=%05.5f%n", N, repE, attE );
-
 			disp.scalarMult(box.force);
 
 			len = disp.length();
@@ -190,12 +178,14 @@ public class NodeParticle extends Particle {
 
 			if (len > box.maxMoveLength)
 				box.maxMoveLength = len;
+		} else {
+			disp.set(0, 0, 0);
 		}
 	}
 
 	@Override
 	public void nextStep(int time) {
-		// if( len > box.area * 0.0000001f )
+		if(! frozen) 
 		{
 			nextPos.x = pos.x + disp.data[0];
 			nextPos.y = pos.y + disp.data[1];
@@ -205,16 +195,13 @@ public class NodeParticle extends Particle {
 
 			box.nodeMoveCount++;
 			moved = true;
+		} else {
+			nextPos.x = pos.x;
+			nextPos.y = pos.y;
+			if(box.is3D)
+				nextPos.z = pos.z;
 		}
 
-		// Eventually output movement information to the listeners.
-
-//		if (box.sendNodeInfos) {
-//			for (LayoutListener listener : box.listeners)
-//				listener.nodeInfos((String) id, disp.data[0],
-//						disp.data[1], box.is3D ? disp.data[2]
-//								: 0);
-//		}
 
 		if (out != null) {
 			out.printf(Locale.US, "%s %f %f %f%n", getId(), len, attE, repE);
@@ -224,8 +211,24 @@ public class NodeParticle extends Particle {
 		super.nextStep(time);
 	}
 
-	public void move(double dx, double dy, double dz) {
+	/**
+	 * Force a node to move from a given vector.
+	 * @param dx The x component.
+	 * @param dy The y component.
+	 * @param dz The z component.
+	 */
+	public void moveOf(double dx, double dy, double dz) {
 		pos.set(pos.x + dx, pos.y + dy, pos.z + dz);
+	}
+	
+	/**
+	 * Force a node to move at a given position.
+	 * @param x The new x.
+	 * @param y The new y.
+	 * @param z The new z.
+	 */
+	public void moveTo(double x, double y, double z) {
+		pos.set(x, y, z);
 	}
 
 	/**
@@ -270,23 +273,8 @@ public class NodeParticle extends Particle {
 		// of one cell only if it does intersect an area around the current
 		// node. Else take its (weighted) barycenter into account.
 
-		// nDirect = 0;
 		recurseRepulsion(box.nodes.getNTree().getRootCell(), delta);
-		/*
-		 * System.err.printf( "enlarge view -> %f!%n", box.viewZone );
-		 * directCount = 0; // directCount2 = 100000; } }
-		 *//*
-			 * else { directCount2--;
-			 * 
-			 * if( directCount2 <= 0 ) { box.viewZone--; System.err.printf(
-			 * "shrink view -> %f!%n", box.viewZone ); directCount2 = 100000; }
-			 * }
-			 *//*
-				 * else if( nDirect > 200 ) { directCount2++;
-				 * 
-				 * if( directCount2 > 100 ) { box.viewZone--; System.err.printf(
-				 * "strech view -> %f!%n", box.viewZone ); directCount2 = 0; } }
-				 */}
+	}
 
 	protected void recurseRepulsion(Cell cell, Vector3 delta) {
 		if (intersection(cell)) {
@@ -338,9 +326,6 @@ public class NodeParticle extends Particle {
 						recurseRepulsion(cell.getSub(i), delta);
 				} else {
 					if (bary.weight != 0) {
-						// System.err.printf(
-						// "applying bary %s [depth=%d weight=%d]%n",
-						// cell.getId(), cell.getDepth(), (int)bary.weight );
 						delta.set(bary.center.x - pos.x, bary.center.y - pos.y,
 								box.is3D ? bary.center.z - pos.z : 0);
 
@@ -378,17 +363,13 @@ public class NodeParticle extends Particle {
 				double factor = box.K1 * (len - k);
 
 				// delta.scalarMult( factor );
-				delta.scalarMult(factor * (1f / (neighbours.size() * 0.1f))); // XXX
-																				// NEW
-																				// inertia
-																				// based
-																				// on
-																				// the
-																				// node
-																				// degree.
+				delta.scalarMult(factor * (1f / (neighbours.size() * 0.1f)));
+				// ^^^ XXX NEW inertia based on the node degree. This is one
+				// of the amelioration of the Spring-Box algorithm. Compare
+				// it to the Force-Atlas algorithm that does this on **repulsion**.
+				
 				disp.add(delta);
 				attE += factor;
-
 				box.energies.accumulateEnergy(factor);
 			}
 		}
@@ -401,6 +382,7 @@ public class NodeParticle extends Particle {
 		double x1 = cell.getSpace().getLoAnchor().x;
 		double y1 = cell.getSpace().getLoAnchor().y;
 		double z1 = cell.getSpace().getLoAnchor().z;
+
 		double x2 = cell.getSpace().getHiAnchor().x;
 		double y2 = cell.getSpace().getHiAnchor().y;
 		double z2 = cell.getSpace().getHiAnchor().z;
@@ -411,23 +393,6 @@ public class NodeParticle extends Particle {
 		double X2 = pos.x + (k * vz);
 		double Y2 = pos.y + (k * vz);
 		double Z2 = pos.z + (k * vz);
-
-		// Only when the area is before or after the cell there cannot
-		// exist an intersection (case a and b). Else there must be an
-		// intersection (cases c, d, e and f).
-		//
-		// |-a-| +---------+ |-b-|
-		// | |
-		// |-c-| |-d-|
-		// | |
-		// | |-e-| |
-		// | |
-		// |-+----f----+-|
-		// | |
-		// +---------+
-		//
-		// (04/21/11) here lies my beautiful comment. Sorry if it is
-		// no more readable, barbarians ruined it.
 
 		if (X2 < x1 || X1 > x2)
 			return false;
@@ -492,13 +457,10 @@ public class NodeParticle extends Particle {
 
 	@Override
 	public void inserted() {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void removed() {
-		// TODO Auto-generated method stub
-
 	}
 }

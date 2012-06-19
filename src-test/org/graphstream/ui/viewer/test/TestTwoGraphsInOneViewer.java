@@ -53,7 +53,7 @@ public class TestTwoGraphsInOneViewer {
 		graph1.addAttribute("ui.stylesheet", styleSheet1);
 		graph2.addAttribute("ui.stylesheet", styleSheet2);
 		//View view1 =
-				viewer1.addDefaultView(true);
+		viewer1.addDefaultView(true);
 		viewer2.addDefaultView(true);
 		viewer1.enableAutoLayout();
 		viewer2.enableAutoLayout();

@@ -33,6 +33,11 @@ import org.graphstream.ui.geom.Vector3;
 
 /**
  * Edge representation.
+ * 
+ * <p>
+ * This is mainly used to store data about an edge, all the computation is done
+ * in the node particle.
+ * </p>
  */
 public class EdgeSpring {
 	/**
@@ -95,29 +100,6 @@ public class EdgeSpring {
 	 * @return The other node.
 	 */
 	public NodeParticle getOpposite(NodeParticle node) {
-		if (node0 == node)
-			return node1;
-
-		return node0;
-	}
-
-	/**
-	 * Compute the attraction force on this edge.
-	 */
-	public void attraction() {
-		if (!ignored) {
-			/*
-			 * Point3 p0 = node0.getPosition(); Point3 p1 = node1.getPosition();
-			 * 
-			 * spring.set( p1.x - p0.x, p1.y - p0.y, is3D ? p1.z - p0.z : 0 );
-			 * 
-			 * double len = spring.normalize();
-			 * 
-			 * if( k != 0 ) { double factor = ( len*len/k ) * weight *
-			 * node0.getWeight() * node1.getWeight(); energy += factor*2;
-			 * spring.scalarMult( factor );
-			 * 
-			 * attE = factor; }
-			 */}
+		return node0 == node ? node1 : node0;
 	}
 }

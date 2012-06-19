@@ -94,10 +94,10 @@ public interface Layout extends Pipe {
 	 * How many nodes moved during the last step?. When this method returns
 	 * zero, the layout stabilized.
 	 */
-	int getNodeMoved();
+	int getNodeMovedCount();
 
 	/**
-	 * How close to stabilization the layout algorithm is.
+	 * Estimate of how close to stabilization the layout algorithm is.
 	 * @return a value between 0 and 1. 1 means fully stabilized.
 	 */
 	double getStabilization();
@@ -147,16 +147,6 @@ public interface Layout extends Pipe {
 	 * Clears the whole nodes and edges structures
 	 */
 	void clear();
-
-	/**
-	 * Add a listener for specific layout events.
-	 */
-	void addListener(LayoutListener listener);
-
-	/**
-	 * Remove a listener for specific layout events.
-	 */
-	void removeListener(LayoutListener listener);
 
 	/**
 	 * The general "speed" of the algorithm. For some algorithm this will have no effect. For most
@@ -210,10 +200,12 @@ public interface Layout extends Pipe {
 
 	/**
 	 * If true, node informations messages are sent for every node. This is
-	 * mainly for debugging and slows down the process a lot.
+	 * mainly for debugging and slows down the process a lot. The contents of
+	 * the node information is specific to the algorithm, and sent via a
+	 * specific "layout.info" attribute.
 	 * 
 	 * @param send
-	 *            If true, send node informations.
+	 *            If true, send node informations to a "layout.info" attribute.
 	 */
 	void setSendNodeInfos(boolean send);
 
@@ -224,7 +216,8 @@ public interface Layout extends Pipe {
 	void shake();
 
 	/**
-	 * Move a node by force to a new location.
+	 * Move a node by force to a new location. It is preferable to first freeze the node
+	 * before moving it by force, and then un-freeze it.
 	 * 
 	 * @param id
 	 *            The node identifier.
@@ -238,7 +231,8 @@ public interface Layout extends Pipe {
 	void moveNode(String id, double x, double y, double z);
 
 	/**
-	 * Freeze or un-freeze a node.
+	 * Freeze or un-freeze a node. The freezed node position will not be changed by the
+	 * algorithm until un-freezed.
 	 * 
 	 * @param id
 	 *            The node identifier.
@@ -253,7 +247,7 @@ public interface Layout extends Pipe {
 	 * <p>
 	 * This method implements the layout algorithm proper. It must be called in
 	 * a loop, until the layout stabilizes. You can know if the layout is stable
-	 * by using the {@link #getNodeMoved()} method that returns the number of
+	 * by using the {@link #getNodeMovedCount()} method that returns the number of
 	 * node that have moved during the last call to step().
 	 * </p>
 	 * 
@@ -266,27 +260,4 @@ public interface Layout extends Pipe {
 	 * </p>
 	 */
 	void compute();
-
-	/**
-	 * Read the nodes positions from a file. See {@link #outputPos(String)} for
-	 * the file format.
-	 */
-	void inputPos(String filename) throws java.io.IOException;
-
-	/**
-	 * Output the nodes positions to a file. The file format is
-	 * <ul>
-	 * <li>each line gives the position of one node.</li>
-	 * <li>the list starts with the node identifier (maybe between quotes if
-	 * needed).</li>
-	 * <li>a colon.
-	 * <li>
-	 * <li>and a list of two to three double numbers indicating the position of
-	 * the node in a given space.</li>
-	 * <li>Empty lines are ignored.</li>
-	 * <li>Lines beginning with an arbitrary number of spaces and then a sharp
-	 * sign (#) are ignored.</li>
-	 * </ul>
-	 */
-	void outputPos(String filename) throws java.io.IOException;
 }

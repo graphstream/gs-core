@@ -98,10 +98,12 @@ public class DefaultMouseManager implements MouseManager {
 
 	protected void mouseButtonPressOnElement(GraphicElement element,
 			MouseEvent event) {
-		if (event.getButton() == 3)
+		view.freezeElement(element, true);
+		if (event.getButton() == 3) {
 			element.addAttribute("ui.selected");
-		else
+		} else {
 			element.addAttribute("ui.clicked");
+		}
 	}
 
 	protected void elementMoving(GraphicElement element, MouseEvent event) {
@@ -110,8 +112,11 @@ public class DefaultMouseManager implements MouseManager {
 
 	protected void mouseButtonReleaseOffElement(GraphicElement element,
 			MouseEvent event) {
-		if (event.getButton() != 3)
+		view.freezeElement(element, false);
+		if (event.getButton() != 3) {
 			element.removeAttribute("ui.clicked");
+		} else {
+		}
 	}
 
 	// Mouse Listener

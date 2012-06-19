@@ -150,7 +150,7 @@ public interface GraphRenderer {
 	 */
 	public abstract void moveElementAtPx(GraphicElement element, double x,
 			double y);
-
+	
 	public abstract void screenshot(String filename, int width, int height);
 
 	/**
