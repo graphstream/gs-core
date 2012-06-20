@@ -38,8 +38,6 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Vector;
 
-import junit.framework.Assert;
-
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
