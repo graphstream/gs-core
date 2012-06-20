@@ -100,12 +100,19 @@ public class SpringBoxNodeParticle extends NodeParticle {
 						is3D ? node.pos.z - pos.z : 0);
 
 				double len = delta.normalize();
-				double factor = len != 0 ? ((box.K2 / (len * len)) * node.weight)
-						: 0.00001f;
 
-				delta.scalarMult(-factor);
-				disp.add(delta);
-				energies.accumulateEnergy(factor); // TODO check this
+				if(len > 0) {
+					if (len < box.k)
+						len = box.k; // XXX NEW To prevent infinite
+									// repulsion.
+				
+					double factor = len != 0 ? ((box.K2 / (len * len)) * node.weight)
+						: 0.00001;
+
+					energies.accumulateEnergy(factor); // TODO check this
+					delta.scalarMult(-factor);
+					disp.add(delta);
+				}
 			}
 		}
 	}
@@ -129,12 +136,10 @@ public class SpringBoxNodeParticle extends NodeParticle {
 				Iterator<? extends Particle> i = cell.getParticles();
 
 				while (i.hasNext()) {
-					NodeParticle node = (NodeParticle) i.next();
+					SpringBoxNodeParticle node = (SpringBoxNodeParticle) i.next();
 
 					if (node != this) {
-						Point3 opos = node.getPosition();
-
-						delta.set(opos.x - pos.x, opos.y - pos.y, is3D ? opos.z
+						delta.set(node.pos.x - pos.x, node.pos.y - pos.y, is3D ? node.pos.z
 								- pos.z : 0);
 
 						double len = delta.normalize();
@@ -145,12 +150,11 @@ public class SpringBoxNodeParticle extends NodeParticle {
 								len = box.k; // XXX NEW To prevent infinite
 												// repulsion.
 							double factor = len != 0 ? ((box.K2 / (len * len)) * node
-									.getWeight()) : 0.00001;
+									.weight) : 0.00001;
 							energies.accumulateEnergy(factor); // TODO check
 																// this
 							repE += factor;
 							delta.scalarMult(-factor);
-
 							disp.add(delta);
 						}
 					}

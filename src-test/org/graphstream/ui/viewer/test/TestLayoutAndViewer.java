@@ -40,6 +40,17 @@ import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.layout.springbox.implementations.SpringBox;
 import org.graphstream.ui.swingViewer.Viewer;
 
+/**
+ * This test creates a layout (instead of using the default layout of
+ * the viewer) and creates a loop :
+ * 
+ * <pre>
+ *   Graph ------> Layout --+
+ *     ^                    |
+ *     |                    |
+ *     +--------------------+
+ * </pre>
+ */
 public class TestLayoutAndViewer {
 	public static final String GRAPH = "data/dorogovtsev_mendes6000.dgs";
 
@@ -49,7 +60,7 @@ public class TestLayoutAndViewer {
 
 	public TestLayoutAndViewer() {
 		boolean loop = true;
-		Graph graph = new MultiGraph("g1");
+		Graph graph = new MultiGraph("test");
 		Viewer viewer = new Viewer(new ThreadProxyPipe(graph));
 		ProxyPipe fromViewer = viewer.newThreadProxyOnGraphicGraph();
 		Layout layout = new SpringBox(false);
@@ -69,7 +80,7 @@ public class TestLayoutAndViewer {
 			for (int i = 0; i < 5000 && dgs.nextEvents(); i++) {
 				fromViewer.pump();
 				layout.compute();
-				//sleep(5);
+				sleep(1);
 			}
 			dgs.end();
 		} catch (IOException e1) {

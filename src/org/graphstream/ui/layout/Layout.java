@@ -29,6 +29,8 @@
  */
 package org.graphstream.ui.layout;
 
+import javax.xml.transform.Source;
+
 import org.graphstream.stream.Pipe;
 import org.graphstream.ui.geom.Point3;
 
@@ -38,27 +40,27 @@ import org.graphstream.ui.geom.Point3;
  * <p>
  * The layout algorithm role is to compute the best possible positions of nodes
  * in a given space (2D or 3D) and eventually break points for edges if
- * supported. As there are many such algorithms with distinct qualities and
- * uses, this interface defines what is awaited from a layout algorithm.
+ * supported using either aesthetic constraints, hierarchical constraints or
+ * grouping constraints. As there are many such algorithms with distinct
+ * qualities and uses, this interface defines what is awaited from a general
+ * layout algorithm.
  * </p>
  * 
  * <p>
- * The algorithm can follow a graph by being a
- * {@link org.graphstream.stream.Sink}. However, at the contrary of several
- * other algorithms, it may or not work on the graph itself. It can work on a
- * description of the graph and maintains its own vision of this graph. In
- * return, it may or not modify the graph but instead can send events to
- * listeners telling the new positions of nodes in the graph. In any case, the
- * layout will also acts as a source for events on the graph (mainly attributes
- * to position nodes and edges).
+ * This algorithm is a {@link Pipe} that receives notifications on the graph
+ * eventually maintain an internal representation of it (or for some of them
+ * work directly on the graph), and in return send graph events to give each
+ * node a position via "xyz" attributes. Some algorithms may also export more
+ * information for nodes and edges. For example some algorithms are also able to
+ * work on the shape of an edge or the shape of a node.
  * </p>
  * 
  * <p>
- * A layout algorithm is iterative. It continuously updates its internal
- * representation of the graph following a given method and may outputs its
- * computations to a listener for each element of the graph or directly modify
- * the graph. Such a layout algorithm is not made to compute a layout once and
- * for all. This is the best way to handle evolving graphs.
+ * The layout algorithm described by this interface may be iterative. Some
+ * algorithm will compute directly their final representation of the graph in
+ * one pass. However most algorithms will probably work step by step until a
+ * global quality function is satisfied. This is the best way to handle evolving
+ * graphs.
  * </p>
  * 
  * <p>
@@ -70,11 +72,8 @@ import org.graphstream.ui.geom.Point3;
  * </p>
  * 
  * <p>
- * To be notified of the layout changes dynamically, you may register a
- * {@link LayoutListener} that will be called each time a node changes its
- * position. The layout may or not modify directly the graph. This allows to
- * either put the layout in another thread (in which case a copy of the graph
- * will be done) or to run the layout directly on the main graph.
+ * To be notified of the layout changes dynamically, you must register as a
+ * sink of the layout.
  * </p>
  * 
  * <p>
@@ -131,8 +130,8 @@ public interface Layout extends Pipe {
 	long getLastStepTime();
 
 	/**
-	 * The current layout algorithm quality. A number between 0 and 1
-	 * with 1 the highest (but probably slowest) quality.
+	 * The current layout algorithm quality. A number between 0 and 1 with 1 the
+	 * highest (but probably slowest) quality.
 	 * 
 	 * @return A number between 0 and 1.
 	 */
@@ -195,8 +194,8 @@ public interface Layout extends Pipe {
 	void setStabilizationLimit(double value);
 
 	/**
-	 * Set the overall quality level, a number between 0 and 1 with 1 the highest
-	 * quality available, but often with a slower computation.
+	 * Set the overall quality level, a number between 0 and 1 with 1 the
+	 * highest quality available, but often with a slower computation.
 	 * 
 	 * @param qualityLevel
 	 *            The quality level, a number between 0 and 1.
