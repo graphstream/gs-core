@@ -54,7 +54,6 @@ import org.graphstream.stream.thread.ThreadProxyPipe;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.layout.Layout;
-import org.graphstream.ui.layout.LayoutListener;
 import org.graphstream.ui.layout.LayoutRunner;
 import org.graphstream.ui.layout.Layouts;
 import org.graphstream.ui.swingViewer.GraphRenderer;
@@ -87,7 +86,7 @@ import org.graphstream.ui.swingViewer.GraphRenderer;
  * 
  * </pre>
  */
-public class FileSinkImages implements FileSink, LayoutListener {
+public class FileSinkImages implements FileSink {
 	/**
 	 * Output resolutions.
 	 */
@@ -1016,47 +1015,47 @@ public class FileSinkImages implements FileSink, LayoutListener {
 		}
 	}
 
-	public void nodeMoved(String id, double x, double y, double z) {
-		switch (outputPolicy) {
-		case BY_NODE_MOVED:
-			if (hasBegan)
-				outputNewImage();
-			break;
-		}
-	}
+//	public void nodeMoved(String id, double x, double y, double z) {
+//		switch (outputPolicy) {
+//		case BY_NODE_MOVED:
+//			if (hasBegan)
+//				outputNewImage();
+//			break;
+//		}
+//	}
 
-	public void nodeInfos(String id, double dx, double dy, double dz) {
-	}
+//	public void nodeInfos(String id, double dx, double dy, double dz) {
+//	}
 
-	public void edgeChanged(String id, double[] points) {
-	}
+//	public void edgeChanged(String id, double[] points) {
+//	}
 
-	public void nodesMoved(Map<String, double[]> nodes) {
-		switch (outputPolicy) {
-		case BY_NODE_MOVED:
-			if (hasBegan)
-				outputNewImage();
-			break;
-		}
-	}
+//	public void nodesMoved(Map<String, double[]> nodes) {
+//		switch (outputPolicy) {
+//		case BY_NODE_MOVED:
+//			if (hasBegan)
+//				outputNewImage();
+//			break;
+//		}
+//	}
 
-	public void edgesChanged(Map<String, double[]> edges) {
-	}
+//	public void edgesChanged(Map<String, double[]> edges) {
+//	}
 
-	public void stepCompletion(double percent) {
-		switch (outputPolicy) {
-		case BY_LAYOUT_STEP:
-			layoutStepWithoutFrame++;
-
-			if (layoutStepWithoutFrame >= layoutStepPerFrame) {
-				if (hasBegan)
-					outputNewImage();
-				layoutStepWithoutFrame = 0;
-			}
-
-			break;
-		}
-	}
+//	public void stepCompletion(double percent) {
+//		switch (outputPolicy) {
+//		case BY_LAYOUT_STEP:
+//			layoutStepWithoutFrame++;
+//
+//			if (layoutStepWithoutFrame >= layoutStepPerFrame) {
+//				if (hasBegan)
+//					outputNewImage();
+//				layoutStepWithoutFrame = 0;
+//			}
+//
+//			break;
+//		}
+//	}
 
 	public static enum Option {
 		IMAGE_PREFIX("image-prefix", 'p', "prefix of outputted images", true,
