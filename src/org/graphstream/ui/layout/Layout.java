@@ -29,8 +29,6 @@
  */
 package org.graphstream.ui.layout;
 
-import javax.xml.transform.Source;
-
 import org.graphstream.stream.Pipe;
 import org.graphstream.ui.geom.Point3;
 
