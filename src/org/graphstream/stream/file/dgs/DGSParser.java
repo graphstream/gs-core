@@ -167,10 +167,6 @@ public class DGSParser implements Parser {
 			throw new IOException("pushback buffer overflow");
 
 		pushback[++pushbackOffset] = c;
-
-		if (column == 0)
-			line--;
-		column--;
 	}
 
 	protected void skipLine() throws IOException {
@@ -343,6 +339,8 @@ public class DGSParser implements Parser {
 	protected void attributes(ElementType type, String id) throws IOException,
 			ParseException {
 		int c;
+		
+		skipWhitespaces();
 
 		while ((c = nextChar()) != '\n' && c != '#' && c >= 0) {
 			pushback(c);
