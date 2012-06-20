@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Random;
 
+import org.graphstream.stream.Sink;
 import org.graphstream.stream.SourceBase;
 import org.graphstream.stream.sync.SinkTime;
 import org.graphstream.ui.geom.Point3;
@@ -49,14 +50,21 @@ import org.miv.pherd.ntree.OctreeCellSpace;
 import org.miv.pherd.ntree.QuadtreeCellSpace;
 
 /**
- * An implementation of spring algorithms to layout a graph.
+ * Base implementation of a Barnes-Hut space decomposition and particle
+ * interaction algorithm to be used for force-based layout algorithms.
  * 
  * <p>
- * This spring method use repulsive forces (electric field) between each nodes
- * and attractive forces (springs) between each node connected by an edge. To
- * speed up the algorithm, a n-tree is used to divide space. A Barnes-Hut like
- * algorithm is used to speed up repulsion force influence when nodes are far
- * away.
+ * This base class creates the space decomposition method and manages the
+ * main loop of the simulation. The simulation is made of {@link NodeParticle}
+ * and {@link EdgeSpring} elements that are created and linked for you in
+ * response to graph events received via the {@link Sink} interface. However
+ * you have to provide an implementation of the abstract {@link NodeParticle} class
+ * (by overriding the abstract method {@link #newNodeParticle(String)}). 
+ * </p>
+ * 
+ * <p>
+ * As almost all the repulsion/attraction forces computation is done in the
+ * {@link NodeParticle} class, this is the most important one.
  * </p>
  * 
  * <p>

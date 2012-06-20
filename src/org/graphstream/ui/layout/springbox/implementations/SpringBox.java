@@ -34,9 +34,27 @@ package org.graphstream.ui.layout.springbox.implementations;
 
 import java.util.Random;
 
+import org.graphstream.ui.layout.LayoutRunner;
 import org.graphstream.ui.layout.springbox.BarnesHutLayout;
 import org.graphstream.ui.layout.springbox.NodeParticle;
 
+/**
+ * The GraphStream Spring-Box layout.
+ * 
+ * <p>
+ * This layout is the default GraphStream layout that handles dynamic graphs.
+ * It can constantly evolve according to the changes in the graph. And works
+ * well with the {@link LayoutRunner} class so that the computations stops
+ * when the layout is stable enougth. 
+ * </p>
+ * 
+ * <p>
+ * This algorithm is based on the Frutcherman-Reingold force layout algorithm
+ * modified on the attraction (the degree of nodes is taken into account to
+ * stabilize the layout as we are not only interested in the result, but also
+ * in the steps in between).
+ * </p>
+ */
 public class SpringBox extends BarnesHutLayout {
 	// TODO specific Frutcherman Reingold attributes
 

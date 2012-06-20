@@ -38,6 +38,20 @@ import java.util.Locale;
 import org.graphstream.ui.geom.Vector3;
 import org.miv.pherd.Particle;
 
+/**
+ * Base implementation of a node particle to be used in the {@link BarnesHutLayout}
+ * to represent nodes and choose their positions.
+ * 
+ * <p>
+ * Several abstract methods have to be overrided to provide a computation of the
+ * layout (all the attraction/repulsion computation is done in this class):  
+ * <ul>
+ * 		<li>{@link #attraction(Vector3)}</li>
+ * 		<li>{@link #repulsionN2(Vector3)}</li>
+ * 		<li>{@link #repulsionNLogN(Vector3)}</li>
+ * </ul>
+ * </p>
+ */
 public abstract class NodeParticle extends Particle {
 	/**
 	 * Set of edge connected to this node.
