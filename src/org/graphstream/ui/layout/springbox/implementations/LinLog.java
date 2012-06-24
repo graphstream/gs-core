@@ -34,76 +34,71 @@ package org.graphstream.ui.layout.springbox.implementations;
 
 import java.util.Random;
 
-import org.graphstream.ui.layout.LayoutRunner;
 import org.graphstream.ui.layout.springbox.BarnesHutLayout;
 import org.graphstream.ui.layout.springbox.NodeParticle;
 
-/**
- * The GraphStream Spring-Box layout.
- * 
- * <p>
- * This layout is the default GraphStream layout that handles dynamic graphs.
- * It can constantly evolve according to the changes in the graph. And works
- * well with the {@link LayoutRunner} class so that the computations stops
- * when the layout is stable enougth. 
- * </p>
- * 
- * <p>
- * This algorithm is based on the Frutcherman-Reingold force layout algorithm
- * modified on the attraction (the degree of nodes is taken into account to
- * stabilize the layout as we are not only interested in the result, but also
- * in the steps in between).
- * </p>
- */
-public class SpringBox extends BarnesHutLayout {
-	/**
-	 * The optimal distance between nodes.
-	 */
-	protected double k = 1f;
+public class LinLog extends BarnesHutLayout {
+	protected double k = 1;
 
 	/**
-	 * Default attraction.
+	 * Default general attraction factor.
 	 */
-	protected double K1 = 0.06f; // 0.3 ??
+	protected double aFactor = 1f;
 
 	/**
-	 * Default repulsion.
+	 * Default general repulsion factor.
 	 */
-	protected double K2 = 0.024f; // 0.12 ??
+	protected double rFactor = 1f;
 
+	protected boolean edgeBased = true;
+	
+	protected double a = 0;
+	
+	protected double r = -1.2;
+	
+	//protected
+	
 	/**
-	 * New "Spring-Box" 2D Barnes-Hut simulation.
+	 * New "LinLog" 2D Barnes-Hut simulation.
 	 */
-	public SpringBox() {
+	public LinLog() {
 		this(false);
 	}
 
 	/**
-	 * New "Spring-Box" Barnes-Hut simulation.
+	 * New "LinLog" Barnes-Hut simulation.
 	 * 
 	 * @param is3D
 	 *            If true the simulation dimensions count is 3 else 2.
 	 */
-	public SpringBox(boolean is3D) {
+	public LinLog(boolean is3D) {
 		this(is3D, new Random(System.currentTimeMillis()));
 	}
 
 	/**
-	 * New "Spring-Box" Barnes-Hut simulation.
+	 * New "LinLog" Barnes-Hut simulation.
 	 * 
 	 * @param is3D
 	 *            If true the simulation dimensions count is 3 else 2.
 	 * @param randomNumberGenerator
 	 *            The random number generator to use.
 	 */
-	public SpringBox(boolean is3D, Random randomNumberGenerator) {
+	public LinLog(boolean is3D, Random randomNumberGenerator) {
 		super(is3D, randomNumberGenerator);
-		setQuality(0.1);
+		setQuality(1);
+		force = 3;
+	}
+	
+	public void configure(double a, double r, boolean edgeBased, double force) {
+		this.a = a;
+		this.r = r;
+		this.edgeBased = edgeBased;
+		this.force = force;
 	}
 
 	@Override
 	public String getLayoutAlgorithmName() {
-		return "SpringBox";
+		return "LinLog";
 	}
 
 	@Override
@@ -133,6 +128,6 @@ public class SpringBox extends BarnesHutLayout {
 
 	@Override
 	public NodeParticle newNodeParticle(String id) {
-		return new SpringBoxNodeParticle(this, id);
+		return new LinLogNodeParticle(this, id);
 	}
 }

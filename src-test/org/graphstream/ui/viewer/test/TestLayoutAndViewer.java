@@ -31,12 +31,18 @@ package org.graphstream.ui.viewer.test;
 
 import java.io.IOException;
 
+import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.stream.ProxyPipe;
+import org.graphstream.stream.file.FileSource;
 import org.graphstream.stream.file.FileSourceDGS;
+import org.graphstream.stream.file.FileSourceGML;
 import org.graphstream.stream.thread.ThreadProxyPipe;
+import org.graphstream.ui.geom.Point3;
+import org.graphstream.ui.graphicGraph.GraphPosLengthUtils;
 import org.graphstream.ui.layout.Layout;
+import org.graphstream.ui.layout.springbox.implementations.LinLog;
 import org.graphstream.ui.layout.springbox.implementations.SpringBox;
 import org.graphstream.ui.swingViewer.Viewer;
 
@@ -52,7 +58,14 @@ import org.graphstream.ui.swingViewer.Viewer;
  * </pre>
  */
 public class TestLayoutAndViewer {
-	public static final String GRAPH = "data/dorogovtsev_mendes6000.dgs";
+//	public static final String GRAPH = "data/dorogovtsev_mendes6000.dgs"; public static final double a= 0; public static final double r=-1.3; public static double force = 3;
+//	public static final String GRAPH = "data/karate.gml";		public static double a= 0; public static double r=-1.3; public static double force = 3;
+	public static final String GRAPH = "data/dolphins.gml";		public static double a= 0; public static double r=-1.2; public static double force = 8;
+//	public static final String GRAPH = "data/polbooks.gml";		public static double a= 0; public static double r=-2; public static double force = 3;
+//	public static final String GRAPH = "data/triangles.dgs";	public static double a= 1; public static double r=-1; public static double force = 3;
+//	public static final String GRAPH = "data/FourClusters.dgs";	public static double a= 0; public static double r=-1; public static double force = 3;
+//	public static final String GRAPH = "data/grid7x7.dgs";		public static double a= 0; public static double r=-1; public static double force = 100;
+//	public static final String GRAPH = "data/imdb.dgs";			
 
 	public static void main(String args[]) {
 		new TestLayoutAndViewer();
@@ -63,7 +76,9 @@ public class TestLayoutAndViewer {
 		Graph graph = new MultiGraph("test");
 		Viewer viewer = new Viewer(new ThreadProxyPipe(graph));
 		ProxyPipe fromViewer = viewer.newThreadProxyOnGraphicGraph();
-		Layout layout = new SpringBox(false);
+		LinLog layout = new LinLog(false);
+		
+		layout.configure(a, r, true, force);
 
 		graph.addAttribute("ui.antialias");
 		graph.addAttribute("ui.stylesheet", styleSheet);
@@ -72,21 +87,23 @@ public class TestLayoutAndViewer {
 		graph.addSink(layout);
 		layout.addAttributeSink(graph);
 
-		FileSourceDGS dgs = new FileSourceDGS();
+		FileSource dgs = GRAPH.endsWith(".gml") ? new FileSourceGML() : new FileSourceDGS();
 
 		dgs.addSink(graph);
 		try {
 			dgs.begin(getClass().getResourceAsStream(GRAPH));
 			for (int i = 0; i < 5000 && dgs.nextEvents(); i++) {
-				fromViewer.pump();
-				layout.compute();
-				sleep(1);
+//				fromViewer.pump();
+//				layout.compute();
+//				sleep(100);
 			}
 			dgs.end();
 		} catch (IOException e1) {
 			e1.printStackTrace();
 			System.exit(1);
 		}
+		
+		System.out.println("Finished creating the graph.");
 
 		while (loop) {
 			fromViewer.pump();
@@ -94,18 +111,44 @@ public class TestLayoutAndViewer {
 			if (graph.hasAttribute("ui.viewClosed")) {
 				loop = false;
 			} else {
-				sleep(20);
+				//sleep(1000);				
 				layout.compute();
+				findCommunities(graph, 1.3);
 			}
 		}
 
 		System.exit(0);
 	}
 	
+	protected void findCommunities(Graph graph, double threshold) {
+		int nedges = graph.getEdgeCount();
+		double avgDist = 0;
+		double edgesDists[] = new double[nedges];
+		for(int i=0; i<nedges; i++) {
+			Edge edge = graph.getEdge(i);
+			Point3 posFrom = GraphPosLengthUtils.nodePointPosition(edge.getNode0());
+			Point3 posTo   = GraphPosLengthUtils.nodePointPosition(edge.getNode1());
+			edgesDists[i]  = posFrom.distance(posTo);
+			avgDist       += edgesDists[i];
+		}
+		avgDist /= nedges;
+		// Nothing happened to the graph so the order remains.
+		for(int i=0; i<nedges; i++) {
+			Edge edge = graph.getEdge(i);
+			if(edgesDists[i] > avgDist*threshold) {
+				edge.addAttribute("ui.class", "cut");
+			} else {
+				edge.removeAttribute("ui.class");
+			}
+		}
+	}
+	
 	protected static void sleep(long ms) {
 		try { Thread.sleep(ms); } catch(Exception e) {} 
 	}
 
-	protected static String styleSheet = "node { size: 3px; fill-color: rgb(150,150,150); }"
-			+ "edge { fill-color: rgb(100,100,100); }";
+	protected static String styleSheet =
+		"node { size: 7px; fill-color: rgb(150,150,150); }" +
+		"edge { fill-color: rgb(255,50,50); size: 2px; }" +
+		"edge.cut { fill-color: rgba(200,200,200,128); }";
 }

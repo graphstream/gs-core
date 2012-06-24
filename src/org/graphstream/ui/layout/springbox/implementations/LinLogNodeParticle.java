@@ -38,13 +38,10 @@ import org.graphstream.ui.geom.Vector3;
 import org.graphstream.ui.layout.springbox.EdgeSpring;
 import org.graphstream.ui.layout.springbox.Energies;
 import org.graphstream.ui.layout.springbox.NodeParticle;
-import org.miv.pherd.Particle;
 import org.miv.pherd.ParticleBox;
-import org.miv.pherd.geom.Point3;
-import org.miv.pherd.ntree.BarycenterCellData;
 import org.miv.pherd.ntree.Cell;
 
-public class SpringBoxNodeParticle extends NodeParticle {
+public class LinLogNodeParticle extends NodeParticle {
 	/**
 	 * New node.
 	 * 
@@ -55,7 +52,7 @@ public class SpringBoxNodeParticle extends NodeParticle {
 	 * @param id
 	 *            The node identifier.
 	 */
-	public SpringBoxNodeParticle(SpringBox box, String id) {
+	public LinLogNodeParticle(LinLog box, String id) {
 		this(box, id, (box.getRandom().nextDouble() * 2 * box.k) - box.k, (box
 				.getRandom().nextDouble() * 2 * box.k) - box.k,
 				box.is3D() ? (box.getRandom().nextDouble() * 2 * box.k) - box.k
@@ -63,7 +60,7 @@ public class SpringBoxNodeParticle extends NodeParticle {
 
 		this.box = box;
 	}
-
+	
 	/**
 	 * New node at a given position.
 	 * 
@@ -78,40 +75,48 @@ public class SpringBoxNodeParticle extends NodeParticle {
 	 * @param z
 	 *            The depth.
 	 */
-	public SpringBoxNodeParticle(SpringBox box, String id, double x, double y,
+	public LinLogNodeParticle(LinLog box, String id, double x, double y,
 			double z) {
 		super(box, id, x, y, z);
 	}
 
 	@Override
 	protected void repulsionN2(Vector3 delta) {
-		SpringBox box = (SpringBox) this.box;
+		LinLog box = (LinLog) this.box;
 		boolean is3D = box.is3D();
 		ParticleBox nodes = box.getSpatialIndex();
 		Energies energies = box.getEnergies();
 		Iterator<Object> i = nodes.getParticleIdIterator();
+		int deg = neighbours.size();
 
 		while (i.hasNext()) {
-			SpringBoxNodeParticle node = (SpringBoxNodeParticle) nodes
+			LinLogNodeParticle node = (LinLogNodeParticle) nodes
 					.getParticle(i.next());
 
 			if (node != this) {
 				delta.set(node.pos.x - pos.x, node.pos.y - pos.y,
 						is3D ? node.pos.z - pos.z : 0);
 
-				double len = delta.normalize();
+//				double len = delta.normalize();
+				double len = delta.length(); if(len == Double.NaN) len = 0.000001;
 
 				if(len > 0) {
-					if (len < box.k)
-						len = box.k; // XXX NEW To prevent infinite
-									// repulsion.
-				
-					double factor = len != 0 ? ((box.K2 / (len * len)) * node.weight)
-						: 0.00001;
+					double degFactor = box.edgeBased ? deg * node.neighbours.size() : 1;
+					double factor = 1;
+//					double r = box.r + 1;
+					double r = box.r;
+
+//					if(r == 0) {
+//						factor = -degFactor * Math.log(len) * node.weight * weight * box.rFactor;
+//					} else {
+//						factor = degFactor * (Math.pow(len, r)/r) * node.weight * weight * box.rFactor;
+						factor = -degFactor * (Math.pow(len, r-2)) * node.weight * weight * box.rFactor;
+//					}
 
 					energies.accumulateEnergy(factor); // TODO check this
-					delta.scalarMult(-factor);
+					delta.scalarMult(factor);
 					disp.add(delta);
+					repE += factor;
 				}
 			}
 		}
@@ -119,123 +124,44 @@ public class SpringBoxNodeParticle extends NodeParticle {
 
 	@Override
 	protected void repulsionNLogN(Vector3 delta) {
-		// Explore the n-tree from the root cell and consider the contents
-		// of one cell only if it does intersect an area around the current
-		// node. Else take its (weighted) barycenter into account.
-
-		recurseRepulsion(box.getSpatialIndex().getNTree().getRootCell(), delta);
-	}
-
-	protected void recurseRepulsion(Cell cell, Vector3 delta) {
-		SpringBox box = (SpringBox) this.box;
-		boolean is3D = box.is3D();
-		Energies energies = box.getEnergies();
-
-		if (intersection(cell)) {
-			if (cell.isLeaf()) {
-				Iterator<? extends Particle> i = cell.getParticles();
-
-				while (i.hasNext()) {
-					SpringBoxNodeParticle node = (SpringBoxNodeParticle) i.next();
-
-					if (node != this) {
-						delta.set(node.pos.x - pos.x, node.pos.y - pos.y, is3D ? node.pos.z
-								- pos.z : 0);
-
-						double len = delta.normalize();
-
-						if (len > 0)// && len < ( box.k * box.viewZone ) )
-						{
-							if (len < box.k)
-								len = box.k; // XXX NEW To prevent infinite
-												// repulsion.
-							double factor = len != 0 ? ((box.K2 / (len * len)) * node
-									.weight) : 0.00001;
-							energies.accumulateEnergy(factor); // TODO check
-																// this
-							repE += factor;
-							delta.scalarMult(-factor);
-							disp.add(delta);
-						}
-					}
-				}
-			} else {
-				int div = cell.getSpace().getDivisions();
-
-				for (int i = 0; i < div; i++)
-					recurseRepulsion(cell.getSub(i), delta);
-			}
-		} else {
-			if (cell != this.cell) {
-				BarycenterCellData bary = (BarycenterCellData) cell.getData();
-
-				double dist = bary.distanceFrom(pos);
-				double size = cell.getSpace().getSize();
-
-				if ((!cell.isLeaf())
-						&& ((size / dist) > box.getBarnesHutTheta())) {
-					int div = cell.getSpace().getDivisions();
-
-					for (int i = 0; i < div; i++)
-						recurseRepulsion(cell.getSub(i), delta);
-				} else {
-					if (bary.weight != 0) {
-						delta.set(bary.center.x - pos.x, bary.center.y - pos.y,
-								is3D ? bary.center.z - pos.z : 0);
-
-						double len = delta.normalize();
-
-						if (len > 0) {
-							if (len < box.k)
-								len = box.k; // XXX NEW To prevent infinite
-												// repulsion.
-							double factor = len != 0 ? ((box.K2 / (len * len)) * (bary.weight))
-									: 0.00001f;
-							energies.accumulateEnergy(factor);
-							delta.scalarMult(-factor);
-							repE += factor;
-
-							disp.add(delta);
-						}
-					}
-				}
-			}
-		}
+		throw new RuntimeException("TODO");
 	}
 
 	@Override
 	protected void attraction(Vector3 delta) {
-		SpringBox box = (SpringBox) this.box;
+		LinLog box = (LinLog) this.box;
 		boolean is3D = box.is3D();
 		Energies energies = box.getEnergies();
-		int neighbourCount = neighbours.size();
 
 		for (EdgeSpring edge : neighbours) {
 			if (!edge.ignored) {
-				NodeParticle other = edge.getOpposite(this);
-				Point3 opos = other.getPosition();
+				LinLogNodeParticle other = (LinLogNodeParticle) edge.getOpposite(this);
 
-				delta.set(opos.x - pos.x, opos.y - pos.y, is3D ? opos.z - pos.z
-						: 0);
+				delta.set(other.pos.x - pos.x, other.pos.y - pos.y, is3D ? other.pos.z - pos.z : 0);
 
-				double len = delta.normalize();
-				double k = box.k * edge.weight;
-				double factor = box.K1 * (len - k);
+//				double len = delta.normalize();
+				double len = delta.length(); if(len == Double.NaN) len = 0.000001;
+				if(len > 0) {
+					double factor = 1;
+//					double a = box.a + 1;
+					double a = box.a;
 
-				// delta.scalarMult( factor );
-				delta.scalarMult(factor * (1f / (neighbourCount * 0.1f)));
-				// ^^^ XXX NEW inertia based on the node degree. This is one
-				// of the amelioration of the Spring-Box algorithm. Compare
-				// it to the Force-Atlas algorithm that does this on
-				// **repulsion**.
+//					if(a == 0) {
+//						factor = Math.log(len) * edge.weight * box.aFactor;
+//					} else {
+//						factor = (Math.pow(len, a)/a) * edge.weight * box.aFactor;
+					factor = (Math.pow(len, a-2)) * edge.weight * box.aFactor;
+//					}
 
-				disp.add(delta);
-				attE += factor;
-				energies.accumulateEnergy(factor);
+					energies.accumulateEnergy(factor);
+					delta.scalarMult(factor);
+					disp.add(delta);
+					attE += factor;
+				}
 			}
 		}
 	}
-
+	
 	protected boolean intersection(Cell cell) {
 		SpringBox box = (SpringBox) this.box;
 

@@ -318,9 +318,7 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout,
 		return lastStepTime;
 	}
 
-	public String getLayoutAlgorithmName() {
-		return "SpringBox";
-	}
+	public abstract String getLayoutAlgorithmName();
 
 	public int getNodeMovedCount() {
 		return nodeMoveCount;

@@ -101,7 +101,7 @@ public class GMLContext {
 				} else if (kv.key.equals("step")) {
 					handleStep(kv);
 				} else if (kv.key.equals("directed")) {
-					setDirected(getBoolean((String) kv.get("directed")));
+					setDirected(getBoolean(kv.get("directed")));
 				} else {
 					if (kv.key.startsWith("-")) {
 						gml.sendAttributeChangedEvent(sourceId, sourceId,
@@ -152,7 +152,7 @@ public class GMLContext {
 			gml.sendNodeAdded(sourceId, id);
 		} else if (thing instanceof KeyValues) {
 			KeyValues node = (KeyValues) thing;
-			String id = node.reqString("id");
+			String id = node.reqStringOrNumber("id");
 
 			gml.sendNodeAdded(sourceId, id);
 			handleNodeAttributes(id, node);
@@ -175,8 +175,8 @@ public class GMLContext {
 		KeyValues edge = (KeyValues) thing;
 		String id = edge.optString("id");
 
-		String src = edge.reqString("source");
-		String trg = edge.reqString("target");
+		String src = edge.reqStringOrNumber("source");
+		String trg = edge.reqStringOrNumber("target");
 
 		if (id == null)
 			id = String.format("%s_%s_%d", src, trg, edgeid++);
@@ -527,11 +527,13 @@ public class GMLContext {
 		}
 	}
 
-	protected boolean getBoolean(String bool) {
-		if (bool.equals("1") || bool.equals("true") || bool.equals("yes")
-				|| bool.equals("y"))
-			return true;
-
+	protected boolean getBoolean(Object bool) {
+		if(bool instanceof String) {
+			return (bool.equals("1") || bool.equals("true") || bool.equals("yes")
+				|| bool.equals("y"));
+		} else if(bool instanceof Number) {
+			return (((Number)bool).doubleValue() != 0);
+		}
 		return false;
 	}
 }
@@ -619,6 +621,29 @@ class KeyValues extends HashMap<String, Object> {
 
 		remove(key);
 
+		return (String) o;
+	}
+
+	protected String reqStringOrNumber(String key) throws IOException {
+		Object o = get(key);
+
+		if (o == null)
+			throw new IOException(String.format(
+					"%d:%d: expecting a tag %s but none found", line, column,
+					key));
+
+		if (!(o instanceof String) && !(o instanceof Number))
+			throw new IOException(
+					String.format(
+							"%d:%d: expecting a string or number value for tag %s, got a list of values",
+							line, column, key));
+
+		remove(key);
+
+		if(o instanceof Number) {
+			o = o.toString();
+		}
+		
 		return (String) o;
 	}
 
