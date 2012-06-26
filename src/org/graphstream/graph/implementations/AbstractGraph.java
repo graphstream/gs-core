@@ -545,8 +545,13 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	public void read(String filename) throws IOException, GraphParseException,
 			ElementNotFoundException {
 		FileSource input = FileSourceFactory.sourceFor(filename);
-		input.addSink(this);
-		read(input, filename);
+		if(input != null) {
+			input.addSink(this);
+			read(input, filename);
+			input.removeSink(this);
+		} else {
+			throw new IOException("No source reader for "+filename);
+		}
 	}
 
 	public void write(FileSink output, String filename) throws IOException {
@@ -555,7 +560,11 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 
 	public void write(String filename) throws IOException {
 		FileSink output = FileSinkFactory.sinkFor(filename);
-		write(output, filename);
+		if(output != null) {
+			write(output, filename);
+		} else {
+			throw new IOException("No sink writer for "+filename);
+		}
 	}
 
 	// *** callbacks maintaining user's data structure
@@ -814,8 +823,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	 * supporting {@link java.util.Iterator#remove()} who want to update the
 	 * data structures by their owns.
 	 * 
-	 * @param node
-	 *            the node to be removed
+	 * @param edge
+	 *            the edge to be removed
 	 * @param graphCallback
 	 *            if {@code false}, {@link #removeEdgeCallback(AbstractEdge)} of
 	 *            the graph is not called
