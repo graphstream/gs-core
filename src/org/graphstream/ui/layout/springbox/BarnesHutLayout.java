@@ -44,7 +44,6 @@ import org.graphstream.ui.layout.Layout;
 import org.miv.pherd.ParticleBox;
 import org.miv.pherd.ParticleBoxListener;
 import org.miv.pherd.ntree.Anchor;
-import org.miv.pherd.ntree.BarycenterCellData;
 import org.miv.pherd.ntree.CellSpace;
 import org.miv.pherd.ntree.OctreeCellSpace;
 import org.miv.pherd.ntree.QuadtreeCellSpace;
@@ -284,7 +283,7 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout,
 		}
 
 		this.nodes = new ParticleBox(nodesPerCell, space,
-				new BarycenterCellData());
+				new GraphCellData());
 
 		nodes.addParticleBoxListener(this);
 		setQuality(quality);

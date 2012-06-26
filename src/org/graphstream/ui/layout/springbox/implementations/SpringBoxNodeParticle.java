@@ -37,11 +37,11 @@ import java.util.Iterator;
 import org.graphstream.ui.geom.Vector3;
 import org.graphstream.ui.layout.springbox.EdgeSpring;
 import org.graphstream.ui.layout.springbox.Energies;
+import org.graphstream.ui.layout.springbox.GraphCellData;
 import org.graphstream.ui.layout.springbox.NodeParticle;
 import org.miv.pherd.Particle;
 import org.miv.pherd.ParticleBox;
 import org.miv.pherd.geom.Point3;
-import org.miv.pherd.ntree.BarycenterCellData;
 import org.miv.pherd.ntree.Cell;
 
 public class SpringBoxNodeParticle extends NodeParticle {
@@ -167,7 +167,7 @@ public class SpringBoxNodeParticle extends NodeParticle {
 			}
 		} else {
 			if (cell != this.cell) {
-				BarycenterCellData bary = (BarycenterCellData) cell.getData();
+				GraphCellData bary = (GraphCellData) cell.getData();
 
 				double dist = bary.distanceFrom(pos);
 				double size = cell.getSpace().getSize();
