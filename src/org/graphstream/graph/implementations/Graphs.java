@@ -50,13 +50,14 @@ import org.graphstream.graph.NodeFactory;
 import org.graphstream.stream.AttributeSink;
 import org.graphstream.stream.ElementSink;
 import org.graphstream.stream.GraphParseException;
+import org.graphstream.stream.GraphReplay;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSource;
 import org.graphstream.ui.swingViewer.Viewer;
 
 public class Graphs {
-	
+
 	public static Graph unmutableGraph(Graph g) {
 		return null;
 	}
@@ -73,6 +74,67 @@ public class Graphs {
 	 */
 	public static Graph synchronizedGraph(Graph g) {
 		return new SynchronizedGraph(g);
+	}
+
+	/**
+	 * Merge several graphs in one. A new graph is created, that will contain
+	 * the result. The method will try to create a graph of the same class that
+	 * the first graph to merge (it needs to have a constructor with a String).
+	 * Else, a MultiGraph is used.
+	 * 
+	 * @param graphs
+	 *            graphs to merge
+	 * @return merge result
+	 */
+	public static Graph merge(Graph... graphs) {
+		if (graphs == null)
+			return new DefaultGraph("void-merge");
+
+		String id = "merge";
+
+		for (Graph g : graphs)
+			id += "-" + g.getId();
+
+		Graph result;
+
+		try {
+			Class<? extends Graph> cls = graphs[0].getClass();
+			result = cls.getConstructor(String.class).newInstance(id);
+		} catch (Exception e) {
+			System.err.printf("*** WARNING *** can not create a graph of %s\n",
+					graphs[0].getClass().getName());
+
+			result = new MultiGraph(id);
+		}
+
+		mergeIn(result, graphs);
+
+		return result;
+	}
+
+	/**
+	 * Merge several graphs in one. The first parameter is the graph in which
+	 * the other graphs will be merged.
+	 * 
+	 * @param result
+	 *            destination graph.
+	 * @param graphs
+	 *            all graphs that will be merged in result.
+	 */
+	public static void mergeIn(Graph result, Graph... graphs) {
+		boolean strict = result.isStrict();
+		GraphReplay replay = new GraphReplay(String.format("replay-%x",
+				System.nanoTime()));
+
+		replay.addSink(result);
+		result.setStrict(false);
+
+		if (graphs != null)
+			for (Graph g : graphs)
+				replay.replay(g);
+
+		replay.removeSink(result);
+		result.setStrict(strict);
 	}
 
 	static class SynchronizedElement<U extends Element> implements Element {
@@ -334,10 +396,10 @@ public class Graphs {
 			elementLock = new ReentrantLock();
 			synchronizedNodes = new HashMap<String, Node>();
 			synchronizedEdges = new HashMap<String, Edge>();
-			
+
 			for (Node n : g.getEachNode())
 				synchronizedNodes.put(n.getId(), new SynchronizedNode(this, n));
-			
+
 			for (Edge e : g.getEachEdge())
 				synchronizedEdges.put(e.getId(), new SynchronizedEdge(this, e));
 		}
@@ -1065,7 +1127,7 @@ public class Graphs {
 
 			return e;
 		}
-		
+
 		public <T extends Edge> T getEnteringEdge(int i) {
 			T e;
 
