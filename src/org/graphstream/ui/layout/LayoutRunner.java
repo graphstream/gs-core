@@ -187,8 +187,18 @@ public class LayoutRunner extends Thread {
 		pumpPipe.unregisterFromSource();
 		pumpPipe.removeSink(layout);
 		pumpPipe = null;
-		layout = null;
 		loop = false;
+		
+		if (Thread.currentThread() != this) {
+			try {
+				this.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				System.err.printf("Layout can not stop ...\n");
+			}
+		}
+		
+		layout = null;
 	}
 
 	/** 
