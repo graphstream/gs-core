@@ -33,9 +33,13 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Element;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
+import org.graphstream.graph.implementations.AdjacencyListGraph;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
@@ -44,11 +48,19 @@ import javax.xml.stream.XMLStreamWriter;
 
 public class FileSinkGEXF extends FileSinkBase {
 	XMLStreamWriter stream;
+	boolean smart;
+	int depth;
+
+	public FileSinkGEXF() {
+		smart = true;
+		depth = 0;
+	}
 
 	protected void outputEndOfFile() throws IOException {
 		try {
-			stream.writeEndElement();
+			endElement(stream, false);
 			stream.writeEndDocument();
+			stream.flush();
 		} catch (XMLStreamException e) {
 			throw new IOException(e);
 		}
@@ -60,7 +72,7 @@ public class FileSinkGEXF extends FileSinkBase {
 					.createXMLStreamWriter(output);
 			stream.writeStartDocument("UTF-8", "1.0");
 
-			stream.writeStartElement("gexf");
+			startElement(stream, "gexf");
 			stream.writeAttribute("xmlns", "http://www.gexf.net/1.2draft");
 			stream.writeAttribute("xmlns:xsi",
 					"http://www.w3.org/2001/XMLSchema-instance");
@@ -74,54 +86,85 @@ public class FileSinkGEXF extends FileSinkBase {
 		}
 	}
 
+	protected void startElement(XMLStreamWriter stream, String name)
+			throws XMLStreamException {
+		if (smart) {
+			stream.writeCharacters("\n");
+
+			for (int i = 0; i < depth; i++)
+				stream.writeCharacters("\t");
+		}
+
+		stream.writeStartElement(name);
+		depth++;
+	}
+
+	protected void endElement(XMLStreamWriter stream, boolean leaf)
+			throws XMLStreamException {
+		depth--;
+
+		if (smart && !leaf) {
+			stream.writeCharacters("\n");
+
+			for (int i = 0; i < depth; i++)
+				stream.writeCharacters("\t");
+		}
+
+		stream.writeEndElement();
+	}
+
 	@Override
 	protected void exportGraph(Graph g) {
 		GEXFAttributeMap nodeAttributes = new GEXFAttributeMap("node", g);
 		GEXFAttributeMap edgeAttributes = new GEXFAttributeMap("edge", g);
 
 		try {
-			stream.writeStartElement("graph");
+			startElement(stream, "graph");
 			stream.writeAttribute("defaultedgetype", "undirected");
 
 			nodeAttributes.export(stream);
 			edgeAttributes.export(stream);
 
-			stream.writeStartElement("nodes");
+			startElement(stream, "nodes");
 			for (Node n : g.getEachNode()) {
-				stream.writeStartElement("node");
+				startElement(stream, "node");
 				stream.writeAttribute("id", n.getId());
 
 				if (n.hasAttribute("label"))
 					stream.writeAttribute("label", n.getAttribute("label")
 							.toString());
 
-				stream.writeStartElement("attvalues");
-				for (String key : n.getAttributeKeySet())
-					nodeAttributes.push(stream, n, key);
-				stream.writeEndElement();
+				if (n.getAttributeCount() > 0) {
+					startElement(stream, "attvalues");
+					for (String key : n.getAttributeKeySet())
+						nodeAttributes.push(stream, n, key);
+					endElement(stream, false);
+				}
 
-				stream.writeEndElement();
+				endElement(stream, n.getAttributeCount() == 0);
 			}
-			stream.writeEndElement();
+			endElement(stream, false);
 
-			stream.writeStartElement("edges");
+			startElement(stream, "edges");
 			for (Edge e : g.getEachEdge()) {
-				stream.writeStartElement("edge");
+				startElement(stream, "edge");
 
 				stream.writeAttribute("id", e.getId());
 				stream.writeAttribute("source", e.getSourceNode().getId());
 				stream.writeAttribute("target", e.getTargetNode().getId());
 
-				stream.writeStartElement("attvalues");
-				for (String key : e.getAttributeKeySet())
-					nodeAttributes.push(stream, e, key);
-				stream.writeEndElement();
+				if (e.getAttributeCount() > 0) {
+					startElement(stream, "attvalues");
+					for (String key : e.getAttributeKeySet())
+						nodeAttributes.push(stream, e, key);
+					endElement(stream, false);
+				}
 
-				stream.writeEndElement();
+				endElement(stream, e.getAttributeCount() == 0);
 			}
-			stream.writeEndElement();
+			endElement(stream, false);
 
-			stream.writeEndElement();
+			endElement(stream, false);
 		} catch (XMLStreamException e1) {
 			e1.printStackTrace();
 		}
@@ -211,38 +254,106 @@ public class FileSinkGEXF extends FileSinkBase {
 		}
 	}
 
-	static class GEXFAttributeMap extends HashMap<String, GEXFAttribute> {
+	class GEXFAttributeMap extends HashMap<String, GEXFAttribute> {
 		private static final long serialVersionUID = 6176508111522815024L;
 		protected String type;
 
 		GEXFAttributeMap(String type, Graph g) {
 			this.type = type;
 
-			if (type.equals("node")) {
-				// TODO
-			} else {
-				// TODO
+			Iterable<? extends Element> iterable;
+
+			if (type.equals("node"))
+				iterable = g.getNodeSet();
+			else
+				iterable = g.getEdgeSet();
+
+			for (Element e : iterable) {
+				for (String key : e.getAttributeKeySet()) {
+					Object value = e.getAttribute(key);
+					String id = String.format("%s@%s", key, value.getClass()
+							.getName());
+					String attType = "string";
+
+					if (containsKey(id))
+						continue;
+
+					// integer
+					// long
+					// double
+					// float
+					// boolean
+					// liststring
+					// string
+					// anyURI
+
+					if (value instanceof Integer || value instanceof Short)
+						attType = "integer";
+					else if (value instanceof Long)
+						attType = "long";
+					else if (value instanceof Float)
+						attType = "float";
+					else if (value instanceof Double)
+						attType = "double";
+					else if (value instanceof Boolean)
+						attType = "boolean";
+					else if (value instanceof URL || value instanceof URI)
+						attType = "anyURI";
+					else if (value.getClass().isArray()
+							|| value instanceof List)
+						attType = "liststring";
+
+					put(id, new GEXFAttribute(key, attType));
+				}
 			}
 		}
 
 		void export(XMLStreamWriter stream) throws XMLStreamException {
-			stream.writeStartElement("attributes");
+			if (size() == 0)
+				return;
+
+			startElement(stream, "attributes");
 			stream.writeAttribute("class", type);
 
 			for (GEXFAttribute a : values()) {
-				stream.writeStartElement("attribute");
+				startElement(stream, "attribute");
 				stream.writeAttribute("id", Integer.toString(a.index));
 				stream.writeAttribute("title", a.key);
 				stream.writeAttribute("type", a.type);
-				stream.writeEndDocument();
+				endElement(stream, true);
 			}
 
-			stream.writeEndElement();
+			endElement(stream, size() == 0);
 		}
 
 		void push(XMLStreamWriter stream, Element e, String key)
 				throws XMLStreamException {
-			// TODO
+			String id = String.format("%s@%s", key, e.getAttribute(key)
+					.getClass().getName());
+			GEXFAttribute a = get(id);
+
+			if (a == null) {
+				// TODO
+				return;
+			}
+
+			startElement(stream, "attvalue");
+			stream.writeAttribute("for", Integer.toString(a.index));
+			stream.writeAttribute("value", e.getAttribute(key).toString());
+			endElement(stream, true);
 		}
+	}
+
+	public static void main(String... args) throws Exception {
+		Graph g = new AdjacencyListGraph("g");
+		g.addNode("A").addAttribute("label", "Node A");
+		g.addNode("B").addAttribute("test", 1.0);
+		g.addNode("C").addAttribute("test", "Test");
+		g.addNode("D").addAttribute("other", true);
+
+		g.addEdge("AB", "A", "B");
+
+		FileSinkGEXF out = new FileSinkGEXF();
+		out.writeAll(g, System.out);
 	}
 }
