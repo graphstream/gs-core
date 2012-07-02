@@ -847,7 +847,7 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout,
 			String attribute) {
 		if (sinkTime.isNewEvent(graphId, time)) {
 			edgeAttributeChanged_(graphId, edgeId, attribute, null, null);
-			sendEdgeRemoved(attribute, time, edgeId);
+			sendEdgeAttributeRemoved(attribute, time, edgeId, attribute);
 		}
 	}
 

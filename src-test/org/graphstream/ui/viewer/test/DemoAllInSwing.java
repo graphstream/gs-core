@@ -38,23 +38,23 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.ui.swingViewer.Viewer;
 
-public class AllInSwing {
+public class DemoAllInSwing {
 	public static void main(String args[]) {
-		new AllInSwing();
+		new DemoAllInSwing();
 	}
 	
-	public AllInSwing() {
+	public DemoAllInSwing() {
 		// On est dans le thread main.
 		
 		Graph graph  = new MultiGraph("mg");
 		
-		// On demande au viewer de considérer que le graphe ne sera lu et modifié que
+		// On demande au viewer de considï¿½rer que le graphe ne sera lu et modifiï¿½ que
 		// dans le thread Swing.
 		
 		Viewer viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_SWING_THREAD);
 
-		// À Partir de là, le viewer considère que le graphe est dans son propre thread,
-		// c'est-à-dire le thread Swing. Il est donc dangereux d'y toucher dans la thread
+		// ï¿½ Partir de lï¿½, le viewer considï¿½re que le graphe est dans son propre thread,
+		// c'est-ï¿½-dire le thread Swing. Il est donc dangereux d'y toucher dans la thread
 		// main. On utilise invokeLater pour faire tourner du code dans le thread Swing,
 		// par exemple pour initialiser l'application :
 		
@@ -87,7 +87,7 @@ class InitializeApplication extends JFrame implements Runnable {
 		graph.getNode("B").setAttribute("xyz",  1, 0, 0 );
   		graph.getNode("C").setAttribute("xyz",  0, 1, 0 );
    
-  		// On insère la vue principale du viewer dans la JFrame.
+  		// On insï¿½re la vue principale du viewer dans la JFrame.
   		
 		add(viewer.addDefaultView( false ), BorderLayout.CENTER );
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
