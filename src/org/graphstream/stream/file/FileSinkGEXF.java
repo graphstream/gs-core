@@ -38,8 +38,11 @@ import org.graphstream.graph.implementations.AdjacencyListGraph;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
@@ -50,6 +53,7 @@ public class FileSinkGEXF extends FileSinkBase {
 	XMLStreamWriter stream;
 	boolean smart;
 	int depth;
+	int currentAttributeIndex = 0;
 
 	public FileSinkGEXF() {
 		smart = true;
@@ -67,6 +71,10 @@ public class FileSinkGEXF extends FileSinkBase {
 	}
 
 	protected void outputHeader() throws IOException {
+		Calendar cal = Calendar.getInstance();
+		Date date = cal.getTime();
+		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+		
 		try {
 			stream = XMLOutputFactory.newFactory()
 					.createXMLStreamWriter(output);
@@ -79,6 +87,13 @@ public class FileSinkGEXF extends FileSinkBase {
 			stream.writeAttribute("xsi:schemaLocation",
 					"http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd");
 			stream.writeAttribute("version", "1.2");
+			
+			startElement(stream, "meta");
+			stream.writeAttribute("lastmodifieddate", df.format(date));
+			startElement(stream, "creator");
+			stream.writeCharacters("GraphStream - " + getClass().getName());
+			endElement(stream, true);
+			endElement(stream, false);
 		} catch (XMLStreamException e) {
 			throw new IOException(e);
 		} catch (FactoryConfigurationError e) {
@@ -240,15 +255,13 @@ public class FileSinkGEXF extends FileSinkBase {
 		throw new UnsupportedOperationException();
 	}
 
-	static class GEXFAttribute {
-		static int currentIndex = 0;
-
+	class GEXFAttribute {
 		int index;
 		String key;
 		String type;
 
 		GEXFAttribute(String key, String type) {
-			this.index = currentIndex++;
+			this.index = currentAttributeIndex++;
 			this.key = key;
 			this.type = type;
 		}
@@ -271,21 +284,11 @@ public class FileSinkGEXF extends FileSinkBase {
 			for (Element e : iterable) {
 				for (String key : e.getAttributeKeySet()) {
 					Object value = e.getAttribute(key);
-					String id = String.format("%s@%s", key, value.getClass()
-							.getName());
+					String id = getID(key, value);
 					String attType = "string";
 
 					if (containsKey(id))
 						continue;
-
-					// integer
-					// long
-					// double
-					// float
-					// boolean
-					// liststring
-					// string
-					// anyURI
 
 					if (value instanceof Integer || value instanceof Short)
 						attType = "integer";
@@ -300,12 +303,16 @@ public class FileSinkGEXF extends FileSinkBase {
 					else if (value instanceof URL || value instanceof URI)
 						attType = "anyURI";
 					else if (value.getClass().isArray()
-							|| value instanceof List)
+							|| value instanceof Collection)
 						attType = "liststring";
 
 					put(id, new GEXFAttribute(key, attType));
 				}
 			}
+		}
+
+		String getID(String key, Object value) {
+			return String.format("%s@%s", key, value.getClass().getName());
 		}
 
 		void export(XMLStreamWriter stream) throws XMLStreamException {
@@ -328,8 +335,7 @@ public class FileSinkGEXF extends FileSinkBase {
 
 		void push(XMLStreamWriter stream, Element e, String key)
 				throws XMLStreamException {
-			String id = String.format("%s@%s", key, e.getAttribute(key)
-					.getClass().getName());
+			String id = getID(key, e.getAttribute(key));
 			GEXFAttribute a = get(id);
 
 			if (a == null) {
