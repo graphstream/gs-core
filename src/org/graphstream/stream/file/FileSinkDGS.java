@@ -134,7 +134,7 @@ public class FileSinkDGS extends FileSinkBase {
 	}
 
 	public void graphCleared(String graphId, long timeId) {
-		out.printf("clear%n");
+		out.printf("cl%n");
 	}
 
 	public void nodeAdded(String graphId, long timeId, String nodeId) {
