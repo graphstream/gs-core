@@ -277,9 +277,9 @@ public class FileSinkGEXF extends FileSinkBase {
 			Iterable<? extends Element> iterable;
 
 			if (type.equals("node"))
-				iterable = g.getNodeSet();
+				iterable = (Iterable<? extends Element>) g.getNodeSet();
 			else
-				iterable = g.getEdgeSet();
+				iterable = (Iterable<? extends Element>) g.getEdgeSet();
 
 			for (Element e : iterable) {
 				for (String key : e.getAttributeKeySet()) {
