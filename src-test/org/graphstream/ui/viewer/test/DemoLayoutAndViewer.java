@@ -57,7 +57,7 @@ import org.graphstream.ui.swingViewer.Viewer;
  *     +--------------------+
  * </pre>
  */
-public class TestLayoutAndViewer {
+public class DemoLayoutAndViewer {
 //	public static final String GRAPH = "data/dorogovtsev_mendes6000.dgs"; public static final double a= 0; public static final double r=-1.3; public static double force = 3;
 //	public static final String GRAPH = "data/karate.gml";		public static double a= 0; public static double r=-1.3; public static double force = 3;
 	public static final String GRAPH = "data/dolphins.gml";		public static double a= 0; public static double r=-1.2; public static double force = 8;
@@ -68,10 +68,10 @@ public class TestLayoutAndViewer {
 //	public static final String GRAPH = "data/imdb.dgs";			
 
 	public static void main(String args[]) {
-		new TestLayoutAndViewer();
+		new DemoLayoutAndViewer();
 	}
 
-	public TestLayoutAndViewer() {
+	public DemoLayoutAndViewer() {
 		boolean loop = true;
 		Graph graph = new MultiGraph("test");
 		Viewer viewer = new Viewer(new ThreadProxyPipe(graph));

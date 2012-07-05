@@ -38,17 +38,17 @@ import org.graphstream.ui.swingViewer.ViewerPipe;
 /**
  * Test the viewer.
  */
-public class TestViewerColorInterpolation implements ViewerListener {
+public class DemoViewerColorInterpolation implements ViewerListener {
 	public static void main(String args[]) {
 		// System.setProperty( "gs.ui.renderer",
 		// "org.graphstream.ui.j2dviewer.J2DGraphRenderer" );
 
-		new TestViewerColorInterpolation();
+		new DemoViewerColorInterpolation();
 	}
 
 	protected boolean loop = true;
 
-	public TestViewerColorInterpolation() {
+	public DemoViewerColorInterpolation() {
 		Graph graph = new MultiGraph("main graph");
 		ViewerPipe pipe = graph.display(false).newViewerPipe();
 

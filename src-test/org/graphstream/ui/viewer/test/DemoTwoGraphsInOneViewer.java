@@ -37,14 +37,14 @@ import org.graphstream.stream.file.FileSourceDGS;
 import org.graphstream.stream.thread.*;
 import org.graphstream.ui.swingViewer.*;
 
-public class TestTwoGraphsInOneViewer {
+public class DemoTwoGraphsInOneViewer {
 	public static final String GRAPH = "data/dorogovtsev_mendes6000.dgs";
 
 	public static void main(String args[]) {
-		new TestTwoGraphsInOneViewer();
+		new DemoTwoGraphsInOneViewer();
 	}
 
-	public TestTwoGraphsInOneViewer() {
+	public DemoTwoGraphsInOneViewer() {
 		Graph graph1 = new MultiGraph("g1");
 		Graph graph2 = new MultiGraph("g2");
 		Viewer viewer1 = new Viewer(new ThreadProxyPipe(graph1));
