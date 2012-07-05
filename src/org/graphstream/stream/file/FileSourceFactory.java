@@ -30,9 +30,15 @@
 package org.graphstream.stream.file;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.XMLEvent;
 
 /**
  * File source factory.
@@ -124,6 +130,10 @@ public class FileSourceFactory {
 
 		// If we did not found anything, we try with the filename extension ...
 
+		if (flc.endsWith(".dgs")) {
+			return new FileSourceDGS();
+		}
+
 		if (flc.endsWith(".gml") || flc.endsWith(".dgml")) {
 			return new org.graphstream.stream.file.FileSourceGML();
 		}
@@ -157,6 +167,11 @@ public class FileSourceFactory {
 		}
 
 		if (flc.endsWith(".xml")) {
+			String root = getXMLRootElement(fileName);
+
+			if (root.equalsIgnoreCase("gexf"))
+				return new FileSourceGEXF();
+			
 			return new FileSourceGraphML();
 		}
 
@@ -165,5 +180,34 @@ public class FileSourceFactory {
 		}
 
 		return null;
+	}
+
+	public static String getXMLRootElement(String fileName) throws IOException {
+		FileReader stream = new FileReader(fileName);
+		XMLEventReader reader;
+		XMLEvent e;
+		String root;
+
+		try {
+			reader = XMLInputFactory.newInstance().createXMLEventReader(stream);
+
+			do {
+				e = reader.nextEvent();
+			} while (!e.isStartElement() && !e.isEndDocument());
+
+			if (e.isEndDocument())
+				throw new IOException(
+						"document ended before catching root element");
+
+			root = e.asStartElement().getName().getLocalPart();
+			reader.close();
+			stream.close();
+
+			return root;
+		} catch (XMLStreamException ex) {
+			throw new IOException(ex);
+		} catch (FactoryConfigurationError ex) {
+			throw new IOException(ex);
+		}
 	}
 }
