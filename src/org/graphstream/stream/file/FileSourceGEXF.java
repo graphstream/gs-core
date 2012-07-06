@@ -392,8 +392,8 @@ public class FileSourceGEXF extends FileSourceXML {
 			e = getNextEvent();
 			checkValid(e, XMLEvent.START_ELEMENT, "attributes");
 
-			attributes = getAttributes(ATTRIBUTESAttribute.class, e
-					.asStartElement());
+			attributes = getAttributes(ATTRIBUTESAttribute.class,
+					e.asStartElement());
 
 			checkRequiredAttributes(e, attributes, ATTRIBUTESAttribute.CLASS);
 
@@ -440,8 +440,8 @@ public class FileSourceGEXF extends FileSourceXML {
 			e = getNextEvent();
 			checkValid(e, XMLEvent.START_ELEMENT, "attribute");
 
-			attributes = getAttributes(ATTRIBUTEAttribute.class, e
-					.asStartElement());
+			attributes = getAttributes(ATTRIBUTEAttribute.class,
+					e.asStartElement());
 
 			checkRequiredAttributes(e, attributes, ATTRIBUTEAttribute.ID,
 					ATTRIBUTEAttribute.TITLE, ATTRIBUTEAttribute.TYPE);
@@ -592,8 +592,8 @@ public class FileSourceGEXF extends FileSourceXML {
 			sendNodeAdded(sourceId, id);
 
 			if (attributes.containsKey(NODEAttribute.LABEL))
-				sendNodeAttributeAdded(sourceId, id, "label", attributes
-						.get(NODEAttribute.LABEL));
+				sendNodeAttributeAdded(sourceId, id, "label",
+						attributes.get(NODEAttribute.LABEL));
 
 			e = getNextEvent();
 
@@ -701,8 +701,8 @@ public class FileSourceGEXF extends FileSourceXML {
 			e = getNextEvent();
 			checkValid(e, XMLEvent.START_ELEMENT, "attvalue");
 
-			attributes = getAttributes(ATTVALUEAttribute.class, e
-					.asStartElement());
+			attributes = getAttributes(ATTVALUEAttribute.class,
+					e.asStartElement());
 
 			checkRequiredAttributes(e, attributes, ATTVALUEAttribute.FOR,
 					ATTVALUEAttribute.VALUE);
@@ -715,8 +715,8 @@ public class FileSourceGEXF extends FileSourceXML {
 						.get(ATTVALUEAttribute.FOR));
 
 			if (theAttribute == null)
-				throw newParseError(e, "undefined attribute \"%s\"", attributes
-						.get(ATTVALUEAttribute.FOR));
+				throw newParseError(e, "undefined attribute \"%s\"",
+						attributes.get(ATTVALUEAttribute.FOR));
 
 			try {
 				value = theAttribute.getValue(attributes
@@ -825,12 +825,12 @@ public class FileSourceGEXF extends FileSourceXML {
 			e = getNextEvent();
 			checkValid(e, XMLEvent.START_ELEMENT, "parent");
 
-			attributes = getAttributes(PARENTAttribute.class, e
-					.asStartElement());
+			attributes = getAttributes(PARENTAttribute.class,
+					e.asStartElement());
 
 			checkRequiredAttributes(e, attributes, PARENTAttribute.FOR);
-			sendNodeAttributeAdded(sourceId, attributes
-					.get(PARENTAttribute.FOR), "parent", nodeId);
+			sendNodeAttributeAdded(sourceId,
+					attributes.get(PARENTAttribute.FOR), "parent", nodeId);
 
 			e = getNextEvent();
 			checkValid(e, XMLEvent.END_ELEMENT, "parent");
@@ -904,8 +904,8 @@ public class FileSourceGEXF extends FileSourceXML {
 			e = getNextEvent();
 			checkValid(e, XMLEvent.START_ELEMENT, "position");
 
-			attributes = getAttributes(POSITIONAttribute.class, e
-					.asStartElement());
+			attributes = getAttributes(POSITIONAttribute.class,
+					e.asStartElement());
 
 			checkRequiredAttributes(e, attributes, POSITIONAttribute.X,
 					POSITIONAttribute.Y, POSITIONAttribute.Z);
@@ -981,8 +981,8 @@ public class FileSourceGEXF extends FileSourceXML {
 			e = getNextEvent();
 			checkValid(e, XMLEvent.START_ELEMENT, "shape");
 
-			attributes = getAttributes(NODESHAPEAttribute.class, e
-					.asStartElement());
+			attributes = getAttributes(NODESHAPEAttribute.class,
+					e.asStartElement());
 
 			checkRequiredAttributes(e, attributes, NODESHAPEAttribute.VALUE);
 
@@ -1005,15 +1005,14 @@ public class FileSourceGEXF extends FileSourceXML {
 						sourceId,
 						nodeId,
 						"ui.style",
-						String
-								.format(
-										"fill-mode: image-scaled; fill-image: url('%s');",
-										uri));
+						String.format(
+								"fill-mode: image-scaled; fill-image: url('%s');",
+								uri));
 
 				break;
 			default:
-				sendNodeAttributeAdded(sourceId, nodeId, "ui.style", String
-						.format("shape: %s;", type.name().toLowerCase()));
+				sendNodeAttributeAdded(sourceId, nodeId, "ui.style",
+						String.format("shape: %s;", type.name().toLowerCase()));
 			}
 
 			e = getNextEvent();
@@ -1100,8 +1099,8 @@ public class FileSourceGEXF extends FileSourceXML {
 			}
 
 			if (attributes.containsKey(EDGEAttribute.LABEL))
-				sendEdgeAttributeAdded(sourceId, id, "ui.label", attributes
-						.get(EDGEAttribute.LABEL));
+				sendEdgeAttributeAdded(sourceId, id, "ui.label",
+						attributes.get(EDGEAttribute.LABEL));
 
 			if (attributes.containsKey(EDGEAttribute.WEIGHT)) {
 				try {
@@ -1118,8 +1117,8 @@ public class FileSourceGEXF extends FileSourceXML {
 
 			while (!isEvent(e, XMLEvent.END_ELEMENT, "edge")) {
 				try {
-					Balise b = Balise.valueOf(e.asStartElement().getName()
-							.getLocalPart());
+					Balise b = Balise.valueOf(toConstantName(e.asStartElement()
+							.getName().getLocalPart()));
 
 					pushback(e);
 
@@ -1145,7 +1144,8 @@ public class FileSourceGEXF extends FileSourceXML {
 								"edge children should be one of 'attvalues', 'color', 'thicknes', 'shape' or 'spells'");
 					}
 				} catch (IllegalArgumentException ex) {
-					throw newParseError(e, "unknown tag");
+					throw newParseError(e, "unknown tag '%s'", e
+							.asStartElement().getName().getLocalPart());
 				}
 
 				e = getNextEvent();
@@ -1177,8 +1177,8 @@ public class FileSourceGEXF extends FileSourceXML {
 			e = getNextEvent();
 			checkValid(e, XMLEvent.START_ELEMENT, "shape");
 
-			attributes = getAttributes(EDGESHAPEAttribute.class, e
-					.asStartElement());
+			attributes = getAttributes(EDGESHAPEAttribute.class,
+					e.asStartElement());
 			checkRequiredAttributes(e, attributes, EDGESHAPEAttribute.VALUE);
 
 			try {
@@ -1218,8 +1218,8 @@ public class FileSourceGEXF extends FileSourceXML {
 			e = getNextEvent();
 			checkValid(e, XMLEvent.START_ELEMENT, "thickness");
 
-			attributes = getAttributes(THICKNESSAttribute.class, e
-					.asStartElement());
+			attributes = getAttributes(THICKNESSAttribute.class,
+					e.asStartElement());
 
 			checkRequiredAttributes(e, attributes, THICKNESSAttribute.VALUE);
 
