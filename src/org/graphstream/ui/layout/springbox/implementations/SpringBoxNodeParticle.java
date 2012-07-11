@@ -235,6 +235,16 @@ public class SpringBoxNodeParticle extends NodeParticle {
 			}
 		}
 	}
+	
+	protected void gravity(Vector3 delta) {
+		SpringBox box = (SpringBox) this.box;
+		boolean is3D = box.is3D();
+		org.graphstream.ui.geom.Point3 center = box.getCenterPoint();
+		delta.set(center.x - pos.x, center.y - pos.y, is3D ? center.z - pos.z : 0);
+		delta.normalize();
+		delta.scalarMult(box.getGravityFactor());
+		disp.add(delta);
+	}
 
 	protected boolean intersection(Cell cell) {
 		SpringBox box = (SpringBox) this.box;

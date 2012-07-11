@@ -175,6 +175,9 @@ public abstract class NodeParticle extends Particle {
 				repulsionNLogN(delta);
 
 			attraction(delta);
+			
+			if(box.gravity != 0)
+				gravity(delta);
 
 			disp.scalarMult(box.force);
 
@@ -266,8 +269,21 @@ public abstract class NodeParticle extends Particle {
 	 */
 	protected abstract void repulsionNLogN(Vector3 delta);
 
+	/**
+	 * Compute the global attraction toward each connected node.
+	 * @param delta
+	 * 			The computed displacement vector.
+	 */
 	protected abstract void attraction(Vector3 delta);
 
+	/**
+	 * Compute the global attraction toward the layout center (if enabled).
+	 * @param delta
+	 * 			The computed displacement vector.
+	 * @see BarnesHutLayout#useGravity
+	 */
+	protected abstract void gravity(Vector3 delta);
+	
 	/**
 	 * The given edge is connected to this node.
 	 * 

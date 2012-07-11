@@ -134,6 +134,11 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout,
 	 * The highest node position.
 	 */
 	protected Point3 hi = new Point3(1, 1, 1);
+	
+	/**
+	 * The point in the middle of the layout.
+	 */
+	protected Point3 center = new Point3(0.5, 0.5, 0.5);
 
 	/**
 	 * Output stream for statistics if in debug mode.
@@ -216,6 +221,11 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout,
 	 */
 	protected boolean is3D = false;
 
+	/**
+	 * The gravity factor. If set to 0 the gravity computation is disabled.
+	 */
+	protected double gravity = 0;
+	
 	/**
 	 * Send node informations?.
 	 */
@@ -302,6 +312,28 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout,
 		org.miv.pherd.geom.Point3 p = nodes.getNTree().getHighestPoint();
 		hi.set(p.x, p.y, p.z);
 		return hi;
+	}
+	
+	public Point3 getCenterPoint() {
+		return center;
+	}
+	
+	/**
+	 * A gravity factor that attracts all nodes to the center of the layout to avoid flying components. If
+	 * set to zero, the gravity computation is disabled.
+	 * @return The gravity factor, usually between 0 and 1.
+	 */
+	public double getGravityFactor() {
+		return gravity;
+	}
+	
+	/**
+	 * Set the gravity factor that attracts all nodes to the center of the layout to avoid flying components. If
+	 * set to zero, the gravity computation is disabled.
+	 * @param value The new gravity factor, usually between 0 and 1.
+	 */
+	public void setGravityFactor(double value) {
+		gravity = value;
 	}
 
 	/**
@@ -436,6 +468,7 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout,
 
 		getLowPoint();
 		getHiPoint();
+		center.set(lo.x+(hi.x-lo.x)/2, lo.y+(hi.y-lo.y)/2, lo.z+(hi.z-lo.z)/2);
 		energies.storeEnergy();
 		printStats();
 		time++;
@@ -707,10 +740,16 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout,
 				q = q < 0 ? 0 : q;
 
 				setQuality(q);
-				System.err.printf("layout.elasticBox.quality: %d%n", q);
+				System.err.printf("layout.%s.quality: %d%n", getLayoutAlgorithmName(), q);
 			}
 
 			energies.clearEnergies();
+		} else if(attribute.equals("layout.gravity")) {
+			if(newValue instanceof Number) {
+				double value = ((Number)newValue).doubleValue();
+				setGravityFactor(value);
+				System.err.printf("layout.%s.gravity: %f%n", getLayoutAlgorithmName(), value);
+			}
 		} else if (attribute.equals("layout.exact-zone")) {
 			if (newValue instanceof Number) {
 				double factor = ((Number) newValue).doubleValue();
@@ -720,7 +759,7 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout,
 
 				viewZone = factor;
 				System.err.printf(
-						"layout.elasticBox.exact-zone: %f of [0..1]%n",
+						"layout.%s.exact-zone: %f of [0..1]%n", getLayoutAlgorithmName(),
 						viewZone);
 
 				energies.clearEnergies();
@@ -731,7 +770,7 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout,
 			else
 				outputStats = true;
 
-			System.err.printf("layout.elasticBox.output-stats: %b%n",
+			System.err.printf("layout.%s.output-stats: %b%n", getLayoutAlgorithmName(),
 					outputStats);
 		} else if (attribute.equals("layout.stabilization-limit")) {
 			if (newValue instanceof Number) {

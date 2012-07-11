@@ -241,6 +241,10 @@ public class LinLogNodeParticle extends NodeParticle {
 		}
 	}
 	
+	@Override
+	protected void gravity(Vector3 delta) {
+	}
+	
 	protected boolean intersection(Cell cell) {
 		LinLog box = (LinLog) this.box;
 
