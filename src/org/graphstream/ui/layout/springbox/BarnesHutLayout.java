@@ -468,8 +468,8 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout,
 
 		getLowPoint();
 		getHiPoint();
-		//center.set(lo.x+(hi.x-lo.x)/2, lo.y+(hi.y-lo.y)/2, lo.z+(hi.z-lo.z)/2);
-		center.set(0, 0, 0);
+		center.set(lo.x+(hi.x-lo.x)/2, lo.y+(hi.y-lo.y)/2, lo.z+(hi.z-lo.z)/2);
+		//center.set(0, 0, 0);
 		energies.storeEnergy();
 		printStats();
 		time++;
