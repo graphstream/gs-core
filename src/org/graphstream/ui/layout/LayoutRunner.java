@@ -138,7 +138,7 @@ public class LayoutRunner extends Thread {
 	public LayoutRunner(Graph graph, Layout layout, boolean start,
 			boolean replay) {
 		this.layout = layout;
-		this.pumpPipe = new ThreadProxyPipe(graph, true);
+		this.pumpPipe = new ThreadProxyPipe(graph, replay);
 		this.pumpPipe.addSink(layout);
 
 		if (start)

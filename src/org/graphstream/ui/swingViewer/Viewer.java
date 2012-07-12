@@ -604,7 +604,9 @@ public class Viewer implements ActionListener {
 	public void enableAutoLayout(Layout layoutAlgorithm) {
 		synchronized(views) {
 			if (optLayout == null) {
-				optLayout = new LayoutRunner(graph, layoutAlgorithm, true, true);
+//				optLayout = new LayoutRunner(graph, layoutAlgorithm, true, true);
+				optLayout = new LayoutRunner(graph, layoutAlgorithm, true, false);
+				graph.replay();
 				layoutPipeIn = optLayout.newLayoutPipe();
 				layoutPipeIn.addAttributeSink(graph);
 			}

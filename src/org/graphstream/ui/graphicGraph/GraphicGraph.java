@@ -1244,4 +1244,45 @@ public class GraphicGraph extends AbstractElement implements Graph,
 	public <T extends Node> T removeNode(Node node) {
 		throw new RuntimeException("not implemented !");
 	}
+	
+	/**
+	 * Replay all the elements of the graph and all attributes as new events to
+	 * all connected sinks.
+	 * 
+	 * Be very careful with this method, it introduces new events in the event
+	 * stream and some sinks may therefore receive them twice !! Graph replay
+	 * is always dangerous !
+	 */
+	public void replay() {
+		// Replay all graph attributes.
+
+		if (getAttributeKeySet() != null)
+			for (String key : getAttributeKeySet()) {
+				listeners.sendGraphAttributeAdded(id, key, getAttribute(key));
+			}
+
+		// Replay all nodes and their attributes.
+
+		for (Node node : this) {
+			listeners.sendNodeAdded(id, node.getId());
+
+			if (node.getAttributeKeySet() != null) {
+				for (String key : node.getAttributeKeySet()) {
+					listeners.sendNodeAttributeAdded(id, node.getId(), key, node.getAttribute(key));
+				}
+			}
+		}
+
+		// Replay all edges and their attributes.
+
+		for (Edge edge : getEachEdge()) {
+			listeners.sendEdgeAdded(id, edge.getId(), edge.getSourceNode().getId(), edge.getTargetNode().getId(), edge.isDirected());
+			
+			if (edge.getAttributeKeySet() != null) {
+				for (String key : edge.getAttributeKeySet()) {
+					listeners.sendEdgeAttributeAdded(id, edge.getId(), key, edge.getAttribute(key));
+				}
+			}
+		}
+	}
 }
