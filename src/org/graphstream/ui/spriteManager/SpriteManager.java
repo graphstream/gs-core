@@ -101,14 +101,14 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 	 * @param graph
 	 *            The graph to associate with this manager;
 	 */
-	public SpriteManager(Graph graph) {
+	public SpriteManager(Graph graph) throws InvalidSpriteIDException {
 		this.graph = graph;
 
 		lookForExistingSprites();
 		graph.addAttributeSink(this);
 	}
 
-	protected void lookForExistingSprites() {
+	protected void lookForExistingSprites() throws InvalidSpriteIDException {
 		if (graph.getAttributeCount() > 0) {
 			for (String attr : graph.getAttributeKeySet()) {
 				if (attr.startsWith("ui.sprite.")) {
@@ -116,6 +116,8 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 
 					if (id.indexOf('.') < 0) {
 						addSprite(id);
+					} else {
+						throw new InvalidSpriteIDException("Sprites identifiers cannot contain dots.");
 					}
 				}
 			}
@@ -226,13 +228,16 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 
 	/**
 	 * Add a sprite with the given identifier. If the sprite already exists,
-	 * nothing is done.
+	 * nothing is done. The sprite identifier cannot actually contain dots.
+	 * This character use is reserved by the sprite mechanism.
 	 * 
 	 * @param identifier
 	 *            The identifier of the new sprite to add.
 	 * @return The created sprite.
+	 * @throws InvalidSpriteIDException
+	 * 			If the given identifier contains a dot.
 	 */
-	public Sprite addSprite(String identifier) {
+	public Sprite addSprite(String identifier) throws InvalidSpriteIDException {
 		return addSprite(identifier, (Values) null);
 	}
 
@@ -241,15 +246,21 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 	 * already exists, nothing is done, excepted if the position is not null in
 	 * which case it is repositioned. If the sprite does not exists, it is added
 	 * and if position is not null, it is used as the initial position of the
-	 * sprite.
+	 * sprite.  The sprite identifier cannot actually contain dots.
+	 * This character use is reserved by the sprite mechanism.
 	 * 
 	 * @param identifier
 	 *            The sprite identifier.
 	 * @param position
 	 *            The sprite position (or null for (0,0,0)).
 	 * @return The created sprite.
+	 * @throws InvalidSpriteIDException
+	 * 			If the given identifier contains a dot.
 	 */
-	protected Sprite addSprite(String identifier, Values position) {
+	protected Sprite addSprite(String identifier, Values position) throws InvalidSpriteIDException {
+		if(identifier.indexOf('.') >= 0)
+			throw new InvalidSpriteIDException("Sprite identifiers cannot contain dots.");
+		
 		Sprite sprite = sprites.get(identifier);
 
 		if (sprite == null) {
@@ -407,7 +418,13 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 					if (value != null)
 						position = getPositionValue(value);
 
-					addSprite(spriteId, position);
+					try {
+						addSprite(spriteId, position);
+					} catch(InvalidSpriteIDException e) {
+						e.printStackTrace();
+						throw new RuntimeException(e);
+						// Ho !! Dirty !!
+					}
 				}
 			}
 		}
