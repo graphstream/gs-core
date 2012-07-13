@@ -86,7 +86,7 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
  * 
  * <p>
  * The style sheet is uploaded on the graph using an attribute correspondingly
- * named "stylesheet" or "ui.stylesheet" (the second one is better). It can be
+ * named "ui.stylesheet" or "ui.stylesheet" (the second one is better). It can be
  * a string that contains the whole style sheet, or an URL of the form :
  * </p>
  * 
