@@ -29,6 +29,7 @@
  */
 package org.graphstream.graph.implementations;
 
+import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -46,7 +47,12 @@ public class AdjacencyListNode extends AbstractNode {
 
 	static {
 		String p = "org.graphstream.graph.node.initialEdgeCapacity";
-		INITIAL_EDGE_CAPACITY = Integer.valueOf(System.getProperty(p, "16"));
+		int initialEdgeCapacity = 16;
+		try {
+			initialEdgeCapacity = Integer.valueOf(System.getProperty(p, "16"));
+		} catch (AccessControlException e) {
+		}
+		INITIAL_EDGE_CAPACITY = initialEdgeCapacity;
 	}
 
 	protected static final char I_EDGE = 0;
