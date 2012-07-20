@@ -117,7 +117,15 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 					if (id.indexOf('.') < 0) {
 						addSprite(id);
 					} else {
-						throw new InvalidSpriteIDException("Sprites identifiers cannot contain dots.");
+						String sattr = id.substring(id.indexOf('.') + 1);
+						id = id.substring(0, id.indexOf('.'));
+
+						Sprite s = getSprite(id);
+
+						if (s == null)
+							s = addSprite(id);
+
+						s.addAttribute(sattr, graph.getAttribute(attr));
 					}
 				}
 			}
@@ -228,14 +236,14 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 
 	/**
 	 * Add a sprite with the given identifier. If the sprite already exists,
-	 * nothing is done. The sprite identifier cannot actually contain dots.
-	 * This character use is reserved by the sprite mechanism.
+	 * nothing is done. The sprite identifier cannot actually contain dots. This
+	 * character use is reserved by the sprite mechanism.
 	 * 
 	 * @param identifier
 	 *            The identifier of the new sprite to add.
 	 * @return The created sprite.
 	 * @throws InvalidSpriteIDException
-	 * 			If the given identifier contains a dot.
+	 *             If the given identifier contains a dot.
 	 */
 	public Sprite addSprite(String identifier) throws InvalidSpriteIDException {
 		return addSprite(identifier, (Values) null);
@@ -246,8 +254,8 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 	 * already exists, nothing is done, excepted if the position is not null in
 	 * which case it is repositioned. If the sprite does not exists, it is added
 	 * and if position is not null, it is used as the initial position of the
-	 * sprite.  The sprite identifier cannot actually contain dots.
-	 * This character use is reserved by the sprite mechanism.
+	 * sprite. The sprite identifier cannot actually contain dots. This
+	 * character use is reserved by the sprite mechanism.
 	 * 
 	 * @param identifier
 	 *            The sprite identifier.
@@ -255,12 +263,14 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 	 *            The sprite position (or null for (0,0,0)).
 	 * @return The created sprite.
 	 * @throws InvalidSpriteIDException
-	 * 			If the given identifier contains a dot.
+	 *             If the given identifier contains a dot.
 	 */
-	protected Sprite addSprite(String identifier, Values position) throws InvalidSpriteIDException {
-		if(identifier.indexOf('.') >= 0)
-			throw new InvalidSpriteIDException("Sprite identifiers cannot contain dots.");
-		
+	protected Sprite addSprite(String identifier, Values position)
+			throws InvalidSpriteIDException {
+		if (identifier.indexOf('.') >= 0)
+			throw new InvalidSpriteIDException(
+					"Sprite identifiers cannot contain dots.");
+
 		Sprite sprite = sprites.get(identifier);
 
 		if (sprite == null) {
@@ -373,7 +383,8 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 				}
 			} else if (values.length == 1) {
 				if (values[0] instanceof Number) {
-					return new Values(Units.GU, ((Number) values[0]).floatValue());
+					return new Values(Units.GU,
+							((Number) values[0]).floatValue());
 				} else {
 					System.err
 							.printf("GraphicGraph : sprite position percent is not a number.%n");
@@ -420,7 +431,7 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 
 					try {
 						addSprite(spriteId, position);
-					} catch(InvalidSpriteIDException e) {
+					} catch (InvalidSpriteIDException e) {
 						e.printStackTrace();
 						throw new RuntimeException(e);
 						// Ho !! Dirty !!
