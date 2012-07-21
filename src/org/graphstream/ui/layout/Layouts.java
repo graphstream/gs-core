@@ -29,30 +29,50 @@
  */
 package org.graphstream.ui.layout;
 
+import java.security.AccessControlException;
+
 /**
- * A factory in charge or creating various layout implementations. 
+ * A factory in charge or creating various layout implementations.
  * 
- * This class is mainly used to create the default layout for the graph viewer. You can
- * also use layouts directly on your graphs, but in this case you do not need this
- * factory.
+ * This class is mainly used to create the default layout for the graph viewer.
+ * You can also use layouts directly on your graphs, but in this case you do not
+ * need this factory.
  * 
- * This class looks at the "gs.ui.layout" system property to create a layout class.
- * You can change this property using <code>System.setProperty("gs.ui.layout", you_layout_class_name)</code>.
+ * This class looks at the "gs.ui.layout" system property to create a layout
+ * class. You can change this property using
+ * <code>System.setProperty("gs.ui.layout", you_layout_class_name)</code>.
  */
 public class Layouts {
 	/**
-	 * Creates a layout according to the "gs.ui.layout" system property.
-	 * @return The new layout or the default GraphStream "Spring-Box" layout if the "gs.ui.layout"
-	 * system property is either not set or contains a class that cannot be found.
+	 * Creates a layout according to the "org.graphstream.ui.layout" system property.
+	 * 
+	 * @return The new layout or the default GraphStream "Spring-Box" layout if
+	 *         the "gs.ui.layout" system property is either not set or contains
+	 *         a class that cannot be found.
 	 */
 	public static Layout newLayoutAlgorithm() {
-		String layoutClassName = System.getProperty("gs.ui.layout");
+		String layoutClassName;
+
+		try {
+			layoutClassName = System.getProperty("gs.ui.layout");
+
+			if (layoutClassName != null) {
+				System.err.printf("\"gs.ui.layout\" is deprecated,");
+				System.err.printf("use \"org.graphstream.ui.layout\""
+						+ " instead\n");
+			} else {
+				layoutClassName = System
+						.getProperty("org.graphstream.ui.layout");
+			}
+		} catch (AccessControlException e) {
+			layoutClassName = null;
+		}
 
 		if (layoutClassName != null) {
 			try {
 				Class<?> c = Class.forName(layoutClassName);
 				Object object = c.newInstance();
-	
+
 				if (object instanceof Layout) {
 					return (Layout) object;
 				} else {
@@ -66,15 +86,17 @@ public class Layouts {
 								+ e.getMessage());
 			} catch (InstantiationException e) {
 				e.printStackTrace();
-				System.err.printf("Cannot create layout, class '" + layoutClassName
-						+ "' error : " + e.getMessage());
+				System.err.printf("Cannot create layout, class '"
+						+ layoutClassName + "' error : " + e.getMessage());
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
-				System.err.printf("Cannot create layout, class '" + layoutClassName
-						+ "' illegal access : " + e.getMessage());
+				System.err.printf("Cannot create layout, class '"
+						+ layoutClassName + "' illegal access : "
+						+ e.getMessage());
 			}
 		}
 
-		return new org.graphstream.ui.layout.springbox.implementations.SpringBox(false);
+		return new org.graphstream.ui.layout.springbox.implementations.SpringBox(
+				false);
 	}
 }
