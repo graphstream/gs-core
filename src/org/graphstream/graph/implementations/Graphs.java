@@ -477,10 +477,14 @@ public class Graphs {
 		public <T extends Edge> T addEdge(String id, Node node1, Node node2) {
 			T e;
 			Edge se;
-
+			final Node unsyncNode1, unsyncNode2;
+			
+			unsyncNode1 = ((SynchronizedElement<Node>) node1).wrappedElement;
+			unsyncNode2 = ((SynchronizedElement<Node>) node2).wrappedElement;
+			
 			elementLock.lock();
 
-			e = wrappedElement.addEdge(id, node1, node2);
+			e = wrappedElement.addEdge(id, unsyncNode1, unsyncNode2);
 			se = new SynchronizedEdge(this, e);
 			synchronizedEdges.put(id, se);
 
@@ -494,10 +498,14 @@ public class Graphs {
 				boolean directed) {
 			T e;
 			Edge se;
+			final Node unsyncFrom, unsyncTo;
+			
+			unsyncFrom = ((SynchronizedElement<Node>) from).wrappedElement;
+			unsyncTo = ((SynchronizedElement<Node>) to).wrappedElement;
 
 			elementLock.lock();
 
-			e = wrappedElement.addEdge(id, from, to, directed);
+			e = wrappedElement.addEdge(id, unsyncFrom, unsyncTo, directed);
 			se = new SynchronizedEdge(this, e);
 			synchronizedEdges.put(id, se);
 
