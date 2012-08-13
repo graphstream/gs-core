@@ -247,6 +247,7 @@ public abstract class NodeParticle extends Particle {
 	 */
 	public void moveTo(double x, double y, double z) {
 		pos.set(x, y, z);
+		moved = true;
 	}
 
 	/**

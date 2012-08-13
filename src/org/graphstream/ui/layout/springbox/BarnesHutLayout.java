@@ -822,10 +822,12 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout,
 			energies.clearEnergies();
 		} else if (attribute.equals("layout.frozen")) {
 			freezeNode(nodeId, (newValue != null));
+//System.err.printf("user froze node %s (%b)%n", nodeId, (newValue != null));
 		} else if (attribute.equals("xyz") || attribute.equals("xy")) {
 			double xyz[] = new double[3];
 			GraphPosLengthUtils.positionFromObject(newValue, xyz);
 			moveNode(nodeId, xyz[0], xyz[1], xyz[2]);
+//System.err.printf("user moved node %s to %f %f%n", nodeId, xyz[0], xyz[1]);
 		} else if (attribute.equals("x") && newValue instanceof Number) {
 			NodeParticle node = (NodeParticle) nodes.getParticle(nodeId);
 			if (node != null) {
