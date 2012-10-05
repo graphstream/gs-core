@@ -252,7 +252,7 @@ public class FileSinkDGS extends FileSinkBase {
 
 		for (Object key : hash.keySet()) {
 			sb.append(attributeString(key.toString(), hash.get(key), false));
-			sb.append(" ");
+			sb.append(",");
 		}
 
 		sb.append(']');
