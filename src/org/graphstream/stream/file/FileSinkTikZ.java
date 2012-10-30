@@ -47,6 +47,8 @@ import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.GraphicNode;
 import org.graphstream.ui.graphicGraph.StyleGroup;
 import org.graphstream.ui.graphicGraph.StyleGroupSet;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.FillMode;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.SizeMode;
 import org.graphstream.ui.layout.springbox.implementations.SpringBox;
 
 /**
@@ -106,14 +108,28 @@ public class FileSinkTikZ extends FileSinkBase {
 	 * Node attribute storing coordinates.
 	 */
 	public static final String XYZ_ATTR = "xyz";
+
 	/**
 	 * Graph attribute storing width of the TikZ picture.
 	 */
 	public static final String WIDTH_ATTR = "ui.tikz.width";
+
 	/**
 	 * Graph attribute storing height of the TikZ picture.
 	 */
 	public static final String HEIGHT_ATTR = "ui.tikz.height";
+
+	/**
+	 * Define the default minimum size of nodes when using a dynamic size. This
+	 * size is in millimeter.
+	 */
+	public static final double DISPLAY_MIN_SIZE_IN_MM = 2;
+
+	/**
+	 * Define the default maximum size of nodes when using a dynamic size. This
+	 * size is in millimeter.
+	 */
+	public static final double DISPLAY_MAX_SIZE_IN_MM = 10;
 
 	protected PrintWriter out;
 
@@ -132,6 +148,14 @@ public class FileSinkTikZ extends FileSinkBase {
 	protected GraphicGraph buffer;
 
 	protected String css = null;
+
+	protected double minSize = 0;
+
+	protected double maxSize = 0;
+
+	protected double displayMinSize = DISPLAY_MIN_SIZE_IN_MM;
+
+	protected double displayMaxSize = DISPLAY_MAX_SIZE_IN_MM;
 
 	protected static String formatId(String id) {
 		return "node" + id.replaceAll("\\W", "_");
@@ -155,6 +179,11 @@ public class FileSinkTikZ extends FileSinkBase {
 
 	public void setHeight(double height) {
 		this.height = height;
+	}
+
+	public void setDisplaySize(double min, double max) {
+		this.displayMinSize = min;
+		this.displayMaxSize = max;
 	}
 
 	public void setCSS(String css) {
@@ -185,6 +214,44 @@ public class FileSinkTikZ extends FileSinkBase {
 		return Double.NaN;
 	}
 
+	protected String getNodeStyle(Node n) {
+		String style = "tikzgsnode";
+
+		if (n instanceof GraphicNode) {
+			GraphicNode gn = (GraphicNode) n;
+
+			style = classNames.get(gn.style.getId());
+
+			if (gn.style.getFillMode() == FillMode.DYN_PLAIN) {
+				double uicolor = gn.getNumber("ui.color");
+
+				if (Double.isNaN(uicolor))
+					uicolor = 0;
+
+				style += String.format(Locale.ROOT, ", fill=%s!%d!%s",
+						checkColor(gn.style.getFillColor(0)),
+						(int) (uicolor * 100),
+						checkColor(gn.style.getFillColor(1)));
+			}
+
+			if (gn.style.getSizeMode() == SizeMode.DYN_SIZE) {
+				double uisize = gn.getNumber("ui.size");
+
+				if (Double.isNaN(uisize))
+					uisize = minSize;
+
+				uisize = (uisize - minSize) / (maxSize - minSize);
+				uisize = uisize * (displayMaxSize - displayMinSize)
+						+ displayMinSize;
+
+				style += String.format(Locale.ROOT, ", minimum size=%fmm",
+						uisize);
+			}
+		}
+
+		return style;
+	}
+
 	protected String checkColor(Color c) {
 		String rgb = String.format(Locale.ROOT, "%.3f,%.3f,%.3f",
 				c.getRed() / 255.0f, c.getGreen() / 255.0f,
@@ -212,8 +279,13 @@ public class FileSinkTikZ extends FileSinkBase {
 
 		switch (group.getType()) {
 		case NODE: {
-			String fill = checkColor(group.getFillColor(0));
-			style.add("fill=" + fill);
+			for (int i = 0; i < group.getFillColorCount(); i++)
+				checkColor(group.getFillColor(i));
+
+			if (group.getFillMode() != FillMode.DYN_PLAIN) {
+				String fill = checkColor(group.getFillColor(0));
+				style.add("fill=" + fill);
+			}
 
 			if (group.getFillColor(0).getAlpha() < 255)
 				style.add(String.format(Locale.ROOT, "fill opacity=%.2f", group
@@ -226,7 +298,8 @@ public class FileSinkTikZ extends FileSinkBase {
 				String stroke = checkColor(group.getStrokeColor(0));
 				style.add("draw=" + stroke);
 				style.add("line width="
-						+ String.format("%.1fpt", group.getStrokeWidth().value));
+						+ String.format(Locale.ROOT, "%.1fpt",
+								group.getStrokeWidth().value));
 
 				if (group.getStrokeColor(0).getAlpha() < 255)
 					style.add(String.format(Locale.ROOT, "draw opacity=%.2f",
@@ -264,9 +337,9 @@ public class FileSinkTikZ extends FileSinkBase {
 								group.getSize().values.get(0)));
 				break;
 			default:
-				System.err.printf(
-						"[warning] units %s are not compatible with TikZ.%n",
-						group.getSize().units);
+				System.err
+						.printf("%% [warning] units %s are not compatible with TikZ.%n",
+								group.getSize().units);
 			}
 
 			style.add("inner sep=0pt");
@@ -287,9 +360,9 @@ public class FileSinkTikZ extends FileSinkBase {
 								group.getSize().values.get(0)));
 				break;
 			default:
-				System.err.printf(
-						"[warning] units %s are not compatible with TikZ.%n",
-						group.getSize().units);
+				System.err
+						.printf("%% [warning] units %s are not compatible with TikZ.%n",
+								group.getSize().units);
 			}
 		}
 			break;
@@ -394,9 +467,17 @@ public class FileSinkTikZ extends FileSinkBase {
 				ymin = Math.min(ymin, y);
 				ymax = Math.max(ymax, y);
 			} else {
-				System.err.printf("[warning] missing node (x,y).%n");
+				System.err.printf("%% [warning] missing node (x,y).%n");
+			}
+
+			if (n.hasNumber("ui.size")) {
+				minSize = Math.min(minSize, n.getNumber("ui.size"));
+				maxSize = Math.max(maxSize, n.getNumber("ui.size"));
 			}
 		}
+
+		if (minSize == maxSize)
+			maxSize += 1;
 
 		for (Edge e : buffer.getEachEdge()) {
 			points.setElement(e);
@@ -417,7 +498,7 @@ public class FileSinkTikZ extends FileSinkBase {
 		for (Node n : buffer.getEachNode()) {
 			double x, y;
 			String label;
-			String uiClass = "tikzgsnode";
+			String style = getNodeStyle(n);
 
 			x = getNodeX(n);
 			y = getNodeY(n);
@@ -432,10 +513,7 @@ public class FileSinkTikZ extends FileSinkBase {
 
 			label = n.hasAttribute("label") ? (String) n.getLabel("label") : "";
 
-			if (n instanceof GraphicNode)
-				uiClass = classNames.get(((GraphicNode) n).style.getId());
-
-			out.printf(l, "\t\\node[%s] (%s) at (%f,%f) {%s};%n", uiClass,
+			out.printf(l, "\t\\node[%s] (%s) at (%f,%f) {%s};%n", style,
 					formatId(n.getId()), x, y, label);
 		}
 
@@ -688,8 +766,8 @@ public class FileSinkTikZ extends FileSinkBase {
 				return ((Point3) p).x;
 			else {
 				Object x = Array.get(p, 0);
-				
-				if(x instanceof Number)
+
+				if (x instanceof Number)
 					return ((Number) x).doubleValue();
 				else
 					return Array.getDouble(p, 0);
@@ -706,8 +784,8 @@ public class FileSinkTikZ extends FileSinkBase {
 				return ((Point3) p).y;
 			else {
 				Object y = Array.get(p, 0);
-				
-				if(y instanceof Number)
+
+				if (y instanceof Number)
 					return ((Number) y).doubleValue();
 				else
 					return Array.getDouble(p, 1);
