@@ -54,6 +54,7 @@ import org.graphstream.ui.graphicGraph.StyleGroup;
 import org.graphstream.ui.graphicGraph.StyleGroupSet;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.graphicGraph.stylesheet.Value;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.FillMode;
 import org.graphstream.ui.swingViewer.GraphRendererBase;
 import org.graphstream.ui.swingViewer.LayerRenderer;
 import org.graphstream.ui.swingViewer.util.Camera;
@@ -93,13 +94,13 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 	protected LayerRenderer backRenderer = null;
 
 	protected LayerRenderer foreRenderer = null;
-	
+
 	protected PrintStream fpsLog = null;
-	
+
 	protected long T1 = 0;
-	
+
 	protected long steps = 0;
-	
+
 	protected double sumFps = 0;
 
 	// Construction
@@ -115,12 +116,12 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 
 	@Override
 	public void close() {
-		if(fpsLog != null) {
+		if (fpsLog != null) {
 			fpsLog.flush();
 			fpsLog.close();
 			fpsLog = null;
 		}
-		
+
 		camera = null;
 		super.close();
 	}
@@ -146,7 +147,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 		// If not closed, one or two renders can occur after closed.
 		if (graph != null) {
 			beginFrame();
-			
+
 			if (camera.getGraphViewport() == null
 					&& camera.getMetrics().diagonal == 0
 					&& (graph.getNodeCount() == 0 && graph.getSpriteCount() == 0)) {
@@ -157,39 +158,40 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 				renderGraph(g);
 				renderSelection(g);
 			}
-			
+
 			endFrame();
 		}
 	}
-	
+
 	protected void beginFrame() {
-		if(graph.hasLabel("ui.log") && fpsLog == null) {
+		if (graph.hasLabel("ui.log") && fpsLog == null) {
 			try {
 				fpsLog = new PrintStream(graph.getLabel("ui.log").toString());
-			} catch(IOException e) {
+			} catch (IOException e) {
 				fpsLog = null;
 				e.printStackTrace();
 			}
 		}
-		
-		if(fpsLog != null) {
+
+		if (fpsLog != null) {
 			T1 = System.currentTimeMillis();
 		}
 	}
-	
+
 	protected void endFrame() {
-		if(fpsLog != null) {
+		if (fpsLog != null) {
 			steps += 1;
 			long T2 = System.currentTimeMillis();
 			long time = T2 - T1;
 			double fps = 1000.0 / time;
 			sumFps += fps;
-			fpsLog.printf("%.3f   %d   %.3f%n", fps, time, (sumFps/steps));
+			fpsLog.printf("%.3f   %d   %.3f%n", fps, time, (sumFps / steps));
 		}
 	}
 
 	public void moveElementAtPx(GraphicElement element, double x, double y) {
-		Point3 p = camera.transformPxToGu(camera.getMetrics().viewport[0]+x, camera.getMetrics().viewport[1]+y);
+		Point3 p = camera.transformPxToGu(camera.getMetrics().viewport[0] + x,
+				camera.getMetrics().viewport[1] + y);
 		element.move(p.x, p.y, element.getZ());
 	}
 
@@ -204,14 +206,16 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 		camera.pushView(graph, g);
 		renderGraphElements(g);
 
-		if (style.getStrokeMode() != StyleConstants.StrokeMode.NONE && style.getStrokeWidth().value != 0) {
+		if (style.getStrokeMode() != StyleConstants.StrokeMode.NONE
+				&& style.getStrokeWidth().value != 0) {
 			GraphMetrics metrics = camera.getMetrics();
-			Rectangle2D rect     = new Rectangle2D.Double();
-			double px1           = metrics.px1;
-			Value stroke         = style.getShadowWidth();
+			Rectangle2D rect = new Rectangle2D.Double();
+			double px1 = metrics.px1;
+			Value stroke = style.getShadowWidth();
 
-			rect.setFrame(metrics.lo.x, metrics.lo.y + px1, metrics.size.data[0] - px1, metrics.size.data[1] - px1);
-			g.setStroke(new BasicStroke((float)metrics.lengthToGu(stroke)));
+			rect.setFrame(metrics.lo.x, metrics.lo.y + px1,
+					metrics.size.data[0] - px1, metrics.size.data[1] - px1);
+			g.setStroke(new BasicStroke((float) metrics.lengthToGu(stroke)));
 			g.setColor(graph.getStyle().getStrokeColor(0));
 			g.draw(rect);
 		}
@@ -267,9 +271,11 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 	protected void renderGraphBackground(Graphics2D g) {
 		StyleGroup group = graph.getStyle();
 
-		g.setColor(group.getFillColor(0));
-		g.fillRect(0, 0, (int) camera.getMetrics().viewport[2],
-			(int) camera.getMetrics().viewport[3]);
+		if (group.getFillMode() != FillMode.NONE) {
+			g.setColor(group.getFillColor(0));
+			g.fillRect(0, 0, (int) camera.getMetrics().viewport[2],
+					(int) camera.getMetrics().viewport[3]);
+		}
 	}
 
 	/**
@@ -393,11 +399,11 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 
 		double x = metrics.loVisible.x;
 		double y = metrics.loVisible.y;
-		double w =  Math.abs(metrics.hiVisible.x - x);
-		double h =  Math.abs(metrics.hiVisible.y - y);
+		double w = Math.abs(metrics.hiVisible.x - x);
+		double h = Math.abs(metrics.hiVisible.y - y);
 
 		rect.setFrame(x, y, w, h);
-		g.setStroke(new BasicStroke((float)(metrics.px1 * 4)));
+		g.setStroke(new BasicStroke((float) (metrics.px1 * 4)));
 		g.setColor(Color.RED);
 		g.draw(rect);
 
@@ -451,21 +457,25 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if(filename.toLowerCase().endsWith("svg")) {
+			} else if (filename.toLowerCase().endsWith("svg")) {
 				try {
 					String plugin = "org.graphstream.ui.batik.BatikGraphics2D";
 					Class<?> c = Class.forName(plugin);
 					Object o = c.newInstance();
-					if(o instanceof Graphics2DOutput) {
+					if (o instanceof Graphics2DOutput) {
 						Graphics2DOutput out = (Graphics2DOutput) o;
 						Graphics2D g2 = out.getGraphics();
-						render(g2, (int)camera.getMetrics().viewport[0], (int)camera.getMetrics().viewport[1], (int)camera.getMetrics().viewport[2], (int)camera.getMetrics().viewport[3]);
+						render(g2, (int) camera.getMetrics().viewport[0],
+								(int) camera.getMetrics().viewport[1],
+								(int) camera.getMetrics().viewport[2],
+								(int) camera.getMetrics().viewport[3]);
 						out.outputTo(filename);
 					} else {
-						System.err.printf("plugin %s is not an instance of Graphics2DOutput (%s)%n", plugin, o.getClass().getName());
+						System.err
+								.printf("plugin %s is not an instance of Graphics2DOutput (%s)%n",
+										plugin, o.getClass().getName());
 					}
-				}
-				catch(Exception e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
