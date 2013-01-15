@@ -322,6 +322,9 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 		case SPRITE:
 			spriteRenderer.render(group, g, camera);
 			break;
+		default:
+			// Do nothing
+			break;
 		}
 	}
 
