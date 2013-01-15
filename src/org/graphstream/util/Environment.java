@@ -835,5 +835,7 @@ public class Environment implements Cloneable
 				}
 			}
 		}
+		
+		br.close();
 	}
 }
