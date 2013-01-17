@@ -39,8 +39,10 @@ import static org.junit.Assert.fail;
 import java.util.HashSet;
 
 import org.graphstream.graph.Edge;
+import org.graphstream.graph.Element;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
+import org.graphstream.graph.implementations.AbstractGraph;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.graph.implementations.MultiNode;
@@ -56,6 +58,64 @@ public class TestGraph {
 		testBasic(new AdjacencyListGraph("AL")); // XXX
 		testBasic(new SingleGraph("S")); // XXX
 		testBasic(new MultiGraph("M")); // XXX
+	}
+
+	@Test
+	public void testReplay() {
+		AbstractGraph g1 = new AdjacencyListGraph("g1");
+		Graph g2 = new AdjacencyListGraph("g2");
+
+		Node A1 = g1.addNode("A");
+		Node B1 = g1.addNode("B");
+		Node C1 = g1.addNode("C");
+
+		Edge AB1 = g1.addEdge("AB", "A", "B");
+		Edge BC1 = g1.addEdge("BC", "B", "C");
+		Edge CA1 = g1.addEdge("CA", "C", "A");
+
+		A1.addAttribute("string", "an example");
+		B1.addAttribute("double", 42.0);
+		C1.addAttribute("array", new int[] { 1, 2, 3 });
+
+		AB1.addAttribute("string", "an example");
+		BC1.addAttribute("double", 42.0);
+		CA1.addAttribute("array", new int[] { 1, 2, 3 });
+
+		g1.replay(g2);
+
+		Node A2 = g2.getNode("A");
+		Node B2 = g2.getNode("B");
+		Node C2 = g2.getNode("C");
+
+		assertNotNull(A2);
+		assertNotNull(B2);
+		assertNotNull(C2);
+
+		checkAttribute(A1, A2);
+		checkAttribute(B1, B2);
+		checkAttribute(C1, C2);
+
+		Edge AB2 = g2.getEdge("AB");
+		Edge BC2 = g2.getEdge("BC");
+		Edge CA2 = g2.getEdge("CA");
+
+		assertNotNull(AB2);
+		assertNotNull(BC2);
+		assertNotNull(CA2);
+
+		checkAttribute(AB1, AB2);
+		checkAttribute(BC1, BC2);
+		checkAttribute(CA1, CA2);
+	}
+
+	protected void checkAttribute(Element e1, Element e2) {
+		for (String key : e1.getAttributeKeySet()) {
+			assertTrue(e2.hasAttribute(key));
+			assertEquals(e1.getAttribute(key), e2.getAttribute(key));
+		}
+
+		for (String key : e2.getAttributeKeySet())
+			assertTrue(e1.hasAttribute(key));
 	}
 
 	protected void testBasic(Graph graph) {
@@ -268,33 +328,33 @@ public class TestGraph {
 		MultiGraph graph = new MultiGraph("g");
 		MultiNode A = graph.addNode("A");
 		MultiNode B = graph.addNode("B");
-		
+
 		graph.addEdge("AB1", "A", "B");
 		graph.addEdge("AB2", "A", "B");
-		
+
 		assertEquals(2, A.getDegree());
 		assertEquals(2, B.getDegree());
 	}
-	
+
 	@Test
 	public void testSingle() {
 		SingleGraph graph = new SingleGraph("g");
 		Node A = graph.addNode("A");
 		Node B = graph.addNode("B");
-		
+
 		graph.addEdge("AB1", "A", "B");
-		
+
 		try {
 			graph.addEdge("AB2", "A", "B");
 			fail();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			// Ok !
 		}
-		
+
 		assertEquals(1, A.getDegree());
 		assertEquals(1, B.getDegree());
 	}
-	
+
 	@Test
 	public void testIterables() {
 		testIterables(new SingleGraph("sg"));
@@ -382,10 +442,10 @@ public class TestGraph {
 
 		graph.removeEdge("AB");
 		AB = graph.addEdge("AB", "A", "B", true);
-		
+
 		graph.removeEdge("BC");
 		BC = graph.addEdge("BC", "B", "C", true);
-		
+
 		// A
 		// |\
 		// | \

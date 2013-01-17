@@ -46,6 +46,7 @@ import org.graphstream.stream.AttributeSink;
 import org.graphstream.stream.ElementSink;
 import org.graphstream.stream.GraphParseException;
 import org.graphstream.stream.Pipe;
+import org.graphstream.stream.Replayable;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.SourceBase;
 import org.graphstream.stream.file.FileSink;
@@ -79,9 +80,10 @@ import org.graphstream.ui.swingViewer.Viewer;
  * {@link #removeEdgeCallback(AbstractEdge)}, {@link #clearCallback()}. The role
  * of these callbacks is to update the data structures and to re-index elements
  * if necessary.
- *</p>
+ * </p>
  */
-public abstract class AbstractGraph extends AbstractElement implements Graph {
+public abstract class AbstractGraph extends AbstractElement implements Graph,
+		Replayable {
 	// *** Fields ***
 
 	private boolean strictChecking;
@@ -93,6 +95,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	private double step = 0;
 
 	private boolean nullAttributesAreErrors;
+
+	private long replayId = 0;
 
 	// *** Constructors ***
 
@@ -379,7 +383,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	public <T extends Edge> T removeEdge(int fromIndex, int toIndex) {
 		Node fromNode = getNode(fromIndex);
 		Node toNode = getNode(toIndex);
-		
+
 		return removeEdge(fromNode, toNode);
 	}
 
@@ -545,12 +549,12 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	public void read(String filename) throws IOException, GraphParseException,
 			ElementNotFoundException {
 		FileSource input = FileSourceFactory.sourceFor(filename);
-		if(input != null) {
+		if (input != null) {
 			input.addSink(this);
 			read(input, filename);
 			input.removeSink(this);
 		} else {
-			throw new IOException("No source reader for "+filename);
+			throw new IOException("No source reader for " + filename);
 		}
 	}
 
@@ -560,13 +564,87 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 
 	public void write(String filename) throws IOException {
 		FileSink output = FileSinkFactory.sinkFor(filename);
-		if(output != null) {
+		if (output != null) {
 			write(output, filename);
 		} else {
-			throw new IOException("No sink writer for "+filename);
+			throw new IOException("No sink writer for " + filename);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.graphstream.stream.Replayable#replay(org.graphstream.stream.Sink)
+	 */
+	public void replay(Object... destination) {
+		String sourceId = String.format("%s-replay-%x", id, replayId++);
+		replay(sourceId, destination);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.graphstream.stream.Replayable#replay(org.graphstream.stream.Sink,
+	 * java.lang.String)
+	 */
+	public void replay(String sourceId, Object... destinations) {
+		if (destinations == null || destinations.length == 0)
+			return;
+
+		SourceBase src = new SourceBase(sourceId) {
+		};
+
+		for (int i = 0; i < destinations.length; i++) {
+			if (destinations[i] instanceof Sink)
+				src.addSink((Sink) destinations[i]);
+			else if (destinations[i] instanceof ElementSink)
+				src.addElementSink((ElementSink) destinations[i]);
+			else if (destinations[i] instanceof AttributeSink)
+				src.addAttributeSink((AttributeSink) destinations[i]);
+			else
+				throw new ClassCastException("destination is not a sink");
+		}
+
+		for (String key : getAttributeKeySet())
+			src.sendGraphAttributeAdded(sourceId, key, getAttribute(key));
+
+		for (int i = 0; i < getNodeCount(); i++) {
+			Node node = getNode(i);
+			String nodeId = node.getId();
+
+			src.sendNodeAdded(sourceId, nodeId);
+
+			if (node.getAttributeCount() > 0)
+				for (String key : node.getAttributeKeySet())
+					src.sendNodeAttributeAdded(sourceId, nodeId, key,
+							node.getAttribute(key));
+		}
+
+		for (int i = 0; i < getEdgeCount(); i++) {
+			Edge edge = getEdge(i);
+			String edgeId = edge.getId();
+
+			src.sendEdgeAdded(sourceId, edgeId, edge.getNode0().getId(), edge
+					.getNode1().getId(), edge.isDirected());
+
+			if (edge.getAttributeCount() > 0)
+				for (String key : edge.getAttributeKeySet())
+					src.sendEdgeAttributeAdded(sourceId, edgeId, key,
+							edge.getAttribute(key));
+		}
+
+		for (int i = 0; i < destinations.length; i++) {
+			if (destinations[i] instanceof Sink)
+				src.removeSink((Sink) destinations[i]);
+			else if (destinations[i] instanceof ElementSink)
+				src.removeElementSink((ElementSink) destinations[i]);
+			else
+				src.removeAttributeSink((AttributeSink) destinations[i]);
+		}
+	}
+	
 	// *** callbacks maintaining user's data structure
 
 	/**
@@ -659,11 +737,10 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 		if (src == null || dst == null) {
 			if (strictChecking)
 				throw new ElementNotFoundException(
-						String
-								.format(
-										"Cannot create edge %s[%s-%s%s]. Node '%s' does not exist.",
-										edgeId, srcId, directed ? ">" : "-",
-										dstId, src == null ? srcId : dstId));
+						String.format(
+								"Cannot create edge %s[%s-%s%s]. Node '%s' does not exist.",
+								edgeId, srcId, directed ? ">" : "-", dstId,
+								src == null ? srcId : dstId));
 			if (!autoCreate)
 				return null;
 			if (src == null)
@@ -876,9 +953,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 			if (sinkTime.isNewEvent(sourceId, timeId)) {
 				AbstractEdge edge = getEdge(edgeId);
 				if (edge != null)
-					edge
-							.changeAttribute_(sourceId, timeId, attribute,
-									newValue);
+					edge.changeAttribute_(sourceId, timeId, attribute, newValue);
 			}
 		}
 
@@ -927,9 +1002,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 			if (sinkTime.isNewEvent(sourceId, timeId)) {
 				AbstractNode node = getNode(nodeId);
 				if (node != null)
-					node
-							.changeAttribute_(sourceId, timeId, attribute,
-									newValue);
+					node.changeAttribute_(sourceId, timeId, attribute, newValue);
 			}
 		}
 
