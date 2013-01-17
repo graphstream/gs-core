@@ -47,6 +47,7 @@ import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.graph.implementations.MultiNode;
 import org.graphstream.graph.implementations.SingleGraph;
+import org.graphstream.stream.Replayable;
 import org.junit.Test;
 
 public class TestGraph {
@@ -81,7 +82,9 @@ public class TestGraph {
 		BC1.addAttribute("double", 42.0);
 		CA1.addAttribute("array", new int[] { 1, 2, 3 });
 
-		g1.replay(g2);
+		Replayable.Controller controller = g1.getReplayController();
+		controller.addSink(g2);
+		controller.replay();
 
 		Node A2 = g2.getNode("A");
 		Node B2 = g2.getNode("B");

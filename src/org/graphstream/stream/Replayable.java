@@ -36,40 +36,46 @@ package org.graphstream.stream;
  * 
  * <pre>
  * Replayable source = ... ;
+ * Replayable.Controller replay = source.getReplayController();
  * ...
  * // source is building a graph
  * ...
  * Graph g = ... ;
- * // Replay the source to get the current state of the graph 
- * source.replay(g);
+ * //
+ * // Replay the source to get the current state of the graph
+ * //
+ * replay.addSink(g);
+ * replay.replay();
  * </pre>
  */
 public interface Replayable {
 	/**
-	 * Replay events describing the current state of the object being built by
-	 * the source.
+	 * Get a controller to replay the graph.
 	 * 
-	 * @param destinations
-	 *            sinks which will receive events.
-	 *            {@link org.graphstream.stream.Sink},
-	 *            {@link org.graphstream.stream.ElementSink},
-	 *            {@link org.graphstream.stream.AttributeSink} are correct
-	 *            destination type, others will throw a cast exception.
+	 * @return a new replay controller
 	 */
-	void replay(Object... destinations);
+	Controller getReplayController();
 
 	/**
-	 * Same as {@link #replay(Sink)} but you can set the id of the source sent
-	 * in events.
-	 * 
-	 * @param sourceId
-	 *            id of the event source
-	 * @param destinations
-	 *            sinks which will receive events.
-	 *            {@link org.graphstream.stream.Sink},
-	 *            {@link org.graphstream.stream.ElementSink},
-	 *            {@link org.graphstream.stream.AttributeSink} are correct
-	 *            destination type, others will throw a cast exception.
+	 * A controller used to replay a source. Controller should be used as a
+	 * source by adding sinks on it. When sinks are set, a call to
+	 * {@link #replay()} send events describing the current state of the
+	 * original source to sinks.
 	 */
-	void replay(String sourceId, Object... destinations);
+	public static interface Controller extends Source {
+		/**
+		 * Replay events describing the current state of the object being built
+		 * by the source.
+		 */
+		void replay();
+
+		/**
+		 * Same as {@link #replay(Sink)} but you can set the id of the source
+		 * sent in events.
+		 * 
+		 * @param sourceId
+		 *            id of the event source
+		 */
+		void replay(String sourceId);
+	}
 }

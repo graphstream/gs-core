@@ -574,77 +574,12 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.graphstream.stream.Replayable#replay(org.graphstream.stream.Sink)
+	 * @see org.graphstream.stream.Replayable#getReplayController()
 	 */
-	public void replay(Object... destination) {
-		String sourceId = String.format("%s-replay-%x", id, replayId++);
-		replay(sourceId, destination);
+	public Replayable.Controller getReplayController() {
+		return new GraphReplayController();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.Replayable#replay(org.graphstream.stream.Sink,
-	 * java.lang.String)
-	 */
-	public void replay(String sourceId, Object... destinations) {
-		if (destinations == null || destinations.length == 0)
-			return;
-
-		SourceBase src = new SourceBase(sourceId) {
-		};
-
-		for (int i = 0; i < destinations.length; i++) {
-			if (destinations[i] instanceof Sink)
-				src.addSink((Sink) destinations[i]);
-			else if (destinations[i] instanceof ElementSink)
-				src.addElementSink((ElementSink) destinations[i]);
-			else if (destinations[i] instanceof AttributeSink)
-				src.addAttributeSink((AttributeSink) destinations[i]);
-			else
-				throw new ClassCastException("destination is not a sink");
-		}
-
-		for (String key : getAttributeKeySet())
-			src.sendGraphAttributeAdded(sourceId, key, getAttribute(key));
-
-		for (int i = 0; i < getNodeCount(); i++) {
-			Node node = getNode(i);
-			String nodeId = node.getId();
-
-			src.sendNodeAdded(sourceId, nodeId);
-
-			if (node.getAttributeCount() > 0)
-				for (String key : node.getAttributeKeySet())
-					src.sendNodeAttributeAdded(sourceId, nodeId, key,
-							node.getAttribute(key));
-		}
-
-		for (int i = 0; i < getEdgeCount(); i++) {
-			Edge edge = getEdge(i);
-			String edgeId = edge.getId();
-
-			src.sendEdgeAdded(sourceId, edgeId, edge.getNode0().getId(), edge
-					.getNode1().getId(), edge.isDirected());
-
-			if (edge.getAttributeCount() > 0)
-				for (String key : edge.getAttributeKeySet())
-					src.sendEdgeAttributeAdded(sourceId, edgeId, key,
-							edge.getAttribute(key));
-		}
-
-		for (int i = 0; i < destinations.length; i++) {
-			if (destinations[i] instanceof Sink)
-				src.removeSink((Sink) destinations[i]);
-			else if (destinations[i] instanceof ElementSink)
-				src.removeElementSink((ElementSink) destinations[i]);
-			else
-				src.removeAttributeSink((AttributeSink) destinations[i]);
-		}
-	}
-	
 	// *** callbacks maintaining user's data structure
 
 	/**
@@ -918,6 +853,59 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 			boolean sourceCallback, boolean targetCallback) {
 		removeEdge_(id, -1, edge, edge.getId(), graphCallback, sourceCallback,
 				targetCallback);
+	}
+
+	class GraphReplayController extends SourceBase implements
+			Replayable.Controller {
+		GraphReplayController() {
+			super(AbstractGraph.this.id + "replay");
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.graphstream.stream.Replayable.Controller#replay()
+		 */
+		public void replay() {
+			String sourceId = String.format("%s-replay-%x", id, replayId++);
+			replay(sourceId);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.graphstream.stream.Replayable.Controller#replay(java.lang.String)
+		 */
+		public void replay(String sourceId) {
+			for (String key : getAttributeKeySet())
+				sendGraphAttributeAdded(sourceId, key, getAttribute(key));
+
+			for (int i = 0; i < getNodeCount(); i++) {
+				Node node = getNode(i);
+				String nodeId = node.getId();
+
+				sendNodeAdded(sourceId, nodeId);
+
+				if (node.getAttributeCount() > 0)
+					for (String key : node.getAttributeKeySet())
+						sendNodeAttributeAdded(sourceId, nodeId, key,
+								node.getAttribute(key));
+			}
+
+			for (int i = 0; i < getEdgeCount(); i++) {
+				Edge edge = getEdge(i);
+				String edgeId = edge.getId();
+
+				sendEdgeAdded(sourceId, edgeId, edge.getNode0().getId(), edge
+						.getNode1().getId(), edge.isDirected());
+
+				if (edge.getAttributeCount() > 0)
+					for (String key : edge.getAttributeKeySet())
+						sendEdgeAttributeAdded(sourceId, edgeId, key,
+								edge.getAttribute(key));
+			}
+		}
 	}
 
 	// *** Listeners ***
