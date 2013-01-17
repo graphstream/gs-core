@@ -113,6 +113,8 @@ public class TestSourceBase {
 			case ST:
 				args = new Object[] { r.nextDouble() };
 				break;
+			default:
+				break;
 			}
 
 			if (args == null)
