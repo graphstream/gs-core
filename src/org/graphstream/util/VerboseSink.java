@@ -351,7 +351,7 @@ public class VerboseSink implements Sink {
 					: o.toString());
 		}
 
-		this.out.printf(out);
+		this.out.print(out);
 		this.out.printf("\n");
 
 		if (autoflush)
