@@ -1,11 +1,13 @@
 /*
- * Copyright 2006 - 2012
- *      Stefan Balev       <stefan.balev@graphstream-project.org>
- *      Julien Baudry	<julien.baudry@graphstream-project.org>
- *      Antoine Dutot	<antoine.dutot@graphstream-project.org>
- *      Yoann Pigné	<yoann.pigne@graphstream-project.org>
- *      Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
- *  
+ * Copyright 2006 - 2013
+ *     Stefan Balev     <stefan.balev@graphstream-project.org>
+ *     Julien Baudry    <julien.baudry@graphstream-project.org>
+ *     Antoine Dutot    <antoine.dutot@graphstream-project.org>
+ *     Yoann Pigné      <yoann.pigne@graphstream-project.org>
+ *     Guilhelm Savin   <guilhelm.savin@graphstream-project.org>
+ * 
+ * This file is part of GraphStream <http://graphstream-project.org>.
+ * 
  * GraphStream is a library whose purpose is to handle static or dynamic
  * graph, create them from scratch, file or any source and display them.
  * 
@@ -63,6 +65,8 @@ import org.graphstream.stream.netstream.packing.NetStreamPacker;
  * 
  */
 public class NetStreamSender implements Sink {
+	private static ByteBuffer NULL_BUFFER = ByteBuffer.allocate(0);
+	
 	protected String stream;
 	byte[] streamIdArray;
 	protected String host;
@@ -111,6 +115,18 @@ public class NetStreamSender implements Sink {
 		connect();
 		
 	}
+	
+	public NetStreamSender(Socket socket) throws IOException {
+		this("default", socket);
+	}
+	
+	public NetStreamSender(String stream, Socket socket) throws IOException {
+		this.host = socket.getInetAddress().getHostName();
+		this.port = socket.getPort();
+		this.socket = socket;
+		this.out = new BufferedOutputStream(socket.getOutputStream());
+		this.streamIdArray = stream.getBytes(Charset.forName("UTF-8"));
+	}
 
 	/**
 	 * Sets an optional NetStreamPaker whose "pack" method will be called on
@@ -137,7 +153,11 @@ public class NetStreamSender implements Sink {
 	}
 
 	protected int getType(Object value) {
-		int valueType = 0;
+		int valueType = NetStreamConstants.TYPE_UNKNOWN;
+		
+		if (value == null)
+			return NetStreamConstants.TYPE_NULL;
+		
 		Class<?> valueClass = value.getClass();
 		boolean isArray = valueClass.isArray();
 		if (isArray) {
@@ -191,11 +211,12 @@ public class NetStreamSender implements Sink {
 			} else {
 				valueType = NetStreamConstants.TYPE_STRING;
 			}
-		}
+		} else 
+			System.err.printf("[warning] can not find type of %s\n", valueClass);
 		// System.out.println("ValueType="+valueType+" "+value.getClass());
 		return valueType;
 	}
-
+	
 	protected ByteBuffer encodeValue(Object in, int valueType) {
 
 		if (NetStreamConstants.TYPE_BOOLEAN == valueType) {
@@ -230,9 +251,13 @@ public class NetStreamSender implements Sink {
 			return encodeString(in);
 		} else if (NetStreamConstants.TYPE_ARRAY == valueType) {
 			return encodeArray(in);
+		} else if (NetStreamConstants.TYPE_NULL == valueType) {
+			return NULL_BUFFER;
 		}
+		
+		System.err.printf("[warning] unknown value type %d\n", valueType);
+		
 		return null;
-
 	}
 
 	/**
@@ -437,7 +462,14 @@ public class NetStreamSender implements Sink {
 				out.write(buffer.array(), 0, buffer.capacity());
 				out.flush();
 			} catch (IOException e) {
-				e.printStackTrace();
+				try {
+					socket.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				System.err.printf("socket error : %s\n", e.getMessage());
 			}
 		}
 	}
@@ -708,6 +740,12 @@ public class NetStreamSender implements Sink {
 		byte[] edgeIdArray = edgeId.getBytes(Charset.forName("UTF-8"));
 		byte[] attrArray = attribute.getBytes(Charset.forName("UTF-8"));
 		int valueType = getType(value);
+		
+		if (valueType == NetStreamConstants.TYPE_UNKNOWN) {
+			System.err.printf("[warning] unknown type, skipping it\n");
+			return;
+		}
+		
 		ByteBuffer bValue = encodeValue(value, valueType);
 		bValue.flip();
 		ByteBuffer buff = ByteBuffer.allocate(4 + streamIdArray.length + // stream

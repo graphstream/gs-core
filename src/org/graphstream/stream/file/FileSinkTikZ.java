@@ -1,11 +1,13 @@
 /*
- * Copyright 2006 - 2012
- *      Stefan Balev       <stefan.balev@graphstream-project.org>
- *      Julien Baudry	<julien.baudry@graphstream-project.org>
- *      Antoine Dutot	<antoine.dutot@graphstream-project.org>
- *      Yoann Pigné	<yoann.pigne@graphstream-project.org>
- *      Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
- *  
+ * Copyright 2006 - 2013
+ *     Stefan Balev     <stefan.balev@graphstream-project.org>
+ *     Julien Baudry    <julien.baudry@graphstream-project.org>
+ *     Antoine Dutot    <antoine.dutot@graphstream-project.org>
+ *     Yoann Pigné      <yoann.pigne@graphstream-project.org>
+ *     Guilhelm Savin   <guilhelm.savin@graphstream-project.org>
+ * 
+ * This file is part of GraphStream <http://graphstream-project.org>.
+ * 
  * GraphStream is a library whose purpose is to handle static or dynamic
  * graph, create them from scratch, file or any source and display them.
  * 
@@ -119,6 +121,10 @@ public class FileSinkTikZ extends FileSinkBase {
 	 */
 	public static final String HEIGHT_ATTR = "ui.tikz.height";
 
+	public static final double DEFAULT_WIDTH = 10;
+	
+	public static final double DEFAULT_HEIGHT= 10;
+	
 	/**
 	 * Define the default minimum size of nodes when using a dynamic size. This
 	 * size is in millimeter.
@@ -140,8 +146,8 @@ public class FileSinkTikZ extends FileSinkBase {
 	protected int classIndex = 0;
 	protected int colorIndex = 0;
 
-	protected double width = 10;
-	protected double height = 10;
+	protected double width = Double.NaN;
+	protected double height = Double.NaN;
 
 	protected boolean layout = false;
 
@@ -399,6 +405,20 @@ public class FileSinkTikZ extends FileSinkBase {
 	 * @see org.graphstream.stream.file.FileSinkBase#outputEndOfFile()
 	 */
 	protected void outputEndOfFile() throws IOException {
+		if (Double.isNaN(width)) {
+			if (buffer.hasNumber(WIDTH_ATTR))
+				width = buffer.getNumber(WIDTH_ATTR);
+			else
+				width = DEFAULT_WIDTH;
+		}
+		
+		if (Double.isNaN(height)) {
+			if (buffer.hasNumber(HEIGHT_ATTR))
+				height = buffer.getNumber(HEIGHT_ATTR);
+			else
+				height = DEFAULT_WIDTH;
+		}
+		
 		SpringBox sbox = null;
 
 		if (layout) {

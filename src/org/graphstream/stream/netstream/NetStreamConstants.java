@@ -1,11 +1,13 @@
 /*
- * Copyright 2006 - 2012
- *      Stefan Balev       <stefan.balev@graphstream-project.org>
- *      Julien Baudry	<julien.baudry@graphstream-project.org>
- *      Antoine Dutot	<antoine.dutot@graphstream-project.org>
- *      Yoann Pigné	<yoann.pigne@graphstream-project.org>
- *      Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
- *  
+ * Copyright 2006 - 2013
+ *     Stefan Balev     <stefan.balev@graphstream-project.org>
+ *     Julien Baudry    <julien.baudry@graphstream-project.org>
+ *     Antoine Dutot    <antoine.dutot@graphstream-project.org>
+ *     Yoann Pigné      <yoann.pigne@graphstream-project.org>
+ *     Guilhelm Savin   <guilhelm.savin@graphstream-project.org>
+ * 
+ * This file is part of GraphStream <http://graphstream-project.org>.
+ * 
  * GraphStream is a library whose purpose is to handle static or dynamic
  * graph, create them from scratch, file or any source and display them.
  * 
@@ -715,6 +717,8 @@ public class NetStreamConstants {
 
 	// Values types
 
+	public static int TYPE_UNKNOWN = 0x00;
+	
 	/**
 	 * Followed by a byte who's value is 0 or 1
 	 */
@@ -796,6 +800,8 @@ public class NetStreamConstants {
 	 * elements themselves have to give their type.
 	 */
 	public static byte TYPE_ARRAY = 0x60;
+	
+	public static int TYPE_NULL = 0x61;
 	
 	
 	
