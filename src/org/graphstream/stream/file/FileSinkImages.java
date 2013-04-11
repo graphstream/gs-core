@@ -285,6 +285,7 @@ public class FileSinkImages implements FileSink {
 	protected boolean clearImageBeforeOutput = false;
 	protected boolean hasBegan = false;
 	protected boolean autofit = true;
+	protected String styleSheet = null;
 
 	public FileSinkImages() {
 		this(OutputType.PNG, Resolutions.HD720);
@@ -350,6 +351,7 @@ public class FileSinkImages implements FileSink {
 	 *            the style sheet
 	 */
 	public void setStyleSheet(String styleSheet) {
+		this.styleSheet = styleSheet;
 		gg.addAttribute("ui.stylesheet", styleSheet);
 	}
 
@@ -443,6 +445,8 @@ public class FileSinkImages implements FileSink {
 				layout.removeAttributeSink(gg);
 				layout = null;
 				break;
+			default:
+				break;
 			}
 
 			switch (policy) {
@@ -455,6 +459,8 @@ public class FileSinkImages implements FileSink {
 				layout = Layouts.newLayoutAlgorithm();
 				gg.addSink(layout);
 				layout.addAttributeSink(gg);
+				break;
+			default:
 				break;
 			}
 
@@ -594,6 +600,16 @@ public class FileSinkImages implements FileSink {
 		g2d = image.createGraphics();
 	}
 
+	protected void clearGG() {
+		gg.clear();
+
+		if (styleSheet != null)
+			gg.setAttribute("ui.stylesheet", styleSheet);
+
+		if (layout != null)
+			layout.clear();
+	}
+
 	/**
 	 * Produce a new image.
 	 */
@@ -614,6 +630,8 @@ public class FileSinkImages implements FileSink {
 		case COMPUTED_FULLY_AT_NEW_IMAGE:
 			stabilizeLayout(layout.getStabilizationLimit());
 			break;
+		default:
+			break;
 		}
 
 		if (resolution.getWidth() != image.getWidth()
@@ -623,13 +641,13 @@ public class FileSinkImages implements FileSink {
 		if (clearImageBeforeOutput) {
 			for (int x = 0; x < resolution.getWidth(); x++)
 				for (int y = 0; y < resolution.getHeight(); y++)
-					image.setRGB(x, y, 0);
+					image.setRGB(x, y, 0x00000000);
 		}
 
 		if (gg.getNodeCount() > 0) {
 			if (autofit) {
 				gg.computeBounds();
-				
+
 				Point3 lo = gg.getMinPos();
 				Point3 hi = gg.getMaxPos();
 
@@ -742,7 +760,7 @@ public class FileSinkImages implements FileSink {
 	 */
 	public synchronized void writeAll(Graph g, String filename)
 			throws IOException {
-		gg.clear();
+		clearGG();
 
 		GraphReplay replay = new GraphReplay(String.format(
 				"file_sink_image-write_all-replay-%x", System.nanoTime()));
@@ -753,7 +771,7 @@ public class FileSinkImages implements FileSink {
 
 		outputNewImage(filename);
 
-		gg.clear();
+		clearGG();
 	}
 
 	/**
@@ -770,6 +788,8 @@ public class FileSinkImages implements FileSink {
 		case BY_ATTRIBUTE_EVENT:
 			if (hasBegan)
 				outputNewImage();
+			break;
+		default:
 			break;
 		}
 	}
@@ -790,6 +810,8 @@ public class FileSinkImages implements FileSink {
 			if (hasBegan)
 				outputNewImage();
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -808,6 +830,8 @@ public class FileSinkImages implements FileSink {
 			if (hasBegan)
 				outputNewImage();
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -825,6 +849,8 @@ public class FileSinkImages implements FileSink {
 		case BY_ATTRIBUTE_EVENT:
 			if (hasBegan)
 				outputNewImage();
+			break;
+		default:
 			break;
 		}
 	}
@@ -845,6 +871,8 @@ public class FileSinkImages implements FileSink {
 			if (hasBegan)
 				outputNewImage();
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -863,6 +891,8 @@ public class FileSinkImages implements FileSink {
 			if (hasBegan)
 				outputNewImage();
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -880,6 +910,8 @@ public class FileSinkImages implements FileSink {
 		case BY_ATTRIBUTE_EVENT:
 			if (hasBegan)
 				outputNewImage();
+			break;
+		default:
 			break;
 		}
 	}
@@ -900,6 +932,8 @@ public class FileSinkImages implements FileSink {
 			if (hasBegan)
 				outputNewImage();
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -917,6 +951,8 @@ public class FileSinkImages implements FileSink {
 		case BY_ATTRIBUTE_EVENT:
 			if (hasBegan)
 				outputNewImage();
+			break;
+		default:
 			break;
 		}
 	}
@@ -936,6 +972,8 @@ public class FileSinkImages implements FileSink {
 			if (hasBegan)
 				outputNewImage();
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -952,6 +990,8 @@ public class FileSinkImages implements FileSink {
 		case BY_ELEMENT_EVENT:
 			if (hasBegan)
 				outputNewImage();
+			break;
+		default:
 			break;
 		}
 	}
@@ -971,6 +1011,8 @@ public class FileSinkImages implements FileSink {
 			if (hasBegan)
 				outputNewImage();
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -987,6 +1029,8 @@ public class FileSinkImages implements FileSink {
 		case BY_ELEMENT_EVENT:
 			if (hasBegan)
 				outputNewImage();
+			break;
+		default:
 			break;
 		}
 	}
@@ -1005,6 +1049,8 @@ public class FileSinkImages implements FileSink {
 			if (hasBegan)
 				outputNewImage();
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -1019,6 +1065,8 @@ public class FileSinkImages implements FileSink {
 		case BY_STEP:
 			if (hasBegan)
 				outputNewImage();
+			break;
+		default:
 			break;
 		}
 	}
@@ -1293,6 +1341,7 @@ public class FileSinkImages implements FileSink {
 				}
 
 				stylesheet = content;
+				in.close();
 			}
 		}
 
