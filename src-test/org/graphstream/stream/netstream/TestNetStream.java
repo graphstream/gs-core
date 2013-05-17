@@ -37,7 +37,6 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Vector;
 
@@ -588,60 +587,7 @@ public class TestNetStream {
 		pipe.pump();
 
 	}
-	
-	@Test
-	public void testNetStreamVarint() {
-		NetStreamReceiver net = null;
-		try {
-			net = new NetStreamReceiver("localhost", 2004, true);
-		} catch (UnknownHostException e1) {
-			fail(e1.toString());
-		} catch (IOException e1) {
-			fail(e1.toString());
-		}
-		NetStreamSender nss = null;
-		try {
-			nss = new NetStreamSender(2004);
-		} catch (UnknownHostException e) {
-			fail(e.toString());
-		} catch (IOException e) {
-			fail(e.toString());
-		}
-	
-		ByteBuffer buff = nss.encodeVarint(300);
-		buff.rewind();
-		//outBuffer(buff);
-		assertEquals(buff.capacity(), 2);
-		int bt = buff.get(0);
-		assertEquals( 216,  (bt & 127) + (bt & 128));
-		bt = buff.get(1);
-		assertEquals( 4,  (bt & 127) + (bt & 128));
-		
-		buff = nss.encodeVarint(-16384);
-		buff.rewind();
-		//outBuffer(buff);
-		assertEquals(buff.capacity(), 3);
-		bt = buff.get(0);
-		assertEquals( 129,  (bt & 127) + (bt & 128));
-		bt = buff.get(1);
-		assertEquals( 128,  (bt & 127) + (bt & 128));
-		bt = buff.get(2);
-		assertEquals( 2,  (bt & 127) + (bt & 128));
 
-		
-	}
-
-	private void outBuffer(ByteBuffer buf){
-		System.out.println(buf.toString());
-		int nbytes = buf.capacity();
-		int at = buf.position();
-		for(int i=0; i< nbytes; i++){
-			int bt = buf.get(at+i);
-			if (bt < 0) bt = (bt & 127) + (bt & 128); 
-			System.out.printf("%d ", bt);
-		}
-		System.out.println();
-	}
 	synchronized void error(String s) {
 		if (errors == null) {
 			errors = new Vector<String>();
