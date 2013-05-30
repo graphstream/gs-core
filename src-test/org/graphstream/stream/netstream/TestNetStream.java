@@ -608,6 +608,9 @@ public class TestNetStream {
 			fail(e.toString());
 		}
 	
+		//-----------------------------
+		//     test encodeVarint
+		//-----------------------------
 		ByteBuffer buff = nss.encodeVarint(300);
 		buff.rewind();
 		//outBuffer(buff);
@@ -628,18 +631,40 @@ public class TestNetStream {
 		bt = buff.get(2);
 		assertEquals( 2,  (bt & 127) + (bt & 128));
 
+		//-----------------------------
+		//   test encodeVarintArray
+		//-----------------------------
 		Integer[] array = {300, -16384};
 		buff = nss.encodeVarintArray(array);
 		buff.rewind();
-		outBuffer(buff);
-		//assertEquals(buff.capacity(), 3);
+		//outBuffer(buff);
+		assertEquals(buff.capacity(), 6);
 		bt = buff.get(0);
-		//assertEquals( 129,  (bt & 127) + (bt & 128));
+		assertEquals( 5,  (bt & 127) + (bt & 128));
 		bt = buff.get(1);
-		//assertEquals( 128,  (bt & 127) + (bt & 128));
+		assertEquals( 216,  (bt & 127) + (bt & 128));
 		bt = buff.get(2);
-		//assertEquals( 2,  (bt & 127) + (bt & 128));
+		assertEquals( 4,  (bt & 127) + (bt & 128));
+		bt = buff.get(3);
+		assertEquals( 129,  (bt & 127) + (bt & 128));
+		bt = buff.get(4);
+		assertEquals( 128,  (bt & 127) + (bt & 128));
+		bt = buff.get(5);
+		assertEquals( 2,  (bt & 127) + (bt & 128));
 
+		//-----------------------------
+		//  test encodeUnsignedVarint
+		//-----------------------------
+		buff = nss.encodeUnsignedVarint(300);
+		buff.rewind();
+		//outBuffer(buff);
+		assertEquals(buff.capacity(), 2);
+		bt = buff.get(0);
+		assertEquals( 172,  (bt & 127) + (bt & 128));
+		bt = buff.get(1);
+		assertEquals( 2,  (bt & 127) + (bt & 128));
+		
+		
 	}
 
 	private void outBuffer(ByteBuffer buf){

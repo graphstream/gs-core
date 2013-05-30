@@ -542,7 +542,27 @@ public class NetStreamSender implements Sink {
 		}
 		return b;
 	}
+	
+	/**
+	 * @param in
+	 * @return
+	 */
+	protected ByteBuffer encodeUnsignedVarint(Object in) {
+		long data = ((Number)in).longValue();
+		
+		int size = varintSize(data);
+		
+		ByteBuffer buff = ByteBuffer.allocate(size);
+		for(int i = 0; i < size; i++){
+			int head=128;
+			if(i==size-1) head = 0;
+			long b = ((data >> (7*i)) & 127) ^ head;
+			buff.put((byte)(b & 255 ));
+		}
+		return  buff;
+	}
 
+	
 	/**
 	 * @param b
 	 * @param sumsizes
