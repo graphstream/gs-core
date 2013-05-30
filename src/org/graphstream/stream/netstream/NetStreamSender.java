@@ -512,6 +512,52 @@ public class NetStreamSender implements Sink {
 	}
 
 	/**
+	 * @param in
+	 * @return
+	 */
+	protected ByteBuffer encodeVarintArray(Object in) {
+		Object[] data = (Object[]) in;
+		int[] sizes = new int[data.length];
+		long[] zigzags = new long[data.length];
+		int sumsizes=0;
+		for (int i = 0; i < data.length; i++) {
+			long datum = ((Number)data[i]).longValue();
+			// signed integers encoding
+			// (n << 1) ^ (n >> 31)
+			// OK but java's negative values are two's complements...
+			zigzags[i] = datum>0?(datum<<1):((Math.abs(datum) << 1) ^ 1);
+			sizes[i] = varintSize(zigzags[i]);
+			sumsizes+=sizes[i];
+		}		
+		
+		// the size of the size!
+		int ssize = varintSize(sumsizes);
+		
+		ByteBuffer b = ByteBuffer.allocate(ssize + sumsizes);
+		
+		putVarint(b, sumsizes, ssize);
+		
+		for (int i = 0; i < data.length; i++) {
+			putVarint(b, zigzags[i], sizes[i]);
+		}
+		return b;
+	}
+
+	/**
+	 * @param b
+	 * @param sumsizes
+	 * @param ssize
+	 */
+	private void putVarint(ByteBuffer buffer, long number, int byteSize) {
+		for(int i = 0; i < byteSize; i++){
+			int head=128;
+			if(i==byteSize-1) head = 0;
+			long b = ((number >> (7*i)) & 127) ^ head;
+			buffer.put((byte)(b & 255 ));
+		}
+	}
+	
+	/**
 	 * @param buff
 	 */
 	private void doSend(ByteBuffer buff) {

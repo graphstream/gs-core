@@ -628,7 +628,18 @@ public class TestNetStream {
 		bt = buff.get(2);
 		assertEquals( 2,  (bt & 127) + (bt & 128));
 
-		
+		Integer[] array = {300, -16384};
+		buff = nss.encodeVarintArray(array);
+		buff.rewind();
+		outBuffer(buff);
+		//assertEquals(buff.capacity(), 3);
+		bt = buff.get(0);
+		//assertEquals( 129,  (bt & 127) + (bt & 128));
+		bt = buff.get(1);
+		//assertEquals( 128,  (bt & 127) + (bt & 128));
+		bt = buff.get(2);
+		//assertEquals( 2,  (bt & 127) + (bt & 128));
+
 	}
 
 	private void outBuffer(ByteBuffer buf){
