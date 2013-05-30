@@ -1,30 +1,30 @@
 /*
- * Copyright 2006 - 2013
- *     Stefan Balev     <stefan.balev@graphstream-project.org>
- *     Julien Baudry    <julien.baudry@graphstream-project.org>
- *     Antoine Dutot    <antoine.dutot@graphstream-project.org>
- *     Yoann Pigné      <yoann.pigne@graphstream-project.org>
- *     Guilhelm Savin   <guilhelm.savin@graphstream-project.org>
+ * Copyright 2006 - 2013 Stefan Balev <stefan.balev@graphstream-project.org>
+ * Julien Baudry <julien.baudry@graphstream-project.org> Antoine Dutot
+ * <antoine.dutot@graphstream-project.org> Yoann Pigné
+ * <yoann.pigne@graphstream-project.org> Guilhelm Savin
+ * <guilhelm.savin@graphstream-project.org>
  * 
  * This file is part of GraphStream <http://graphstream-project.org>.
  * 
- * GraphStream is a library whose purpose is to handle static or dynamic
- * graph, create them from scratch, file or any source and display them.
+ * GraphStream is a library whose purpose is to handle static or dynamic graph,
+ * create them from scratch, file or any source and display them.
  * 
- * This program is free software distributed under the terms of two licenses, the
- * CeCILL-C license that fits European law, and the GNU Lesser General Public
- * License. You can  use, modify and/ or redistribute the software under the terms
- * of the CeCILL-C license as circulated by CEA, CNRS and INRIA at the following
- * URL <http://www.cecill.info> or under the terms of the GNU LGPL as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * This program is free software distributed under the terms of two licenses,
+ * the CeCILL-C license that fits European law, and the GNU Lesser General
+ * Public License. You can use, modify and/ or redistribute the software under
+ * the terms of the CeCILL-C license as circulated by CEA, CNRS and INRIA at the
+ * following URL <http://www.cecill.info> or under the terms of the GNU LGPL as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * 
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
@@ -52,20 +52,22 @@ import org.miv.mbox.net.PositionableByteArrayInputStream;
 
 /**
  * <p>
- * This class implements a receiver according to specifications the NetStream protocol.
+ * This class implements a receiver according to specifications the NetStream
+ * protocol.
  * </p>
  * 
  * <p>
- * See {@link NetStreamConstants} for a full description of the protocol, the sender and the receiver.
+ * See {@link NetStreamConstants} for a full description of the protocol, the
+ * sender and the receiver.
  * </p>
  * 
  * @see NetStreamConstants
  * @see NetStreamSender
  * 
  * 
- * Copyright (c) 2010 University of Luxembourg
+ *      Copyright (c) 2010 University of Luxembourg
  * 
- * NetStreamReceiver.java
+ *      NetStreamReceiver.java
  * @since Aug 13, 2011
  * 
  * @author Yoann Pigné
@@ -133,8 +135,7 @@ public class NetStreamReceiver extends Thread {
 	 */
 	protected HashMap<SelectionKey, IncomingBuffer> incoming = new HashMap<SelectionKey, IncomingBuffer>();
 
-	
-	class DefaultUnpacker extends NetStreamUnpacker{
+	class DefaultUnpacker extends NetStreamUnpacker {
 
 		@Override
 		public ByteBuffer unpackMessage(ByteBuffer buffer, int startIndex,
@@ -147,8 +148,12 @@ public class NetStreamReceiver extends Thread {
 			return buffer.getInt();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.graphstream.stream.netstream.packing.NetStreamUnpacker#sizeOfInt()
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.graphstream.stream.netstream.packing.NetStreamUnpacker#sizeOfInt
+		 * ()
 		 */
 		@Override
 		public int sizeOfInt() {
@@ -157,7 +162,6 @@ public class NetStreamReceiver extends Thread {
 	};
 	private NetStreamUnpacker unpacker;
 
-	
 	// Constructors
 
 	/**
@@ -223,7 +227,7 @@ public class NetStreamReceiver extends Thread {
 	 *            Identifier of the stream.
 	 * @return the identified pipe
 	 */
-	public  synchronized ThreadProxyPipe getStream(String name) {
+	public synchronized ThreadProxyPipe getStream(String name) {
 		ThreadProxyPipe s = streams.get(name);
 		if (s == null) {
 			s = new ThreadProxyPipe();
@@ -238,7 +242,7 @@ public class NetStreamReceiver extends Thread {
 	 * @return the default pipe
 	 */
 
-	public  synchronized ThreadProxyPipe getDefaultStream() {
+	public synchronized ThreadProxyPipe getDefaultStream() {
 		ThreadProxyPipe s = streams.get("default");
 		if (s == null) {
 			s = new ThreadProxyPipe();
@@ -280,8 +284,6 @@ public class NetStreamReceiver extends Thread {
 		debug = on;
 	}
 
-	
-
 	/**
 	 * Register a stream. All events with the given stream name will be directed
 	 * to it. The user has to ensure the ThreadProxyPipe can be safely written
@@ -297,8 +299,7 @@ public class NetStreamReceiver extends Thread {
 	public synchronized void register(String name, ThreadProxyPipe stream)
 			throws Exception {
 		if (streams.containsKey(name))
-			throw new Exception("name " + name
-					+ " already registered");
+			throw new Exception("name " + name + " already registered");
 
 		streams.put(name, stream);
 
@@ -324,27 +325,22 @@ public class NetStreamReceiver extends Thread {
 		return !incoming.isEmpty();
 	}
 
-	
-	
-
 	/**
-	 *  Sets an optional NetStreamUnpaker whose "unpack" method will be called on each message.
+	 * Sets an optional NetStreamUnpaker whose "unpack" method will be called on
+	 * each message.
 	 * 
-	 *  It allows to do extra decoding on the all byte array message. You can also decrypt things.
-	 *  
+	 * It allows to do extra decoding on the all byte array message. You can
+	 * also decrypt things.
+	 * 
 	 * @param unpaker
 	 */
-	public void setUnpacker(NetStreamUnpacker unpaker){
+	public void setUnpacker(NetStreamUnpacker unpaker) {
 		this.unpacker = unpaker;
 	}
-	public void removeUnpacker(){
+	public void removeUnpacker() {
 		unpacker = new DefaultUnpacker();
 	}
-	
 
-	
-	
-	
 	/**
 	 * Wait for connections, accept them, demultiplexes them and dispatch
 	 * messages to registered message boxes.
@@ -566,7 +562,6 @@ public class NetStreamReceiver extends Thread {
 		 */
 		protected boolean active = true;
 
-		
 		// Constructors
 
 		public IncomingBuffer() {
@@ -596,11 +591,13 @@ public class NetStreamReceiver extends Thread {
 			if (nbytes <= 0)
 				return;
 
-			if (debug){
-				debug("<chunk (%d bytes) from " + socket.socket().getInetAddress() + ":" + socket.socket().getPort() + ">", nbytes);
+			if (debug) {
+				debug("<chunk (%d bytes) from "
+						+ socket.socket().getInetAddress() + ":"
+						+ socket.socket().getPort() + ">", nbytes);
 				int at = buf.position();
-				for(int i=0; i< nbytes; i++){
-					System.err.printf("%d ", buf.get(at+i));
+				for (int i = 0; i < nbytes; i++) {
+					System.err.printf("%d ", buf.get(at + i));
 				}
 				System.err.println();
 				buf.position(at);
@@ -620,8 +617,9 @@ public class NetStreamReceiver extends Thread {
 					end = size + sizeOfInt;
 					beg = sizeOfInt;
 					if (debug)
-						debug("start to bufferize a %d byte long messsage", size);
-					
+						debug("start to bufferize a %d byte long messsage",
+								size);
+
 				} else {
 					// The header is incomplete, wait next call to complete it.
 
@@ -751,24 +749,20 @@ public class NetStreamReceiver extends Thread {
 			}
 		}
 
-		
-		
-		
-		
 		/**
 		 * Decode one message.
 		 */
 		protected void decodeMessage(int limit) throws IOException {
 
-				
-			ByteBuffer unpackedBuffer= unpacker.unpackMessage(buf, beg,end);
-			if(unpackedBuffer == buf){
-				in = new PositionableByteArrayInputStream(buf.array(), beg,end-beg);
+			ByteBuffer unpackedBuffer = unpacker.unpackMessage(buf, beg, end);
+			if (unpackedBuffer == buf) {
+				in = new PositionableByteArrayInputStream(buf.array(), beg, end
+						- beg);
+			} else {
+				in = new PositionableByteArrayInputStream(
+						unpackedBuffer.array(), 0, unpackedBuffer.capacity());
 			}
-			else{
-				in = new PositionableByteArrayInputStream(unpackedBuffer.array(), 0, unpackedBuffer.capacity());
-			}
-							
+
 			int cmd = 0;
 
 			// First read the name of the stream that will be addressed.
@@ -868,18 +862,17 @@ public class NetStreamReceiver extends Thread {
 
 	/**
 	 * @param in
-     * @see NetStreamConstants.EVENT_DEL_EDGE
+	 * @see NetStreamConstants.EVENT_DEL_EDGE
 	 */
 	protected void serve_EVENT_DEL_EDGE_ATTR(InputStream in) {
 		if (debug) {
 			debug("NetStreamServer: Received DEL_EDGE_ATTR command.");
 		}
 		String sourceId = readString(in);
-		long timeId = readLong(in);
+		long timeId = readUnsignedVarint(in);
 		String edgeId = readString(in);
 		String attrId = readString(in);
-		currentStream.edgeAttributeRemoved(sourceId, timeId,
-				edgeId, attrId);
+		currentStream.edgeAttributeRemoved(sourceId, timeId, edgeId, attrId);
 	}
 
 	/**
@@ -890,7 +883,7 @@ public class NetStreamReceiver extends Thread {
 			debug("NetStreamServer: Received CHG_EDGE_ATTR command.");
 		}
 		String sourceId = readString(in);
-		long timeId = readLong(in);
+		long timeId = readUnsignedVarint(in);
 		String edgeId = readString(in);
 		String attrId = readString(in);
 		int oldValueType = readType(in);
@@ -898,8 +891,8 @@ public class NetStreamReceiver extends Thread {
 		int newValueType = readType(in);
 		Object newValue = readValue(in, newValueType);
 
-		currentStream.edgeAttributeChanged(sourceId, timeId,
-				edgeId, attrId, oldValue, newValue);
+		currentStream.edgeAttributeChanged(sourceId, timeId, edgeId, attrId,
+				oldValue, newValue);
 
 	}
 
@@ -911,13 +904,13 @@ public class NetStreamReceiver extends Thread {
 			debug("NetStreamServer: Received ADD_EDGE_ATTR command.");
 		}
 		String sourceId = readString(in);
-		long timeId = readLong(in);
+		long timeId = readUnsignedVarint(in);
 		String edgeId = readString(in);
 		String attrId = readString(in);
 		Object value = readValue(in, readType(in));
 
-		currentStream.edgeAttributeAdded(sourceId, timeId,
-				edgeId, attrId, value);
+		currentStream.edgeAttributeAdded(sourceId, timeId, edgeId, attrId,
+				value);
 
 	}
 
@@ -929,12 +922,11 @@ public class NetStreamReceiver extends Thread {
 			debug("NetStreamServer: Received DEL_NODE_ATTR command.");
 		}
 		String sourceId = readString(in);
-		long timeId = readLong(in);
+		long timeId = readUnsignedVarint(in);
 		String nodeId = readString(in);
 		String attrId = readString(in);
 
-		currentStream.nodeAttributeRemoved(sourceId, timeId,
-				nodeId, attrId);
+		currentStream.nodeAttributeRemoved(sourceId, timeId, nodeId, attrId);
 
 	}
 
@@ -946,7 +938,7 @@ public class NetStreamReceiver extends Thread {
 			debug("NetStreamServer: Received EVENT_CHG_NODE_ATTR command.");
 		}
 		String sourceId = readString(in);
-		long timeId = readLong(in);
+		long timeId = readUnsignedVarint(in);
 		String nodeId = readString(in);
 		String attrId = readString(in);
 		int oldValueType = readType(in);
@@ -954,8 +946,8 @@ public class NetStreamReceiver extends Thread {
 		int newValueType = readType(in);
 		Object newValue = readValue(in, newValueType);
 
-		currentStream.nodeAttributeChanged(sourceId, timeId,
-				nodeId, attrId, oldValue, newValue);
+		currentStream.nodeAttributeChanged(sourceId, timeId, nodeId, attrId,
+				oldValue, newValue);
 	}
 
 	/**
@@ -966,13 +958,13 @@ public class NetStreamReceiver extends Thread {
 			debug("NetStreamServer: Received EVENT_ADD_NODE_ATTR command.");
 		}
 		String sourceId = readString(in);
-		long timeId = readLong(in);
+		long timeId = readUnsignedVarint(in);
 		String nodeId = readString(in);
 		String attrId = readString(in);
 		Object value = readValue(in, readType(in));
 
-		currentStream.nodeAttributeAdded(sourceId, timeId,
-				nodeId, attrId, value);
+		currentStream.nodeAttributeAdded(sourceId, timeId, nodeId, attrId,
+				value);
 	}
 
 	/**
@@ -983,11 +975,10 @@ public class NetStreamReceiver extends Thread {
 			debug("NetStreamServer: Received EVENT_DEL_GRAPH_ATTR command.");
 		}
 		String sourceId = readString(in);
-		long timeId = readLong(in);
+		long timeId = readUnsignedVarint(in);
 		String attrId = readString(in);
 
-		currentStream.graphAttributeRemoved(sourceId, timeId,
-				attrId);
+		currentStream.graphAttributeRemoved(sourceId, timeId, attrId);
 	}
 
 	/**
@@ -998,15 +989,15 @@ public class NetStreamReceiver extends Thread {
 			debug("NetStreamServer: Received EVENT_CHG_GRAPH_ATTR command.");
 		}
 		String sourceId = readString(in);
-		long timeId = readLong(in);
+		long timeId = readUnsignedVarint(in);
 		String attrId = readString(in);
 		int oldValueType = readType(in);
 		Object oldValue = readValue(in, oldValueType);
 		int newValueType = readType(in);
 		Object newValue = readValue(in, newValueType);
 
-		currentStream.graphAttributeChanged(sourceId, timeId,
-				attrId, oldValue, newValue);
+		currentStream.graphAttributeChanged(sourceId, timeId, attrId, oldValue,
+				newValue);
 
 	}
 
@@ -1018,15 +1009,14 @@ public class NetStreamReceiver extends Thread {
 			debug("NetStreamServer: Received EVENT_ADD_GRAPH_ATTR command.");
 		}
 		String sourceId = readString(in);
-		long timeId = readLong(in);
+		long timeId = readUnsignedVarint(in);
 		String attrId = readString(in);
 		Object value = readValue(in, readType(in));
 		if (debug) {
 			debug("NetStreamServer | EVENT_ADD_GRAPH_ATTR | %s=%s", attrId,
 					value.toString());
 		}
-		currentStream.graphAttributeAdded(sourceId, timeId,
-				attrId, value);
+		currentStream.graphAttributeAdded(sourceId, timeId, attrId, value);
 
 	}
 
@@ -1038,7 +1028,7 @@ public class NetStreamReceiver extends Thread {
 			debug("NetStreamServer: Received EVENT_CLEARED command.");
 		}
 		String sourceId = readString(in);
-		long timeId = readLong(in);
+		long timeId = readUnsignedVarint(in);
 		currentStream.graphCleared(sourceId, timeId);
 
 	}
@@ -1051,7 +1041,7 @@ public class NetStreamReceiver extends Thread {
 			debug("NetStreamServer: Received EVENT_STEP command.");
 		}
 		String sourceId = readString(in);
-		long timeId = readLong(in);
+		long timeId = readUnsignedVarint(in);
 		double time = readDouble(in);
 		currentStream.stepBegins(sourceId, timeId, time);
 	}
@@ -1064,7 +1054,7 @@ public class NetStreamReceiver extends Thread {
 			debug("NetStreamServer: Received EVENT_DEL_EDGE command.");
 		}
 		String sourceId = readString(in);
-		long timeId = readLong(in);
+		long timeId = readUnsignedVarint(in);
 		String edgeId = readString(in);
 		currentStream.edgeRemoved(sourceId, timeId, edgeId);
 	}
@@ -1077,13 +1067,12 @@ public class NetStreamReceiver extends Thread {
 			debug("NetStreamServer: Received ADD_EDGE command.");
 		}
 		String sourceId = readString(in);
-		long timeId = readLong(in);
+		long timeId = readUnsignedVarint(in);
 		String edgeId = readString(in);
 		String from = readString(in);
 		String to = readString(in);
 		boolean directed = readBoolean(in);
-		currentStream.edgeAdded(sourceId, timeId, edgeId, from,
-				to, directed);
+		currentStream.edgeAdded(sourceId, timeId, edgeId, from, to, directed);
 	}
 
 	/**
@@ -1094,7 +1083,7 @@ public class NetStreamReceiver extends Thread {
 			debug("NetStreamServer: Received DEL_NODE command.");
 		}
 		String sourceId = readString(in);
-		long timeId = readLong(in);
+		long timeId = readUnsignedVarint(in);
 		String nodeId = readString(in);
 		currentStream.nodeRemoved(sourceId, timeId, nodeId);
 	}
@@ -1107,7 +1096,7 @@ public class NetStreamReceiver extends Thread {
 			debug("NetStreamServer: Received EVENT_ADD_NODE command");
 		}
 		String sourceId = readString(in);
-		long timeId = readLong(in);
+		long timeId = readUnsignedVarint(in);
 		String nodeId = readString(in);
 		currentStream.nodeAdded(sourceId, timeId, nodeId);
 
@@ -1123,6 +1112,9 @@ public class NetStreamReceiver extends Thread {
 			if ((data = in.read()) == -1) {
 				debug("readType : could not read type");
 				return 0;
+			}
+			if (debug) {
+				debug("NetStreamServer: type "+data);
 			}
 			return data;
 		} catch (IOException e) {
@@ -1175,51 +1167,27 @@ public class NetStreamReceiver extends Thread {
 	 * @return
 	 */
 	protected Object[] readArray(InputStream in) {
-		byte[] data = new byte[4];
 
-		try {
-			if (in.read(data, 0, 4) != 4) {
-				debug("readArray: could not read length of array (int)");
-				return null;
-			}
+		int len = (int) readUnsignedVarint(in);
 
-			ByteBuffer bb = ByteBuffer.allocate(4);
-			bb.put(data);
-			bb.flip();
-			int len = bb.getInt();
-
-			Object[] array = new Object[len];
-			for (int i = 0; i < len; i++) {
-				array[i] = readValue(in, readType(in));
-			}
-			return array;
-
-		} catch (IOException e) {
-			debug("readArray: could not read");
-			e.printStackTrace();
+		Object[] array = new Object[len];
+		for (int i = 0; i < len; i++) {
+			array[i] = readValue(in, readType(in));
 		}
-		return null;
+		return array;
+
 	}
 
 	protected String readString(InputStream in) {
-		byte[] data = new byte[4];
-
 		try {
-			if (in.read(data, 0, 4) != 4) {
-				debug("readString: could not read length of array (int)");
-				return null;
-			}
 
-			ByteBuffer bb = ByteBuffer.allocate(4);
-			bb.put(data);
-			bb.flip();
-			int len = bb.getInt();
-
-			data = new byte[len];
+			int len = (int) readUnsignedVarint(in);
+			byte[] data = new byte[len];
 			if (in.read(data, 0, len) != len) {
 				return null;
 			}
-			return new String(data, Charset.forName("UTF-8"));
+			String s = new String(data, Charset.forName("UTF-8"));
+			return s;
 		} catch (IOException e) {
 			debug("readString: could not read string");
 			e.printStackTrace();
@@ -1249,55 +1217,53 @@ public class NetStreamReceiver extends Thread {
 		return data;
 	}
 
-	protected Short readShort(InputStream in) {
-		byte[] data = new byte[2];
+	protected long readUnsignedVarint(InputStream in) {
 		try {
-			if (in.read(data, 0, 2) != 2) {
-				debug("readShort: could not read");
-				return 0;
+
+			int size = 0;
+			long[] data = new long[9];
+			do {
+				data[size] = in.read();
+				
+				size++;
+				
+				//int bt =data[size-1]; 
+				//if (bt < 0) bt = (bt & 127) + (bt & 128);
+				//System.out.println("test "+bt+"  -> "+(data[size - 1]& 128) );
+			} while ((data[size - 1] & 128) == 128);
+			long number = 0;
+			for (int i = 0; i < size; i++) {
+
+				number ^= (data[i] & 127L) << (i * 7L);
+				
 			}
+			
+			return number;
+
 		} catch (IOException e) {
-			debug("readShort: could not read");
+			debug("readUnsignedVarintFromInteger: could not read");
 			e.printStackTrace();
 		}
-		ByteBuffer bb = ByteBuffer.allocate(2);
-		bb.put(data);
-		bb.flip();
-		return bb.getShort();
+		return 0L;
+	}
+	
+	
+
+	protected long readVarint(InputStream in) {
+		long number = readUnsignedVarint(in);
+		return ((number & 1) == 0) ? number >> 1 : -(number >> 1);
+	}
+
+	protected Short readShort(InputStream in) {
+		return (short) readVarint(in);
 	}
 
 	protected Integer readInt(InputStream in) {
-		byte[] data = new byte[4];
-		try {
-			if (in.read(data, 0, 4) != 4) {
-				debug("readInt: could not read");
-				return 0;
-			}
-		} catch (IOException e) {
-			debug("readInt: could not read");
-			e.printStackTrace();
-		}
-		ByteBuffer bb = ByteBuffer.allocate(4);
-		bb.put(data);
-		bb.flip();
-		return bb.getInt();
+		return (int) readVarint(in);
 	}
 
 	protected Long readLong(InputStream in) {
-		byte[] data = new byte[8];
-		try {
-			if (in.read(data, 0, 8) != 8) {
-				debug("readLong: could not read");
-				return 0L;
-			}
-		} catch (IOException e) {
-			debug("readLong: could not read");
-			e.printStackTrace();
-		}
-		ByteBuffer bb = ByteBuffer.allocate(8);
-		bb.put(data);
-		bb.flip();
-		return bb.getLong();
+		return readVarint(in);
 	}
 
 	protected Float readFloat(InputStream in) {
@@ -1340,54 +1306,22 @@ public class NetStreamReceiver extends Thread {
 	 * @throws IOException
 	 */
 	protected Integer[] readIntArray(InputStream in) {
-		byte[] data = new byte[4];
+		
+		int len = (int) readUnsignedVarint(in);
 
-		try {
-			if (in.read(data, 0, 4) != 4) {
-				debug("readIntArray: could not read length of array (int)");
-				return null;
-			}
-
-			ByteBuffer bb = ByteBuffer.allocate(4);
-			bb.put(data);
-			bb.flip();
-			int len = bb.getInt();
-
-			data = new byte[len * 4];
-			if (in.read(data, 0, len * 4) != len * 4) {
-				debug("readIntArray: could not read array");
-				return null;
-			}
-
-			bb = ByteBuffer.allocate(4 * len);
-			bb.put(data);
-			bb.flip();
-			Integer[] res = new Integer[len];
-			for (int i = 0; i < len; i++) {
-
-				res[i] = bb.getInt();
-			}
-			return res;
-		} catch (IOException e) {
-			debug("readIntArray: could not read array");
-			e.printStackTrace();
+		Integer[] res = new Integer[len];
+		for (int i = 0; i < len; i++) {
+			res[i] = (int) readVarint(in);
+			//System.out.printf("array[%d]=%d%n",i,res[i]);
 		}
-		return null;
+		return res;
 	}
 
 	protected Boolean[] readBooleanArray(InputStream in) {
-		byte[] data = new byte[4];
+		byte[] data = null;
 
 		try {
-			if (in.read(data, 0, 4) != 4) {
-				debug("readBooleanArray: could not read length of array (int)");
-				return null;
-			}
-
-			ByteBuffer bb = ByteBuffer.allocate(4);
-			bb.put(data);
-			bb.flip();
-			int len = bb.getInt();
+			int len = (int) readUnsignedVarint(in);
 
 			data = new byte[len];
 			if (in.read(data, 0, len) != len) {
@@ -1395,7 +1329,7 @@ public class NetStreamReceiver extends Thread {
 				return null;
 			}
 
-			bb = ByteBuffer.allocate(len);
+			ByteBuffer bb = ByteBuffer.allocate(len);
 			bb.put(data);
 			bb.flip();
 			Boolean[] res = new Boolean[len];
@@ -1414,18 +1348,10 @@ public class NetStreamReceiver extends Thread {
 	}
 
 	protected Byte[] readByteArray(InputStream in) {
-		byte[] data = new byte[4];
+		byte[] data = null;
 
 		try {
-			if (in.read(data, 0, 4) != 4) {
-				debug("readByteArray: could not read length of array (int)");
-				return null;
-			}
-
-			ByteBuffer bb = ByteBuffer.allocate(4);
-			bb.put(data);
-			bb.flip();
-			int len = bb.getInt();
+			int len = (int) readUnsignedVarint(in);
 
 			data = new byte[len];
 			if (in.read(data, 0, len) != len) {
@@ -1433,7 +1359,7 @@ public class NetStreamReceiver extends Thread {
 				return null;
 			}
 
-			bb = ByteBuffer.allocate(len);
+			ByteBuffer bb = ByteBuffer.allocate(len);
 			bb.put(data);
 			bb.flip();
 			Byte[] res = new Byte[len];
@@ -1451,18 +1377,10 @@ public class NetStreamReceiver extends Thread {
 	}
 
 	protected Double[] readDoubleArray(InputStream in) {
-		byte[] data = new byte[4];
+		byte[] data = null;
 
 		try {
-			if (in.read(data, 0, 4) != 4) {
-				debug("readDoubleArray: could not read length of array (int)");
-				return null;
-			}
-
-			ByteBuffer bb = ByteBuffer.allocate(4);
-			bb.put(data);
-			bb.flip();
-			int len = bb.getInt();
+			int len = (int) readUnsignedVarint(in);
 
 			data = new byte[len * 8];
 			if (in.read(data, 0, len * 8) != len * 8) {
@@ -1470,7 +1388,7 @@ public class NetStreamReceiver extends Thread {
 				return null;
 			}
 
-			bb = ByteBuffer.allocate(8 * len);
+			ByteBuffer bb = ByteBuffer.allocate(8 * len);
 			bb.put(data);
 			bb.flip();
 			Double[] res = new Double[len];
@@ -1487,18 +1405,10 @@ public class NetStreamReceiver extends Thread {
 	}
 
 	protected Float[] readFloatArray(InputStream in) {
-		byte[] data = new byte[4];
+		byte[] data = null;
 
 		try {
-			if (in.read(data, 0, 4) != 4) {
-				debug("readFloatArray: could not read length of array (int)");
-				return null;
-			}
-
-			ByteBuffer bb = ByteBuffer.allocate(4);
-			bb.put(data);
-			bb.flip();
-			int len = bb.getInt();
+			int len = (int) readUnsignedVarint(in);
 
 			data = new byte[len * 4];
 			if (in.read(data, 0, len * 4) != len * 4) {
@@ -1506,7 +1416,7 @@ public class NetStreamReceiver extends Thread {
 				return null;
 			}
 
-			bb = ByteBuffer.allocate(4 * len);
+			ByteBuffer bb = ByteBuffer.allocate(4 * len);
 			bb.put(data);
 			bb.flip();
 			Float[] res = new Float[len];
@@ -1523,78 +1433,23 @@ public class NetStreamReceiver extends Thread {
 	}
 
 	protected Long[] readLongArray(InputStream in) {
-		byte[] data = new byte[4];
+		int len = (int) readUnsignedVarint(in);
 
-		try {
-			if (in.read(data, 0, 4) != 4) {
-				debug("readLongArray: could not read length of array (int)");
-				return null;
-			}
-
-			ByteBuffer bb = ByteBuffer.allocate(4);
-			bb.put(data);
-			bb.flip();
-			int len = bb.getInt();
-
-			data = new byte[len * 8];
-			if (in.read(data, 0, len * 8) != len * 8) {
-				debug("readLongArray: could not read array");
-				return null;
-			}
-
-			bb = ByteBuffer.allocate(8 * len);
-			bb.put(data);
-			bb.flip();
-			Long[] res = new Long[len];
-			for (int i = 0; i < len; i++) {
-
-				res[i] = bb.getLong();
-				debug(res[i] + ",");
-			}
-			debug("%n");
-			return res;
-		} catch (IOException e) {
-			debug("readLongArray: could not read array");
-			e.printStackTrace();
+		Long[] res = new Long[len];
+		for (int i = 0; i < len; i++) {
+			res[i] = readVarint(in);
 		}
-		return null;
+		return res;
 	}
 
 	protected Short[] readShortArray(InputStream in) {
-		byte[] data = new byte[4];
+		int len = (int) readUnsignedVarint(in);
 
-		try {
-			if (in.read(data, 0, 4) != 4) {
-				debug("readShortArray: could not read length of array (int)");
-				return null;
-			}
-
-			ByteBuffer bb = ByteBuffer.allocate(4);
-			bb.put(data);
-			bb.flip();
-			int len = bb.getInt();
-
-			data = new byte[len * 2];
-			if (in.read(data, 0, len * 2) != len * 2) {
-				debug("readShortArray: could not read array");
-				return null;
-			}
-
-			bb = ByteBuffer.allocate(2 * len);
-			bb.put(data);
-			bb.flip();
-			Short[] res = new Short[len];
-			for (int i = 0; i < len; i++) {
-
-				res[i] = bb.getShort();
-				debug(res[i] + ",");
-			}
-			debug("%n");
-			return res;
-		} catch (IOException e) {
-			debug("readShortArray: could not read array");
-			e.printStackTrace();
+		Short[] res = new Short[len];
+		for (int i = 0; i < len; i++) {
+			res[i] = (short) readVarint(in);
+			//System.out.printf("array[%d]=%d%n",i,res[i]);
 		}
-		return null;
+		return res;
 	}
 }
