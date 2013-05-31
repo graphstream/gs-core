@@ -36,6 +36,8 @@ import java.net.UnknownHostException;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.stream.netstream.NetStreamReceiver;
+import org.graphstream.stream.netstream.NetStreamSender;
 import org.graphstream.stream.netstream.packing.Base64Packer;
 import org.graphstream.stream.netstream.packing.Base64Unpacker;
 import org.graphstream.stream.thread.ThreadProxyPipe;
@@ -78,6 +80,7 @@ public class ExampleWithViewer {
 		NetStreamReceiver net = new NetStreamReceiver(2001);
 		
 		net.setUnpacker(new Base64Unpacker());
+		net.setDebugOn(false);
 		
 		// - received events end up in the "default" pipe
 		ThreadProxyPipe pipe = net.getDefaultStream();
@@ -102,7 +105,8 @@ public class ExampleWithViewer {
 				}
 				
 				nsc.setPacker(new Base64Packer());
-			
+
+				
 				// - plug the graph to the sender so that graph events can be
 				// sent automatically
 				g.addSink(nsc);
@@ -111,7 +115,7 @@ public class ExampleWithViewer {
 				g.addAttribute("stylesheet", style);
 				g.addAttribute("ui.antialias", true);
 				g.addAttribute("layout.stabilization-limit", 0);
-				for (int i = 0; i < 500; i++) {
+				for (int i = 0; i < 5000; i++) {
 					g.addNode(i + "");
 					if (i > 0) {
 						g.addEdge(i + "-" + (i - 1), i + "", (i - 1) + "");

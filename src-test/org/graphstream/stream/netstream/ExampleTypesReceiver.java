@@ -31,14 +31,13 @@
  */
 package org.graphstream.stream.netstream;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 
 import org.graphstream.stream.SinkAdapter;
+import org.graphstream.stream.netstream.NetStreamReceiver;
 import org.graphstream.stream.thread.ThreadProxyPipe;
 
 /**
@@ -59,9 +58,9 @@ public class ExampleTypesReceiver {
 		try {
 			net = new NetStreamReceiver("localhost", 2001, true);
 		} catch (UnknownHostException e1) {
-			fail(e1.toString());
+			System.err.println(e1.toString());
 		} catch (IOException e1) {
-			fail(e1.toString());
+			System.err.println(e1.toString());
 		}
 
 		ThreadProxyPipe pipe = net.getDefaultStream();
@@ -173,7 +172,7 @@ public class ExampleTypesReceiver {
 					}
 				}
 
-				assertTrue(valueType.equals(attribute));
+				System.err.println(valueType.equals(attribute));
 
 			}
 

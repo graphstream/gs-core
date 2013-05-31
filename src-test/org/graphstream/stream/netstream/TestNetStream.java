@@ -48,6 +48,8 @@ import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.SinkAdapter;
+import org.graphstream.stream.netstream.NetStreamReceiver;
+import org.graphstream.stream.netstream.NetStreamSender;
 import org.graphstream.stream.netstream.packing.Base64Packer;
 import org.graphstream.stream.netstream.packing.Base64Unpacker;
 import org.graphstream.stream.thread.ThreadProxyPipe;

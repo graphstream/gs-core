@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 
 import org.graphstream.stream.Sink;
+import org.graphstream.stream.netstream.NetStreamReceiver;
 import org.graphstream.stream.thread.ThreadProxyPipe;
 
 /**

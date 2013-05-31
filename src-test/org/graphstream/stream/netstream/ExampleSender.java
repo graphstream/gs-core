@@ -36,6 +36,8 @@ import java.net.UnknownHostException;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.stream.netstream.NetStreamSender;
+import org.graphstream.stream.netstream.packing.Base64Packer;
 
 /**
  *  A simple example of use of the NetStream sender.
@@ -60,6 +62,9 @@ public class ExampleSender {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		nsc.setPacker(new Base64Packer());
+		
 		// - plug the graph to the sender so that graph events can be
 		// sent automatically
 		g.addSink(nsc);
