@@ -506,8 +506,6 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 		 */
 		protected boolean active = true;
 
-		int totalSize=0;
-
 		// Constructors
 
 		public IncomingBuffer() {
@@ -565,8 +563,6 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 					if (debug)
 						debug("start to bufferize a %d byte long messsage",
 								size);
-					totalSize+=size;
-					System.out.println(totalSize);
 				} else {
 					// The header is incomplete, wait next call to complete it.
 

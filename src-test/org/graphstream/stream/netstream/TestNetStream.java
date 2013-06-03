@@ -75,7 +75,7 @@ public class TestNetStream {
 		try {
 			NetStreamReceiver net = null;
 			try {
-				net = new NetStreamReceiver("localhost", 2000, true);
+				net = new NetStreamReceiver("localhost", 2000, false);
 			} catch (UnknownHostException e1) {
 				fail(e1.toString());
 			} catch (IOException e1) {
@@ -142,14 +142,14 @@ public class TestNetStream {
 
 		NetStreamReceiver net = null;
 		try {
-			net = new NetStreamReceiver("localhost", 2001, true);
+			net = new NetStreamReceiver("localhost", 2001, false);
 		} catch (UnknownHostException e1) {
 			fail(e1.toString());
 		} catch (IOException e1) {
 			fail(e1.toString());
 		}
 
-		// net.setUnpacker(new Base64Unpacker());
+		net.setUnpacker(new Base64Unpacker());
 
 		ThreadProxyPipe pipe = net.getDefaultStream();
 
@@ -285,7 +285,7 @@ public class TestNetStream {
 					return;
 				}
 
-				// nsc.setPacker(new Base64Packer());
+				nsc.setPacker(new Base64Packer());
 
 				g.addSink(nsc);
 
@@ -359,7 +359,7 @@ public class TestNetStream {
 		Graph g2 = new MultiGraph("G2");
 		NetStreamReceiver net = null;
 		try {
-			net = new NetStreamReceiver("localhost", 2002, true);
+			net = new NetStreamReceiver("localhost", 2002, false);
 		} catch (UnknownHostException e1) {
 			fail(e1.toString());
 		} catch (IOException e1) {
@@ -448,13 +448,12 @@ public class TestNetStream {
 		final Graph g1 = new DefaultGraph("G");
 		NetStreamReceiver net = null;
 		try {
-			net = new NetStreamReceiver("localhost", 2003, true);
+			net = new NetStreamReceiver("localhost", 2003, false);
 		} catch (UnknownHostException e1) {
 			fail(e1.toString());
 		} catch (IOException e1) {
 			fail(e1.toString());
 		}
-
 		ThreadProxyPipe pipe = net.getDefaultStream();
 
 		pipe.addSink(g1);
@@ -560,6 +559,7 @@ public class TestNetStream {
 					error(e1.toString());
 					return;
 				}
+				
 				g.addSink(nsc);
 				Node node0 = g.addNode("node0");
 				Edge edge = g.addEdge("edge", "node0", "node1", true);
@@ -594,7 +594,7 @@ public class TestNetStream {
 	public void testNetStreamVarint() {
 		NetStreamReceiver net = null;
 		try {
-			net = new NetStreamReceiver("localhost", 2004, true);
+			net = new NetStreamReceiver("localhost", 2004, false);
 		} catch (UnknownHostException e1) {
 			fail(e1.toString());
 		} catch (IOException e1) {
