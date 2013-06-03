@@ -31,17 +31,18 @@
  */
 package org.graphstream.stream.thread;
 
-import org.graphstream.graph.Edge;
+import java.util.LinkedList;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
 import org.graphstream.stream.ProxyPipe;
+import org.graphstream.stream.Replayable;
+import org.graphstream.stream.Replayable.Controller;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.Source;
 import org.graphstream.stream.SourceBase;
-import org.miv.mbox.CannotPostException;
-import org.miv.mbox.MBox;
-import org.miv.mbox.MBoxListener;
-import org.miv.mbox.MBoxStandalone;
 
 /**
  * Filter that allows to pass graph events between two threads without explicit
@@ -68,8 +69,8 @@ import org.miv.mbox.MBoxStandalone;
  * 
  * <p>
  * The only restriction is that the sink thread must regularly call the
- * {@link #pump()} method to dispatch events coming from the source to all
- * sinks registered (see the explanation in {@link org.graphstream.stream.ProxyPipe}).
+ * {@link #pump()} method to dispatch events coming from the source to all sinks
+ * registered (see the explanation in {@link org.graphstream.stream.ProxyPipe}).
  * </p>
  * 
  * <p>
@@ -80,8 +81,7 @@ import org.miv.mbox.MBoxStandalone;
  * graph as input.
  * </p>
  */
-public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
-		MBoxListener {
+public class ThreadProxyPipe extends SourceBase implements ProxyPipe {
 
 	/**
 	 * Proxy id.
@@ -96,7 +96,11 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 	/**
 	 * The message box used to exchange messages between the two threads.
 	 */
-	protected MBox events;
+	protected LinkedList<GraphEvents> events;
+	protected LinkedList<Object[]> eventsData;
+
+	protected ReentrantLock lock;
+	protected Condition notEmpty;
 
 	/**
 	 * Used only to remove the listener. We ensure this is done in the source
@@ -109,118 +113,113 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 	 */
 	protected boolean unregisterWhenPossible = false;
 
-	/**
-	 * New thread proxy pipe with no input.
-	 */
 	public ThreadProxyPipe() {
-		this((Source) null);
+		this.events = new LinkedList<GraphEvents>();
+		this.eventsData = new LinkedList<Object[]>();
+		this.lock = new ReentrantLock();
+		this.notEmpty = this.lock.newCondition();
+		this.from = "<in>";
+		this.input = null;
 	}
 
 	/**
-	 * Listen at an input in a given thread and redirect all events to
-	 * GraphListeners that may be in another thread.
-	 * 
-	 * @param input
-	 *            The source of graph events we listen at.
-	 */
-	public ThreadProxyPipe(Source input) {
-		this(input, new MBoxStandalone());
-	}
-
-	/**
-	 * Like {@link #ThreadProxyPipe(Source)}, but allow to share the message box
-	 * with another message processor. This can be needed to share the same
-	 * message stack, when message order is important.
 	 * 
 	 * @param input
 	 *            The source of events we listen at.
-	 * @param sharedMBox
-	 *            The message box used to send and receive graph messages across
-	 *            the thread boundary.
+	 * 
+	 * @deprecated Use the default constructor and then call the
+	 *             {@link #init(Source)} method.
 	 */
-	public ThreadProxyPipe(Source input, MBox sharedMBox) {
-		this.events = sharedMBox;
-		this.from = "<in>";
-		this.input = input;
-
-		if (input != null)
-			input.addSink(this);
-
-		((MBoxStandalone) this.events).addListener(this);
+	@Deprecated
+	public ThreadProxyPipe(Source input) {
+		this(input, null, input instanceof Replayable);
 	}
 
 	/**
-	 * Listen at an input graph in a given thread and redirect all events to
-	 * GraphListeners that may be in another thread. By default, if the graph
-	 * already contains some elements, they are "replayed". This means that
-	 * events are sent to mimic the fact they just appeared.
 	 * 
-	 * @param inputGraph
-	 *            The graph we listen at.
+	 * @param input
+	 * @param replay
+	 * 
+	 * @deprecated Use the default constructor and then call the
+	 *             {@link #init(Source)} method.
 	 */
-	public ThreadProxyPipe(Graph inputGraph) {
-		this(inputGraph, true);
+	@Deprecated
+	public ThreadProxyPipe(Source input, boolean replay) {
+		this(input, null, replay);
 	}
 
 	/**
-	 * Like {@link #ThreadProxyPipe(Graph)} but allow to avoid replaying the
-	 * graph.
 	 * 
-	 * @param inputGraph
-	 *            The graph we listen at.
-	 * @param replayGraph
-	 *            If false, and if the input graph already contains element they
-	 *            are not replayed.
+	 * @param input
+	 * @param initialListener
+	 * @param replay
+	 * 
+	 * @deprecated Use the default constructor and then call the
+	 *             {@link #init(Source)} method.
 	 */
-	public ThreadProxyPipe(Graph inputGraph, boolean replayGraph) {
-		this(inputGraph, null, replayGraph);
+	@Deprecated
+	public ThreadProxyPipe(Source input, Sink initialListener, boolean replay) {
+		this();
+
+		if (initialListener != null)
+			addSink(initialListener);
+
+		init(input, replay);
+	}
+
+	public void init() {
+		init(null, false);
 	}
 
 	/**
-	 * Like {@link #ThreadProxyPipe(Graph,boolean)} but allows to pass an
-	 * initial listener, therefore specifying the input and output at once.
+	 * Init the proxy. If there are previous events, they will be cleared.
 	 * 
-	 * @param inputGraph
-	 *            The graph we listen at.
-	 * @param firstListener
-	 *            The initial listener to register.
-	 * @param replayGraph
-	 *            If false, and if the input graph already contains element they
-	 *            are not replayed.
+	 * @param source
+	 *            source of the events
 	 */
-	public ThreadProxyPipe(Graph inputGraph, Sink firstListener,
-			boolean replayGraph) {
-		this(inputGraph, firstListener, replayGraph, new MBoxStandalone());
+	public void init(Source source) {
+		init(source, source instanceof Replayable);
 	}
 
 	/**
-	 * Like {@link #ThreadProxyPipe(Graph,Sink,boolean)}, but allows to share
-	 * the message box with another message processor. This can be needed to
-	 * share the same message stack, when message order is important.
+	 * Init the proxy. If there are previous events, they will be cleared.
 	 * 
-	 * @param inputGraph
-	 *            The graph we listen at.
-	 * @param replayGraph
-	 *            If false, and if the input graph already contains element they
-	 *            are not replayed.
-	 * @param sharedMBox
-	 *            The message box used to send and receive graph messages across
-	 *            the thread boundary.
+	 * @param source
+	 *            source of the events
+	 * @param replay
+	 *            true if the source should be replayed. You need a
+	 *            {@link org.graphstream.stream.Replayable} source to enable
+	 *            replay, else nothing happens.
 	 */
-	public ThreadProxyPipe(Graph inputGraph, Sink firstListener,
-			boolean replayGraph, MBox sharedMBox) {
-		this.events = sharedMBox;
-		this.from = inputGraph.getId();
-		this.input = inputGraph;
+	public void init(Source source, boolean replay) {
+		lock.lock();
 
-		if (firstListener != null)
-			addSink(firstListener);
+		try {
+			if (this.input != null)
+				this.input.removeSink(this);
 
-		if (replayGraph)
-			replayGraph(inputGraph);
+			this.input = source;
 
-		input.addSink(this);
-		((MBoxStandalone) this.events).addListener(this);
+			this.events.clear();
+			this.eventsData.clear();
+		} finally {
+			lock.unlock();
+		}
+
+		if (source != null) {
+			if (source instanceof Graph)
+				this.from = ((Graph) source).getId();
+
+			this.input.addSink(this);
+
+			if (replay && source instanceof Replayable) {
+				Replayable r = (Replayable) source;
+				Controller rc = r.getReplayController();
+
+				rc.addSink(this);
+				rc.replay();
+			}
+		}
 	}
 
 	@Override
@@ -248,68 +247,79 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 	 * called.
 	 */
 	public void pump() {
-		((MBoxStandalone) events).processMessages();
+		GraphEvents e = null;
+		Object[] data = null;
+
+		do {
+			lock.lock();
+
+			try {
+				e = events.poll();
+				data = eventsData.poll();
+			} finally {
+				lock.unlock();
+			}
+
+			if (e != null)
+				processMessage(e, data);
+		} while (e != null);
+	}
+
+	public void blockingPump() throws InterruptedException {
+		blockingPump(0);
+	}
+
+	public void blockingPump(long timeout) throws InterruptedException {
+		GraphEvents e;
+		Object[] data;
+
+		lock.lock();
+
+		try {
+			if (timeout > 0)
+				while (events.size() == 0)
+					notEmpty.await(timeout, TimeUnit.MILLISECONDS);
+			else
+				while (events.size() == 0)
+					notEmpty.await();
+		} finally {
+			lock.unlock();
+		}
+
+		do {
+			lock.lock();
+
+			try {
+				e = events.poll();
+				data = eventsData.poll();
+			} finally {
+				lock.unlock();
+			}
+
+			if (e != null)
+				processMessage(e, data);
+		} while (e != null);
+	}
+
+	public boolean hasPostRemaining() {
+		boolean r = true;
+		lock.lock();
+		
+		try {
+			r = events.size() > 0;
+		} finally {
+			lock.unlock();
+		}
+
+		return r;
 	}
 
 	/**
 	 * Set of events sent via the message box.
 	 */
 	protected static enum GraphEvents {
-		ADD_NODE, DEL_NODE, ADD_EDGE, DEL_EDGE,
-		STEP, CLEARED,
-		ADD_GRAPH_ATTR, CHG_GRAPH_ATTR, DEL_GRAPH_ATTR,
-		ADD_NODE_ATTR, CHG_NODE_ATTR, DEL_NODE_ATTR,
-		ADD_EDGE_ATTR, CHG_EDGE_ATTR, DEL_EDGE_ATTR
+		ADD_NODE, DEL_NODE, ADD_EDGE, DEL_EDGE, STEP, CLEARED, ADD_GRAPH_ATTR, CHG_GRAPH_ATTR, DEL_GRAPH_ATTR, ADD_NODE_ATTR, CHG_NODE_ATTR, DEL_NODE_ATTR, ADD_EDGE_ATTR, CHG_EDGE_ATTR, DEL_EDGE_ATTR
 	};
-
-	protected void replayGraph(Graph graph) {
-		try {
-			String graphId = "@replay";
-
-			// Replay all graph attributes.
-
-			if (graph.getAttributeKeySet() != null)
-				for (String key : graph.getAttributeKeySet())
-					events.post(from, GraphEvents.ADD_GRAPH_ATTR, graphId,
-							sourceTime.newEvent(), key, graph.getAttribute(key));
-
-			Thread.yield();
-			
-			// Replay all nodes and their attributes.
-
-			for (Node node : graph) {
-				events.post(from, GraphEvents.ADD_NODE, graphId,
-						sourceTime.newEvent(), node.getId());
-
-				if (node.getAttributeKeySet() != null)
-					for (String key : node.getAttributeKeySet())
-						events.post(from, GraphEvents.ADD_NODE_ATTR, graphId,
-								sourceTime.newEvent(), node.getId(), key,
-								node.getAttribute(key));
-				Thread.yield();
-			}
-
-			// Replay all edges and their attributes.
-
-			for (Edge edge : graph.getEachEdge()) {
-				events.post(from, GraphEvents.ADD_EDGE, graphId, sourceTime
-						.newEvent(), edge.getId(),
-						edge.getSourceNode().getId(), edge.getTargetNode()
-								.getId(), edge.isDirected());
-
-				if (edge.getAttributeKeySet() != null)
-					for (String key : edge.getAttributeKeySet())
-						events.post(from, GraphEvents.ADD_EDGE_ATTR, graphId,
-								sourceTime.newEvent(), edge.getId(), key,
-								edge.getAttribute(key));
-				Thread.yield();
-			}
-		} catch (CannotPostException e) {
-			System.err
-					.printf("GraphRendererRunner: cannot post message to listeners: %s%n",
-							e.getMessage());
-		}
-	}
 
 	protected boolean maybeUnregister() {
 		if (unregisterWhenPossible) {
@@ -321,17 +331,26 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 		return false;
 	}
 
+	protected void post(GraphEvents e, Object... data) {
+		lock.lock();
+
+		try {
+			events.add(e);
+			eventsData.add(data);
+
+			notEmpty.signal();
+		} finally {
+			lock.unlock();
+		}
+	}
+
 	public void edgeAttributeAdded(String graphId, long timeId, String edgeId,
 			String attribute, Object value) {
 		if (maybeUnregister())
 			return;
 
-		try {
-			events.post(from, GraphEvents.ADD_EDGE_ATTR, graphId, timeId,
-					edgeId, attribute, value);
-		} catch (CannotPostException e) {
-			e.printStackTrace();
-		}
+		post(GraphEvents.ADD_EDGE_ATTR, graphId, timeId, edgeId, attribute,
+				value);
 	}
 
 	public void edgeAttributeChanged(String graphId, long timeId,
@@ -339,12 +358,8 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 		if (maybeUnregister())
 			return;
 
-		try {
-			events.post(from, GraphEvents.CHG_EDGE_ATTR, graphId, timeId,
-					edgeId, attribute, oldValue, newValue);
-		} catch (CannotPostException e) {
-			e.printStackTrace();
-		}
+		post(GraphEvents.CHG_EDGE_ATTR, graphId, timeId, edgeId, attribute,
+				oldValue, newValue);
 	}
 
 	public void edgeAttributeRemoved(String graphId, long timeId,
@@ -352,12 +367,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 		if (maybeUnregister())
 			return;
 
-		try {
-			events.post(from, GraphEvents.DEL_EDGE_ATTR, graphId, timeId,
-					edgeId, attribute);
-		} catch (CannotPostException e) {
-			e.printStackTrace();
-		}
+		post(GraphEvents.DEL_EDGE_ATTR, graphId, timeId, edgeId, attribute);
 	}
 
 	public void graphAttributeAdded(String graphId, long timeId,
@@ -365,12 +375,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 		if (maybeUnregister())
 			return;
 
-		try {
-			events.post(from, GraphEvents.ADD_GRAPH_ATTR, graphId, timeId,
-					attribute, value);
-		} catch (CannotPostException e) {
-			e.printStackTrace();
-		}
+		post(GraphEvents.ADD_GRAPH_ATTR, graphId, timeId, attribute, value);
 	}
 
 	public void graphAttributeChanged(String graphId, long timeId,
@@ -378,12 +383,8 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 		if (maybeUnregister())
 			return;
 
-		try {
-			events.post(from, GraphEvents.CHG_GRAPH_ATTR, graphId, timeId,
-					attribute, oldValue, newValue);
-		} catch (CannotPostException e) {
-			e.printStackTrace();
-		}
+		post(GraphEvents.CHG_GRAPH_ATTR, graphId, timeId, attribute, oldValue,
+				newValue);
 	}
 
 	public void graphAttributeRemoved(String graphId, long timeId,
@@ -391,12 +392,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 		if (maybeUnregister())
 			return;
 
-		try {
-			events.post(from, GraphEvents.DEL_GRAPH_ATTR, graphId, timeId,
-					attribute);
-		} catch (CannotPostException e) {
-			e.printStackTrace();
-		}
+		post(GraphEvents.DEL_GRAPH_ATTR, graphId, timeId, attribute);
 	}
 
 	public void nodeAttributeAdded(String graphId, long timeId, String nodeId,
@@ -404,12 +400,8 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 		if (maybeUnregister())
 			return;
 
-		try {
-			events.post(from, GraphEvents.ADD_NODE_ATTR, graphId, timeId,
-					nodeId, attribute, value);
-		} catch (CannotPostException e) {
-			e.printStackTrace();
-		}
+		post(GraphEvents.ADD_NODE_ATTR, graphId, timeId, nodeId, attribute,
+				value);
 	}
 
 	public void nodeAttributeChanged(String graphId, long timeId,
@@ -417,12 +409,8 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 		if (maybeUnregister())
 			return;
 
-		try {
-			events.post(from, GraphEvents.CHG_NODE_ATTR, graphId, timeId,
-					nodeId, attribute, oldValue, newValue);
-		} catch (CannotPostException e) {
-			e.printStackTrace();
-		}
+		post(GraphEvents.CHG_NODE_ATTR, graphId, timeId, nodeId, attribute,
+				oldValue, newValue);
 	}
 
 	public void nodeAttributeRemoved(String graphId, long timeId,
@@ -430,12 +418,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 		if (maybeUnregister())
 			return;
 
-		try {
-			events.post(from, GraphEvents.DEL_NODE_ATTR, graphId, timeId,
-					nodeId, attribute);
-		} catch (CannotPostException e) {
-			e.printStackTrace();
-		}
+		post(GraphEvents.DEL_NODE_ATTR, graphId, timeId, nodeId, attribute);
 	}
 
 	public void edgeAdded(String graphId, long timeId, String edgeId,
@@ -443,187 +426,185 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe,
 		if (maybeUnregister())
 			return;
 
-		try {
-			events.post(from, GraphEvents.ADD_EDGE, graphId, timeId, edgeId,
-					fromNodeId, toNodeId, directed);
-		} catch (CannotPostException e) {
-			e.printStackTrace();
-		}
+		post(GraphEvents.ADD_EDGE, graphId, timeId, edgeId, fromNodeId,
+				toNodeId, directed);
 	}
 
 	public void edgeRemoved(String graphId, long timeId, String edgeId) {
 		if (maybeUnregister())
 			return;
 
-		try {
-			events.post(from, GraphEvents.DEL_EDGE, graphId, timeId, edgeId);
-		} catch (CannotPostException e) {
-			e.printStackTrace();
-		}
+		post(GraphEvents.DEL_EDGE, graphId, timeId, edgeId);
 	}
 
 	public void graphCleared(String graphId, long timeId) {
 		if (maybeUnregister())
 			return;
 
-		try {
-			events.post(from, GraphEvents.CLEARED, graphId, timeId);
-		} catch (CannotPostException e) {
-			e.printStackTrace();
-		}
+		post(GraphEvents.CLEARED, graphId, timeId);
 	}
 
 	public void nodeAdded(String graphId, long timeId, String nodeId) {
 		if (maybeUnregister())
 			return;
 
-		try {
-			events.post(from, GraphEvents.ADD_NODE, graphId, timeId, nodeId);
-		} catch (CannotPostException e) {
-			e.printStackTrace();
-		}
+		post(GraphEvents.ADD_NODE, graphId, timeId, nodeId);
 	}
 
 	public void nodeRemoved(String graphId, long timeId, String nodeId) {
 		if (maybeUnregister())
 			return;
 
-		try {
-			events.post(from, GraphEvents.DEL_NODE, graphId, timeId, nodeId);
-		} catch (CannotPostException e) {
-			e.printStackTrace();
-		}
+		post(GraphEvents.DEL_NODE, graphId, timeId, nodeId);
 	}
 
 	public void stepBegins(String graphId, long timeId, double step) {
 		if (maybeUnregister())
 			return;
 
-		try {
-			events.post(from, GraphEvents.STEP, graphId, timeId, step);
-		} catch (CannotPostException e) {
-			e.printStackTrace();
-		}
+		post(GraphEvents.STEP, graphId, timeId, step);
 	}
 
 	// MBoxListener
 
-	public void processMessage(String from, Object[] data) {
-		// System.err.printf( "    %s.msg(%s, %s, %s, %s)%n", from, data[1],
-		// data[2], data[0], data[3] );
-		if (data[0].equals(GraphEvents.ADD_NODE)) {
-			String graphId = (String) data[1];
-			Long timeId = (Long) data[2];
-			String nodeId = (String) data[3];
+	public void processMessage(GraphEvents e, Object[] data) {
+		String graphId, elementId, attribute;
+		Long timeId;
+		Object newValue, oldValue;
 
-			sendNodeAdded(graphId, timeId, nodeId);
-		} else if (data[0].equals(GraphEvents.DEL_NODE)) {
-			String graphId = (String) data[1];
-			Long timeId = (Long) data[2];
-			String nodeId = (String) data[3];
+		switch (e) {
+		case ADD_NODE:
+			graphId = (String) data[0];
+			timeId = (Long) data[1];
+			elementId = (String) data[2];
 
-			sendNodeRemoved(graphId, timeId, nodeId);
-		} else if (data[0].equals(GraphEvents.ADD_EDGE)) {
-			String graphId = (String) data[1];
-			Long timeId = (Long) data[2];
-			String edgeId = (String) data[3];
-			String fromId = (String) data[4];
-			String toId = (String) data[5];
-			boolean directed = (Boolean) data[6];
+			sendNodeAdded(graphId, timeId, elementId);
+			break;
+		case DEL_NODE:
+			graphId = (String) data[0];
+			timeId = (Long) data[1];
+			elementId = (String) data[2];
 
-			sendEdgeAdded(graphId, timeId, edgeId, fromId, toId, directed);
-		} else if (data[0].equals(GraphEvents.DEL_EDGE)) {
-			String graphId = (String) data[1];
-			Long timeId = (Long) data[2];
-			String edgeId = (String) data[3];
+			sendNodeRemoved(graphId, timeId, elementId);
+			break;
+		case ADD_EDGE:
+			graphId = (String) data[0];
+			timeId = (Long) data[1];
+			elementId = (String) data[2];
 
-			sendEdgeRemoved(graphId, timeId, edgeId);
-		} else if (data[0].equals(GraphEvents.STEP)) {
-			String graphId = (String) data[1];
-			Long timeId = (Long) data[2];
-			double step = (Double) data[3];
+			String fromId = (String) data[3];
+			String toId = (String) data[4];
+			boolean directed = (Boolean) data[5];
+
+			sendEdgeAdded(graphId, timeId, elementId, fromId, toId, directed);
+			break;
+		case DEL_EDGE:
+			graphId = (String) data[0];
+			timeId = (Long) data[1];
+			elementId = (String) data[2];
+
+			sendEdgeRemoved(graphId, timeId, elementId);
+			break;
+		case STEP:
+			graphId = (String) data[0];
+			timeId = (Long) data[1];
+
+			double step = (Double) data[2];
 
 			sendStepBegins(graphId, timeId, step);
-		} else if (data[0].equals(GraphEvents.ADD_GRAPH_ATTR)) {
-			String graphId = (String) data[1];
-			Long timeId = (Long) data[2];
-			String attribute = (String) data[3];
-			Object value = data[4];
+			break;
+		case ADD_GRAPH_ATTR:
+			graphId = (String) data[0];
+			timeId = (Long) data[1];
+			attribute = (String) data[2];
+			newValue = data[3];
 
-			sendGraphAttributeAdded(graphId, timeId, attribute, value);
-		} else if (data[0].equals(GraphEvents.CHG_GRAPH_ATTR)) {
-			String graphId = (String) data[1];
-			Long timeId = (Long) data[2];
-			String attribute = (String) data[3];
-			Object oldValue = data[4];
-			Object newValue = data[5];
+			sendGraphAttributeAdded(graphId, timeId, attribute, newValue);
+			break;
+		case CHG_GRAPH_ATTR:
+			graphId = (String) data[0];
+			timeId = (Long) data[1];
+			attribute = (String) data[2];
+			oldValue = data[3];
+			newValue = data[4];
 
 			sendGraphAttributeChanged(graphId, timeId, attribute, oldValue,
 					newValue);
-		} else if (data[0].equals(GraphEvents.DEL_GRAPH_ATTR)) {
-			String graphId = (String) data[1];
-			Long timeId = (Long) data[2];
-			String attribute = (String) data[3];
+			break;
+		case DEL_GRAPH_ATTR:
+			graphId = (String) data[0];
+			timeId = (Long) data[1];
+			attribute = (String) data[2];
 
 			sendGraphAttributeRemoved(graphId, timeId, attribute);
-		} else if (data[0].equals(GraphEvents.ADD_EDGE_ATTR)) {
-			String graphId = (String) data[1];
-			Long timeId = (Long) data[2];
-			String edgeId = (String) data[3];
-			String attribute = (String) data[4];
-			Object value = data[5];
+			break;
+		case ADD_EDGE_ATTR:
+			graphId = (String) data[0];
+			timeId = (Long) data[1];
+			elementId = (String) data[2];
+			attribute = (String) data[3];
+			newValue = data[4];
 
-			sendEdgeAttributeAdded(graphId, timeId, edgeId, attribute, value);
-		} else if (data[0].equals(GraphEvents.CHG_EDGE_ATTR)) {
-			String graphId = (String) data[1];
-			Long timeId = (Long) data[2];
-			String edgeId = (String) data[3];
-			String attribute = (String) data[4];
-			Object oldValue = data[5];
-			Object newValue = data[6];
+			sendEdgeAttributeAdded(graphId, timeId, elementId, attribute,
+					newValue);
+			break;
+		case CHG_EDGE_ATTR:
+			graphId = (String) data[0];
+			timeId = (Long) data[1];
+			elementId = (String) data[2];
+			attribute = (String) data[3];
+			oldValue = data[4];
+			newValue = data[5];
 
-			sendEdgeAttributeChanged(graphId, timeId, edgeId, attribute,
+			sendEdgeAttributeChanged(graphId, timeId, elementId, attribute,
 					oldValue, newValue);
-		} else if (data[0].equals(GraphEvents.DEL_EDGE_ATTR)) {
-			String graphId = (String) data[1];
-			Long timeId = (Long) data[2];
-			String edgeId = (String) data[3];
-			String attribute = (String) data[4];
+			break;
+		case DEL_EDGE_ATTR:
+			graphId = (String) data[0];
+			timeId = (Long) data[1];
+			elementId = (String) data[2];
+			attribute = (String) data[3];
 
-			sendEdgeAttributeRemoved(graphId, timeId, edgeId, attribute);
-		} else if (data[0].equals(GraphEvents.ADD_NODE_ATTR)) {
-			String graphId = (String) data[1];
-			Long timeId = (Long) data[2];
-			String nodeId = (String) data[3];
-			String attribute = (String) data[4];
-			Object value = data[5];
+			sendEdgeAttributeRemoved(graphId, timeId, elementId, attribute);
+			break;
+		case ADD_NODE_ATTR:
+			graphId = (String) data[0];
+			timeId = (Long) data[1];
+			elementId = (String) data[2];
+			attribute = (String) data[3];
+			newValue = data[4];
 
-			sendNodeAttributeAdded(graphId, timeId, nodeId, attribute, value);
-		} else if (data[0].equals(GraphEvents.CHG_NODE_ATTR)) {
-			String graphId = (String) data[1];
-			Long timeId = (Long) data[2];
-			String nodeId = (String) data[3];
-			String attribute = (String) data[4];
-			Object oldValue = data[5];
-			Object newValue = data[6];
+			sendNodeAttributeAdded(graphId, timeId, elementId, attribute,
+					newValue);
+			break;
+		case CHG_NODE_ATTR:
+			graphId = (String) data[0];
+			timeId = (Long) data[1];
+			elementId = (String) data[2];
+			attribute = (String) data[3];
+			oldValue = data[4];
+			newValue = data[5];
 
-			sendNodeAttributeChanged(graphId, timeId, nodeId, attribute,
+			sendNodeAttributeChanged(graphId, timeId, elementId, attribute,
 					oldValue, newValue);
-		} else if (data[0].equals(GraphEvents.DEL_NODE_ATTR)) {
-			String graphId = (String) data[1];
-			Long timeId = (Long) data[2];
-			String nodeId = (String) data[3];
-			String attribute = (String) data[4];
+			break;
+		case DEL_NODE_ATTR:
+			graphId = (String) data[0];
+			timeId = (Long) data[1];
+			elementId = (String) data[2];
+			attribute = (String) data[3];
 
-			sendNodeAttributeRemoved(graphId, timeId, nodeId, attribute);
-		} else if (data[0].equals(GraphEvents.CLEARED)) {
-			String graphId = (String) data[1];
-			Long timeId = (Long) data[2];
+			sendNodeAttributeRemoved(graphId, timeId, elementId, attribute);
+			break;
+		case CLEARED:
+			graphId = (String) data[0];
+			timeId = (Long) data[1];
 
 			sendGraphCleared(graphId, timeId);
-		} else {
-			System.err.printf("ThreadProxyFilter : Unknown message %s !!%n",
-					data[0]);
+			break;
+		default:
+			System.err.printf("ThreadProxy : Unknown message %s !!%n", e);
+			break;
 		}
 	}
 }

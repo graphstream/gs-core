@@ -549,7 +549,7 @@ public class FileSinkImages implements FileSink {
 		if (outputRunnerAlive) {
 			if (outputRunnerProxy == null) {
 				outputRunnerProxy = new ThreadProxyPipe();
-				outputRunnerProxy.addSink(gg);
+				outputRunnerProxy.init(gg);
 			}
 
 			sink = outputRunnerProxy;

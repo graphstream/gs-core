@@ -229,8 +229,11 @@ public class Viewer implements ActionListener {
 			break;
 		case GRAPH_IN_ANOTHER_THREAD:
 			graphInAnotherThread = true;
-			init(new GraphicGraph(newGGId()), new ThreadProxyPipe(graph, true),
-					(Source) null);
+			
+			ThreadProxyPipe tpp = new ThreadProxyPipe();
+			tpp.init(graph, true);
+
+			init(new GraphicGraph(newGGId()), tpp, (Source) null);
 			enableXYZfeedback(false);
 			break;
 		case GRAPH_ON_NETWORK:
@@ -375,7 +378,10 @@ public class Viewer implements ActionListener {
 	 * @return The new proxy pipe.
 	 */
 	public ProxyPipe newThreadProxyOnGraphicGraph() {
-		return new ThreadProxyPipe(graph);
+		ThreadProxyPipe tpp = new ThreadProxyPipe();
+		tpp.init(graph);
+
+		return tpp;
 	}
 
 	/**
@@ -384,10 +390,13 @@ public class Viewer implements ActionListener {
 	 * @return The new viewer pipe.
 	 */
 	public ViewerPipe newViewerPipe() {
+		ThreadProxyPipe tpp = new ThreadProxyPipe();
+		tpp.init(graph, false);
+
 		enableXYZfeedback(true);
+
 		return new ViewerPipe(String.format("viewer_%d",
-				(int) (Math.random() * 10000)), new ThreadProxyPipe(graph,
-				false));
+				(int) (Math.random() * 10000)), tpp);
 	}
 
 	/**
