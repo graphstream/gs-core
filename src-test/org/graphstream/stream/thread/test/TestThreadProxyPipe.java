@@ -143,7 +143,7 @@ public class TestThreadProxyPipe {
 			this.target = target;
 		}
 	}
-	
+
 	@Test
 	public void test() {
 		try {
@@ -175,10 +175,10 @@ public class TestThreadProxyPipe {
 
 		t.start();
 		generateRandom(g, 1000);
-		Thread.yield();
-		a.alive = false;
 
 		try {
+			Thread.yield();
+			a.alive = false;
 			t.join();
 		} catch (InterruptedException e) {
 		}
@@ -203,8 +203,9 @@ public class TestThreadProxyPipe {
 		}
 
 		public void run() {
-			while (alive)
+			do
 				pipe.pump();
+			while (alive || pipe.hasPostRemaining());
 		}
 	}
 

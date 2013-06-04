@@ -56,6 +56,7 @@ import org.junit.Test;
  * Test of the NetStream protocol, sender and receiver.
  * 
  * TestNetStream.java
+ * 
  * @since Aug 16, 2011
  * 
  * @author Yoann Pigné
@@ -63,85 +64,105 @@ import org.junit.Test;
  */
 public class TestNetStream {
 
-	Vector<String> errors;
+	final Vector<String> errors = new Vector<String>();
+	boolean debug = false;
 
 	@Test
 	public void testNetStreamAttributesChanges() {
-		
-		try{
+		errors.clear();
 		NetStreamReceiver net = null;
+
 		try {
-			net = new NetStreamReceiver("localhost", 2000, true);
+			net = new NetStreamReceiver("localhost", 2000, debug);
 		} catch (UnknownHostException e1) {
 			fail(e1.toString());
 		} catch (IOException e1) {
 			fail(e1.toString());
 		}
-		
-		ThreadProxyPipe pipe = net.getDefaultStream();
 
-		pipe.addSink(new SinkAdapter() {
-			
-			public void graphAttributeAdded(String sourceId, long timeId,
-					String attribute, Object value) {
-			}
-		});
-		
-		new Thread() {
-
-			@Override
-			public void run() {
-
-				Graph g = new MultiGraph("G",false,true);
-				NetStreamSender nsc = null;
-				try {
-					nsc = new NetStreamSender("localhost", 2000);
-				} catch (UnknownHostException e1) {
-					error(e1.toString());
-					return;
-				} catch (IOException e1) {
-					error(e1.toString());
-					return;
-				}
-				
-				g.addSink(nsc);
-
-				g.addAttribute("attribute","foo");
-				g.changeAttribute("attribute",false);
-				Edge e = g.addEdge("AB", "A", "B");
-				e.addAttribute("attribute","foo");
-				e.changeAttribute("attribute",false);
-				Node n = e.getNode0();
-				n.addAttribute("attribute","foo");
-				n.changeAttribute("attribute",false);
-
-
-			}
-		}.start();
 		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+			ThreadProxyPipe pipe = net.getDefaultStream();
 
-		pipe.pump();	
-			
-		
-		}
-		catch(ClassCastException cce){
+			pipe.addSink(new SinkAdapter() {
+
+				public void graphAttributeAdded(String sourceId, long timeId,
+						String attribute, Object value) {
+				}
+			});
+
+			Thread t = new Thread() {
+
+				@Override
+				public void run() {
+
+					Graph g = new MultiGraph("G", false, true);
+					NetStreamSender nsc = null;
+					try {
+						nsc = new NetStreamSender("localhost", 2000);
+					} catch (UnknownHostException e1) {
+						error(e1.toString());
+						return;
+					} catch (IOException e1) {
+						error(e1.toString());
+						return;
+					}
+
+					g.addSink(nsc);
+
+					g.addAttribute("attribute", "foo");
+					g.changeAttribute("attribute", false);
+					Edge e = g.addEdge("AB", "A", "B");
+					e.addAttribute("attribute", "foo");
+					e.changeAttribute("attribute", false);
+					Node n = e.getNode0();
+					n.addAttribute("attribute", "foo");
+					n.changeAttribute("attribute", false);
+
+					try {
+						nsc.close();
+					} catch (IOException e1) {
+					}
+				}
+			};
+
+			t.start();
+
+			try {
+				t.join();
+			} catch (InterruptedException e) {
+				fail(e.getMessage());
+			}
+
+			while (pipe.hasPostRemaining() || net.hasActiveConnections()) {
+				pipe.pump();
+
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+				}
+			}
+
+		} catch (ClassCastException cce) {
 			fail("Bad cast in attribute change.");
+		} finally {
+			try {
+				net.quit();
+				net.join();
+			} catch (InterruptedException e) {
+			}
 		}
-		
-	}	
+	}
+
 	/**
 	 * Tests (almost) all the possible data types encoding and decoding.
 	 */
 	@Test
 	public void testNetStreamTypes() {
+		errors.clear();
 
 		NetStreamReceiver net = null;
 		try {
-			net = new NetStreamReceiver("localhost", 2001, true);
+			net = new NetStreamReceiver("localhost", 2001, debug);
 		} catch (UnknownHostException e1) {
 			fail(e1.toString());
 		} catch (IOException e1) {
@@ -149,22 +170,23 @@ public class TestNetStream {
 		}
 
 		net.setUnpacker(new Base64Unpacker());
-		
+
 		ThreadProxyPipe pipe = net.getDefaultStream();
 
-		
 		pipe.addSink(new SinkAdapter() {
-			
+
 			public void graphAttributeAdded(String sourceId, long timeId,
 					String attribute, Object value) {
 				validate(attribute, value);
 			}
+
 			public void graphAttributeChanged(String sourceId, long timeId,
 					String attribute, Object oldValue, Object newValue) {
 				validate(attribute, newValue);
 			}
+
 			private void validate(String attribute, Object value) {
-				
+
 				String valueType = null;
 				Class<?> valueClass = value.getClass();
 				boolean isArray = valueClass.isArray();
@@ -268,7 +290,7 @@ public class TestNetStream {
 
 		});
 
-		new Thread() {
+		Thread t = new Thread() {
 
 			@Override
 			public void run() {
@@ -284,9 +306,9 @@ public class TestNetStream {
 					error(e1.toString());
 					return;
 				}
-				
+
 				nsc.setPacker(new Base64Packer());
-				
+
 				g.addSink(nsc);
 
 				g.addAttribute("intArray", 0, Integer.MAX_VALUE,
@@ -311,33 +333,43 @@ public class TestNetStream {
 				g.addAttribute("byte", (byte) 0);
 				g.addAttribute("boolean", true);
 				g.addAttribute("string", "true");
+
 				try {
 					nsc.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-		}.start();
+		};
+
+		t.start();
 
 		try {
-			Thread.sleep(50);
+			t.join();
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
 
-		pipe.pump();
+		while (pipe.hasPostRemaining() || net.hasActiveConnections()) {
+			pipe.pump();
 
-		if (errors != null) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+		}
+
+		if (errors.size() > 0) {
 			for (String s : errors) {
 				System.err.println(s);
 				fail(s);
 			}
 		}
-		net.quit();
+
 		try {
-			Thread.sleep(50);
+			net.quit();
+			net.join();
 		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -353,11 +385,13 @@ public class TestNetStream {
 	 */
 	@Test
 	public void testNetStreamMultiThreadSenders() {
+		errors.clear();
+
 		Graph g1 = new MultiGraph("G1");
 		Graph g2 = new MultiGraph("G2");
 		NetStreamReceiver net = null;
 		try {
-			net = new NetStreamReceiver("localhost", 2002, true);
+			net = new NetStreamReceiver("localhost", 2002, debug);
 		} catch (UnknownHostException e1) {
 			fail(e1.toString());
 		} catch (IOException e1) {
@@ -370,39 +404,55 @@ public class TestNetStream {
 		pipe1.addSink(g1);
 		pipe2.addSink(g2);
 
-		launchClient(2002, "G1", "0");
-		launchClient(2002, "G1", "1");
-		launchClient(2002, "G2", "0");
+		Thread t1 = launchClient(2002, "G1", "0");
+		Thread t2 = launchClient(2002, "G1", "1");
+		Thread t3 = launchClient(2002, "G2", "0");
 
-		for (int i = 0; i < 10; i++) {
+		try {
+			t1.join();
+			t2.join();
+			t3.join();
+		} catch (InterruptedException e) {
+			fail(e.getMessage());
+		}
+
+		while (pipe1.hasPostRemaining() || pipe2.hasPostRemaining()
+				|| net.hasActiveConnections()) {
 			pipe1.pump();
 			pipe2.pump();
 
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
 			}
 		}
 
-		pipe1.pump();
-		pipe2.pump();
+		if (errors.size() > 0) {
+			for (String s : errors) {
+				System.err.println(s);
+				fail(s);
+			}
+		}
 
 		assertEquals("G1", g1.getAttribute("id"));
 		assertEquals("G2", g2.getAttribute("id"));
 		assertEquals(180, g1.getNodeCount());
 		assertEquals(90, g2.getNodeCount());
 
+		try {
+			net.quit();
+			net.join();
+		} catch (InterruptedException e) {
+		}
 	}
 
-	private void launchClient(final int port, final String id,
+	private Thread launchClient(final int port, final String id,
 			final String prefix) {
-		new Thread() {
+		Thread t = new Thread() {
 
 			@Override
 			public void run() {
-
-				Graph g = new MultiGraph(id+prefix);
+				Graph g = new MultiGraph(id + prefix);
 
 				NetStreamSender nsc = null;
 				try {
@@ -434,19 +484,23 @@ public class TestNetStream {
 					e.printStackTrace();
 				}
 			}
-		}.start();
+		};
+		t.start();
+		return t;
 	}
 
-	
 	/**
-	 * Hopefully tests all possible graph events through the NetStream framework. 
+	 * Hopefully tests all possible graph events through the NetStream
+	 * framework.
 	 */
 	@Test
 	public void testNetStreamEvents() {
+		errors.clear();
+
 		final Graph g1 = new DefaultGraph("G");
 		NetStreamReceiver net = null;
 		try {
-			net = new NetStreamReceiver("localhost", 2003, true);
+			net = new NetStreamReceiver("localhost", 2002, debug);
 		} catch (UnknownHostException e1) {
 			fail(e1.toString());
 		} catch (IOException e1) {
@@ -464,62 +518,62 @@ public class TestNetStream {
 				assertEquals(0, value);
 				assertEquals("graphAttribute", attribute);
 			}
-			
+
 			public void graphAttributeChanged(String sourceId, long timeId,
 					String attribute, Object oldValue, Object newValue) {
 				assertTrue((Integer) newValue == 0 || (Integer) newValue == 1);
 				assertEquals("graphAttribute", attribute);
 			}
-			
+
 			public void graphAttributeRemoved(String sourceId, long timeId,
 					String attribute) {
 				assertEquals("graphAttribute", attribute);
 			}
-			
+
 			public void nodeAttributeAdded(String sourceId, long timeId,
 					String nodeId, String attribute, Object value) {
 				assertEquals(0, value);
 				assertEquals("nodeAttribute", attribute);
 			}
-			
+
 			public void nodeAttributeChanged(String sourceId, long timeId,
 					String nodeId, String attribute, Object oldValue,
 					Object newValue) {
 				assertTrue((Integer) newValue == 0 || (Integer) newValue == 1);
 				assertEquals("nodeAttribute", attribute);
 			}
-			
+
 			public void nodeAttributeRemoved(String sourceId, long timeId,
 					String nodeId, String attribute) {
 				assertEquals("nodeAttribute", attribute);
 			}
-			
+
 			public void edgeAttributeAdded(String sourceId, long timeId,
 					String edgeId, String attribute, Object value) {
 				assertEquals(0, value);
 				assertEquals("edgeAttribute", attribute);
 			}
-			
+
 			public void edgeAttributeChanged(String sourceId, long timeId,
 					String edgeId, String attribute, Object oldValue,
 					Object newValue) {
 				assertTrue((Integer) newValue == 0 || (Integer) newValue == 1);
 				assertEquals("edgeAttribute", attribute);
 			}
-			
+
 			public void edgeAttributeRemoved(String sourceId, long timeId,
 					String edgeId, String attribute) {
 				assertEquals("edgeAttribute", attribute);
 			}
-			
+
 			public void nodeAdded(String sourceId, long timeId, String nodeId) {
 				assertTrue("node0".equals(nodeId) || "node1".equals(nodeId));
 			}
-			
+
 			public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 				assertTrue("node0".equals(nodeId) || "node1".equals(nodeId));
 			}
-			
+
 			public void edgeAdded(String sourceId, long timeId, String edgeId,
 					String fromNodeId, String toNodeId, boolean directed) {
 				assertEquals("edge", edgeId);
@@ -527,30 +581,31 @@ public class TestNetStream {
 				assertEquals("node1", toNodeId);
 				assertEquals(true, directed);
 			}
-			
+
 			public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 				assertEquals("edge", edgeId);
 			}
-			
+
 			public void graphCleared(String sourceId, long timeId) {
-				
+
 			}
-			
+
 			public void stepBegins(String sourceId, long timeId, double step) {
 				assertEquals(1.1, step);
 			}
 		});
 
-		new Thread() {
+		Thread t = new Thread() {
 
 			@Override
 			public void run() {
-				
+
 				Graph g = new MultiGraph("G", false, true);
 
 				NetStreamSender nsc = null;
+
 				try {
-					nsc = new NetStreamSender("localhost", 2003);
+					nsc = new NetStreamSender("localhost", 2002);
 				} catch (UnknownHostException e1) {
 					error(e1.toString());
 					return;
@@ -558,6 +613,7 @@ public class TestNetStream {
 					error(e1.toString());
 					return;
 				}
+
 				g.addSink(nsc);
 				Node node0 = g.addNode("node0");
 				Edge edge = g.addEdge("edge", "node0", "node1", true);
@@ -574,24 +630,46 @@ public class TestNetStream {
 				g.removeEdge("edge");
 				g.removeNode("node0");
 				g.clear();
-				
+
+				try {
+					nsc.close();
+				} catch (IOException e1) {
+				}
 			}
-		}.start();
+		};
+
+		t.start();
 
 		try {
-			Thread.sleep(100);
+			t.join();
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
 
-		pipe.pump();
+		while (pipe.hasPostRemaining() || net.hasActiveConnections()) {
+			pipe.pump();
 
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+		}
+
+		if (errors.size() > 0) {
+			for (String s : errors) {
+				System.err.println(s);
+				fail(s);
+			}
+		}
+
+		try {
+			net.quit();
+			net.join();
+		} catch (InterruptedException e) {
+		}
 	}
 
 	synchronized void error(String s) {
-		if (errors == null) {
-			errors = new Vector<String>();
-		}
 		errors.add(s);
 	}
 
