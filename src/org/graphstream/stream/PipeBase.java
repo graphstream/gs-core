@@ -79,7 +79,7 @@ public class PipeBase extends SourceBase implements Pipe {
 
 	public void nodeAttributeAdded(String graphId, long timeId, String nodeId,
 			String attribute, Object value) {
-		sendNodeAdded(graphId, timeId, nodeId);
+		sendNodeAttributeAdded(graphId, timeId, nodeId, attribute, value);
 	}
 
 	public void nodeAttributeChanged(String graphId, long timeId,
