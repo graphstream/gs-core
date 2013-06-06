@@ -769,23 +769,25 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	}
 
 	protected void clear_(String sourceId, long timeId) {
+		// If the event comes from the graph itself, create timeId
+		if (timeId == -1)
+			timeId = newEvent();
+		listeners.sendGraphCleared(sourceId, timeId);
+
 		Iterator<AbstractNode> it = getNodeIterator();
 		while (it.hasNext())
 			it.next().clearCallback();
 		clearCallback();
 		clearAttributes();
-		// If the event comes from the graph itself, create timeId
-		if (timeId == -1)
-			timeId = newEvent();
-		listeners.sendGraphCleared(sourceId, timeId);
 	}
 
 	protected void stepBegins_(String sourceId, long timeId, double step) {
-		this.step = step;
 		// If the event comes from the graph itself, create timeId
 		if (timeId == -1)
 			timeId = newEvent();
 		listeners.sendStepBegins(sourceId, timeId, step);
+
+		this.step = step;
 	}
 
 	// helper for removeNode_
