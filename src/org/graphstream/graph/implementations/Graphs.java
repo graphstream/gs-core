@@ -32,6 +32,7 @@
 package org.graphstream.graph.implementations;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -137,6 +138,97 @@ public class Graphs {
 
 		replay.removeSink(result);
 		result.setStrict(strict);
+	}
+
+	/**
+	 * Clone a given graph with same node/edge structure and same attributes.
+	 * 
+	 * @param g
+	 *            the graph to clone
+	 * @return a copy of g
+	 */
+	public static Graph clone(Graph g) {
+		Graph copy;
+
+		try {
+			Class<? extends Graph> cls = g.getClass();
+			copy = cls.getConstructor(String.class).newInstance(g.getId());
+		} catch (Exception e) {
+			System.err.printf("*** WARNING *** can not create a graph of %s\n",
+					g.getClass().getName());
+
+			copy = new AdjacencyListGraph(g.getId());
+		}
+
+		copyAttributes(g, copy);
+
+		for (int i = 0; i < g.getNodeCount(); i++) {
+			Node source = g.getNode(i);
+			Node target = copy.addNode(source.getId());
+
+			copyAttributes(source, target);
+		}
+
+		for (int i = 0; i < g.getEdgeCount(); i++) {
+			Edge source = g.getEdge(i);
+			Edge target = g.addEdge(source.getId(), source.getSourceNode()
+					.getId(), source.getTargetNode().getId(), source
+					.isDirected());
+
+			copyAttributes(source, target);
+		}
+
+		return copy;
+	}
+
+	/**
+	 * 
+	 * @param source
+	 * @param target
+	 */
+	public static void copyAttributes(Element source, Element target) {
+		for (String key : source.getAttributeKeySet()) {
+			Object value = source.getAttribute(key);
+			value = checkedArrayOrCollectionCopy(value);
+
+			target.setAttribute(key, value);
+		}
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static Object checkedArrayOrCollectionCopy(Object o) {
+		if (o == null)
+			return null;
+
+		if (o.getClass().isArray()) {
+
+			Object c = Array.newInstance(o.getClass().getComponentType(),
+					Array.getLength(o));
+
+			for (int i = 0; i < Array.getLength(o); i++) {
+				Object t = checkedArrayOrCollectionCopy(Array.get(o, i));
+				Array.set(c, i, t);
+			}
+
+			return c;
+		}
+
+		if (Collection.class.isAssignableFrom(o.getClass())) {
+			Collection<?> t;
+
+			try {
+				t = (Collection<?>) o.getClass().newInstance();
+				t.addAll((Collection) o);
+
+				return t;
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return o;
 	}
 
 	static class SynchronizedElement<U extends Element> implements Element {
@@ -480,10 +572,10 @@ public class Graphs {
 			T e;
 			Edge se;
 			final Node unsyncNode1, unsyncNode2;
-			
+
 			unsyncNode1 = ((SynchronizedElement<Node>) node1).wrappedElement;
 			unsyncNode2 = ((SynchronizedElement<Node>) node2).wrappedElement;
-			
+
 			elementLock.lock();
 
 			e = wrappedElement.addEdge(id, unsyncNode1, unsyncNode2);
@@ -501,7 +593,7 @@ public class Graphs {
 			T e;
 			Edge se;
 			final Node unsyncFrom, unsyncTo;
-			
+
 			unsyncFrom = ((SynchronizedElement<Node>) from).wrappedElement;
 			unsyncTo = ((SynchronizedElement<Node>) to).wrappedElement;
 

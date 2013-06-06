@@ -32,655 +32,362 @@
 package org.graphstream.stream;
 
 import java.util.Iterator;
-import java.util.TreeSet;
+import java.util.LinkedList;
 
-public class Timeline extends SourceBase implements Sink {
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+import org.graphstream.graph.implementations.AdjacencyListGraph;
+import org.graphstream.graph.implementations.Graphs;
+import org.graphstream.util.GraphDiff;
+import org.graphstream.util.VerboseSink;
+
+public class Timeline implements Source, Replayable, Iterable<Graph> {
 
 	public static final String TIME_PREFIX = "time";
 
-	protected TreeSet<Event> events;
-	protected boolean changed;
-	protected long currentDate;
-	protected int currentEvent;
+	private class StepDiff {
+		double step;
+		GraphDiff diff;
 
-	public Timeline() {
-		this.events = new TreeSet<Event>();
-		this.changed = false;
-		this.currentDate = 0;
-		this.currentEvent = 0;
+		StepDiff(double step, GraphDiff diff) {
+			this.step = step;
+			this.diff = diff;
+		}
 	}
 
-	private void insert(Event e) {
-		events.add(e);
+	LinkedList<StepDiff> diffs;
+
+	protected boolean changed;
+	protected Graph initialGraph, currentGraph;
+	protected GraphDiff currentDiff;
+	protected Connector connector;
+	protected PipeBase pipe;
+
+	public Timeline() {
+		this.diffs = new LinkedList<StepDiff>();
+		this.changed = false;
+		this.connector = new Connector();
+		this.currentDiff = null;
+		this.pipe = new PipeBase();
 	}
 
 	public void reset() {
-		currentEvent = 0;
-		events.clear();
+
 	}
 
-	public boolean next() {
-		return false;
+	public void play(double from, double to) {
+		play(from, to, pipe);
 	}
-	
-	public void play(long dateFrom, long dateTo) {
-		long timeId;
-		Iterator<Event> it;
-		Event e;
 
-		if (dateFrom < dateTo)
-			it = events.iterator();
-		else {
-			timeId = dateTo;
-			dateTo = dateFrom;
-			dateFrom = timeId;
-			it = events.descendingIterator();
+	public void play(double from, double to, Sink sink) {
+		if (diffs.size() == 0)
+			return;
+
+		if (from > to) {
+			int i = diffs.size() - 1, j;
+
+			while (i > 0 && diffs.get(i).step > from)
+				i--;
+
+			j = i;
+
+			while (j > 0 && diffs.get(j).step >= to)
+				j--;
+
+			for (int k = i; k >= j; k--)
+				diffs.get(k).diff.reverse(sink);
+		} else {
+			int i = 0, j;
+
+			while (i < diffs.size() - 1 && diffs.get(i).step < from)
+				i++;
+
+			j = i;
+
+			while (j < diffs.size() - 1 && diffs.get(j).step <= to)
+				j++;
+
+			for (int k = i; k <= j; k++)
+				diffs.get(k).diff.apply(sink);
+		}
+	}
+
+	public void play() {
+		play(initialGraph.getStep(), currentGraph.getStep());
+	}
+
+	public void play(Sink sink) {
+		play(initialGraph.getStep(), currentGraph.getStep(), sink);
+	}
+
+	public void playback() {
+		play(currentGraph.getStep(), initialGraph.getStep());
+	}
+
+	public void playback(Sink sink) {
+		play(currentGraph.getStep(), initialGraph.getStep(), sink);
+	}
+
+	/**
+	 * 
+	 * @param source
+	 */
+	public void begin(Source source) {
+		initialGraph = new AdjacencyListGraph("initial");
+		currentGraph = new AdjacencyListGraph("initial");
+		begin();
+	}
+
+	/**
+	 * 
+	 * @param source
+	 */
+	public void begin(Graph source) {
+		initialGraph = Graphs.clone(source);
+		currentGraph = source;
+		begin();
+	}
+
+	protected void begin() {
+		currentGraph.addSink(connector);
+		pushDiff();
+	}
+
+	/**
+	 * 
+	 */
+	public void end() {
+		if (currentDiff != null) {
+			currentDiff.end();
+			diffs.add(new StepDiff(currentGraph.getStep(), currentDiff));
 		}
 
-		timeId = 0;
+		currentGraph.removeSink(connector);
+	}
 
-		while (it.hasNext()) {
-			e = it.next();
+	protected void pushDiff() {
+		if (currentDiff != null) {
+			currentDiff.end();
+			diffs.add(new StepDiff(currentGraph.getStep(), currentDiff));
+		}
 
-			if (e.date >= dateFrom && e.date <= dateTo)
-				e.doEvent(timeId++);
+		currentDiff = new GraphDiff();
+		currentDiff.start(currentGraph);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Iterable#iterator()
+	 */
+	public Iterator<Graph> iterator() {
+		return new TimelineIterator();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.Replayable#getReplayController()
+	 */
+	public Controller getReplayController() {
+		return new TimelineReplayController();
+	}
+
+	protected class Connector extends SinkAdapter {
+		@Override
+		public void stepBegins(String sourceId, long timeId, double step) {
+			Timeline.this.pushDiff();
 		}
 	}
 
-	public void playAll() {
-		play(events.first().date, events.last().date);
-	}
-
-	public void addNodeAt(long date, String nodeId) {
-		insert(new NodeAdded(date, nodeId));
-	}
-
-	public void removeNodeAt(long date, String nodeId) {
-		insert(new NodeRemoved(date, nodeId));
-	}
-
-	public void addEdgeAt(long date, String edgeId, String source,
-			String target, boolean directed) {
-		insert(new EdgeAdded(date, edgeId, source, target, directed));
-	}
-
-	public void removeEdgeAt(long date, String edgeId) {
-		insert(new EdgeRemoved(date, edgeId));
-	}
-
-	public void addNodeAttributeAt(long date, String nodeId,
-			String attributeId, Object value) {
-		insert(new AttributeAdded(date, ElementType.NODE, nodeId, attributeId,
-				value));
-	}
-
-	public void addEdgeAttributeAt(long date, String edgeId,
-			String attributeId, Object value) {
-		insert(new AttributeAdded(date, ElementType.EDGE, edgeId, attributeId,
-				value));
-	}
-
-	public void addGraphAttributeAt(long date, String attributeId, Object value) {
-		insert(new AttributeAdded(date, ElementType.GRAPH, null, attributeId,
-				value));
-	}
-
-	public void changeNodeAttributeAt(long date, String nodeId,
-			String attributeId, Object oldValue, Object newValue) {
-		insert(new AttributeChanged(date, ElementType.NODE, nodeId,
-				attributeId, oldValue, newValue));
-	}
-
-	public void changeEdgeAttributeAt(long date, String edgeId,
-			String attributeId, Object oldValue, Object newValue) {
-		insert(new AttributeChanged(date, ElementType.EDGE, edgeId,
-				attributeId, oldValue, newValue));
-	}
-
-	public void changeGraphAttributeAt(long date, String attributeId,
-			Object oldValue, Object newValue) {
-		insert(new AttributeChanged(date, ElementType.GRAPH, null, attributeId,
-				oldValue, newValue));
-	}
-
-	public void removeNodeAttributeAt(long date, String nodeId,
-			String attributeId) {
-		insert(new AttributeRemoved(date, ElementType.NODE, nodeId, attributeId));
-	}
-
-	public void removeEdgeAttributeAt(long date, String edgeId,
-			String attributeId) {
-		insert(new AttributeRemoved(date, ElementType.EDGE, edgeId, attributeId));
-	}
-
-	public void removeGraphAttributeAt(long date, String attributeId) {
-		insert(new AttributeRemoved(date, ElementType.GRAPH, null, attributeId));
-	}
-
-	public void stepBeginsAt(long date, double step) {
-		insert(new StepBegins(date, step));
-	}
-
-	public void clearGraphAt(long date) {
-		insert(new GraphCleared(date));
-	}
-
-	protected void handleTimeAttribute(boolean delete, String key, Object value) {
-		TimeAction action;
-
-		action = TimeAction.valueOf(key.substring(TIME_PREFIX.length() + 1)
-				.toUpperCase());
-
-		switch (action) {
-		case FORMAT:
-		case SET:
+	protected class TimelineReplayController extends PipeBase implements
+			Controller {
+		public void replay() {
+			play(this);
 		}
+
+		public void replay(String sourceId) {
+			String tmp = this.sourceId;
+			this.sourceId = sourceId;
+			play(this);
+			this.sourceId = tmp;
+		}
+	}
+
+	protected class TimelineIterator implements Iterator<Graph> {
+		Graph current;
+		int idx;
+
+		public TimelineIterator() {
+			current = Graphs.clone(initialGraph);
+			idx = 0;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.util.Iterator#hasNext()
+		 */
+		public boolean hasNext() {
+			return idx < diffs.size();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.util.Iterator#next()
+		 */
+		public Graph next() {
+			if (idx >= diffs.size())
+				return null;
+
+			diffs.get(idx++).diff.apply(current);
+			return Graphs.clone(current);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.util.Iterator#remove()
+		 */
+		public void remove() {
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.Source#addSink(org.graphstream.stream.Sink)
+	 */
+	public void addSink(Sink sink) {
+		pipe.addSink(sink);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.graphstream.stream.AttributeSink#edgeAttributeAdded(java.lang.String,
-	 * long, java.lang.String, java.lang.String, java.lang.Object)
+	 * org.graphstream.stream.Source#removeSink(org.graphstream.stream.Sink)
 	 */
-	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
-			String attribute, Object value) {
-		addEdgeAttributeAt(currentDate, edgeId, attribute, value);
+	public void removeSink(Sink sink) {
+		pipe.removeSink(sink);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.graphstream.stream.AttributeSink#edgeAttributeChanged(java.lang.String
-	 * , long, java.lang.String, java.lang.String, java.lang.Object,
-	 * java.lang.Object)
+	 * org.graphstream.stream.Source#addAttributeSink(org.graphstream.stream
+	 * .AttributeSink)
 	 */
-	public void edgeAttributeChanged(String sourceId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
-		changeEdgeAttributeAt(currentDate, edgeId, attribute, oldValue,
-				newValue);
+	public void addAttributeSink(AttributeSink sink) {
+		pipe.addAttributeSink(sink);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.graphstream.stream.AttributeSink#edgeAttributeRemoved(java.lang.String
-	 * , long, java.lang.String, java.lang.String)
+	 * org.graphstream.stream.Source#removeAttributeSink(org.graphstream.stream
+	 * .AttributeSink)
 	 */
-	public void edgeAttributeRemoved(String sourceId, long timeId,
-			String edgeId, String attribute) {
-		removeEdgeAttributeAt(currentDate, edgeId, attribute);
+	public void removeAttributeSink(AttributeSink sink) {
+		pipe.removeAttributeSink(sink);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.Source#addElementSink(org.graphstream.stream.
+	 * ElementSink)
+	 */
+	public void addElementSink(ElementSink sink) {
+		pipe.addElementSink(sink);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.graphstream.stream.AttributeSink#graphAttributeAdded(java.lang.String
-	 * , long, java.lang.String, java.lang.Object)
+	 * org.graphstream.stream.Source#removeElementSink(org.graphstream.stream
+	 * .ElementSink)
 	 */
-	public void graphAttributeAdded(String sourceId, long timeId,
-			String attribute, Object value) {
-		if (attribute.startsWith(TIME_PREFIX + "."))
-			handleTimeAttribute(false, attribute, value);
-
-		addGraphAttributeAt(currentDate, attribute, value);
+	public void removeElementSink(ElementSink sink) {
+		pipe.removeElementSink(sink);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#graphAttributeChanged(java.lang.
-	 * String, long, java.lang.String, java.lang.Object, java.lang.Object)
+	 * @see org.graphstream.stream.Source#clearElementSinks()
 	 */
-	public void graphAttributeChanged(String sourceId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
-		if (attribute.startsWith(TIME_PREFIX + "."))
-			handleTimeAttribute(false, attribute, newValue);
-
-		changeGraphAttributeAt(currentDate, attribute, oldValue, newValue);
+	public void clearElementSinks() {
+		pipe.clearElementSinks();
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#graphAttributeRemoved(java.lang.
-	 * String, long, java.lang.String)
+	 * @see org.graphstream.stream.Source#clearAttributeSinks()
 	 */
-	public void graphAttributeRemoved(String sourceId, long timeId,
-			String attribute) {
-		if (attribute.startsWith(TIME_PREFIX + "."))
-			handleTimeAttribute(true, attribute, null);
-
-		removeGraphAttributeAt(currentDate, attribute);
+	public void clearAttributeSinks() {
+		pipe.clearAttributeSinks();
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#nodeAttributeAdded(java.lang.String,
-	 * long, java.lang.String, java.lang.String, java.lang.Object)
+	 * @see org.graphstream.stream.Source#clearSinks()
 	 */
-	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-			String attribute, Object value) {
-		addNodeAttributeAt(currentDate, nodeId, attribute, value);
+	public void clearSinks() {
+		pipe.clearSinks();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#nodeAttributeChanged(java.lang.String
-	 * , long, java.lang.String, java.lang.String, java.lang.Object,
-	 * java.lang.Object)
-	 */
-	public void nodeAttributeChanged(String sourceId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
-		changeNodeAttributeAt(currentDate, nodeId, attribute, oldValue,
-				newValue);
+	public static void main(String... strings) throws Exception {
+		Graph g = new AdjacencyListGraph("g");
+		Timeline timeline = new Timeline();
+		timeline.addSink(new VerboseSink());
+
+		timeline.begin(g);
+
+		g.stepBegins(0.0);
+		g.addNode("A");
+		g.addNode("B");
+		g.stepBegins(1.0);
+		g.addNode("C");
+
+		timeline.end();
+
+		System.out.printf("############\n");
+		System.out.printf("# Play :\n");
+		timeline.play();
+		System.out.printf("############\n");
+		System.out.printf("# Playback :\n");
+		timeline.playback();
+		System.out.printf("############\n");
+		System.out.printf("# Sequence :\n");
+		int i = 0;
+		for (Graph it : timeline) {
+			System.out.printf(" Graph#%d %s\n", i, toString(it));
+		}
+		System.out.printf("############\n");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#nodeAttributeRemoved(java.lang.String
-	 * , long, java.lang.String, java.lang.String)
-	 */
-	public void nodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute) {
-		removeNodeAttributeAt(currentDate, nodeId, attribute);
-	}
+	private static String toString(Graph g) {
+		StringBuilder buffer = new StringBuilder();
+		buffer.append("id=\"").append(g.getId()).append("\" node={");
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#edgeAdded(java.lang.String, long,
-	 * java.lang.String, java.lang.String, java.lang.String, boolean)
-	 */
-	public void edgeAdded(String sourceId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
-		addEdgeAt(currentDate, edgeId, fromNodeId, toNodeId, directed);
-	}
+		for (Node n : g)
+			buffer.append("\"").append(n.getId()).append("\", ");
+		buffer.append("}, edges={");
+		for (Edge e : g.getEachEdge())
+			buffer.append("\"").append(e.getId()).append("\":\"")
+					.append(e.getSourceNode().getId()).append("\"--\"")
+					.append(e.getTargetNode().getId()).append("\", ");
+		buffer.append("}");
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#edgeRemoved(java.lang.String,
-	 * long, java.lang.String)
-	 */
-	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
-		removeEdgeAt(currentDate, edgeId);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#graphCleared(java.lang.String,
-	 * long)
-	 */
-	public void graphCleared(String sourceId, long timeId) {
-		clearGraphAt(currentDate);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#nodeAdded(java.lang.String, long,
-	 * java.lang.String)
-	 */
-	public void nodeAdded(String sourceId, long timeId, String nodeId) {
-		addNodeAt(currentDate, nodeId);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#nodeRemoved(java.lang.String,
-	 * long, java.lang.String)
-	 */
-	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
-		removeNodeAt(currentDate, nodeId);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#stepBegins(java.lang.String,
-	 * long, double)
-	 */
-	public void stepBegins(String sourceId, long timeId, double step) {
-		stepBeginsAt(currentDate, step);
-	}
-
-	protected static enum ElementType {
-		NODE, EDGE, GRAPH
-	}
-
-	protected abstract class Event implements Comparable<Event> {
-		long date;
-		int priority;
-
-		protected Event(long date, int priority) {
-			this.date = date;
-		}
-
-		abstract void doEvent(long timeId);
-
-		abstract void reverse(long timeId);
-
-		public int compareTo(Event e) {
-			if (date == e.date)
-				return priority - e.priority;
-
-			return (int) (date - e.date);
-		}
-	}
-
-	protected class NodeAdded extends Event {
-		String nodeId;
-
-		public NodeAdded(long timeId, String nodeId) {
-			super(timeId, 10);
-			this.nodeId = nodeId;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.graphstream.stream.Timeline.Event#doEvent(long)
-		 */
-		public void doEvent(long timeId) {
-			sendNodeAdded(sourceId, timeId, nodeId);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.graphstream.stream.Timeline.Event#reverse(long)
-		 */
-		public void reverse(long timeId) {
-			sendNodeRemoved(sourceId, timeId, nodeId);
-		}
-	}
-
-	protected class NodeRemoved extends Event {
-		String nodeId;
-
-		public NodeRemoved(long timeId, String nodeId) {
-			super(timeId, 4);
-			this.nodeId = nodeId;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.graphstream.stream.Timeline.Event#doEvent(long)
-		 */
-		public void doEvent(long timeId) {
-			sendNodeRemoved(sourceId, timeId, nodeId);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.graphstream.stream.Timeline.Event#reverse(long)
-		 */
-		public void reverse(long timeId) {
-			sendNodeAdded(sourceId, timeId, nodeId);
-		}
-	}
-
-	protected class AttributeAdded extends Event {
-		ElementType type;
-		String elementId;
-		String attrId;
-		Object value;
-
-		public AttributeAdded(long timeId, ElementType type, String elementId,
-				String attrId, Object value) {
-			super(timeId, 8);
-			this.type = type;
-			this.elementId = elementId;
-			this.value = value;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.graphstream.stream.Timeline.Event#doEvent(long)
-		 */
-		public void doEvent(long timeId) {
-			switch (type) {
-			case NODE:
-				sendNodeAttributeAdded(sourceId, timeId, elementId, attrId,
-						value);
-				break;
-			case EDGE:
-				sendEdgeAttributeAdded(sourceId, timeId, elementId, attrId,
-						value);
-				break;
-			case GRAPH:
-				sendGraphAttributeAdded(sourceId, timeId, attrId, value);
-				break;
-			}
-		}
-
-		public void reverse(long timeId) {
-			// TODO
-		}
-	}
-
-	protected class AttributeChanged extends Event {
-		ElementType type;
-		String elementId;
-		String attrId;
-		Object newValue;
-		Object oldValue;
-
-		public AttributeChanged(long date, ElementType type, String elementId,
-				String attrId, Object newValue, Object oldValue) {
-			super(date, 7);
-
-			this.type = type;
-			this.elementId = elementId;
-			this.attrId = attrId;
-			this.newValue = newValue;
-			this.oldValue = oldValue;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.graphstream.stream.Timeline.Event#doEvent(long)
-		 */
-		public void doEvent(long timeId) {
-			switch (type) {
-			case NODE:
-				sendNodeAttributeChanged(sourceId, timeId, elementId, attrId,
-						oldValue, newValue);
-			case EDGE:
-				sendEdgeAttributeChanged(sourceId, timeId, elementId, attrId,
-						oldValue, newValue);
-				break;
-			case GRAPH:
-				sendGraphAttributeChanged(sourceId, timeId, attrId, oldValue,
-						newValue);
-				break;
-			}
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.graphstream.stream.Timeline.Event#reverse(long)
-		 */
-		public void reverse(long timeId) {
-			// TODO
-		}
-	}
-
-	protected class AttributeRemoved extends Event {
-		ElementType type;
-		String elementId;
-		String attrId;
-
-		public AttributeRemoved(long date, ElementType type, String elementId,
-				String attrId) {
-			super(date, 6);
-
-			this.type = type;
-			this.elementId = elementId;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.graphstream.stream.Timeline.Event#doEvent(long)
-		 */
-		public void doEvent(long timeId) {
-			switch (type) {
-			case NODE:
-				sendNodeAttributeRemoved(sourceId, timeId, elementId, attrId);
-				break;
-			case EDGE:
-				sendEdgeAttributeRemoved(sourceId, timeId, elementId, attrId);
-				break;
-			case GRAPH:
-				sendGraphAttributeRemoved(sourceId, timeId, attrId);
-				break;
-			}
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.graphstream.stream.Timeline.Event#reverse(long)
-		 */
-		public void reverse(long timeId) {
-			// TODO
-		}
-	}
-
-	protected class EdgeAdded extends Event {
-		String edgeId;
-		String source, target;
-		boolean directed;
-
-		public EdgeAdded(long date, String edgeId, String source,
-				String target, boolean directed) {
-			super(date, 9);
-
-			this.edgeId = edgeId;
-			this.source = source;
-			this.target = target;
-			this.directed = directed;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.graphstream.stream.Timeline.Event#doEvent(long)
-		 */
-		public void doEvent(long timeId) {
-			sendEdgeAdded(sourceId, timeId, edgeId, source, target, directed);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.graphstream.stream.Timeline.Event#reverse(long)
-		 */
-		public void reverse(long timeId) {
-			sendEdgeRemoved(sourceId, timeId, edgeId);
-		}
-	}
-
-	protected class EdgeRemoved extends Event {
-		String edgeId;
-
-		public EdgeRemoved(long date, String edgeId) {
-			super(date, 5);
-			this.edgeId = edgeId;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.graphstream.stream.Timeline.Event#doEvent(long)
-		 */
-		public void doEvent(long timeId) {
-			sendEdgeRemoved(sourceId, timeId, edgeId);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.graphstream.stream.Timeline.Event#reverse(long)
-		 */
-		public void reverse(long timeId) {
-			// TODO
-		}
-	}
-
-	protected class StepBegins extends Event {
-		double step;
-
-		public StepBegins(long date, double step) {
-			super(date, 0);
-			this.step = step;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.graphstream.stream.Timeline.Event#doEvent(long)
-		 */
-		public void doEvent(long timeId) {
-			sendStepBegins(sourceId, timeId, step);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.graphstream.stream.Timeline.Event#reverse(long)
-		 */
-		public void reverse(long timeId) {
-			// TODO
-		}
-	}
-
-	protected class GraphCleared extends Event {
-		public GraphCleared(long date) {
-			super(date, 0);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.graphstream.stream.Timeline.Event#doEvent(long)
-		 */
-		public void doEvent(long timeId) {
-			sendGraphCleared(sourceId, timeId);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.graphstream.stream.Timeline.Event#reverse(long)
-		 */
-		public void reverse(long timeId) {
-			// TODO
-		}
-	}
-
-	protected static enum TimeAction {
-		FORMAT, SET
+		return buffer.toString();
 	}
 }
