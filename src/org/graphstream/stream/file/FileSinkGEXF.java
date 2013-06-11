@@ -173,7 +173,7 @@ public class FileSinkGEXF extends FileSinkBase {
 				if (e.getAttributeCount() > 0) {
 					startElement(stream, "attvalues");
 					for (String key : e.getAttributeKeySet())
-						nodeAttributes.push(stream, e, key);
+						edgeAttributes.push(stream, e, key);
 					endElement(stream, false);
 				}
 
