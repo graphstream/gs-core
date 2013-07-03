@@ -32,6 +32,7 @@
 package org.graphstream.util;
 
 import java.io.PrintStream;
+import java.lang.reflect.Array;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Stack;
@@ -381,6 +382,29 @@ public class VerboseSink implements Sink {
 		}
 	}
 
+	private String toStringValue(Object o) {
+		if (o == null)
+			return "<null>";
+
+		if (o instanceof String)
+			return "\"" + ((String) o).replace("\"", "\\\"");
+		else if (o.getClass().isArray()) {
+			StringBuilder buffer = new StringBuilder();
+			buffer.append("{");
+
+			for (int i = 0; i < Array.getLength(o); i++) {
+				if (i > 0)
+					buffer.append(", ");
+				buffer.append(toStringValue(Array.get(o, i)));
+			}
+
+			buffer.append("}");
+			return buffer.toString();
+		}
+
+		return o.toString();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -396,7 +420,7 @@ public class VerboseSink implements Sink {
 		args.put("timeId", timeId);
 		args.put("edgeId", edgeId);
 		args.put("attributeId", attribute);
-		args.put("value", value);
+		args.put("value", toStringValue(value));
 
 		print(EventType.ADD_EDGE_ATTRIBUTE, args);
 	}
@@ -417,7 +441,7 @@ public class VerboseSink implements Sink {
 		args.put("timeId", timeId);
 		args.put("edgeId", edgeId);
 		args.put("attributeId", attribute);
-		args.put("value", newValue);
+		args.put("value", toStringValue(newValue));
 
 		print(EventType.SET_EDGE_ATTRIBUTE, args);
 	}
@@ -455,7 +479,7 @@ public class VerboseSink implements Sink {
 		args.put("sourceId", sourceId);
 		args.put("timeId", timeId);
 		args.put("attributeId", attribute);
-		args.put("value", value);
+		args.put("value", toStringValue(value));
 
 		print(EventType.ADD_GRAPH_ATTRIBUTE, args);
 	}
@@ -474,7 +498,7 @@ public class VerboseSink implements Sink {
 		args.put("sourceId", sourceId);
 		args.put("timeId", timeId);
 		args.put("attributeId", attribute);
-		args.put("value", newValue);
+		args.put("value", toStringValue(newValue));
 
 		print(EventType.SET_GRAPH_ATTRIBUTE, args);
 	}
@@ -512,7 +536,7 @@ public class VerboseSink implements Sink {
 		args.put("timeId", timeId);
 		args.put("nodeId", nodeId);
 		args.put("attributeId", attribute);
-		args.put("value", value);
+		args.put("value", toStringValue(value));
 
 		print(EventType.ADD_NODE_ATTRIBUTE, args);
 	}
@@ -533,7 +557,7 @@ public class VerboseSink implements Sink {
 		args.put("timeId", timeId);
 		args.put("nodeId", nodeId);
 		args.put("attributeId", attribute);
-		args.put("value", newValue);
+		args.put("value", toStringValue(newValue));
 
 		print(EventType.SET_NODE_ATTRIBUTE, args);
 	}

@@ -63,6 +63,7 @@ public class Timeline implements Source, Replayable, Iterable<Graph> {
 	protected GraphDiff currentDiff;
 	protected Connector connector;
 	protected PipeBase pipe;
+	protected int seeker;
 
 	public Timeline() {
 		this.diffs = new LinkedList<StepDiff>();
@@ -129,6 +130,40 @@ public class Timeline implements Source, Replayable, Iterable<Graph> {
 		play(currentGraph.getStep(), initialGraph.getStep(), sink);
 	}
 
+	public void seek(int i) {
+		seeker = i;
+	}
+
+	public void seekStart() {
+		seeker = 0;
+	}
+
+	public void seekEnd() {
+		seeker = diffs.size();
+	}
+
+	public boolean hasNext() {
+		return seeker < diffs.size();
+	}
+
+	public void next() {
+		if (seeker >= diffs.size())
+			return;
+
+		diffs.get(seeker++).diff.apply(pipe);
+	}
+
+	public boolean hasPrevious() {
+		return seeker > 0;
+	}
+
+	public void previous() {
+		if (seeker <= 0)
+			return;
+
+		diffs.get(--seeker).diff.reverse(pipe);
+	}
+
 	/**
 	 * 
 	 * @param source
@@ -164,6 +199,7 @@ public class Timeline implements Source, Replayable, Iterable<Graph> {
 		}
 
 		currentGraph.removeSink(connector);
+		currentGraph = Graphs.clone(currentGraph);
 	}
 
 	protected void pushDiff() {

@@ -32,6 +32,7 @@ package org.graphstream.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.LinkedList;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -185,7 +186,7 @@ public class GraphDiff {
 
 	public void reverse(String sourceId, Sink g2) {
 		for (int i = events.size() - 1; i >= 0; i--)
-			events.get(i).reverse(sourceId, i - events.size() + 1, g2);
+			events.get(i).reverse(sourceId, events.size() + 1 - i, g2);
 	}
 
 	private void attributeDiff(ElementType type, Element e1, Element e2) {
@@ -407,6 +408,17 @@ public class GraphDiff {
 
 			this.attrId = attrId;
 			this.value = value;
+
+			if (value != null && value.getClass().isArray()
+					&& Array.getLength(value) > 0) {
+				Object o = Array.newInstance(Array.get(value, 0).getClass(),
+						Array.getLength(value));
+
+				for (int i = 0; i < Array.getLength(value); i++)
+					Array.set(o, i, Array.get(value, i));
+
+				this.value = o;
+			}
 		}
 
 		/*
@@ -475,6 +487,28 @@ public class GraphDiff {
 			this.attrId = attrId;
 			this.newValue = newValue;
 			this.oldValue = oldValue;
+
+			if (newValue != null && newValue.getClass().isArray()
+					&& Array.getLength(newValue) > 0) {
+				Object o = Array.newInstance(Array.get(newValue, 0).getClass(),
+						Array.getLength(newValue));
+
+				for (int i = 0; i < Array.getLength(newValue); i++)
+					Array.set(o, i, Array.get(newValue, i));
+
+				this.newValue = o;
+			}
+
+			if (oldValue != null && oldValue.getClass().isArray()
+					&& Array.getLength(oldValue) > 0) {
+				Object o = Array.newInstance(Array.get(oldValue, 0).getClass(),
+						Array.getLength(oldValue));
+
+				for (int i = 0; i < Array.getLength(oldValue); i++)
+					Array.set(o, i, Array.get(oldValue, i));
+
+				this.oldValue = o;
+			}
 		}
 
 		/*
@@ -797,7 +831,7 @@ public class GraphDiff {
 		Graph g;
 
 		Bridge(Graph g) {
-			
+
 			this.g = g;
 			g.addSink(this);
 		}
