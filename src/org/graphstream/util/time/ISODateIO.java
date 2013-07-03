@@ -239,8 +239,8 @@ public class ISODateIO {
 				int from = offset;
 				while (offset < format.length() && format.charAt(offset) != '%')
 					offset++;
-				components.addLast(new TextComponent(Pattern.quote(format
-						.substring(from, offset))));
+				components.addLast(new TextComponent(format.substring(from,
+						offset)));
 			}
 		}
 

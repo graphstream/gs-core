@@ -34,6 +34,7 @@ package org.graphstream.util.time;
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * Defines components of {@link ISODateIO}.
@@ -141,8 +142,11 @@ public abstract class ISODateComponent {
 	 * text to the resulting regular expression.
 	 */
 	public static class TextComponent extends ISODateComponent {
+		String unquoted;
+
 		public TextComponent(String value) {
-			super(null, value);
+			super(null, Pattern.quote(value));
+			unquoted = value;
 		}
 
 		public void set(String value, Calendar calendar) {
@@ -150,7 +154,7 @@ public abstract class ISODateComponent {
 		}
 
 		public String get(Calendar calendar) {
-			return replace;
+			return unquoted;
 		}
 	}
 
@@ -235,22 +239,26 @@ public abstract class ISODateComponent {
 	 */
 	public static class UTCOffsetComponent extends ISODateComponent {
 		public UTCOffsetComponent() {
-			super("%z", "[-+]\\d{4}");
+			super("%z", "(?:[-+]\\d{4}|Z)");
 		}
 
 		public void set(String value, Calendar calendar) {
-			String hs = value.substring(1, 3);
-			String ms = value.substring(3, 5);
-			if (hs.charAt(0) == '0')
-				hs = hs.substring(1);
-			if (ms.charAt(0) == '0')
-				ms = ms.substring(1);
+			if (value.equals("Z")) {
+				calendar.getTimeZone().setRawOffset(0);
+			} else {
+				String hs = value.substring(1, 3);
+				String ms = value.substring(3, 5);
+				if (hs.charAt(0) == '0')
+					hs = hs.substring(1);
+				if (ms.charAt(0) == '0')
+					ms = ms.substring(1);
 
-			int i = value.charAt(0) == '+' ? 1 : -1;
-			int h = Integer.parseInt(hs);
-			int m = Integer.parseInt(ms);
+				int i = value.charAt(0) == '+' ? 1 : -1;
+				int h = Integer.parseInt(hs);
+				int m = Integer.parseInt(ms);
 
-			calendar.getTimeZone().setRawOffset(i * (h * 60 + m) * 60000);
+				calendar.getTimeZone().setRawOffset(i * (h * 60 + m) * 60000);
+			}
 		}
 
 		public String get(Calendar calendar) {
