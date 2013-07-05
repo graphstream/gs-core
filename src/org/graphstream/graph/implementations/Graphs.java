@@ -171,7 +171,7 @@ public class Graphs {
 
 		for (int i = 0; i < g.getEdgeCount(); i++) {
 			Edge source = g.getEdge(i);
-			Edge target = g.addEdge(source.getId(), source.getSourceNode()
+			Edge target = copy.addEdge(source.getId(), source.getSourceNode()
 					.getId(), source.getTargetNode().getId(), source
 					.isDirected());
 
