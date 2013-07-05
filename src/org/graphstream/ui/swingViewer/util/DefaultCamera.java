@@ -141,6 +141,7 @@ public class DefaultCamera implements Camera {
 	 * of the graph space instead of the graph dimensions.
 	 */
 	protected double gviewport[] = null;
+	protected double gviewportDiagonal = 0;
 
 	// Construction
 
@@ -257,6 +258,9 @@ public class DefaultCamera implements Camera {
 	 * @see org.graphstream.ui.swingViewer.util.Camera#getGraphDimension()
 	 */
 	public double getGraphDimension() {
+		if (gviewport != null)
+			return gviewportDiagonal;
+
 		return metrics.diagonal;
 	}
 
@@ -442,10 +446,14 @@ public class DefaultCamera implements Camera {
 		gviewport[2] = maxx;
 		gviewport[3] = maxy;
 
+		gviewportDiagonal = Math.sqrt((maxx - minx) * (maxx - minx)
+				+ (maxy - miny) * (maxy - miny));
+
 		setZoom(1);
 	}
 
 	public void removeGraphViewport() {
+		System.out.printf("gviewport removed\n");
 		gviewport = null;
 		resetView();
 	}
@@ -649,9 +657,7 @@ public class DefaultCamera implements Camera {
 	 */
 	public void setViewport(double viewportX, double viewportY,
 			double viewportWidth, double viewportHeight) {
-		metrics
-				.setViewport(viewportX, viewportY, viewportWidth,
-						viewportHeight);
+		metrics.setViewport(viewportX, viewportY, viewportWidth, viewportHeight);
 	}
 
 	/**
@@ -864,9 +870,9 @@ public class DefaultCamera implements Camera {
 		Point2D.Double dst = new Point2D.Double();
 
 		Tx.transform(src, dst);
-		
-  		dst.x -= metrics.viewport[0];
-  		dst.y -= metrics.viewport[1];
+
+		dst.x -= metrics.viewport[0];
+		dst.y -= metrics.viewport[1];
 
 		double x1 = dst.x - w2;
 		double x2 = dst.x + w2;
@@ -912,8 +918,8 @@ public class DefaultCamera implements Camera {
 		// Point2D.Double dst = new Point2D.Double();
 
 		// Tx.transform( src, dst );
-  		dst.x -= metrics.viewport[0];
-  		dst.y -= metrics.viewport[1];
+		dst.x -= metrics.viewport[0];
+		dst.y -= metrics.viewport[1];
 
 		double x1 = dst.x - w2;
 		double x2 = dst.x + w2;
@@ -1032,8 +1038,8 @@ public class DefaultCamera implements Camera {
 			Point2 p1 = new Point2(ctrl[0], ctrl[1]);
 			Point2 p2 = new Point2(ctrl[1], ctrl[2]);
 			Point2 p3 = new Point2(edge.to.getX(), edge.to.getY());
-			Vector2 perp = CubicCurve.perpendicular(p0, p1, p2, p3, sprite
-					.getX());
+			Vector2 perp = CubicCurve.perpendicular(p0, p1, p2, p3,
+					sprite.getX());
 			double y = metrics.lengthToGu(sprite.getY(), sprite.getUnits());
 
 			perp.normalize();
