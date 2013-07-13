@@ -113,8 +113,8 @@ public class FileSourceGPX extends FileSourceXML {
 
 		void deploy() {
 			sendNodeAdded(sourceId, name);
-			sendNodeAttributeAdded(sourceId, name, "xyz", new double[] { lat,
-					lon, ele });
+			sendNodeAttributeAdded(sourceId, name, "xyz", new double[] { lon,
+					lat, ele });
 
 			for (String key : attributes.keySet())
 				sendNodeAttributeAdded(sourceId, name, key, attributes.get(key));
