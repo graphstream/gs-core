@@ -341,7 +341,7 @@ public class DGSParser implements Parser {
 	protected void attributes(ElementType type, String id) throws IOException,
 			ParseException {
 		int c;
-		
+
 		skipWhitespaces();
 
 		while ((c = nextChar()) != '\n' && c != '#' && c >= 0) {
@@ -444,8 +444,13 @@ public class DGSParser implements Parser {
 					try {
 						if (word.indexOf('.') > 0)
 							o = Double.valueOf(word);
-						else
-							o = Integer.valueOf(word);
+						else {
+							try {
+								o = Integer.valueOf(word);
+							} catch (NumberFormatException e) {
+								o = Long.valueOf(word);
+							}
+						}
 					} catch (NumberFormatException e) {
 						throw parseException("invalid number format '%s'", word);
 					}
