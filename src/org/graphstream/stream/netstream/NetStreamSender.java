@@ -337,7 +337,9 @@ public class NetStreamSender implements Sink {
 	 * @return ByteBuffer with encoded double in it
 	 */
 	protected ByteBuffer encodeDouble(Object in) {
-		return ByteBuffer.allocate(8).putDouble((Double) in);
+		ByteBuffer bb = ByteBuffer.allocate(8).putDouble((Double) in);
+		bb.rewind();
+		return bb;
 	}
 
 	/**
