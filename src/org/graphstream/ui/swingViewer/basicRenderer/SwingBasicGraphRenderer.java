@@ -147,7 +147,9 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 
 	public void render(Graphics2D g, int x, int y, int width, int height) {
 		// If not closed, one or two renders can occur after closed.
-		if (graph != null && g != null) {
+		// Camera == null means closed. In case render occurs after closing
+		// (called from the gfx thread).
+		if (graph != null && g != null && camera != null) {
 			beginFrame();
 
 			if (camera.getGraphViewport() == null
