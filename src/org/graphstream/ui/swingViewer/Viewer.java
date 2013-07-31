@@ -288,6 +288,10 @@ public class Viewer implements ActionListener {
 	public void close() {
 		synchronized (views) {
 			disableAutoLayout();
+
+			for (View view : views.values())
+				view.close(graph);
+
 			timer.stop();
 			timer.removeActionListener(this);
 
@@ -295,9 +299,6 @@ public class Viewer implements ActionListener {
 				pumpPipe.removeSink(graph);
 			if (sourceInSameThread != null)
 				sourceInSameThread.removeSink(graph);
-
-			for (View view : views.values())
-				view.close(graph);
 
 			graph = null;
 			pumpPipe = null;
@@ -514,7 +515,7 @@ public class Viewer implements ActionListener {
 	}
 
 	/**
-	 * Remove a view.
+	 * Remove a view. The view is not closed.
 	 * 
 	 * @param id
 	 *            The view identifier.
