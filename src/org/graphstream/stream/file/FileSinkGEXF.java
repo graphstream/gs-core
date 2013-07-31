@@ -36,6 +36,10 @@ import org.graphstream.graph.Element;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
+import org.graphstream.util.cumulative.CumulativeAttributes;
+import org.graphstream.util.cumulative.CumulativeSpells;
+import org.graphstream.util.cumulative.CumulativeSpells.Spell;
+import org.graphstream.util.cumulative.GraphSpells;
 
 import java.io.IOException;
 import java.net.URI;
@@ -56,14 +60,21 @@ public class FileSinkGEXF extends FileSinkBase {
 	boolean smart;
 	int depth;
 	int currentAttributeIndex = 0;
+	GraphSpells graphSpells;
 
 	public FileSinkGEXF() {
 		smart = true;
 		depth = 0;
+		graphSpells = null;
 	}
 
 	protected void outputEndOfFile() throws IOException {
 		try {
+			if (graphSpells != null) {
+				exportGraphSpells();
+				graphSpells = null;
+			}
+
 			endElement(stream, false);
 			stream.writeEndDocument();
 			stream.flush();
@@ -75,8 +86,9 @@ public class FileSinkGEXF extends FileSinkBase {
 	protected void outputHeader() throws IOException {
 		Calendar cal = Calendar.getInstance();
 		Date date = cal.getTime();
-		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-		
+		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT,
+				DateFormat.SHORT);
+
 		try {
 			stream = XMLOutputFactory.newFactory()
 					.createXMLStreamWriter(output);
@@ -89,7 +101,7 @@ public class FileSinkGEXF extends FileSinkBase {
 			stream.writeAttribute("xsi:schemaLocation",
 					"http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd");
 			stream.writeAttribute("version", "1.2");
-			
+
 			startElement(stream, "meta");
 			stream.writeAttribute("lastmodifieddate", df.format(date));
 			startElement(stream, "creator");
@@ -109,7 +121,7 @@ public class FileSinkGEXF extends FileSinkBase {
 			stream.writeCharacters("\n");
 
 			for (int i = 0; i < depth; i++)
-				stream.writeCharacters("\t");
+				stream.writeCharacters(" ");
 		}
 
 		stream.writeStartElement(name);
@@ -124,7 +136,7 @@ public class FileSinkGEXF extends FileSinkBase {
 			stream.writeCharacters("\n");
 
 			for (int i = 0; i < depth; i++)
-				stream.writeCharacters("\t");
+				stream.writeCharacters(" ");
 		}
 
 		stream.writeEndElement();
@@ -187,74 +199,218 @@ public class FileSinkGEXF extends FileSinkBase {
 		}
 	}
 
+	protected void exportGraphSpells() {
+		GEXFAttributeMap nodeAttributes = new GEXFAttributeMap("node",
+				graphSpells);
+		GEXFAttributeMap edgeAttributes = new GEXFAttributeMap("edge",
+				graphSpells);
+
+		try {
+			startElement(stream, "graph");
+			stream.writeAttribute("mode", "dynamic");
+			stream.writeAttribute("defaultedgetype", "undirected");
+
+			nodeAttributes.export(stream);
+			edgeAttributes.export(stream);
+
+			startElement(stream, "nodes");
+			for (String nodeId : graphSpells.getNodes()) {
+				startElement(stream, "node");
+				stream.writeAttribute("id", nodeId);
+
+				CumulativeAttributes attr = graphSpells
+						.getNodeAttributes(nodeId);
+				Object label = attr.getAny("label");
+
+				if (label != null)
+					stream.writeAttribute("label", label.toString());
+
+				CumulativeSpells spells = graphSpells.getNodeSpells(nodeId);
+
+				if (!spells.isEternal()) {
+					startElement(stream, "spells");
+					for (int i = 0; i < spells.getSpellCount(); i++) {
+						Spell s = spells.getSpell(i);
+						startElement(stream, "spell");
+
+						if (s.isStarted()) {
+							String start = s.isStartOpen() ? "startopen"
+									: "start";
+							stream.writeAttribute(start,
+									Double.toString(s.getStartDate()));
+						}
+
+						if (s.isEnded()) {
+							String end = s.isEndOpen() ? "endopen" : "end";
+							stream.writeAttribute(end,
+									Double.toString(s.getEndDate()));
+						}
+
+						endElement(stream, true);
+					}
+					endElement(stream, false);
+				}
+
+				if (attr.getAttributesCount() > 0) {
+					startElement(stream, "attvalues");
+					nodeAttributes.push(stream, nodeId, graphSpells);
+					endElement(stream, false);
+				}
+
+				endElement(stream,
+						spells.isEternal() && attr.getAttributesCount() == 0);
+			}
+			endElement(stream, false);
+
+			startElement(stream, "edges");
+			for (String edgeId : graphSpells.getEdges()) {
+				startElement(stream, "edge");
+
+				GraphSpells.EdgeData data = graphSpells.getEdgeData(edgeId);
+
+				stream.writeAttribute("id", edgeId);
+				stream.writeAttribute("source", data.getSource());
+				stream.writeAttribute("target", data.getTarget());
+
+				CumulativeAttributes attr = graphSpells
+						.getEdgeAttributes(edgeId);
+
+				CumulativeSpells spells = graphSpells.getEdgeSpells(edgeId);
+
+				if (!spells.isEternal()) {
+					startElement(stream, "spells");
+					for (int i = 0; i < spells.getSpellCount(); i++) {
+						Spell s = spells.getSpell(i);
+						startElement(stream, "spell");
+
+						if (s.isStarted()) {
+							String start = s.isStartOpen() ? "startopen"
+									: "start";
+							stream.writeAttribute(start,
+									Double.toString(s.getStartDate()));
+						}
+
+						if (s.isEnded()) {
+							String end = s.isEndOpen() ? "endopen" : "end";
+							stream.writeAttribute(end,
+									Double.toString(s.getEndDate()));
+						}
+
+						endElement(stream, true);
+					}
+					endElement(stream, false);
+				}
+
+				if (attr.getAttributesCount() > 0) {
+					startElement(stream, "attvalues");
+					edgeAttributes.push(stream, edgeId, graphSpells);
+					endElement(stream, false);
+				}
+
+				endElement(stream, spells.isEternal() && attr.getAttributesCount() == 0);
+			}
+			endElement(stream, false);
+
+			endElement(stream, false);
+		} catch (XMLStreamException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	protected void checkGraphSpells() {
+		if (graphSpells == null)
+			graphSpells = new GraphSpells();
+	}
+
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
 			String attribute, Object value) {
-		throw new UnsupportedOperationException();
+		checkGraphSpells();
+		graphSpells.edgeAttributeAdded(sourceId, timeId, edgeId, attribute,
+				value);
 	}
 
 	public void edgeAttributeChanged(String sourceId, long timeId,
 			String edgeId, String attribute, Object oldValue, Object newValue) {
-		throw new UnsupportedOperationException();
+		checkGraphSpells();
+		graphSpells.edgeAttributeChanged(sourceId, timeId, edgeId, attribute,
+				oldValue, newValue);
 	}
 
 	public void edgeAttributeRemoved(String sourceId, long timeId,
 			String edgeId, String attribute) {
-		throw new UnsupportedOperationException();
+		checkGraphSpells();
+		graphSpells.edgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
 	}
 
 	public void graphAttributeAdded(String sourceId, long timeId,
 			String attribute, Object value) {
-		throw new UnsupportedOperationException();
+		checkGraphSpells();
+		graphSpells.graphAttributeAdded(sourceId, timeId, attribute, value);
 	}
 
 	public void graphAttributeChanged(String sourceId, long timeId,
 			String attribute, Object oldValue, Object newValue) {
-		throw new UnsupportedOperationException();
+		checkGraphSpells();
+		graphSpells.graphAttributeChanged(sourceId, timeId, attribute,
+				oldValue, newValue);
 	}
 
 	public void graphAttributeRemoved(String sourceId, long timeId,
 			String attribute) {
-		throw new UnsupportedOperationException();
+		checkGraphSpells();
+		graphSpells.graphAttributeRemoved(sourceId, timeId, attribute);
 	}
 
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
 			String attribute, Object value) {
-		throw new UnsupportedOperationException();
+		checkGraphSpells();
+		graphSpells.nodeAttributeAdded(sourceId, timeId, nodeId, attribute,
+				value);
 	}
 
 	public void nodeAttributeChanged(String sourceId, long timeId,
 			String nodeId, String attribute, Object oldValue, Object newValue) {
-		throw new UnsupportedOperationException();
+		checkGraphSpells();
+		graphSpells.nodeAttributeChanged(sourceId, timeId, nodeId, attribute,
+				oldValue, newValue);
 	}
 
 	public void nodeAttributeRemoved(String sourceId, long timeId,
 			String nodeId, String attribute) {
-		throw new UnsupportedOperationException();
+		checkGraphSpells();
+		graphSpells.nodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
 	}
 
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
 			String fromNodeId, String toNodeId, boolean directed) {
-		throw new UnsupportedOperationException();
+		checkGraphSpells();
+		graphSpells.edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId,
+				directed);
 	}
 
 	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
-		throw new UnsupportedOperationException();
+		checkGraphSpells();
+		graphSpells.edgeRemoved(sourceId, timeId, edgeId);
 	}
 
 	public void graphCleared(String sourceId, long timeId) {
-		throw new UnsupportedOperationException();
+		checkGraphSpells();
+		graphSpells.graphCleared(sourceId, timeId);
 	}
 
 	public void nodeAdded(String sourceId, long timeId, String nodeId) {
-		throw new UnsupportedOperationException();
+		checkGraphSpells();
+		graphSpells.nodeAdded(sourceId, timeId, nodeId);
 	}
 
 	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
-		throw new UnsupportedOperationException();
+		checkGraphSpells();
+		graphSpells.nodeRemoved(sourceId, timeId, nodeId);
 	}
 
 	public void stepBegins(String sourceId, long timeId, double step) {
-		throw new UnsupportedOperationException();
+		checkGraphSpells();
+		graphSpells.stepBegins(sourceId, timeId, step);
 	}
 
 	class GEXFAttribute {
@@ -286,31 +442,64 @@ public class FileSinkGEXF extends FileSinkBase {
 			for (Element e : iterable) {
 				for (String key : e.getAttributeKeySet()) {
 					Object value = e.getAttribute(key);
-					String id = getID(key, value);
-					String attType = "string";
-
-					if (containsKey(id))
-						continue;
-
-					if (value instanceof Integer || value instanceof Short)
-						attType = "integer";
-					else if (value instanceof Long)
-						attType = "long";
-					else if (value instanceof Float)
-						attType = "float";
-					else if (value instanceof Double)
-						attType = "double";
-					else if (value instanceof Boolean)
-						attType = "boolean";
-					else if (value instanceof URL || value instanceof URI)
-						attType = "anyURI";
-					else if (value.getClass().isArray()
-							|| value instanceof Collection)
-						attType = "liststring";
-
-					put(id, new GEXFAttribute(key, attType));
+					check(key, value);
 				}
 			}
+		}
+
+		GEXFAttributeMap(String type, GraphSpells spells) {
+			this.type = type;
+
+			if (type.equals("node")) {
+				for (String nodeId : spells.getNodes()) {
+					CumulativeAttributes attr = spells
+							.getNodeAttributes(nodeId);
+
+					for (String key : attr.getAttributes()) {
+						for (Spell s : attr.getAttributeSpells(key)) {
+							Object value = s.getAttachedData();
+							check(key, value);
+						}
+					}
+				}
+			} else {
+				for (String edgeId : spells.getEdges()) {
+					CumulativeAttributes attr = spells
+							.getEdgeAttributes(edgeId);
+
+					for (String key : attr.getAttributes()) {
+						for (Spell s : attr.getAttributeSpells(key)) {
+							Object value = s.getAttachedData();
+							check(key, value);
+						}
+					}
+				}
+			}
+		}
+
+		void check(String key, Object value) {
+			String id = getID(key, value);
+			String attType = "string";
+
+			if (containsKey(id))
+				return;
+
+			if (value instanceof Integer || value instanceof Short)
+				attType = "integer";
+			else if (value instanceof Long)
+				attType = "long";
+			else if (value instanceof Float)
+				attType = "float";
+			else if (value instanceof Double)
+				attType = "double";
+			else if (value instanceof Boolean)
+				attType = "boolean";
+			else if (value instanceof URL || value instanceof URI)
+				attType = "anyURI";
+			else if (value.getClass().isArray() || value instanceof Collection)
+				attType = "liststring";
+
+			put(id, new GEXFAttribute(key, attType));
 		}
 
 		String getID(String key, Object value) {
@@ -349,6 +538,47 @@ public class FileSinkGEXF extends FileSinkBase {
 			stream.writeAttribute("for", Integer.toString(a.index));
 			stream.writeAttribute("value", e.getAttribute(key).toString());
 			endElement(stream, true);
+		}
+
+		void push(XMLStreamWriter stream, String elementId, GraphSpells spells)
+				throws XMLStreamException {
+			CumulativeAttributes attr;
+
+			if (type.equals("node"))
+				attr = spells.getNodeAttributes(elementId);
+			else
+				attr = spells.getEdgeAttributes(elementId);
+
+			for (String key : attr.getAttributes()) {
+				for (Spell s : attr.getAttributeSpells(key)) {
+					Object value = s.getAttachedData();
+					String id = getID(key, value);
+					GEXFAttribute a = get(id);
+
+					if (a == null) {
+						// TODO
+						return;
+					}
+
+					startElement(stream, "attvalue");
+					stream.writeAttribute("for", Integer.toString(a.index));
+					stream.writeAttribute("value", value.toString());
+
+					if (s.isStarted()) {
+						String start = s.isStartOpen() ? "startopen" : "start";
+						stream.writeAttribute(start,
+								Double.toString(s.getStartDate()));
+					}
+
+					if (s.isEnded()) {
+						String end = s.isEndOpen() ? "endopen" : "end";
+						stream.writeAttribute(end,
+								Double.toString(s.getEndDate()));
+					}
+
+					endElement(stream, true);
+				}
+			}
 		}
 	}
 
