@@ -35,7 +35,6 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Element;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
-import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.util.cumulative.CumulativeAttributes;
 import org.graphstream.util.cumulative.CumulativeSpells;
 import org.graphstream.util.cumulative.CumulativeSpells.Spell;
@@ -45,10 +44,15 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
@@ -56,16 +60,51 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 public class FileSinkGEXF extends FileSinkBase {
+	public static enum TimeFormat {
+		INTEGER(new DecimalFormat("#", new DecimalFormatSymbols(Locale.ROOT))), DOUBLE(
+				new DecimalFormat("#.0###################",
+						new DecimalFormatSymbols(Locale.ROOT))), DATE(
+				new SimpleDateFormat("yyyy-MM-dd")), DATETIME(
+				new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ"));
+		Format format;
+
+		TimeFormat(Format f) {
+			this.format = f;
+		}
+	}
+
 	XMLStreamWriter stream;
 	boolean smart;
 	int depth;
 	int currentAttributeIndex = 0;
 	GraphSpells graphSpells;
+	TimeFormat timeFormat;
 
 	public FileSinkGEXF() {
 		smart = true;
 		depth = 0;
 		graphSpells = null;
+		timeFormat = TimeFormat.DOUBLE;
+	}
+
+	public void setTimeFormat(TimeFormat format) {
+		this.timeFormat = format;
+	}
+
+	protected void putSpellAttributes(Spell s) throws XMLStreamException {
+		if (s.isStarted()) {
+			String start = s.isStartOpen() ? "startopen" : "start";
+			String date = timeFormat.format.format(s.getStartDate());
+
+			stream.writeAttribute(start, date);
+		}
+
+		if (s.isEnded()) {
+			String end = s.isEndOpen() ? "endopen" : "end";
+			String date = timeFormat.format.format(s.getEndDate());
+
+			stream.writeAttribute(end, date);
+		}
 	}
 
 	protected void outputEndOfFile() throws IOException {
@@ -209,6 +248,7 @@ public class FileSinkGEXF extends FileSinkBase {
 			startElement(stream, "graph");
 			stream.writeAttribute("mode", "dynamic");
 			stream.writeAttribute("defaultedgetype", "undirected");
+			stream.writeAttribute("timeformat", timeFormat.name().toLowerCase());
 
 			nodeAttributes.export(stream);
 			edgeAttributes.export(stream);
@@ -231,21 +271,9 @@ public class FileSinkGEXF extends FileSinkBase {
 					startElement(stream, "spells");
 					for (int i = 0; i < spells.getSpellCount(); i++) {
 						Spell s = spells.getSpell(i);
+
 						startElement(stream, "spell");
-
-						if (s.isStarted()) {
-							String start = s.isStartOpen() ? "startopen"
-									: "start";
-							stream.writeAttribute(start,
-									Double.toString(s.getStartDate()));
-						}
-
-						if (s.isEnded()) {
-							String end = s.isEndOpen() ? "endopen" : "end";
-							stream.writeAttribute(end,
-									Double.toString(s.getEndDate()));
-						}
-
+						putSpellAttributes(s);
 						endElement(stream, true);
 					}
 					endElement(stream, false);
@@ -281,21 +309,9 @@ public class FileSinkGEXF extends FileSinkBase {
 					startElement(stream, "spells");
 					for (int i = 0; i < spells.getSpellCount(); i++) {
 						Spell s = spells.getSpell(i);
+
 						startElement(stream, "spell");
-
-						if (s.isStarted()) {
-							String start = s.isStartOpen() ? "startopen"
-									: "start";
-							stream.writeAttribute(start,
-									Double.toString(s.getStartDate()));
-						}
-
-						if (s.isEnded()) {
-							String end = s.isEndOpen() ? "endopen" : "end";
-							stream.writeAttribute(end,
-									Double.toString(s.getEndDate()));
-						}
-
+						putSpellAttributes(s);
 						endElement(stream, true);
 					}
 					endElement(stream, false);
@@ -307,7 +323,8 @@ public class FileSinkGEXF extends FileSinkBase {
 					endElement(stream, false);
 				}
 
-				endElement(stream, spells.isEternal() && attr.getAttributesCount() == 0);
+				endElement(stream,
+						spells.isEternal() && attr.getAttributesCount() == 0);
 			}
 			endElement(stream, false);
 
@@ -563,35 +580,10 @@ public class FileSinkGEXF extends FileSinkBase {
 					startElement(stream, "attvalue");
 					stream.writeAttribute("for", Integer.toString(a.index));
 					stream.writeAttribute("value", value.toString());
-
-					if (s.isStarted()) {
-						String start = s.isStartOpen() ? "startopen" : "start";
-						stream.writeAttribute(start,
-								Double.toString(s.getStartDate()));
-					}
-
-					if (s.isEnded()) {
-						String end = s.isEndOpen() ? "endopen" : "end";
-						stream.writeAttribute(end,
-								Double.toString(s.getEndDate()));
-					}
-
+					putSpellAttributes(s);
 					endElement(stream, true);
 				}
 			}
 		}
-	}
-
-	public static void main(String... args) throws Exception {
-		Graph g = new AdjacencyListGraph("g");
-		g.addNode("A").addAttribute("label", "Node A");
-		g.addNode("B").addAttribute("test", 1.0);
-		g.addNode("C").addAttribute("test", "Test");
-		g.addNode("D").addAttribute("other", true);
-
-		g.addEdge("AB", "A", "B");
-
-		FileSinkGEXF out = new FileSinkGEXF();
-		out.writeAll(g, System.out);
 	}
 }
