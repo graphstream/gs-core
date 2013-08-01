@@ -65,7 +65,7 @@ public class FileSinkGEXF extends FileSinkBase {
 				new DecimalFormat("#.0###################",
 						new DecimalFormatSymbols(Locale.ROOT))), DATE(
 				new SimpleDateFormat("yyyy-MM-dd")), DATETIME(
-				new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ"));
+				new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ"));
 		Format format;
 
 		TimeFormat(Format f) {
