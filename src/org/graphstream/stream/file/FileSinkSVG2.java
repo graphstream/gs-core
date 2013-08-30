@@ -189,8 +189,8 @@ public class FileSinkSVG2 implements FileSink {
 				return ((Number) xyz[0]).doubleValue();
 		}
 
-		System.err.printf("[WARNING] no x attribute for node \"%s\" %s\n", n
-				.getId(), n.hasAttribute("xyz"));
+		System.err.printf("[WARNING] no x attribute for node \"%s\" %s\n",
+				n.getId(), n.hasAttribute("xyz"));
 
 		return Math.random();
 	}
@@ -267,9 +267,9 @@ public class FileSinkSVG2 implements FileSink {
 				groups.addElement(e);
 
 				if (e.hasAttribute("ui.style"))
-					stylesheet.parseStyleFromString(new Selector(Type.EDGE, e
-							.getId(), null), (String) e
-							.getAttribute("ui.style"));
+					stylesheet.parseStyleFromString(
+							new Selector(Type.EDGE, e.getId(), null),
+							(String) e.getAttribute("ui.style"));
 
 				groups.checkElementStyleGroup(e);
 			}
@@ -278,9 +278,9 @@ public class FileSinkSVG2 implements FileSink {
 				groups.addElement(n);
 
 				if (n.hasAttribute("ui.style"))
-					stylesheet.parseStyleFromString(new Selector(Type.NODE, n
-							.getId(), null), (String) n
-							.getAttribute("ui.style"));
+					stylesheet.parseStyleFromString(
+							new Selector(Type.NODE, n.getId(), null),
+							(String) n.getAttribute("ui.style"));
 
 				groups.checkElementStyleGroup(n);
 			}
@@ -389,9 +389,7 @@ public class FileSinkSVG2 implements FileSink {
 
 				if (style != null) {
 					if (style.getTextColorCount() > 0)
-						out
-								.attribute("fill", toHexColor(style
-										.getTextColor(0)));
+						out.attribute("fill", toHexColor(style.getTextColor(0)));
 
 					switch (style.getTextAlignment()) {
 					case CENTER:
@@ -409,9 +407,7 @@ public class FileSinkSVG2 implements FileSink {
 					switch (style.getTextSize().units) {
 					case PX:
 					case GU:
-						out
-								.attribute("font-size",
-										d(style.getTextSize().value));
+						out.attribute("font-size", d(style.getTextSize().value));
 						break;
 					case PERCENTS:
 						out.attribute("font-size", d(style.getTextSize().value)
@@ -768,12 +764,14 @@ public class FileSinkSVG2 implements FileSink {
 
 				for (int i = 0; i < group.getFillColorCount(); i++) {
 					out.open("stop");
-					out.attribute("stop-color", toHexColor(group
-							.getFillColor(i)));
+					out.attribute("stop-color",
+							toHexColor(group.getFillColor(i)));
 					out.attribute("stop-opacity", d(group.getFillColor(i)
 							.getAlpha() / 255.0));
-					out.attribute("offset", Double.toString(i
-							/ (double) (group.getFillColorCount() - 1)));
+					out.attribute(
+							"offset",
+							Double.toString(i
+									/ (double) (group.getFillColorCount() - 1)));
 					out.close();
 				}
 
@@ -794,27 +792,27 @@ public class FileSinkSVG2 implements FileSink {
 
 					double a, b;
 					Colors colors = group.getFillColors();
-					int s = Math.min((int) d, colors.size() - 1);
+					int s = Math.min((int) (d * group.getFillColorCount()),
+							colors.size() - 2);
 
 					a = s / (double) (colors.size() - 1);
 					b = (s + 1) / (double) (colors.size() - 1);
 
 					d = (d - a) / (b - a);
 
-					color = String.format("#%02x%02x%02x", (int) (colors.get(s)
-							.getRed() + d
-							* (colors.get(s + 1).getRed() - colors.get(s)
-									.getRed())), (int) (colors.get(s)
-							.getGreen() + d
-							* (colors.get(s + 1).getGreen() - colors.get(s)
-									.getGreen())), (int) (colors.get(s)
-							.getBlue() + d
-							* (colors.get(s + 1).getBlue() - colors.get(s)
-									.getBlue())));
+					Color c1 = colors.get(s), c2 = colors.get(s + 1);
 
-					opacity = Double.toString((colors.get(s).getAlpha() + d
-							* (colors.get(s + 1).getAlpha() - colors.get(s)
-									.getAlpha())) / 255.0);
+					color = String.format(
+							"#%02x%02x%02x",
+							(int) (c1.getRed() + d
+									* (c2.getRed() - c1.getRed())),
+							(int) (c1.getGreen() + d
+									* (c2.getGreen() - c1.getGreen())),
+							(int) (c1.getBlue() + d
+									* (c2.getBlue() - c1.getBlue())));
+
+					opacity = Double.toString((c1.getAlpha() + d
+							* (c2.getAlpha() - c1.getAlpha())) / 255.0);
 
 					st = st.replace("%fill-color%", color);
 					st = st.replace("%fill-opacity%", opacity);
@@ -877,8 +875,8 @@ public class FileSinkSVG2 implements FileSink {
 	}
 
 	private static String toHexColor(Color c) {
-		return String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c
-				.getBlue());
+		return String.format("#%02x%02x%02x", c.getRed(), c.getGreen(),
+				c.getBlue());
 	}
 
 	/*
