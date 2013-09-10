@@ -339,6 +339,7 @@ Selector select():
 	)
 	( ( <SHARP> ( ( t=<IDENTIFIER> { select.setId( t.image ); } )
 				| ( t=<STRING>     { select.setId( t.image.substring( 1, t.image.length()-1 ) ); } )
+				| ( t=<REAL>       { select.setId( t.image.toString() ); } )
 				)
 	  )
 	| ( <DOT>   ( ( t=<IDENTIFIER> { select.setClass( t.image ); } )
