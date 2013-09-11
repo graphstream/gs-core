@@ -121,7 +121,7 @@ public class DefaultShortcutManager implements ShortcutManager {
 				delta = camera.getGraphDimension() * 0.01f;
 
 			delta *= camera.getViewPercent();
-			
+
 			Point3 p = camera.getViewCenter();
 			camera.setViewCenter(p.x, p.y + delta, 0);
 		} else if (event.getKeyCode() == KeyEvent.VK_DOWN) {
