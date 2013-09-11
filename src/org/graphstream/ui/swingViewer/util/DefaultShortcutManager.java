@@ -57,7 +57,7 @@ public class DefaultShortcutManager implements ShortcutManager {
 		this.view = view;
 		view.addKeyListener(this);
 	}
-	
+
 	public void release() {
 		view.removeKeyListener(this);
 	}
@@ -72,11 +72,12 @@ public class DefaultShortcutManager implements ShortcutManager {
 	 */
 	public void keyPressed(KeyEvent event) {
 		Camera camera = view.getCamera();
-		
+
 		if (event.getKeyCode() == KeyEvent.VK_PAGE_UP) {
-			camera.setViewPercent(camera.getViewPercent() - 0.05f);
+			camera.setViewPercent(Math.max(0.0001f,
+					camera.getViewPercent() * 0.9f));
 		} else if (event.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
-			camera.setViewPercent(camera.getViewPercent() + 0.05f);
+			camera.setViewPercent(camera.getViewPercent() * 1.1f);
 		} else if (event.getKeyCode() == KeyEvent.VK_LEFT) {
 			if ((event.getModifiers() & KeyEvent.ALT_MASK) != 0) {
 				double r = camera.getViewRotation();
@@ -88,6 +89,8 @@ public class DefaultShortcutManager implements ShortcutManager {
 					delta = camera.getGraphDimension() * 0.1f;
 				else
 					delta = camera.getGraphDimension() * 0.01f;
+
+				delta *= camera.getViewPercent();
 
 				Point3 p = camera.getViewCenter();
 				camera.setViewCenter(p.x - delta, p.y, 0);
@@ -104,6 +107,8 @@ public class DefaultShortcutManager implements ShortcutManager {
 				else
 					delta = camera.getGraphDimension() * 0.01f;
 
+				delta *= camera.getViewPercent();
+
 				Point3 p = camera.getViewCenter();
 				camera.setViewCenter(p.x + delta, p.y, 0);
 			}
@@ -115,6 +120,8 @@ public class DefaultShortcutManager implements ShortcutManager {
 			else
 				delta = camera.getGraphDimension() * 0.01f;
 
+			delta *= camera.getViewPercent();
+			
 			Point3 p = camera.getViewCenter();
 			camera.setViewCenter(p.x, p.y + delta, 0);
 		} else if (event.getKeyCode() == KeyEvent.VK_DOWN) {
@@ -124,6 +131,8 @@ public class DefaultShortcutManager implements ShortcutManager {
 				delta = camera.getGraphDimension() * 0.1f;
 			else
 				delta = camera.getGraphDimension() * 0.01f;
+
+			delta *= camera.getViewPercent();
 
 			Point3 p = camera.getViewCenter();
 			camera.setViewCenter(p.x, p.y - delta, 0);
