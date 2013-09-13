@@ -251,11 +251,14 @@ public abstract class AbstractElement implements Element {
 				if (o instanceof String) {
 					try {
 						return Double.parseDouble((String) o);
-					} catch (NumberFormatException e) {}
-				} else if(o instanceof CharSequence) {
+					} catch (NumberFormatException e) {
+					}
+				} else if (o instanceof CharSequence) {
 					try {
-						return Double.parseDouble(((CharSequence)o).toString());
-					} catch (NumberFormatException e) {}
+						return Double
+								.parseDouble(((CharSequence) o).toString());
+					} catch (NumberFormatException e) {
+					}
 				}
 			}
 		}
@@ -480,24 +483,24 @@ public abstract class AbstractElement implements Element {
 	// Command
 
 	public void clearAttributes() {
-		clearAttributes_(myGraphId(), newEvent());
-	}
-
-	protected void clearAttributes_(String sourceId, long timeId) {
 		if (attributes != null) {
-			Iterator<String> keys = attributes.keySet().iterator();
-			Iterator<Object> vals = attributes.values().iterator();
+			String sourceId = myGraphId();
 
-			while (keys.hasNext() && vals.hasNext()) {
-				String key = keys.next();
-				Object val = vals.next();
+			for (Map.Entry<String, Object> entry : attributes.entrySet()) {
+				String key = entry.getKey();
+				Object val = entry.getValue();
 
-				attributeChanged(sourceId, timeId, key,
+				attributeChanged(sourceId, newEvent(), key,
 						AttributeChangeEvent.REMOVE, val, null);
 			}
 
 			attributes.clear();
 		}
+	}
+
+	protected void clearAttributesWithNoEvent() {
+		if (attributes != null)
+			attributes.clear();
 	}
 
 	/**

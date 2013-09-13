@@ -778,7 +778,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		while (it.hasNext())
 			it.next().clearCallback();
 		clearCallback();
-		clearAttributes();
+		clearAttributesWithNoEvent();
 	}
 
 	protected void stepBegins_(String sourceId, long timeId, double step) {

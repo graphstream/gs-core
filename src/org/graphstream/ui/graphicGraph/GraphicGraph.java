@@ -623,8 +623,8 @@ public class GraphicGraph extends AbstractElement implements Graph,
 	}
 
 	public void clear(String sourceId, long timeId) {
-		clearAttributes_(sourceId, timeId);
 		listeners.sendGraphCleared(sourceId, timeId);
+		clearAttributesWithNoEvent();
 		connectivity.clear();
 		styleGroups.clear();
 		styleSheet.clear();
