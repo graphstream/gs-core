@@ -342,6 +342,11 @@ public class FileSinkTikZ extends FileSinkBase {
 						+ String.format(Locale.ROOT, "%.1fcm",
 								group.getSize().values.get(0)));
 				break;
+			case PX:
+				style.add("minimum size="
+						+ String.format(Locale.ROOT, "%.1fpt",
+								group.getSize().values.get(0)));
+				break;
 			default:
 				System.err
 						.printf("%% [warning] units %s are not compatible with TikZ.%n",
