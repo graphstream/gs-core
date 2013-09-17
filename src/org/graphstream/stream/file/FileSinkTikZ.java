@@ -365,6 +365,7 @@ public class FileSinkTikZ extends FileSinkBase {
 						.getFillColor(0).getAlpha() / 255.0f));
 
 			switch (group.getSize().units) {
+			case PX:
 			case GU:
 				style.add("line width="
 						+ String.format(Locale.ROOT, "%.1fpt",
