@@ -34,6 +34,7 @@ package org.graphstream.stream.file;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * Transform the input events into a GML graph.
@@ -89,6 +90,7 @@ public class FileSinkGML extends FileSinkBase {
 		ensureToFinish();
 
 		String val = valueToString(value);
+		attribute = keyToString(attribute);
 
 		if (val != null) {
 			out.printf("\t%s %s%n", attribute, val);
@@ -111,7 +113,8 @@ public class FileSinkGML extends FileSinkBase {
 			String attribute, Object value) {
 		if (nodeToFinish != null && nodeToFinish.equals(nodeId)) {
 			String val = valueToString(value);
-
+			attribute = keyToString(attribute);
+			
 			if (val != null) {
 				out.printf("\t\t%s %s%n", attribute, val);
 			}
@@ -138,6 +141,7 @@ public class FileSinkGML extends FileSinkBase {
 			String attribute, Object value) {
 		if (edgeToFinish != null && edgeToFinish.equals(edgeId)) {
 			String val = valueToString(value);
+			attribute = keyToString(attribute);
 
 			if (val != null) {
 				out.printf("\t\t%s %s%n", attribute, val);
@@ -198,14 +202,24 @@ public class FileSinkGML extends FileSinkBase {
 
 	// Commands
 
+	Pattern forbiddenKeyChars = Pattern.compile(".*[^a-zA-Z0-9-_.].*");
+
+	protected String keyToString(String key) {
+		if (forbiddenKeyChars.matcher(key).matches())
+			return "\"" + key.replace("\"", "\\\"") + "\"";
+
+		return key;
+	}
+
 	protected String valueToString(Object value) {
 		if (value instanceof CharSequence) {
 			return String.format("\"%s\"", (CharSequence) value);
 		} else if (value instanceof Number) {
-			double val = ((Number)value).doubleValue();
-			if((val-((int)val)) == 0) 
-				 return String.format(Locale.US, "%d", (int)val);
-			else return String.format(Locale.US, "%f", val);
+			double val = ((Number) value).doubleValue();
+			if ((val - ((int) val)) == 0)
+				return String.format(Locale.US, "%d", (int) val);
+			else
+				return String.format(Locale.US, "%f", val);
 		} else if (value != null) {
 			return String.format("\"%s\"", value.toString());
 		}
