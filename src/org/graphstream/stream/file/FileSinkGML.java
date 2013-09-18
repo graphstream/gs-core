@@ -114,7 +114,7 @@ public class FileSinkGML extends FileSinkBase {
 		if (nodeToFinish != null && nodeToFinish.equals(nodeId)) {
 			String val = valueToString(value);
 			attribute = keyToString(attribute);
-			
+
 			if (val != null) {
 				out.printf("\t\t%s %s%n", attribute, val);
 			}
@@ -212,19 +212,18 @@ public class FileSinkGML extends FileSinkBase {
 	}
 
 	protected String valueToString(Object value) {
-		if (value instanceof CharSequence) {
-			return String.format("\"%s\"", (CharSequence) value);
-		} else if (value instanceof Number) {
+		if (value == null)
+			return null;
+
+		if (value instanceof Number) {
 			double val = ((Number) value).doubleValue();
 			if ((val - ((int) val)) == 0)
 				return String.format(Locale.US, "%d", (int) val);
 			else
 				return String.format(Locale.US, "%f", val);
-		} else if (value != null) {
-			return String.format("\"%s\"", value.toString());
 		}
 
-		return null;
+		return String.format("\"%s\"", value.toString().replaceAll("\n|\r|\"", " "));
 	}
 
 	protected void ensureToFinish() {
