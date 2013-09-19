@@ -34,7 +34,6 @@ import java.util.HashMap;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.stream.Sink;
-import org.graphstream.util.cumulative.CumulativeSpells.Spell;
 
 public class GraphSpells implements Sink {
 	CumulativeSpells graph;
