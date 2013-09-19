@@ -38,6 +38,7 @@ import java.net.URISyntaxException;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.regex.Pattern;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
@@ -50,6 +51,8 @@ import javax.xml.stream.events.XMLEvent;
  * 
  */
 public class FileSourceGEXF extends FileSourceXML {
+	private static final Pattern IS_DOUBLE = Pattern
+			.compile("^-?\\d+([.]\\d+)?$");
 
 	/**
 	 * The GEXF parser.
@@ -121,10 +124,10 @@ public class FileSourceGEXF extends FileSourceXML {
 				String[] list = value.split("\\|");
 
 				boolean isDouble = true;
-				
+
 				for (int i = 0; i < list.length; i++)
-					isDouble = isDouble && list[i].matches("^-?\\d+([.]\\d+)?$");
-				
+					isDouble = isDouble && IS_DOUBLE.matcher(list[i]).matches();
+
 				if (isDouble) {
 					double[] dlist = new double[list.length];
 
