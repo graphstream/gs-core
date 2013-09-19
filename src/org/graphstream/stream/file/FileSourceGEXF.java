@@ -118,7 +118,23 @@ public class FileSourceGEXF extends FileSourceXML {
 				r = Boolean.valueOf(value);
 				break;
 			case LISTSTRING:
-				r = value.split(",");
+				String[] list = value.split("\\|");
+
+				boolean isDouble = true;
+				
+				for (int i = 0; i < list.length; i++)
+					isDouble = isDouble && list[i].matches("^-?\\d+([.]\\d+)?$");
+				
+				if (isDouble) {
+					double[] dlist = new double[list.length];
+
+					for (int i = 0; i < list.length; i++)
+						dlist[i] = Double.parseDouble(list[i]);
+
+					r = dlist;
+				} else
+					r = list;
+
 				break;
 			case ANYURI:
 				try {
