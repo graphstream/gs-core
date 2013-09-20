@@ -98,35 +98,13 @@ public class AbstractEdge extends AbstractElement implements Edge {
 		this.graph = (AbstractGraph) source.getGraph();
 	}
 
-
 	// *** Inherited from AbstractElement ***
 
 	@Override
-	protected void attributeChanged(String sourceId, long timeId,
-			String attribute, AttributeChangeEvent event, Object oldValue,
-			Object newValue) {
-		graph.listeners.sendAttributeChangedEvent(sourceId, timeId, id,
-				ElementType.EDGE, attribute, event, oldValue,
-				newValue);
-	}
-
-	/**
-	 * @return The id of the parent graph
-	 * @see org.graphstream.graph.implementations.AbstractElement#myGraphId()
-	 */
-	@Override
-	protected String myGraphId() {
-		return graph.getId();
-	}
-
-	/**
-	 * This implementation calls the corresponding method of the parent graph
-	 * 
-	 * @see org.graphstream.graph.implementations.AbstractElement#newEvent()
-	 */
-	@Override
-	protected long newEvent() {
-		return graph.newEvent();
+	protected void attributeChanged(AttributeChangeEvent event,
+			String attribute, Object oldValue, Object newValue) {
+		graph.listeners.sendAttributeChangedEvent(id, ElementType.EDGE,
+				attribute, event, oldValue, newValue);
 	}
 
 	/**
@@ -138,7 +116,7 @@ public class AbstractEdge extends AbstractElement implements Edge {
 	protected boolean nullAttributesAreErrors() {
 		return graph.nullAttributesAreErrors();
 	}
-	
+
 	@Override
 	public String toString() {
 		return String.format("%s[%s-%s%s]", getId(), source, directed ? ">"

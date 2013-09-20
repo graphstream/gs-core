@@ -89,33 +89,29 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	// *** Inherited from abstract element ***
 
 	@Override
-	protected void attributeChanged(String sourceId, long timeId,
-			String attribute, AttributeChangeEvent event, Object oldValue,
-			Object newValue) {
-		graph.listeners.sendAttributeChangedEvent(sourceId, timeId, id,
+	protected void attributeChanged(AttributeChangeEvent event,
+			String attribute, Object oldValue, Object newValue) {
+		graph.listeners.sendAttributeChangedEvent(id,
 				SourceBase.ElementType.NODE, attribute, event, oldValue,
 				newValue);
-
 	}
 
-	@Override
 	/**
 	 * @return The id of the parent graph
 	 * @see org.graphstream.graph.implementations.AbstractElement#myGraphId()
 	 */
-	protected String myGraphId() {
-		return graph.getId();
-	}
+	// protected String myGraphId() {
+	// return graph.getId();
+	// }
 
-	@Override
 	/**
 	 * This implementation calls the corresponding method of the parent graph
 	 * 
 	 * @see org.graphstream.graph.implementations.AbstractElement#newEvent()
 	 */
-	protected long newEvent() {
-		return graph.newEvent();
-	}
+	// protected long newEvent() {
+	// return graph.newEvent();
+	// }
 
 	@Override
 	/**

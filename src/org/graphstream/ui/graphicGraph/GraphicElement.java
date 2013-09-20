@@ -31,7 +31,6 @@
  */
 package org.graphstream.ui.graphicGraph;
 
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,7 +71,8 @@ public abstract class GraphicElement extends AbstractElement {
 	/**
 	 * Interface for renderers registered in each style group.
 	 */
-	public interface SwingElementRenderer {}
+	public interface SwingElementRenderer {
+	}
 
 	/**
 	 * Graph containing this element.
@@ -93,12 +93,12 @@ public abstract class GraphicElement extends AbstractElement {
 	 * Associated GUI component.
 	 */
 	public Object component;
-	
+
 	/**
 	 * Do not show.
 	 */
 	public boolean hidden = false;
-	
+
 	/**
 	 * New element.
 	 */
@@ -111,18 +111,6 @@ public abstract class GraphicElement extends AbstractElement {
 		return mygraph;
 	}
 
-	@Override
-	protected String myGraphId()
-	{
-		return mygraph.getId();
-	}
-
-	@Override
-	protected long newEvent()
-	{
-		return mygraph.newEvent();
-	}
-	
 	@Override
 	protected boolean nullAttributesAreErrors() {
 		return mygraph.nullAttributesAreErrors();
@@ -210,9 +198,8 @@ public abstract class GraphicElement extends AbstractElement {
 	 * Handle the "ui.class", "label", "ui.style", etc. attributes.
 	 */
 	@Override
-	protected void attributeChanged(String sourceId, long timeId,
-			String attribute, AttributeChangeEvent event, Object oldValue,
-			Object newValue) {
+	protected void attributeChanged(AttributeChangeEvent event,
+			String attribute, Object oldValue, Object newValue) {
 		if (event == AttributeChangeEvent.ADD
 				|| event == AttributeChangeEvent.CHANGE) {
 			if (attribute.equals("ui.class")) {
@@ -272,7 +259,8 @@ public abstract class GraphicElement extends AbstractElement {
 		} else // REMOVE
 		{
 			if (attribute.equals("ui.class")) {
-			    Object o = attributes.remove("ui.class");	// Not yet removed at this point !
+				Object o = attributes.remove("ui.class"); // Not yet removed at
+															// this point !
 				mygraph.styleGroups.checkElementStyleGroup(this);
 				attributes.put("ui.class", o);
 				mygraph.graphChanged = true;
@@ -314,37 +302,5 @@ public abstract class GraphicElement extends AbstractElement {
 
 		if (matcher.matches())
 			super.addAttribute(attribute, values);
-	}
-
-	// Make change _ methods visible
-
-	@Override
-	protected void addAttribute_(String sourceId, long timeId,
-			String attribute, Object... values) {
-		super.addAttribute_(sourceId, timeId, attribute, values);
-	}
-
-	@Override
-	protected void changeAttribute_(String sourceId, long timeId,
-			String attribute, Object... values) {
-		super.changeAttribute_(sourceId, timeId, attribute, values);
-	}
-
-	@Override
-	protected void setAttribute_(String sourceId, long timeId,
-			String attribute, Object... values) {
-		super.setAttribute_(sourceId, timeId, attribute, values);
-	}
-
-	@Override
-	protected void addAttributes_(String sourceId, long timeId,
-			Map<String, Object> attributes) {
-		super.addAttributes_(sourceId, timeId, attributes);
-	}
-
-	@Override
-	protected void removeAttribute_(String sourceId, long timeId,
-			String attribute) {
-		super.removeAttribute_(sourceId, timeId, attribute);
 	}
 }
