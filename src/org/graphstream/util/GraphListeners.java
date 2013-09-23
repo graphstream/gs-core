@@ -154,6 +154,9 @@ public class GraphListeners extends SourceBase implements Pipe {
 			if (edge != null) {
 				passYourWay = true;
 
+				if (oldValue == null)
+					oldValue = edge.getAttribute(attribute);
+
 				try {
 					edge.changeAttribute(attribute, newValue);
 				} finally {
@@ -207,7 +210,7 @@ public class GraphListeners extends SourceBase implements Pipe {
 				passYourWay = false;
 			}
 
-			sendGraphAttributeAdded(sourceId, attribute, value);
+			sendGraphAttributeAdded(sourceId, timeId, attribute, value);
 		}
 	}
 
@@ -221,6 +224,9 @@ public class GraphListeners extends SourceBase implements Pipe {
 			String attribute, Object oldValue, Object newValue) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
 			passYourWay = true;
+
+			if (oldValue == null)
+				oldValue = g.getAttribute(attribute);
 
 			try {
 				g.changeAttribute(attribute, newValue);
@@ -291,6 +297,9 @@ public class GraphListeners extends SourceBase implements Pipe {
 			Node node = g.getNode(nodeId);
 			if (node != null) {
 				passYourWay = true;
+
+				if (oldValue == null)
+					oldValue = node.getAttribute(attribute);
 
 				try {
 					node.changeAttribute(attribute, newValue);
@@ -444,5 +453,11 @@ public class GraphListeners extends SourceBase implements Pipe {
 
 			sendStepBegins(sourceId, timeId, step);
 		}
+	}
+
+	@Override
+	public String toString() {
+		return String.format("GraphListeners of %s.%s", g.getClass()
+				.getSimpleName(), g.getId());
 	}
 }

@@ -38,7 +38,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.regex.Matcher;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeFactory;
@@ -1217,8 +1216,8 @@ public class GraphicGraph extends AbstractElement implements Graph,
 
 	public GraphicSprite addSprite(String id) {
 		String prefix = String.format("ui.sprite.%s", id);
+		System.out.printf("add sprite %s\n", id);
 		addAttribute(prefix, 0, 0, 0);
-
 		GraphicSprite s = styleGroups.getSprite(id);
 		assert (s != null);
 		return s;
@@ -1304,24 +1303,29 @@ public class GraphicGraph extends AbstractElement implements Graph,
 		}
 	}
 
-	// Redefinition of the attribute setting mechanism to filter attributes.
-
-	@Override
-	public void addAttribute(String attribute, Object... values) {
-		Matcher matcher = GraphicElement.acceptedAttribute.matcher(attribute);
-
-		if (matcher.matches())
-			super.addAttribute(attribute, values);
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.Source#clearAttributeSinks()
+	 */
 	public void clearAttributeSinks() {
 		listeners.clearAttributeSinks();
 	}
 
+	/*
+	 * *(non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.Source#clearElementSinks()
+	 */
 	public void clearElementSinks() {
 		listeners.clearElementSinks();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.Source#clearSinks()
+	 */
 	public void clearSinks() {
 		listeners.clearSinks();
 	}
