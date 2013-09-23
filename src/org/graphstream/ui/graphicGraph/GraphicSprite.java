@@ -60,7 +60,7 @@ public class GraphicSprite extends GraphicElement {
 	 * Sprite position.
 	 */
 	public Values position = new Values(StyleConstants.Units.GU, 0, 0, 0);
-	
+
 	// Constructors
 
 	/**
@@ -323,11 +323,9 @@ public class GraphicSprite extends GraphicElement {
 	}
 
 	@Override
-	protected void attributeChanged(String sourceId, long timeId,
-			String attribute, AttributeChangeEvent event, Object oldValue,
-			Object newValue) {
-		super.attributeChanged(sourceId, timeId, attribute, event, oldValue,
-				newValue);
+	protected void attributeChanged(AttributeChangeEvent event,
+			String attribute, Object oldValue, Object newValue) {
+		super.attributeChanged(event, attribute, oldValue, newValue);
 
 		// if( attribute.equals( "ui.clicked" ) ) // Filter the clicks to avoid
 		// loops XXX BAD !!! XXX
@@ -338,9 +336,8 @@ public class GraphicSprite extends GraphicElement {
 		// System.err.printf( "GSprite add attribute %s %s (old=%s) (new=%s)%n",
 		// event, attribute, oldValue, newValue );
 
-		mygraph.listeners.sendAttributeChangedEvent(sourceId, timeId,
-				mygraph.getId(), ElementType.GRAPH, completeAttr, event,
-				oldValue, newValue);
+		mygraph.listeners.sendAttributeChangedEvent(mygraph.getId(),
+				ElementType.GRAPH, completeAttr, event, oldValue, newValue);
 	}
 
 	@Override
