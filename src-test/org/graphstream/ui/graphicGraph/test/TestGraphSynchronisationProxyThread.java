@@ -70,7 +70,9 @@ public class TestGraphSynchronisationProxyThread {
 		// graphic graph.
 
 		Graph main = new MultiGraph("main");
-		ThreadProxyPipe toGraphic = new ThreadProxyPipe(main);
+		ThreadProxyPipe toGraphic = new ThreadProxyPipe();
+		toGraphic.init(main);
+		
 		InTheSwingThread viewerThread = new InTheSwingThread(toGraphic);
 		ThreadProxyPipe toMain = viewerThread.getProxy();
 
@@ -267,7 +269,8 @@ public class TestGraphSynchronisationProxyThread {
 		}
 
 		public ThreadProxyPipe getProxy() {
-			ThreadProxyPipe toMain = new ThreadProxyPipe(graphic);
+			ThreadProxyPipe toMain = new ThreadProxyPipe();
+			toMain.init(graphic);
 
 			// fromMain.synchronizeWith( toMain, graphic );
 

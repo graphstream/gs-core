@@ -55,6 +55,10 @@ import org.graphstream.graph.NullAttributeException;
  * @since 20040910
  */
 public abstract class AbstractElement implements Element {
+	public static enum AttributeChangeEvent {
+		ADD, CHANGE, REMOVE
+	};
+
 	// Attribute
 
 	// protected static Set<String> emptySet = new HashSet<String>();
@@ -123,11 +127,34 @@ public abstract class AbstractElement implements Element {
 	// XXX in which case we need to generate a new event (sourceId/timeId) using
 	// the graph
 	// XXX id and a new time. These methods allow access to this.
-	protected abstract String myGraphId(); // XXX
+	// protected abstract String myGraphId(); // XXX
 
-	protected abstract long newEvent(); // XXX
+	// protected abstract long newEvent(); // XXX
 
 	protected abstract boolean nullAttributesAreErrors(); // XXX
+
+	/**
+	 * Called for each change in the attribute set. This method must be
+	 * implemented by sub-elements in order to send events to the graph
+	 * listeners.
+	 * 
+	 * @param sourceId
+	 *            The source of the change.
+	 * @param timeId
+	 *            The source time of the change, for synchronization.
+	 * @param attribute
+	 *            The attribute name that changed.
+	 * @param event
+	 *            The type of event among ADD, CHANGE and REMOVE.
+	 * @param oldValue
+	 *            The old value of the attribute, null if the attribute was
+	 *            added.
+	 * @param newValue
+	 *            The new value of the attribute, null if the attribute is about
+	 *            to be removed.
+	 */
+	protected abstract void attributeChanged(AttributeChangeEvent event,
+			String attribute, Object oldValue, Object newValue);
 
 	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this
@@ -484,15 +511,9 @@ public abstract class AbstractElement implements Element {
 
 	public void clearAttributes() {
 		if (attributes != null) {
-			String sourceId = myGraphId();
-
-			for (Map.Entry<String, Object> entry : attributes.entrySet()) {
-				String key = entry.getKey();
-				Object val = entry.getValue();
-
-				attributeChanged(sourceId, newEvent(), key,
-						AttributeChangeEvent.REMOVE, val, null);
-			}
+			for (Map.Entry<String, Object> entry : attributes.entrySet())
+				attributeChanged(AttributeChangeEvent.REMOVE, entry.getKey(),
+						entry.getValue(), null);
 
 			attributes.clear();
 		}
@@ -508,11 +529,6 @@ public abstract class AbstractElement implements Element {
 	 *             element.
 	 */
 	public void addAttribute(String attribute, Object... values) {
-		addAttribute_(myGraphId(), newEvent(), attribute, values);
-	}
-
-	protected void addAttribute_(String sourceId, long timeId,
-			String attribute, Object... values) {
 		if (attributes == null)
 			attributes = new HashMap<String, Object>(1);
 
@@ -532,7 +548,7 @@ public abstract class AbstractElement implements Element {
 			event = AttributeChangeEvent.CHANGE; // but the attribute exists.
 
 		oldValue = attributes.put(attribute, value);
-		attributeChanged(sourceId, timeId, attribute, event, oldValue, value);
+		attributeChanged(event, attribute, oldValue, value);
 	}
 
 	/**
@@ -540,12 +556,7 @@ public abstract class AbstractElement implements Element {
 	 *             element.
 	 */
 	public void changeAttribute(String attribute, Object... values) {
-		changeAttribute_(myGraphId(), newEvent(), attribute, values);
-	}
-
-	protected void changeAttribute_(String sourceId, long timeId,
-			String attribute, Object... values) {
-		addAttribute_(sourceId, timeId, attribute, values);
+		addAttribute(attribute, values);
 	}
 
 	/**
@@ -553,12 +564,7 @@ public abstract class AbstractElement implements Element {
 	 *             element.
 	 */
 	public void setAttribute(String attribute, Object... values) {
-		setAttribute_(myGraphId(), newEvent(), attribute, values);
-	}
-
-	protected void setAttribute_(String sourceId, long timeId,
-			String attribute, Object... values) {
-		addAttribute_(sourceId, timeId, attribute, values);
+		addAttribute(attribute, values);
 	}
 
 	/**
@@ -566,19 +572,14 @@ public abstract class AbstractElement implements Element {
 	 *             element.
 	 */
 	public void addAttributes(Map<String, Object> attributes) {
-		addAttributes_(myGraphId(), newEvent(), attributes);
-	}
-
-	protected void addAttributes_(String sourceId, long timeId,
-			Map<String, Object> attributes) {
 		if (this.attributes == null)
-			this.attributes = new HashMap<String, Object>(1);
+			this.attributes = new HashMap<String, Object>(attributes.size());
 
 		Iterator<String> i = attributes.keySet().iterator();
 		Iterator<Object> j = attributes.values().iterator();
 
 		while (i.hasNext() && j.hasNext())
-			addAttribute_(sourceId, timeId, i.next(), j.next());
+			addAttribute(i.next(), j.next());
 	}
 
 	/**
@@ -586,11 +587,6 @@ public abstract class AbstractElement implements Element {
 	 *             element.
 	 */
 	public void removeAttribute(String attribute) {
-		removeAttribute_(myGraphId(), newEvent(), attribute);
-	}
-
-	protected void removeAttribute_(String sourceId, long timeId,
-			String attribute) {
 		if (attributes != null) {
 			//
 			// 'attributesBeingRemoved' is created only if this is required.
@@ -599,15 +595,14 @@ public abstract class AbstractElement implements Element {
 				attributesBeingRemoved = new ArrayList<String>();
 
 			//
-			// Avoid recursive calls when synchronising graphs.
+			// Avoid recursive calls when synchronizing graphs.
 			//
 			if (attributes.containsKey(attribute)
 					&& !attributesBeingRemoved.contains(attribute)) {
 				attributesBeingRemoved.add(attribute);
 
-				attributeChanged(sourceId, timeId, attribute,
-						AttributeChangeEvent.REMOVE, attributes.get(attribute),
-						null);
+				attributeChanged(AttributeChangeEvent.REMOVE, attribute,
+						attributes.get(attribute), null);
 
 				attributesBeingRemoved
 						.remove(attributesBeingRemoved.size() - 1);
@@ -615,32 +610,4 @@ public abstract class AbstractElement implements Element {
 			}
 		}
 	}
-
-	public static enum AttributeChangeEvent {
-		ADD, CHANGE, REMOVE
-	};
-
-	/**
-	 * Called for each change in the attribute set. This method must be
-	 * implemented by sub-elements in order to send events to the graph
-	 * listeners.
-	 * 
-	 * @param sourceId
-	 *            The source of the change.
-	 * @param timeId
-	 *            The source time of the change, for synchronization.
-	 * @param attribute
-	 *            The attribute name that changed.
-	 * @param event
-	 *            The type of event among ADD, CHANGE and REMOVE.
-	 * @param oldValue
-	 *            The old value of the attribute, null if the attribute was
-	 *            added.
-	 * @param newValue
-	 *            The new value of the attribute, null if the attribute is about
-	 *            to be removed.
-	 */
-	protected abstract void attributeChanged(String sourceId, long timeId,
-			String attribute, AttributeChangeEvent event, Object oldValue,
-			Object newValue);
 }

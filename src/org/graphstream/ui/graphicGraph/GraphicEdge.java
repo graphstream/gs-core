@@ -207,18 +207,16 @@ public class GraphicEdge extends GraphicElement implements Edge {
 	}
 
 	@Override
-	protected void attributeChanged(String sourceId, long timeId,
-			String attribute, AttributeChangeEvent event, Object oldValue,
-			Object newValue) {
-		super.attributeChanged(sourceId, timeId, attribute, event, oldValue,
-				newValue);
+	protected void attributeChanged(AttributeChangeEvent event,
+			String attribute, Object oldValue, Object newValue) {
+		super.attributeChanged(event, attribute, oldValue, newValue);
 
 		if (attribute.startsWith("ui.sprite.")) {
 			mygraph.spriteAttribute(event, this, attribute, newValue);
 		}
 
-		mygraph.listeners.sendAttributeChangedEvent(sourceId, timeId, getId(),
-				ElementType.EDGE, attribute, event, oldValue, newValue);
+		mygraph.listeners.sendAttributeChangedEvent(getId(), ElementType.EDGE,
+				attribute, event, oldValue, newValue);
 	}
 
 	/**
@@ -263,12 +261,12 @@ public class GraphicEdge extends GraphicElement implements Edge {
 
 	@SuppressWarnings("all")
 	public <T extends Node> T getNode0() {
-		return (T)from;
+		return (T) from;
 	}
 
 	@SuppressWarnings("all")
 	public <T extends Node> T getNode1() {
-		return (T)to;
+		return (T) to;
 	}
 
 	/**
@@ -285,25 +283,25 @@ public class GraphicEdge extends GraphicElement implements Edge {
 	@SuppressWarnings("all")
 	public <T extends Node> T getOpposite(Node node) {
 		if (node == from)
-			return (T)to;
+			return (T) to;
 
-		return (T)from;
+		return (T) from;
 	}
 
 	@SuppressWarnings("all")
 	public <T extends Node> T getSourceNode() {
-		return (T)from;
+		return (T) from;
 	}
 
 	@SuppressWarnings("all")
 	public <T extends Node> T getTargetNode() {
-		return (T)to;
+		return (T) to;
 	}
 
 	public boolean isDirected() {
 		return directed;
 	}
-	
+
 	public boolean isLoop() {
 		return (from == to);
 	}

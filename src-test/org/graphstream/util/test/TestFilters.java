@@ -150,32 +150,32 @@ public class TestFilters {
 	public void byAttributeFilter() {
 		Filter<Element> f = Filters.byAttributeFilter("keyTest", "ok");
 		TestElement e = new TestElement("e");
-		
+
 		assertFalse(f.isAvailable(e));
-		
+
 		e.setAttribute("keyTest", "no");
 		assertFalse(f.isAvailable(e));
-		
+
 		e.setAttribute("keyTest", "ok");
 		assertTrue(f.isAvailable(e));
 	}
-	
+
 	@Test
 	public void byIdFilter() {
 		Filter<Element> f = Filters.byIdFilter("A.*");
 		Element a1, a2, b1, c2;
-		
+
 		a1 = new TestElement("A1");
 		a2 = new TestElement("a2");
 		b1 = new TestElement("B1");
 		c2 = new TestElement("C2");
-		
+
 		assertTrue(f.isAvailable(a1));
 		assertFalse(f.isAvailable(a2));
 		assertFalse(f.isAvailable(b1));
 		assertFalse(f.isAvailable(c2));
 	}
-	
+
 	@Test
 	public void isContainedFilter() {
 		Collection<Element> elements = new HashSet<Element>();
@@ -183,19 +183,19 @@ public class TestFilters {
 		Filter<Element> fObj = Filters.isContained(elements);
 		Filter<Element> fId = Filters.isIdContained(elementsId);
 		Element a1, a2, a3;
-		
+
 		a1 = new TestElement("a1");
 		a2 = new TestElement("a2");
 		a3 = new TestElement("a3");
-		
+
 		elements.add(a1);
 		elements.add(a2);
 		elementsId.add("a3");
-		
+
 		assertTrue(fObj.isAvailable(a1));
 		assertTrue(fObj.isAvailable(a2));
 		assertFalse(fObj.isAvailable(a3));
-		
+
 		assertFalse(fId.isAvailable(a1));
 		assertFalse(fId.isAvailable(a2));
 		assertTrue(fId.isAvailable(a3));
@@ -235,9 +235,8 @@ public class TestFilters {
 		 * .AbstractElement.AttributeChangeEvent, java.lang.Object,
 		 * java.lang.Object)
 		 */
-		protected void attributeChanged(String sourceId, long timeId,
-				String attribute, AttributeChangeEvent event, Object oldValue,
-				Object newValue) {
+		protected void attributeChanged(AttributeChangeEvent event,
+				String attribute, Object oldValue, Object newValue) {
 		}
 
 		/*
