@@ -41,8 +41,6 @@ import java.nio.charset.Charset;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.netstream.packing.NetStreamPacker;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
-
 /**
  * <p>
  * This class implements a sender according to specifications the NetStream
@@ -281,6 +279,7 @@ public class NetStreamSender implements Sink {
 		return null;
 	}
 
+	/*
 	private void outBuffer(ByteBuffer buf){
 		System.out.println(buf.toString());
 		int nbytes = buf.capacity();
@@ -291,7 +290,7 @@ public class NetStreamSender implements Sink {
 			System.out.printf("%d ", bt);
 		}
 		System.out.println();
-	}
+	}*/
 	
 	/**
 	 * @param in
