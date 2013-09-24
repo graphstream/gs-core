@@ -465,10 +465,7 @@ public abstract class AbstractElement implements Element {
 	}
 
 	public Iterable<String> getEachAttributeKey() {
-		if (attributes != null)
-			return attributes.keySet();
-
-		return Collections.emptySet();
+		return getAttributeKeySet();
 	}
 
 	public Collection<String> getAttributeKeySet() {

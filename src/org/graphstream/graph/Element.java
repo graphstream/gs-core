@@ -32,6 +32,7 @@
 package org.graphstream.graph;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -40,8 +41,8 @@ import java.util.Map;
  * An element is a part of a graph (node, edge, the graph itself).
  * 
  * <p>
- * An interface that defines common method to manipulate identifiers,
- * attributes and indices of the elements (graph, nodes and edges) of a graph.
+ * An interface that defines common method to manipulate identifiers, attributes
+ * and indices of the elements (graph, nodes and edges) of a graph.
  * </p>
  * *
  * <p>
@@ -69,8 +70,7 @@ public interface Element {
 	 * @return The identifier value.
 	 */
 	String getId();
-	
-	
+
 	/**
 	 * The current index of this element
 	 * 
@@ -275,13 +275,19 @@ public interface Element {
 	Iterator<String> getAttributeKeyIterator();
 
 	/**
-	 * An iterable view on the set of attributes keys usable with the for-each
+	 * An iterable view on the set of attribute keys usable within a for-each
 	 * loop.
 	 * 
-	 * @return an iterable view on each attribute key, null if there are no
-	 *         attributes.
+	 * @return an iterable view on attribute keys.
 	 */
-	Iterable<String> getAttributeKeySet();
+	Iterable<String> getEachAttributeKey();
+
+	/**
+	 * An unmodifiable view on the set of attribute keys.
+	 * 
+	 * @return an unmodifiable collection containing the attribute keys.
+	 */
+	Collection<String> getAttributeKeySet();
 
 	/**
 	 * Remove all registered attributes. This includes numbers, labels and

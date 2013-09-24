@@ -32,6 +32,7 @@
 package org.graphstream.ui.spriteManager;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -400,7 +401,7 @@ public class Sprite implements Element {
 		throw new RuntimeException("not implemented");
 	}
 
-	public Iterable<String> getAttributeKeySet() {
+	public Collection<String> getAttributeKeySet() {
 		throw new RuntimeException("not implemented");
 	}
 
@@ -523,5 +524,10 @@ public class Sprite implements Element {
 	// Sprites do not have unique index but is this useful?
 	public int getIndex() {
 		return 0;
+	}
+
+	@Override
+	public Iterable<String> getEachAttributeKey() {
+		return getAttributeKeySet();
 	}
 }

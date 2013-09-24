@@ -309,7 +309,7 @@ public class Graphs {
 			return getAttributeKeySet().iterator();
 		}
 
-		public Iterable<String> getAttributeKeySet() {
+		public Collection<String> getAttributeKeySet() {
 			ArrayList<String> o;
 			Iterator<String> it;
 
@@ -474,6 +474,11 @@ public class Graphs {
 			attributeLock.lock();
 			wrappedElement.setAttribute(attribute, values);
 			attributeLock.unlock();
+		}
+
+		@Override
+		public Iterable<String> getEachAttributeKey() {
+			return getAttributeKeySet();
 		}
 	}
 
