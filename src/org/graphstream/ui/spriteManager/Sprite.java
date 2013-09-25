@@ -400,6 +400,10 @@ public class Sprite implements Element {
 	public Iterator<String> getAttributeKeyIterator() {
 		throw new RuntimeException("not implemented");
 	}
+	
+	public Iterable<String> getEachAttributeKey() {
+		return getAttributeKeySet();
+	}
 
 	public Collection<String> getAttributeKeySet() {
 		throw new RuntimeException("not implemented");
@@ -524,10 +528,5 @@ public class Sprite implements Element {
 	// Sprites do not have unique index but is this useful?
 	public int getIndex() {
 		return 0;
-	}
-
-	@Override
-	public Iterable<String> getEachAttributeKey() {
-		return getAttributeKeySet();
 	}
 }

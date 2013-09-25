@@ -325,6 +325,10 @@ public class Graphs {
 
 			return o;
 		}
+		
+		public Iterable<String> getEachAttributeKey() {
+			return getAttributeKeySet();
+		}
 
 		public <T> T getFirstAttributeOf(String... keys) {
 			T o;
@@ -474,12 +478,7 @@ public class Graphs {
 			attributeLock.lock();
 			wrappedElement.setAttribute(attribute, values);
 			attributeLock.unlock();
-		}
-
-		@Override
-		public Iterable<String> getEachAttributeKey() {
-			return getAttributeKeySet();
-		}
+		}		
 	}
 
 	static class SynchronizedGraph extends SynchronizedElement<Graph> implements
