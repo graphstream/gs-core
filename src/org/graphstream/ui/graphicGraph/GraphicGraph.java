@@ -746,6 +746,9 @@ public class GraphicGraph extends AbstractElement implements Graph,
 
 		step = 0;
 		graphChanged = true;
+		
+		styleGroups.addElement(this);
+		style = styleGroups.getStyleFor(this);
 	}
 
 	/*
