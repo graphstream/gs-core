@@ -128,7 +128,7 @@ public class GEXFEdges extends SinkAdapter implements GEXFElement {
 			edge.weight = ((Number) value).doubleValue();
 
 		edge.attvalues
-				.attributeUpdated(root.getNodeAttribute(attribute), value);
+				.attributeUpdated(root.getEdgeAttribute(attribute), value);
 	}
 
 	/*
