@@ -742,6 +742,11 @@ public class DGSParser implements Parser {
 						stop = true;
 
 					break;
+				case Character.MATH_SYMBOL:
+					if (c != '+')
+						stop = true;
+
+					break;
 				case Character.CONNECTOR_PUNCTUATION:
 					if (c != '_')
 						stop = true;

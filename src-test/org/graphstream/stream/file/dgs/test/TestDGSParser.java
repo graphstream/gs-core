@@ -137,7 +137,10 @@ public class TestDGSParser {
 				new Attribute("color", Color.class, Color.RED),
 				new Attribute("map", Map.class, map),
 				new Attribute("array", Integer.class, new Object[] { 1, 2, 3 }),
-				new Attribute("aoa", Object[].class, aoa) };
+				new Attribute("aoa", Object[].class, aoa),
+				new Attribute("big_sci", Double.class, Double.valueOf("1.27E+07")),
+				new Attribute("small_sci", Double.class, Double.valueOf("1.27E-07")),
+				new Attribute("neg_sci", Double.class, Double.valueOf("-1.27E-07")) };
 
 		for (Node n : g) {
 			for (Attribute a : attributes)
