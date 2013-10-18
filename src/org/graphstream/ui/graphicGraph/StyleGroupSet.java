@@ -607,7 +607,7 @@ public class StyleGroupSet implements StyleSheetListener {
 		groups.put(id, group);
 		zIndex.groupAdded(group);
 		shadow.groupAdded(group);
-		
+
 		return group;
 	}
 
@@ -701,14 +701,16 @@ public class StyleGroupSet implements StyleSheetListener {
 
 		// Get the old element "dynamic" status.
 
-		boolean isDyn = oldGroup.isElementDynamic(element);
+		boolean isDyn = false;
 
 		// Get the old event set for the given element.
 
 		StyleGroup.ElementEvents events = null;
 
-		if (oldGroup != null)
+		if (oldGroup != null) {
+			isDyn = oldGroup.isElementDynamic(element);
 			events = oldGroup.getEventsFor(element);
+		}
 
 		// Remove the element from its old style and add it to insert it in the
 		// correct style.
@@ -938,7 +940,7 @@ public class StyleGroupSet implements StyleSheetListener {
 				if (oldRule.getGroups() != null)
 					for (String s : oldRule.getGroups()) {
 						StyleGroup group = groups.get(s);
-						if(group != null) {
+						if (group != null) {
 							zIndex.groupChanged(group);
 							shadow.groupChanged(group);
 						}
@@ -968,22 +970,22 @@ public class StyleGroupSet implements StyleSheetListener {
 	 * 
 	 * Two cases :
 	 * <ol>
-	 *    <li>The style is an specific (id) style. In this case a new
-	 *        group may be added.
-	 *        <ul>
-	 *            <li>check an element matches the style and in this case
-     *                create the group by adding the element.</li>
-     *            <li>else do nothing.</li>
-     *        </ul></li>
-     *   <li>The style is a kind or class style.
-     *        <ul>
-     *            <li>check all the groups in the kind of the style
-	 *                  (graph, node, edge, sprite) and only in this kind (since other will never
-	 *                  be affected).</li>
-	 *            <li>remove all groups of this kind.</li>
-	 *            <li>add all elements of this kind anew to recreate the group.</li>
-	 *        </ul>
-	 *   </li>
+	 * <li>The style is an specific (id) style. In this case a new group may be
+	 * added.
+	 * <ul>
+	 * <li>check an element matches the style and in this case create the group
+	 * by adding the element.</li>
+	 * <li>else do nothing.</li>
+	 * </ul>
+	 * </li>
+	 * <li>The style is a kind or class style.
+	 * <ul>
+	 * <li>check all the groups in the kind of the style (graph, node, edge,
+	 * sprite) and only in this kind (since other will never be affected).</li>
+	 * <li>remove all groups of this kind.</li>
+	 * <li>add all elements of this kind anew to recreate the group.</li>
+	 * </ul>
+	 * </li>
 	 * </ol>
 	 */
 	protected void checkForNewStyle(Rule newRule) {
