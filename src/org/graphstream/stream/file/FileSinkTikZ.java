@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Array;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Locale;
 
@@ -122,9 +123,9 @@ public class FileSinkTikZ extends FileSinkBase {
 	public static final String HEIGHT_ATTR = "ui.tikz.height";
 
 	public static final double DEFAULT_WIDTH = 10;
-	
-	public static final double DEFAULT_HEIGHT= 10;
-	
+
+	public static final double DEFAULT_HEIGHT = 10;
+
 	/**
 	 * Define the default minimum size of nodes when using a dynamic size. This
 	 * size is in millimeter.
@@ -162,6 +163,11 @@ public class FileSinkTikZ extends FileSinkBase {
 	protected double displayMinSize = DISPLAY_MIN_SIZE_IN_MM;
 
 	protected double displayMaxSize = DISPLAY_MAX_SIZE_IN_MM;
+
+	private double xmin, ymin, xmax, ymax;
+
+	private PointsWrapper points;
+	private Locale l = Locale.ROOT;
 
 	protected static String formatId(String id) {
 		return "node" + id.replaceAll("\\W", "_");
@@ -234,6 +240,16 @@ public class FileSinkTikZ extends FileSinkBase {
 				if (Double.isNaN(uicolor))
 					uicolor = 0;
 
+				int c = gn.style.getFillColorCount();
+				int s = 1;
+				double d = 1.0 / (c - 1);
+
+				while (s * d < uicolor && s < c)
+					s++;
+
+				uicolor -= (s - 1) * d;
+				uicolor *= c;
+
 				style += String.format(Locale.ROOT, ", fill=%s!%d!%s",
 						checkColor(gn.style.getFillColor(0)),
 						(int) (uicolor * 100),
@@ -252,6 +268,50 @@ public class FileSinkTikZ extends FileSinkBase {
 
 				style += String.format(Locale.ROOT, ", minimum size=%fmm",
 						uisize);
+			}
+		}
+
+		return style;
+	}
+
+	protected String getEdgeStyle(Edge e) {
+		String style = "tikzgsnode";
+
+		if (e instanceof GraphicEdge) {
+			GraphicEdge ge = (GraphicEdge) e;
+
+			style = classNames.get(ge.style.getId());
+
+			if (ge.style.getFillMode() == FillMode.DYN_PLAIN) {
+				double uicolor = ge.getNumber("ui.color");
+
+				if (Double.isNaN(uicolor))
+					uicolor = 0;
+
+				int c = ge.style.getFillColorCount();
+				int s = 1;
+				double d = 1.0 / (c - 1);
+
+				while (s * d < uicolor && s < c)
+					s++;
+
+				uicolor -= (s - 1) * d;
+				uicolor *= c;
+
+				style += String.format(Locale.ROOT, ", draw=%s!%d!%s",
+						checkColor(ge.style.getFillColor(s - 1)),
+						(int) (uicolor * 100),
+						checkColor(ge.style.getFillColor(s)));
+			}
+
+			if (ge.style.getSizeMode() == SizeMode.DYN_SIZE) {
+				double uisize = ge.getNumber("ui.size");
+
+				if (Double.isNaN(uisize) || uisize < 0.01)
+					uisize = 1;
+
+				style += String
+						.format(Locale.ROOT, ", line width=%fpt", uisize);
 			}
 		}
 
@@ -283,11 +343,11 @@ public class FileSinkTikZ extends FileSinkBase {
 		StringBuilder buffer = new StringBuilder();
 		LinkedList<String> style = new LinkedList<String>();
 
+		for (int i = 0; i < group.getFillColorCount(); i++)
+			checkColor(group.getFillColor(i));
+
 		switch (group.getType()) {
 		case NODE: {
-			for (int i = 0; i < group.getFillColorCount(); i++)
-				checkColor(group.getFillColor(i));
-
 			if (group.getFillMode() != FillMode.DYN_PLAIN) {
 				String fill = checkColor(group.getFillColor(0));
 				style.add("fill=" + fill);
@@ -312,6 +372,9 @@ public class FileSinkTikZ extends FileSinkBase {
 							group.getStrokeColor(0).getAlpha() / 255.0f));
 
 				break;
+			default:
+				System.err.printf("unhandled stroke mode : %s%n",
+						group.getStrokeMode());
 			}
 
 			switch (group.getShape()) {
@@ -357,8 +420,10 @@ public class FileSinkTikZ extends FileSinkBase {
 		}
 			break;
 		case EDGE: {
-			String fill = checkColor(group.getFillColor(0));
-			style.add("draw=" + fill);
+			if (group.getFillMode() != FillMode.DYN_PLAIN) {
+				String fill = checkColor(group.getFillColor(0));
+				style.add("draw=" + fill);
+			}
 
 			if (group.getFillColor(0).getAlpha() < 255)
 				style.add(String.format(Locale.ROOT, "draw opacity=%.2f", group
@@ -378,6 +443,8 @@ public class FileSinkTikZ extends FileSinkBase {
 			}
 		}
 			break;
+		default:
+			System.err.printf("unhandled group type : %s%n", group.getType());
 		}
 
 		for (int i = 0; i < style.size(); i++) {
@@ -417,67 +484,93 @@ public class FileSinkTikZ extends FileSinkBase {
 			else
 				width = DEFAULT_WIDTH;
 		}
-		
+
 		if (Double.isNaN(height)) {
 			if (buffer.hasNumber(HEIGHT_ATTR))
 				height = buffer.getNumber(HEIGHT_ATTR);
 			else
 				height = DEFAULT_WIDTH;
 		}
-		
-		SpringBox sbox = null;
 
-		if (layout) {
-			sbox = new SpringBox();
-
-			GraphReplay replay = new GraphReplay("replay");
-			replay.addSink(sbox);
-			sbox.addAttributeSink(buffer);
-
-			replay.replay(buffer);
-
-			do
-				sbox.compute();
-			while (sbox.getStabilization() < 0.9);
-
-			buffer.removeSink(sbox);
-			sbox.removeAttributeSink(buffer);
-
-			sbox = null;
-		}
+		checkLayout();
 
 		if (css != null)
 			buffer.addAttribute("ui.stylesheet", css);
 
-		StyleGroupSet sgs = buffer.getStyleGroups();
-
-		for (StyleGroup sg : sgs.groups()) {
-			String key = String.format("class%02d", classIndex++);
-			classNames.put(sg.getId(), key);
-			classes.put(key, getTikzStyle(sg));
-		}
-
-		String nodeStyle = "circle,draw=black,fill=black";
-		String edgeStyle = "draw=black";
-		Locale l = Locale.ROOT;
-		double xmin, ymin, xmax, ymax;
-		PointsWrapper points = new PointsWrapper();
-
-		out.printf("%%%n%% Do not forget \\usepackage{tikz} in header.%n%%%n");
+		points = new PointsWrapper();
 
 		//
 		// Begin tikzpicture
 		//
-		out.printf("\\begin{tikzpicture}[%n");
-		for (String key : classes.keySet())
-			out.printf(l, "\t%s/.style={%s},%n", key, classes.get(key));
-		out.printf(l, "\ttikzgsnode/.style={%s},%n", nodeStyle);
-		out.printf(l, "\ttikzgsedge/.style={%s}%n", edgeStyle);
-		out.printf("]%n");
-		for (String rgb : colors.keySet())
-			out.printf(l, "\t\\definecolor{%s}{rgb}{%s}%n", colors.get(rgb),
-					rgb);
+		out.printf("%%%n%% Do not forget \\usepackage{tikz} in header.%n%%%n");
+		out.printf("\\begin{tikzpicture}");
 
+		checkAndOutputStyle();
+		checkXYandSize();
+
+		for (Node n : buffer.getEachNode()) {
+			double x, y;
+
+			x = getNodeX(n);
+			y = getNodeY(n);
+
+			if (Double.isNaN(x) || Double.isNaN(y)) {
+				x = Math.random() * width;
+				y = Math.random() * height;
+			} else {
+				x = width * (x - xmin) / (xmax - xmin);
+				y = height * (y - ymin) / (ymax - ymin);
+			}
+
+			out.printf(l, "\t\\node[inner sep=0pt] (%s) at (%f,%f) {};%n",
+					formatId(n.getId()), x, y);
+		}
+
+		StyleGroupSet sgs = buffer.getStyleGroups();
+
+		for (HashSet<StyleGroup> groups : sgs.zIndex()) {
+			for (StyleGroup group : groups) {
+				switch (group.getType()) {
+				case NODE:
+					for (Element e : group.elements())
+						outputNode((Node) e);
+					break;
+				case EDGE:
+					for (Element e : group.elements())
+						outputEdge((Edge) e);
+					break;
+				default:
+				}
+			}
+		}
+
+		//
+		// End of tikzpicture.
+		//
+		out.printf("\\end{tikzpicture}%n");
+	}
+
+	private void checkLayout() {
+		if (!layout)
+			return;
+
+		SpringBox sbox = new SpringBox();
+
+		GraphReplay replay = new GraphReplay("replay");
+		replay.addSink(sbox);
+		sbox.addAttributeSink(buffer);
+
+		replay.replay(buffer);
+
+		do
+			sbox.compute();
+		while (sbox.getStabilization() < 0.9);
+
+		buffer.removeSink(sbox);
+		sbox.removeAttributeSink(buffer);
+	}
+
+	private void checkXYandSize() {
 		xmin = ymin = Double.MAX_VALUE;
 		xmax = ymax = Double.MIN_VALUE;
 
@@ -520,61 +613,66 @@ public class FileSinkTikZ extends FileSinkBase {
 				}
 			}
 		}
+	}
 
-		for (Node n : buffer.getEachNode()) {
-			double x, y;
-			String label;
-			String style = getNodeStyle(n);
+	private void checkAndOutputStyle() {
+		String nodeStyle = "circle,draw=black,fill=black";
+		String edgeStyle = "draw=black";
+		StyleGroupSet sgs = buffer.getStyleGroups();
 
-			x = getNodeX(n);
-			y = getNodeY(n);
+		for (StyleGroup sg : sgs.groups()) {
+			String key = String.format("class%02d", classIndex++);
+			classNames.put(sg.getId(), key);
+			classes.put(key, getTikzStyle(sg));
+		}
 
-			if (Double.isNaN(x) || Double.isNaN(y)) {
-				x = Math.random() * width;
-				y = Math.random() * height;
-			} else {
+		out.printf("[%n");
+
+		for (String key : classes.keySet())
+			out.printf(l, "\t%s/.style={%s},%n", key, classes.get(key));
+
+		out.printf(l, "\ttikzgsnode/.style={%s},%n", nodeStyle);
+		out.printf(l, "\ttikzgsedge/.style={%s}%n", edgeStyle);
+
+		out.printf("]%n");
+
+		for (String rgb : colors.keySet())
+			out.printf(l, "\t\\definecolor{%s}{rgb}{%s}%n", colors.get(rgb),
+					rgb);
+	}
+
+	private void outputNode(Node n) {
+		String label;
+		String style = getNodeStyle(n);
+
+		label = n.hasAttribute("label") ? (String) n.getLabel("label") : "";
+
+		out.printf(l, "\t\\node[%s] at (%s) {%s};%n", style,
+				formatId(n.getId()), label);
+	}
+
+	private void outputEdge(Edge e) {
+		String style = getEdgeStyle(e);
+		String uiPoints = "";
+		points.setElement(e);
+
+		if (points.check()) {
+			for (int i = 0; i < points.getPointsCount(); i++) {
+				double x, y;
+
+				x = points.getX(i);
+				y = points.getY(i);
 				x = width * (x - xmin) / (xmax - xmin);
 				y = height * (y - ymin) / (ymax - ymin);
+
+				uiPoints = String
+						.format(l, "%s-- (%.3f,%.3f) ", uiPoints, x, y);
 			}
-
-			label = n.hasAttribute("label") ? (String) n.getLabel("label") : "";
-
-			out.printf(l, "\t\\node[%s] (%s) at (%f,%f) {%s};%n", style,
-					formatId(n.getId()), x, y, label);
 		}
 
-		for (Edge e : buffer.getEachEdge()) {
-			String uiClass = "tikzgsedge";
-
-			if (e instanceof GraphicEdge)
-				uiClass = classNames.get(((GraphicEdge) e).style.getId());
-
-			String uiPoints = "";
-			points.setElement(e);
-
-			if (points.check()) {
-				for (int i = 0; i < points.getPointsCount(); i++) {
-					double x, y;
-
-					x = points.getX(i);
-					y = points.getY(i);
-					x = width * (x - xmin) / (xmax - xmin);
-					y = height * (y - ymin) / (ymax - ymin);
-
-					uiPoints = String.format(l, "%s-- (%.3f,%.3f) ", uiPoints,
-							x, y);
-				}
-			}
-
-			out.printf(l, "\t\\draw[%s] (%s) %s%s (%s);%n", uiClass, formatId(e
-					.getSourceNode().getId()), uiPoints, e.isDirected() ? "->"
-					: "--", formatId(e.getTargetNode().getId()));
-		}
-
-		//
-		// End of tikzpicture.
-		//
-		out.printf("\\end{tikzpicture}%n");
+		out.printf(l, "\t\\draw[%s] (%s) %s%s (%s);%n", style, formatId(e
+				.getSourceNode().getId()), uiPoints, e.isDirected() ? "->"
+				: "--", formatId(e.getTargetNode().getId()));
 	}
 
 	/*
