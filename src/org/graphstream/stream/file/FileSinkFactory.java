@@ -31,6 +31,8 @@
  */
 package org.graphstream.stream.file;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * Try to instantiate the correct writer given a graph filename.
  * 
@@ -41,6 +43,25 @@ package org.graphstream.stream.file;
  * </p>
  */
 public class FileSinkFactory {
+	private static final ConcurrentHashMap<String, Class<? extends FileSink>> ext2sink;
+
+	static {
+		ext2sink = new ConcurrentHashMap<String, Class<? extends FileSink>>();
+
+		ext2sink.put("dgs", FileSinkDGS.class);
+		ext2sink.put("dgml", FileSinkDynamicGML.class);
+		ext2sink.put("gml", FileSinkGML.class);
+		ext2sink.put("dot", FileSinkDOT.class);
+		ext2sink.put("svg", FileSinkSVG.class);
+		ext2sink.put("pgf", FileSinkTikZ.class);
+		ext2sink.put("tikz", FileSinkTikZ.class);
+		ext2sink.put("tex", FileSinkTikZ.class);
+		ext2sink.put("gexf", FileSinkGEXF.class);
+		ext2sink.put("xml", FileSinkGEXF.class);
+		ext2sink.put("png", FileSinkImages.class);
+		ext2sink.put("jpg", FileSinkImages.class);
+	}
+
 	/**
 	 * Looks at the file name given and its extension and propose a file output
 	 * for the format that match this extension.
@@ -50,23 +71,22 @@ public class FileSinkFactory {
 	 * @return A file sink or null.
 	 */
 	public static FileSink sinkFor(String filename) {
-		// String fc = new String( filename );
-		filename = filename.toLowerCase();
+		if (filename.indexOf('.') > 0) {
+			String ext = filename.substring(filename.lastIndexOf('.') + 1);
+			ext = ext.toLowerCase();
 
-		if (filename.endsWith(".dgs"))
-			return new FileSinkDGS();
+			if (ext2sink.containsKey(ext)) {
+				Class<? extends FileSink> fsink = ext2sink.get(ext);
 
-		if (filename.endsWith(".dgml"))
-			return new FileSinkDynamicGML();
-		
-		if (filename.endsWith(".gml"))
-			return new FileSinkGML();
-
-		if (filename.endsWith(".dot"))
-			return new FileSinkDOT();
-
-		if (filename.endsWith(".svg"))
-			return new FileSinkSVG();
+				try {
+					return fsink.newInstance();
+				} catch (InstantiationException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 
 		return null;
 	}
