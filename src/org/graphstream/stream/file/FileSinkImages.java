@@ -586,6 +586,11 @@ public class FileSinkImages implements FileSink {
 		renderer.getCamera().setViewPercent(zoom);
 	}
 
+	public void setGraphViewport(double minx, double miny, double maxx,
+			double maxy) {
+		renderer.getCamera().setGraphViewport(minx, miny, maxx, maxy);
+	}
+
 	public void setClearImageBeforeOutputEnabled(boolean on) {
 		clearImageBeforeOutput = on;
 	}
