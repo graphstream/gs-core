@@ -87,11 +87,31 @@ public class ViewerPipe extends SourceBase implements ProxyPipe {
 
 	// Commands
 
-	/**
-	 * Pump events from the pipe.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.ProxyPipe#pump()
 	 */
 	public void pump() {
 		pipeIn.pump();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.ProxyPipe#blockingPump()
+	 */
+	public void blockingPump() throws InterruptedException {
+		pipeIn.blockingPump();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.ProxyPipe#blockingPump(long)
+	 */
+	public void blockingPump(long timeout) throws InterruptedException {
+		pipeIn.blockingPump(timeout);
 	}
 
 	public void addViewerListener(ViewerListener listener) {
@@ -104,22 +124,51 @@ public class ViewerPipe extends SourceBase implements ProxyPipe {
 
 	// Sink interface
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#edgeAttributeAdded(java.lang.String,
+	 * long, java.lang.String, java.lang.String, java.lang.Object)
+	 */
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
 			String attribute, Object value) {
 		sendEdgeAttributeAdded(sourceId, timeId, edgeId, attribute, value);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#edgeAttributeChanged(java.lang.String
+	 * , long, java.lang.String, java.lang.String, java.lang.Object,
+	 * java.lang.Object)
+	 */
 	public void edgeAttributeChanged(String sourceId, long timeId,
 			String edgeId, String attribute, Object oldValue, Object newValue) {
 		sendEdgeAttributeChanged(sourceId, timeId, edgeId, attribute, oldValue,
 				newValue);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#edgeAttributeRemoved(java.lang.String
+	 * , long, java.lang.String, java.lang.String)
+	 */
 	public void edgeAttributeRemoved(String sourceId, long timeId,
 			String edgeId, String attribute) {
 		sendEdgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#graphAttributeAdded(java.lang.String
+	 * , long, java.lang.String, java.lang.Object)
+	 */
 	public void graphAttributeAdded(String sourceId, long timeId,
 			String attribute, Object value) {
 		sendGraphAttributeAdded(sourceId, timeId, attribute, value);
@@ -137,64 +186,136 @@ public class ViewerPipe extends SourceBase implements ProxyPipe {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#graphAttributeChanged(java.lang.
+	 * String, long, java.lang.String, java.lang.Object, java.lang.Object)
+	 */
 	public void graphAttributeChanged(String sourceId, long timeId,
 			String attribute, Object oldValue, Object newValue) {
 		sendGraphAttributeChanged(sourceId, timeId, attribute, oldValue,
 				newValue);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#graphAttributeRemoved(java.lang.
+	 * String, long, java.lang.String)
+	 */
 	public void graphAttributeRemoved(String sourceId, long timeId,
 			String attribute) {
 		sendGraphAttributeRemoved(sourceId, timeId, attribute);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#nodeAttributeAdded(java.lang.String,
+	 * long, java.lang.String, java.lang.String, java.lang.Object)
+	 */
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
 			String attribute, Object value) {
 		sendNodeAttributeAdded(sourceId, timeId, nodeId, attribute, value);
 
-		if(attribute.equals("ui.clicked")) {
-			for(ViewerListener listener: viewerListeners)
+		if (attribute.equals("ui.clicked")) {
+			for (ViewerListener listener : viewerListeners)
 				listener.buttonPushed(nodeId);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#nodeAttributeChanged(java.lang.String
+	 * , long, java.lang.String, java.lang.String, java.lang.Object,
+	 * java.lang.Object)
+	 */
 	public void nodeAttributeChanged(String sourceId, long timeId,
 			String nodeId, String attribute, Object oldValue, Object newValue) {
 		sendNodeAttributeChanged(sourceId, timeId, nodeId, attribute, oldValue,
-			newValue);
+				newValue);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#nodeAttributeRemoved(java.lang.String
+	 * , long, java.lang.String, java.lang.String)
+	 */
 	public void nodeAttributeRemoved(String sourceId, long timeId,
 			String nodeId, String attribute) {
 		sendNodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
 
-		if(attribute.equals("ui.clicked")) {
-			for(ViewerListener listener: viewerListeners)
+		if (attribute.equals("ui.clicked")) {
+			for (ViewerListener listener : viewerListeners)
 				listener.buttonReleased(nodeId);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.ElementSink#edgeAdded(java.lang.String, long,
+	 * java.lang.String, java.lang.String, java.lang.String, boolean)
+	 */
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
 			String fromNodeId, String toNodeId, boolean directed) {
 		sendEdgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId, directed);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.ElementSink#edgeRemoved(java.lang.String,
+	 * long, java.lang.String)
+	 */
 	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 		sendEdgeRemoved(sourceId, timeId, edgeId);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.ElementSink#graphCleared(java.lang.String,
+	 * long)
+	 */
 	public void graphCleared(String sourceId, long timeId) {
 		sendGraphCleared(sourceId, timeId);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.ElementSink#nodeAdded(java.lang.String, long,
+	 * java.lang.String)
+	 */
 	public void nodeAdded(String sourceId, long timeId, String nodeId) {
 		sendNodeAdded(sourceId, timeId, nodeId);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.ElementSink#nodeRemoved(java.lang.String,
+	 * long, java.lang.String)
+	 */
 	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 		sendNodeRemoved(sourceId, timeId, nodeId);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.ElementSink#stepBegins(java.lang.String,
+	 * long, double)
+	 */
 	public void stepBegins(String sourceId, long timeId, double step) {
 		sendStepBegins(sourceId, timeId, step);
 	}

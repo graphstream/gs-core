@@ -265,6 +265,11 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe {
 		} while (e != null);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.ProxyPipe#blockingPump()
+	 */
 	public void blockingPump() throws InterruptedException {
 		blockingPump(0);
 	}
@@ -304,7 +309,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe {
 	public boolean hasPostRemaining() {
 		boolean r = true;
 		lock.lock();
-		
+
 		try {
 			r = events.size() > 0;
 		} finally {

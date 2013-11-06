@@ -68,8 +68,8 @@ import org.miv.mbox.MBoxStandalone;
  * 
  * <p>
  * The only restriction is that the sink thread must regularly call the
- * {@link #pump()} method to dispatch events coming from the source to all
- * sinks registered (see the explanation in {@link org.graphstream.stream.ProxyPipe}).
+ * {@link #pump()} method to dispatch events coming from the source to all sinks
+ * registered (see the explanation in {@link org.graphstream.stream.ProxyPipe}).
  * </p>
  * 
  * <p>
@@ -80,7 +80,8 @@ import org.miv.mbox.MBoxStandalone;
  * graph as input.
  * </p>
  * 
- * @deprecated This is the old version of {@link org.graphstream.stream.thread.ThreadProxyPipe}.
+ * @deprecated This is the old version of
+ *             {@link org.graphstream.stream.thread.ThreadProxyPipe}.
  */
 @Deprecated
 public class ThreadProxyPipeOld extends SourceBase implements ProxyPipe,
@@ -254,15 +255,29 @@ public class ThreadProxyPipeOld extends SourceBase implements ProxyPipe,
 		((MBoxStandalone) events).processMessages();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.ProxyPipe#blockingPump()
+	 */
+	public void blockingPump() throws InterruptedException {
+		throw new UnsupportedOperationException();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.stream.ProxyPipe#blockingPump(long)
+	 */
+	public void blockingPump(long timeout) throws InterruptedException {
+		throw new UnsupportedOperationException();
+	}
+
 	/**
 	 * Set of events sent via the message box.
 	 */
 	protected static enum GraphEvents {
-		ADD_NODE, DEL_NODE, ADD_EDGE, DEL_EDGE,
-		STEP, CLEARED,
-		ADD_GRAPH_ATTR, CHG_GRAPH_ATTR, DEL_GRAPH_ATTR,
-		ADD_NODE_ATTR, CHG_NODE_ATTR, DEL_NODE_ATTR,
-		ADD_EDGE_ATTR, CHG_EDGE_ATTR, DEL_EDGE_ATTR
+		ADD_NODE, DEL_NODE, ADD_EDGE, DEL_EDGE, STEP, CLEARED, ADD_GRAPH_ATTR, CHG_GRAPH_ATTR, DEL_GRAPH_ATTR, ADD_NODE_ATTR, CHG_NODE_ATTR, DEL_NODE_ATTR, ADD_EDGE_ATTR, CHG_EDGE_ATTR, DEL_EDGE_ATTR
 	};
 
 	protected void replayGraph(Graph graph) {
@@ -277,7 +292,7 @@ public class ThreadProxyPipeOld extends SourceBase implements ProxyPipe,
 							sourceTime.newEvent(), key, graph.getAttribute(key));
 
 			Thread.yield();
-			
+
 			// Replay all nodes and their attributes.
 
 			for (Node node : graph) {

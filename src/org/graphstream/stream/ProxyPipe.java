@@ -57,12 +57,12 @@ package org.graphstream.stream;
  * </p>
  * 
  * <p>
- * This way of doing allows for example to pass a thread frontier with a
- * minimum of synchronization : only the mail box has to be synchronized. And
- * the source and sink can most of the time run in parallel. Without such a
- * proxy, we would have to synchronize the whole graph, and threads would
- * consume their time waiting one another since most of the work in GraphStream
- * is centered on graphs.
+ * This way of doing allows for example to pass a thread frontier with a minimum
+ * of synchronization : only the mail box has to be synchronized. And the source
+ * and sink can most of the time run in parallel. Without such a proxy, we would
+ * have to synchronize the whole graph, and threads would consume their time
+ * waiting one another since most of the work in GraphStream is centered on
+ * graphs.
  * </p>
  * 
  * <p>
@@ -86,4 +86,22 @@ public interface ProxyPipe extends Pipe {
 	 * outputs.
 	 */
 	void pump();
+
+	/**
+	 * Same as {@link #pump()} but try to block until new events were available.
+	 * Note that this feature will not be available on all proxy pipe
+	 * implementation and may throws an
+	 * {@link java.lang.UnsupportedOperationException}. It can throw an
+	 * {@link java.lang.InterruptedException} if the current thread is
+	 * interrupted while proxy is waiting for events.
+	 */
+	void blockingPump() throws InterruptedException;
+
+	/**
+	 * Same as {@link #blockingPump()} but including a timeout delay.
+	 * 
+	 * @param timeout
+	 * @throws InterruptedException
+	 */
+	void blockingPump(long timeout) throws InterruptedException;
 }
