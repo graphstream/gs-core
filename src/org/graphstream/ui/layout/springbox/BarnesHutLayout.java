@@ -315,6 +315,24 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout,
 		hi.set(p.x, p.y, p.z);
 		return hi;
 	}
+
+	public double randomXInsideBounds() {
+		org.miv.pherd.geom.Point3 lo = nodes.getNTree().getLowestPoint();
+		org.miv.pherd.geom.Point3 hi = nodes.getNTree().getHighestPoint();
+		return lo.x + ((hi.x - lo.x)*Math.random());
+	}
+
+	public double randomYInsideBounds() {
+		org.miv.pherd.geom.Point3 lo = nodes.getNTree().getLowestPoint();
+		org.miv.pherd.geom.Point3 hi = nodes.getNTree().getHighestPoint();
+		return lo.y + ((hi.y - lo.y)*Math.random());
+	}
+
+	public double randomZInsideBounds() {
+		org.miv.pherd.geom.Point3 lo = nodes.getNTree().getLowestPoint();
+		org.miv.pherd.geom.Point3 hi = nodes.getNTree().getHighestPoint();
+		return lo.z + ((hi.z - lo.z)*Math.random());
+	}
 	
 	public Point3 getCenterPoint() {
 		return center;
