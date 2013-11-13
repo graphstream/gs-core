@@ -49,10 +49,11 @@ public class FileSinkFactory {
 		ext2sink = new ConcurrentHashMap<String, Class<? extends FileSink>>();
 
 		ext2sink.put("dgs", FileSinkDGS.class);
+		ext2sink.put("dgsz", FileSinkDGS.class);
 		ext2sink.put("dgml", FileSinkDynamicGML.class);
 		ext2sink.put("gml", FileSinkGML.class);
 		ext2sink.put("dot", FileSinkDOT.class);
-		ext2sink.put("svg", FileSinkSVG.class);
+		ext2sink.put("svg", FileSinkSVG2.class);
 		ext2sink.put("pgf", FileSinkTikZ.class);
 		ext2sink.put("tikz", FileSinkTikZ.class);
 		ext2sink.put("tex", FileSinkTikZ.class);

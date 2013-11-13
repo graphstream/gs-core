@@ -402,6 +402,8 @@ public class FileSinkSVG2 implements FileSink {
 					case RIGHT:
 						out.attribute("text-anchor", "end");
 						break;
+					default:
+						break;
 					}
 
 					switch (style.getTextSize().units) {
@@ -636,6 +638,8 @@ public class FileSinkSVG2 implements FileSink {
 				buildGraphStyle();
 				break;
 			case SPRITE:
+			default:
+				break;
 			}
 		}
 
@@ -748,6 +752,8 @@ public class FileSinkSVG2 implements FileSink {
 					y1 = "100%";
 					x2 = "0%";
 					y2 = "0%";
+					break;
+				default:
 					break;
 				}
 
