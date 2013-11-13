@@ -224,6 +224,7 @@
 						<exclude>org/graphstream/stream/file/FileSinkSWF.java</exclude>
 					</excludes>
 				</configuration>
+				<version>3.1</version>
 			</plugin>
 
 			<plugin>
@@ -234,11 +235,13 @@
 						<include>**</include>
 					</sourceIncludes>
 				</configuration>
+				<version>2.9</version>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
 			</plugin>
 
 			<plugin>
@@ -270,6 +273,7 @@
 					<version>true</version>
 					<windowtitle>The GraphStream ${project.version} API</windowtitle>
 				</configuration>
+				<version>2.9.1</version>
 			</plugin>
 
 			<plugin>
@@ -281,6 +285,7 @@
 						<exclude>**/*$*</exclude>
 					</excludes>
 				</configuration>
+				<version>2.16</version>
 			</plugin>
 		</plugins>
 	</build>
