@@ -108,6 +108,7 @@ public abstract class NodeParticle extends Particle {
 	 *            The node identifier.
 	 */
 	public NodeParticle(BarnesHutLayout box, String id) {
+//		this(box, id, box.getCenterPoint().x, box.getCenterPoint().y, box.is3D() ? box.getCenterPoint().z : 0);
 		this(box, id,  box.randomXInsideBounds(), box.randomYInsideBounds(), box.is3D ? box.randomZInsideBounds() : 0);	
 //		this(box, id, (box.random.nextDouble() * 2) - 1, (box.random
 //				.nextDouble() * 2) - 1,

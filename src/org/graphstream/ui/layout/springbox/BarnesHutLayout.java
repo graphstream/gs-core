@@ -317,21 +317,27 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout,
 	}
 
 	public double randomXInsideBounds() {
-		org.miv.pherd.geom.Point3 lo = nodes.getNTree().getLowestPoint();
-		org.miv.pherd.geom.Point3 hi = nodes.getNTree().getHighestPoint();
-		return lo.x + ((hi.x - lo.x)*Math.random());
+		org.miv.pherd.geom.Point3 c = ((GraphCellData)nodes.getNTree().getRootCell().getData()).center;
+		return c.x + (random.nextDouble()*2-1);
+		//org.miv.pherd.geom.Point3 lo = nodes.getNTree().getLowestPoint();
+		//org.miv.pherd.geom.Point3 hi = nodes.getNTree().getHighestPoint();
+		//return lo.x + ((hi.x - lo.x)*random.nextDouble());
 	}
 
 	public double randomYInsideBounds() {
-		org.miv.pherd.geom.Point3 lo = nodes.getNTree().getLowestPoint();
-		org.miv.pherd.geom.Point3 hi = nodes.getNTree().getHighestPoint();
-		return lo.y + ((hi.y - lo.y)*Math.random());
+		org.miv.pherd.geom.Point3 c = ((GraphCellData)nodes.getNTree().getRootCell().getData()).center;
+		return c.y + (random.nextDouble()*2-1);
+		//org.miv.pherd.geom.Point3 lo = nodes.getNTree().getLowestPoint();
+		//org.miv.pherd.geom.Point3 hi = nodes.getNTree().getHighestPoint();
+		//return lo.y + ((hi.y - lo.y)*random.nextDouble());
 	}
 
 	public double randomZInsideBounds() {
-		org.miv.pherd.geom.Point3 lo = nodes.getNTree().getLowestPoint();
-		org.miv.pherd.geom.Point3 hi = nodes.getNTree().getHighestPoint();
-		return lo.z + ((hi.z - lo.z)*Math.random());
+		org.miv.pherd.geom.Point3 c = ((GraphCellData)nodes.getNTree().getRootCell().getData()).center;
+		return c.z + (random.nextDouble()*2-1);
+		//org.miv.pherd.geom.Point3 lo = nodes.getNTree().getLowestPoint();
+		//org.miv.pherd.geom.Point3 hi = nodes.getNTree().getHighestPoint();
+		//return lo.z + ((hi.z - lo.z)*random.nextDouble());
 	}
 	
 	public Point3 getCenterPoint() {
@@ -533,8 +539,10 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout,
 		energies.clearEnergies();
 	}
 
-	protected void addNode(String sourceId, String id) {
-		nodes.addParticle(newNodeParticle(id));
+	protected NodeParticle addNode(String sourceId, String id) {
+		NodeParticle np = newNodeParticle(id);
+		nodes.addParticle(np);
+		return np;
 	}
 
 	public void moveNode(String id, double x, double y, double z) {
@@ -695,8 +703,13 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout,
 
 	public void nodeAdded(String graphId, long time, String nodeId) {
 		if (sinkTime.isNewEvent(graphId, time)) {
-			addNode(graphId, nodeId);
+//System.err.printf("## before (%.2f, %.2f  --  %.2f %.2f) %n", lo.x, lo.y, hi.x, hi.y);
+			NodeParticle np = addNode(graphId, nodeId);
 			sendNodeAdded(graphId, time, nodeId);
+//			org.miv.pherd.geom.Point3 p = np.getPosition();
+
+//System.err.printf("-- node added at (%.2f, %.2f)   inside (%.2f, %.2f  --  %.2f %.2f) %n", p.x, p.y, lo.x, lo.y, hi.x, hi.y);
+//			particleMoved(nodeId, p.x, p.y, p.z);
 		}
 	}
 

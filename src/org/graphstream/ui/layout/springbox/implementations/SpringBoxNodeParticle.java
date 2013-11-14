@@ -56,10 +56,9 @@ public class SpringBoxNodeParticle extends NodeParticle {
 	 *            The node identifier.
 	 */
 	public SpringBoxNodeParticle(SpringBox box, String id) {
-		this(box, id, (box.getRandom().nextDouble() * 2 * box.k) - box.k, (box
-				.getRandom().nextDouble() * 2 * box.k) - box.k,
-				box.is3D() ? (box.getRandom().nextDouble() * 2 * box.k) - box.k
-						: 0);
+		//this(box, id, box.getCenterPoint().x, box.getCenterPoint().y, box.is3D() ? box.getCenterPoint().z : 0);
+		this(box, id,  box.randomXInsideBounds(), box.randomYInsideBounds(), box.is3D() ? box.randomZInsideBounds() : 0);	
+		//this(box, id, (box.getRandom().nextDouble() * 2 * box.k) - box.k, (box.getRandom().nextDouble() * 2 * box.k) - box.k, box.is3D() ? (box.getRandom().nextDouble() * 2 * box.k) - box.k : 0);
 
 		this.box = box;
 	}
