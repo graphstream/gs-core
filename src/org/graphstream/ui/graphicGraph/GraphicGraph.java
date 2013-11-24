@@ -746,7 +746,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 
 		step = 0;
 		graphChanged = true;
-		
+
 		styleGroups.addElement(this);
 		style = styleGroups.getStyleFor(this);
 	}
@@ -978,7 +978,8 @@ public class GraphicGraph extends AbstractElement implements Graph,
 	 */
 	public void edgeAttributeChanged(String sourceId, long timeId,
 			String edgeId, String attribute, Object oldValue, Object newValue) {
-		listeners.edgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
+		listeners.edgeAttributeChanged(sourceId, timeId, edgeId, attribute,
+				oldValue, newValue);
 	}
 
 	/*
