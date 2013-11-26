@@ -35,6 +35,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 
 import org.graphstream.graph.Element;
 import org.graphstream.ui.geom.Point3;
@@ -46,6 +47,7 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
 import org.graphstream.ui.swingViewer.util.Camera;
 import org.graphstream.ui.swingViewer.util.FontCache;
+import org.graphstream.ui.swingViewer.util.DefaultCamera;
 
 public abstract class ElementRenderer {
 	// Attribute
@@ -210,23 +212,25 @@ public abstract class ElementRenderer {
 
 			Point3 p = null;
 			GraphicSprite s = null;
+			Point2D.Double pos = null;
 
-			if (element instanceof GraphicSprite)
-				s = (GraphicSprite) element;
+			if (element instanceof GraphicSprite) {
+				s   = (GraphicSprite) element;
+				pos = ((DefaultCamera) camera).getSpritePosition(s,
+					new Point2D.Double(), StyleConstants.Units.GU);
+			}
 
-			if (s != null && s.getUnits() == Units.PX) {
+			if (pos != null && s.getUnits() == Units.PX) {
 				double w = camera.getMetrics().lengthToPx(group.getSize(),
 						0);
-				p = new Point3();
-				p.x = element.getX() + (w / 2);
-				p.y = element.getY();
+				p = camera.transformGuToPx(pos.x, pos.y, 0);
+				p.x += w/2;
 			} else if (s != null && s.getUnits() == Units.PERCENTS) {
 				double w = camera.getMetrics().lengthToPx(group.getSize(),
 						0);
-				p = new Point3();
-				p.x = camera.getMetrics().viewport[2] * element.getX()
-						+ (w / 2);
-				p.y = camera.getMetrics().viewport[3] * element.getY();
+				p = camera.transformGuToPx(camera.getMetrics().viewport[2] * pos.x,
+					camera.getMetrics().viewport[3] *  pos.y, 0);
+				p.x += (w/2);
 			} else {
 				double w = camera.getMetrics().lengthToGu(group.getSize(),
 						0);
