@@ -679,7 +679,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 			if (n2 == null)
 				throw new ElementNotFoundException("node \"%s\"", to);
 
-			edge = new GraphicEdge(id, n1, n2, directed, attributes);
+			edge = new GraphicEdge(id, n1, n2, directed, null);//, attributes);
 
 			styleGroups.addElement(edge);
 
@@ -718,7 +718,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 		GraphicNode node = (GraphicNode) styleGroups.getNode(id);
 
 		if (node == null) {
-			node = new GraphicNode(this, id, attributes);
+			node = new GraphicNode(this, id, null);//, attributes);
 
 			styleGroups.addElement(node);
 
@@ -1137,7 +1137,6 @@ public class GraphicGraph extends AbstractElement implements Graph,
 
 	protected void spriteAttribute(AttributeChangeEvent event, Element element,
 			String attribute, Object value) {
-
 		String spriteId = attribute.substring(10); // Remove the "ui.sprite."
 													// prefix.
 		int pos = spriteId.indexOf('.'); // Look if there is something after the
