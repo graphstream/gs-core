@@ -225,6 +225,27 @@ public class TestGraph {
 		assertNull(A.getEdgeToward("Z"));
 		assertNull(B.getEdgeToward("Z"));
 		assertNull(C.getEdgeToward("Z"));
+		
+		// Loop edges
+		assertFalse(A.hasEdgeBetween(A));
+		assertFalse(A.hasEdgeToward(A));
+		assertFalse(A.hasEdgeFrom(A));
+		assertNull(A.getEdgeBetween(A));
+		assertNull(A.getEdgeToward(A));
+		assertNull(A.getEdgeFrom(A));		
+		Edge AA = graph.addEdge("AA", "A", "A");
+		assertEquals(4, graph.getEdgeCount());
+		assertEquals(3, A.getDegree());
+		assertEquals(3, A.getInDegree());
+		assertEquals(3, A.getOutDegree());
+		assertTrue(A.hasEdgeBetween(A));
+		assertTrue(A.hasEdgeToward(A));
+		assertTrue(A.hasEdgeFrom(A));
+		assertEquals(AA, A.getEdgeBetween(A));
+		assertEquals(AA, A.getEdgeToward(A));
+		assertEquals(AA, A.getEdgeFrom(A));
+		assertEquals(A, AA.getSourceNode());
+		assertEquals(A, AA.getTargetNode());		
 	}
 
 	@Test
@@ -326,6 +347,27 @@ public class TestGraph {
 		assertNull(B.getEdgeToward("C"));
 		assertEquals(CA, C.getEdgeToward("A"));
 		assertEquals(BC, C.getEdgeToward("B"));
+		
+		// Directed loop edges
+		assertFalse(A.hasEdgeBetween(A));
+		assertFalse(A.hasEdgeToward(A));
+		assertFalse(A.hasEdgeFrom(A));
+		assertNull(A.getEdgeBetween(A));
+		assertNull(A.getEdgeToward(A));
+		assertNull(A.getEdgeFrom(A));		
+		Edge AA = graph.addEdge("AA", "A", "A", true);
+		assertEquals(4, graph.getEdgeCount());
+		assertEquals(3, A.getDegree());
+		assertEquals(2, A.getInDegree());
+		assertEquals(3, A.getOutDegree());
+		assertTrue(A.hasEdgeBetween(A));
+		assertTrue(A.hasEdgeToward(A));
+		assertTrue(A.hasEdgeFrom(A));
+		assertEquals(AA, A.getEdgeBetween(A));
+		assertEquals(AA, A.getEdgeToward(A));
+		assertEquals(AA, A.getEdgeFrom(A));		
+		assertEquals(A, AA.getSourceNode());
+		assertEquals(A, AA.getTargetNode());		
 	}
 
 	@Test
@@ -339,6 +381,12 @@ public class TestGraph {
 
 		assertEquals(2, A.getDegree());
 		assertEquals(2, B.getDegree());
+		
+		// loop edges
+		graph.addEdge("AA1", "A", "B");
+		graph.addEdge("AA2", "A", "B", true);
+		
+		assertEquals(4, A.getDegree());
 	}
 
 	@Test
@@ -579,6 +627,29 @@ public class TestGraph {
 		assertNotNull(graph.getNode("B"));
 		assertNotNull(graph.getNode("C"));
 		assertNotNull(graph.getEdge("BC"));
+		
+		// loop edges
+		Edge AA = graph.addEdge("AA", "A", "A");
+		assertEquals(2, graph.getEdgeCount());
+		e = graph.removeEdge("AA");
+		assertEquals(1, graph.getEdgeCount());
+		assertEquals(AA, e);
+		assertEquals(0, A.getDegree());
+		assertNull(graph.getEdge("AA"));
+		
+		Edge BB = graph.addEdge("BB", "B", "B", true);
+		assertEquals(2, graph.getEdgeCount());
+		e = graph.removeEdge("BB");
+		assertEquals(BB, e);
+		assertEquals(1, graph.getNode("B").getDegree());
+		assertNull(graph.getEdge("BB"));
+		BB = graph.addEdge("BB", "B", "B");
+		graph.removeNode("B");
+		assertNull(graph.getEdge("BB"));
+		assertEquals(0, graph.getEdgeCount());
+		
+		graph.addEdge("AC", "A", "C");
+		graph.addEdge("AA", "A", "A");
 
 		// Test the whole graph erasing.
 

@@ -992,7 +992,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		if (sourceCallback)
 			src.removeEdgeCallback(edge);
 
-		if (targetCallback)
+		if (src != dst && targetCallback)
 			dst.removeEdgeCallback(edge);
 
 		if (graphCallback)
