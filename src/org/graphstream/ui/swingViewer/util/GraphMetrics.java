@@ -187,7 +187,8 @@ public class GraphMetrics {
 	public double lengthToGu(double value, StyleConstants.Units units) {
 		switch (units) {
 		case PX:
-			return (value - 0.01f) / ratioPx2Gu;
+			//return (value - 0.01f) / ratioPx2Gu;
+			return value / ratioPx2Gu;
 		case PERCENTS:
 			return (diagonal * value);
 		case GU:
@@ -231,7 +232,8 @@ public class GraphMetrics {
 	public double lengthToPx(double value, StyleConstants.Units units) {
 		switch (units) {
 		case GU:
-			return (value - 0.01f) * ratioPx2Gu;
+			//return (value - 0.01f) * ratioPx2Gu;
+			return value * ratioPx2Gu;
 		case PERCENTS:
 			return (diagonal * value) * ratioPx2Gu;
 		case PX:
