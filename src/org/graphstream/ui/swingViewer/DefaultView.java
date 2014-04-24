@@ -216,6 +216,7 @@ public class DefaultView extends View implements WindowListener
 				frame.setLayout(new BorderLayout());
 				frame.add(this, BorderLayout.CENTER);
 				frame.setSize(800, 600);
+				frame.setLocationRelativeTo(null);
 				frame.setVisible(true);
 				frame.addWindowListener(this);
 				frame.addKeyListener(shortcuts);
