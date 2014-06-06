@@ -333,6 +333,8 @@ public class GraphMetrics {
 			ratioPx2Gu = ratio;
 			px1 = 0.95f / ratioPx2Gu;
 		}
+		else if(ratio == 0) throw new RuntimeException("ratio PX to GU cannot be zero");
+		else if(ratio < 0) throw new RuntimeException(String.format("ratio PX to GU cannot be negative (%f)",ratio)) ;
 	}
 
 	/**

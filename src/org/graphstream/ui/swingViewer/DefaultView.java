@@ -36,6 +36,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.event.ComponentListener;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -100,7 +101,7 @@ import org.graphstream.ui.swingViewer.util.ShortcutManager;
  * graph attribute is the identifier of the view.
  * </p>
  */
-public class DefaultView extends View implements WindowListener
+public class DefaultView extends View implements WindowListener, ComponentListener
 {
 	private static final long serialVersionUID = - 4489484861592064398L;
 
@@ -218,12 +219,14 @@ public class DefaultView extends View implements WindowListener
 				frame.setSize(800, 600);
 				frame.setVisible(true);
 				frame.addWindowListener(this);
+				frame.addComponentListener(this);
 				frame.addKeyListener(shortcuts);
 			} else {
 				frame.setVisible(true);
 			}
 		} else {
 			if (frame != null) {
+				frame.removeComponentListener(this);
 				frame.removeWindowListener(this);
 				frame.removeKeyListener(shortcuts);
 				frame.remove(this);
@@ -307,6 +310,23 @@ public class DefaultView extends View implements WindowListener
 	public void windowOpened(WindowEvent e) {
 		graph.removeAttribute("ui.viewClosed");
 	}
+
+	void componentHidden(ComponentEvent e) {
+		repaint();
+	}
+
+ 	void componentMoved(ComponentEvent e) {
+		repaint();
+ 	}
+
+ 	void componentResized(ComponentEvent e) {
+		repaint();
+ 	}
+
+ 	void componentShown(ComponentEvent e) {
+ 		repaint();
+ 	}
+
 
 	// Methods deferred to the renderer
 
