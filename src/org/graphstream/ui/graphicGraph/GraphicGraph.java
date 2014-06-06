@@ -339,16 +339,8 @@ public class GraphicGraph extends AbstractElement implements Graph,
 	 */
 	public void computeBounds() {
 		if (boundsChanged) {
-			lo.x = lo.y = lo.z = Double.POSITIVE_INFINITY;// 1000000000; // A
-															// bug with
-															// Double.MAX_VALUE
-															// during
-			// comparisons ?
-			hi.x = hi.y = hi.z = Double.NEGATIVE_INFINITY;// -1000000000; // A
-															// bug with
-															// Double.MIN_VALUE
-															// during
-			// comparisons ?
+			lo.x = lo.y = lo.z =  Double.MAX_VALUE;
+			hi.x = hi.y = hi.z = -Double.MAX_VALUE;
 
 			for (Node n : getEachNode()) {
 				GraphicNode node = (GraphicNode) n;
@@ -393,17 +385,17 @@ public class GraphicGraph extends AbstractElement implements Graph,
 				}
 			}
 
-			if ((hi.x - lo.x < 0.000001)) {
-				hi.x = 1;
-				lo.x = -1;
+			if (hi.x - lo.x < 0.000001) {
+				hi.x = hi.x + 1;
+				lo.x = lo.x - 1;
 			}
-			if ((hi.y - lo.y < 0.000001)) {
-				hi.y = 1;
-				lo.y = -1;
+			if (hi.y - lo.y < 0.000001) {
+				hi.y = hi.y + 1;
+				lo.y = lo.y - 1;
 			}
-			if ((hi.z - lo.z < 0.000001)) {
-				hi.z = 1;
-				lo.z = -1;
+			if (hi.z - lo.z < 0.000001) {
+				hi.z = hi.z + 1;
+				lo.z = lo.z - 1;
 			}
 
 			boundsChanged = false;
