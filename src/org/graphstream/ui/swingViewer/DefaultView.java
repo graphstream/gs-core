@@ -37,6 +37,7 @@ import java.awt.Graphics2D;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.event.ComponentListener;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -312,19 +313,19 @@ public class DefaultView extends View implements WindowListener, ComponentListen
 		graph.removeAttribute("ui.viewClosed");
 	}
 
-	void componentHidden(ComponentEvent e) {
+	public void componentHidden(ComponentEvent e) {
 		repaint();
 	}
 
- 	void componentMoved(ComponentEvent e) {
+ 	public void componentMoved(ComponentEvent e) {
 		repaint();
  	}
 
- 	void componentResized(ComponentEvent e) {
+ 	public void componentResized(ComponentEvent e) {
 		repaint();
  	}
 
- 	void componentShown(ComponentEvent e) {
+ 	public void componentShown(ComponentEvent e) {
  		repaint();
  	}
 
