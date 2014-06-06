@@ -472,7 +472,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe {
 
 	// MBoxListener
 
-	public void processMessage(GraphEvents e, Object[] data) {
+	protected void processMessage(GraphEvents e, Object[] data) {
 		String graphId, elementId, attribute;
 		Long timeId;
 		Object newValue, oldValue;
