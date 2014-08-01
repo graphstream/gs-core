@@ -328,4 +328,42 @@ public class Point3 extends Point2 implements java.io.Serializable {
 
 		return buf.toString();
 	}
+
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        if (!super.equals(o))
+        {
+            return false;
+        }
+
+        Point3 point3 = (Point3) o;
+
+        if (Double.compare(point3.z, z) != 0)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    @Override
+    public int hashCode()
+    {
+        int result = super.hashCode();
+        long temp;
+        temp = Double.doubleToLongBits(z);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
 }

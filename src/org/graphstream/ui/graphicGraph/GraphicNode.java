@@ -31,20 +31,20 @@
  */
 package org.graphstream.ui.graphicGraph;
 
-import static org.graphstream.ui.graphicGraph.GraphPosLengthUtils.nodePosition;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.stylesheet.Selector;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import static org.graphstream.ui.graphicGraph.GraphPosLengthUtils.nodePosition;
 
 /**
  * Graphical node.
@@ -225,7 +225,7 @@ public class GraphicNode extends GraphicElement implements Node {
 	}
 
 	public int getDegree() {
-		ArrayList<GraphicEdge> edges = mygraph.connectivity.get(this);
+        List<GraphicEdge> edges = mygraph.connectivity.get(this);
 
 		if (edges != null)
 			return edges.size();
@@ -235,7 +235,7 @@ public class GraphicNode extends GraphicElement implements Node {
 
 	@SuppressWarnings("unchecked")
 	public <T extends Edge> T getEdge(int i) {
-		ArrayList<GraphicEdge> edges = mygraph.connectivity.get(this);
+        List<GraphicEdge> edges = mygraph.connectivity.get(this);
 
 		if (edges != null && i >= 0 && i < edges.size())
 			return (T) edges.get(i);
@@ -258,7 +258,7 @@ public class GraphicNode extends GraphicElement implements Node {
 
 	@SuppressWarnings("unchecked")
 	public <T extends Edge> Iterator<T> getEdgeIterator() {
-		ArrayList<GraphicEdge> edges = mygraph.connectivity.get(this);
+        List<GraphicEdge> edges = mygraph.connectivity.get(this);
 
 		if (edges != null)
 			return (Iterator<T>) edges.iterator();
@@ -284,7 +284,7 @@ public class GraphicNode extends GraphicElement implements Node {
 
 	@SuppressWarnings("all")
 	public <T extends Edge> T getEdgeToward(String id) {
-		ArrayList<? extends Edge> edges = mygraph.connectivity.get(this);
+        List<? extends Edge> edges = mygraph.connectivity.get(this);
 
 		for (Edge edge : edges) {
 			if (edge.getOpposite(this).getId().equals(id))

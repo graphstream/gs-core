@@ -31,20 +31,23 @@
  */
 package org.graphstream.ui.graphicGraph;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Element;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.ui.graphicGraph.stylesheet.Rule;
 import org.graphstream.ui.graphicGraph.stylesheet.Selector;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.ShadowMode;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleSheet;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleSheetListener;
-import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.ShadowMode;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A set of style groups.
@@ -68,27 +71,27 @@ public class StyleGroupSet implements StyleSheetListener {
 	/**
 	 * All the groups indexed by their unique identifier.
 	 */
-	protected HashMap<String, StyleGroup> groups = new HashMap<String, StyleGroup>();
+	protected final Map<String, StyleGroup> groups = new ConcurrentHashMap<String, StyleGroup>();
 
 	/**
 	 * Allows to retrieve the group containing a node knowing the node id.
 	 */
-	protected HashMap<String, String> byNodeIdGroups = new HashMap<String, String>();
+	protected final Map<String, String> byNodeIdGroups = new ConcurrentHashMap<String, String>();
 
 	/**
 	 * Allows to retrieve the group containing an edge knowing the node id.
 	 */
-	protected HashMap<String, String> byEdgeIdGroups = new HashMap<String, String>();
+	protected final Map<String, String> byEdgeIdGroups = new ConcurrentHashMap<String, String>();
 
 	/**
 	 * Allows to retrieve the group containing a sprite knowing the node id.
 	 */
-	protected HashMap<String, String> bySpriteIdGroups = new HashMap<String, String>();
+	protected final Map<String, String> bySpriteIdGroups = new ConcurrentHashMap<String, String>();
 
 	/**
 	 * Allows to retrieve the group containing a graph knowing the node id.
 	 */
-	protected HashMap<String, String> byGraphIdGroups = new HashMap<String, String>();
+	protected final Map<String, String> byGraphIdGroups = new ConcurrentHashMap<String, String>();
 
 	/**
 	 * Virtual set of nodes. This set provides fake methods to make it appear as
@@ -287,7 +290,7 @@ public class StyleGroupSet implements StyleSheetListener {
 	 *            The kind of element.
 	 * @return The element or null if not found.
 	 */
-	protected Element getElement(String id, HashMap<String, String> elt2grp) {
+	protected Element getElement(String id, Map<String, String> elt2grp) {
 		String gid = elt2grp.get(id);
 
 		if (gid != null) {
@@ -662,6 +665,11 @@ public class StyleGroupSet implements StyleSheetListener {
 	 */
 	public void removeElement(Element element) {
 		String gid = getElementGroup(element);
+        if (null == gid)
+        {
+            return;
+        }
+
 		StyleGroup group = groups.get(gid);
 
 		if (group != null) {
@@ -1029,7 +1037,7 @@ public class StyleGroupSet implements StyleSheetListener {
 	 *            The name space.
 	 */
 	protected void checkForNewIdStyle(Rule newRule,
-			HashMap<String, String> elt2grp) {
+			Map<String, String> elt2grp) {
 		// There is only one element that matches the identifier.
 
 		Element element = getElement(newRule.selector.getId(), elt2grp);
@@ -1053,8 +1061,8 @@ public class StyleGroupSet implements StyleSheetListener {
 	 *            The name space.
 	 */
 	protected void checkForNewStyle(Rule newRule,
-			HashMap<String, String> elt2grp) {
-		ArrayList<Element> elementsToCheck = new ArrayList<Element>();
+			Map<String, String> elt2grp) {
+		Collection<Element> elementsToCheck = new ArrayList<Element>();
 
 		for (String eltId : elt2grp.keySet())
 			elementsToCheck.add(getElement(eltId, elt2grp));
@@ -1403,11 +1411,11 @@ public class StyleGroupSet implements StyleSheetListener {
 	 *            The kind of graph element.
 	 */
 	protected class ElementIterator<E extends Element> implements Iterator<E> {
-		protected HashMap<String, String> elt2grp;
+		protected Map<String, String> elt2grp;
 
 		protected Iterator<String> elts;
 
-		public ElementIterator(HashMap<String, String> elements2groups) {
+		public ElementIterator(final Map<String, String> elements2groups) {
 			elt2grp = elements2groups;
 			elts = elements2groups.keySet().iterator();
 		}
