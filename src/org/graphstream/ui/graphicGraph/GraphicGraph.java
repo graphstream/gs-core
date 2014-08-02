@@ -31,6 +31,15 @@
  */
 package org.graphstream.ui.graphicGraph;
 
+import java.io.IOException;
+import java.util.AbstractCollection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeFactory;
 import org.graphstream.graph.Element;
@@ -54,16 +63,6 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleSheet;
 import org.graphstream.ui.graphicGraph.stylesheet.Value;
 import org.graphstream.ui.graphicGraph.stylesheet.Values;
 import org.graphstream.util.GraphListeners;
-
-import java.io.IOException;
-import java.util.AbstractCollection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Graph representation used in display classes.
@@ -218,7 +217,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 		listeners = new GraphListeners(this);
 		styleSheet = new StyleSheet();
 		styleGroups = new StyleGroupSet(styleSheet);
-		connectivity = new ConcurrentHashMap<GraphicNode, List<GraphicEdge>>();
+		connectivity = new HashMap<GraphicNode, List<GraphicEdge>>();
 
 		styleGroups.addListener(this);
 		styleGroups.addElement(this); // Add style to this graph.

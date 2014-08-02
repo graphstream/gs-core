@@ -31,6 +31,13 @@
  */
 package org.graphstream.ui.graphicGraph;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Element;
 import org.graphstream.graph.Graph;
@@ -40,14 +47,6 @@ import org.graphstream.ui.graphicGraph.stylesheet.Selector;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.ShadowMode;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleSheet;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleSheetListener;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A set of style groups.
@@ -71,27 +70,27 @@ public class StyleGroupSet implements StyleSheetListener {
 	/**
 	 * All the groups indexed by their unique identifier.
 	 */
-	protected final Map<String, StyleGroup> groups = new ConcurrentHashMap<String, StyleGroup>();
+	protected final Map<String, StyleGroup> groups = new TreeMap<String, StyleGroup>();
 
 	/**
 	 * Allows to retrieve the group containing a node knowing the node id.
 	 */
-	protected final Map<String, String> byNodeIdGroups = new ConcurrentHashMap<String, String>();
+	protected final Map<String, String> byNodeIdGroups = new TreeMap<String, String>();
 
 	/**
 	 * Allows to retrieve the group containing an edge knowing the node id.
 	 */
-	protected final Map<String, String> byEdgeIdGroups = new ConcurrentHashMap<String, String>();
+	protected final Map<String, String> byEdgeIdGroups = new TreeMap<String, String>();
 
 	/**
 	 * Allows to retrieve the group containing a sprite knowing the node id.
 	 */
-	protected final Map<String, String> bySpriteIdGroups = new ConcurrentHashMap<String, String>();
+	protected final Map<String, String> bySpriteIdGroups = new TreeMap<String, String>();
 
 	/**
 	 * Allows to retrieve the group containing a graph knowing the node id.
 	 */
-	protected final Map<String, String> byGraphIdGroups = new ConcurrentHashMap<String, String>();
+	protected final Map<String, String> byGraphIdGroups = new TreeMap<String, String>();
 
 	/**
 	 * Virtual set of nodes. This set provides fake methods to make it appear as
@@ -669,7 +668,6 @@ public class StyleGroupSet implements StyleSheetListener {
         {
             return;
         }
-
 		StyleGroup group = groups.get(gid);
 
 		if (group != null) {
