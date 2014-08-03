@@ -31,14 +31,13 @@
  */
 package org.graphstream.ui.swingViewer.util;
 
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-
 import org.graphstream.graph.Node;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.GraphicSprite;
 import org.graphstream.ui.swingViewer.View;
+
+import java.awt.event.MouseEvent;
 
 public class DefaultMouseManager implements MouseManager {
 	// Attribute
@@ -88,7 +87,7 @@ public class DefaultMouseManager implements MouseManager {
 	}
 
 	protected void mouseButtonRelease(MouseEvent event,
-			ArrayList<GraphicElement> elementsInArea) {
+			Iterable<GraphicElement> elementsInArea) {
 		for (GraphicElement element : elementsInArea) {
 			if (!element.hasAttribute("ui.selected"))
 				element.addAttribute("ui.selected");

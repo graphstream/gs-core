@@ -44,6 +44,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 
 import javax.imageio.ImageIO;
@@ -134,7 +135,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 		return camera;
 	}
 
-	public ArrayList<GraphicElement> allNodesOrSpritesIn(double x1, double y1,
+	public Collection<GraphicElement> allNodesOrSpritesIn(double x1, double y1,
 			double x2, double y2) {
 		return camera.allNodesOrSpritesIn(graph, x1, y1, x2, y2);
 	}

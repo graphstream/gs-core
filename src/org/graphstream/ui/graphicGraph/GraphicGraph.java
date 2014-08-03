@@ -38,15 +38,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-
+import java.util.List;
+import java.util.Map;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeFactory;
 import org.graphstream.graph.Element;
+import org.graphstream.graph.ElementNotFoundException;
 import org.graphstream.graph.Graph;
+import org.graphstream.graph.IdAlreadyInUseException;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.NodeFactory;
-import org.graphstream.graph.ElementNotFoundException;
-import org.graphstream.graph.IdAlreadyInUseException;
 import org.graphstream.graph.implementations.AbstractElement;
 import org.graphstream.stream.AttributeSink;
 import org.graphstream.stream.ElementSink;
@@ -57,10 +58,10 @@ import org.graphstream.stream.file.FileSource;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleSheet;
 import org.graphstream.ui.graphicGraph.stylesheet.Value;
 import org.graphstream.ui.graphicGraph.stylesheet.Values;
-import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
 import org.graphstream.util.GraphListeners;
 
 /**
@@ -146,7 +147,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 	 * map is sorted by node. For each node an array of edges lists the
 	 * connectivity.
 	 */
-	protected HashMap<GraphicNode, ArrayList<GraphicEdge>> connectivity;
+	protected final Map<GraphicNode, List<GraphicEdge>> connectivity;
 
 	/**
 	 * The style of this graph. This is a shortcut to avoid searching it in the
@@ -216,7 +217,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 		listeners = new GraphListeners(this);
 		styleSheet = new StyleSheet();
 		styleGroups = new StyleGroupSet(styleSheet);
-		connectivity = new HashMap<GraphicNode, ArrayList<GraphicEdge>>();
+		connectivity = new HashMap<GraphicNode, List<GraphicEdge>>();
 
 		styleGroups.addListener(this);
 		styleGroups.addElement(this); // Add style to this graph.
@@ -487,7 +488,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 		while (keys.hasNext()) {
 			GraphicNode node = keys.next();
 			System.err.printf("    [%s] -> ", node.getId());
-			ArrayList<GraphicEdge> edges = connectivity.get(node);
+			Iterable<GraphicEdge> edges = connectivity.get(node);
 			for (GraphicEdge edge : edges)
 				System.err.printf(" (%s %d)", edge.getId(),
 						edge.getMultiIndex());
@@ -675,8 +676,8 @@ public class GraphicGraph extends AbstractElement implements Graph,
 
 			styleGroups.addElement(edge);
 
-			ArrayList<GraphicEdge> l1 = connectivity.get(n1);
-			ArrayList<GraphicEdge> l2 = connectivity.get(n2);
+            List<GraphicEdge> l1 = connectivity.get(n1);
+            List<GraphicEdge> l2 = connectivity.get(n2);
 
 			if (l1 == null) {
 				l1 = new ArrayList<GraphicEdge>();
@@ -783,8 +784,8 @@ public class GraphicGraph extends AbstractElement implements Graph,
 		GraphicNode node1 = (GraphicNode) styleGroups.getNode(to);
 
 		if (node0 != null && node1 != null) {
-			ArrayList<GraphicEdge> edges0 = connectivity.get(node0);
-			ArrayList<GraphicEdge> edges1 = connectivity.get(node1);
+			Collection<GraphicEdge> edges0 = connectivity.get(node0);
+            Collection<GraphicEdge> edges1 = connectivity.get(node1);
 
 			for (GraphicEdge edge0 : edges0) {
 				for (GraphicEdge edge1 : edges1) {
@@ -816,7 +817,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 				// We must do a copy of the connectivity set for the node
 				// since we will be modifying the connectivity as we process
 				// edges.
-				ArrayList<GraphicEdge> l = new ArrayList<GraphicEdge>(
+				List<GraphicEdge> l = new ArrayList<GraphicEdge>(
 						connectivity.get(node));
 
 				for (GraphicEdge edge : l)

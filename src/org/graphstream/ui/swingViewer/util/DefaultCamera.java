@@ -36,7 +36,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 import org.graphstream.graph.Node;
 import org.graphstream.ui.geom.Point2;
@@ -387,9 +390,9 @@ public class DefaultCamera implements Camera {
 	 *            The rectangle highest point ordinate.
 	 * @return The set of sprites and nodes in the given rectangle.
 	 */
-	public ArrayList<GraphicElement> allNodesOrSpritesIn(GraphicGraph graph,
+	public Collection<GraphicElement> allNodesOrSpritesIn(GraphicGraph graph,
 			double x1, double y1, double x2, double y2) {
-		ArrayList<GraphicElement> elts = new ArrayList<GraphicElement>();
+		List<GraphicElement> elts = new ArrayList<GraphicElement>();
 
 		for (Node node : graph) {
 			if (isNodeIn((GraphicNode) node, x1, y1, x2, y2))
@@ -401,7 +404,7 @@ public class DefaultCamera implements Camera {
 				elts.add(sprite);
 		}
 
-		return elts;
+		return Collections.unmodifiableList(elts);
 	}
 
 	/**

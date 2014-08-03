@@ -31,17 +31,6 @@
  */
 package org.graphstream.ui.swingViewer;
 
-import java.awt.BorderLayout;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.awt.event.ComponentListener;
-import java.awt.event.ComponentEvent;
-import java.util.ArrayList;
-
-import javax.swing.JFrame;
-
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.swingViewer.util.Camera;
@@ -49,6 +38,16 @@ import org.graphstream.ui.swingViewer.util.DefaultMouseManager;
 import org.graphstream.ui.swingViewer.util.DefaultShortcutManager;
 import org.graphstream.ui.swingViewer.util.MouseManager;
 import org.graphstream.ui.swingViewer.util.ShortcutManager;
+
+import javax.swing.JFrame;
+import java.awt.BorderLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.util.Collection;
 
 /**
  * Base for constructing views.
@@ -333,7 +332,7 @@ public class DefaultView extends View implements WindowListener, ComponentListen
 	// Methods deferred to the renderer
 
 	@Override
-	public ArrayList<GraphicElement> allNodesOrSpritesIn(double x1, double y1,
+	public Collection<GraphicElement> allNodesOrSpritesIn(double x1, double y1,
 			double x2, double y2) {
 		return renderer.allNodesOrSpritesIn(x1, y1, x2, y2);
 	}

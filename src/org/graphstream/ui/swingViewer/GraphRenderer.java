@@ -31,13 +31,13 @@
  */
 package org.graphstream.ui.swingViewer;
 
-import java.awt.Container;
-import java.awt.Graphics2D;
-import java.util.ArrayList;
-
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.swingViewer.util.Camera;
+
+import java.awt.Container;
+import java.awt.Graphics2D;
+import java.util.Collection;
 
 /**
  * Interface for classes that draw a GraphicGraph in a swing component.
@@ -98,7 +98,7 @@ public interface GraphRenderer {
 	 *            The rectangle highest point ordinate.
 	 * @return The set of sprites and nodes in the given rectangle.
 	 */
-	public abstract ArrayList<GraphicElement> allNodesOrSpritesIn(double x1,
+	public abstract Collection<GraphicElement> allNodesOrSpritesIn(double x1,
 			double y1, double x2, double y2);
 
 	// Command

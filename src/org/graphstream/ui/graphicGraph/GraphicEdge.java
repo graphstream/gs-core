@@ -31,13 +31,13 @@
  */
 package org.graphstream.ui.graphicGraph;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.ui.graphicGraph.stylesheet.Selector;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Graphical edge.
@@ -229,7 +229,7 @@ public class GraphicEdge extends GraphicElement implements Edge {
 	 *            The actual set of edges between two nodes (see the
 	 *            connectivity in the graphic graph).
 	 */
-	protected void countSameEdges(ArrayList<GraphicEdge> edgeList) {
+	protected void countSameEdges(Iterable<GraphicEdge> edgeList) {
 		for (GraphicEdge other : edgeList) {
 			if (other != this) {
 				if ((other.from == from && other.to == to)

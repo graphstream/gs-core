@@ -31,15 +31,14 @@
  */
 package org.graphstream.ui.swingViewer;
 
-import java.util.ArrayList;
-
-import javax.swing.JPanel;
-
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.swingViewer.util.Camera;
 import org.graphstream.ui.swingViewer.util.MouseManager;
 import org.graphstream.ui.swingViewer.util.ShortcutManager;
+
+import javax.swing.JPanel;
+import java.util.Collection;
 
 /**
  * A view on a graphic graph.
@@ -112,7 +111,7 @@ public abstract class View extends JPanel {
 	 *            The rectangle highest point ordinate.
 	 * @return The set of sprites and nodes in the given rectangle.
 	 */
-	public abstract ArrayList<GraphicElement> allNodesOrSpritesIn(double x1,
+	public abstract Collection<GraphicElement> allNodesOrSpritesIn(double x1,
 			double y1, double x2, double y2);
 
 	// Command

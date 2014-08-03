@@ -31,6 +31,8 @@
  */
 package org.graphstream.ui.geom;
 
+import java.util.Arrays;
+
 public class Vector2 implements java.io.Serializable {
 	// Attributes
 
@@ -286,4 +288,11 @@ public class Vector2 implements java.io.Serializable {
 
 		return sb.toString();
 	}
+
+
+    @Override
+    public int hashCode()
+    {
+        return data != null ? Arrays.hashCode(data) : 0;
+    }
 }
