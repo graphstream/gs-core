@@ -29,17 +29,17 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.ui.swingViewer.util;
-
-import java.awt.event.KeyListener;
+package org.graphstream.ui.view.util;
 
 import org.graphstream.ui.graphicGraph.GraphicGraph;
-import org.graphstream.ui.swingViewer.View;
+import org.graphstream.ui.view.View;
+
+import javax.swing.event.MouseInputListener;
 
 /**
- * Utility to centralise the shortcuts and actions for all view instances.
+ * A global behavior for all mouse events on graphic elements.
  */
-public interface ShortcutManager extends KeyListener {
+public interface MouseManager extends MouseInputListener {
 	/**
 	 * Make the manager active on the given graph and view.
 	 * @param graph
@@ -48,7 +48,7 @@ public interface ShortcutManager extends KeyListener {
 	 *            The view to control.
 	 */
 	void init(GraphicGraph graph, View view);
-	
+
 	/**
 	 * Release the links between this manager and the view and the graph.
 	 */

@@ -57,7 +57,7 @@ import org.graphstream.stream.GraphReplay;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSource;
-import org.graphstream.ui.swingViewer.Viewer;
+import org.graphstream.ui.view.Viewer;
 
 public class Graphs {
 

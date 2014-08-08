@@ -29,15 +29,17 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.ui.swingViewer.util;
-
-import java.awt.event.KeyEvent;
+package org.graphstream.ui.view.util;
 
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
-import org.graphstream.ui.swingViewer.View;
+import org.graphstream.ui.view.Camera;
+import org.graphstream.ui.view.View;
 
-public class DefaultShortcutManager implements ShortcutManager {
+import java.awt.event.KeyEvent;
+
+public class DefaultShortcutManager implements ShortcutManager
+{
 	// Attributes
 
 	/**
@@ -67,8 +69,7 @@ public class DefaultShortcutManager implements ShortcutManager {
 	/**
 	 * A key has been pressed.
 	 * 
-	 * @param event
-	 *            The event that generated the key.
+	 * @param event  The event that generated the key.
 	 */
 	public void keyPressed(KeyEvent event) {
 		Camera camera = view.getCamera();

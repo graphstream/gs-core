@@ -29,12 +29,13 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.ui.swingViewer;
-
-import java.util.HashSet;
+package org.graphstream.ui.view;
 
 import org.graphstream.stream.ProxyPipe;
 import org.graphstream.stream.SourceBase;
+import org.graphstream.ui.view.ViewerListener;
+
+import java.util.HashSet;
 
 /**
  * Shell around a proxy pipe coming from the viewer allowing to put viewer

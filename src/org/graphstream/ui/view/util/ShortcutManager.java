@@ -29,47 +29,28 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.ui.swingViewer;
+package org.graphstream.ui.view.util;
 
 import org.graphstream.ui.graphicGraph.GraphicGraph;
+import org.graphstream.ui.view.View;
 
-import java.awt.Graphics2D;
+import java.awt.event.KeyListener;
 
 /**
- * A specific rendering class that can be plugged in any view and is called to
- * draw under or above the graph.
- * 
- * @see org.graphstream.ui.view.View#setForeLayoutRenderer(LayerRenderer)
- * @see org.graphstream.ui.view.View#setBackLayerRenderer(LayerRenderer)
+ * Utility to centralise the shortcuts and actions for all view instances.
  */
-public interface LayerRenderer {
+public interface ShortcutManager extends KeyListener {
 	/**
-	 * Render something under or above the graph.
-	 * 
-	 * @param graphics
-	 *            The Swing graphics.
+	 * Make the manager active on the given graph and view.
 	 * @param graph
-	 *            The graphic representation of the graph.
-	 * @param px2Gu
-	 *            The ratio to pass from pixels to graph units.
-	 * @param widthPx
-	 *            The width in pixels of the view port.
-	 * @param heightPx
-	 *            The height in pixels of the view port.
-	 * @param minXGu
-	 *            The minimum visible point abscissa of the graph in graph
-	 *            units.
-	 * @param minYGu
-	 *            The minimum visible point ordinate of the graph in graph
-	 *            units.
-	 * @param maxXGu
-	 *            The maximum visible point abscissa of the graph in graph
-	 *            units.
-	 * @param maxYGu
-	 *            The maximum visible point ordinate of the graph in graph
-	 *            units.
+	 *            The graph to control.
+	 * @param view
+	 *            The view to control.
 	 */
-	void render(Graphics2D graphics, GraphicGraph graph, double px2Gu,
-			int widthPx, int heightPx, double minXGu, double minYGu,
-			double maxXGu, double maxYGu);
+	void init(GraphicGraph graph, View view);
+	
+	/**
+	 * Release the links between this manager and the view and the graph.
+	 */
+	void release();
 }

@@ -39,6 +39,7 @@ import org.graphstream.stream.GraphParseException;
 import org.graphstream.stream.Pipe;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSource;
+import org.graphstream.ui.view.Viewer;
 
 
 /**
@@ -616,12 +617,12 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * automatically launch a graph layout algorithm in its own thread to
 	 * compute best node positions.
 	 * 
-	 * @see org.graphstream.ui.swingViewer.Viewer
+	 * @see org.graphstream.ui.view.Viewer
 	 * @see #display(boolean )
 	 * @return a graph viewer that allows to command the viewer (it often run in
 	 *         another thread).
 	 */
-	org.graphstream.ui.swingViewer.Viewer display();
+	Viewer display();
 
 	/**
 	 * Utility method that creates a new graph viewer, and register the graph in
@@ -631,12 +632,12 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * @param autoLayout
 	 *            If true a layout algorithm is launched in its own thread to
 	 *            compute best node positions.
-	 * @see org.graphstream.ui.swingViewer.Viewer
+	 * @see org.graphstream.ui.view.Viewer
 	 * @see #display()
 	 * @return a graph viewer that allows to command the viewer (it often run in
 	 *         another thread).
 	 */
-	org.graphstream.ui.swingViewer.Viewer display(boolean autoLayout);
+	Viewer display(boolean autoLayout);
 
 	// New methods
 

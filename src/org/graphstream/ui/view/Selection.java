@@ -29,28 +29,61 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.ui.swingViewer.util;
+package org.graphstream.ui.view;
 
-import javax.swing.event.MouseInputListener;
+public class Selection
+{
+    public double x1, y1, x2, y2;
 
-import org.graphstream.ui.graphicGraph.GraphicGraph;
-import org.graphstream.ui.swingViewer.View;
 
-/**
- * A global behavior for all mouse events on graphic elements.
- */
-public interface MouseManager extends MouseInputListener {
-	/**
-	 * Make the manager active on the given graph and view.
-	 * @param graph
-	 *            The graph to control.
-	 * @param view
-	 *            The view to control.
-	 */
-	void init(GraphicGraph graph, View view);
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
 
-	/**
-	 * Release the links between this manager and the view and the graph.
-	 */
-	void release();
+        Selection selection = (Selection) o;
+
+        if (Double.compare(selection.x1, x1) != 0)
+        {
+            return false;
+        }
+        if (Double.compare(selection.x2, x2) != 0)
+        {
+            return false;
+        }
+        if (Double.compare(selection.y1, y1) != 0)
+        {
+            return false;
+        }
+        if (Double.compare(selection.y2, y2) != 0)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    @Override
+    public int hashCode()
+    {
+        int result;
+        long temp;
+        temp = Double.doubleToLongBits(x1);
+        result = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(y1);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(x2);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(y2);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
 }
