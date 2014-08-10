@@ -37,7 +37,7 @@ import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
 import org.graphstream.stream.file.FileSourceDGS;
 import org.graphstream.stream.thread.*;
-import org.graphstream.ui.swingViewer.*;
+import org.graphstream.ui.view.Viewer;
 
 public class DemoTwoGraphsInOneViewer {
 	public static final String GRAPH = "data/dorogovtsev_mendes6000.dgs";

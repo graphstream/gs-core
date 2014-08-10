@@ -44,7 +44,7 @@ import org.graphstream.stream.thread.ThreadProxyPipe;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphPosLengthUtils;
 import org.graphstream.ui.layout.springbox.implementations.LinLog;
-import org.graphstream.ui.swingViewer.Viewer;
+import org.graphstream.ui.view.Viewer;
 
 /**
  * This test creates a layout (instead of using the default layout of

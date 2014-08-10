@@ -29,14 +29,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.ui.swingViewer;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.security.AccessControlException;
-import java.util.HashMap;
-
-import javax.swing.Timer;
+package org.graphstream.ui.view;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
@@ -49,7 +42,17 @@ import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.layout.LayoutRunner;
 import org.graphstream.ui.layout.Layouts;
+import org.graphstream.ui.swingViewer.DefaultView;
+import org.graphstream.ui.swingViewer.GraphRenderer;
+import org.graphstream.ui.swingViewer.ViewPanel;
 import org.graphstream.ui.swingViewer.basicRenderer.SwingBasicGraphRenderer;
+
+import javax.swing.Timer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.security.AccessControlException;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Set of views on a graphic graph.
@@ -119,7 +122,7 @@ public class Viewer implements ActionListener {
 	 * thread, or on a distant machine.
 	 */
 	public enum ThreadingModel {
-		GRAPH_IN_SWING_THREAD, GRAPH_IN_ANOTHER_THREAD, GRAPH_ON_NETWORK
+        GRAPH_IN_GUI_THREAD, GRAPH_IN_ANOTHER_THREAD, GRAPH_ON_NETWORK
 	};
 
 	// Attribute
@@ -159,7 +162,7 @@ public class Viewer implements ActionListener {
 	/**
 	 * The set of views.
 	 */
-	protected HashMap<String, View> views = new HashMap<String, View>();
+	protected final Map<String, View> views = new TreeMap<String, View>();
 
 	/**
 	 * What to do when a view frame is closed.
@@ -209,7 +212,7 @@ public class Viewer implements ActionListener {
 	 * New viewer on an existing graph. The viewer always run in the Swing
 	 * thread, therefore, you must specify how it will take graph events from
 	 * the graph you give. If the graph you give will be accessed only from the
-	 * Swing thread use ThreadingModel.GRAPH_IN_SWING_THREAD. If the graph you
+	 * Swing thread use ThreadingModel.GRAPH_IN_GUI_THREAD. If the graph you
 	 * use is accessed in another thread use
 	 * ThreadingModel.GRAPH_IN_ANOTHER_THREAD. This last scheme is more powerful
 	 * since it allows to run algorithms on the graph in parallel with the
@@ -222,7 +225,7 @@ public class Viewer implements ActionListener {
 	 */
 	public Viewer(Graph graph, ThreadingModel threadingModel) {
 		switch (threadingModel) {
-		case GRAPH_IN_SWING_THREAD:
+		case GRAPH_IN_GUI_THREAD:
 			graphInAnotherThread = false;
 			init(new GraphicGraph(newGGId()), (ProxyPipe) null, graph);
 			enableXYZfeedback(true);
@@ -381,7 +384,6 @@ public class Viewer implements ActionListener {
 	public ProxyPipe newThreadProxyOnGraphicGraph() {
 		ThreadProxyPipe tpp = new ThreadProxyPipe();
 		tpp.init(graph);
-
 		return tpp;
 	}
 
@@ -427,8 +429,8 @@ public class Viewer implements ActionListener {
 	 * 
 	 * @return The default view or null if no default view has been installed.
 	 */
-	public View getDefaultView() {
-		return getView(DEFAULT_VIEW_ID);
+	public ViewPanel getDefaultView() {
+		return (DefaultView) getView(DEFAULT_VIEW_ID);
 	}
 
 	// Command
@@ -442,9 +444,9 @@ public class Viewer implements ActionListener {
 	 *            It true, the view is placed in a frame, else the view is only
 	 *            created and you must embed it yourself in your application.
 	 */
-	public View addDefaultView(boolean openInAFrame) {
+	public ViewPanel addDefaultView(boolean openInAFrame) {
 		synchronized (views) {
-			View view = new DefaultView(this, DEFAULT_VIEW_ID,
+            DefaultView view = new DefaultView(this, DEFAULT_VIEW_ID,
 					newGraphRenderer());
 			addView(view);
 
@@ -485,7 +487,7 @@ public class Viewer implements ActionListener {
 	 *            The renderer to use.
 	 * @return The created view.
 	 */
-	public View addView(String id, GraphRenderer renderer) {
+	public ViewPanel addView(String id, GraphRenderer renderer) {
 		return addView(id, renderer, true);
 	}
 
@@ -502,9 +504,9 @@ public class Viewer implements ActionListener {
 	 *            a JPanel that can be inserted in a GUI.
 	 * @return The created view.
 	 */
-	public View addView(String id, GraphRenderer renderer, boolean openInAFrame) {
+	public ViewPanel addView(String id, GraphRenderer renderer, boolean openInAFrame) {
 		synchronized (views) {
-			View view = new DefaultView(this, id, renderer);
+            DefaultView view = new DefaultView(this, id, renderer);
 			addView(view);
 
 			if (openInAFrame)
@@ -576,10 +578,13 @@ public class Viewer implements ActionListener {
 
 		synchronized (views) {
 			Point3 lo = graph.getMinPos();
-			Point3 hi = graph.getMaxPos();
-
-			for (View view : views.values())
-				view.getCamera().setBounds(lo.x, lo.y, lo.z, hi.x, hi.y, hi.z);
+            Point3 hi = graph.getMaxPos();
+			for (final View view : views.values()) {
+                Camera camera = view.getCamera();
+                if (camera != null) {
+                    camera.setBounds(lo.x, lo.y, lo.z, hi.x, hi.y, hi.z);
+                }
+            }
 		}
 	}
 

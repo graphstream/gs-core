@@ -37,8 +37,8 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.stream.file.FileSourcePajek;
-import org.graphstream.ui.swingViewer.Viewer;
-import org.graphstream.ui.swingViewer.Viewer.CloseFramePolicy;
+import org.graphstream.ui.view.Viewer;
+import org.graphstream.ui.view.Viewer.CloseFramePolicy;
 import org.junit.Ignore;
 
 @Ignore

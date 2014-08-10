@@ -31,6 +31,7 @@
  */
 package org.graphstream.ui.swingViewer.util;
 
+import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -38,9 +39,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-
-import javax.imageio.ImageIO;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * A simple cache for images to avoid reloading them constantly and to allow
@@ -53,13 +53,13 @@ public class ImageCache {
 	/**
 	 * The image cache.
 	 */
-	protected HashMap<String, Image> imageCache = new HashMap<String, Image>();
+	protected final Map<String, Image> imageCache = new TreeMap<String, Image>();
 
 	/**
 	 * The dummy image used to mark a not found image (and avoid trying to
 	 * reload it again and again).
 	 */
-	protected Image dummy;
+	protected final Image dummy;
 
 	/**
 	 * The default singleton image cache instance.

@@ -31,15 +31,15 @@
  */
 package org.graphstream.ui.swingViewer.util;
 
+import org.graphstream.ui.graphicGraph.stylesheet.Style;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.FillMode;
+
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.LinearGradientPaint;
 import java.awt.MultipleGradientPaint;
 import java.awt.Paint;
 import java.awt.RadialGradientPaint;
-
-import org.graphstream.ui.graphicGraph.stylesheet.Style;
-import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.FillMode;
 
 public class GradientFactory {
 	/**

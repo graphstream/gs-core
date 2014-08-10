@@ -33,11 +33,12 @@ package org.graphstream.ui.swingViewer;
 
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
-import org.graphstream.ui.swingViewer.util.Camera;
-import org.graphstream.ui.swingViewer.util.DefaultMouseManager;
-import org.graphstream.ui.swingViewer.util.DefaultShortcutManager;
-import org.graphstream.ui.swingViewer.util.MouseManager;
-import org.graphstream.ui.swingViewer.util.ShortcutManager;
+import org.graphstream.ui.view.Viewer;
+import org.graphstream.ui.view.Camera;
+import org.graphstream.ui.view.util.DefaultMouseManager;
+import org.graphstream.ui.view.util.DefaultShortcutManager;
+import org.graphstream.ui.view.util.MouseManager;
+import org.graphstream.ui.view.util.ShortcutManager;
 
 import javax.swing.JFrame;
 import java.awt.BorderLayout;
@@ -101,7 +102,7 @@ import java.util.Collection;
  * graph attribute is the identifier of the view.
  * </p>
  */
-public class DefaultView extends View implements WindowListener, ComponentListener
+public class DefaultView extends ViewPanel implements WindowListener, ComponentListener
 {
 	private static final long serialVersionUID = - 4489484861592064398L;
 
@@ -155,12 +156,12 @@ public class DefaultView extends View implements WindowListener, ComponentListen
 
 	// Command
 
-	@Override
+
 	public Camera getCamera() {
 		return renderer.getCamera();
 	}
 
-	@Override
+
 	public void display(GraphicGraph graph, boolean graphChanged) {
 		repaint();
 	}
@@ -190,7 +191,6 @@ public class DefaultView extends View implements WindowListener, ComponentListen
 		}
 	}
 
-	@Override
 	public void close(GraphicGraph graph) {
 		renderer.close();
 		graph.addAttribute("ui.viewClosed", getId());
@@ -202,14 +202,12 @@ public class DefaultView extends View implements WindowListener, ComponentListen
 		openInAFrame(false);
 	}
 
-	@Override
 	public void resizeFrame(int width, int height) {
 		if (frame != null) {
 			frame.setSize(width, height);
 		}
 	}
 
-	@Override
 	public void openInAFrame(boolean on) {
 		if (on) {
 			if (frame == null) {
@@ -250,19 +248,16 @@ public class DefaultView extends View implements WindowListener, ComponentListen
 
 	// Selection
 
-	@Override
 	public void beginSelectionAt(double x1, double y1) {
 		renderer.beginSelectionAt(x1, y1);
 		repaint();
 	}
 
-	@Override
 	public void selectionGrowsAt(double x, double y) {
 		renderer.selectionGrowsAt(x, y);
 		repaint();
 	}
 
-	@Override
 	public void endSelectionAt(double x2, double y2) {
 		renderer.endSelectionAt(x2, y2);
 		repaint();
@@ -331,18 +326,15 @@ public class DefaultView extends View implements WindowListener, ComponentListen
 
 	// Methods deferred to the renderer
 
-	@Override
 	public Collection<GraphicElement> allNodesOrSpritesIn(double x1, double y1,
 			double x2, double y2) {
 		return renderer.allNodesOrSpritesIn(x1, y1, x2, y2);
 	}
 
-	@Override
 	public GraphicElement findNodeOrSpriteAt(double x, double y) {
 		return renderer.findNodeOrSpriteAt(x, y);
 	}
 
-	@Override
 	public void moveElementAtPx(GraphicElement element, double x, double y) {
 		// The feedback on the node positions is often off since not needed
 		// and generating lots of events. We activate it here since the
@@ -353,8 +345,7 @@ public class DefaultView extends View implements WindowListener, ComponentListen
 		renderer.moveElementAtPx(element, x, y);
 		graph.feedbackXYZ(on);
 	}
-	
-	@Override
+
 	public void freezeElement(GraphicElement element, boolean frozen) {
 		if(frozen) {
 			element.addAttribute("layout.frozen");
@@ -363,19 +354,16 @@ public class DefaultView extends View implements WindowListener, ComponentListen
 		}
 	}
 
-	@Override
 	public void setBackLayerRenderer(LayerRenderer renderer) {
 		this.renderer.setBackLayerRenderer(renderer);
 		repaint();
 	}
 
-	@Override
 	public void setForeLayoutRenderer(LayerRenderer renderer) {
 		this.renderer.setForeLayoutRenderer(renderer);
 		repaint();
 	}
 
-	@Override
 	public void setMouseManager(MouseManager manager) {
 		if(mouseClicks != null)
 			mouseClicks.release();
@@ -388,7 +376,6 @@ public class DefaultView extends View implements WindowListener, ComponentListen
 		mouseClicks = manager;
 	}
 
-	@Override
 	public void setShortcutManager(ShortcutManager manager) {
 		if(shortcuts != null)
 			shortcuts.release();

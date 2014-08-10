@@ -33,7 +33,7 @@ package org.graphstream.ui.swingViewer;
 
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
-import org.graphstream.ui.swingViewer.util.Camera;
+import org.graphstream.ui.view.Camera;
 
 import java.awt.Container;
 import java.awt.Graphics2D;

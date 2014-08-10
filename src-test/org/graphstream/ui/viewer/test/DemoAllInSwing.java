@@ -31,14 +31,13 @@
  */
 package org.graphstream.ui.viewer.test;
 
-import java.awt.BorderLayout;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.ui.view.Viewer;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.ui.swingViewer.Viewer;
+import java.awt.BorderLayout;
 
 public class DemoAllInSwing {
 	public static void main(String args[]) {
@@ -53,7 +52,7 @@ public class DemoAllInSwing {
 		// On demande au viewer de consid�rer que le graphe ne sera lu et modifi� que
 		// dans le thread Swing.
 		
-		Viewer viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_SWING_THREAD);
+		Viewer viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
 
 		// � Partir de l�, le viewer consid�re que le graphe est dans son propre thread,
 		// c'est-�-dire le thread Swing. Il est donc dangereux d'y toucher dans la thread

@@ -29,17 +29,18 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.ui.swingViewer.util;
+package org.graphstream.ui.view.util;
 
 import org.graphstream.graph.Node;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.GraphicSprite;
-import org.graphstream.ui.swingViewer.View;
+import org.graphstream.ui.view.View;
 
 import java.awt.event.MouseEvent;
 
-public class DefaultMouseManager implements MouseManager {
+public class DefaultMouseManager implements MouseManager
+{
 	// Attribute
 
 	/**

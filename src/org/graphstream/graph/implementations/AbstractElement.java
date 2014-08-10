@@ -31,16 +31,16 @@
  */
 package org.graphstream.graph.implementations;
 
+import org.graphstream.graph.CompoundAttribute;
+import org.graphstream.graph.Element;
+import org.graphstream.graph.NullAttributeException;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import org.graphstream.graph.CompoundAttribute;
-import org.graphstream.graph.Element;
-import org.graphstream.graph.NullAttributeException;
 
 /**
  * A base implementation of an element.
@@ -138,10 +138,6 @@ public abstract class AbstractElement implements Element {
 	 * implemented by sub-elements in order to send events to the graph
 	 * listeners.
 	 * 
-	 * @param sourceId
-	 *            The source of the change.
-	 * @param timeId
-	 *            The source time of the change, for synchronization.
 	 * @param attribute
 	 *            The attribute name that changed.
 	 * @param event
@@ -249,12 +245,12 @@ public abstract class AbstractElement implements Element {
 	 * @complexity O(log(n)) with n being the number of attributes of this
 	 *             element.
 	 */
-	public CharSequence getLabel(String key) {
+	public String getLabel(String key) {
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
 			if (o != null && o instanceof CharSequence)
-				return (CharSequence) o;
+				return o.toString();
 		}
 
 		if (nullAttributesAreErrors())
