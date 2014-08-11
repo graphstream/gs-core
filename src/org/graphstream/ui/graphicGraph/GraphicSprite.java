@@ -31,14 +31,14 @@
  */
 package org.graphstream.ui.graphicGraph;
 
-import java.util.Iterator;
-
 import org.graphstream.graph.Node;
 import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.ui.graphicGraph.stylesheet.Selector;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.graphicGraph.stylesheet.Values;
+
+import java.util.Iterator;
 
 /**
  * A small gentle sprite.
@@ -305,9 +305,6 @@ public class GraphicSprite extends GraphicElement {
 		if (values.getValueCount() > 2)
 			z = values.get(2);
 
-		// System.err.printf(
-		// "setting %s position x=%f y=%f z=%f units=%s (value in=%s)%n",
-		// getId(), x, y, z, values.units, values );
 		if (x == 1 && y == 1 && z == 1)
 			throw new RuntimeException("WTF !!!");
 		setPosition(x, y, z, values.units);
@@ -333,8 +330,6 @@ public class GraphicSprite extends GraphicElement {
 
 		String completeAttr = String.format("ui.sprite.%s.%s", getId(),
 				attribute);
-		// System.err.printf( "GSprite add attribute %s %s (old=%s) (new=%s)%n",
-		// event, attribute, oldValue, newValue );
 
 		mygraph.listeners.sendAttributeChangedEvent(mygraph.getId(),
 				ElementType.GRAPH, completeAttr, event, oldValue, newValue);

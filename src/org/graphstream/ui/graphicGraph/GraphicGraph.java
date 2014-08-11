@@ -31,15 +31,6 @@
  */
 package org.graphstream.ui.graphicGraph;
 
-import java.io.IOException;
-import java.util.AbstractCollection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeFactory;
 import org.graphstream.graph.Element;
@@ -64,6 +55,18 @@ import org.graphstream.ui.graphicGraph.stylesheet.Value;
 import org.graphstream.ui.graphicGraph.stylesheet.Values;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.util.GraphListeners;
+
+import java.io.IOException;
+import java.util.AbstractCollection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Graph representation used in display classes.
@@ -131,8 +134,13 @@ import org.graphstream.util.GraphListeners;
  * 
  * TODO : this graph cannot handle modification inside event listener methods !!
  */
-public class GraphicGraph extends AbstractElement implements Graph,
-		StyleGroupListener {
+public class GraphicGraph extends AbstractElement implements Graph, StyleGroupListener {
+
+    /**
+     * class level logger
+     */
+    private static final Logger logger = Logger.getLogger(GraphicGraph.class.getSimpleName());
+
 	/**
 	 * Set of styles.
 	 */
@@ -450,18 +458,11 @@ public class GraphicGraph extends AbstractElement implements Graph,
 					try {
 						styleSheet.load((String) newValue);
 						graphChanged = true;
-					} catch (IOException e) {
-						System.err
-								.printf("Error while parsing style sheet for graph '%s' : %n",
-										getId());
-						if (((String) newValue).startsWith("url"))
-							System.err.printf("    %s%n", ((String) newValue));
-						System.err.printf("    %s%n", e.getMessage());
+					} catch (Exception e) {
+                        logger.log(Level.WARNING, String.format("Error while parsing style sheet for graph '%s'.", getId()), e);
 					}
 				} else {
-					System.err
-							.printf("Error with stylesheet specification what to do with '%s' ?%n",
-									newValue);
+                    logger.warning(String.format("Error with stylesheet specification what to do with '%s'.", newValue));
 				}
 			} else // Remove the style.
 			{
@@ -1213,7 +1214,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 
 	public GraphicSprite addSprite(String id) {
 		String prefix = String.format("ui.sprite.%s", id);
-		System.out.printf("add sprite %s\n", id);
+        logger.info(String.format("Added sprite %s.", id));
 		addAttribute(prefix, 0, 0, 0);
 		GraphicSprite s = styleGroups.getSprite(id);
 		assert (s != null);
@@ -1260,8 +1261,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 							((Number) values[2]).doubleValue(),
 							(Style.Units) values[3]);
 				} else {
-					System.err
-							.printf("GraphicGraph : cannot parse values[4] for sprite position.%n");
+                    logger.warning("Cannot parse values[4] for sprite position.");
 				}
 			} else if (values.length == 3) {
 				if (values[0] instanceof Number && values[1] instanceof Number
@@ -1270,20 +1270,16 @@ public class GraphicGraph extends AbstractElement implements Graph,
 							((Number) values[1]).doubleValue(),
 							((Number) values[2]).doubleValue(), Units.GU);
 				} else {
-					System.err
-							.printf("GraphicGraph : cannot parse values[3] for sprite position.%n");
+                    logger.warning("Cannot parse values[3] for sprite position.");
 				}
 			} else if (values.length == 1) {
 				if (values[0] instanceof Number) {
 					sprite.setPosition(((Number) values[0]).doubleValue());
 				} else {
-					System.err
-							.printf("GraphicGraph : sprite position percent is not a number.%n");
+                    logger.warning("Sprite position percent is not a number.");
 				}
 			} else {
-				System.err
-						.printf("GraphicGraph : cannot transform value '%s' (length=%d) into a position%n",
-								Arrays.toString(values), values.length);
+                logger.warning(String.format("Cannot transform value '%s' (length=%d) into a position%n", Arrays.toString(values), values.length));
 			}
 		} else if (value instanceof Number) {
 			sprite.setPosition(((Number) value).doubleValue());
@@ -1294,9 +1290,7 @@ public class GraphicGraph extends AbstractElement implements Graph,
 		} else if (value == null) {
 			throw new RuntimeException("What do you expect with a null value ?");
 		} else {
-			System.err
-					.printf("GraphicGraph : cannot place sprite with posiiton '%s' (instance of %s)%n",
-							value, value.getClass().getName());
+			logger.warning(String.format("Cannot place sprite with posiiton '%s' (instance of %s)%n", value, value.getClass().getName()));
 		}
 	}
 

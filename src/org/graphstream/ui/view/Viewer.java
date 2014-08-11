@@ -53,6 +53,8 @@ import java.awt.event.ActionListener;
 import java.security.AccessControlException;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Set of views on a graphic graph.
@@ -101,6 +103,12 @@ import java.util.TreeMap;
  * </p>
  */
 public class Viewer implements ActionListener {
+
+    /**
+     * class level logger
+     */
+    private static final Logger logger = Logger.getLogger(Viewer.class.getName());
+
 	// Attributes
 
 	/**
@@ -326,12 +334,9 @@ public class Viewer implements ActionListener {
 			rendererClassName = System.getProperty("gs.ui.renderer");
 
 			if (rendererClassName != null) {
-				System.err.printf("\"gs.ui.renderer\" is deprecated,");
-				System.err.printf("use \"org.graphstream.ui.renderer\""
-						+ " instead\n");
+                logger.warning("\"gs.ui.renderer\" is deprecated, use \"org.graphstream.ui.renderer\" instead.");
 			} else {
-				rendererClassName = System
-						.getProperty("org.graphstream.ui.renderer");
+				rendererClassName = System.getProperty("org.graphstream.ui.renderer");
 			}
 		} catch (AccessControlException e) {
 			rendererClassName = null;
@@ -347,23 +352,10 @@ public class Viewer implements ActionListener {
 			if (object instanceof GraphRenderer) {
 				return (GraphRenderer) object;
 			} else {
-				System.err.printf("class '%s' is not a 'GraphRenderer'%n",
-						object);
+				logger.warning(String.format("Class '%s' is not a 'GraphRenderer'.", object));
 			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			System.err
-					.printf("Cannot create graph renderer, 'GraphRenderer' class not found : "
-							+ e.getMessage());
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-			System.err.printf("Cannot create graph renderer, class '"
-					+ rendererClassName + "' error : " + e.getMessage());
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-			System.err.printf("Cannot create graph renderer, class '"
-					+ rendererClassName + "' illegal access : "
-					+ e.getMessage());
+		} catch (Exception e) {
+            logger.log(Level.WARNING, "Cannot create graph renderer.", e);
 		}
 
 		return new SwingBasicGraphRenderer();

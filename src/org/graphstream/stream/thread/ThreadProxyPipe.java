@@ -31,11 +31,6 @@
  */
 package org.graphstream.stream.thread;
 
-import java.util.LinkedList;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
-
 import org.graphstream.graph.Graph;
 import org.graphstream.stream.ProxyPipe;
 import org.graphstream.stream.Replayable;
@@ -43,6 +38,12 @@ import org.graphstream.stream.Replayable.Controller;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.Source;
 import org.graphstream.stream.SourceBase;
+
+import java.util.LinkedList;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Logger;
 
 /**
  * Filter that allows to pass graph events between two threads without explicit
@@ -82,6 +83,11 @@ import org.graphstream.stream.SourceBase;
  * </p>
  */
 public class ThreadProxyPipe extends SourceBase implements ProxyPipe {
+
+    /**
+     * class level logger
+     */
+    private static final Logger logger = Logger.getLogger(ThreadProxyPipe.class.getSimpleName());
 
 	/**
 	 * Proxy id.
@@ -608,7 +614,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe {
 			sendGraphCleared(graphId, timeId);
 			break;
 		default:
-			System.err.printf("ThreadProxy : Unknown message %s !!%n", e);
+            logger.warning(String.format("Unknown message %s.", e));
 			break;
 		}
 	}

@@ -31,12 +31,14 @@
  */
 package org.graphstream.ui.graphicGraph;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.graphstream.graph.implementations.AbstractElement;
 import org.graphstream.ui.graphicGraph.stylesheet.Selector;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Super class of all graphic node, edge, and sprite elements.
@@ -68,6 +70,12 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
  * </p>
  */
 public abstract class GraphicElement extends AbstractElement {
+
+    /**
+     * class level logger
+     */
+    private static final Logger logger = Logger.getLogger(GraphicElement.class.getSimpleName());
+
 	/**
 	 * Interface for renderers registered in each style group.
 	 */
@@ -219,17 +227,12 @@ public abstract class GraphicElement extends AbstractElement {
 							mygraph.styleSheet.parseStyleFromString(
 									new Selector(getSelectorType(), getId(),
 											null), (String) newValue);
-						} catch (java.io.IOException e) {
-							System.err.printf(
-									"Error while parsing style for %S '%s' :",
-									getSelectorType(), getId());
-							System.err.printf("    %s%n", e.getMessage());
-							System.err.printf("    The style was ignored");
+						} catch (Exception e) {
+                            logger.log(Level.WARNING, String.format("Error while parsing style for %S '%s' :", getSelectorType(), getId()), e);
 						}
-
 						mygraph.graphChanged = true;
 					} else {
-						System.err.printf("ERROR !!%n");
+						logger.warning("Unknown value for style [" + newValue + "].");
 					}
 				} else if (attribute.equals("ui.hide")) {
 					hidden = true;
