@@ -56,6 +56,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Define how the graph is viewed.
@@ -83,6 +85,11 @@ import java.util.List;
  */
 public class DefaultCamera implements Camera
 {
+    /**
+     * class level logger
+     */
+    private static final Logger logger = Logger.getLogger(DefaultCamera.class.getSimpleName());
+
     // Attribute
 
     /**
@@ -459,7 +466,7 @@ public class DefaultCamera implements Camera
     }
 
     public void removeGraphViewport() {
-        System.out.printf("gviewport removed\n");
+        logger.fine("Graph viewport removed for [" + this + "].");
         gviewport = null;
         resetView();
     }
@@ -545,7 +552,7 @@ public class DefaultCamera implements Camera
         try {
             xT.invert();
         } catch (NoninvertibleTransformException e) {
-            System.err.printf("cannot inverse gu2px matrix...%n");
+            logger.warning("Cannot inverse gu2px matrix.");
         }
 
         zoom = 1;
@@ -597,7 +604,7 @@ public class DefaultCamera implements Camera
         try {
             xT.invert();
         } catch (NoninvertibleTransformException e) {
-            System.err.printf("cannot inverse gu2px matrix...%n");
+            logger.log(Level.WARNING, "Cannot inverse gu2px matrix.", e);
         }
 
         metrics.setRatioPx2Gu(sx);

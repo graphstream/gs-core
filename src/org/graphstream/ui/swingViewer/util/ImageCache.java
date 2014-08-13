@@ -41,6 +41,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A simple cache for images to avoid reloading them constantly and to allow
@@ -50,6 +52,12 @@ import java.util.TreeMap;
  * time.
  */
 public class ImageCache {
+
+    /**
+     * class level logger
+     */
+    private static final Logger logger = Logger.getLogger(DefaultCamera.class.getSimpleName());
+
 	/**
 	 * The image cache.
 	 */
@@ -148,9 +156,7 @@ public class ImageCache {
 						imageCache.put(fileNameOrUrl, ii);
 					} catch (IOException ee) {
 						imageCache.put(fileNameOrUrl, dummy);
-						// ee.printStackTrace();
-						System.err.printf("Cannot read image '%s'%n",
-								fileNameOrUrl);
+                        logger.log(Level.WARNING, String.format("Cannot read image '%s'.", fileNameOrUrl), e);
 					}
 				}
 			}

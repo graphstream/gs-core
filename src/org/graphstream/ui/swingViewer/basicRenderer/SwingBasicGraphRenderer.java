@@ -62,6 +62,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A very simple view of the graph that respect only a subset of CSS.
@@ -79,6 +81,9 @@ import java.util.HashSet;
  * TODO - Les sprites. - Les bordures.
  */
 public class SwingBasicGraphRenderer extends GraphRendererBase {
+
+    private static final Logger logger = Logger.getLogger(SwingBasicGraphRenderer.class.getName());
+
 	// Attribute
 
 	/**
@@ -298,11 +303,8 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 					}
 				}
 			}
-		} catch (NullPointerException e) {
-			// Mysterious bug, where are you ?
-			e.printStackTrace();
-			System.err.printf("Mysterious bug ... (g=%s)", g);
-			//System.exit(1);
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "Unexpected error during graph render.", e);
 		}
 	}
 
@@ -477,12 +479,10 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 								(int) camera.getMetrics().viewport[3]);
 						out.outputTo(filename);
 					} else {
-						System.err
-								.printf("plugin %s is not an instance of Graphics2DOutput (%s)%n",
-										plugin, o.getClass().getName());
+                        logger.warning(String.format("Plugin %s is not an instance of Graphics2DOutput (%s).", plugin, o.getClass().getName()));
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
+                    logger.log(Level.WARNING, "Unexpected error during screen shot.", e);
 				}
 			}
 		}

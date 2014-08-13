@@ -31,16 +31,6 @@
  */
 package org.graphstream.graph.implementations;
 
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.concurrent.locks.ReentrantLock;
-
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeFactory;
 import org.graphstream.graph.EdgeRejectedException;
@@ -59,7 +49,20 @@ import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSource;
 import org.graphstream.ui.view.Viewer;
 
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Logger;
+
 public class Graphs {
+
+    private static final Logger logger = Logger.getLogger(Graphs.class.getSimpleName());
 
 	public static Graph unmutableGraph(Graph g) {
 		return null;
@@ -104,9 +107,7 @@ public class Graphs {
 			Class<? extends Graph> cls = graphs[0].getClass();
 			result = cls.getConstructor(String.class).newInstance(id);
 		} catch (Exception e) {
-			System.err.printf("*** WARNING *** can not create a graph of %s\n",
-					graphs[0].getClass().getName());
-
+            logger.warning(String.format("Cannot create a graph of %s.", graphs[0].getClass().getName()));
 			result = new MultiGraph(id);
 		}
 
@@ -154,9 +155,7 @@ public class Graphs {
 			Class<? extends Graph> cls = g.getClass();
 			copy = cls.getConstructor(String.class).newInstance(g.getId());
 		} catch (Exception e) {
-			System.err.printf("*** WARNING *** can not create a graph of %s\n",
-					g.getClass().getName());
-
+            logger.warning(String.format("Cannot create a graph of %s.", g.getClass().getName()));
 			copy = new AdjacencyListGraph(g.getId());
 		}
 

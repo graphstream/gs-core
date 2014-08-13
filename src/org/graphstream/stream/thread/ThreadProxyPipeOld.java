@@ -43,6 +43,9 @@ import org.miv.mbox.MBox;
 import org.miv.mbox.MBoxListener;
 import org.miv.mbox.MBoxStandalone;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Filter that allows to pass graph events between two threads without explicit
  * synchronization.
@@ -84,8 +87,12 @@ import org.miv.mbox.MBoxStandalone;
  *             {@link org.graphstream.stream.thread.ThreadProxyPipe}.
  */
 @Deprecated
-public class ThreadProxyPipeOld extends SourceBase implements ProxyPipe,
-		MBoxListener {
+public class ThreadProxyPipeOld extends SourceBase implements ProxyPipe, MBoxListener {
+
+    /**
+     * class level logger
+     */
+    private static final Logger logger = Logger.getLogger(ThreadProxyPipe.class.getSimpleName());
 
 	/**
 	 * Proxy id.
@@ -323,9 +330,7 @@ public class ThreadProxyPipeOld extends SourceBase implements ProxyPipe,
 				Thread.yield();
 			}
 		} catch (CannotPostException e) {
-			System.err
-					.printf("GraphRendererRunner: cannot post message to listeners: %s%n",
-							e.getMessage());
+            logger.log(Level.WARNING, "Unable to post message to listeners.", e);
 		}
 	}
 
@@ -527,8 +532,6 @@ public class ThreadProxyPipeOld extends SourceBase implements ProxyPipe,
 	// MBoxListener
 
 	public void processMessage(String from, Object[] data) {
-		// System.err.printf( "    %s.msg(%s, %s, %s, %s)%n", from, data[1],
-		// data[2], data[0], data[3] );
 		if (data[0].equals(GraphEvents.ADD_NODE)) {
 			String graphId = (String) data[1];
 			Long timeId = (Long) data[2];
@@ -640,8 +643,7 @@ public class ThreadProxyPipeOld extends SourceBase implements ProxyPipe,
 
 			sendGraphCleared(graphId, timeId);
 		} else {
-			System.err.printf("ThreadProxyFilter : Unknown message %s !!%n",
-					data[0]);
+            logger.warning(String.format("Unknown message %s.", data[0]));
 		}
 	}
 }

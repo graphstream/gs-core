@@ -32,6 +32,8 @@
 package org.graphstream.ui.layout;
 
 import java.security.AccessControlException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A factory in charge or creating various layout implementations.
@@ -45,6 +47,12 @@ import java.security.AccessControlException;
  * <code>System.setProperty("gs.ui.layout", you_layout_class_name)</code>.
  */
 public class Layouts {
+
+    /**
+     * class level logger
+     */
+    private static final Logger logger = Logger.getLogger(Layouts.class.getSimpleName());
+
 	/**
 	 * Creates a layout according to the "org.graphstream.ui.layout" system property.
 	 * 
@@ -57,14 +65,10 @@ public class Layouts {
 
 		try {
 			layoutClassName = System.getProperty("gs.ui.layout");
-
 			if (layoutClassName != null) {
-				System.err.printf("\"gs.ui.layout\" is deprecated,");
-				System.err.printf("use \"org.graphstream.ui.layout\""
-						+ " instead\n");
+                logger.log(Level.WARNING, "\"gs.ui.layout\" is deprecated, use \"org.graphstream.ui.layout\" instead.");
 			} else {
-				layoutClassName = System
-						.getProperty("org.graphstream.ui.layout");
+				layoutClassName = System.getProperty("org.graphstream.ui.layout");
 			}
 		} catch (AccessControlException e) {
 			layoutClassName = null;
@@ -78,23 +82,10 @@ public class Layouts {
 				if (object instanceof Layout) {
 					return (Layout) object;
 				} else {
-					System.err.printf("class '%s' is not a 'GraphRenderer'%n",
-							object);
+                    logger.warning(String.format("class '%s' is not a 'GraphRenderer'%n", object));
 				}
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-				System.err
-						.printf("Cannot create layout, 'GraphRenderer' class not found : "
-								+ e.getMessage());
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-				System.err.printf("Cannot create layout, class '"
-						+ layoutClassName + "' error : " + e.getMessage());
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-				System.err.printf("Cannot create layout, class '"
-						+ layoutClassName + "' illegal access : "
-						+ e.getMessage());
+			} catch (Exception e) {
+                logger.log(Level.WARNING, "Cannot create layout.", e);
 			}
 		}
 

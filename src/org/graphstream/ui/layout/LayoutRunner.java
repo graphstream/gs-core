@@ -36,6 +36,9 @@ import org.graphstream.stream.ProxyPipe;
 import org.graphstream.stream.Source;
 import org.graphstream.stream.thread.ThreadProxyPipe;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Allows to run a layout in a distinct thread.
  * 
@@ -66,6 +69,12 @@ import org.graphstream.stream.thread.ThreadProxyPipe;
  * </p>
  */
 public class LayoutRunner extends Thread {
+
+    /**
+     * class level logger
+     */
+    private static final Logger logger = Logger.getLogger(LayoutRunner.class.getSimpleName());
+
 	/**
 	 * The layout algorithm.
 	 */
@@ -189,9 +198,7 @@ public class LayoutRunner extends Thread {
 				nap(shortNap);
 			}
 		}
-
-		System.out.printf("Layout '%s' process stopped.%n", layoutName);
-		System.out.flush();
+        logger.info(String.format("Layout '%s' process stopped.", layoutName));
 	}
 
 	/**
@@ -207,9 +214,8 @@ public class LayoutRunner extends Thread {
 		if (Thread.currentThread() != this) {
 			try {
 				this.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				System.err.printf("Layout can not stop ...\n");
+			} catch (Exception e) {
+                logger.log(Level.WARNING, "Unable to stop/release layout.", e);
 			}
 		}
 

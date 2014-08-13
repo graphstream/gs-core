@@ -31,16 +31,18 @@
  */
 package org.graphstream.ui.spriteManager;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-
 import org.graphstream.graph.Graph;
 import org.graphstream.stream.AttributeSink;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
 import org.graphstream.ui.graphicGraph.stylesheet.Value;
 import org.graphstream.ui.graphicGraph.stylesheet.Values;
-import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Set of sprites associated with a graph.
@@ -67,6 +69,12 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
  * </p>
  */
 public class SpriteManager implements Iterable<Sprite>, AttributeSink {
+
+    /**
+     * class level logger
+     */
+    private static final Logger logger = Logger.getLogger(SpriteManager.class.getName());
+
 	// Attribute
 
 	/**
@@ -325,13 +333,8 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 			T sprite = spriteClass.newInstance();
 			sprite.init(identifier, this, position);
 			return sprite;
-		} catch (InstantiationException e) {
-			System.err.printf(
-					"Error while trying to instantiate class %s : %s",
-					spriteClass.getName(), e.getMessage());
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+            logger.log(Level.WARNING, String.format("Error while trying to instantiate class %s.", spriteClass.getName()), e);
 		}
 		return null;
 	}
@@ -369,8 +372,7 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 							((Number) values[1]).floatValue(),
 							((Number) values[2]).floatValue());
 				} else {
-					System.err
-							.printf("GraphicGraph : cannot parse values[4] for sprite position.%n");
+					logger.warning("Cannot parse values[4] for sprite position.");
 				}
 			} else if (values.length == 3) {
 				if (values[0] instanceof Number && values[1] instanceof Number
@@ -380,21 +382,17 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 							((Number) values[1]).floatValue(),
 							((Number) values[2]).floatValue());
 				} else {
-					System.err
-							.printf("GraphicGraph : cannot parse values[3] for sprite position.%n");
+                    logger.warning("Cannot parse values[3] for sprite position.");
 				}
 			} else if (values.length == 1) {
 				if (values[0] instanceof Number) {
 					return new Values(Units.GU,
 							((Number) values[0]).floatValue());
 				} else {
-					System.err
-							.printf("GraphicGraph : sprite position percent is not a number.%n");
+					logger.warning(String.format("Sprite position percent is not a number."));
 				}
 			} else {
-				System.err
-						.printf("GraphicGraph : cannot transform value '%s' (length=%d) into a position%n",
-								Arrays.toString(values), values.length);
+				logger.warning(String.format("Cannot transform value '%s' (length=%d) into a position.", Arrays.toString(values), values.length));
 			}
 		} else if (value instanceof Number) {
 			return new Values(Units.GU, ((Number) value).floatValue());
@@ -460,18 +458,12 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 
 					if (newValue != null) {
 						Values position = getPositionValue(newValue);
-						// System.err.printf(
-						// "       %%spriteMan set %s Position(%s) (from %s)%n",
-						// spriteId, position, newValue );
 						s.setPosition(position);
 					} else {
-						System.err.printf(
-								"%s changed but newValue == null ! (old=%s)%n",
-								spriteId, oldValue);
+                        logger.warning(String.format("%s changed but newValue == null ! (old=%s).", spriteId, oldValue));
 					}
 				} else {
-					throw new RuntimeException(
-							"WTF ! sprite changed, but not added...%n");
+					throw new IllegalStateException("Sprite changed, but not added.");
 				}
 			}
 		}

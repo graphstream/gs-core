@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
+import java.util.logging.Logger;
 
 /**
  * Path description.
@@ -65,6 +66,12 @@ import java.util.Stack;
  * 
  */
 public class Path implements Structure {
+
+    /**
+     * class level logger
+     */
+    private static final Logger logger = Logger.getLogger(Path.class.getSimpleName());
+
 	// ------------- ATTRIBUTES ------------
 
 	/**
@@ -114,10 +121,8 @@ public class Path implements Structure {
 			this.root = root;
 			nodePath.push(root);
 		} else {
-			System.err
-					.printf("Error in org.miv.graphstream.graph.Path: root is not null. First use the clear method.%n");
+            logger.warning("Root node is not null - first use the clear method.");
 		}
-
 	}
 
 	/**
@@ -207,9 +212,7 @@ public class Path implements Structure {
 	public void add(Node from, Edge edge) {
 		if (root == null) {
 			if (from == null) {
-				System.err
-						.print("Error using org.miv.graphstream.graph.Path: Use setRoot( ) first. %n");
-				System.exit(0);
+				throw new IllegalArgumentException("From node cannot be null.");
 			} else {
 				setRoot(from);
 			}
@@ -227,8 +230,7 @@ public class Path implements Structure {
 			nodePath.push(edge.getOpposite(from));
 			edgePath.push(edge);
 		} else {
-			System.err
-					.printf("Path: Cannot add the specified edge, it cannot be part of the path! %n");
+			logger.warning("Cannot add the specified edge, it cannot be part of the path! %n");
 		}
 	}
 
@@ -335,13 +337,6 @@ public class Path implements Structure {
 	 */
 	public void removeLoops() {
 		int n = nodePath.size();
-		/*
-		 * System.err.printf( "removeLoop()%n" ); System.err.printf(
-		 * "  path size = %d==%d%n  [ ", n, edgePath.size() );
-		 * 
-		 * for( int i=0; i<n; i++ ) { System.err.printf( "%d=%s ", i,
-		 * nodePath.get(i).getId() ); } System.err.printf( "]%n" );
-		 */
 		// For each node-edge pair
 		for (int i = 0; i < n; i++) {
 			// Lookup each other following node. We start
@@ -351,7 +346,6 @@ public class Path implements Structure {
 				if (nodePath.get(i) == nodePath.get(j)) {
 					// We found a loop between i and j.
 					// Remove ]i,j].
-					// System.err.printf( "removed ]%d,%d]%n", i, j );
 					for (int k = i + 1; k <= j; k++) {
 						nodePath.remove(i + 1);
 						edgePath.remove(i);
@@ -361,13 +355,7 @@ public class Path implements Structure {
 				}
 			}
 		}
-		/*
-		 * System.err.printf( "  NEW path size = %d==%d%n  NEW [ ", n,
-		 * edgePath.size() );
-		 * 
-		 * for( int i=0; i<n; i++ ) { System.err.printf( "%d=%s ", i,
-		 * nodePath.get(i).getId() ); } System.err.printf( "]%n" );
-		 */}
+    }
 
 	/**
 	 * Compare the content of the current path and the specified path to decide

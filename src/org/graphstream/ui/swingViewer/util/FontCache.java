@@ -189,9 +189,7 @@ class FontSlot {
 		Font font = map.get(size);
 
 		if (font == null) {
-			// System.err.printf( "new font %s %s %d%n", name, style, size );
 			font = new Font(name, style, size);
-
 			map.put(size, font);
 		}
 

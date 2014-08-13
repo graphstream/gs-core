@@ -39,14 +39,6 @@ import org.graphstream.util.parser.TokenMgrError;
 /** Token Manager. */
 public class StyleSheetParserTokenManager implements StyleSheetParserConstants {
 
-	/** Debug output. */
-	public java.io.PrintStream debugStream = System.out;
-
-	/** Set debug output. */
-	public void setDebugStream(java.io.PrintStream ds) {
-		debugStream = ds;
-	}
-
 	private final int jjStopStringLiteralDfa_0(int pos, long active0,
 			long active1, long active2) {
 		switch (pos) {

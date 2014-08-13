@@ -31,6 +31,9 @@
  */
 package org.graphstream.graph;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * An interface aimed at dynamically creating graph objects based on a class
  * name.
@@ -38,6 +41,9 @@ package org.graphstream.graph;
  * @since september 2007
  */
 public class GraphFactory {
+
+    private static final Logger logger = Logger.getLogger(GraphFactory.class.getSimpleName());
+
 	/**
 	 * Create a new instance of graph.
 	 */
@@ -65,28 +71,9 @@ public class GraphFactory {
 			Graph res = (Graph) clazz.getConstructor(String.class).newInstance(
 					id);
 			return res;
-		} catch (InstantiationException e) {
-			System.out
-					.println("GraphFactory newInstance InstantiationException : "
-							+ e.getMessage());
-		} catch (ClassNotFoundException e) {
-			System.out
-					.println("GraphFactory newInstance ClassNotFoundException : "
-							+ e.getMessage());
-		} catch (IllegalAccessException e) {
-			System.out
-					.println("GraphFactory newInstance IllegalAccessException : "
-							+ e.getMessage());
-		} catch (NoSuchMethodException e) {
-			System.out
-					.println("GraphFactory newInstance NoSuchMethodException : "
-							+ e.getMessage());
-		} catch (java.lang.reflect.InvocationTargetException e) {
-			System.out
-					.println("GraphFactory newInstance InvocationTargetException : "
-							+ e.getMessage());
-		}
-
+		}  catch (final Exception e) {
+            logger.log(Level.SEVERE, "Error executing GraphFactory#newInstance.", e);
+        }
 		return null;
 	}
 }

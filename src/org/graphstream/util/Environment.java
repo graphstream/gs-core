@@ -45,6 +45,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Representation of a set of parameters.
@@ -112,7 +114,9 @@ import java.util.Set;
  */
 public class Environment implements Cloneable
 {
-	// ---------- Attributes -----------
+    private static final Logger logger = Logger.getLogger(Environment.class.getSimpleName());
+
+    // ---------- Attributes -----------
 
 	/**
 	 * Name of the configuration file. Default is "config"
@@ -478,13 +482,7 @@ public class Environment implements Cloneable
 				}
 				catch( NumberFormatException e )
 				{
-					Logger
-							.getGlobalLogger()
-							.log(
-									Logger.LogLevel.WARN,
-									this.getClass().getName(),
-									"cannot set '%s' to the value '%s', values is not a long%n",
-									method.toString(), value );
+                    logger.warning(String.format("cannot set '%s' to the value '%s', values is not a long%n", method.toString(), value));
 				}
 			}
 			else if( types[0] == Integer.TYPE )
@@ -496,13 +494,7 @@ public class Environment implements Cloneable
 				}
 				catch( NumberFormatException e )
 				{
-					Logger
-							.getGlobalLogger()
-							.log(
-									Logger.LogLevel.WARN,
-									this.getClass().getName(),
-									"cannot set '%s' to the value '%s', values is not a int%n",
-									method.toString(), value );
+					logger.warning(String.format("cannot set '%s' to the value '%s', values is not a int%n", method.toString(), value));
 				}
 			}
 			else if( types[0] == Double.TYPE )
@@ -514,13 +506,7 @@ public class Environment implements Cloneable
 				}
 				catch( NumberFormatException e )
 				{
-					Logger
-							.getGlobalLogger()
-							.log(
-									Logger.LogLevel.WARN,
-									this.getClass().getName(),
-									"cannot set '%s' to the value '%s', values is not a double%n",
-									method.toString(), value );
+					logger.warning(String.format("cannot set '%s' to the value '%s', values is not a double%n", method.toString(), value));
 				}
 			}
 			else if( types[0] == Float.TYPE )
@@ -532,13 +518,7 @@ public class Environment implements Cloneable
 				}
 				catch( NumberFormatException e )
 				{
-					Logger
-							.getGlobalLogger()
-							.log(
-									Logger.LogLevel.WARN,
-									this.getClass().getName(),
-									"cannot set '%s' to the value '%s', values is not a float%n",
-									method.toString(), value );
+					logger.warning(String.format("cannot set '%s' to the value '%s', values is not a float%n", method.toString(), value));
 				}
 			}
 			else if( types[0] == Boolean.TYPE )
@@ -556,13 +536,7 @@ public class Environment implements Cloneable
 				}
 				catch( NumberFormatException e )
 				{
-					Logger
-							.getGlobalLogger()
-							.log(
-									Logger.LogLevel.WARN,
-									this.getClass().getName(),
-									"cannot set '%s' to the value '%s', values is not a boolean%n",
-									method.toString(), value );
+					logger.warning(String.format("cannot set '%s' to the value '%s', values is not a boolean%n", method.toString(), value));
 				}
 			}
 			else if( types[0] == String.class )
@@ -571,28 +545,16 @@ public class Environment implements Cloneable
 			}
 			else
 			{
-				Logger.getGlobalLogger().log( Logger.LogLevel.WARN,
-						this.getClass().getName(),
-						"cannot match parameter '%s' and the method '%s'%n",
-						value, method.toString() );
+				logger.warning(String.format("cannot match parameter '%s' and the method '%s'%n", value, method.toString()));
 			}
 		}
 		catch( InvocationTargetException ite )
 		{
-			Logger
-					.getGlobalLogger()
-					.log(
-							Logger.LogLevel.WARN,
-							this.getClass().getName(),
-							"cannot invoke method '%s' : invocation targer error : %s%n",
-							method.toString(), ite.getMessage() );
+			logger.warning(String.format("cannot invoke method '%s' : invocation targer error : %s%n", method.toString(), ite.getMessage()));
 		}
 		catch( IllegalAccessException iae )
 		{
-			Logger.getGlobalLogger().log( Logger.LogLevel.WARN,
-					this.getClass().getName(),
-					"cannot invoke method '%s' : illegal access error : %s%n",
-					method.toString(), iae.getMessage() );
+			logger.warning(String.format("cannot invoke method '%s' : illegal access error : %s%n", method.toString(), iae.getMessage()));
 		}
 	}
 
@@ -715,10 +677,7 @@ public class Environment implements Cloneable
 						}
 						else
 						{
-							System.err
-									.printf(
-											"Something is wrong with the configuration file \"%s\"near line %d :\n %s",
-											filename, count, str );
+                            logger.warning(String.format("Something is wrong with the configuration file \"%s\"near line %d :\n %s", filename, count, str));
 							if( trashcan != null )
 							{
 								trashcan.add( str );
@@ -766,7 +725,6 @@ public class Environment implements Cloneable
 		{
 			bw.write( key + " = " + parameters.get( key ) );
 			bw.newLine();
-			// System.out.println( key + " = " + parameters.get( key ) );
 		}
 
 		bw.close();
@@ -786,8 +744,7 @@ public class Environment implements Cloneable
 		}
 		catch( IOException ioe )
 		{
-			System.err.printf( "%-5s : %s : %s\n", "Warning", "Environment",
-					"Something wrong while reading the configuration file" );
+			logger.log(Level.WARNING, String.format("%-5s : %s : %s\n", "Warning", "Environment", "Something wrong while reading the configuration file."), ioe);
 		}
 	}
 
@@ -823,10 +780,10 @@ public class Environment implements Cloneable
 
 				if( val.length != 2 )
 				{
-					System.err.printf( "%-5s : %s : %s\n", "Warn",
+                    logger.warning(String.format("%-5s : %s : %s\n", "Warn",
 							"Environment",
 							"Something is wrong in your configuration file near line "
-									+ count + " : \n" + Arrays.toString( val ) );
+									+ count + " : \n" + Arrays.toString( val ) ));
 				}
 				else
 				{

@@ -38,6 +38,8 @@ import org.graphstream.ui.graphicGraph.stylesheet.Value;
 import org.graphstream.ui.graphicGraph.stylesheet.Values;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
 
+import java.util.logging.Logger;
+
 /**
  * p Various geometric informations on the graphic graph.
  * 
@@ -53,6 +55,12 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
  * </p>
  */
 public class GraphMetrics {
+
+    /**
+     * class level logger
+     */
+    private static final Logger logger = Logger.getLogger(GraphMetrics.class.getSimpleName());
+
 	// Attribute
 
 	/**
@@ -281,7 +289,7 @@ public class GraphMetrics {
 			throw new IllegalArgumentException();
 		}
 
-		System.out.printf("%spixel[%d] %d --> %fgu\n", this, index, pixels, l);
+		logger.fine(String.format("%spixel[%d] %d --> %fgu", this, index, pixels, l));
 		
 		return l;
 	}
@@ -367,7 +375,5 @@ public class GraphMetrics {
 		size.data[2] = hi.z - lo.z;
 		diagonal = Math.sqrt(size.data[0] * size.data[0] + size.data[1]
 				* size.data[1] + size.data[2] * size.data[2]);
-
-		// System.err.printf( "lo=%s hi=%s%n", lo, hi );
 	}
 }
