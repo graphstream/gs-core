@@ -151,6 +151,10 @@ public abstract class AbstractElement implements Element {
 	 */
     @Override
 	public <T> T getAttribute(String key) {
+        if (null == key) {
+            return null;
+        }
+
 		if (attributes != null) {
 			T value = (T) attributes.get(key);
 
@@ -170,21 +174,20 @@ public abstract class AbstractElement implements Element {
 	 */
     @Override
 	public <T> T getFirstAttributeOf(String... keys) {
-		Object o = null;
-
 		if (attributes != null) {
 			for (String key : keys) {
-				o = attributes.get(key);
-
-				if (o != null)
-					return (T) o;
+                if (key != null) {
+                    final Object o = attributes.get(key);
+                    if (o != null)
+                        return (T) o;
+                }
 			}
 		}
 
-		if (o == null && nullAttributesAreErrors())
+		if (nullAttributesAreErrors())
 			throw new NullAttributeException();
 
-		return (T) o;
+		return null;
 	}
 
 	/**
@@ -193,6 +196,10 @@ public abstract class AbstractElement implements Element {
 	 */
     @Override
 	public <T> T getAttribute(String key, Class<T> clazz) {
+        if (null == key) {
+            return null;
+        }
+
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
@@ -212,16 +219,15 @@ public abstract class AbstractElement implements Element {
 	 */
     @Override
 	public <T> T getFirstAttributeOf(Class<T> clazz, String... keys) {
-		Object o = null;
-
 		if (attributes == null)
 			return null;
 
 		for (String key : keys) {
-			o = attributes.get(key);
-
-			if (o != null && clazz.isInstance(o))
-				return (T) o;
+            if (key != null) {
+                final Object o = attributes.get(key);
+                if (o != null && clazz.isInstance(o))
+                    return (T) o;
+            }
 		}
 
 		if (nullAttributesAreErrors())
@@ -236,6 +242,10 @@ public abstract class AbstractElement implements Element {
 	 */
     @Override
 	public String getLabel(String key) {
+        if (null == key) {
+            return null;
+        }
+
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
@@ -255,6 +265,9 @@ public abstract class AbstractElement implements Element {
 	 */
     @Override
 	public Number getNumber(String key) {
+        if (null == key) {
+            return null;
+        }
 		if (attributes != null) {
 			Object o = attributes.get(key);
             if (null == o) {
@@ -330,6 +343,10 @@ public abstract class AbstractElement implements Element {
     @Override
 	@SuppressWarnings("unchecked")
 	public Collection<? extends Number> getVector(String key) {
+        if (null == key) {
+            return null;
+        }
+
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
@@ -349,6 +366,10 @@ public abstract class AbstractElement implements Element {
 	 */
     @Override
 	public Object[] getArray(String key) {
+        if (null == key) {
+            return null;
+        }
+
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
@@ -368,6 +389,10 @@ public abstract class AbstractElement implements Element {
 	 */
     @Override
 	public Map<?, ?> getHash(String key) {
+        if (null == key) {
+            return null;
+        }
+
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
@@ -391,6 +416,10 @@ public abstract class AbstractElement implements Element {
 	 */
     @Override
 	public boolean hasAttribute(String key) {
+        if (null == key) {
+            return false;
+        }
+
 		if (attributes != null)
 			return attributes.containsKey(key);
 
@@ -403,6 +432,10 @@ public abstract class AbstractElement implements Element {
 	 */
     @Override
 	public boolean hasAttribute(String key, Class<?> clazz) {
+        if (null == key) {
+            return false;
+        }
+
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
@@ -419,6 +452,10 @@ public abstract class AbstractElement implements Element {
 	 */
     @Override
 	public boolean hasLabel(String key) {
+        if (null == key) {
+            return false;
+        }
+
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
@@ -435,6 +472,10 @@ public abstract class AbstractElement implements Element {
 	 */
     @Override
 	public boolean hasNumber(String key) {
+        if (null == key) {
+            return false;
+        }
+
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
@@ -451,6 +492,10 @@ public abstract class AbstractElement implements Element {
 	 */
     @Override
 	public boolean hasVector(String key) {
+        if (null == key) {
+            return false;
+        }
+
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
@@ -467,6 +512,10 @@ public abstract class AbstractElement implements Element {
 	 */
     @Override
 	public boolean hasArray(String key) {
+        if (null == key) {
+            return false;
+        }
+
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
@@ -483,6 +532,10 @@ public abstract class AbstractElement implements Element {
 	 */
     @Override
 	public boolean hasHash(String key) {
+        if (null == key) {
+            return false;
+        }
+
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
@@ -520,6 +573,7 @@ public abstract class AbstractElement implements Element {
 		return id;
 	}
 
+    @Override
 	public int getAttributeCount() {
 		if (attributes != null)
 			return attributes.size();
@@ -551,6 +605,9 @@ public abstract class AbstractElement implements Element {
 	 */
     @Override
 	public boolean addAttribute(String attribute, Object... values) {
+        if (null == attribute) {
+            return false;
+        }
 		if (attributes == null)
 			attributes = new TreeMap<>();
 
@@ -616,6 +673,9 @@ public abstract class AbstractElement implements Element {
 	 */
     @Override
 	public boolean removeAttribute(String attribute) {
+        if (null == attribute) {
+            return false;
+        }
         if (null == attributes) {
             return false;
         }
