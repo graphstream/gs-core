@@ -196,34 +196,27 @@ public class GraphicNode extends GraphicElement implements Node {
 
 	// Node interface.
 
-	/**
-	 * Not implemented.
-	 */
+    @Override
 	public Iterator<Node> getBreadthFirstIterator() {
 		throw new RuntimeException("not implemented !");
 	}
 
-	/**
-	 * Not implemented.
-	 */
+    @Override
 	public Iterator<Node> getBreadthFirstIterator(boolean directed) {
 		throw new RuntimeException("not implemented !");
 	}
 
-	/**
-	 * Not implemented.
-	 */
+    @Override
 	public Iterator<Node> getDepthFirstIterator() {
 		throw new RuntimeException("not implemented !");
 	}
 
-	/**
-	 * Not implemented.
-	 */
+    @Override
 	public Iterator<Node> getDepthFirstIterator(boolean directed) {
 		throw new RuntimeException("not implemented !");
 	}
 
+    @Override
 	public int getDegree() {
         List<GraphicEdge> edges = mygraph.connectivity.get(this);
 
@@ -234,6 +227,7 @@ public class GraphicNode extends GraphicElement implements Node {
 	}
 
 	@SuppressWarnings("unchecked")
+    @Override
 	public <T extends Edge> T getEdge(int i) {
         List<GraphicEdge> edges = mygraph.connectivity.get(this);
 
@@ -244,6 +238,7 @@ public class GraphicNode extends GraphicElement implements Node {
 	}
 
 	@SuppressWarnings("unchecked")
+    @Override
 	public <T extends Edge> T getEdgeBetween(String id) {
 		if (hasEdgeToward(id))
 			return (T) getEdgeToward(id);
@@ -252,11 +247,13 @@ public class GraphicNode extends GraphicElement implements Node {
 	}
 
 	@SuppressWarnings("all")
+    @Override
 	public <T extends Edge> T getEdgeFrom(String id) {
 		return null;
 	}
 
 	@SuppressWarnings("unchecked")
+    @Override
 	public <T extends Edge> Iterator<T> getEdgeIterator() {
         List<GraphicEdge> edges = mygraph.connectivity.get(this);
 
@@ -267,22 +264,26 @@ public class GraphicNode extends GraphicElement implements Node {
 	}
 
 	@SuppressWarnings("all")
+    @Override
 	public Iterator<Edge> iterator() {
 		return (Iterator<Edge>) getEdgeIterator();
 	}
 
 	@SuppressWarnings("all")
+    @Override
 	public <T extends Edge> Iterable<T> getEachEdge() {
 		return (Iterable<T>) mygraph.connectivity.get(this);
 	}
 
 	@SuppressWarnings("all")
+    @Override
 	public <T extends Edge> Collection<T> getEdgeSet() {
 		return (Collection<T>) Collections
 				.unmodifiableCollection(mygraph.connectivity.get(this));
 	}
 
 	@SuppressWarnings("all")
+    @Override
 	public <T extends Edge> T getEdgeToward(String id) {
         List<? extends Edge> edges = mygraph.connectivity.get(this);
 
@@ -295,20 +296,24 @@ public class GraphicNode extends GraphicElement implements Node {
 	}
 
 	@SuppressWarnings("all")
+    @Override
 	public <T extends Edge> Iterator<T> getEnteringEdgeIterator() {
 		return getEdgeIterator();
 	}
 
 	@SuppressWarnings("all")
+    @Override
 	public <T extends Edge> Iterable<T> getEachEnteringEdge() {
 		return getEdgeSet();
 	}
 
 	@SuppressWarnings("all")
+    @Override
 	public <T extends Edge> Collection<T> getEnteringEdgeSet() {
 		return (Collection<T>) Collections.unmodifiableCollection(getEdgeSet());
 	}
 
+    @Override
 	public Graph getGraph() {
 		return mygraph;
 	}
@@ -326,36 +331,44 @@ public class GraphicNode extends GraphicElement implements Node {
 	}
 
 	@SuppressWarnings("all")
+    @Override
 	public <T extends Edge> Iterator<T> getLeavingEdgeIterator() {
 		return getEdgeIterator();
 	}
 
 	@SuppressWarnings("all")
+    @Override
 	public <T extends Edge> Iterable<T> getEachLeavingEdge() {
 		return getEdgeSet();
 	}
 
 	@SuppressWarnings("all")
+    @Override
 	public <T extends Edge> Collection<T> getLeavingEdgeSet() {
 		return (Collection<T>) Collections.unmodifiableCollection(getEdgeSet());
 	}
 
+    @Override
 	public Iterator<Node> getNeighborNodeIterator() {
 		return null;
 	}
 
+    @Override
 	public int getOutDegree() {
 		return getDegree();
 	}
 
+    @Override
 	public boolean hasEdgeBetween(String id) {
 		return (hasEdgeToward(id) || hasEdgeFrom(id));
 	}
 
+    @Override
 	public boolean hasEdgeFrom(String id) {
 		return false;
 	}
 
+    @Override
 	public boolean hasEdgeToward(String id) {
 		return false;
 	}
@@ -376,75 +389,73 @@ public class GraphicNode extends GraphicElement implements Node {
 		throw new RuntimeException("impossible with GraphicGraph");
 	}
 
-	// XXX stubs for the new methods
-
+    @Override
 	public <T extends Edge> T getEdgeBetween(Node Node) {
-		// TODO Auto-generated method stub
-		return null;
+        throw new UnsupportedOperationException();
 	}
 
+    @Override
 	public <T extends Edge> T getEdgeBetween(int index) {
-		// TODO Auto-generated method stub
-		return null;
+        throw new UnsupportedOperationException();
 	}
 
+    @Override
 	public <T extends Edge> T getEdgeFrom(Node Node) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
+    @Override
 	public <T extends Edge> T getEdgeFrom(int index) {
-		// TODO Auto-generated method stub
-		return null;
+        throw new UnsupportedOperationException();
 	}
 
+    @Override
 	public <T extends Edge> T getEdgeToward(Node Node) {
-		// TODO Auto-generated method stub
-		return null;
+        throw new UnsupportedOperationException();
 	}
 
+    @Override
 	public <T extends Edge> T getEdgeToward(int index) {
-		// TODO Auto-generated method stub
-		return null;
+        throw new UnsupportedOperationException();
 	}
 
+    @Override
 	public boolean hasEdgeBetween(Node node) {
-		// TODO Auto-generated method stub
-		return false;
+        throw new UnsupportedOperationException();
 	}
 
+    @Override
 	public boolean hasEdgeBetween(int index) {
-		// TODO Auto-generated method stub
-		return false;
+        throw new UnsupportedOperationException();
 	}
 
+    @Override
 	public boolean hasEdgeFrom(Node node) {
-		// TODO Auto-generated method stub
-		return false;
+        throw new UnsupportedOperationException();
 	}
 
+    @Override
 	public boolean hasEdgeFrom(int index) {
-		// TODO Auto-generated method stub
-		return false;
+        throw new UnsupportedOperationException();
 	}
 
+    @Override
 	public boolean hasEdgeToward(Node node) {
-		// TODO Auto-generated method stub
-		return false;
+        throw new UnsupportedOperationException();
 	}
 
+    @Override
 	public boolean hasEdgeToward(int index) {
-		// TODO Auto-generated method stub
-		return false;
+        throw new UnsupportedOperationException();
 	}
 
+    @Override
 	public <T extends Edge> T getEnteringEdge(int i) {
-		// TODO Auto-generated method stub
-		return null;
+        throw new UnsupportedOperationException();
 	}
 
+    @Override
 	public <T extends Edge> T getLeavingEdge(int i) {
-		// TODO Auto-generated method stub
-		return null;
+        throw new UnsupportedOperationException();
 	}
 }

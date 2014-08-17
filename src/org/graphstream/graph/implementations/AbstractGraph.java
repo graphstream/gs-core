@@ -83,15 +83,18 @@ import java.util.Iterator;
  * if necessary.
  * </p>
  */
-public abstract class AbstractGraph extends AbstractElement implements Graph,
-		Replayable {
+public abstract class AbstractGraph extends AbstractElement implements Graph, Replayable {
 	// *** Fields ***
 
 	private boolean strictChecking;
-	private boolean autoCreate;
-	GraphListeners listeners;
-	private NodeFactory<? extends AbstractNode> nodeFactory;
-	private EdgeFactory<? extends AbstractEdge> edgeFactory;
+
+    private boolean autoCreate;
+
+    GraphListeners listeners;
+
+    private NodeFactory<? extends AbstractNode> nodeFactory;
+
+    private EdgeFactory<? extends AbstractEdge> edgeFactory;
 
 	private double step = 0;
 
@@ -128,8 +131,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		this.listeners = new GraphListeners(this);
 	}
 
-	// *** Inherited from abstract element
-
 	@Override
 	protected void attributeChanged(AttributeChangeEvent event,
 			String attribute, Object oldValue, Object newValue) {
@@ -141,12 +142,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	public boolean nullAttributesAreErrors() {
 		return nullAttributesAreErrors;
 	}
-
-	// *** Inherited from graph ***
-
-	// some helpers
-
-	// get node / edge by its id/index
 
 	public abstract <T extends Node> T getNode(String id);
 
@@ -166,11 +161,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 
 	public abstract <T extends Edge> Iterator<T> getEdgeIterator();
 
-	/**
-	 * This implementation uses {@link #getNodeIterator()}
-	 * 
-	 * @see org.graphstream.graph.Graph#getEachNode()
-	 */
+    @Override
 	public <T extends Node> Iterable<? extends T> getEachNode() {
 		return new Iterable<T>() {
 			public Iterator<T> iterator() {
@@ -179,11 +170,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		};
 	}
 
-	/**
-	 * This implementation uses {@link #getEdgeIterator()}
-	 * 
-	 * @see org.graphstream.graph.Graph#getEachEdge()
-	 */
+    @Override
 	public <T extends Edge> Iterable<? extends T> getEachEdge() {
 		return new Iterable<T>() {
 			public Iterator<T> iterator() {
@@ -192,12 +179,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		};
 	}
 
-	/**
-	 * This implementation uses {@link #getNodeIterator()} and
-	 * {@link #getNodeCount()}
-	 * 
-	 * @see org.graphstream.graph.Graph#getNodeSet()
-	 */
+    @Override
 	public <T extends Node> Collection<T> getNodeSet() {
 		return new AbstractCollection<T>() {
 			public Iterator<T> iterator() {
@@ -210,12 +192,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		};
 	}
 
-	/**
-	 * This implementation uses {@link #getEdgeIterator()} and
-	 * {@link #getEdgeCount()}
-	 * 
-	 * @see org.graphstream.graph.Graph#getNodeSet()
-	 */
+    @Override
 	public <T extends Edge> Collection<T> getEdgeSet() {
 		return new AbstractCollection<T>() {
 			public Iterator<T> iterator() {
@@ -228,73 +205,74 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		};
 	}
 
-	/**
-	 * This implementation returns {@link #getNodeIterator()}
-	 * 
-	 * @see java.lang.Iterable#iterator()
-	 */
+    @Override
 	public Iterator<Node> iterator() {
 		return getNodeIterator();
 	}
 
 	// Factories
 
+    @Override
 	public NodeFactory<? extends Node> nodeFactory() {
 		return nodeFactory;
 	}
 
+    @Override
 	public EdgeFactory<? extends Edge> edgeFactory() {
 		return edgeFactory;
 	}
 
 	@SuppressWarnings("unchecked")
+    @Override
 	public void setNodeFactory(NodeFactory<? extends Node> nf) {
 		nodeFactory = (NodeFactory<? extends AbstractNode>) nf;
 	}
 
 	@SuppressWarnings("unchecked")
+    @Override
 	public void setEdgeFactory(EdgeFactory<? extends Edge> ef) {
 		edgeFactory = (EdgeFactory<? extends AbstractEdge>) ef;
 	}
 
 	// strict checking, autocreation, etc
 
+    @Override
 	public boolean isStrict() {
 		return strictChecking;
 	}
 
+    @Override
 	public boolean isAutoCreationEnabled() {
 		return autoCreate;
 	}
 
+    @Override
 	public double getStep() {
 		return step;
 	}
 
+    @Override
 	public void setNullAttributesAreErrors(boolean on) {
 		nullAttributesAreErrors = on;
 	}
 
+    @Override
 	public void setStrict(boolean on) {
 		strictChecking = on;
 	}
 
+    @Override
 	public void setAutoCreate(boolean on) {
 		autoCreate = on;
 	}
 
+    @Override
 	public void stepBegins(double time) {
 		listeners.sendStepBegins(time);
 		this.step = time;
 	}
 
-	// adding and removing elements
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#clear()
-	 */
+    @Override
 	public void clear() {
 		listeners.sendGraphCleared();
 
@@ -307,12 +285,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		clearAttributesWithNoEvent();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#addNode(java.lang.String)
-	 */
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
+    @Override
 	public <T extends Node> T addNode(String id) {
 		AbstractNode node = getNode(id);
 
@@ -331,75 +305,42 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		return (T) node;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#addEdge(java.lang.String,
-	 * java.lang.String, java.lang.String)
-	 */
+    @Override
 	public <T extends Edge> T addEdge(String id, String node1, String node2) {
 		return addEdge(id, node1, node2, false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#addEdge(java.lang.String,
-	 * java.lang.String, java.lang.String, boolean)
-	 */
+    @Override
 	public <T extends Edge> T addEdge(String id, String from, String to,
 			boolean directed) {
 		return addEdge(id, (AbstractNode) getNode(from), from,
 				(AbstractNode) getNode(to), to, directed);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#addEdge(java.lang.String, int, int)
-	 */
+    @Override
 	public <T extends Edge> T addEdge(String id, int index1, int index2) {
 		return addEdge(id, index1, index2, false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#addEdge(java.lang.String, int, int,
-	 * boolean)
-	 */
+    @Override
 	public <T extends Edge> T addEdge(String id, int fromIndex, int toIndex,
 			boolean directed) {
 		return addEdge(id, getNode(fromIndex), getNode(toIndex), directed);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#addEdge(java.lang.String,
-	 * org.graphstream.graph.Node, org.graphstream.graph.Node)
-	 */
+    @Override
 	public <T extends Edge> T addEdge(String id, Node node1, Node node2) {
 		return addEdge(id, node1, node2, false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#addEdge(java.lang.String,
-	 * org.graphstream.graph.Node, org.graphstream.graph.Node, boolean)
-	 */
+    @Override
 	public <T extends Edge> T addEdge(String id, Node from, Node to,
 			boolean directed) {
 		return addEdge(id, (AbstractNode) from, from.getId(),
 				(AbstractNode) to, to.getId(), directed);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#removeNode(java.lang.String)
-	 */
+    @Override
 	public <T extends Node> T removeNode(String id) {
 		AbstractNode node = getNode(id);
 
@@ -413,11 +354,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		return removeNode(node);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#removeNode(int)
-	 */
+    @Override
 	public <T extends Node> T removeNode(int index) {
 		Node node = getNode(index);
 
@@ -431,12 +368,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		return removeNode(node);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#removeNode(org.graphstream.graph.Node)
-	 */
 	@SuppressWarnings("unchecked")
+    @Override
 	public <T extends Node> T removeNode(Node node) {
 		if (node == null)
 			return null;
@@ -445,11 +378,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		return (T) node;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#removeEdge(java.lang.String)
-	 */
+    @Override
 	public <T extends Edge> T removeEdge(String id) {
 		Edge edge = getEdge(id);
 
@@ -463,11 +392,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		return removeEdge(edge);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#removeEdge(int)
-	 */
+    @Override
 	public <T extends Edge> T removeEdge(int index) {
 		Edge edge = getEdge(index);
 
@@ -481,12 +406,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		return removeEdge(edge);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#removeEdge(org.graphstream.graph.Edge)
-	 */
 	@SuppressWarnings("unchecked")
+    @Override
 	public <T extends Edge> T removeEdge(Edge edge) {
 		if (edge == null)
 			return null;
@@ -495,12 +416,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		return (T) edge;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#removeEdge(java.lang.String,
-	 * java.lang.String)
-	 */
+    @Override
 	public <T extends Edge> T removeEdge(String from, String to) {
 		Node fromNode = getNode(from);
 		Node toNode = getNode(to);
@@ -516,11 +432,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		return removeEdge(fromNode, toNode);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#removeEdge(int, int)
-	 */
+    @Override
 	public <T extends Edge> T removeEdge(int fromIndex, int toIndex) {
 		Node fromNode = getNode(fromIndex);
 		Node toNode = getNode(toIndex);
@@ -536,12 +448,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		return removeEdge(fromNode, toNode);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#removeEdge(org.graphstream.graph.Node,
-	 * org.graphstream.graph.Node)
-	 */
+    @Override
 	public <T extends Edge> T removeEdge(Node node1, Node node2) {
 		AbstractEdge edge = node1.getEdgeToward(node2);
 
@@ -556,115 +463,62 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		return removeEdge(edge);
 	}
 
-	// *** Sinks, sources etc. ***
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#attributeSinks()
-	 */
+    @Override
 	public Iterable<AttributeSink> attributeSinks() {
 		return listeners.attributeSinks();
 	}
 
-	/*
-	 * *(non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#elementSinks()
-	 */
+    @Override
 	public Iterable<ElementSink> elementSinks() {
 		return listeners.elementSinks();
 	}
 
-	/*
-	 * *(non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.Source#addAttributeSink(org.graphstream.stream
-	 * .AttributeSink)
-	 */
+    @Override
 	public void addAttributeSink(AttributeSink sink) {
 		listeners.addAttributeSink(sink);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.Source#addElementSink(org.graphstream.stream.
-	 * ElementSink)
-	 */
+    @Override
 	public void addElementSink(ElementSink sink) {
 		listeners.addElementSink(sink);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.Source#addSink(org.graphstream.stream.Sink)
-	 */
+    @Override
 	public void addSink(Sink sink) {
 		listeners.addSink(sink);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.Source#clearAttributeSinks()
-	 */
+    @Override
 	public void clearAttributeSinks() {
 		listeners.clearAttributeSinks();
 	}
 
-	/*
-	 * *(non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.Source#clearElementSinks()
-	 */
+    @Override
 	public void clearElementSinks() {
 		listeners.clearElementSinks();
 	}
 
-	/*
-	 * *(non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.Source#clearSinks()
-	 */
+    @Override
 	public void clearSinks() {
 		listeners.clearSinks();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.Source#removeAttributeSink(org.graphstream.stream
-	 * .AttributeSink)
-	 */
+    @Override
 	public void removeAttributeSink(AttributeSink sink) {
 		listeners.removeAttributeSink(sink);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.Source#removeElementSink(org.graphstream.stream
-	 * .ElementSink)
-	 */
+    @Override
 	public void removeElementSink(ElementSink sink) {
 		listeners.removeElementSink(sink);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.Source#removeSink(org.graphstream.stream.Sink)
-	 */
+    @Override
 	public void removeSink(Sink sink) {
 		listeners.removeSink(sink);
 	}
 
+    @Override
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
 			String attribute, Object value) {
 		listeners
@@ -677,76 +531,89 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 				oldValue, newValue);
 	}
 
+    @Override
 	public void edgeAttributeRemoved(String sourceId, long timeId,
 			String edgeId, String attribute) {
 		listeners.edgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
 	}
 
+    @Override
 	public void graphAttributeAdded(String sourceId, long timeId,
 			String attribute, Object value) {
 		listeners.graphAttributeAdded(sourceId, timeId, attribute, value);
 	}
 
+    @Override
 	public void graphAttributeChanged(String sourceId, long timeId,
 			String attribute, Object oldValue, Object newValue) {
 		listeners.graphAttributeChanged(sourceId, timeId, attribute, oldValue,
 				newValue);
 	}
 
+    @Override
 	public void graphAttributeRemoved(String sourceId, long timeId,
 			String attribute) {
 		listeners.graphAttributeRemoved(sourceId, timeId, attribute);
 	}
 
+    @Override
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
 			String attribute, Object value) {
 		listeners
 				.nodeAttributeAdded(sourceId, timeId, nodeId, attribute, value);
 	}
 
+    @Override
 	public void nodeAttributeChanged(String sourceId, long timeId,
 			String nodeId, String attribute, Object oldValue, Object newValue) {
 		listeners.nodeAttributeChanged(sourceId, timeId, nodeId, attribute,
 				oldValue, newValue);
 	}
 
+    @Override
 	public void nodeAttributeRemoved(String sourceId, long timeId,
 			String nodeId, String attribute) {
 		listeners.nodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
 	}
 
+    @Override
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
 			String fromNodeId, String toNodeId, boolean directed) {
 		listeners.edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId,
 				directed);
 	}
 
+    @Override
 	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 		listeners.edgeRemoved(sourceId, timeId, edgeId);
 	}
 
+    @Override
 	public void graphCleared(String sourceId, long timeId) {
 		listeners.graphCleared(sourceId, timeId);
 	}
 
+    @Override
 	public void nodeAdded(String sourceId, long timeId, String nodeId) {
 		listeners.nodeAdded(sourceId, timeId, nodeId);
 	}
 
+    @Override
 	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 		listeners.nodeRemoved(sourceId, timeId, nodeId);
 	}
 
+    @Override
 	public void stepBegins(String sourceId, long timeId, double step) {
 		listeners.stepBegins(sourceId, timeId, step);
 	}
 
-	// display, read, write
-
+    @Override
 	public Viewer display() {
 		return display(true);
 	}
 
+    @Override
 	public Viewer display(boolean autoLayout) {
 		Viewer viewer = new Viewer(this,
 				Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
@@ -759,11 +626,13 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		return viewer;
 	}
 
+    @Override
 	public void read(FileSource input, String filename) throws IOException,
 			GraphParseException {
 		input.readAll(filename);
 	}
 
+    @Override
 	public void read(String filename) throws IOException, GraphParseException,
 			ElementNotFoundException {
 		FileSource input = FileSourceFactory.sourceFor(filename);
@@ -776,10 +645,12 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		}
 	}
 
+    @Override
 	public void write(FileSink output, String filename) throws IOException {
 		output.writeAll(this, filename);
 	}
 
+    @Override
 	public void write(String filename) throws IOException {
 		FileSink output = FileSinkFactory.sinkFor(filename);
 		if (output != null) {
@@ -789,16 +660,10 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.Replayable#getReplayController()
-	 */
+    @Override
 	public Replayable.Controller getReplayController() {
 		return new GraphReplayController();
 	}
-
-	// *** callbacks maintaining user's data structure
 
 	/**
 	 * This method is automatically called when a new node is created.
@@ -845,8 +710,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * must remove all the nodes and all the edges from their data structures.
 	 */
 	protected abstract void clearCallback();
-
-	// *** _ methods ***
 
 	// Why do we pass both the ids and the references of the endpoints here?
 	// When the caller knows the references it's stupid to call getNode(id)
@@ -909,7 +772,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		return (T) edge;
 	}
 
-	// helper for removeNode_
 	private void removeAllEdges(AbstractNode node) {
 		// first check if the EdgeIterator of node supports remove
 		// if this is the case, we will use it, generally it will be much more
@@ -933,8 +795,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 			while (node.getDegree() > 0)
 				removeEdge(node.getEdge(0));
 	}
-
-	// *** Methods for iterators ***
 
 	/**
 	 * This method is similar to {@link #removeNode(Node)} but allows to control
@@ -999,28 +859,19 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 			removeEdgeCallback(edge);
 	}
 
-	class GraphReplayController extends SourceBase implements
-			Replayable.Controller {
+	class GraphReplayController extends SourceBase implements Replayable.Controller {
+
 		GraphReplayController() {
 			super(AbstractGraph.this.id + "replay");
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.graphstream.stream.Replayable.Controller#replay()
-		 */
+        @Override
 		public void replay() {
 			String sourceId = String.format("%s-replay-%x", id, replayId++);
 			replay(sourceId);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.graphstream.stream.Replayable.Controller#replay(java.lang.String)
-		 */
+        @Override
 		public void replay(String sourceId) {
 			for (String key : getAttributeKeySet())
 				sendGraphAttributeAdded(sourceId, key, getAttribute(key));

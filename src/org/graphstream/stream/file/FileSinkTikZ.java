@@ -31,15 +31,6 @@
  */
 package org.graphstream.stream.file;
 
-import java.awt.Color;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.lang.reflect.Array;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Locale;
-
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Element;
 import org.graphstream.graph.Node;
@@ -53,6 +44,15 @@ import org.graphstream.ui.graphicGraph.StyleGroupSet;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.FillMode;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.SizeMode;
 import org.graphstream.ui.layout.springbox.implementations.SpringBox;
+
+import java.awt.Color;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.lang.reflect.Array;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Locale;
 
 /**
  * An export of a graph to PGF/TikZ format.
@@ -211,7 +211,7 @@ public class FileSinkTikZ extends FileSinkBase {
 			return ((Number) (n.getArray(XYZ_ATTR)[0])).doubleValue();
 
 		if (n.hasAttribute("x"))
-			return n.getNumber("x");
+			return n.getDouble("x");
 
 		return Double.NaN;
 	}
@@ -221,7 +221,7 @@ public class FileSinkTikZ extends FileSinkBase {
 			return ((Number) (n.getArray(XYZ_ATTR)[1])).doubleValue();
 
 		if (n.hasAttribute("y"))
-			return n.getNumber("y");
+			return n.getDouble("y");
 
 		return Double.NaN;
 	}
@@ -235,7 +235,7 @@ public class FileSinkTikZ extends FileSinkBase {
 			style = classNames.get(gn.style.getId());
 
 			if (gn.style.getFillMode() == FillMode.DYN_PLAIN) {
-				double uicolor = gn.getNumber("ui.color");
+				double uicolor = gn.getDouble("ui.color");
 
 				if (Double.isNaN(uicolor))
 					uicolor = 0;
@@ -257,7 +257,7 @@ public class FileSinkTikZ extends FileSinkBase {
 			}
 
 			if (gn.style.getSizeMode() == SizeMode.DYN_SIZE) {
-				double uisize = gn.getNumber("ui.size");
+				double uisize = gn.getDouble("ui.size");
 
 				if (Double.isNaN(uisize))
 					uisize = minSize;
@@ -283,7 +283,7 @@ public class FileSinkTikZ extends FileSinkBase {
 			style = classNames.get(ge.style.getId());
 
 			if (ge.style.getFillMode() == FillMode.DYN_PLAIN) {
-				double uicolor = ge.getNumber("ui.color");
+				double uicolor = ge.getDouble("ui.color");
 
 				if (Double.isNaN(uicolor))
 					uicolor = 0;
@@ -305,7 +305,7 @@ public class FileSinkTikZ extends FileSinkBase {
 			}
 
 			if (ge.style.getSizeMode() == SizeMode.DYN_SIZE) {
-				double uisize = ge.getNumber("ui.size");
+				double uisize = ge.getDouble("ui.size");
 
 				if (Double.isNaN(uisize) || uisize < 0.01)
 					uisize = 1;
@@ -480,14 +480,14 @@ public class FileSinkTikZ extends FileSinkBase {
 	protected void outputEndOfFile() throws IOException {
 		if (Double.isNaN(width)) {
 			if (buffer.hasNumber(WIDTH_ATTR))
-				width = buffer.getNumber(WIDTH_ATTR);
+				width = buffer.getDouble(WIDTH_ATTR);
 			else
 				width = DEFAULT_WIDTH;
 		}
 
 		if (Double.isNaN(height)) {
 			if (buffer.hasNumber(HEIGHT_ATTR))
-				height = buffer.getNumber(HEIGHT_ATTR);
+				height = buffer.getDouble(HEIGHT_ATTR);
 			else
 				height = DEFAULT_WIDTH;
 		}
@@ -590,8 +590,8 @@ public class FileSinkTikZ extends FileSinkBase {
 			}
 
 			if (n.hasNumber("ui.size")) {
-				minSize = Math.min(minSize, n.getNumber("ui.size"));
-				maxSize = Math.max(maxSize, n.getNumber("ui.size"));
+				minSize = Math.min(minSize, n.getDouble("ui.size"));
+				maxSize = Math.max(maxSize, n.getDouble("ui.size"));
 			}
 		}
 

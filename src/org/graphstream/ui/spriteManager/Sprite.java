@@ -172,15 +172,14 @@ public class Sprite implements Element {
 				this.position = position;
 			} else {
 				this.position = new Values(Style.Units.GU, 0f, 0f, 0f);
-				manager.graph.addAttribute(completeId, this.position);
+				manager.graph.addAttribute(completeId, new Values(this.position));
 			}
 		} else {
 			if (position != null) {
 				manager.graph.setAttribute(completeId, position);
 				this.position = position;
 			} else {
-				this.position = SpriteManager.getPositionValue(manager.graph
-						.getAttribute(completeId));
+				this.position = SpriteManager.getPositionValue(manager.graph.getAttribute(completeId));
 			}
 		}
 	}
@@ -363,19 +362,23 @@ public class Sprite implements Element {
 
 	// Access (Element)
 
+    @Override
 	public String getId() {
 		return id;
 	}
 
-	public CharSequence getLabel(String key) {
+    @Override
+	public String getLabel(String key) {
 		return manager.graph.getLabel(String.format("%s.%s", completeId, key));
 	}
 
+    @Override
 	public <T> T getAttribute(String key) {
 		return manager.graph.getAttribute(String.format("%s.%s", completeId,
 				key));
 	}
 
+    @Override
 	public <T> T getAttribute(String key, Class<T> clazz) {
 		return manager.graph.getAttribute(
 				String.format("%s.%s", completeId, key), clazz);
@@ -384,6 +387,7 @@ public class Sprite implements Element {
 	/**
 	 * Quite expensive operation !.
 	 */
+    @Override
 	public int getAttributeCount() {
 		String start = String.format("%s.", completeId);
 		int count = 0;
@@ -396,22 +400,22 @@ public class Sprite implements Element {
 		return count;
 	}
 
+    @Override
 	public Iterator<String> getAttributeKeyIterator() {
 		throw new RuntimeException("not implemented");
 	}
-	
+
+    @Override
 	public Iterable<String> getEachAttributeKey() {
 		return getAttributeKeySet();
 	}
 
+    @Override
 	public Collection<String> getAttributeKeySet() {
 		throw new RuntimeException("not implemented");
 	}
 
-	public Map<String, Object> getAttributeMap() {
-		throw new RuntimeException("not implemented");
-	}
-
+    @Override
 	public <T> T getFirstAttributeOf(String... keys) {
 		String completeKeys[] = new String[keys.length];
 		int i = 0;
@@ -424,6 +428,7 @@ public class Sprite implements Element {
 		return manager.graph.getFirstAttributeOf(completeKeys);
 	}
 
+    @Override
 	public <T> T getFirstAttributeOf(Class<T> clazz, String... keys) {
 		String completeKeys[] = new String[keys.length];
 		int i = 0;
@@ -436,75 +441,90 @@ public class Sprite implements Element {
 		return manager.graph.getFirstAttributeOf(clazz, completeKeys);
 	}
 
+    @Override
 	public Object[] getArray(String key) {
 		return manager.graph.getArray(String.format("%s.%s", completeId, key));
 	}
 
+    @Override
 	public Map<?, ?> getHash(String key) {
 		return manager.graph.getHash(String.format("%s.%s", completeId, key));
 	}
 
-	public double getNumber(String key) {
+    @Override
+	public Number getNumber(String key) {
 		return manager.graph.getNumber(String.format("%s.%s", completeId, key));
 	}
 
+    @Override
 	public Collection<? extends Number> getVector(String key) {
 		return manager.graph.getVector(String.format("%s.%s", completeId, key));
 	}
 
+    @Override
 	public boolean hasAttribute(String key) {
 		return manager.graph.hasAttribute(String.format("%s.%s", completeId,
 				key));
 	}
 
+    @Override
 	public boolean hasArray(String key) {
 		return manager.graph.hasArray(String.format("%s.%s", completeId, key));
 	}
 
+    @Override
 	public boolean hasAttribute(String key, Class<?> clazz) {
 		return manager.graph.hasAttribute(
 				String.format("%s.%s", completeId, key), clazz);
 	}
 
+    @Override
 	public boolean hasHash(String key) {
 		return manager.graph.hasHash(String.format("%s.%s", completeId, key));
 	}
 
+    @Override
 	public boolean hasLabel(String key) {
 		return manager.graph.hasLabel(String.format("%s.%s", completeId, key));
 	}
 
+    @Override
 	public boolean hasNumber(String key) {
 		return manager.graph.hasNumber(String.format("%s.%s", completeId, key));
 	}
 
+    @Override
 	public boolean hasVector(String key) {
 		return manager.graph.hasVector(String.format("%s.%s", completeId, key));
 	}
 
 	// Commands (Element)
 
-	public void addAttribute(String attribute, Object... values) {
-		manager.graph.addAttribute(
-				String.format("%s.%s", completeId, attribute), values);
+    @Override
+	public boolean addAttribute(String attribute, Object... values) {
+		return manager.graph.addAttribute(String.format("%s.%s", completeId, attribute), values);
 	}
 
-	public void addAttributes(Map<String, Object> attributes) {
-		for (String key : attributes.keySet())
-			manager.graph.addAttribute(String.format("%s.%s", completeId, key),
-					attributes.get(key));
+    @Override
+	public boolean addAttributes(Map<String, Object> attributes) {
+        boolean modified = false;
+		for (String key : attributes.keySet()) {
+            modified |= manager.graph.addAttribute(String.format("%s.%s", completeId, key), attributes.get(key));
+        }
+        return modified;
 	}
 
-	public void setAttribute(String attribute, Object... values) {
-		manager.graph.setAttribute(
-				String.format("%s.%s", completeId, attribute), values);
+    @Override
+	public boolean setAttribute(String attribute, Object... values) {
+		return manager.graph.setAttribute(String.format("%s.%s", completeId, attribute), values);
 	}
 
-	public void changeAttribute(String attribute, Object... values) {
-		manager.graph.changeAttribute(
-				String.format("%s.%s", completeId, attribute), values);
+    @Override
+	public boolean changeAttribute(String attribute, Object... values) {
+		return manager.graph.changeAttribute(String.format("%s.%s", completeId, attribute), values);
 	}
 
+    @Override
 	public void clearAttributes() {
 		String start = String.format("%s.", completeId);
 		ArrayList<String> keys = new ArrayList<String>();
@@ -518,14 +538,60 @@ public class Sprite implements Element {
 			manager.graph.removeAttribute(key);
 	}
 
-	public void removeAttribute(String attribute) {
-		manager.graph.removeAttribute(String.format("%s.%s", completeId,
-				attribute));
+    @Override
+	public boolean removeAttribute(String attribute) {
+		return manager.graph.removeAttribute(String.format("%s.%s", completeId, attribute));
 	}
 	
 	// XXX -> UGLY FIX
 	// Sprites do not have unique index but is this useful?
+    @Override
 	public int getIndex() {
 		return 0;
 	}
+
+    @Override
+    public double getDouble(String key) {
+        final Number num = this.getNumber(key);
+        if (null == num) {
+            return Double.NaN;
+        }
+        return num.doubleValue();
+    }
+
+    @Override
+    public float getFloat(String key) {
+        final Number num = this.getNumber(key);
+        if (null == num) {
+            return Float.NaN;
+        }
+        return num.floatValue();
+    }
+
+    @Override
+    public int getInteger(String key) {
+        final Number num = this.getNumber(key);
+        if (null == num) {
+            return 0;
+        }
+        return num.intValue();
+    }
+
+    @Override
+    public long getLong(String key) {
+        final Number num = this.getNumber(key);
+        if (null == num) {
+            return 0L;
+        }
+        return num.longValue();
+    }
+
+    @Override
+    public short getShort(String key) {
+        final Number num = this.getNumber(key);
+        if (null == num) {
+            return 0;
+        }
+        return num.shortValue();
+    }
 }

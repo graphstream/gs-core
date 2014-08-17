@@ -32,7 +32,7 @@
 package org.graphstream.ui.graphicGraph.stylesheet;
 
 import java.awt.Color;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -769,8 +769,8 @@ public class Style extends StyleConstants {
 			String key = i.next();
 			Object o = values.get(key);
 
-			if (o instanceof ArrayList<?>) {
-				ArrayList<?> array = (ArrayList<?>) o;
+			if (o instanceof Collection<?>) {
+                Collection<?> array = (Collection<?>) o;
 
 				if (array.size() > 0) {
 					builder.append(String.format("%s%s%s%s: ", prefix, sprefix,

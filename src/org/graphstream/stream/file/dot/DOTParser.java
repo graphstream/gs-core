@@ -31,23 +31,20 @@
  */
 package org.graphstream.stream.file.dot;
 
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.Reader;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-
+import org.graphstream.graph.Element.AttributeChangeEvent;
 import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.stream.file.FileSourceDOT;
-import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
-
 import org.graphstream.util.parser.ParseException;
 import org.graphstream.util.parser.Parser;
 import org.graphstream.util.parser.SimpleCharStream;
 import org.graphstream.util.parser.Token;
-import org.graphstream.util.parser.TokenMgrError;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 
 /**
  * This class defines a DOT parser.

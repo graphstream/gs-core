@@ -63,14 +63,11 @@ import org.graphstream.stream.SourceBase;
  */
 public abstract class AbstractNode extends AbstractElement implements Node {
 
-	// *** Fields ***
-
 	/**
 	 * The graph to which this node belongs
 	 */
 	protected AbstractGraph graph;
 
-	// *** Constructors
 
 	/**
 	 * Constructs a new node. This constructor copies the parameters into the
@@ -86,8 +83,6 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 		this.graph = graph;
 	}
 
-	// *** Inherited from abstract element ***
-
 	@Override
 	protected void attributeChanged(AttributeChangeEvent event,
 			String attribute, Object oldValue, Object newValue) {
@@ -96,40 +91,12 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 				newValue);
 	}
 
-	/**
-	 * @return The id of the parent graph
-	 * @see org.graphstream.graph.implementations.AbstractElement#myGraphId()
-	 */
-	// protected String myGraphId() {
-	// return graph.getId();
-	// }
-
-	/**
-	 * This implementation calls the corresponding method of the parent graph
-	 * 
-	 * @see org.graphstream.graph.implementations.AbstractElement#newEvent()
-	 */
-	// protected long newEvent() {
-	// return graph.newEvent();
-	// }
-
 	@Override
-	/**
-	 * This implementation calls the corresponding method of the parent graph
-	 * 
-	 * @see org.graphstream.graph.implementations.AbstractElement#nullAttributesAreErrors()
-	 */
 	protected boolean nullAttributesAreErrors() {
 		return graph.nullAttributesAreErrors();
 	}
 
-	// *** Inherited from Node ***
-
-	/**
-	 * This implementation returns {@link #graph}.
-	 * 
-	 * @see org.graphstream.graph.Node#getGraph()
-	 */
+    @Override
 	public Graph getGraph() {
 		return graph;
 	}
@@ -140,160 +107,86 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 
 	public abstract int getOutDegree();
 
-	// [has|get]Edge[Toward|From|Between](Node|int|String) -> 2 * 3 * 3 = 18
-	// methods
-
-	/**
-	 * This implementation returns {@code true} if {@link #getEdgeToward(Node)}
-	 * is not {@code null}.
-	 * 
-	 * @see org.graphstream.graph.Node#getEdgeToward(org.graphstream.graph.Node)
-	 */
+    @Override
 	public boolean hasEdgeToward(Node node) {
 		return getEdgeToward(node) != null;
 	}
 
-	/**
-	 * This implementation returns {@code true} if {@link #getEdgeToward(int)}
-	 * is not {@code null}.
-	 * 
-	 * @see org.graphstream.graph.Node#hasEdgeToward(int)
-	 */
+    @Override
 	public boolean hasEdgeToward(int index) {
 		return getEdgeToward(index) != null;
 	}
 
-	/**
-	 * This implementation returns {@code true} if {@link #getEdgeToward(Node)}
-	 * is not {@code null}.
-	 * 
-	 * @see org.graphstream.graph.Node#hasEdgeToward(java.lang.String)
-	 */
+    @Override
 	public boolean hasEdgeToward(String id) {
 		return getEdgeToward(id) != null;
 	}
 
-	/**
-	 * This implementation returns {@code true} if {@link #getEdgeFrom(Node)} is
-	 * not {@code null}.
-	 * 
-	 * @see org.graphstream.graph.Node#hasEdgeFrom(org.graphstream.graph.Node)
-	 */
+    @Override
 	public boolean hasEdgeFrom(Node node) {
 		return getEdgeFrom(node) != null;
 	}
 
-	/**
-	 * This implementation returns {@code true} if {@link #getEdgeFrom(int)} is
-	 * not {@code null}.
-	 * 
-	 * @see org.graphstream.graph.Node#hasEdgeFrom(int)
-	 */
+    @Override
 	public boolean hasEdgeFrom(int index) {
 		return getEdgeFrom(index) != null;
 	}
 
-	/**
-	 * This implementation returns {@code true} if {@link #getEdgeFrom(Node)} is
-	 * not {@code null}.
-	 * 
-	 * @see org.graphstream.graph.Node#hasEdgeFrom(java.lang.String)
-	 */
+    @Override
 	public boolean hasEdgeFrom(String id) {
 		return getEdgeFrom(id) != null;
 	}
 
-	/**
-	 * This implementation returns {@code true} if {@link #getEdgeBetween(Node)}
-	 * is not {@code null}.
-	 * 
-	 * @see org.graphstream.graph.Node#hasEdgeBetween(org.graphstream.graph.Node)
-	 */
+    @Override
 	public boolean hasEdgeBetween(Node node) {
 		return getEdgeBetween(node) != null;
 	}
 
-	/**
-	 * This implementation returns {@code true} if {@link #getEdgeBetween(int)}
-	 * is not {@code null}.
-	 * 
-	 * @see org.graphstream.graph.Node#hasEdgeBetween(int)
-	 */
+    @Override
 	public boolean hasEdgeBetween(int index) {
 		return getEdgeBetween(index) != null;
 	}
 
-	/**
-	 * This implementation returns {@code true} if {@link #getEdgeBetween(Node)}
-	 * is not {@code null}.
-	 * 
-	 * @see org.graphstream.graph.Node#hasEdgeBetween(java.lang.String)
-	 */
+    @Override
 	public boolean hasEdgeBetween(String id) {
 		return getEdgeBetween(id) != null;
 	}
 
 	public abstract <T extends Edge> T getEdgeToward(Node node);
 
-	/**
-	 * This implementation uses {@link #getEdgeToward(Node)}
-	 * 
-	 * @see org.graphstream.graph.Node#getEdgeToward(int)
-	 */
+    @Override
 	public <T extends Edge> T getEdgeToward(int index) {
 		return getEdgeToward(graph.getNode(index));
 	}
 
-	/**
-	 * This implementation uses {@link #getEdgeToward(Node)}
-	 * 
-	 * @see org.graphstream.graph.Node#getEdgeToward(java.lang.String)
-	 */
+    @Override
 	public <T extends Edge> T getEdgeToward(String id) {
 		return getEdgeToward(graph.getNode(id));
 	}
 
 	public abstract <T extends Edge> T getEdgeFrom(Node node);
 
-	/**
-	 * This implementation uses {@link #getEdgeFrom(Node)}
-	 * 
-	 * @see org.graphstream.graph.Node#getEdgeFrom(int)
-	 */
+    @Override
 	public <T extends Edge> T getEdgeFrom(int index) {
 		return getEdgeFrom(graph.getNode(index));
 	}
 
-	/**
-	 * This implementation uses {@link #getEdgeFrom(Node)}
-	 * 
-	 * @see org.graphstream.graph.Node#getEdgeFrom(java.lang.String)
-	 */
+    @Override
 	public <T extends Edge> T getEdgeFrom(String id) {
 		return getEdgeFrom(graph.getNode(id));
 	}
 
 	public abstract <T extends Edge> T getEdgeBetween(Node node);
 
-	/**
-	 * This implementation uses {@link #getEdgeBetween(Node)}
-	 * 
-	 * @see org.graphstream.graph.Node#getEdgeBetween(int)
-	 */
+    @Override
 	public <T extends Edge> T getEdgeBetween(int index) {
 		return getEdgeBetween(graph.getNode(index));
 	}
 
-	/**
-	 * This implementation uses {@link #getEdgeBetween(Node)}
-	 * 
-	 * @see org.graphstream.graph.Node#getEdgeBetween(java.lang.String)
-	 */
+    @Override
 	public <T extends Edge> T getEdgeBetween(String id) {
 		return getEdgeBetween(graph.getNode(id));
 	}
-
-	// get[_|Entering|Leaving]EdgeIterator
 
 	public abstract <T extends Edge> Iterator<T> getEdgeIterator();
 
@@ -301,13 +194,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 
 	public abstract <T extends Edge> Iterator<T> getLeavingEdgeIterator();
 
-	// getEach[_Entering|Leaving]Edge
-
-	/**
-	 * This implementation uses {@link #getEdgeIterator()}
-	 * 
-	 * @see org.graphstream.graph.Node#getEachEdge()
-	 */
+    @Override
 	public <T extends Edge> Iterable<T> getEachEdge() {
 		return new Iterable<T>() {
 			public Iterator<T> iterator() {
@@ -316,11 +203,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 		};
 	}
 
-	/**
-	 * This implementation uses {@link #getEnteringEdgeIterator()}
-	 * 
-	 * @see org.graphstream.graph.Node#getEachEnteringEdge()
-	 */
+    @Override
 	public <T extends Edge> Iterable<T> getEachEnteringEdge() {
 		return new Iterable<T>() {
 			public Iterator<T> iterator() {
@@ -329,11 +212,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 		};
 	}
 
-	/**
-	 * This implementation uses {@link #getLeavingEdgeIterator()}
-	 * 
-	 * @see org.graphstream.graph.Node#getEachLeavingEdge()
-	 */
+    @Override
 	public <T extends Edge> Iterable<T> getEachLeavingEdge() {
 		return new Iterable<T>() {
 			public Iterator<T> iterator() {
@@ -342,14 +221,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 		};
 	}
 
-	// get[_|Entering|Leaving]EdgeSet
-
-	/**
-	 * This implementation uses {@link #getEdgeIterator()} and
-	 * {@link #getDegree()}
-	 * 
-	 * @see org.graphstream.graph.Node#getEdgeSet()
-	 */
+    @Override
 	public <T extends Edge> Collection<T> getEdgeSet() {
 		return new AbstractCollection<T>() {
 			@Override
@@ -364,12 +236,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 		};
 	}
 
-	/**
-	 * This implementation uses {@link #getEnteringEdgeIterator()} and
-	 * {@link #geIntDegree()}
-	 * 
-	 * @see org.graphstream.graph.Node#getEnteringEdgeSet()
-	 */
+    @Override
 	public <T extends Edge> Collection<T> getEnteringEdgeSet() {
 		return new AbstractCollection<T>() {
 			@Override
@@ -384,12 +251,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 		};
 	}
 
-	/**
-	 * This implementation uses {@link #getLeavingIterator()} and
-	 * {@link #geOuttDegree()}
-	 * 
-	 * @see org.graphstream.graph.Node#getLeavingEdgeSet()
-	 */
+    @Override
 	public <T extends Edge> Collection<T> getLeavingEdgeSet() {
 		return new AbstractCollection<T>() {
 			@Override
@@ -404,11 +266,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 		};
 	}
 
-	/**
-	 * This implementation uses {@link #getEdgeIterator()}
-	 * 
-	 * @see java.lang.Iterable#iterator()
-	 */
+    @Override
 	public Iterator<Edge> iterator() {
 		return getEdgeIterator();
 	}
@@ -419,13 +277,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 
 	public abstract <T extends Edge> T getLeavingEdge(int i);
 
-	/**
-	 * This implementation uses {@link #getEdgeIterator()} and stores the
-	 * visited nodes in a set. In this way it ensures that each neighbor will be
-	 * visited exactly once, even in multi-graph.
-	 * 
-	 * @see org.graphstream.graph.Node#getNeighborNodeIterator()
-	 */
+    @Override
 	public <T extends Node> Iterator<T> getNeighborNodeIterator() {
 		return new Iterator<T>() {
 			Iterator<Edge> edgeIt = getEdgeIterator();
@@ -459,79 +311,38 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 			}
 
 			public void remove() {
-				throw new UnsupportedOperationException(
-						"This iterator does not support remove");
-
+				throw new UnsupportedOperationException("This iterator does not support remove");
 			}
-
-			// Iterator<Edge> edgeIterator = getEdgeIterator();
-			//
-			// public boolean hasNext() {
-			// return edgeIterator.hasNext();
-			// }
-			//
-			// public T next() {
-			// return edgeIterator.next().getOpposite(AbstractNode.this);
-			// }
-			//
-			// public void remove() {
-			// throw new UnsupportedOperationException(
-			// "This iterator does not support remove");
-			// }
 		};
 	}
 
-	// breadth- and depth-first iterator
-
-	/**
-	 * This implementation creates an instance of
-	 * {@link org.graphstream.graph#BreadthFirstIterator} and returns it.
-	 * 
-	 * @see org.graphstream.graph.Node#getBreadthFirstIterator()
-	 */
+    @Override
 	public <T extends Node> Iterator<T> getBreadthFirstIterator() {
 		// XXX change it when the old iterator disappears
 		// XXX change the return type to have access to the other methods
 		return new BreadthFirstIterator<T>(this);
 	}
 
-	/**
-	 * This implementation creates an instance of
-	 * {@link org.graphstream.graph#BreadthFirstIterator} and returns it.
-	 * 
-	 * @see org.graphstream.graph.Node#getBreadthFirstIterator(boolean)
-	 */
+    @Override
 	public <T extends Node> Iterator<T> getBreadthFirstIterator(boolean directed) {
 		// XXX change it when the old iterator disappears
 		// XXX change the return type to have access to the other methods
 		return new BreadthFirstIterator<T>(this, directed);
 	}
 
-	/**
-	 * This implementation creates an instance of
-	 * {@link org.graphstream.graph#DepthFirstIterator} and returns it.
-	 * 
-	 * @see org.graphstream.graph.Node#getDepthFirstIterator()
-	 */
+    @Override
 	public <T extends Node> Iterator<T> getDepthFirstIterator() {
 		// XXX change it when the old iterator disappears
 		// XXX change the return type to have access to the other methods
 		return new DepthFirstIterator<T>(this);
 	}
 
-	/**
-	 * This implementation creates an instance of
-	 * {@link org.graphstream.graph#DepthFirstIterator} and returns it.
-	 * 
-	 * @see org.graphstream.graph.Node#getDepthFirstIterator(boolean)
-	 */
+    @Override
 	public <T extends Node> Iterator<T> getDepthFirstIterator(boolean directed) {
 		// XXX change it when the old iterator disappears
 		// XXX change the return type to have access to the other methods
 		return new DepthFirstIterator<T>(this, directed);
 	}
-
-	// *** Other methods ***
 
 	/**
 	 * This method is called automatically when an edge incident to this node is

@@ -195,8 +195,7 @@ public abstract class GraphicElement extends AbstractElement {
 	/**
 	 * Set the GUI component of this element.
 	 *
-	 * @param component
-	 *            The component.
+	 * @param component The component.
 	 */
 	public void setComponent(Object component) {
 		this.component = component;
@@ -296,10 +295,12 @@ public abstract class GraphicElement extends AbstractElement {
 	}
 
 	@Override
-	public void addAttribute(String attribute, Object... values) {
+	public boolean addAttribute(String attribute, Object... values) {
 		Matcher matcher = acceptedAttribute.matcher(attribute);
-
-		if (matcher.matches())
-			super.addAttribute(attribute, values);
+		if (matcher.matches()) {
+            return super.addAttribute(attribute, values);
+        } else {
+            return false;
+        }
 	}
 }

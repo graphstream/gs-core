@@ -260,11 +260,13 @@ public class GraphicEdge extends GraphicElement implements Edge {
 	// Edge interface
 
 	@SuppressWarnings("all")
+    @Override
 	public <T extends Node> T getNode0() {
 		return (T) from;
 	}
 
 	@SuppressWarnings("all")
+    @Override
 	public <T extends Node> T getNode1() {
 		return (T) to;
 	}
@@ -281,6 +283,7 @@ public class GraphicEdge extends GraphicElement implements Edge {
 	}
 
 	@SuppressWarnings("all")
+    @Override
 	public <T extends Node> T getOpposite(Node node) {
 		if (node == from)
 			return (T) to;
@@ -289,19 +292,23 @@ public class GraphicEdge extends GraphicElement implements Edge {
 	}
 
 	@SuppressWarnings("all")
+    @Override
 	public <T extends Node> T getSourceNode() {
 		return (T) from;
 	}
 
 	@SuppressWarnings("all")
+    @Override
 	public <T extends Node> T getTargetNode() {
 		return (T) to;
 	}
 
+    @Override
 	public boolean isDirected() {
 		return directed;
 	}
 
+    @Override
 	public boolean isLoop() {
 		return (from == to);
 	}

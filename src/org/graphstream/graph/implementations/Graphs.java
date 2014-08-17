@@ -240,30 +240,38 @@ public class Graphs {
 			this.attributeLock = new ReentrantLock();
 		}
 
-		public void addAttribute(String attribute, Object... values) {
+        @Override
+		public boolean addAttribute(String attribute, Object... values) {
 			attributeLock.lock();
-			wrappedElement.addAttribute(attribute, values);
+			final boolean modified = wrappedElement.addAttribute(attribute, values);
 			attributeLock.unlock();
+            return modified;
 		}
 
-		public void addAttributes(Map<String, Object> attributes) {
+        @Override
+		public boolean addAttributes(Map<String, Object> attributes) {
 			attributeLock.lock();
-			wrappedElement.addAttributes(attributes);
+            final boolean modified = wrappedElement.addAttributes(attributes);
 			attributeLock.unlock();
+            return modified;
 		}
 
-		public void changeAttribute(String attribute, Object... values) {
+        @Override
+		public boolean changeAttribute(String attribute, Object... values) {
 			attributeLock.lock();
-			wrappedElement.changeAttribute(attribute, values);
+            final boolean modified = wrappedElement.changeAttribute(attribute, values);
 			attributeLock.unlock();
+            return modified;
 		}
 
+        @Override
 		public void clearAttributes() {
 			attributeLock.lock();
 			wrappedElement.clearAttributes();
 			attributeLock.unlock();
 		}
 
+        @Override
 		public Object[] getArray(String key) {
 			Object[] o;
 
@@ -274,6 +282,7 @@ public class Graphs {
 			return o;
 		}
 
+        @Override
 		public <T> T getAttribute(String key) {
 			T o;
 
@@ -284,6 +293,7 @@ public class Graphs {
 			return o;
 		}
 
+        @Override
 		public <T> T getAttribute(String key, Class<T> clazz) {
 			T o;
 
@@ -294,6 +304,7 @@ public class Graphs {
 			return o;
 		}
 
+        @Override
 		public int getAttributeCount() {
 			int c;
 
@@ -304,10 +315,12 @@ public class Graphs {
 			return c;
 		}
 
+        @Override
 		public Iterator<String> getAttributeKeyIterator() {
 			return getAttributeKeySet().iterator();
 		}
 
+        @Override
 		public Collection<String> getAttributeKeySet() {
 			ArrayList<String> o;
 			Iterator<String> it;
@@ -324,11 +337,13 @@ public class Graphs {
 
 			return o;
 		}
-		
+
+        @Override
 		public Iterable<String> getEachAttributeKey() {
 			return getAttributeKeySet();
 		}
 
+        @Override
 		public <T> T getFirstAttributeOf(String... keys) {
 			T o;
 
@@ -339,6 +354,7 @@ public class Graphs {
 			return o;
 		}
 
+        @Override
 		public <T> T getFirstAttributeOf(Class<T> clazz, String... keys) {
 			T o;
 
@@ -349,6 +365,7 @@ public class Graphs {
 			return o;
 		}
 
+        @Override
 		public Map<?, ?> getHash(String key) {
             Map<?, ?> o;
 
@@ -359,16 +376,19 @@ public class Graphs {
 			return o;
 		}
 
+        @Override
 		public String getId() {
 			return wrappedElement.getId();
 		}
 
+        @Override
 		public int getIndex() {
 			return wrappedElement.getIndex();
 		}
 
-		public CharSequence getLabel(String key) {
-			CharSequence o;
+        @Override
+		public String getLabel(String key) {
+			String o;
 
 			attributeLock.lock();
 			o = wrappedElement.getLabel(key);
@@ -377,8 +397,9 @@ public class Graphs {
 			return o;
 		}
 
-		public double getNumber(String key) {
-			double o;
+        @Override
+		public Number getNumber(String key) {
+            Number o;
 
 			attributeLock.lock();
 			o = wrappedElement.getNumber(key);
@@ -387,6 +408,52 @@ public class Graphs {
 			return o;
 		}
 
+        @Override
+        public double getDouble(String key) {
+            final Number num = this.getNumber(key);
+            if (null == num) {
+                return Double.NaN;
+            }
+            return num.doubleValue();
+        }
+
+        @Override
+        public float getFloat(String key) {
+            final Number num = this.getNumber(key);
+            if (null == num) {
+                return Float.NaN;
+            }
+            return num.floatValue();
+        }
+
+        @Override
+        public int getInteger(String key) {
+            final Number num = this.getNumber(key);
+            if (null == num) {
+                return 0;
+            }
+            return num.intValue();
+        }
+
+        @Override
+        public long getLong(String key) {
+            final Number num = this.getNumber(key);
+            if (null == num) {
+                return 0L;
+            }
+            return num.longValue();
+        }
+
+        @Override
+        public short getShort(String key) {
+            final Number num = this.getNumber(key);
+            if (null == num) {
+                return 0;
+            }
+            return num.shortValue();
+        }
+
+        @Override
 		public Collection<? extends Number> getVector(String key) {
             Collection<? extends Number> o;
 
@@ -397,6 +464,7 @@ public class Graphs {
 			return o;
 		}
 
+        @Override
 		public boolean hasArray(String key) {
 			boolean b;
 
@@ -407,6 +475,7 @@ public class Graphs {
 			return b;
 		}
 
+        @Override
 		public boolean hasAttribute(String key) {
 			boolean b;
 
@@ -417,6 +486,7 @@ public class Graphs {
 			return b;
 		}
 
+        @Override
 		public boolean hasAttribute(String key, Class<?> clazz) {
 			boolean b;
 
@@ -427,6 +497,7 @@ public class Graphs {
 			return b;
 		}
 
+        @Override
 		public boolean hasHash(String key) {
 			boolean b;
 
@@ -437,6 +508,7 @@ public class Graphs {
 			return b;
 		}
 
+        @Override
 		public boolean hasLabel(String key) {
 			boolean b;
 
@@ -447,6 +519,7 @@ public class Graphs {
 			return b;
 		}
 
+        @Override
 		public boolean hasNumber(String key) {
 			boolean b;
 
@@ -457,6 +530,7 @@ public class Graphs {
 			return b;
 		}
 
+        @Override
 		public boolean hasVector(String key) {
 			boolean b;
 
@@ -467,21 +541,24 @@ public class Graphs {
 			return b;
 		}
 
-		public void removeAttribute(String attribute) {
+        @Override
+		public boolean removeAttribute(String attribute) {
 			attributeLock.lock();
-			wrappedElement.removeAttribute(attribute);
+			final boolean modified = wrappedElement.removeAttribute(attribute);
 			attributeLock.unlock();
+            return modified;
 		}
 
-		public void setAttribute(String attribute, Object... values) {
+        @Override
+		public boolean setAttribute(String attribute, Object... values) {
 			attributeLock.lock();
-			wrappedElement.setAttribute(attribute, values);
+            final boolean modified = wrappedElement.setAttribute(attribute, values);
 			attributeLock.unlock();
+            return modified;
 		}		
 	}
 
-	static class SynchronizedGraph extends SynchronizedElement<Graph> implements
-			Graph {
+	static class SynchronizedGraph extends SynchronizedElement<Graph> implements Graph {
 
 		final ReentrantLock elementLock;
 		final HashMap<String, Node> synchronizedNodes;

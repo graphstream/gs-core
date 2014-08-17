@@ -31,18 +31,23 @@
  */
 package org.graphstream.graph.test;
 
-import static org.junit.Assert.*;
+import org.graphstream.graph.CompoundAttribute;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+import org.graphstream.graph.NullAttributeException;
+import org.graphstream.graph.implementations.MultiGraph;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.graphstream.graph.CompoundAttribute;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.NullAttributeException;
-import org.graphstream.graph.Node;
-import org.graphstream.graph.implementations.MultiGraph;
-import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class TestElement {
 	@Test(expected=NullAttributeException.class)
@@ -143,7 +148,7 @@ public class TestElement {
 
 		A.setAttribute("pi", "3.1415");
 		
-		assertEquals(3.1415, A.getNumber("pi"), 0);
+		assertEquals(3.1415d, A.getDouble("pi"), 0);
 		
 		// Vector of numbers.
 

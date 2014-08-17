@@ -289,6 +289,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 				getEdgeCount());
 	}
 
+    @Override
 	public double getStep() {
 		return step;
 	}
@@ -428,11 +429,13 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	}
 
 	@SuppressWarnings("unchecked")
+    @Override
 	public <T extends Node> T getNode(String id) {
 		return (T) styleGroups.getNode(id);
 	}
 
 	@SuppressWarnings("unchecked")
+    @Override
 	public <T extends Edge> T getEdge(String id) {
 		return (T) styleGroups.getEdge(id);
 	}
@@ -521,15 +524,18 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 
 	// Graph interface
 
+    @Override
 	public Iterable<? extends Edge> getEachEdge() {
 		return styleGroups.edges();
 	}
 
+    @Override
 	public Iterable<? extends Node> getEachNode() {
 		return styleGroups.nodes();
 	}
 
 	@SuppressWarnings("all")
+    @Override
 	public <T extends Node> Collection<T> getNodeSet() {
 		return new AbstractCollection<T>() {
 			public Iterator<T> iterator() {
@@ -543,6 +549,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	}
 
 	@SuppressWarnings("all")
+    @Override
 	public <T extends Edge> Collection<T> getEdgeSet() {
 		return new AbstractCollection<T>() {
 			public Iterator<T> iterator() {
@@ -556,109 +563,60 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	}
 
 	@SuppressWarnings("unchecked")
+    @Override
 	public Iterator<Node> iterator() {
 		return (Iterator<Node>) styleGroups.getNodeIterator();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.Source#addSink(org.graphstream.stream.Sink)
-	 */
+    @Override
 	public void addSink(Sink listener) {
 		listeners.addSink(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.Source#removeSink(org.graphstream.stream.Sink)
-	 */
+    @Override
 	public void removeSink(Sink listener) {
 		listeners.removeSink(listener);
 	}
 
-	/*
-	 * *(non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.Source#addAttributeSink(org.graphstream.stream
-	 * .AttributeSink)
-	 */
+    @Override
 	public void addAttributeSink(AttributeSink listener) {
 		listeners.addAttributeSink(listener);
 	}
 
-	/*
-	 * *(non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.Source#removeAttributeSink(org.graphstream.stream
-	 * .AttributeSink)
-	 */
+    @Override
 	public void removeAttributeSink(AttributeSink listener) {
 		listeners.removeAttributeSink(listener);
 	}
 
-	/*
-	 * *(non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.Source#addElementSink(org.graphstream.stream.
-	 * ElementSink)
-	 */
+    @Override
 	public void addElementSink(ElementSink listener) {
 		listeners.addElementSink(listener);
 	}
 
-	/*
-	 * *(non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.Source#removeElementSink(org.graphstream.stream
-	 * .ElementSink)
-	 */
+    @Override
 	public void removeElementSink(ElementSink listener) {
 		listeners.removeElementSink(listener);
 	}
 
-	/*
-	 * *(non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#attributeSinks()
-	 */
+    @Override
 	public Iterable<AttributeSink> attributeSinks() {
 		return listeners.attributeSinks();
 	}
 
-	/*
-	 * *(non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#elementSinks()
-	 */
+    @Override
 	public Iterable<ElementSink> elementSinks() {
 		return listeners.elementSinks();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#addEdge(java.lang.String,
-	 * java.lang.String, java.lang.String)
-	 */
 	@SuppressWarnings("unchecked")
+    @Override
 	public <T extends Edge> T addEdge(String id, String from, String to)
 			throws IdAlreadyInUseException, ElementNotFoundException {
 		return (T) addEdge(id, from, to, false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#addEdge(java.lang.String,
-	 * java.lang.String, java.lang.String, boolean)
-	 */
 	@SuppressWarnings("unchecked")
+    @Override
 	public <T extends Edge> T addEdge(String id, String from, String to,
 			boolean directed) throws IdAlreadyInUseException,
 			ElementNotFoundException {
@@ -703,12 +661,8 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		return (T) edge;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#addNode(java.lang.String)
-	 */
 	@SuppressWarnings("unchecked")
+    @Override
 	public <T extends Node> T addNode(String id) throws IdAlreadyInUseException {
 		GraphicNode node = (GraphicNode) styleGroups.getNode(id);
 
@@ -725,11 +679,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		return (T) node;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#clear()
-	 */
+    @Override
 	public void clear() {
 		listeners.sendGraphCleared();
 
@@ -746,12 +696,8 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		style = styleGroups.getStyleFor(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#removeEdge(java.lang.String)
-	 */
 	@SuppressWarnings("unchecked")
+    @Override
 	public <T extends Edge> T removeEdge(String id)
 			throws ElementNotFoundException {
 		GraphicEdge edge = (GraphicEdge) styleGroups.getEdge(id);
@@ -773,13 +719,8 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		return (T) edge;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#removeEdge(java.lang.String,
-	 * java.lang.String)
-	 */
 	@SuppressWarnings("unchecked")
+    @Override
 	public <T extends Edge> T removeEdge(String from, String to)
 			throws ElementNotFoundException {
 		GraphicNode node0 = (GraphicNode) styleGroups.getNode(from);
@@ -802,12 +743,8 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		return null;
 	}
 
-	/*
-	 * *(non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#removeNode(java.lang.String)
-	 */
 	@SuppressWarnings("unchecked")
+    @Override
 	public <T extends Node> T removeNode(String id)
 			throws ElementNotFoundException {
 		GraphicNode node = (GraphicNode) styleGroups.getNode(id);
@@ -837,39 +774,41 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		return (T) node;
 	}
 
+    @Override
 	public Viewer display() {
 		throw new RuntimeException(
 				"GraphicGraph is used by display() and cannot recursively define display()");
 	}
 
+    @Override
 	public Viewer display(boolean autoLayout) {
 		throw new RuntimeException(
 				"GraphicGraph is used by display() and cannot recursively define display()");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#stepBegins(double)
-	 */
+    @Override
 	public void stepBegins(double step) {
 		listeners.sendStepBegins(step);
 		this.step = step;
 	}
 
+    @Override
 	public EdgeFactory<? extends Edge> edgeFactory() {
 		throw new RuntimeException("GraphicGraph does not support EdgeFactory");
 	}
 
+    @Override
 	public int getEdgeCount() {
 		return styleGroups.getEdgeCount();
 	}
 
 	@SuppressWarnings("unchecked")
+    @Override
 	public <T extends Edge> Iterator<T> getEdgeIterator() {
 		return (Iterator<T>) styleGroups.getEdgeIterator();
 	}
 
+    @Override
 	public int getNodeCount() {
 		return styleGroups.getNodeCount();
 	}
@@ -879,6 +818,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	}
 
 	@SuppressWarnings("unchecked")
+    @Override
 	public <T extends Node> Iterator<T> getNodeIterator() {
 		return (Iterator<T>) styleGroups.getNodeIterator();
 	}
@@ -891,23 +831,28 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		return styleGroups.sprites();
 	}
 
+    @Override
 	public boolean isAutoCreationEnabled() {
 		return false;
 	}
 
+    @Override
 	public NodeFactory<? extends Node> nodeFactory() {
 		throw new RuntimeException("GraphicGraph does not support NodeFactory");
 	}
 
+    @Override
 	public void setAutoCreate(boolean on) {
 		throw new RuntimeException(
 				"GraphicGraph does not support auto-creation");
 	}
 
+    @Override
 	public boolean isStrict() {
 		return false;
 	}
 
+    @Override
 	public void setStrict(boolean on) {
 		throw new RuntimeException(
 				"GraphicGraph does not support strict checking");
@@ -918,211 +863,132 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		return nullAttrError;
 	}
 
+    @Override
 	public void setNullAttributesAreErrors(boolean on) {
 		nullAttrError = on;
 	}
 
+    @Override
 	public void setEdgeFactory(EdgeFactory<? extends Edge> ef) {
 		throw new RuntimeException(
 				"you cannot change the edge factory for graphic graphs !");
 	}
 
+    @Override
 	public void setNodeFactory(NodeFactory<? extends Node> nf) {
 		throw new RuntimeException(
 				"you cannot change the node factory for graphic graphs !");
 	}
 
+    @Override
 	public void read(String filename) throws IOException {
 		throw new RuntimeException("GraphicGraph does not support I/O");
 	}
 
+    @Override
 	public void read(FileSource input, String filename) throws IOException {
 		throw new RuntimeException("GraphicGraph does not support I/O");
 	}
 
+    @Override
 	public void write(FileSink output, String filename) throws IOException {
 		throw new RuntimeException("GraphicGraph does not support I/O");
 	}
 
+    @Override
 	public void write(String filename) throws IOException {
 		throw new RuntimeException("GraphicGraph does not support I/O");
 	}
 
 	// Output interface
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#edgeAttributeAdded(java.lang.String,
-	 * long, java.lang.String, java.lang.String, java.lang.Object)
-	 */
+    @Override
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
 			String attribute, Object value) {
 		listeners
 				.edgeAttributeAdded(sourceId, timeId, edgeId, attribute, value);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#edgeAttributeChanged(java.lang.String
-	 * , long, java.lang.String, java.lang.String, java.lang.Object,
-	 * java.lang.Object)
-	 */
+    @Override
 	public void edgeAttributeChanged(String sourceId, long timeId,
 			String edgeId, String attribute, Object oldValue, Object newValue) {
 		listeners.edgeAttributeChanged(sourceId, timeId, edgeId, attribute,
 				oldValue, newValue);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#edgeAttributeRemoved(java.lang.String
-	 * , long, java.lang.String, java.lang.String)
-	 */
+    @Override
 	public void edgeAttributeRemoved(String sourceId, long timeId,
 			String edgeId, String attribute) {
 		listeners.edgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#graphAttributeAdded(java.lang.String
-	 * , long, java.lang.String, java.lang.Object)
-	 */
+    @Override
 	public void graphAttributeAdded(String sourceId, long timeId,
 			String attribute, Object value) {
 		listeners.graphAttributeAdded(sourceId, timeId, attribute, value);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#graphAttributeChanged(java.lang.
-	 * String, long, java.lang.String, java.lang.Object, java.lang.Object)
-	 */
+    @Override
 	public void graphAttributeChanged(String sourceId, long timeId,
 			String attribute, Object oldValue, Object newValue) {
 		listeners.graphAttributeChanged(sourceId, timeId, attribute, oldValue,
 				newValue);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#graphAttributeRemoved(java.lang.
-	 * String, long, java.lang.String)
-	 */
+    @Override
 	public void graphAttributeRemoved(String sourceId, long timeId,
 			String attribute) {
 		listeners.graphAttributeRemoved(sourceId, timeId, attribute);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#nodeAttributeAdded(java.lang.String,
-	 * long, java.lang.String, java.lang.String, java.lang.Object)
-	 */
+    @Override
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
 			String attribute, Object value) {
 		listeners
 				.nodeAttributeAdded(sourceId, timeId, nodeId, attribute, value);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#nodeAttributeChanged(java.lang.String
-	 * , long, java.lang.String, java.lang.String, java.lang.Object,
-	 * java.lang.Object)
-	 */
+    @Override
 	public void nodeAttributeChanged(String sourceId, long timeId,
 			String nodeId, String attribute, Object oldValue, Object newValue) {
 		listeners.nodeAttributeChanged(sourceId, timeId, nodeId, attribute,
 				oldValue, newValue);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#nodeAttributeRemoved(java.lang.String
-	 * , long, java.lang.String, java.lang.String)
-	 */
+    @Override
 	public void nodeAttributeRemoved(String sourceId, long timeId,
 			String nodeId, String attribute) {
 		listeners.nodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#edgeAdded(java.lang.String, long,
-	 * java.lang.String, java.lang.String, java.lang.String, boolean)
-	 */
+    @Override
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
 			String fromNodeId, String toNodeId, boolean directed) {
 		listeners.edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId,
 				directed);
 	}
 
-	/*
-	 * *(non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#edgeRemoved(java.lang.String,
-	 * long, java.lang.String)
-	 */
+    @Override
 	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 		listeners.edgeRemoved(sourceId, timeId, edgeId);
 	}
 
-	/*
-	 * *(non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#graphCleared(java.lang.String,
-	 * long)
-	 */
+    @Override
 	public void graphCleared(String sourceId, long timeId) {
 		listeners.graphCleared(sourceId, timeId);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#nodeAdded(java.lang.String, long,
-	 * java.lang.String)
-	 */
+    @Override
 	public void nodeAdded(String sourceId, long timeId, String nodeId) {
 		listeners.nodeAdded(sourceId, timeId, nodeId);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#nodeRemoved(java.lang.String,
-	 * long, java.lang.String)
-	 */
+    @Override
 	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 		listeners.nodeRemoved(sourceId, timeId, nodeId);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#stepBegins(java.lang.String,
-	 * long, double)
-	 */
+    @Override
 	public void stepBegins(String sourceId, long timeId, double time) {
 		listeners.sendStepBegins(sourceId, timeId, time);
 		stepBegins(time);
@@ -1294,85 +1160,82 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.Source#clearAttributeSinks()
-	 */
+    @Override
 	public void clearAttributeSinks() {
 		listeners.clearAttributeSinks();
 	}
 
-	/*
-	 * *(non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.Source#clearElementSinks()
-	 */
+    @Override
 	public void clearElementSinks() {
 		listeners.clearElementSinks();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.Source#clearSinks()
-	 */
+    @Override
 	public void clearSinks() {
 		listeners.clearSinks();
 	}
 
 	// stubs for the new methods
 
+    @Override
 	public <T extends Edge> T addEdge(String id, int index1, int index2) {
-		throw new RuntimeException("not implemented !");
+		throw new UnsupportedOperationException();
 	}
 
-	public <T extends Edge> T addEdge(String id, int fromIndex, int toIndex,
-			boolean directed) {
-		throw new RuntimeException("not implemented !");
+    @Override
+	public <T extends Edge> T addEdge(String id, int fromIndex, int toIndex, boolean directed) {
+        throw new UnsupportedOperationException();
 	}
 
+    @Override
 	public <T extends Edge> T addEdge(String id, Node node1, Node node2) {
-		throw new RuntimeException("not implemented !");
+        throw new UnsupportedOperationException();
 	}
 
-	public <T extends Edge> T addEdge(String id, Node from, Node to,
-			boolean directed) {
-		throw new RuntimeException("not implemented !");
+    @Override
+	public <T extends Edge> T addEdge(String id, Node from, Node to, boolean directed) {
+        throw new UnsupportedOperationException();
 	}
 
+    @Override
 	public <T extends Edge> T getEdge(int index)
 			throws IndexOutOfBoundsException {
-		throw new RuntimeException("not implemented !");
+        throw new UnsupportedOperationException();
 	}
 
-	public <T extends Node> T getNode(int index)
-			throws IndexOutOfBoundsException {
-		throw new RuntimeException("not implemented !");
+    @Override
+	public <T extends Node> T getNode(int index) throws IndexOutOfBoundsException {
+        throw new UnsupportedOperationException();
 	}
 
+    @Override
 	public <T extends Edge> T removeEdge(int index) {
-		throw new RuntimeException("not implemented !");
+        throw new UnsupportedOperationException();
 	}
 
+    @Override
 	public <T extends Edge> T removeEdge(int fromIndex, int toIndex) {
-		throw new RuntimeException("not implemented !");
+        throw new UnsupportedOperationException();
 	}
 
+    @Override
 	public <T extends Edge> T removeEdge(Node node1, Node node2) {
-		throw new RuntimeException("not implemented !");
+        throw new UnsupportedOperationException();
 	}
 
+    @Override
 	public <T extends Edge> T removeEdge(Edge edge) {
-		throw new RuntimeException("not implemented !");
+        throw new UnsupportedOperationException();
 	}
 
+    @Override
 	public <T extends Node> T removeNode(int index) {
-		throw new RuntimeException("not implemented !");
+        throw new UnsupportedOperationException();
 	}
 
+    @Override
 	public <T extends Node> T removeNode(Node node) {
-		throw new RuntimeException("not implemented !");
+        throw new UnsupportedOperationException();
 	}
 
 	/**

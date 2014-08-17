@@ -51,8 +51,6 @@ import org.graphstream.stream.SourceBase.ElementType;
  */
 public class AbstractEdge extends AbstractElement implements Edge {
 
-	// *** Fields ***
-
 	/**
 	 * The source node
 	 */
@@ -72,8 +70,6 @@ public class AbstractEdge extends AbstractElement implements Edge {
 	 * The graph to which this edge belongs
 	 */
 	protected AbstractGraph graph;
-
-	// *** Constructors ***
 
 	/**
 	 * Constructs a new edge. This constructor copies the parameters into the
@@ -98,8 +94,6 @@ public class AbstractEdge extends AbstractElement implements Edge {
 		this.graph = (AbstractGraph) source.getGraph();
 	}
 
-	// *** Inherited from AbstractElement ***
-
 	@Override
 	protected void attributeChanged(AttributeChangeEvent event,
 			String attribute, Object oldValue, Object newValue) {
@@ -107,11 +101,6 @@ public class AbstractEdge extends AbstractElement implements Edge {
 				attribute, event, oldValue, newValue);
 	}
 
-	/**
-	 * This implementation calls the corresponding method of the parent graph
-	 * 
-	 * @see org.graphstream.graph.implementations.AbstractElement#nullAttributesAreErrors()
-	 */
 	@Override
 	protected boolean nullAttributesAreErrors() {
 		return graph.nullAttributesAreErrors();
@@ -123,19 +112,20 @@ public class AbstractEdge extends AbstractElement implements Edge {
 				: "-", target);
 	}
 
-	// *** Inherited from Edge ***
-
 	@SuppressWarnings("unchecked")
+    @Override
 	public <T extends Node> T getNode0() {
 		return (T) source;
 	}
 
 	@SuppressWarnings("unchecked")
+    @Override
 	public <T extends Node> T getNode1() {
 		return (T) target;
 	}
 
 	@SuppressWarnings("unchecked")
+    @Override
 	public <T extends Node> T getOpposite(Node node) {
 		if (node == source)
 			return (T) target;
@@ -145,19 +135,23 @@ public class AbstractEdge extends AbstractElement implements Edge {
 	}
 
 	@SuppressWarnings("unchecked")
+    @Override
 	public <T extends Node> T getSourceNode() {
 		return (T) source;
 	}
 
 	@SuppressWarnings("unchecked")
+    @Override
 	public <T extends Node> T getTargetNode() {
 		return (T) target;
 	}
 
+    @Override
 	public boolean isDirected() {
 		return directed;
 	}
 
+    @Override
 	public boolean isLoop() {
 		return source == target;
 	}

@@ -35,30 +35,25 @@ import org.graphstream.graph.CompoundAttribute;
 import org.graphstream.graph.Element;
 import org.graphstream.graph.NullAttributeException;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 /**
  * A base implementation of an element.
- * 
+ *
  * <p>
  * This class is the Base class for {@link org.graphstream.graph.Node},
  * {@link org.graphstream.graph.Edge} and {@link org.graphstream.graph.Graph}.
  * An element is made of an unique and arbitrary identifier that identifies it,
  * and a set of attributes.
  * </p>
- * 
+ *
  * @since 20040910
  */
 public abstract class AbstractElement implements Element {
-	public static enum AttributeChangeEvent {
-		ADD, CHANGE, REMOVE
-	};
 
 	// Attribute
 
@@ -78,21 +73,18 @@ public abstract class AbstractElement implements Element {
 	 */
 	protected Map<String, Object> attributes = null;
 
-    /**
-     * Vector used when removing attributes to avoid recursive removing.
-     */
-    protected List<String> attributesBeingRemoved = null;
-
 	// Construction
 
 	/**
 	 * New element.
-	 * 
+	 *
 	 * @param id
 	 *            The unique identifier of this element.
 	 */
-	public AbstractElement(String id) {
-		assert id != null : "Graph elements cannot have a null identifier";
+	public AbstractElement(final String id) {
+        if (null == id || id.isEmpty()) {
+          throw new IllegalArgumentException("Id cannot be null/empty.");
+        }
 		this.id = id;
 	}
 
@@ -110,7 +102,7 @@ public abstract class AbstractElement implements Element {
 
 	/**
 	 * Used by subclasses to change the index of an element
-	 * 
+	 *
 	 * @param index
 	 *            the new index
 	 */
@@ -138,7 +130,7 @@ public abstract class AbstractElement implements Element {
 	 * Called for each change in the attribute set. This method must be
 	 * implemented by sub-elements in order to send events to the graph
 	 * listeners.
-	 * 
+	 *
 	 * @param attribute
 	 *            The attribute name that changed.
 	 * @param event
@@ -262,34 +254,74 @@ public abstract class AbstractElement implements Element {
 	 *             element.
 	 */
     @Override
-	public double getNumber(String key) {
+	public Number getNumber(String key) {
 		if (attributes != null) {
 			Object o = attributes.get(key);
+            if (null == o) {
+                return null;
+            }
+            if (o instanceof Number) {
+                return (Number) o;
+            }
+            if (o instanceof CharSequence) {
+                try {
+                    return Double.parseDouble((String) o);
+                } catch (NumberFormatException e) {
 
-			if (o != null) {
-				if (o instanceof Number)
-					return ((Number) o).doubleValue();
-
-				if (o instanceof String) {
-					try {
-						return Double.parseDouble((String) o);
-					} catch (NumberFormatException e) {
-					}
-				} else if (o instanceof CharSequence) {
-					try {
-						return Double
-								.parseDouble(((CharSequence) o).toString());
-					} catch (NumberFormatException e) {
-					}
-				}
-			}
+                }
+            }
 		}
 
 		if (nullAttributesAreErrors())
 			throw new NullAttributeException(key);
 
-		return Double.NaN;
+        return null;
 	}
+
+    @Override
+    public double getDouble(String key) {
+        final Number num = this.getNumber(key);
+        if (null == num) {
+            return Double.NaN;
+        }
+        return num.doubleValue();
+    }
+
+    @Override
+    public float getFloat(String key) {
+        final Number num = this.getNumber(key);
+        if (null == num) {
+            return Float.NaN;
+        }
+        return num.floatValue();
+    }
+
+    @Override
+    public int getInteger(String key) {
+        final Number num = this.getNumber(key);
+        if (null == num) {
+            return 0;
+        }
+        return num.intValue();
+    }
+
+    @Override
+    public long getLong(String key) {
+        final Number num = this.getNumber(key);
+        if (null == num) {
+            return 0L;
+        }
+        return num.longValue();
+    }
+
+    @Override
+    public short getShort(String key) {
+        final Number num = this.getNumber(key);
+        if (null == num) {
+            return 0;
+        }
+        return num.shortValue();
+    }
 
 	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this
@@ -467,7 +499,7 @@ public abstract class AbstractElement implements Element {
 		if (attributes != null)
 			return attributes.keySet().iterator();
 
-		return null;
+		return Collections.emptyIterator();
 	}
 
     @Override
@@ -499,13 +531,13 @@ public abstract class AbstractElement implements Element {
 
     @Override
 	public void clearAttributes() {
-		if (attributes != null) {
-			for (Map.Entry<String, Object> entry : attributes.entrySet())
-				attributeChanged(AttributeChangeEvent.REMOVE, entry.getKey(),
-						entry.getValue(), null);
-
-			attributes.clear();
-		}
+        if (null == attributes) {
+            return;
+        }
+        for (Map.Entry<String, Object> entry : attributes.entrySet()) {
+            attributeChanged(AttributeChangeEvent.REMOVE, entry.getKey(), entry.getValue(), null);
+        }
+        attributes.clear();
 	}
 
 	protected void clearAttributesWithNoEvent() {
@@ -518,27 +550,28 @@ public abstract class AbstractElement implements Element {
 	 *             element.
 	 */
     @Override
-	public void addAttribute(String attribute, Object... values) {
+	public boolean addAttribute(String attribute, Object... values) {
 		if (attributes == null)
 			attributes = new TreeMap<>();
 
-		Object oldValue;
-		Object value;
-
-		if (values.length == 0)
-			value = true;
+		final Object value;
+        if (null == values || values.length == 0)
+			value = Boolean.TRUE;
 		else if (values.length == 1)
 			value = values[0];
 		else
 			value = values;
 
-		AttributeChangeEvent event = AttributeChangeEvent.ADD;
-
-		if (attributes.containsKey(attribute)) // In case the value is null,
-			event = AttributeChangeEvent.CHANGE; // but the attribute exists.
-
-		oldValue = attributes.put(attribute, value);
-		attributeChanged(event, attribute, oldValue, value);
+		final Object oldValue = this.attributes.put(attribute, value);
+        if (null == oldValue || !oldValue.equals(value)) {
+            // send updates
+            final AttributeChangeEvent event = oldValue != null ? AttributeChangeEvent.CHANGE : AttributeChangeEvent.ADD;
+            this.attributeChanged(event, attribute, oldValue, value);
+            return true;
+        } else {
+            // attribute value did not change
+            return false;
+        }
 	}
 
 	/**
@@ -546,8 +579,8 @@ public abstract class AbstractElement implements Element {
 	 *             element.
 	 */
     @Override
-	public void changeAttribute(String attribute, Object... values) {
-		addAttribute(attribute, values);
+	public boolean changeAttribute(String attribute, Object... values) {
+		return this.addAttribute(attribute, values);
 	}
 
 	/**
@@ -555,8 +588,8 @@ public abstract class AbstractElement implements Element {
 	 *             element.
 	 */
     @Override
-	public void setAttribute(String attribute, Object... values) {
-		addAttribute(attribute, values);
+	public boolean setAttribute(String attribute, Object... values) {
+		return this.addAttribute(attribute, values);
 	}
 
 	/**
@@ -564,15 +597,17 @@ public abstract class AbstractElement implements Element {
 	 *             element.
 	 */
     @Override
-	public void addAttributes(final Map<String, Object> attributes) {
+	public boolean addAttributes(final Map<String, Object> attributes) {
         if (null == attributes || attributes.isEmpty()) {
-            return;
+            return false;
         }
 		if (this.attributes == null)
 			this.attributes = new TreeMap<>();
+        boolean modified = false;
         for(final Map.Entry<String, Object> entry : attributes.entrySet()) {
-            this.addAttribute(entry.getKey(), entry.getValue());
+            modified |= this.addAttribute(entry.getKey(), entry.getValue());
         }
+        return modified;
 	}
 
 	/**
@@ -580,26 +615,17 @@ public abstract class AbstractElement implements Element {
 	 *             element.
 	 */
     @Override
-	public void removeAttribute(String attribute) {
-		if (attributes != null) {
+	public boolean removeAttribute(String attribute) {
+        if (null == attributes) {
+            return false;
+        }
 
-            if (attributesBeingRemoved == null)
-				attributesBeingRemoved = new ArrayList<>();
-
-			//
-			// Avoid recursive calls when synchronizing graphs.
-			//
-			if (attributes.containsKey(attribute)
-					&& !attributesBeingRemoved.contains(attribute)) {
-				attributesBeingRemoved.add(attribute);
-
-				attributeChanged(AttributeChangeEvent.REMOVE, attribute,
-						attributes.get(attribute), null);
-
-				attributesBeingRemoved
-						.remove(attributesBeingRemoved.size() - 1);
-				attributes.remove(attribute);
-			}
-		}
+        // make sure to avoid recursive calls when synchronizing graphs
+        final Object oldValue = this.attributes.remove(attribute);
+        if (null == oldValue) {
+            return false;
+        }
+        attributeChanged(AttributeChangeEvent.REMOVE, attribute, oldValue, null);
+        return true;
 	}
 }

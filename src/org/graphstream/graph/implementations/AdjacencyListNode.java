@@ -31,19 +31,20 @@
  */
 package org.graphstream.graph.implementations;
 
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Node;
+
 import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import org.graphstream.graph.Edge;
-import org.graphstream.graph.Node;
 
 /**
  * Nodes used with {@link AdjacencyListGraph}
  * 
  */
 public class AdjacencyListNode extends AbstractNode {
+
 	protected static final int INITIAL_EDGE_CAPACITY;
 	protected static final double GROWTH_FACTOR = 1.1;
 
@@ -243,11 +244,13 @@ public class AdjacencyListNode extends AbstractNode {
 				iNext = ioStart;
 		}
 
+        @Override
 		public boolean hasNext() {
 			return iNext < iEnd;
 		}
 
 		@SuppressWarnings("unchecked")
+        @Override
 		public T next() {
 			if (iNext >= iEnd)
 				throw new NoSuchElementException();
@@ -255,6 +258,7 @@ public class AdjacencyListNode extends AbstractNode {
 			return (T) edges[iPrev];
 		}
 
+        @Override
 		public void remove() {
 			if (iPrev == -1)
 				throw new IllegalStateException();
