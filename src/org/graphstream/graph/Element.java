@@ -31,9 +31,7 @@
  */
 package org.graphstream.graph;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -162,7 +160,7 @@ public interface Element {
 	 *            The name of the number to search.
 	 * @return The vector of numbers or null if not found.
 	 */
-	ArrayList<? extends Number> getVector(String key);
+	Collection<? extends Number> getVector(String key);
 
 	/**
 	 * Get the array of objects bound to key. Arrays of objects are special
@@ -188,7 +186,7 @@ public interface Element {
 	 *            The name of the hash to search.
 	 * @return The hash or null if not found.
 	 */
-	HashMap<?, ?> getHash(String key);
+	Map<?, ?> getHash(String key);
 
 	/**
 	 * Does this element store a value for the given attribute key?

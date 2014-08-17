@@ -31,15 +31,14 @@
  */
 package org.graphstream.ui.spriteManager;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.graphstream.graph.Element;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
 import org.graphstream.ui.graphicGraph.stylesheet.Values;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * A gentle little sprite.
@@ -441,7 +440,7 @@ public class Sprite implements Element {
 		return manager.graph.getArray(String.format("%s.%s", completeId, key));
 	}
 
-	public HashMap<?, ?> getHash(String key) {
+	public Map<?, ?> getHash(String key) {
 		return manager.graph.getHash(String.format("%s.%s", completeId, key));
 	}
 
@@ -449,7 +448,7 @@ public class Sprite implements Element {
 		return manager.graph.getNumber(String.format("%s.%s", completeId, key));
 	}
 
-	public ArrayList<? extends Number> getVector(String key) {
+	public Collection<? extends Number> getVector(String key) {
 		return manager.graph.getVector(String.format("%s.%s", completeId, key));
 	}
 

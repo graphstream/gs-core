@@ -349,8 +349,8 @@ public class Graphs {
 			return o;
 		}
 
-		public HashMap<?, ?> getHash(String key) {
-			HashMap<?, ?> o;
+		public Map<?, ?> getHash(String key) {
+            Map<?, ?> o;
 
 			attributeLock.lock();
 			o = wrappedElement.getHash(key);
@@ -387,8 +387,8 @@ public class Graphs {
 			return o;
 		}
 
-		public ArrayList<? extends Number> getVector(String key) {
-			ArrayList<? extends Number> o;
+		public Collection<? extends Number> getVector(String key) {
+            Collection<? extends Number> o;
 
 			attributeLock.lock();
 			o = wrappedElement.getVector(key);
