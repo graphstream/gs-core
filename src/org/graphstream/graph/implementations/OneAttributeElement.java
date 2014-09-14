@@ -33,7 +33,8 @@ package org.graphstream.graph.implementations;
 
 import org.graphstream.graph.Element;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -47,7 +48,6 @@ import java.util.Map;
  * 
  */
 public abstract class OneAttributeElement implements Element {
-	// Constants
 
 	// Attributes
 
@@ -76,94 +76,139 @@ public abstract class OneAttributeElement implements Element {
 
 	// Accessors
 
+    @Override
 	public String getId() {
 		return id;
 	}
 
 	@SuppressWarnings("all")
+    @Override
 	public <T> T getAttribute(String key) {
 		return (T) attribute;
 	}
 
 	@SuppressWarnings("all")
+    @Override
 	public <T> T getFirstAttributeOf(String... keys) {
 		return (T) attribute;
 	}
 
 	@SuppressWarnings("all")
+    @Override
 	public <T> T getAttribute(String key, Class<T> clazz) {
 		return (T) attribute;
 	}
 
 	@SuppressWarnings("all")
+    @Override
 	public <T> T getFirstAttributeOf(Class<T> clazz, String... keys) {
 		return (T) attribute;
 	}
 
-	public CharSequence getLabel(String key) {
-		if (attribute != null && attribute instanceof CharSequence)
-			return (CharSequence) attribute;
-		return null;
+    @Override
+	public String getLabel(String key) {
+		if (attribute instanceof CharSequence) {
+            return attribute.toString();
+        } else {
+            return null;
+        }
 	}
 
-	public double getNumber(String key) {
-		if (attribute != null && attribute instanceof Number)
-			return ((Number) attribute).doubleValue();
-
-		return Double.NaN;
+    @Override
+	public Number getNumber(String key) {
+		if (attribute instanceof Number)
+			return (Number) attribute;
+        else
+		    return null;
 	}
+
+    @Override
+    public double getDouble(String key) {
+        final Number num = this.getNumber(key);
+        if (null == num) {
+            return Double.NaN;
+        }
+        return num.doubleValue();
+    }
+
+    @Override
+    public float getFloat(String key) {
+        final Number num = this.getNumber(key);
+        if (null == num) {
+            return Float.NaN;
+        }
+        return num.floatValue();
+    }
+
+    @Override
+    public int getInteger(String key) {
+        final Number num = this.getNumber(key);
+        if (null == num) {
+            return 0;
+        }
+        return num.intValue();
+    }
+
+    @Override
+    public long getLong(String key) {
+        final Number num = this.getNumber(key);
+        if (null == num) {
+            return 0L;
+        }
+        return num.longValue();
+    }
+
+    @Override
+    public short getShort(String key) {
+        final Number num = this.getNumber(key);
+        if (null == num) {
+            return 0;
+        }
+        return num.shortValue();
+    }
 
 	@SuppressWarnings("unchecked")
-	public ArrayList<? extends Number> getVector(String key) {
-		if (attribute != null && attribute instanceof ArrayList)
-			return ((ArrayList<? extends Number>) attribute);
+    @Override
+	public Collection<? extends Number> getVector(String key) {
+		if (attribute != null && attribute instanceof Collection)
+			return ((Collection<? extends Number>) attribute);
 
 		return null;
 	}
 
+    @Override
 	public boolean hasAttribute(String key) {
-
 		return true;
 	}
 
+    @Override
 	public boolean hasAttribute(String key, Class<?> clazz) {
 		if (attribute != null)
 			return (clazz.isInstance(attribute));
 		return false;
 	}
 
+    @Override
 	public boolean hasLabel(String key) {
-		if (attribute != null)
-			return (attribute instanceof CharSequence);
-
-		return false;
+		return attribute instanceof CharSequence;
 	}
 
+    @Override
 	public boolean hasNumber(String key) {
-		if (attribute != null)
-			return (attribute instanceof Number);
-
-		return false;
+		return attribute instanceof Number;
 	}
 
+    @Override
 	public boolean hasVector(String key) {
-		if (attribute != null && attribute instanceof ArrayList<?>)
-			return true;
-
-		return false;
+		return attribute instanceof Collection;
 	}
 
+    @Override
 	public Iterator<String> getAttributeKeyIterator() {
-		return null;
+		return Collections.emptyIterator();
 	}
 
-	public Map<String, Object> getAttributeMap() {
-		return null;
-	}
 
-	/**
-	 * Override the Object method
-	 */
 	@Override
 	public String toString() {
 		return id;
@@ -171,30 +216,50 @@ public abstract class OneAttributeElement implements Element {
 
 	// Commands
 
+    @Override
 	public void clearAttributes() {
 		attribute = null;
 	}
 
-	public void addAttribute(String attribute, Object value) {
-		this.attribute = value;
+    @Override
+	public boolean addAttribute(String attribute, Object... values) {
+        final Object oldValue = this.attribute;
+        if (null == values || values.length < 0) {
+            this.attribute = Boolean.TRUE;
+        } else if (values.length == 1) {
+            this.attribute = values[0];
+        } else {
+            this.attribute = values;
+        }
+        if (null == oldValue) {
+            return true;
+        } else {
+            return !oldValue.equals(this.attribute);
+        }
 	}
 
-	public void changeAttribute(String attribute, Object value) {
-		addAttribute(attribute, value);
+    @Override
+	public boolean changeAttribute(String attribute, Object... values) {
+		return addAttribute(attribute, values);
 	}
 
-	public void addAttributes(Map<String, Object> attributes) {
-		if (attributes.size() >= 1)
-			addAttribute("", attributes.get((attributes.keySet().toArray()[0])));
+    @Override
+	public boolean addAttributes(Map<String, Object> attributes) {
+        if (null == attributes || attributes.isEmpty()) {
+            return false;
+        }
+		return addAttribute("attribute", attributes.values().iterator().next());
 	}
 
-	public void removeAttribute(String attribute) {
-		this.attribute = null;
+    @Override
+	public boolean removeAttribute(String attribute) {
+        if (null == this.attribute) {
+            return false;
+        } else {
+            this.attribute = null;
+            return true;
+        }
 	}
-
-	public static enum AttributeChangeEvent {
-		ADD, CHANGE, REMOVE
-	};
 
 	/**
 	 * Called for each change in the attribute set. This method must be

@@ -30,9 +30,9 @@
 package org.graphstream.util;
 
 import org.graphstream.graph.Edge;
+import org.graphstream.graph.Element;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
-import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
 import org.graphstream.stream.Pipe;
 import org.graphstream.stream.SourceBase;
 import org.graphstream.stream.sync.SinkTime;
@@ -60,7 +60,7 @@ public class GraphListeners extends SourceBase implements Pipe {
 	}
 
 	public void sendAttributeChangedEvent(String eltId, ElementType eltType,
-			String attribute, AttributeChangeEvent event, Object oldValue,
+			String attribute, Element.AttributeChangeEvent event, Object oldValue,
 			Object newValue) {
 		//
 		// Attributes with name beginnig with a dot are hidden.

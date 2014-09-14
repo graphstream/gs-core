@@ -31,14 +31,15 @@
  */
 package org.graphstream.stream.file;
 
+import org.graphstream.graph.CompoundAttribute;
+
 import java.awt.Color;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Locale;
-
-import org.graphstream.graph.CompoundAttribute;
+import java.util.Map;
 
 /**
  * File output for the DGS (Dynamic Graph Stream) file format.
@@ -228,7 +229,7 @@ public class FileSinkDGS extends FileSinkBase {
 			}
 
 			return sb.toString();
-		} else if (value instanceof HashMap<?, ?>
+		} else if (value instanceof Map<?, ?>
 				|| value instanceof CompoundAttribute) {
 			HashMap<?, ?> hash;
 

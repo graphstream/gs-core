@@ -31,14 +31,14 @@
  */
 package org.graphstream.stream.file.pajek;
 
-import java.util.ArrayList;
-import java.util.Locale;
-
-import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
+import org.graphstream.graph.Element.AttributeChangeEvent;
 import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.stream.file.FileSourcePajek;
 import org.graphstream.util.parser.ParseException;
 import org.graphstream.util.parser.Token;
+
+import java.util.ArrayList;
+import java.util.Locale;
 
 public class PajekContext {
 	FileSourcePajek pajek;

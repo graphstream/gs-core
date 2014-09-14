@@ -42,18 +42,18 @@ import java.util.regex.Pattern;
 
 /**
  * Super class of all graphic node, edge, and sprite elements.
- * 
+ *
  * <p>
  * Each graphic element references a style, a graphic graph and has a label.
  * </p>
- * 
+ *
  * <p>
  * The element also defines the basic behaviour to reload the style when needed,
  * defines abstract methods to set and get the position and bounds in spaces of
  * the element, and to do appropriate actions when specific predefined
  * attributes change (most of them starting with the prefix "ui.").
  * </p>
- * 
+ *
  * <p>
  * The graphic element has the ability to store attributes like any other graph
  * element, however the attributes stored by the graphic element are restricted.
@@ -131,7 +131,7 @@ public abstract class GraphicElement extends AbstractElement {
 
 	/**
 	 * Style group. An style group may reference several elements.
-	 * 
+	 *
 	 * @return The style group corresponding to this element.
 	 */
 	public StyleGroup getStyle() {
@@ -165,7 +165,7 @@ public abstract class GraphicElement extends AbstractElement {
 
 	/**
 	 * The associated GUI component.
-	 * 
+	 *
 	 * @return An object.
 	 */
 	public Object getComponent() {
@@ -182,7 +182,7 @@ public abstract class GraphicElement extends AbstractElement {
 	/**
 	 * Try to force the element to move at the give location in graph units
 	 * (GU). For edges, this may move the two attached nodes.
-	 * 
+	 *
 	 * @param x
 	 *            The new X.
 	 * @param y
@@ -194,9 +194,8 @@ public abstract class GraphicElement extends AbstractElement {
 
 	/**
 	 * Set the GUI component of this element.
-	 * 
-	 * @param component
-	 *            The component.
+	 *
+	 * @param component The component.
 	 */
 	public void setComponent(Object component) {
 		this.component = component;
@@ -213,15 +212,12 @@ public abstract class GraphicElement extends AbstractElement {
 			if (attribute.charAt(0) == 'u' && attribute.charAt(1) == 'i') {
 				if (attribute.equals("ui.class")) {
 					mygraph.styleGroups.checkElementStyleGroup(this);
-					// mygraph.styleGroups.removeElement( tis );
-					// mygraph.styleGroups.addElement( this );
 					mygraph.graphChanged = true;
 				} else if (attribute.equals("ui.label")) {
 					label = StyleConstants.convertLabel(newValue);
 					mygraph.graphChanged = true;
 				} else if (attribute.equals("ui.style")) {
 					// Cascade the new style in the style sheet.
-
 					if (newValue instanceof String) {
 						try {
 							mygraph.styleSheet.parseStyleFromString(
@@ -252,24 +248,14 @@ public abstract class GraphicElement extends AbstractElement {
 				} else if (attribute.equals("ui.icon")) {
 					mygraph.graphChanged = true;
 				}
-				// else if( attribute.equals( "ui.state" ) )
-				// {
-				// if( newValue == null )
-				// state = null;
-				// else if( newValue instanceof String )
-				// state = (String) newValue;
-				// }
 			} else if (attribute.equals("label")) {
 				label = StyleConstants.convertLabel(newValue);
 				mygraph.graphChanged = true;
 			}
-		} else // REMOVE
-		{
+		} else {
 			if (attribute.charAt(0) == 'u' && attribute.charAt(1) == 'i') {
 				if (attribute.equals("ui.class")) {
-					Object o = attributes.remove("ui.class"); // Not yet removed
-																// at
-																// this point !
+					Object o = attributes.remove("ui.class");
 					mygraph.styleGroups.checkElementStyleGroup(this);
 					attributes.put("ui.class", o);
 					mygraph.graphChanged = true;
@@ -309,10 +295,12 @@ public abstract class GraphicElement extends AbstractElement {
 	}
 
 	@Override
-	public void addAttribute(String attribute, Object... values) {
+	public boolean addAttribute(String attribute, Object... values) {
 		Matcher matcher = acceptedAttribute.matcher(attribute);
-
-		if (matcher.matches())
-			super.addAttribute(attribute, values);
+		if (matcher.matches()) {
+            return super.addAttribute(attribute, values);
+        } else {
+            return false;
+        }
 	}
 }

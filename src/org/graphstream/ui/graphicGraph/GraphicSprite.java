@@ -324,10 +324,6 @@ public class GraphicSprite extends GraphicElement {
 			String attribute, Object oldValue, Object newValue) {
 		super.attributeChanged(event, attribute, oldValue, newValue);
 
-		// if( attribute.equals( "ui.clicked" ) ) // Filter the clicks to avoid
-		// loops XXX BAD !!! XXX
-		// return;
-
 		String completeAttr = String.format("ui.sprite.%s.%s", getId(),
 				attribute);
 

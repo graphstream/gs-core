@@ -42,13 +42,13 @@ import java.util.logging.Logger;
 
 /**
  * p Various geometric informations on the graphic graph.
- * 
+ *
  * <p>
  * This class extends the GraphMetrics to provide not only metrics on the
  * graphic graph but also on the rendering canvas, and allow to convert from
  * graph metrics to canvas metrics and the reverse.
  * </p>
- * 
+ *
  * <p>
  * Here we call the canvas "view port" since this class allows to place a view
  * port inside the graph in order to zoom and pan the view.
@@ -135,7 +135,7 @@ public class GraphMetrics {
 
 	/**
 	 * The graph diagonal (the overall width).
-	 * 
+	 *
 	 * @return The diagonal.
 	 */
 	public double getDiagonal() {
@@ -144,7 +144,7 @@ public class GraphMetrics {
 
 	/**
 	 * The graph bounds.
-	 * 
+	 *
 	 * @return The size.
 	 */
 	public Vector3 getSize() {
@@ -153,7 +153,7 @@ public class GraphMetrics {
 
 	/**
 	 * The graph lowest (bottom,left,front) point.
-	 * 
+	 *
 	 * @return The lowest point.
 	 */
 	public Point3 getLowPoint() {
@@ -162,7 +162,7 @@ public class GraphMetrics {
 
 	/**
 	 * The graph highest (top,right,back) point.
-	 * 
+	 *
 	 * @return The highest point.
 	 */
 	public Point3 getHighPoint() {
@@ -181,11 +181,27 @@ public class GraphMetrics {
 		return hi.z - lo.z;
 	}
 
+    public double getViewportX() {
+        return this.viewport[0];
+    }
+
+    public double getViewportY() {
+        return this.viewport[1];
+    }
+
+    public double getViewportWidth() {
+        return this.viewport[2];
+    }
+
+    public double getViewportHeight() {
+        return this.viewport[3];
+    }
+
 	// Access -- Convert values
 
 	/**
 	 * Convert a value in given units to graph units.
-	 * 
+	 *
 	 * @param value
 	 *            The value to convert.
 	 * @param units
@@ -207,7 +223,7 @@ public class GraphMetrics {
 
 	/**
 	 * Convert a value in a given units to graph units.
-	 * 
+	 *
 	 * @param value
 	 *            The value to convert (it contains its own units).
 	 */
@@ -217,7 +233,7 @@ public class GraphMetrics {
 
 	/**
 	 * Convert one of the given values in a given units to graph units.
-	 * 
+	 *
 	 * @param values
 	 *            The values set containing the value to convert (it contains
 	 *            its own units).
@@ -230,7 +246,7 @@ public class GraphMetrics {
 
 	/**
 	 * Convert a value in a given units to pixels.
-	 * 
+	 *
 	 * @param value
 	 *            The value to convert.
 	 * @param units
@@ -252,7 +268,7 @@ public class GraphMetrics {
 
 	/**
 	 * Convert a value in a given units to pixels.
-	 * 
+	 *
 	 * @param value
 	 *            The value to convert (it contains its own units).
 	 */
@@ -262,7 +278,7 @@ public class GraphMetrics {
 
 	/**
 	 * Convert one of the given values in a given units pixels.
-	 * 
+	 *
 	 * @param values
 	 *            The values set containing the value to convert (it contains
 	 *            its own units).
@@ -290,7 +306,7 @@ public class GraphMetrics {
 		}
 
 		logger.fine(String.format("%spixel[%d] %d --> %fgu", this, index, pixels, l));
-		
+
 		return l;
 	}
 
@@ -316,7 +332,7 @@ public class GraphMetrics {
 
 	/**
 	 * Set the output view port size in pixels.
-	 * 
+	 *
 	 * @param viewportWidth
 	 *            The width in pixels of the view port.
 	 * @param viewportHeight
@@ -332,7 +348,7 @@ public class GraphMetrics {
 	/**
 	 * The ratio to pass by multiplication from pixels to graph units. This
 	 * ratio must be larger than zero, else nothing is changed.
-	 * 
+	 *
 	 * @param ratio
 	 *            The ratio.
 	 */
@@ -347,7 +363,7 @@ public class GraphMetrics {
 
 	/**
 	 * Set the graphic graph bounds (the lowest and highest points).
-	 * 
+	 *
 	 * @param minx
 	 *            Lowest abscissa.
 	 * @param miny

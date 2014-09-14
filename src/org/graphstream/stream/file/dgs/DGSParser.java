@@ -31,19 +31,17 @@
  */
 package org.graphstream.stream.file.dgs;
 
-import java.awt.Color;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.HashMap;
-import java.util.LinkedList;
-
-import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
+import org.graphstream.graph.Element.AttributeChangeEvent;
 import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.stream.file.FileSourceDGS;
 import org.graphstream.util.parser.ParseException;
 import org.graphstream.util.parser.Parser;
 
-// import org.graphstream.util.time.ISODateIO;
+import java.awt.Color;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 public class DGSParser implements Parser {
 	static enum Token {

@@ -31,12 +31,12 @@
  */
 package org.graphstream.stream;
 
+import org.graphstream.graph.Element.AttributeChangeEvent;
+import org.graphstream.stream.sync.SourceTime;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
-import org.graphstream.stream.sync.SourceTime;
 
 /**
  * Base implementation of an input that provide basic sink handling.

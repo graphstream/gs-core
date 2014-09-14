@@ -31,15 +31,13 @@
  */
 package org.graphstream.graph;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 /**
  * An element is a part of a graph (node, edge, the graph itself).
- * 
+ *
  * <p>
  * An interface that defines common method to manipulate identifiers, attributes
  * and indices of the elements (graph, nodes and edges) of a graph.
@@ -53,27 +51,32 @@ import java.util.Map;
  * {@link #getVector(String)}, however they are also accessible through the more
  * general method {@link #getAttribute(String)}.
  * </p>
- * 
+ *
  * <h3>Important</h3>
  * <p>
  * Implementing classes should indicate the complexity of their implementation
  * for each method.
  * </p>
- * 
+ *
  * @since July 12 2007
- * 
+ *
  */
 public interface Element {
+
+    public static enum AttributeChangeEvent {
+        ADD, CHANGE, REMOVE
+    }
+
 	/**
 	 * Unique identifier of this element.
-	 * 
+	 *
 	 * @return The identifier value.
 	 */
 	String getId();
 
 	/**
 	 * The current index of this element
-	 * 
+	 *
 	 * @return The index value
 	 */
 	int getIndex();
@@ -81,32 +84,30 @@ public interface Element {
 	/**
 	 * Get the attribute object bound to the given key. The returned value may
 	 * be null to indicate the attribute does not exists or is not supported.
-	 * 
+	 *
 	 * @param key
 	 *            Name of the attribute to search.
 	 * @return The object bound to the given key or null if no object match this
 	 *         attribute name.
 	 */
-	// Object getAttribute( String key );
 	<T> T getAttribute(String key);
 
 	/**
 	 * Like {@link #getAttribute(String)}, but returns the first existing
 	 * attribute in a list of keys, instead of only one key. The key list order
 	 * matters.
-	 * 
+	 *
 	 * @param keys
 	 *            Several strings naming attributes.
 	 * @return The first attribute that exists.
 	 */
-	// Object getFirstAttributeOf( String... keys );
 	<T> T getFirstAttributeOf(String... keys);
 
 	/**
 	 * Get the attribute object bound to the given key if it is an instance of
 	 * the given class. Some The returned value maybe null to indicate the
 	 * attribute does not exists or is not an instance of the given class.
-	 * 
+	 *
 	 * @param key
 	 *            The attribute name to search.
 	 * @param clazz
@@ -114,61 +115,64 @@ public interface Element {
 	 * @return The object bound to the given key or null if no object match this
 	 *         attribute.
 	 */
-	// Object getAttribute( String key, Class<?> clazz );
 	<T> T getAttribute(String key, Class<T> clazz);
 
 	/**
 	 * Like {@link #getAttribute(String, Class)}, but returns the first existing
 	 * attribute in a list of keys, instead of only one key. The key list order
 	 * matters.
-	 * 
+	 *
 	 * @param clazz
 	 *            The class the attribute must be instance of.
 	 * @param keys
 	 *            Several string naming attributes.
 	 * @return The first attribute that exists.
 	 */
-	// Object getFirstAttributeOf( Class<?> clazz, String... keys );
 	<T> T getFirstAttributeOf(Class<T> clazz, String... keys);
 
 	/**
 	 * Get the label string bound to the given key key. Labels are special
 	 * attributes whose value is a character sequence. If an attribute with the
 	 * same name exists but is not a character sequence, null is returned.
-	 * 
+	 *
 	 * @param key
 	 *            The label to search.
 	 * @return The label string value or null if not found.
 	 */
-	CharSequence getLabel(String key);
+	String getLabel(String key);
 
 	/**
 	 * Get the number bound to key. Numbers are special attributes whose value
 	 * is an instance of Number. If an attribute with the same name exists but
 	 * is not a Number, NaN is returned.
-	 * 
+	 *
 	 * @param key
 	 *            The name of the number to search.
-	 * @return The number value or NaN if not found.
+	 * @return The number value or null if not found.
 	 */
-	double getNumber(String key);
+	Number getNumber(String key);
+    double getDouble(String key);
+    float getFloat(String key);
+    int getInteger(String key);
+    long getLong(String key);
+    short getShort(String key);
 
 	/**
 	 * Get the vector of number bound to key. Vectors of numbers are special
 	 * attributes whose value is a sequence of numbers. If an attribute with the
 	 * same name exists but is not a vector of number, null is returned.
-	 * 
+	 *
 	 * @param key
 	 *            The name of the number to search.
 	 * @return The vector of numbers or null if not found.
 	 */
-	ArrayList<? extends Number> getVector(String key);
+	Collection<? extends Number> getVector(String key);
 
 	/**
 	 * Get the array of objects bound to key. Arrays of objects are special
 	 * attributes whose value is a sequence of objects. If an attribute with the
 	 * same name exists but is not an array, null is returned.
-	 * 
+	 *
 	 * @param key
 	 *            The name of the array to search.
 	 * @return The array of objects or null if not found.
@@ -183,16 +187,16 @@ public interface Element {
 	 * but is not a hash, null is returned. We cannot enforce the type of the
 	 * key. It is considered a string and you should use "Object.toString()" to
 	 * get it.
-	 * 
+	 *
 	 * @param key
 	 *            The name of the hash to search.
 	 * @return The hash or null if not found.
 	 */
-	HashMap<?, ?> getHash(String key);
+	Map<?,?> getHash(String key);
 
 	/**
 	 * Does this element store a value for the given attribute key?
-	 * 
+	 *
 	 * @param key
 	 *            The name of the attribute to search.
 	 * @return True if a value is present for this attribute.
@@ -202,7 +206,7 @@ public interface Element {
 	/**
 	 * Does this element store a value for the given attribute key and this
 	 * value is an instance of the given class?
-	 * 
+	 *
 	 * @param key
 	 *            The name of the attribute to search.
 	 * @param clazz
@@ -214,7 +218,7 @@ public interface Element {
 	/**
 	 * Does this element store a label value for the given key? A label is an
 	 * attribute whose value is a string.
-	 * 
+	 *
 	 * @param key
 	 *            The name of the label.
 	 * @return True if a value is present for this attribute and implements
@@ -225,7 +229,7 @@ public interface Element {
 	/**
 	 * Does this element store a number for the given key? A number is an
 	 * attribute whose value is an instance of Number.
-	 * 
+	 *
 	 * @param key
 	 *            The name of the number.
 	 * @return True if a value is present for this attribute and can contain a
@@ -236,7 +240,7 @@ public interface Element {
 	/**
 	 * Does this element store a vector value for the given key? A vector is an
 	 * attribute whose value is a sequence of numbers.
-	 * 
+	 *
 	 * @param key
 	 *            The name of the vector.
 	 * @return True if a value is present for this attribute and can contain a
@@ -247,7 +251,7 @@ public interface Element {
 	/**
 	 * Does this element store an array value for the given key? A vector is an
 	 * attribute whose value is an array of objects.
-	 * 
+	 *
 	 * @param key
 	 *            The name of the array.
 	 * @return True if a value is present for this attribute and can contain an
@@ -259,7 +263,7 @@ public interface Element {
 	 * Does this element store a hash value for the given key? A hash is a set
 	 * of pairs (key,value) or objects that implement the
 	 * {@link org.graphstream.graph.CompoundAttribute} class.
-	 * 
+	 *
 	 * @param key
 	 *            The name of the hash.
 	 * @return True if a value is present for this attribute and can contain a
@@ -269,7 +273,7 @@ public interface Element {
 
 	/**
 	 * Iterator on all attributes keys.
-	 * 
+	 *
 	 * @return An iterator on the key set of attributes.
 	 */
 	Iterator<String> getAttributeKeyIterator();
@@ -277,14 +281,14 @@ public interface Element {
 	/**
 	 * An iterable view on the set of attribute keys usable within a for-each
 	 * loop.
-	 * 
+	 *
 	 * @return an iterable view on attribute keys.
 	 */
 	Iterable<String> getEachAttributeKey();
 
 	/**
 	 * An unmodifiable view on the set of attribute keys.
-	 * 
+	 *
 	 * @return an unmodifiable collection containing the attribute keys.
 	 */
 	Collection<String> getAttributeKeySet();
@@ -303,58 +307,58 @@ public interface Element {
 	 * attribute values. If no value is given, a boolean with value "true" is
 	 * added. If there is more than one value, an array is stored. If there is
 	 * only one value, the value is stored (but not in an array).
-	 * 
+	 *
 	 * @param attribute
 	 *            The attribute name.
 	 * @param values
 	 *            The attribute value or set of values.
 	 */
-	void addAttribute(String attribute, Object... values);
+	boolean addAttribute(String attribute, Object... values);
 
 	/**
 	 * Like {@link #addAttribute(String, Object...)} but for consistency.
-	 * 
+	 *
 	 * @param attribute
 	 *            The attribute name.
 	 * @param values
 	 *            The attribute value or array of values.
 	 * @see #addAttribute(String, Object...)
 	 */
-	void changeAttribute(String attribute, Object... values);
+    boolean changeAttribute(String attribute, Object... values);
 
 	/**
 	 * Like {@link #addAttribute(String, Object...)} but for consistency.
-	 * 
+	 *
 	 * @param attribute
 	 *            The attribute name.
 	 * @param values
 	 *            The attribute value or array of values.
 	 * @see #addAttribute(String, Object...)
 	 */
-	void setAttribute(String attribute, Object... values);
+    boolean setAttribute(String attribute, Object... values);
 
 	/**
 	 * Add or replace each attribute found in attributes. Existing attributes
 	 * are overwritten silently. All classes inheriting from Number can be
 	 * considered as numbers. All classes inheriting from CharSequence can be
 	 * considered as labels.
-	 * 
+	 *
 	 * @param attributes
 	 *            A set of (key,value) pairs.
 	 */
-	void addAttributes(Map<String, Object> attributes);
+    boolean addAttributes(Map<String, Object> attributes);
 
 	/**
 	 * Remove an attribute. Non-existent attributes errors are ignored silently.
-	 * 
+	 *
 	 * @param attribute
 	 *            Name of the attribute to remove.
 	 */
-	void removeAttribute(String attribute);
+    boolean removeAttribute(String attribute);
 
 	/**
 	 * Number of attributes stored in this element.
-	 * 
+	 *
 	 * @return the number of attributes.
 	 */
 	int getAttributeCount();

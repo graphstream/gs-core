@@ -34,7 +34,7 @@ package org.graphstream.stream.file.gml;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
+import org.graphstream.graph.Element.AttributeChangeEvent;
 import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.stream.file.FileSourceGML;
 

@@ -258,7 +258,7 @@ public abstract class ElementRenderer {
 
 		if (n > 1) {
 			if (element.hasNumber("ui.color") && n > 1) {
-				double value = element.getNumber("ui.color");
+				float value = element.getFloat("ui.color");
 
 				if (value < 0)
 					value = 0;
@@ -266,30 +266,26 @@ public abstract class ElementRenderer {
 					value = 1;
 
 				if (value == 1) {
-					color = group.getFillColor(n - 1); // Simplification,
-					// faster.
-				} else if (value != 0) // If value == 0, color is already set
-				// above.
-				{
-					double div = 1f / (n - 1);
+                    // Simplification, faster.
+					color = group.getFillColor(n - 1);
+				} else if (value != 0)  {
+                    // If value == 0, color is already set above.
+                    float div = 1f / (n - 1);
 					int col = (int) (value / div);
-
 					div = (value - (div * col)) / div;
-					// div = value / div - col;
-
 					Color color0 = group.getFillColor(col);
 					Color color1 = group.getFillColor(col + 1);
-					double red = ((color0.getRed() * (1 - div)) + (color1
+
+					float red = ((color0.getRed() * (1 - div)) + (color1
 							.getRed() * div)) / 255f;
-					double green = ((color0.getGreen() * (1 - div)) + (color1
+                    float green = ((color0.getGreen() * (1 - div)) + (color1
 							.getGreen() * div)) / 255f;
-					double blue = ((color0.getBlue() * (1 - div)) + (color1
+                    float blue = ((color0.getBlue() * (1 - div)) + (color1
 							.getBlue() * div)) / 255f;
-					double alpha = ((color0.getAlpha() * (1 - div)) + (color1
+                    float alpha = ((color0.getAlpha() * (1 - div)) + (color1
 							.getAlpha() * div)) / 255f;
 
-					color = new Color((float) red, (float) green, (float) blue,
-							(float) alpha);
+					color = new Color(red, green, blue, alpha);
 				}
 			} else if (element.hasAttribute("ui.color", Color.class)) {
 				color = element.getAttribute("ui.color");

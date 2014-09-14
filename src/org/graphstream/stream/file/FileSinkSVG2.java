@@ -31,6 +31,25 @@
  */
 package org.graphstream.stream.file;
 
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Element;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+import org.graphstream.ui.graphicGraph.StyleGroup;
+import org.graphstream.ui.graphicGraph.StyleGroupSet;
+import org.graphstream.ui.graphicGraph.stylesheet.Colors;
+import org.graphstream.ui.graphicGraph.stylesheet.Selector;
+import org.graphstream.ui.graphicGraph.stylesheet.Selector.Type;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.StrokeMode;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleSheet;
+import org.graphstream.ui.graphicGraph.stylesheet.Value;
+import org.graphstream.ui.graphicGraph.stylesheet.Values;
+
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import java.awt.Color;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -41,26 +60,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
-
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
-import org.graphstream.graph.Edge;
-import org.graphstream.graph.Element;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
-import org.graphstream.ui.graphicGraph.StyleGroup;
-import org.graphstream.ui.graphicGraph.StyleGroupSet;
-import org.graphstream.ui.graphicGraph.stylesheet.Colors;
-import org.graphstream.ui.graphicGraph.stylesheet.Selector;
-import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
-import org.graphstream.ui.graphicGraph.stylesheet.Value;
-import org.graphstream.ui.graphicGraph.stylesheet.Values;
-import org.graphstream.ui.graphicGraph.stylesheet.Selector.Type;
-import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.StrokeMode;
-import org.graphstream.ui.graphicGraph.stylesheet.StyleSheet;
 
 public class FileSinkSVG2 implements FileSink {
 
@@ -173,7 +172,7 @@ public class FileSinkSVG2 implements FileSink {
 
 	private static double getX(Node n) {
 		if (n.hasNumber("x"))
-			return n.getNumber("x");
+			return n.getDouble("x");
 
 		if (n.hasArray("xy")) {
 			Object[] xy = n.getArray("xy");
@@ -197,7 +196,7 @@ public class FileSinkSVG2 implements FileSink {
 
 	private static double getY(Node n) {
 		if (n.hasNumber("y"))
-			return n.getNumber("y");
+			return n.getDouble("y");
 
 		if (n.hasArray("xy")) {
 			Object[] xy = n.getArray("xy");
@@ -794,7 +793,7 @@ public class FileSinkSVG2 implements FileSink {
 				if (group.getFillColorCount() > 1) {
 					String color, opacity;
 					double d = e.hasNumber("ui.color") ? e
-							.getNumber("ui.color") : 0;
+							.getDouble("ui.color") : 0;
 
 					double a, b;
 					Colors colors = group.getFillColors();

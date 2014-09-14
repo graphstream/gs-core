@@ -33,6 +33,7 @@ package org.graphstream.ui.graphicGraph.stylesheet;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Several values and the units of these values.
@@ -49,7 +50,7 @@ public class Values implements Iterable<Double> {
 	/**
 	 * The value.
 	 */
-	public ArrayList<Double> values = new ArrayList<Double>();
+	public final List<Double> values;
 
 	/**
 	 * The values units.
@@ -68,7 +69,7 @@ public class Values implements Iterable<Double> {
 	 */
 	public Values(Style.Units units, double... values) {
 		this.units = units;
-
+        this.values = new ArrayList<>(values.length);
 		for (double value : values)
 			this.values.add(value);
 	}
@@ -80,7 +81,7 @@ public class Values implements Iterable<Double> {
 	 *            The other values to copy.
 	 */
 	public Values(Values other) {
-		this.values = new ArrayList<Double>(other.values);
+		this.values = new ArrayList<>(other.values);
 		this.units = other.units;
 	}
 
@@ -91,10 +92,9 @@ public class Values implements Iterable<Double> {
 	 *            The value to copy with its units.
 	 */
 	public Values(Value value) {
-		this.values = new ArrayList<Double>();
+		this.values = new ArrayList<>(1);
 		this.units = value.units;
-
-		values.add(value.value);
+		this.values.add(value.value);
 	}
 
 	/**
@@ -142,31 +142,7 @@ public class Values implements Iterable<Double> {
 		return units;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (o != this) {
-			if (!(o instanceof Values))
-				return false;
-
-			Values other = (Values) o;
-
-			if (other.units != units)
-				return false;
-
-			int n = values.size();
-
-			if (other.values.size() != n)
-				return false;
-
-			for (int i = 0; i < n; i++) {
-				if (!other.values.get(i).equals(values.get(i)))
-					return false;
-			}
-		}
-
-		return true;
-	}
-
+    @Override
 	public Iterator<Double> iterator() {
 		return values.iterator();
 	}
@@ -266,4 +242,40 @@ public class Values implements Iterable<Double> {
 	public void setUnits(Style.Units units) {
 		this.units = units;
 	}
+
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+
+        Values doubles = (Values) o;
+
+        if (units != doubles.units)
+        {
+            return false;
+        }
+        if (values != null ? !values.equals(doubles.values) : doubles.values != null)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    @Override
+    public int hashCode()
+    {
+        int result = values != null ? values.hashCode() : 0;
+        result = 31 * result + (units != null ? units.hashCode() : 0);
+        return result;
+    }
 }
