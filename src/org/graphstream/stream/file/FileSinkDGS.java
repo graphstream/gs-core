@@ -64,7 +64,7 @@ public class FileSinkDGS extends FileSinkBase {
 		if (graphName.length() <= 0)
 			out.printf("null 0 0%n");
 		else
-			out.printf("\"%s\" 0 0%n", formatStringForQuoting(graphName));
+			out.printf("\"%s\" 0 0%n", FileSinkDGSUtility.formatStringForQuoting(graphName));
 	}
 
 	@Override
@@ -79,14 +79,14 @@ public class FileSinkDGS extends FileSinkBase {
 
 	public void edgeAttributeChanged(String graphId, long timeId,
 			String edgeId, String attribute, Object oldValue, Object newValue) {
-		out.printf("ce \"%s\" %s%n", formatStringForQuoting(edgeId),
-				attributeString(attribute, newValue, false));
+		out.printf("ce \"%s\" %s%n", FileSinkDGSUtility.formatStringForQuoting(edgeId),
+				FileSinkDGSUtility.attributeString(attribute, newValue, false));
 	}
 
 	public void edgeAttributeRemoved(String graphId, long timeId,
 			String edgeId, String attribute) {
-		out.printf("ce \"%s\" %s%n", formatStringForQuoting(edgeId),
-				attributeString(attribute, null, true));
+		out.printf("ce \"%s\" %s%n", FileSinkDGSUtility.formatStringForQuoting(edgeId),
+				FileSinkDGSUtility.attributeString(attribute, null, true));
 	}
 
 	public void graphAttributeAdded(String graphId, long timeId,
@@ -96,12 +96,12 @@ public class FileSinkDGS extends FileSinkBase {
 
 	public void graphAttributeChanged(String graphId, long timeId,
 			String attribute, Object oldValue, Object newValue) {
-		out.printf("cg %s%n", attributeString(attribute, newValue, false));
+		out.printf("cg %s%n", FileSinkDGSUtility.attributeString(attribute, newValue, false));
 	}
 
 	public void graphAttributeRemoved(String graphId, long timeId,
 			String attribute) {
-		out.printf("cg %s%n", attributeString(attribute, null, true));
+		out.printf("cg %s%n", FileSinkDGSUtility.attributeString(attribute, null, true));
 	}
 
 	public void nodeAttributeAdded(String graphId, long timeId, String nodeId,
@@ -111,28 +111,28 @@ public class FileSinkDGS extends FileSinkBase {
 
 	public void nodeAttributeChanged(String graphId, long timeId,
 			String nodeId, String attribute, Object oldValue, Object newValue) {
-		out.printf("cn \"%s\" %s%n", formatStringForQuoting(nodeId),
-				attributeString(attribute, newValue, false));
+		out.printf("cn \"%s\" %s%n", FileSinkDGSUtility.formatStringForQuoting(nodeId),
+				FileSinkDGSUtility.attributeString(attribute, newValue, false));
 	}
 
 	public void nodeAttributeRemoved(String graphId, long timeId,
 			String nodeId, String attribute) {
-		out.printf("cn \"%s\" %s%n", formatStringForQuoting(nodeId),
-				attributeString(attribute, null, true));
+		out.printf("cn \"%s\" %s%n", FileSinkDGSUtility.formatStringForQuoting(nodeId),
+				FileSinkDGSUtility.attributeString(attribute, null, true));
 	}
 
 	public void edgeAdded(String graphId, long timeId, String edgeId,
 			String fromNodeId, String toNodeId, boolean directed) {
-		edgeId = formatStringForQuoting(edgeId);
-		fromNodeId = formatStringForQuoting(fromNodeId);
-		toNodeId = formatStringForQuoting(toNodeId);
+		edgeId = FileSinkDGSUtility.formatStringForQuoting(edgeId);
+		fromNodeId = FileSinkDGSUtility.formatStringForQuoting(fromNodeId);
+		toNodeId = FileSinkDGSUtility.formatStringForQuoting(toNodeId);
 
 		out.printf("ae \"%s\" \"%s\" %s \"%s\"%n", edgeId, fromNodeId,
 				directed ? ">" : "", toNodeId);
 	}
 
 	public void edgeRemoved(String graphId, long timeId, String edgeId) {
-		out.printf("de \"%s\"%n", formatStringForQuoting(edgeId));
+		out.printf("de \"%s\"%n", FileSinkDGSUtility.formatStringForQuoting(edgeId));
 	}
 
 	public void graphCleared(String graphId, long timeId) {
@@ -140,125 +140,14 @@ public class FileSinkDGS extends FileSinkBase {
 	}
 
 	public void nodeAdded(String graphId, long timeId, String nodeId) {
-		out.printf("an \"%s\"%n", formatStringForQuoting(nodeId));
+		out.printf("an \"%s\"%n", FileSinkDGSUtility.formatStringForQuoting(nodeId));
 	}
 
 	public void nodeRemoved(String graphId, long timeId, String nodeId) {
-		out.printf("dn \"%s\"%n", formatStringForQuoting(nodeId));
+		out.printf("dn \"%s\"%n", FileSinkDGSUtility.formatStringForQuoting(nodeId));
 	}
 
 	public void stepBegins(String graphId, long timeId, double step) {
 		out.printf(Locale.US, "st %f%n", step);
-	}
-
-	// Utility
-
-	protected String formatStringForQuoting(String str) {
-		return str.replaceAll("(^|[^\\\\])\"", "$1\\\\\"");
-	}
-
-	protected String attributeString(String key, Object value, boolean remove) {
-		if (key == null || key.length() == 0)
-			return null;
-
-		if (remove) {
-			return String.format(" -\"%s\"", key);
-		} else {
-			if (value != null && value.getClass().isArray())
-				return String.format(" \"%s\":%s", key, arrayString(value));
-			else
-				return String.format(" \"%s\":%s", key, valueString(value));
-		}
-	}
-
-	protected String arrayString(Object value) {
-		if (value != null && value.getClass().isArray()) {
-			StringBuilder sb = new StringBuilder();
-			sb.append("{");
-
-			if (Array.getLength(value) == 0)
-				sb.append("\"\"");
-			else
-				sb.append(arrayString(Array.get(value, 0)));
-
-			for (int i = 1; i < Array.getLength(value); ++i)
-				sb.append(String
-						.format(",%s", arrayString(Array.get(value, i))));
-
-			sb.append("}");
-			return sb.toString();
-		} else {
-			return valueString(value);
-		}
-	}
-
-	protected String valueString(Object value) {
-		if (value == null)
-			return "\"\"";
-
-		if (value instanceof CharSequence) {
-			if (value instanceof String)
-				return String.format("\"%s\"",
-						formatStringForQuoting((String) value));
-			else
-				return String.format("\"%s\"", (CharSequence) value);
-		} else if (value instanceof Number) {
-			Number nval = (Number) value;
-
-			if (value instanceof Integer || value instanceof Short
-					|| value instanceof Byte || value instanceof Long)
-				return String.format(Locale.US, "%d", nval.longValue());
-			else
-				return String.format(Locale.US, "%f", nval.doubleValue());
-		} else if (value instanceof Boolean) {
-			return String.format(Locale.US, "%b", ((Boolean) value));
-		} else if (value instanceof Character) {
-			return String.format("\"%c\"", ((Character) value).charValue());
-		} else if (value instanceof Object[]) {
-			Object array[] = (Object[]) value;
-			int n = array.length;
-			StringBuffer sb = new StringBuffer();
-
-			if (array.length > 0)
-				sb.append(valueString(array[0]));
-
-			for (int i = 1; i < n; i++) {
-				sb.append(",");
-				sb.append(valueString(array[i]));
-			}
-
-			return sb.toString();
-		} else if (value instanceof HashMap<?, ?>
-				|| value instanceof CompoundAttribute) {
-			HashMap<?, ?> hash;
-
-			if (value instanceof CompoundAttribute)
-				hash = ((CompoundAttribute) value).toHashMap();
-			else
-				hash = (HashMap<?, ?>) value;
-
-			return hashToString(hash);
-		} else if (value instanceof Color) {
-			Color c = (Color) value;
-			return String.format("#%02X%02X%02X%02X", c.getRed(), c.getGreen(),
-					c.getBlue(), c.getAlpha());
-		} else {
-			return String.format("\"%s\"", value.toString());
-		}
-	}
-
-	protected String hashToString(HashMap<?, ?> hash) {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("[ ");
-
-		for (Object key : hash.keySet()) {
-			sb.append(attributeString(key.toString(), hash.get(key), false));
-			sb.append(",");
-		}
-
-		sb.append(']');
-
-		return sb.toString();
 	}
 }
