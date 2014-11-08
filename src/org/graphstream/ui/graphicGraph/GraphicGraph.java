@@ -134,12 +134,14 @@ import java.util.logging.Logger;
  * 
  * TODO : this graph cannot handle modification inside event listener methods !!
  */
-public class GraphicGraph extends AbstractElement implements Graph, StyleGroupListener {
+public class GraphicGraph extends AbstractElement implements Graph,
+		StyleGroupListener {
 
-    /**
-     * class level logger
-     */
-    private static final Logger logger = Logger.getLogger(GraphicGraph.class.getSimpleName());
+	/**
+	 * class level logger
+	 */
+	private static final Logger logger = Logger.getLogger(GraphicGraph.class
+			.getSimpleName());
 
 	/**
 	 * Set of styles.
@@ -349,13 +351,17 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	 */
 	public void computeBounds() {
 		if (boundsChanged) {
-			lo.x = lo.y = lo.z =  Double.MAX_VALUE;
+			boolean effectiveChange = false;
+
+			lo.x = lo.y = lo.z = Double.MAX_VALUE;
 			hi.x = hi.y = hi.z = -Double.MAX_VALUE;
 
 			for (Node n : getEachNode()) {
 				GraphicNode node = (GraphicNode) n;
 
 				if (!node.hidden && node.positionned) {
+					effectiveChange = true;
+
 					if (node.x < lo.x)
 						lo.x = node.x;
 					if (node.x > hi.x)
@@ -379,6 +385,8 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 					double z = sprite.getZ();
 
 					if (!sprite.hidden) {
+						effectiveChange = true;
+
 						if (x < lo.x)
 							lo.x = x;
 						if (x > hi.x)
@@ -408,7 +416,15 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 				lo.z = lo.z - 1;
 			}
 
-			boundsChanged = false;
+			//
+			// Prevent infinities that can be produced by Double.MAX_VALUE.
+			//
+			if (effectiveChange)
+				boundsChanged = false;
+			else {
+				lo.x = lo.y = lo.z = -1;
+				hi.x = hi.y = hi.z = 1;
+			}
 		}
 	}
 
@@ -459,10 +475,16 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 						styleSheet.load((String) newValue);
 						graphChanged = true;
 					} catch (Exception e) {
-                        logger.log(Level.WARNING, String.format("Error while parsing style sheet for graph '%s'.", getId()), e);
+						logger.log(
+								Level.WARNING,
+								String.format(
+										"Error while parsing style sheet for graph '%s'.",
+										getId()), e);
 					}
 				} else {
-                    logger.warning(String.format("Error with stylesheet specification what to do with '%s'.", newValue));
+					logger.warning(String
+							.format("Error with stylesheet specification what to do with '%s'.",
+									newValue));
 				}
 			} else // Remove the style.
 			{
@@ -674,12 +696,12 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 			if (n2 == null)
 				throw new ElementNotFoundException("node \"%s\"", to);
 
-			edge = new GraphicEdge(id, n1, n2, directed, null);//, attributes);
+			edge = new GraphicEdge(id, n1, n2, directed, null);// , attributes);
 
 			styleGroups.addElement(edge);
 
-            List<GraphicEdge> l1 = connectivity.get(n1);
-            List<GraphicEdge> l2 = connectivity.get(n2);
+			List<GraphicEdge> l1 = connectivity.get(n1);
+			List<GraphicEdge> l2 = connectivity.get(n2);
 
 			if (l1 == null) {
 				l1 = new ArrayList<GraphicEdge>();
@@ -713,7 +735,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		GraphicNode node = (GraphicNode) styleGroups.getNode(id);
 
 		if (node == null) {
-			node = new GraphicNode(this, id, null);//, attributes);
+			node = new GraphicNode(this, id, null);// , attributes);
 
 			styleGroups.addElement(node);
 
@@ -787,7 +809,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 
 		if (node0 != null && node1 != null) {
 			Collection<GraphicEdge> edges0 = connectivity.get(node0);
-            Collection<GraphicEdge> edges1 = connectivity.get(node1);
+			Collection<GraphicEdge> edges1 = connectivity.get(node1);
 
 			for (GraphicEdge edge0 : edges0) {
 				for (GraphicEdge edge1 : edges1) {
@@ -1214,7 +1236,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 
 	public GraphicSprite addSprite(String id) {
 		String prefix = String.format("ui.sprite.%s", id);
-        logger.info(String.format("Added sprite %s.", id));
+		logger.info(String.format("Added sprite %s.", id));
 		addAttribute(prefix, 0, 0, 0);
 		GraphicSprite s = styleGroups.getSprite(id);
 		assert (s != null);
@@ -1261,7 +1283,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 							((Number) values[2]).doubleValue(),
 							(Style.Units) values[3]);
 				} else {
-                    logger.warning("Cannot parse values[4] for sprite position.");
+					logger.warning("Cannot parse values[4] for sprite position.");
 				}
 			} else if (values.length == 3) {
 				if (values[0] instanceof Number && values[1] instanceof Number
@@ -1270,16 +1292,18 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 							((Number) values[1]).doubleValue(),
 							((Number) values[2]).doubleValue(), Units.GU);
 				} else {
-                    logger.warning("Cannot parse values[3] for sprite position.");
+					logger.warning("Cannot parse values[3] for sprite position.");
 				}
 			} else if (values.length == 1) {
 				if (values[0] instanceof Number) {
 					sprite.setPosition(((Number) values[0]).doubleValue());
 				} else {
-                    logger.warning("Sprite position percent is not a number.");
+					logger.warning("Sprite position percent is not a number.");
 				}
 			} else {
-                logger.warning(String.format("Cannot transform value '%s' (length=%d) into a position%n", Arrays.toString(values), values.length));
+				logger.warning(String
+						.format("Cannot transform value '%s' (length=%d) into a position%n",
+								Arrays.toString(values), values.length));
 			}
 		} else if (value instanceof Number) {
 			sprite.setPosition(((Number) value).doubleValue());
@@ -1290,7 +1314,9 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		} else if (value == null) {
 			throw new RuntimeException("What do you expect with a null value ?");
 		} else {
-			logger.warning(String.format("Cannot place sprite with posiiton '%s' (instance of %s)%n", value, value.getClass().getName()));
+			logger.warning(String
+					.format("Cannot place sprite with posiiton '%s' (instance of %s)%n",
+							value, value.getClass().getName()));
 		}
 	}
 

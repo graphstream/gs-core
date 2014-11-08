@@ -535,7 +535,7 @@ public class DefaultCamera implements Camera
         // Y
         tx = metrics.lo.x + (metrics.size.data[0] / 2); // Centre of graph in X
         ty = metrics.lo.y + (metrics.size.data[1] / 2); // Centre of graph in Y
-
+        
         if (sx > sy) // The least ratio.
             sx = sy;
         else
