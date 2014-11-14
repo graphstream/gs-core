@@ -172,7 +172,7 @@ public class FileSinkDOT extends FileSinkBase {
 			if (!directed)
 				out.printf(" -> \"%s\"", fromNodeId);
 
-			out.printf("\n;");
+			out.printf(";%n");
 		} else
 			out.printf("\t\"%s\" -- \"%s\";%n", fromNodeId, toNodeId);
 	}
