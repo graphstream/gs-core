@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Locale;
+import java.util.logging.Logger;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Element;
@@ -106,6 +107,8 @@ import org.graphstream.ui.layout.springbox.implementations.SpringBox;
  * </ul>
  */
 public class FileSinkTikZ extends FileSinkBase {
+	private static final Logger LOGGER = Logger.getLogger(FileSinkTikZ.class
+			.getName());
 
 	/**
 	 * Node attribute storing coordinates.
@@ -373,8 +376,8 @@ public class FileSinkTikZ extends FileSinkBase {
 
 				break;
 			default:
-				System.err.printf("unhandled stroke mode : %s%n",
-						group.getStrokeMode());
+				LOGGER.warning(String.format("unhandled stroke mode : %s%n",
+						group.getStrokeMode()));
 			}
 
 			switch (group.getShape()) {
@@ -393,7 +396,8 @@ public class FileSinkTikZ extends FileSinkBase {
 				style.add("diamond");
 				break;
 			default:
-				System.err.printf("unhandled shape : %s%n", group.getShape());
+				LOGGER.warning(String.format("unhandled shape : %s%n",
+						group.getShape()));
 			}
 
 			String text = checkColor(group.getTextColor(0));
@@ -411,9 +415,9 @@ public class FileSinkTikZ extends FileSinkBase {
 								group.getSize().values.get(0)));
 				break;
 			default:
-				System.err
-						.printf("%% [warning] units %s are not compatible with TikZ.%n",
-								group.getSize().units);
+				LOGGER.warning(String
+						.format("%% [warning] units %s are not compatible with TikZ.%n",
+								group.getSize().units));
 			}
 
 			style.add("inner sep=0pt");
@@ -437,14 +441,15 @@ public class FileSinkTikZ extends FileSinkBase {
 								group.getSize().values.get(0)));
 				break;
 			default:
-				System.err
-						.printf("%% [warning] units %s are not compatible with TikZ.%n",
-								group.getSize().units);
+				LOGGER.warning(String
+						.format("%% [warning] units %s are not compatible with TikZ.%n",
+								group.getSize().units));
 			}
 		}
 			break;
 		default:
-			System.err.printf("unhandled group type : %s%n", group.getType());
+			LOGGER.warning(String.format("unhandled group type : %s%n",
+					group.getType()));
 		}
 
 		for (int i = 0; i < style.size(); i++) {
@@ -586,7 +591,8 @@ public class FileSinkTikZ extends FileSinkBase {
 				ymin = Math.min(ymin, y);
 				ymax = Math.max(ymax, y);
 			} else {
-				System.err.printf("%% [warning] missing node (x,y).%n");
+				LOGGER.warning(String
+						.format("%% [warning] missing node (x,y).%n"));
 			}
 
 			if (n.hasNumber("ui.size")) {

@@ -41,6 +41,7 @@ import java.io.Writer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -260,6 +261,9 @@ public class FileSinkImages implements FileSink {
 		LOW, MEDIUM, HIGH
 	}
 
+	private static final Logger LOGGER = Logger.getLogger(FileSinkImages.class
+			.getName());
+
 	protected Resolution resolution;
 	protected OutputType outputType;
 	protected GraphRenderer renderer;
@@ -404,8 +408,8 @@ public class FileSinkImages implements FileSink {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (ClassCastException e) {
-			System.err
-					.printf("not a renderer \"%s\"%n", rendererType.classname);
+			LOGGER.warning(String.format("not a renderer \"%s\"%n",
+					rendererType.classname));
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
@@ -685,7 +689,8 @@ public class FileSinkImages implements FileSink {
 	}
 
 	protected void printProgress() {
-		System.out.printf("\033[s\033[K%d images written\033[u", counter);
+		LOGGER.info(String.format("\033[s\033[K%d images written\033[u",
+				counter));
 	}
 
 	/*
@@ -1206,13 +1211,14 @@ public class FileSinkImages implements FileSink {
 	}
 
 	public static void usage() {
-		System.out.printf("usage: java %s [options] fichier.dgs%n",
-				FileSinkImages.class.getName());
-		System.out.printf("where options in:%n");
+		LOGGER.info(String.format("usage: java %s [options] fichier.dgs%n",
+				FileSinkImages.class.getName()));
+		LOGGER.info(String.format("where options in:%n"));
 		for (Option option : Option.values()) {
-			System.out.printf("%n --%s%s , -%s %s%n%s%n", option.fullopts,
-					option.valuable ? "=..." : "", option.shortopts,
-					option.valuable ? "..." : "", option.description);
+			LOGGER.info(String.format("%n --%s%s , -%s %s%n%s%n",
+					option.fullopts, option.valuable ? "=..." : "",
+					option.shortopts, option.valuable ? "..." : "",
+					option.description));
 		}
 	}
 
@@ -1251,8 +1257,8 @@ public class FileSinkImages implements FileSink {
 					}
 
 					if (!found) {
-						System.err.printf("unknown option: %s%n",
-								args[i].substring(0, args[i].indexOf('=')));
+						LOGGER.severe(String.format("unknown option: %s%n",
+								args[i].substring(0, args[i].indexOf('='))));
 						System.exit(1);
 					}
 				} else if (args[i].matches("^-\\w$")) {
@@ -1266,7 +1272,8 @@ public class FileSinkImages implements FileSink {
 					}
 
 					if (!found) {
-						System.err.printf("unknown option: %s%n", args[i]);
+						LOGGER.severe(String.format("unknown option: %s%n",
+								args[i]));
 						System.exit(1);
 					}
 				} else {
@@ -1359,10 +1366,10 @@ public class FileSinkImages implements FileSink {
 		}
 
 		if (errors.size() > 0) {
-			System.err.printf("error:%n");
+			LOGGER.info(String.format("error:%n"));
 
 			for (String error : errors)
-				System.err.printf("- %s%n", error);
+				LOGGER.info(String.format("- %s%n", error));
 
 			System.exit(1);
 		}
