@@ -645,7 +645,9 @@ public class FileSinkTikZ extends FileSinkBase {
 		String label;
 		String style = getNodeStyle(n);
 
-		label = n.hasAttribute("label") ? (String) n.getLabel("label") : "";
+		label = n.hasAttribute("label") ? (String) n.getLabel("label") : (n
+				.hasAttribute("ui.label") ? (String) n.getLabel("ui.label")
+				: "");
 
 		out.printf(l, "\t\\node[%s] at (%s) {%s};%n", style,
 				formatId(n.getId()), label);
