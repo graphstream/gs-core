@@ -34,6 +34,11 @@ package org.graphstream.stream.file;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Element;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+
 /**
  * Graph writer for the GraphViz DOT format.
  */
@@ -101,6 +106,36 @@ public class FileSinkDOT extends FileSinkBase {
 	}
 
 	@Override
+	protected void exportGraph(Graph graph) {
+		String graphId = graph.getId();
+		long timeId = 0;
+
+		for (String key : graph.getAttributeKeySet())
+			graphAttributeAdded(graphId, timeId++, key, graph.getAttribute(key));
+
+		for (Node node : graph) {
+			String nodeId = node.getId();
+			out.printf("\t\"%s\" %s;%n", nodeId, outputAttributes(node));
+		}
+
+		for (Edge edge : graph.getEachEdge()) {
+			String fromNodeId = edge.getNode0().getId();
+			String toNodeId = edge.getNode1().getId();
+			String attr = outputAttributes(edge);
+
+			if (digraph) {
+				out.printf("\t\"%s\" -> \"%s\"", fromNodeId, toNodeId);
+
+				if (!edge.isDirected())
+					out.printf(" -> \"%s\"", fromNodeId);
+			} else
+				out.printf("\t\"%s\" -- \"%s\"", fromNodeId, toNodeId);
+
+			out.printf(" %s;%n", attr);
+		}
+	}
+
+	@Override
 	protected void outputHeader() throws IOException {
 		out = (PrintWriter) output;
 		out.printf("%s {%n", digraph ? "digraph" : "graph");
@@ -131,15 +166,13 @@ public class FileSinkDOT extends FileSinkBase {
 
 	public void graphAttributeAdded(String graphId, long timeId,
 			String attribute, Object value) {
-		out
-				.printf("\tgraph [ %s ];%n", outputAttribute(attribute, value,
-						true));
+		out.printf("\tgraph [ %s ];%n", outputAttribute(attribute, value, true));
 	}
 
 	public void graphAttributeChanged(String graphId, long timeId,
 			String attribute, Object oldValue, Object newValue) {
-		out.printf("\tgraph [ %s ];%n", outputAttribute(attribute, newValue,
-				true));
+		out.printf("\tgraph [ %s ];%n",
+				outputAttribute(attribute, newValue, true));
 	}
 
 	public void graphAttributeRemoved(String graphId, long timeId,
@@ -149,14 +182,14 @@ public class FileSinkDOT extends FileSinkBase {
 
 	public void nodeAttributeAdded(String graphId, long timeId, String nodeId,
 			String attribute, Object value) {
-		out.printf("\t\"%s\" [ %s ];%n", nodeId, outputAttribute(attribute,
-				value, true));
+		out.printf("\t\"%s\" [ %s ];%n", nodeId,
+				outputAttribute(attribute, value, true));
 	}
 
 	public void nodeAttributeChanged(String graphId, long timeId,
 			String nodeId, String attribute, Object oldValue, Object newValue) {
-		out.printf("\t\"%s\" [ %s ];%n", nodeId, outputAttribute(attribute,
-				newValue, true));
+		out.printf("\t\"%s\" [ %s ];%n", nodeId,
+				outputAttribute(attribute, newValue, true));
 	}
 
 	public void nodeAttributeRemoved(String graphId, long timeId,
@@ -225,5 +258,28 @@ public class FileSinkDOT extends FileSinkBase {
 
 		return String.format("%s\"%s\"=%s%s%s", first ? "" : ",", key,
 				quote ? "\"" : "", value, quote ? "\"" : "");
+	}
+
+	protected String outputAttributes(Element e) {
+		if (e.getAttributeCount() == 0)
+			return "";
+
+		StringBuilder buffer = new StringBuilder("[");
+		boolean first = true;
+
+		for (String key : e.getEachAttributeKey()) {
+			boolean quote = true;
+			Object value = e.getAttribute(key);
+
+			if (value instanceof Number)
+				quote = false;
+
+			buffer.append(String.format("%s\"%s\"=%s%s%s", first ? "" : ",",
+					key, quote ? "\"" : "", value, quote ? "\"" : ""));
+
+			first = false;
+		}
+
+		return buffer.append(']').toString();
 	}
 }
