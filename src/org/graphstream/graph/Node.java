@@ -64,7 +64,7 @@ public interface Node extends Element, Iterable<Edge> {
 	/**
 	 * Number of leaving edges.
 	 * 
-	 * @return the count of edges that only enter this node plus all undirected
+	 * @return the count of edges that only leave this node plus all undirected
 	 *         edges.
 	 */
 	int getOutDegree();
@@ -72,7 +72,7 @@ public interface Node extends Element, Iterable<Edge> {
 	/**
 	 * Number of entering edges.
 	 * 
-	 * @return the count of edges that only leave this node plus all undirected
+	 * @return the count of edges that only enter this node plus all undirected
 	 *         edges.
 	 */
 	int getInDegree();
