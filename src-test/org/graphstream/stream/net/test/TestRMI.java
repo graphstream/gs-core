@@ -140,10 +140,10 @@ public class TestRMI {
 			assertEquals(points.length, 2);
 			assertEquals(points[0].length, 2);
 			assertEquals(points[1].length, 2);
-			assertEquals(points[0][0], 1.0);
-			assertEquals(points[0][1], 1.0);
-			assertEquals(points[1][0], 2.0);
-			assertEquals(points[1][1], 2.0);
+			assertEquals(1.0, points[0][0], 1E-12);
+			assertEquals(1.0, points[0][1], 1E-12);
+			assertEquals(2.0, points[1][0], 1E-12);
+			assertEquals(2.0, points[1][1], 1E-12);
 		} catch (ClassCastException e) {
 			fail();
 		} catch (NullPointerException e) {

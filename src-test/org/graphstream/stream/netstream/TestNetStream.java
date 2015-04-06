@@ -592,7 +592,7 @@ public class TestNetStream {
 			}
 
 			public void stepBegins(String sourceId, long timeId, double step) {
-				assertEquals(1.1, step);
+				assertEquals(1.1, step, 1E-12);
 			}
 		});
 
@@ -672,6 +672,7 @@ public class TestNetStream {
 
 	@Test
 	public void testNetStreamVarint() {
+		@SuppressWarnings("unused")
 		NetStreamReceiver net = null;
 		try {
 			net = new NetStreamReceiver("localhost", 2004, false);
@@ -782,6 +783,8 @@ public class TestNetStream {
 		assertEquals(1, (bt & 127) + (bt & 128));
 
 	}
+	
+	@SuppressWarnings("unused")
 	private void outBuffer(ByteBuffer buf) {
 		System.out.println(buf.toString());
 		int nbytes = buf.capacity();

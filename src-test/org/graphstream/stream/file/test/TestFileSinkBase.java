@@ -197,13 +197,13 @@ public abstract class TestFileSinkBase {
 						aTemporaryGraphFileName()));
 				input.addSink(inGraph);
 				input.readAll(aTemporaryGraphFileName());
-				
+
 				testAttributedTriangle();
 			} catch (IOException e) {
 				e.printStackTrace();
 				fail("Should not happen !");
 			} finally {
-				//removeFile(aTemporaryGraphFileName());
+				// removeFile(aTemporaryGraphFileName());
 			}
 		}
 	}
@@ -360,10 +360,11 @@ public abstract class TestFileSinkBase {
 		assertNotNull(B);
 		assertNotNull(C);
 
-		assertEquals(1, inGraph.getAttribute("a"));
+		assertEquals(1.0, ((Number) inGraph.getAttribute("a")).doubleValue(),
+				1E-12);
 		assertEquals("foo", inGraph.getAttribute("b"));
 
-		assertEquals(1, A.getAttribute("a"));
+		assertEquals(1.0, ((Number) A.getAttribute("a")).doubleValue(), 1E-12);
 		assertEquals("foo", B.getAttribute("b"));
 		assertEquals("bar", C.getAttribute("c"));
 	}

@@ -31,7 +31,7 @@
  */
 package org.graphstream.stream.test;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.stream.AnnotatedSink;

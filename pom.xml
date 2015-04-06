@@ -294,7 +294,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.3.1</version>
+			<version>4.12</version>
 			<optional>false</optional>
 		</dependency>
 		<dependency>
@@ -311,3 +311,4 @@
 		</dependency>
 	</dependencies>
 </project>
+

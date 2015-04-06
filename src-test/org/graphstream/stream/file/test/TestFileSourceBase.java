@@ -300,7 +300,7 @@ public abstract class TestFileSourceBase {
 		assertTrue(B.hasAttribute("cc"));
 		assertTrue(C.hasAttribute("aaa"));
 
-		assertEquals(1.0, A.getAttribute("a"));
+		assertEquals(1.0, ((Number) A.getAttribute("a")).doubleValue(), 1E-12);
 		assertEquals("truc", A.getAttribute("b"));
 		assertEquals("true", A.getAttribute("c"));
 
