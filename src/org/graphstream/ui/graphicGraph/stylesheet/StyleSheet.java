@@ -421,7 +421,8 @@ public class StyleSheet {
 	public void parseFromURL(String url) throws IOException {
 		URL u = StyleSheet.class.getClassLoader().getResource(url);
 		if (u == null) {
-			File f = new File(url);
+			String fileUrl = url.replace("file://", "");
+			File f = new File(fileUrl);
 
 			if (f.exists())
 				u = f.toURI().toURL();
