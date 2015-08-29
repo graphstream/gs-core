@@ -64,82 +64,44 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleSheet;
 
 public class FileSinkSVG2 implements FileSink {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSink#begin(java.lang.String)
-	 */
+	@Override
 	public void begin(String fileName) throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSink#begin(java.io.OutputStream)
-	 */
+	@Override
 	public void begin(OutputStream stream) throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSink#begin(java.io.Writer)
-	 */
+	@Override
 	public void begin(Writer writer) throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSink#end()
-	 */
+	@Override
 	public void end() throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSink#flush()
-	 */
+	@Override
 	public void flush() throws IOException {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph
-	 * , java.lang.String)
-	 */
+	@Override
 	public void writeAll(Graph graph, String fileName) throws IOException {
 		FileWriter out = new FileWriter(fileName);
 		writeAll(graph, out);
 		out.close();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph
-	 * , java.io.OutputStream)
-	 */
+	@Override
 	public void writeAll(Graph graph, OutputStream stream) throws IOException {
 		OutputStreamWriter out = new OutputStreamWriter(stream);
 		writeAll(graph, out);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph
-	 * , java.io.Writer)
-	 */
+	@Override
 	public void writeAll(Graph g, Writer w) throws IOException {
 		XMLWriter out = new XMLWriter();
 		SVGContext ctx = new SVGContext();
@@ -905,161 +867,5 @@ public class FileSinkSVG2 implements FileSink {
 	private static String toHexColor(Color c) {
 		return String.format("#%02x%02x%02x", c.getRed(), c.getGreen(),
 			c.getBlue());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#edgeAttributeAdded(java.lang.String,
-	 * long, java.lang.String, java.lang.String, java.lang.Object)
-	 */
-	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
-		String attribute, Object value) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#edgeAttributeChanged(java.lang.String
-	 * , long, java.lang.String, java.lang.String, java.lang.Object,
-	 * java.lang.Object)
-	 */
-	public void edgeAttributeChanged(String sourceId, long timeId,
-		String edgeId, String attribute, Object oldValue, Object newValue) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#edgeAttributeRemoved(java.lang.String
-	 * , long, java.lang.String, java.lang.String)
-	 */
-	public void edgeAttributeRemoved(String sourceId, long timeId,
-		String edgeId, String attribute) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#graphAttributeAdded(java.lang.String
-	 * , long, java.lang.String, java.lang.Object)
-	 */
-	public void graphAttributeAdded(String sourceId, long timeId,
-		String attribute, Object value) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#graphAttributeChanged(java.lang.
-	 * String, long, java.lang.String, java.lang.Object, java.lang.Object)
-	 */
-	public void graphAttributeChanged(String sourceId, long timeId,
-		String attribute, Object oldValue, Object newValue) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#graphAttributeRemoved(java.lang.
-	 * String, long, java.lang.String)
-	 */
-	public void graphAttributeRemoved(String sourceId, long timeId,
-		String attribute) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#nodeAttributeAdded(java.lang.String,
-	 * long, java.lang.String, java.lang.String, java.lang.Object)
-	 */
-	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-		String attribute, Object value) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#nodeAttributeChanged(java.lang.String
-	 * , long, java.lang.String, java.lang.String, java.lang.Object,
-	 * java.lang.Object)
-	 */
-	public void nodeAttributeChanged(String sourceId, long timeId,
-		String nodeId, String attribute, Object oldValue, Object newValue) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#nodeAttributeRemoved(java.lang.String
-	 * , long, java.lang.String, java.lang.String)
-	 */
-	public void nodeAttributeRemoved(String sourceId, long timeId,
-		String nodeId, String attribute) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#edgeAdded(java.lang.String, long,
-	 * java.lang.String, java.lang.String, java.lang.String, boolean)
-	 */
-	public void edgeAdded(String sourceId, long timeId, String edgeId,
-		String fromNodeId, String toNodeId, boolean directed) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#edgeRemoved(java.lang.String,
-	 * long, java.lang.String)
-	 */
-	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#graphCleared(java.lang.String,
-	 * long)
-	 */
-	public void graphCleared(String sourceId, long timeId) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#nodeAdded(java.lang.String, long,
-	 * java.lang.String)
-	 */
-	public void nodeAdded(String sourceId, long timeId, String nodeId) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#nodeRemoved(java.lang.String,
-	 * long, java.lang.String)
-	 */
-	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#stepBegins(java.lang.String,
-	 * long, double)
-	 */
-	public void stepBegins(String sourceId, long timeId, double step) {
 	}
 }

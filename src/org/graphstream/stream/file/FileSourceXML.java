@@ -79,38 +79,22 @@ public abstract class FileSourceXML extends SourceBase implements FileSource,
 		events = new Stack<XMLEvent>();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#readAll(java.lang.String)
-	 */
+	@Override
 	public void readAll(String fileName) throws IOException {
 		readAll(new FileReader(fileName));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#readAll(java.net.URL)
-	 */
+	@Override
 	public void readAll(URL url) throws IOException {
 		readAll(url.openStream());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#readAll(java.io.InputStream)
-	 */
+	@Override
 	public void readAll(InputStream stream) throws IOException {
 		readAll(new InputStreamReader(stream));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#readAll(java.io.Reader)
-	 */
+	@Override
 	public void readAll(Reader reader) throws IOException {
 		begin(reader);
 		while (nextEvents())
@@ -118,38 +102,22 @@ public abstract class FileSourceXML extends SourceBase implements FileSource,
 		end();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#begin(java.lang.String)
-	 */
+	@Override
 	public void begin(String fileName) throws IOException {
 		begin(new FileReader(fileName));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#begin(java.net.URL)
-	 */
+	@Override
 	public void begin(URL url) throws IOException {
 		begin(url.openStream());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#begin(java.io.InputStream)
-	 */
+	@Override
 	public void begin(InputStream stream) throws IOException {
 		begin(new InputStreamReader(stream));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#begin(java.io.Reader)
-	 */
+	@Override
 	public void begin(Reader reader) throws IOException {
 		openStream(reader);
 	}
@@ -175,27 +143,15 @@ public abstract class FileSourceXML extends SourceBase implements FileSource,
 	protected abstract void beforeEndDocument() throws IOException,
 		XMLStreamException;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#nextEvents()
-	 */
+	@Override
 	public abstract boolean nextEvents() throws IOException;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#nextStep()
-	 */
+	@Override
 	public boolean nextStep() throws IOException {
 		return nextEvents();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#end()
-	 */
+	@Override
 	public void end() throws IOException {
 		closeStream();
 	}

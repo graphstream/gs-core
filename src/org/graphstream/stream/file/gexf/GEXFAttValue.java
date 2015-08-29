@@ -50,13 +50,7 @@ public class GEXFAttValue implements GEXFElement {
 		this.end = Double.NaN;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.file.gexf.GEXFElement#export(org.graphstream.stream
-	 * .file.gexf.SmartXMLWriter)
-	 */
+	@Override
 	public void export(SmartXMLWriter stream) throws XMLStreamException {
 		stream.startElement("attvalue");
 

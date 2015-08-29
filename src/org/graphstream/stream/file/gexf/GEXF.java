@@ -85,13 +85,7 @@ public class GEXF extends PipeBase implements GEXFElement {
 		extensions.add(ext);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.file.gexf.GEXFElement#export(org.graphstream.stream
-	 * .file.gexf.SmartXMLWriter)
-	 */
+	@Override
 	public void export(SmartXMLWriter stream) throws XMLStreamException {
 		stream.startElement("gexf");
 
@@ -123,12 +117,7 @@ public class GEXF extends PipeBase implements GEXFElement {
 		return graph.edgesAttributes.attributes.get(key);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.PipeBase#stepBegins(java.lang.String, long,
-	 * double)
-	 */
+	@Override
 	public void stepBegins(String sourceId, long timeId, double step) {
 		this.step = step;
 		super.stepBegins(sourceId, timeId, step);

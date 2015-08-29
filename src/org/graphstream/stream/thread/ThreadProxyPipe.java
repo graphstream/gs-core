@@ -171,11 +171,6 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe {
 		} while (e != null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ProxyPipe#blockingPump()
-	 */
 	@Override
 	public void blockingPump() throws InterruptedException {
 		blockingPump(0);

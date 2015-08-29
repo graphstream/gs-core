@@ -98,15 +98,9 @@ public class GEXFAttValues implements GEXFElement {
 		return o.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.file.gexf.GEXFElement#export(org.graphstream.stream
-	 * .file.gexf.SmartXMLWriter)
-	 */
+	@Override
 	public void export(SmartXMLWriter stream) throws XMLStreamException {
-		if (values.size() == 0) {
+		if (values.isEmpty()) {
 			return;
 		}
 

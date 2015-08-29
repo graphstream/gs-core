@@ -53,13 +53,7 @@ public class GEXFAttribute implements GEXFElement {
 		options = null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.file.gexf.GEXFElement#export(org.graphstream.stream
-	 * .file.gexf.SmartXMLWriter)
-	 */
+	@Override
 	public void export(SmartXMLWriter stream) throws XMLStreamException {
 		stream.startElement("attribute");
 		stream.stream.writeAttribute("id", Integer.toString(id));

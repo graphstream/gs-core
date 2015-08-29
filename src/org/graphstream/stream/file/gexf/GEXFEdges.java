@@ -43,18 +43,12 @@ public class GEXFEdges implements GEXFElement, Sink {
 
 	public GEXFEdges(GEXF root) {
 		this.root = root;
-		this.edges = new HashMap<String, GEXFEdge>();
+		this.edges = new HashMap<>();
 
 		root.addSink(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.file.gexf.GEXFElement#export(org.graphstream.stream
-	 * .file.gexf.SmartXMLWriter)
-	 */
+	@Override
 	public void export(SmartXMLWriter stream) throws XMLStreamException {
 		stream.startElement("edges");
 
@@ -65,12 +59,7 @@ public class GEXFEdges implements GEXFElement, Sink {
 		stream.endElement(); // EDGES
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.SinkAdapter#edgeAdded(java.lang.String, long,
-	 * java.lang.String, java.lang.String, java.lang.String, boolean)
-	 */
+	@Override
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
 		String fromNodeId, String toNodeId, boolean directed) {
 		GEXFEdge edge = edges.get(edgeId);
@@ -83,12 +72,7 @@ public class GEXFEdges implements GEXFElement, Sink {
 		edge.spells.start();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.SinkAdapter#edgeRemoved(java.lang.String,
-	 * long, java.lang.String)
-	 */
+	@Override
 	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 		GEXFEdge edge = edges.get(edgeId);
 
@@ -100,25 +84,14 @@ public class GEXFEdges implements GEXFElement, Sink {
 		edge.spells.end();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.SinkAdapter#graphCleared(java.lang.String,
-	 * long)
-	 */
+	@Override
 	public void graphCleared(String sourceId, long timeId) {
 		for (GEXFEdge edge : edges.values()) {
 			edge.spells.end();
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.SinkAdapter#edgeAttributeAdded(java.lang.String,
-	 * long, java.lang.String, java.lang.String, java.lang.Object)
-	 */
+	@Override
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
 		String attribute, Object value) {
 		GEXFEdge edge = edges.get(edgeId);
@@ -137,26 +110,13 @@ public class GEXFEdges implements GEXFElement, Sink {
 			.attributeUpdated(root.getEdgeAttribute(attribute), value);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.SinkAdapter#edgeAttributeChanged(java.lang.String,
-	 * long, java.lang.String, java.lang.String, java.lang.Object,
-	 * java.lang.Object)
-	 */
+	@Override
 	public void edgeAttributeChanged(String sourceId, long timeId,
 		String edgeId, String attribute, Object oldValue, Object newValue) {
 		edgeAttributeAdded(sourceId, timeId, edgeId, attribute, newValue);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.SinkAdapter#edgeAttributeRemoved(java.lang.String,
-	 * long, java.lang.String, java.lang.String)
-	 */
+	@Override
 	public void edgeAttributeRemoved(String sourceId, long timeId,
 		String edgeId, String attribute) {
 		GEXFEdge edge = edges.get(edgeId);

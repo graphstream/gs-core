@@ -143,9 +143,9 @@ public class FileSinkTikZ extends FileSinkBase {
 
 	protected PrintWriter out;
 
-	protected HashMap<String, String> colors = new HashMap<String, String>();
-	protected HashMap<String, String> classes = new HashMap<String, String>();
-	protected HashMap<String, String> classNames = new HashMap<String, String>();
+	protected HashMap<String, String> colors = new HashMap<>();
+	protected HashMap<String, String> classes = new HashMap<>();
+	protected HashMap<String, String> classNames = new HashMap<>();
 
 	protected int classIndex = 0;
 	protected int colorIndex = 0;
@@ -354,7 +354,7 @@ public class FileSinkTikZ extends FileSinkBase {
 	 */
 	protected String getTikzStyle(StyleGroup group) {
 		StringBuilder buffer = new StringBuilder();
-		LinkedList<String> style = new LinkedList<String>();
+		LinkedList<String> style = new LinkedList<>();
 
 		for (int i = 0; i < group.getFillColorCount(); i++) {
 			checkColor(group.getFillColor(i));
@@ -477,11 +477,7 @@ public class FileSinkTikZ extends FileSinkBase {
 		return buffer.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSinkBase#outputHeader()
-	 */
+	@Override
 	protected void outputHeader() throws IOException {
 		out = (PrintWriter) output;
 
@@ -492,11 +488,7 @@ public class FileSinkTikZ extends FileSinkBase {
 		buffer.clear();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSinkBase#outputEndOfFile()
-	 */
+	@Override
 	protected void outputEndOfFile() throws IOException {
 		if (Double.isNaN(width)) {
 			if (buffer.hasNumber(WIDTH_ATTR)) {
@@ -707,177 +699,91 @@ public class FileSinkTikZ extends FileSinkBase {
 				: "--", formatId(e.getTargetNode().getId()));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#graphAttributeAdded(java.lang.String
-	 * , long, java.lang.String, java.lang.Object)
-	 */
+	@Override
 	public void graphAttributeAdded(String sourceId, long timeId,
 		String attribute, Object value) {
 		buffer.graphAttributeAdded(sourceId, timeId, attribute, value);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#graphAttributeChanged(java.lang.
-	 * String, long, java.lang.String, java.lang.Object, java.lang.Object)
-	 */
+	@Override
 	public void graphAttributeChanged(String sourceId, long timeId,
 		String attribute, Object oldValue, Object newValue) {
 		buffer.graphAttributeChanged(sourceId, timeId, attribute, oldValue,
 			newValue);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#graphAttributeRemoved(java.lang.
-	 * String, long, java.lang.String)
-	 */
+	@Override
 	public void graphAttributeRemoved(String sourceId, long timeId,
 		String attribute) {
 		buffer.graphAttributeRemoved(sourceId, timeId, attribute);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#nodeAttributeAdded(java.lang.String,
-	 * long, java.lang.String, java.lang.String, java.lang.Object)
-	 */
+	@Override
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
 		String attribute, Object value) {
 		buffer.nodeAttributeAdded(sourceId, timeId, nodeId, attribute, value);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#nodeAttributeChanged(java.lang.String
-	 * , long, java.lang.String, java.lang.String, java.lang.Object,
-	 * java.lang.Object)
-	 */
+	@Override
 	public void nodeAttributeChanged(String sourceId, long timeId,
 		String nodeId, String attribute, Object oldValue, Object newValue) {
 		buffer.nodeAttributeChanged(sourceId, timeId, nodeId, attribute,
 			oldValue, newValue);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#nodeAttributeRemoved(java.lang.String
-	 * , long, java.lang.String, java.lang.String)
-	 */
+	@Override
 	public void nodeAttributeRemoved(String sourceId, long timeId,
 		String nodeId, String attribute) {
 		buffer.nodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#edgeAttributeAdded(java.lang.String,
-	 * long, java.lang.String, java.lang.String, java.lang.Object)
-	 */
+	@Override
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
 		String attribute, Object value) {
 		buffer.edgeAttributeAdded(sourceId, timeId, edgeId, attribute, value);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#edgeAttributeChanged(java.lang.String
-	 * , long, java.lang.String, java.lang.String, java.lang.Object,
-	 * java.lang.Object)
-	 */
+	@Override
 	public void edgeAttributeChanged(String sourceId, long timeId,
 		String edgeId, String attribute, Object oldValue, Object newValue) {
 		buffer.edgeAttributeChanged(sourceId, timeId, edgeId, attribute,
 			oldValue, newValue);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#edgeAttributeRemoved(java.lang.String
-	 * , long, java.lang.String, java.lang.String)
-	 */
+	@Override
 	public void edgeAttributeRemoved(String sourceId, long timeId,
 		String edgeId, String attribute) {
 		buffer.edgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#nodeAdded(java.lang.String, long,
-	 * java.lang.String)
-	 */
+	@Override
 	public void nodeAdded(String sourceId, long timeId, String nodeId) {
 		buffer.nodeAdded(sourceId, timeId, nodeId);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#nodeRemoved(java.lang.String,
-	 * long, java.lang.String)
-	 */
+	@Override
 	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 		buffer.nodeRemoved(sourceId, timeId, nodeId);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#edgeAdded(java.lang.String, long,
-	 * java.lang.String, java.lang.String, java.lang.String, boolean)
-	 */
+	@Override
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
 		String fromNodeId, String toNodeId, boolean directed) {
 		buffer.edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId,
 			directed);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#edgeRemoved(java.lang.String,
-	 * long, java.lang.String)
-	 */
+	@Override
 	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 		buffer.edgeRemoved(sourceId, timeId, edgeId);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#graphCleared(java.lang.String,
-	 * long)
-	 */
+	@Override
 	public void graphCleared(String sourceId, long timeId) {
 		buffer.graphCleared(sourceId, timeId);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#stepBegins(java.lang.String,
-	 * long, double)
-	 */
+	@Override
 	public void stepBegins(String sourceId, long timeId, double step) {
 		buffer.stepBegins(sourceId, timeId, step);
 	}

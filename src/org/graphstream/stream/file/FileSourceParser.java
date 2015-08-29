@@ -70,11 +70,7 @@ public abstract class FileSourceParser extends SourceBase implements FileSource 
 		factory = getNewParserFactory();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#readAll(java.lang.String)
-	 */
+	@Override
 	public void readAll(String fileName) throws IOException {
 		Parser parser = factory.newParser(createReaderForFile(fileName));
 
@@ -86,11 +82,7 @@ public abstract class FileSourceParser extends SourceBase implements FileSource 
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#readAll(java.net.URL)
-	 */
+	@Override
 	public void readAll(URL url) throws IOException {
 		Parser parser = factory.newParser(new InputStreamReader(url
 			.openStream()));
@@ -103,11 +95,7 @@ public abstract class FileSourceParser extends SourceBase implements FileSource 
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#readAll(java.io.InputStream)
-	 */
+	@Override
 	public void readAll(InputStream stream) throws IOException {
 		Parser parser = factory.newParser(new InputStreamReader(stream));
 
@@ -119,11 +107,7 @@ public abstract class FileSourceParser extends SourceBase implements FileSource 
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#readAll(java.io.Reader)
-	 */
+	@Override
 	public void readAll(Reader reader) throws IOException {
 		Parser parser = factory.newParser(reader);
 
@@ -135,11 +119,7 @@ public abstract class FileSourceParser extends SourceBase implements FileSource 
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#begin(java.lang.String)
-	 */
+	@Override
 	public void begin(String fileName) throws IOException {
 		if (parser != null) {
 			end();
@@ -154,11 +134,7 @@ public abstract class FileSourceParser extends SourceBase implements FileSource 
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#begin(java.net.URL)
-	 */
+	@Override
 	public void begin(URL url) throws IOException {
 		parser = factory.newParser(new InputStreamReader(url.openStream()));
 
@@ -169,11 +145,7 @@ public abstract class FileSourceParser extends SourceBase implements FileSource 
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#begin(java.io.InputStream)
-	 */
+	@Override
 	public void begin(InputStream stream) throws IOException {
 		parser = factory.newParser(new InputStreamReader(stream));
 
@@ -184,11 +156,7 @@ public abstract class FileSourceParser extends SourceBase implements FileSource 
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#begin(java.io.Reader)
-	 */
+	@Override
 	public void begin(Reader reader) throws IOException {
 		parser = factory.newParser(reader);
 
@@ -199,11 +167,7 @@ public abstract class FileSourceParser extends SourceBase implements FileSource 
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#nextEvents()
-	 */
+	@Override
 	public boolean nextEvents() throws IOException {
 		try {
 			return parser.next();
@@ -216,15 +180,12 @@ public abstract class FileSourceParser extends SourceBase implements FileSource 
 	 * Since there is no step in DOT, this does the same action than
 	 * {@link #nextEvents()}.
 	 */
+	@Override
 	public boolean nextStep() throws IOException {
 		return nextEvents();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#end()
-	 */
+	@Override
 	public void end() throws IOException {
 		parser.close();
 		parser = null;

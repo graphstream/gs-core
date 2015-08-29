@@ -53,7 +53,7 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 
 		this.type = type;
 		this.mode = Mode.STATIC;
-		this.attributes = new HashMap<String, GEXFAttribute>();
+		this.attributes = new HashMap<>();
 
 		root.addAttributeSink(this);
 	}
@@ -96,15 +96,9 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 		return AttrType.STRING;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.file.gexf.GEXFElement#export(org.graphstream.stream
-	 * .file.gexf.SmartXMLWriter)
-	 */
+	@Override
 	public void export(SmartXMLWriter stream) throws XMLStreamException {
-		if (attributes.size() == 0) {
+		if (attributes.isEmpty()) {
 			return;
 		}
 
@@ -118,13 +112,7 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 		stream.endElement(); // ATTRIBUTES
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#nodeAttributeAdded(java.lang.String,
-	 * long, java.lang.String, java.lang.String, java.lang.Object)
-	 */
+	@Override
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
 		String attribute, Object value) {
 		if (type == ClassType.NODE) {
@@ -132,14 +120,7 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#nodeAttributeChanged(java.lang.String
-	 * , long, java.lang.String, java.lang.String, java.lang.Object,
-	 * java.lang.Object)
-	 */
+	@Override
 	public void nodeAttributeChanged(String sourceId, long timeId,
 		String nodeId, String attribute, Object oldValue, Object newValue) {
 		if (type == ClassType.NODE) {
@@ -147,13 +128,7 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#edgeAttributeAdded(java.lang.String,
-	 * long, java.lang.String, java.lang.String, java.lang.Object)
-	 */
+	@Override
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
 		String attribute, Object value) {
 		if (type == ClassType.EDGE) {
@@ -161,14 +136,7 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#edgeAttributeChanged(java.lang.String
-	 * , long, java.lang.String, java.lang.String, java.lang.Object,
-	 * java.lang.Object)
-	 */
+	@Override
 	public void edgeAttributeChanged(String sourceId, long timeId,
 		String edgeId, String attribute, Object oldValue, Object newValue) {
 		if (type == ClassType.EDGE) {
@@ -176,57 +144,27 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#nodeAttributeRemoved(java.lang.String
-	 * , long, java.lang.String, java.lang.String)
-	 */
+	@Override
 	public void nodeAttributeRemoved(String sourceId, long timeId,
 		String nodeId, String attribute) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#graphAttributeAdded(java.lang.String
-	 * , long, java.lang.String, java.lang.Object)
-	 */
+	@Override
 	public void graphAttributeAdded(String sourceId, long timeId,
 		String attribute, Object value) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#graphAttributeChanged(java.lang.
-	 * String, long, java.lang.String, java.lang.Object, java.lang.Object)
-	 */
+	@Override
 	public void graphAttributeChanged(String sourceId, long timeId,
 		String attribute, Object oldValue, Object newValue) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#graphAttributeRemoved(java.lang.
-	 * String, long, java.lang.String)
-	 */
+	@Override
 	public void graphAttributeRemoved(String sourceId, long timeId,
 		String attribute) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#edgeAttributeRemoved(java.lang.String
-	 * , long, java.lang.String, java.lang.String)
-	 */
+	@Override
 	public void edgeAttributeRemoved(String sourceId, long timeId,
 		String edgeId, String attribute) {
 	}

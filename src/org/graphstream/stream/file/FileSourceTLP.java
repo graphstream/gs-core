@@ -31,10 +31,8 @@
  */
 package org.graphstream.stream.file;
 
-import java.io.Reader;
 
 import org.graphstream.stream.file.tlp.TLPParser;
-import org.graphstream.util.parser.Parser;
 import org.graphstream.util.parser.ParserFactory;
 
 /**
@@ -116,15 +114,9 @@ import org.graphstream.util.parser.ParserFactory;
  * </ul>
  */
 public class FileSourceTLP extends FileSourceParser {
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.stream.file.FileSourceParser#getNewFactory()
-	 */
+
+	@Override
 	public ParserFactory getNewParserFactory() {
-		return new ParserFactory() {
-			public Parser newParser(Reader reader) {
-				return new TLPParser(FileSourceTLP.this, reader);
-			}
-		};
+		return (reader) -> new TLPParser(FileSourceTLP.this, reader);
 	}
 }

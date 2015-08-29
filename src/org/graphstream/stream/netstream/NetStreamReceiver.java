@@ -143,13 +143,6 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 			return buffer.getInt();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.graphstream.stream.netstream.packing.NetStreamUnpacker#sizeOfInt
-		 * ()
-		 */
 		@Override
 		public int sizeOfInt() {
 			return 4;
@@ -235,6 +228,7 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 	/**
 	 * Enable or disable debugging.
 	 */
+	@Override
 	public void setDebugOn(boolean on) {
 		debug = on;
 		decoder.setDebugOn(on);
@@ -754,30 +748,22 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.graphstream.stream.netstream.NetStreamDecoder#getStream(java.lang.String)
-	 */
+	@Override
 	public ThreadProxyPipe getStream(String name) {
 		return decoder.getStream(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.graphstream.stream.netstream.NetStreamDecoder#getDefaultStream()
-	 */
+	@Override
 	public ThreadProxyPipe getDefaultStream() {
 		return decoder.getDefaultStream();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.graphstream.stream.netstream.NetStreamDecoder#register(java.lang.String, org.graphstream.stream.thread.ThreadProxyPipe)
-	 */
+	@Override
 	public void register(String name, ThreadProxyPipe stream) throws Exception {
 		decoder.register(name, stream);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.graphstream.stream.netstream.NetStreamDecoder#decodeMessage(java.io.InputStream)
-	 */
+	@Override
 	public void decodeMessage(InputStream in) throws IOException {
 		decoder.decodeMessage(in);
 

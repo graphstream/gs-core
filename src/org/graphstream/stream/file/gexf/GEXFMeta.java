@@ -54,13 +54,7 @@ public class GEXFMeta implements GEXFElement {
 		this.description = description;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.file.gexf.GEXFElement#export(org.graphstream.stream
-	 * .file.gexf.SmartXMLWriter)
-	 */
+	@Override
 	public void export(SmartXMLWriter stream) throws XMLStreamException {
 		Calendar cal = Calendar.getInstance();
 		Date date = cal.getTime();

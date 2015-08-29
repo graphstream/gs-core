@@ -41,7 +41,6 @@ import java.util.zip.GZIPInputStream;
 
 import org.graphstream.stream.file.dgs.DGSParser;
 import org.graphstream.util.parser.ParseException;
-import org.graphstream.util.parser.Parser;
 import org.graphstream.util.parser.ParserFactory;
 
 /**
@@ -59,17 +58,10 @@ import org.graphstream.util.parser.ParserFactory;
  * @see FileSource
  */
 public class FileSourceDGS extends FileSourceParser {
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSourceParser#getNewParserFactory()
-	 */
+
+	@Override
 	public ParserFactory getNewParserFactory() {
-		return new ParserFactory() {
-			public Parser newParser(Reader reader) {
-				return new DGSParser(FileSourceDGS.this, reader);
-			}
-		};
+		return (reader) -> new DGSParser(FileSourceDGS.this, reader);
 	}
 
 	@Override

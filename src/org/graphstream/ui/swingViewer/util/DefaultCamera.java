@@ -164,21 +164,12 @@ public class DefaultCamera implements Camera {
 
 	// Access
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.graphstream.ui.swingViewer.util.Camera#getViewCenter()
-	 */
+	@Override
 	public Point3 getViewCenter() {
 		return center;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.graphstream.ui.swingViewer.util.Camera#setViewCenter(double,
-	 * double, double)
-	 */
+	@Override
 	public void setViewCenter(double x, double y, double z) {
 		setAutoFitView(false);
 		center.set(x, y, z);
@@ -189,40 +180,24 @@ public class DefaultCamera implements Camera {
 		setViewCenter(x, y, 0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.graphstream.ui.swingViewer.util.Camera#getViewPercent()
-	 */
+	@Override
 	public double getViewPercent() {
 		return zoom;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.graphstream.ui.swingViewer.util.Camera#setViewPercent(double)
-	 */
+	@Override
 	public void setViewPercent(double percent) {
 		setAutoFitView(false);
 		setZoom(percent);
 		graph.graphChanged = true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.graphstream.ui.swingViewer.util.Camera#getViewRotation()
-	 */
+	@Override
 	public double getViewRotation() {
 		return rotation;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.graphstream.ui.swingViewer.util.Camera#getMetrics()
-	 */
+	@Override
 	public GraphMetrics getMetrics() {
 		return metrics;
 	}
@@ -241,32 +216,19 @@ public class DefaultCamera implements Camera {
 		return builder.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.graphstream.ui.swingViewer.util.Camera#resetView()
-	 */
+	@Override
 	public void resetView() {
 		setAutoFitView(true);
 		setViewRotation(0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.graphstream.ui.swingViewer.util.Camera#setBounds(double, double,
-	 * double, double, double, double)
-	 */
+	@Override
 	public void setBounds(double minx, double miny, double minz, double maxx,
 		double maxy, double maxz) {
 		metrics.setBounds(minx, miny, minz, maxx, maxy, maxz);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.graphstream.ui.swingViewer.util.Camera#getGraphDimension()
-	 */
+	@Override
 	public double getGraphDimension() {
 		if (gviewport != null) {
 			return gviewportDiagonal;
@@ -289,6 +251,7 @@ public class DefaultCamera implements Camera {
 	 * @return True if the element is visible and therefore must be
 	 *         rendered.
 	 */
+	@Override
 	public boolean isVisible(GraphicElement element) {
 		if (autoFit) {
 			return ((!element.hidden) && (element.style.getVisibilityMode() != StyleConstants.VisibilityMode.HIDDEN));
@@ -306,23 +269,14 @@ public class DefaultCamera implements Camera {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.graphstream.ui.swingViewer.util.Camera#inverseTransform(double,
-	 * double)
-	 */
+	@Override
 	public Point3 transformPxToGu(double x, double y) {
 		Point2D.Double p = new Point2D.Double(x, y);
 		xT.transform(p, p);
 		return new Point3(p.x, p.y, 0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.graphstream.ui.swingViewer.util.Camera#transform(double, double)
-	 */
+	@Override
 	public Point3 transformGuToPx(double x, double y, double z) {
 		Point2D.Double p = new Point2D.Double(x, y);
 		Tx.transform(p, p);
@@ -441,6 +395,7 @@ public class DefaultCamera implements Camera {
 	}
 
 	// Command
+	@Override
 	public void setGraphViewport(double minx, double miny, double maxx,
 		double maxy) {
 		setAutoFitView(false);
@@ -458,6 +413,7 @@ public class DefaultCamera implements Camera {
 		setZoom(1);
 	}
 
+	@Override
 	public void removeGraphViewport() {
 		logger.fine("Graph viewport removed for [" + this + "].");
 		gviewport = null;
@@ -619,6 +575,7 @@ public class DefaultCamera implements Camera {
 	 *
 	 * @param on If true, automatic adjustment is enabled.
 	 */
+	@Override
 	public void setAutoFitView(boolean on) {
 		if (autoFit && (!on)) {
 			// We go from autoFit to user view, ensure the current centre is at
@@ -649,6 +606,7 @@ public class DefaultCamera implements Camera {
 	 *
 	 * @param theta The rotation angle in degrees.
 	 */
+	@Override
 	public void setViewRotation(double theta) {
 		rotation = theta;
 		graph.graphChanged = true;

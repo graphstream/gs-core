@@ -84,29 +84,17 @@ public class DGSParser implements Parser {
 		// }
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.util.parser.Parser#close()
-	 */
+	@Override
 	public void close() throws IOException {
 		reader.close();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.util.parser.Parser#open()
-	 */
+	@Override
 	public void open() throws IOException, ParseException {
 		header();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.util.parser.Parser#all()
-	 */
+	@Override
 	public void all() throws IOException, ParseException {
 		header();
 
@@ -217,11 +205,7 @@ public class DGSParser implements Parser {
 		skipLine();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.util.parser.Parser#next()
-	 */
+	@Override
 	public boolean next() throws IOException, ParseException {
 		int c;
 		String nodeId;
@@ -487,7 +471,7 @@ public class DGSParser implements Parser {
 			c = nextChar();
 
 			if (l == null && array && c == ',') {
-				l = new LinkedList<Object>();
+				l = new LinkedList<>();
 				l.add(o);
 			} else if (l != null) {
 				l.add(o);
@@ -555,7 +539,7 @@ public class DGSParser implements Parser {
 
 	protected Object array() throws IOException, ParseException {
 		int c;
-		LinkedList<Object> array = new LinkedList<Object>();
+		LinkedList<Object> array = new LinkedList<>();
 
 		c = nextChar();
 
@@ -593,7 +577,7 @@ public class DGSParser implements Parser {
 
 	protected Object map() throws IOException, ParseException {
 		int c;
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		HashMap<String, Object> map = new HashMap<>();
 		String key;
 		Object value;
 

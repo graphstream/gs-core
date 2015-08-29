@@ -43,9 +43,6 @@ import java.nio.ByteBuffer;
 
 public class Base64Packer extends NetStreamPacker {
 
-	/* (non-Javadoc)
-	 * @see org.graphstream.stream.netstream.packing.NetStreamPacker#packMessage(java.nio.ByteBuffer, int, int)
-	 */
 	@Override
 	public ByteBuffer packMessage(ByteBuffer buffer, int startIndex,
 		int endIndex) {
@@ -53,9 +50,6 @@ public class Base64Packer extends NetStreamPacker {
 		return ByteBuffer.wrap(encoded.getBytes());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.graphstream.stream.netstream.packing.NetStreamPacker#packMessageSize(int)
-	 */
 	@Override
 	public ByteBuffer packMessageSize(int capacity) {
 		ByteBuffer sizeBuffer = ByteBuffer.allocate(4);

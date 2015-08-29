@@ -232,46 +232,30 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 	 * Build a new source to parse an xml stream in GraphML format.
 	 */
 	public FileSourceGraphML() {
-		events = new Stack<XMLEvent>();
-		keys = new HashMap<String, Key>();
-		datas = new LinkedList<Data>();
-		graphId = new Stack<String>();
+		events = new Stack<>();
+		keys = new HashMap<>();
+		datas = new LinkedList<>();
+		graphId = new Stack<>();
 		graphCounter = 0;
 		sourceId = String.format("<GraphML stream %x>", System.nanoTime());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#readAll(java.lang.String)
-	 */
+	@Override
 	public void readAll(String fileName) throws IOException {
 		readAll(new FileReader(fileName));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#readAll(java.net.URL)
-	 */
+	@Override
 	public void readAll(URL url) throws IOException {
 		readAll(url.openStream());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#readAll(java.io.InputStream)
-	 */
+	@Override
 	public void readAll(InputStream stream) throws IOException {
 		readAll(new InputStreamReader(stream));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#readAll(java.io.Reader)
-	 */
+	@Override
 	public void readAll(Reader reader) throws IOException {
 		begin(reader);
 		while (nextEvents())
@@ -279,47 +263,27 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 		end();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#begin(java.lang.String)
-	 */
+	@Override
 	public void begin(String fileName) throws IOException {
 		begin(new FileReader(fileName));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#begin(java.net.URL)
-	 */
+	@Override
 	public void begin(URL url) throws IOException {
 		begin(url.openStream());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#begin(java.io.InputStream)
-	 */
+	@Override
 	public void begin(InputStream stream) throws IOException {
 		begin(new InputStreamReader(stream));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#begin(java.io.Reader)
-	 */
+	@Override
 	public void begin(Reader reader) throws IOException {
 		openStream(reader);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#nextEvents()
-	 */
+	@Override
 	public boolean nextEvents() throws IOException {
 		try {
 			__graphml();
@@ -330,20 +294,12 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#nextStep()
-	 */
+	@Override
 	public boolean nextStep() throws IOException {
 		return nextEvents();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#end()
-	 */
+	@Override
 	public void end() throws IOException {
 		closeStream();
 	}
@@ -1174,7 +1130,7 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 			.getAttributes();
 
 		String id = null;
-		HashSet<Key> sentAttributes = new HashSet<Key>();
+		HashSet<Key> sentAttributes = new HashSet<>();
 
 		while (attributes.hasNext()) {
 			Attribute a = attributes.next();
@@ -1286,7 +1242,7 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 		Iterator<? extends Attribute> attributes = e.asStartElement()
 			.getAttributes();
 
-		HashSet<Key> sentAttributes = new HashSet<Key>();
+		HashSet<Key> sentAttributes = new HashSet<>();
 		String id = null;
 		boolean directed = edgedefault;
 		String source = null;

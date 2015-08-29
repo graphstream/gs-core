@@ -64,9 +64,7 @@ public class DefaultNetStreamDecoder implements NetStreamDecoder {
 	// protected HashMap<String,MBox> boxes = new HashMap<String,MBox>();
 	protected HashMap<String, ThreadProxyPipe> streams = new HashMap<String, ThreadProxyPipe>();
 
-	/* (non-Javadoc)
-	 * @see org.graphstream.stream.netstream.NetStreamDecoder#getStream(java.lang.String)
-	 */
+	@Override
 	public synchronized ThreadProxyPipe getStream(String name) {
 		ThreadProxyPipe s = streams.get(name);
 		if (s == null) {
@@ -75,10 +73,8 @@ public class DefaultNetStreamDecoder implements NetStreamDecoder {
 		}
 		return s;
 	}
-	/* (non-Javadoc)
-	 * @see org.graphstream.stream.netstream.NetStreamDecoder#getDefaultStream()
-	 */
 
+	@Override
 	public synchronized ThreadProxyPipe getDefaultStream() {
 		ThreadProxyPipe s = streams.get("default");
 		if (s == null) {
@@ -88,10 +84,8 @@ public class DefaultNetStreamDecoder implements NetStreamDecoder {
 		return s;
 
 	}
-	/* (non-Javadoc)
-	 * @see org.graphstream.stream.netstream.NetStreamDecoder#register(java.lang.String, org.graphstream.stream.thread.ThreadProxyPipe)
-	 */
 
+	@Override
 	public synchronized void register(String name, ThreadProxyPipe stream)
 		throws Exception {
 		if (streams.containsKey(name)) {
@@ -105,9 +99,7 @@ public class DefaultNetStreamDecoder implements NetStreamDecoder {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.graphstream.stream.netstream.NetStreamDecoder#decodeMessage(java.io.InputStream)
-	 */
+	@Override
 	public void decodeMessage(InputStream in) throws IOException {
 
 		int cmd = 0;
@@ -763,9 +755,7 @@ public class DefaultNetStreamDecoder implements NetStreamDecoder {
 		// System.err.println( RESET );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.graphstream.stream.netstream.NetStreamDecoder#setDebugOn(boolean)
-	 */
+	@Override
 	public void setDebugOn(boolean on) {
 		debug = on;
 	}

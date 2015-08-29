@@ -116,19 +116,20 @@ public abstract class AnnotatedSink implements Sink {
 
 		Method[] ms = getClass().getMethods();
 
-		if (ms != null) {
-			for (int i = 0; i < ms.length; i++) {
-				Method m = ms[i];
-				Bind b = m.getAnnotation(Bind.class);
+		for (int i = 0; i < ms.length; i++) {
+			Method m = ms[i];
+			Bind b = m.getAnnotation(Bind.class);
 
-				if (b != null) {
-					methods.get(b.type()).put(b.value(), m);
-				}
+			if (b != null) {
+				methods.get(b.type()).put(b.value(), m);
 			}
 		}
 	}
 
 	private void invoke(Method m, Object... args) {
+		if (m == null) {
+			return;
+		}
 		try {
 			m.invoke(this, args);
 		} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
@@ -136,130 +137,76 @@ public abstract class AnnotatedSink implements Sink {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#edgeAttributeAdded(java.lang.String, long, java.lang.String, java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
 		String attribute, Object value) {
 		Method m = methods.get(ElementType.EDGE).get(attribute);
 
-		if (m != null) {
-			invoke(m, edgeId, attribute, value);
-		}
+		invoke(m, edgeId, attribute, value);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#edgeAttributeChanged(java.lang.String, long, java.lang.String, java.lang.String, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public void edgeAttributeChanged(String sourceId, long timeId,
 		String edgeId, String attribute, Object oldValue, Object newValue) {
 		Method m = methods.get(ElementType.EDGE).get(attribute);
 
-		if (m != null) {
-			invoke(m, edgeId, attribute, newValue);
-		}
+		invoke(m, edgeId, attribute, newValue);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#edgeAttributeRemoved(java.lang.String, long, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void edgeAttributeRemoved(String sourceId, long timeId,
 		String edgeId, String attribute) {
 		Method m = methods.get(ElementType.EDGE).get(attribute);
 
-		if (m != null) {
-			invoke(m, edgeId, attribute, null);
-		}
+		invoke(m, edgeId, attribute, null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#graphAttributeAdded(java.lang.String, long, java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public void graphAttributeAdded(String sourceId, long timeId,
 		String attribute, Object value) {
 		Method m = methods.get(ElementType.GRAPH).get(attribute);
 
-		if (m != null) {
-			invoke(m, attribute, value);
-		}
+		invoke(m, attribute, value);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#graphAttributeChanged(java.lang.String, long, java.lang.String, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public void graphAttributeChanged(String sourceId, long timeId,
 		String attribute, Object oldValue, Object newValue) {
 		Method m = methods.get(ElementType.GRAPH).get(attribute);
 
-		if (m != null) {
-			invoke(m, attribute, newValue);
-		}
+		invoke(m, attribute, newValue);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#graphAttributeRemoved(java.lang.String, long, java.lang.String)
-	 */
 	@Override
 	public void graphAttributeRemoved(String sourceId, long timeId,
 		String attribute) {
 		Method m = methods.get(ElementType.GRAPH).get(attribute);
 
-		if (m != null) {
-			invoke(m, attribute, null);
-		}
+		invoke(m, attribute, null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#nodeAttributeAdded(java.lang.String, long, java.lang.String, java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
 		String attribute, Object value) {
 		Method m = methods.get(ElementType.NODE).get(attribute);
 
-		if (m != null) {
-			invoke(m, nodeId, attribute, value);
-		}
+		invoke(m, nodeId, attribute, value);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#nodeAttributeChanged(java.lang.String, long, java.lang.String, java.lang.String, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public void nodeAttributeChanged(String sourceId, long timeId,
 		String nodeId, String attribute, Object oldValue, Object newValue) {
 		Method m = methods.get(ElementType.NODE).get(attribute);
 
-		if (m != null) {
-			invoke(m, nodeId, attribute, newValue);
-		}
+		invoke(m, nodeId, attribute, newValue);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#nodeAttributeRemoved(java.lang.String, long, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void nodeAttributeRemoved(String sourceId, long timeId,
 		String nodeId, String attribute) {
 		Method m = methods.get(ElementType.NODE).get(attribute);
 
-		if (m != null) {
-			invoke(m, nodeId, attribute, null);
-		}
+		invoke(m, nodeId, attribute, null);
 	}
 
 	private static class MethodMap extends HashMap<String, Method> {

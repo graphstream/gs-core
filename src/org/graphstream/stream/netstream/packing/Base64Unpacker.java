@@ -49,9 +49,6 @@ import java.nio.ByteBuffer;
  */
 public class Base64Unpacker extends NetStreamUnpacker {
 
-	/* (non-Javadoc)
-	 * @see org.graphstream.stream.netstream.packing.NetStreamUnpacker#unpackMessage(java.nio.ByteBuffer, int, int)
-	 */
 	@Override
 	public ByteBuffer unpackMessage(ByteBuffer buffer, int startIndex,
 		int endIndex) {
@@ -66,9 +63,6 @@ public class Base64Unpacker extends NetStreamUnpacker {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.graphstream.stream.netstream.packing.NetStreamUnpacker#packMessageSize(java.nio.ByteBuffer)
-	 */
 	@Override
 	public int unpackMessageSize(ByteBuffer buffer) {
 		try {
@@ -101,9 +95,6 @@ public class Base64Unpacker extends NetStreamUnpacker {
 		System.out.println((char) bb.get());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.graphstream.stream.netstream.packing.NetStreamUnpacker#sizeOfInt()
-	 */
 	@Override
 	public int sizeOfInt() {
 		return 8;

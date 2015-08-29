@@ -208,13 +208,7 @@ public class TestFilters {
 			flag = on;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.graphstream.util.Filter#isAvailable(org.graphstream.graph.Element
-		 * )
-		 */
+		@Override
 		public boolean isAvailable(T e) {
 			return flag;
 		}
@@ -225,45 +219,20 @@ public class TestFilters {
 			super(id);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.graphstream.graph.implementations.AbstractElement#attributeChanged
-		 * (java.lang.String, long, java.lang.String,
-		 * org.graphstream.graph.implementations
-		 * .AbstractElement.AttributeChangeEvent, java.lang.Object,
-		 * java.lang.Object)
-		 */
+		@Override
 		protected void attributeChanged(AttributeChangeEvent event,
 				String attribute, Object oldValue, Object newValue) {
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.graphstream.graph.implementations.AbstractElement#myGraphId()
-		 */
 		protected String myGraphId() {
 			return "test";
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.graphstream.graph.implementations.AbstractElement#newEvent()
-		 */
 		protected long newEvent() {
 			return 0;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @seeorg.graphstream.graph.implementations.AbstractElement#
-		 * nullAttributesAreErrors()
-		 */
+		@Override
 		protected boolean nullAttributesAreErrors() {
 			return false;
 		}

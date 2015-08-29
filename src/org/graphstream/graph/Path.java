@@ -381,74 +381,47 @@ public class Path implements Structure {
 	 *
 	 * @return The size of the path.
 	 */
+	@Override
 	public int getNodeCount() {
 		return nodePath.size();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Structure#getEdgeCount()
-	 */
+	@Override
 	public int getEdgeCount() {
 		return edgePath.size();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Structure#getNodeIterator()
-	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends Node> Iterator<T> getNodeIterator() {
 		return (Iterator<T>) nodePath.iterator();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Structure#getEdgeIterator()
-	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends Edge> Iterator<T> getEdgeIterator() {
 		return (Iterator<T>) edgePath.iterator();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Structure#getEachNode()
-	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends Node> Iterable<? extends T> getEachNode() {
 		return (Iterable<? extends T>) nodePath;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Structure#getEachEdge()
-	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends Edge> Iterable<? extends T> getEachEdge() {
 		return (Iterable<? extends T>) edgePath;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Structure#getNodeSet()
-	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends Node> Collection<T> getNodeSet() {
 		return (Collection<T>) nodePath;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Structure#getEdgeSet()
-	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends Edge> Collection<T> getEdgeSet() {
 		return (Collection<T>) edgePath;

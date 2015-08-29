@@ -163,10 +163,12 @@ public interface Structure {
 	 */
 	default <T extends Node> Collection<T> getNodeSet() {
 		return new AbstractCollection<T>() {
+			@Override
 			public Iterator<T> iterator() {
 				return getNodeIterator();
 			}
 
+			@Override
 			public int size() {
 				return getNodeCount();
 			}
@@ -192,10 +194,12 @@ public interface Structure {
 	 */
 	default <T extends Edge> Collection<T> getEdgeSet() {
 		return new AbstractCollection<T>() {
+			@Override
 			public Iterator<T> iterator() {
 				return getEdgeIterator();
 			}
 
+			@Override
 			public int size() {
 				return getEdgeCount();
 			}

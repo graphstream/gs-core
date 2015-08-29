@@ -103,47 +103,25 @@ public class FileSinkGEXF2 extends PipeBase implements FileSink {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph
-	 * , java.lang.String)
-	 */
+	@Override
 	public void writeAll(Graph graph, String fileName) throws IOException {
 		Context ctx = createContext(fileName);
 		export(ctx, graph);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph
-	 * , java.io.OutputStream)
-	 */
+	@Override
 	public void writeAll(Graph graph, OutputStream stream) throws IOException {
 		Context ctx = createContext(stream);
 		export(ctx, graph);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph
-	 * , java.io.Writer)
-	 */
+	@Override
 	public void writeAll(Graph graph, Writer writer) throws IOException {
 		Context ctx = createContext(writer);
 		export(ctx, graph);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSink#begin(java.lang.String)
-	 */
+	@Override
 	public void begin(String fileName) throws IOException {
 		if (currentContext != null) {
 			throw new IOException(
@@ -154,11 +132,7 @@ public class FileSinkGEXF2 extends PipeBase implements FileSink {
 		addSink(currentContext.gexf);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSink#begin(java.io.OutputStream)
-	 */
+	@Override
 	public void begin(OutputStream stream) throws IOException {
 		if (currentContext != null) {
 			throw new IOException(
@@ -169,11 +143,7 @@ public class FileSinkGEXF2 extends PipeBase implements FileSink {
 		addSink(currentContext.gexf);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSink#begin(java.io.Writer)
-	 */
+	@Override
 	public void begin(Writer writer) throws IOException {
 		if (currentContext != null) {
 			throw new IOException(
@@ -184,22 +154,14 @@ public class FileSinkGEXF2 extends PipeBase implements FileSink {
 		addSink(currentContext.gexf);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSink#flush()
-	 */
+	@Override
 	public void flush() throws IOException {
 		if (currentContext != null) {
 			currentContext.stream.flush();
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSink#end()
-	 */
+	@Override
 	public void end() throws IOException {
 		removeSink(currentContext.gexf);
 

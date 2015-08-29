@@ -65,18 +65,12 @@ public class FilteredNodeIterator<T extends Node> implements Iterator<T> {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.Iterator#hasNext()
-	 */
+	@Override
 	public boolean hasNext() {
 		return next != null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.Iterator#next()
-	 */
+	@Override
 	public T next() {
 		T tmp = next;
 		findNext();
@@ -84,10 +78,7 @@ public class FilteredNodeIterator<T extends Node> implements Iterator<T> {
 		return tmp;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.Iterator#remove()
-	 */
+	@Override
 	public void remove() {
 	}
 }

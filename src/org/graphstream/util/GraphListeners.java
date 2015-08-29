@@ -124,12 +124,6 @@ public class GraphListeners extends SourceBase implements Pipe {
 		sendStepBegins(sourceId, newEvent(), step);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.AttributeSink#edgeAttributeAdded(java.lang
-	 * .String, long, java.lang.String, java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
 		String attribute, Object value) {
@@ -150,13 +144,6 @@ public class GraphListeners extends SourceBase implements Pipe {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.AttributeSink#edgeAttributeChanged(java.lang
-	 * .String, long, java.lang.String, java.lang.String, java.lang.Object,
-	 * java.lang.Object)
-	 */
 	@Override
 	public void edgeAttributeChanged(String sourceId, long timeId,
 		String edgeId, String attribute, Object oldValue, Object newValue) {
@@ -181,12 +168,6 @@ public class GraphListeners extends SourceBase implements Pipe {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.AttributeSink#edgeAttributeRemoved(java.lang
-	 * .String, long, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void edgeAttributeRemoved(String sourceId, long timeId,
 		String edgeId, String attribute) {
@@ -206,12 +187,6 @@ public class GraphListeners extends SourceBase implements Pipe {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.AttributeSink#graphAttributeAdded(java.lang
-	 * .String, long, java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public void graphAttributeAdded(String sourceId, long timeId,
 		String attribute, Object value) {
@@ -228,12 +203,6 @@ public class GraphListeners extends SourceBase implements Pipe {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.AttributeSink#graphAttributeChanged(java.lang
-	 * .String, long, java.lang.String, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public void graphAttributeChanged(String sourceId, long timeId,
 		String attribute, Object oldValue, Object newValue) {
@@ -255,12 +224,6 @@ public class GraphListeners extends SourceBase implements Pipe {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.AttributeSink#graphAttributeRemoved(java.lang
-	 * .String, long, java.lang.String)
-	 */
 	@Override
 	public void graphAttributeRemoved(String sourceId, long timeId,
 		String attribute) {
@@ -276,12 +239,6 @@ public class GraphListeners extends SourceBase implements Pipe {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.AttributeSink#nodeAttributeAdded(java.lang
-	 * .String, long, java.lang.String, java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
 		String attribute, Object value) {
@@ -302,13 +259,6 @@ public class GraphListeners extends SourceBase implements Pipe {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.AttributeSink#nodeAttributeChanged(java.lang
-	 * .String, long, java.lang.String, java.lang.String, java.lang.Object,
-	 * java.lang.Object)
-	 */
 	@Override
 	public void nodeAttributeChanged(String sourceId, long timeId,
 		String nodeId, String attribute, Object oldValue, Object newValue) {
@@ -333,12 +283,6 @@ public class GraphListeners extends SourceBase implements Pipe {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.AttributeSink#nodeAttributeRemoved(java.lang
-	 * .String, long, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void nodeAttributeRemoved(String sourceId, long timeId,
 		String nodeId, String attribute) {
@@ -357,12 +301,6 @@ public class GraphListeners extends SourceBase implements Pipe {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#edgeAdded(java.lang.String, long,
-	 * java.lang.String, java.lang.String, java.lang.String, boolean)
-	 */
 	@Override
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
 		String fromNodeId, String toNodeId, boolean directed) {
@@ -380,12 +318,6 @@ public class GraphListeners extends SourceBase implements Pipe {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#edgeRemoved(java.lang.String,
-	 * long, java.lang.String)
-	 */
 	@Override
 	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
@@ -400,12 +332,6 @@ public class GraphListeners extends SourceBase implements Pipe {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#graphCleared(java.lang.String,
-	 * long)
-	 */
 	@Override
 	public void graphCleared(String sourceId, long timeId) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
@@ -420,12 +346,6 @@ public class GraphListeners extends SourceBase implements Pipe {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#nodeAdded(java.lang.String, long,
-	 * java.lang.String)
-	 */
 	@Override
 	public void nodeAdded(String sourceId, long timeId, String nodeId) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
@@ -441,12 +361,6 @@ public class GraphListeners extends SourceBase implements Pipe {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#nodeRemoved(java.lang.String,
-	 * long, java.lang.String)
-	 */
 	@Override
 	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
@@ -461,12 +375,6 @@ public class GraphListeners extends SourceBase implements Pipe {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.ElementSink#stepBegins(java.lang.String,
-	 * long, double)
-	 */
 	@Override
 	public void stepBegins(String sourceId, long timeId, double step) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {

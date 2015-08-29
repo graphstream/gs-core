@@ -86,18 +86,21 @@ public abstract class FileSinkBase implements FileSink {
 	protected Writer output;
 
 	// Command
+	@Override
 	public void writeAll(Graph graph, String fileName) throws IOException {
 		begin(fileName);
 		exportGraph(graph);
 		end();
 	}
 
+	@Override
 	public void writeAll(Graph graph, OutputStream stream) throws IOException {
 		begin(stream);
 		exportGraph(graph);
 		end();
 	}
 
+	@Override
 	public void writeAll(Graph graph, Writer writer) throws IOException {
 		begin(writer);
 		exportGraph(graph);
@@ -147,10 +150,7 @@ public abstract class FileSinkBase implements FileSink {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.stream.file.FileSink#begin(java.lang.String)
-	 */
+	@Override
 	public void begin(String fileName) throws IOException {
 		if (output != null) {
 			throw new IOException(
@@ -162,10 +162,7 @@ public abstract class FileSinkBase implements FileSink {
 		outputHeader();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.stream.file.FileSink#begin(java.io.OutputStream)
-	 */
+	@Override
 	public void begin(OutputStream stream) throws IOException {
 		if (output != null) {
 			throw new IOException(
@@ -177,10 +174,7 @@ public abstract class FileSinkBase implements FileSink {
 		outputHeader();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.stream.file.FileSink#begin(java.io.Writer)
-	 */
+	@Override
 	public void begin(Writer writer) throws IOException {
 		if (output != null) {
 			throw new IOException(
@@ -192,20 +186,14 @@ public abstract class FileSinkBase implements FileSink {
 		outputHeader();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.stream.file.FileSink#flush()
-	 */
+	@Override
 	public void flush() throws IOException {
 		if (output != null) {
 			output.flush();
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.stream.file.FileSink#end()
-	 */
+	@Override
 	public void end() throws IOException {
 		outputEndOfFile();
 		output.flush();

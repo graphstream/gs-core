@@ -59,30 +59,18 @@ public class FileSourceGEXF extends FileSourceXML {
 	 */
 	protected GEXFParser parser;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSourceXML#afterStartDocument()
-	 */
+	@Override
 	protected void afterStartDocument() throws IOException, XMLStreamException {
 		parser = new GEXFParser();
 		parser.__gexf();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSourceXML#nextEvents()
-	 */
+	@Override
 	public boolean nextEvents() throws IOException {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSourceXML#beforeEndDocument()
-	 */
+	@Override
 	protected void beforeEndDocument() {
 		parser = null;
 	}
@@ -174,8 +162,8 @@ public class FileSourceGEXF extends FileSourceXML {
 		GEXFParser() {
 			defaultEdgeType = EdgeType.UNDIRECTED;
 			timeFormat = TimeFormatType.INTEGER;
-			nodeAttributesDefinition = new HashMap<String, Attribute>();
-			edgeAttributesDefinition = new HashMap<String, Attribute>();
+			nodeAttributesDefinition = new HashMap<>();
+			edgeAttributesDefinition = new HashMap<>();
 		}
 
 		@SuppressWarnings("unused")

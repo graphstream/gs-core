@@ -51,7 +51,6 @@ import org.graphstream.graph.Graph;
 import org.graphstream.stream.GraphReplay;
 import org.graphstream.stream.ProxyPipe;
 import org.graphstream.stream.Sink;
-import org.graphstream.stream.file.FileSourceDGS;
 import org.graphstream.stream.thread.ThreadProxyPipe;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
@@ -118,10 +117,12 @@ public class FileSinkImages implements FileSink {
 			this.height = height;
 		}
 
+		@Override
 		public int getWidth() {
 			return width;
 		}
 
+		@Override
 		public int getHeight() {
 			return height;
 		}
@@ -143,10 +144,12 @@ public class FileSinkImages implements FileSink {
 			this.height = height;
 		}
 
+		@Override
 		public int getWidth() {
 			return width;
 		}
 
+		@Override
 		public int getHeight() {
 			return height;
 		}
@@ -232,6 +235,7 @@ public class FileSinkImages implements FileSink {
 			this.y = y;
 		}
 
+		@Override
 		public void render(Graphics2D g) {
 			g.drawImage(logo, x, y, null);
 		}
@@ -697,82 +701,44 @@ public class FileSinkImages implements FileSink {
 			counter));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSink#begin(java.io.OutputStream)
-	 */
+	@Override
 	public void begin(OutputStream stream) throws IOException {
 		throw new IOException("not implemented");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSink#begin(java.io.Writer)
-	 */
+	@Override
 	public void begin(Writer writer) throws IOException {
 		throw new IOException("not implemented");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSink#begin(java.lang.String)
-	 */
+	@Override
 	public void begin(String prefix) throws IOException {
 		this.filePrefix = prefix;
 		this.hasBegan = true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSink#flush()
-	 */
+	@Override
 	public void flush() throws IOException {
 		// Nothing to do
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSink#end()
-	 */
+	@Override
 	public void end() throws IOException {
 		flush();
 		this.hasBegan = false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph
-	 * , java.io.OutputStream)
-	 */
+	@Override
 	public void writeAll(Graph g, OutputStream stream) throws IOException {
 		throw new IOException("not implemented");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph
-	 * , java.io.Writer)
-	 */
+	@Override
 	public void writeAll(Graph g, Writer writer) throws IOException {
 		throw new IOException("not implemented");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph
-	 * , java.lang.String)
-	 */
+	@Override
 	public synchronized void writeAll(Graph g, String filename)
 		throws IOException {
 		clearGG();
@@ -792,6 +758,7 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
+	@Override
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
 		String attribute, Object value) {
 		sink.edgeAttributeAdded(sourceId, timeId, edgeId, attribute, value);
@@ -813,6 +780,7 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
+	@Override
 	public void edgeAttributeChanged(String sourceId, long timeId,
 		String edgeId, String attribute, Object oldValue, Object newValue) {
 		sink.edgeAttributeChanged(sourceId, timeId, edgeId, attribute,
@@ -835,6 +803,7 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
+	@Override
 	public void edgeAttributeRemoved(String sourceId, long timeId,
 		String edgeId, String attribute) {
 		sink.edgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
@@ -856,6 +825,7 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
+	@Override
 	public void graphAttributeAdded(String sourceId, long timeId,
 		String attribute, Object value) {
 		sink.graphAttributeAdded(sourceId, timeId, attribute, value);
@@ -877,6 +847,7 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
+	@Override
 	public void graphAttributeChanged(String sourceId, long timeId,
 		String attribute, Object oldValue, Object newValue) {
 		sink.graphAttributeChanged(sourceId, timeId, attribute, oldValue,
@@ -899,6 +870,7 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
+	@Override
 	public void graphAttributeRemoved(String sourceId, long timeId,
 		String attribute) {
 		sink.graphAttributeRemoved(sourceId, timeId, attribute);
@@ -920,6 +892,7 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
+	@Override
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
 		String attribute, Object value) {
 		sink.nodeAttributeAdded(sourceId, timeId, nodeId, attribute, value);
@@ -941,6 +914,7 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
+	@Override
 	public void nodeAttributeChanged(String sourceId, long timeId,
 		String nodeId, String attribute, Object oldValue, Object newValue) {
 		sink.nodeAttributeChanged(sourceId, timeId, nodeId, attribute,
@@ -963,6 +937,7 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
+	@Override
 	public void nodeAttributeRemoved(String sourceId, long timeId,
 		String nodeId, String attribute) {
 		sink.nodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
@@ -984,6 +959,7 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
+	@Override
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
 		String fromNodeId, String toNodeId, boolean directed) {
 		sink.edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId, directed);
@@ -1005,6 +981,7 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
+	@Override
 	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 		sink.edgeRemoved(sourceId, timeId, edgeId);
 
@@ -1025,6 +1002,7 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
+	@Override
 	public void graphCleared(String sourceId, long timeId) {
 		sink.graphCleared(sourceId, timeId);
 
@@ -1046,6 +1024,7 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
+	@Override
 	public void nodeAdded(String sourceId, long timeId, String nodeId) {
 		sink.nodeAdded(sourceId, timeId, nodeId);
 
@@ -1066,6 +1045,7 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
+	@Override
 	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 		sink.nodeRemoved(sourceId, timeId, nodeId);
 
@@ -1086,6 +1066,7 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
+	@Override
 	public void stepBegins(String sourceId, long timeId, double step) {
 		sink.stepBegins(sourceId, timeId, step);
 
@@ -1101,42 +1082,6 @@ public class FileSinkImages implements FileSink {
 		}
 	}
 
-	// public void nodeMoved(String id, double x, double y, double z) {
-	// switch (outputPolicy) {
-	// case BY_NODE_MOVED:
-	// if (hasBegan)
-	// outputNewImage();
-	// break;
-	// }
-	// }
-	// public void nodeInfos(String id, double dx, double dy, double dz) {
-	// }
-	// public void edgeChanged(String id, double[] points) {
-	// }
-	// public void nodesMoved(Map<String, double[]> nodes) {
-	// switch (outputPolicy) {
-	// case BY_NODE_MOVED:
-	// if (hasBegan)
-	// outputNewImage();
-	// break;
-	// }
-	// }
-	// public void edgesChanged(Map<String, double[]> edges) {
-	// }
-	// public void stepCompletion(double percent) {
-	// switch (outputPolicy) {
-	// case BY_LAYOUT_STEP:
-	// layoutStepWithoutFrame++;
-	//
-	// if (layoutStepWithoutFrame >= layoutStepPerFrame) {
-	// if (hasBegan)
-	// outputNewImage();
-	// layoutStepWithoutFrame = 0;
-	// }
-	//
-	// break;
-	// }
-	// }
 	public static enum Option {
 		IMAGE_PREFIX("image-prefix", 'p', "prefix of outputted images", true,
 			true, "image_"), IMAGE_TYPE("image-type", 't',
@@ -1181,6 +1126,7 @@ public class FileSinkImages implements FileSink {
 			FileSinkImages.this.layoutPipeIn.addAttributeSink(FileSinkImages.this.gg);
 		}
 
+		@Override
 		public void run() {
 
 			int stepAfterStabilization = 0;
@@ -1209,6 +1155,7 @@ public class FileSinkImages implements FileSink {
 			setDaemon(true);
 		}
 
+		@Override
 		public void run() {
 			while (outputRunnerAlive && outputPolicy == OutputPolicy.ON_RUNNER) {
 				outputRunnerProxy.pump();

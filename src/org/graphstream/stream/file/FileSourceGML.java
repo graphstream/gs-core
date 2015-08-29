@@ -32,12 +32,10 @@
 package org.graphstream.stream.file;
 
 import java.io.IOException;
-import java.io.Reader;
 
 import org.graphstream.stream.file.gml.GMLParser;
 
 import org.graphstream.util.parser.ParseException;
-import org.graphstream.util.parser.Parser;
 import org.graphstream.util.parser.ParserFactory;
 
 /**
@@ -105,10 +103,7 @@ import org.graphstream.util.parser.ParserFactory;
  */
 public class FileSourceGML extends FileSourceParser {
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.stream.file.FileSourceParser#nextStep()
-	 */
+	@Override
 	public boolean nextStep() throws IOException {
 		try {
 			return ((GMLParser) parser).step();
@@ -117,15 +112,8 @@ public class FileSourceGML extends FileSourceParser {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.stream.file.FileSourceParser#getNewParserFactory()
-	 */
+	@Override
 	public ParserFactory getNewParserFactory() {
-		return new ParserFactory() {
-			public Parser newParser(Reader reader) {
-				return new GMLParser(FileSourceGML.this, reader);
-			}
-		};
+		return (reader) -> new GMLParser(FileSourceGML.this, reader);
 	}
 }

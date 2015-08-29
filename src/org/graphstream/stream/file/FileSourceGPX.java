@@ -72,30 +72,18 @@ public class FileSourceGPX extends FileSourceXML {
 		return strict;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSourceXML#afterStartDocument()
-	 */
+	@Override
 	protected void afterStartDocument() throws IOException, XMLStreamException {
 		parser = new GPXParser();
 		parser.__gpx();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSourceXML#beforeEndDocument()
-	 */
+	@Override
 	protected void beforeEndDocument() throws IOException, XMLStreamException {
 		parser = null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSourceXML#nextEvents()
-	 */
+	@Override
 	public boolean nextEvents() throws IOException {
 		return false;
 	}
