@@ -35,9 +35,8 @@ package org.graphstream.stream.netstream;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import org.graphstream.stream.Sink;
 
-import org.graphstream.stream.SinkAdapter;
-import org.graphstream.stream.netstream.NetStreamReceiver;
 import org.graphstream.stream.thread.ThreadProxyPipe;
 
 /**
@@ -65,7 +64,7 @@ public class ExampleTypesReceiver {
 
 		ThreadProxyPipe pipe = net.getDefaultStream();
 
-		pipe.addSink(new SinkAdapter() {
+		pipe.addSink(new Sink() {
 			public void graphAttributeAdded(String sourceId, long timeId,
 					String attribute, Object value) {
 				validate(attribute, value);

@@ -83,7 +83,6 @@ public class Arrow extends Shape {
 	}
 
 	// Utility
-
 	protected void setPositionAndShape(GraphicEdge edge, GraphMetrics metrics) {
 		// Compute the direction vector and some lengths.
 
@@ -94,14 +93,12 @@ public class Arrow extends Shape {
 		double off = evalTargetRadius(edge, metrics);
 
 		// Normalise the vectors.
-
 		double d = (double) Math.sqrt(vx * vx + vy * vy);
 
 		vx /= d;
 		vy /= d;
 
 		// Choose an arrow "length".
-
 		x -= vx * off;
 		y -= vy * off;
 
@@ -110,15 +107,11 @@ public class Arrow extends Shape {
 
 	/**
 	 * Compute the shape of the arrow.
-	 * 
-	 * @param x
-	 *            Point at which the edge crosses the node shape.
-	 * @param y
-	 *            Point at which the edge crosses the node shape.
-	 * @param dx
-	 *            The arrow vector (and length).
-	 * @param dy
-	 *            The arrow vector (and length).
+	 *
+	 * @param x Point at which the edge crosses the node shape.
+	 * @param y Point at which the edge crosses the node shape.
+	 * @param dx The arrow vector (and length).
+	 * @param dy The arrow vector (and length).
 	 */
 	protected void setShapeAt(double x, double y, double dx, double dy) {
 		// Compute the edge vector (1) and the perpendicular vector (2).
@@ -127,19 +120,16 @@ public class Arrow extends Shape {
 		double dy2 = -dx;
 
 		// Normalise the vectors.
-
 		double d2 = (double) Math.sqrt(dx2 * dx2 + dy2 * dy2);
 
 		dx2 /= d2;
 		dy2 /= d2;
 
 		// Choose an arrow "width".
-
 		dx2 *= widthGu;
 		dy2 *= widthGu;
 
 		// Create a polygon.
-
 		path.reset();
 		path.moveTo(x, y);
 		path.lineTo(x - dx + dx2, y - dy + dy2);
@@ -148,26 +138,24 @@ public class Arrow extends Shape {
 	}
 
 	/**
-	 * Evaluate the position of the arrow to avoid putting it above or under the
-	 * target node.
-	 * 
-	 * @param edge
-	 *            The edge.
-	 * @param metrics
-	 *            The metrics.
-	 * @return The length from the node centre along the edge to position the
-	 *         arrow.
+	 * Evaluate the position of the arrow to avoid putting it above or under
+	 * the target node.
+	 *
+	 * @param edge The edge.
+	 * @param metrics The metrics.
+	 * @return The length from the node centre along the edge to position
+	 *         the arrow.
 	 */
 	protected double evalTargetRadius(GraphicEdge edge, GraphMetrics metrics) {
 		GraphicNode target = edge.to;
 		StyleGroup group = target.getStyle();
 		double w = metrics.lengthToGu(group.getSize(), 0);
 		double h = group.getSize().size() > 1 ? metrics.lengthToGu(
-				group.getSize(), 1) : w;
+			group.getSize(), 1) : w;
 
 		if (w == h) {
 			double b = group.getStrokeMode() != StrokeMode.NONE ? metrics
-					.lengthToGu(group.getStrokeWidth()) : 0;
+				.lengthToGu(group.getStrokeWidth()) : 0;
 			return ((w / 2) + b);
 		} else {
 			return evalEllipseRadius(edge, w, h);
@@ -175,15 +163,12 @@ public class Arrow extends Shape {
 	}
 
 	/**
-	 * Compute the length of a vector along the edge from the ellipse centre to
-	 * the intersection between the edge and the ellipse.
-	 * 
-	 * @param edge
-	 *            The edge representing the vector.
-	 * @param w
-	 *            The ellipse first radius (width/2).
-	 * @param h
-	 *            The ellipse second radius (height/2).
+	 * Compute the length of a vector along the edge from the ellipse centre
+	 * to the intersection between the edge and the ellipse.
+	 *
+	 * @param edge The edge representing the vector.
+	 * @param w The ellipse first radius (width/2).
+	 * @param h The ellipse second radius (height/2).
 	 * @return The length of the radius along the edge vector.
 	 */
 	protected double evalEllipseRadius(GraphicEdge edge, double w, double h) {
@@ -197,18 +182,15 @@ public class Arrow extends Shape {
 
 		// The entering edge must be deformed by the ellipse ratio to find the
 		// correct angle.
-
 		dy *= (w / h); // I searched a lot to find this line was missing ! Tsu !
-						// This comment is in memory of this long search.
+		// This comment is in memory of this long search.
 
 		// Find the angle of the entering vector with (1,0).
-
 		double d = (double) Math.sqrt(dx * dx + dy * dy);
 		double a = dx / d;
 
 		// Compute the coordinates at which the entering vector and the ellipse
 		// cross.
-
 		a = (double) Math.acos(a);
 		dx = (double) Math.cos(a) * w;
 		dy = (double) Math.sin(a) * h;
@@ -216,7 +198,6 @@ public class Arrow extends Shape {
 		// The distance from the ellipse centre to the crossing point of the
 		// ellipse and
 		// vector. Yo !
-
 		return Math.sqrt(dx * dx + dy * dy);
 	}
 }

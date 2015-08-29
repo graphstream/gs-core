@@ -35,7 +35,7 @@ import java.util.HashSet;
 
 /**
  * Style application rule.
- * 
+ *
  * <p>
  * A rule is made of a selector and values. The selector identifies the
  * element(s) this rule applies to, and the values are styles to apply to the
@@ -56,20 +56,19 @@ public class Rule {
 	public Style style;
 
 	/**
-	 * Optionally, the rule can store all the style groups it participates in.
+	 * Optionally, the rule can store all the style groups it participates
+	 * in.
 	 */
 	public HashSet<String> groups;
 
 	// Constructors
-
 	protected Rule() {
 	}
 
 	/**
 	 * New rule with a matcher.
-	 * 
-	 * @param selector
-	 *            The rule selector.
+	 *
+	 * @param selector The rule selector.
 	 */
 	public Rule(Selector selector) {
 		this.selector = selector;
@@ -82,7 +81,7 @@ public class Rule {
 
 	/**
 	 * This rule style.
-	 * 
+	 *
 	 * @return The rule style.
 	 */
 	public Style getStyle() {
@@ -92,7 +91,7 @@ public class Rule {
 	/**
 	 * The group this rule participate in, maybe null if the rule does not
 	 * participate in any group.
-	 * 
+	 *
 	 * @return The group set or null.
 	 */
 	public HashSet<String> getGroups() {
@@ -101,25 +100,24 @@ public class Rule {
 
 	/**
 	 * True if this rule selector match the given identifier.
-	 * 
-	 * @param identifier
-	 *            The identifier to test for the match.
+	 *
+	 * @param identifier The identifier to test for the match.
 	 * @return True if matching.
 	 */
 	public boolean matchId(String identifier) {
 		String ident = selector.getId();
 
-		if (ident != null)
+		if (ident != null) {
 			return ident.equals(identifier);
+		}
 
 		return false;
 	}
 
 	/**
 	 * Change the style.
-	 * 
-	 * @param style
-	 *            A style specification.
+	 *
+	 * @param style A style specification.
 	 */
 	public void setStyle(Style style) {
 		this.style = style;
@@ -127,25 +125,25 @@ public class Rule {
 
 	/**
 	 * Specify that this rule participates in the given style group.
-	 * 
-	 * @param groupId
-	 *            The group unique identifier.
+	 *
+	 * @param groupId The group unique identifier.
 	 */
 	public void addGroup(String groupId) {
-		if (groups == null)
+		if (groups == null) {
 			groups = new HashSet<String>();
+		}
 		groups.add(groupId);
 	}
 
 	/**
 	 * Remove this rule from the style group.
-	 * 
-	 * @param groupId
-	 *            The group unique identifier.
+	 *
+	 * @param groupId The group unique identifier.
 	 */
 	public void removeGroup(String groupId) {
-		if (groups != null)
+		if (groups != null) {
 			groups.remove(groupId);
+		}
 	}
 
 	@Override
@@ -158,8 +156,9 @@ public class Rule {
 		String prefix = "";
 
 		if (level > 0) {
-			for (int i = 0; i < level; i++)
+			for (int i = 0; i < level; i++) {
 				prefix += "    ";
+			}
 		}
 
 		builder.append(prefix);

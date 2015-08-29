@@ -38,7 +38,7 @@ import org.graphstream.graph.Node;
 /**
  * A simple source of graph events that takes an existing graph and creates a
  * flow of events by enumerating all nodes, edges and attributes of the graph.
- * 
+ *
  * <p>
  * The only method of this class is {@link #replay(Graph)} that takes a graph as
  * argument and :
@@ -59,7 +59,7 @@ import org.graphstream.graph.Node;
  * </ul>
  * In this order.
  * </p>
- * 
+ *
  * <p>
  * Note that this is a source, not a pipe. This means that it has its own
  * identifier and is a producer of "new" events. Also note that is does not
@@ -69,40 +69,44 @@ import org.graphstream.graph.Node;
  * graph itself just after its creation).
  * </p>
  */
-public class GraphReplay extends SourceBase implements Source {
+public class GraphReplay extends SourceBase {
 	public GraphReplay(String id) {
 		super(id);
 	}
 
 	/**
 	 * Echo each element and attribute of the graph to the registered sinks.
-	 * 
-	 * @param graph
-	 *            The graph to export.
+	 *
+	 * @param graph The graph to export.
 	 */
 	public void replay(Graph graph) {
-		for (String key : graph.getAttributeKeySet())
+		for (String key : graph.getAttributeKeySet()) {
 			sendGraphAttributeAdded(sourceId, key, graph.getAttribute(key));
+		}
 
 		for (Node node : graph) {
 			String nodeId = node.getId();
 			sendNodeAdded(sourceId, nodeId);
 
-			if (node.getAttributeCount() > 0)
-				for (String key : node.getAttributeKeySet())
+			if (node.getAttributeCount() > 0) {
+				for (String key : node.getAttributeKeySet()) {
 					sendNodeAttributeAdded(sourceId, nodeId, key,
-							node.getAttribute(key));
+						node.getAttribute(key));
+				}
+			}
 		}
 
 		for (Edge edge : graph.getEachEdge()) {
 			String edgeId = edge.getId();
 			sendEdgeAdded(sourceId, edgeId, edge.getNode0().getId(), edge
-					.getNode1().getId(), edge.isDirected());
+				.getNode1().getId(), edge.isDirected());
 
-			if (edge.getAttributeCount() > 0)
-				for (String key : edge.getAttributeKeySet())
+			if (edge.getAttributeCount() > 0) {
+				for (String key : edge.getAttributeKeySet()) {
 					sendEdgeAttributeAdded(sourceId, edgeId, key,
-							edge.getAttribute(key));
+						edge.getAttribute(key));
+				}
+			}
 		}
 	}
 }

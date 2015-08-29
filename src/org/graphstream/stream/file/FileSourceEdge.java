@@ -39,18 +39,18 @@ import java.util.HashSet;
 
 /**
  * Reader for the "edge" graph format.
- * 
+ *
  * <p>
  * The edge graph format is a very simple and lightweight format where each line
  * describes an edge by giving two node names. The nodes are created implicitly.
  * </p>
- * 
+ *
  * <p>
  * This reader also understands the derivative format where a line contains a
  * first node name, followed by several node names separated by spaces. In this
  * case it links the first node with all other node name following on the line.
  * </p>
- * 
+ *
  * <p>
  * Also, the format does not specify any direction for edges. By default all
  * edges are undirected. You can choose to make all edges directed by passing
@@ -59,21 +59,21 @@ import java.util.HashSet;
  * . The direction of edges goes from the first node name on each line toward
  * the second (or more) node names on each line.
  * </p>
- * 
+ *
  * <p>
  * This format only contains edges. To ensure the "add node" events are sent
  * before an edge referencing two nodes is created via an "add edge" event, this
  * reader has a hash set of already encountered nodes. The hash set allows to
  * issue "add node" events only when a node is encountered for the first time.
  * </p>
- * 
+ *
  * </p> This hash set consumes memory, but is the only way to ensure "add node"
  * events are correctly issued. If this input is directly connected to a graph,
  * as graphs can create non-existing nodes automatically, you can disable the
  * hash set of nodes using the constructor
  * {@link #FileSourceEdge(boolean, boolean)}, and giving "false" for the second
  * argument. </p>
- * 
+ *
  * The usual file name extension for this format is ".edge".
  */
 public class FileSourceEdge extends FileSourceBase {
@@ -97,7 +97,6 @@ public class FileSourceEdge extends FileSourceBase {
 	protected String graphName = "EDGE_";
 
 	// Construction
-
 	/**
 	 * New reader for the "edge" format.
 	 */
@@ -107,9 +106,9 @@ public class FileSourceEdge extends FileSourceBase {
 
 	/**
 	 * New reader for the "edge" format.
-	 * 
-	 * @param edgesAreDirected
-	 *            If true (default=false) edges are considered directed.
+	 *
+	 * @param edgesAreDirected If true (default=false) edges are considered
+	 *                         directed.
 	 */
 	public FileSourceEdge(boolean edgesAreDirected) {
 		this(edgesAreDirected, true);
@@ -117,11 +116,11 @@ public class FileSourceEdge extends FileSourceBase {
 
 	/**
 	 * New reader for the "edge" format.
-	 * 
-	 * @param edgesAreDirected
-	 *            If true (default=false) edges are considered directed.
-	 * @param declareNodes
-	 *            If true (default=true) this reader outputs nodeAdded events.
+	 *
+	 * @param edgesAreDirected If true (default=false) edges are considered
+	 *                         directed.
+	 * @param declareNodes If true (default=true) this reader outputs
+	 *                         nodeAdded events.
 	 */
 	public FileSourceEdge(boolean edgesAreDirected, boolean declareNodes) {
 		directed = edgesAreDirected;
@@ -129,7 +128,6 @@ public class FileSourceEdge extends FileSourceBase {
 	}
 
 	// Commands
-
 	@Override
 	protected void continueParsingInInclude() throws IOException {
 		// Should not happen, EDGE files cannot be nested.
@@ -201,7 +199,7 @@ public class FileSourceEdge extends FileSourceBase {
 		st.commentChar('#');
 
 		graphName = String.format("%s_%d", graphName,
-				System.currentTimeMillis() + ((long) Math.random() * 10));
+			System.currentTimeMillis() + ((long) Math.random() * 10));
 	}
 
 	public boolean nextStep() throws IOException {

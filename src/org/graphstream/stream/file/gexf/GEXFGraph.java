@@ -65,8 +65,9 @@ public class GEXFGraph implements GEXFElement {
 	public void export(SmartXMLWriter stream) throws XMLStreamException {
 		Mode realMode = mode;
 
-		if (!root.isExtensionEnable(Extension.DYNAMICS))
+		if (!root.isExtensionEnable(Extension.DYNAMICS)) {
 			realMode = Mode.STATIC;
+		}
 
 		stream.startElement("graph");
 
@@ -74,9 +75,10 @@ public class GEXFGraph implements GEXFElement {
 		stream.stream.writeAttribute("mode", realMode.qname);
 		stream.stream.writeAttribute("defaultedgetype", defaultEdgeType.qname);
 
-		if (root.isExtensionEnable(Extension.DYNAMICS))
+		if (root.isExtensionEnable(Extension.DYNAMICS)) {
 			stream.stream.writeAttribute("timeformat",
-					root.getTimeFormat().qname);
+				root.getTimeFormat().qname);
+		}
 
 		nodesAttributes.export(stream);
 		edgesAttributes.export(stream);

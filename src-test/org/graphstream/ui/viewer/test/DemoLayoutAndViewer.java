@@ -74,14 +74,14 @@ public class DemoLayoutAndViewer {
 	public DemoLayoutAndViewer() {
 		boolean loop = true;
 		Graph graph = new MultiGraph("test");
-		Viewer viewer = new Viewer(new ThreadProxyPipe(graph));
+		Viewer viewer = new Viewer(ThreadProxyPipe.create(graph));
 		ProxyPipe fromViewer = viewer.newThreadProxyOnGraphicGraph();
 		LinLog layout = new LinLog(false);
 		
 		layout.configure(a, r, true, force);
 
-		graph.addAttribute("ui.antialias");
-		graph.addAttribute("ui.stylesheet", styleSheet);
+		graph.setAttribute("ui.antialias");
+		graph.setAttribute("ui.stylesheet", styleSheet);
 		fromViewer.addSink(graph);
 		viewer.addDefaultView(true);
 		graph.addSink(layout);
@@ -136,7 +136,7 @@ public class DemoLayoutAndViewer {
 		for(int i=0; i<nedges; i++) {
 			Edge edge = graph.getEdge(i);
 			if(edgesDists[i] > avgDist*threshold) {
-				edge.addAttribute("ui.class", "cut");
+				edge.setAttribute("ui.class", "cut");
 			} else {
 				edge.removeAttribute("ui.class");
 			}

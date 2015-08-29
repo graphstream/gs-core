@@ -75,8 +75,9 @@ public class CumulativeAttributes {
 	public Iterable<Spell> getAttributeSpells(String key) {
 		CumulativeSpells o = data.get(key);
 
-		if (o != null)
+		if (o != null) {
 			return Collections.unmodifiableList(o.spells);
+		}
 
 		return Collections.EMPTY_LIST;
 	}
@@ -95,8 +96,9 @@ public class CumulativeAttributes {
 
 		Spell s = spells.closeSpell();
 
-		if (s != null)
+		if (s != null) {
 			s.setEndOpen(true);
+		}
 
 		s = spells.startSpell(date);
 		s.setAttachedData(value);
@@ -105,22 +107,25 @@ public class CumulativeAttributes {
 	public void remove(String key) {
 		CumulativeSpells spells = data.get(key);
 
-		if (spells == null)
+		if (spells == null) {
 			return;
+		}
 
 		spells.closeSpell();
 	}
 
 	public void remove() {
-		for (CumulativeSpells spells : data.values())
+		for (CumulativeSpells spells : data.values()) {
 			spells.closeSpell();
+		}
 	}
 
 	public void updateDate(double date) {
 		this.date = date;
 
-		for (CumulativeSpells spells : data.values())
+		for (CumulativeSpells spells : data.values()) {
 			spells.updateCurrentSpell(date);
+		}
 	}
 
 	public String toString() {

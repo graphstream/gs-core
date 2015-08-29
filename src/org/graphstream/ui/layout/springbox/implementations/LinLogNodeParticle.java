@@ -45,39 +45,32 @@ import org.miv.pherd.ntree.Cell;
 public class LinLogNodeParticle extends NodeParticle {
 	/**
 	 * New node.
-	 * 
+	 *
 	 * The node is placed at random in the space of the simulation.
-	 * 
-	 * @param box
-	 *            The spring box.
-	 * @param id
-	 *            The node identifier.
+	 *
+	 * @param box The spring box.
+	 * @param id The node identifier.
 	 */
 	public LinLogNodeParticle(LinLog box, String id) {
 		this(box, id, (box.getRandom().nextDouble() * 2 * box.k) - box.k, (box
-				.getRandom().nextDouble() * 2 * box.k) - box.k,
-				box.is3D() ? (box.getRandom().nextDouble() * 2 * box.k) - box.k
-						: 0);
+			.getRandom().nextDouble() * 2 * box.k) - box.k,
+			box.is3D() ? (box.getRandom().nextDouble() * 2 * box.k) - box.k
+				: 0);
 
 		this.box = box;
 	}
-	
+
 	/**
 	 * New node at a given position.
-	 * 
-	 * @param box
-	 *            The spring box.
-	 * @param id
-	 *            The node identifier.
-	 * @param x
-	 *            The abscissa.
-	 * @param y
-	 *            The ordinate.
-	 * @param z
-	 *            The depth.
+	 *
+	 * @param box The spring box.
+	 * @param id The node identifier.
+	 * @param x The abscissa.
+	 * @param y The ordinate.
+	 * @param z The depth.
 	 */
 	public LinLogNodeParticle(LinLog box, String id, double x, double y,
-			double z) {
+		double z) {
 		super(box, id, x, y, z);
 	}
 
@@ -92,24 +85,26 @@ public class LinLogNodeParticle extends NodeParticle {
 
 		while (i.hasNext()) {
 			LinLogNodeParticle node = (LinLogNodeParticle) nodes
-					.getParticle(i.next());
+				.getParticle(i.next());
 
 			if (node != this) {
 				delta.set(node.pos.x - pos.x, node.pos.y - pos.y,
-						is3D ? node.pos.z - pos.z : 0);
+					is3D ? node.pos.z - pos.z : 0);
 
 //				double len = delta.normalize();
 				double len = delta.length();
 
-				if(len > 0) {
+				if (len > 0) {
 					double degFactor = box.edgeBased ? deg * node.neighbours.size() : 1;
 					double factor = 1;
 					double r = box.r;
 
-					factor = -degFactor * (Math.pow(len, r-2)) * node.weight * weight * box.rFactor;
+					factor = -degFactor * (Math.pow(len, r - 2)) * node.weight * weight * box.rFactor;
 
-					if(factor < -box.maxR) { factor = -box.maxR; }
-					
+					if (factor < -box.maxR) {
+						factor = -box.maxR;
+					}
+
 					energies.accumulateEnergy(factor); // TODO check this
 					delta.scalarMult(factor);
 					disp.add(delta);
@@ -118,7 +113,7 @@ public class LinLogNodeParticle extends NodeParticle {
 			}
 		}
 	}
-	
+
 	@Override
 	protected void repulsionNLogN(Vector3 delta) {
 		// Explore the n-tree from the root cell and consider the contents
@@ -143,7 +138,7 @@ public class LinLogNodeParticle extends NodeParticle {
 
 					if (node != this) {
 						delta.set(node.pos.x - pos.x, node.pos.y - pos.y, is3D ? node.pos.z
-								- pos.z : 0);
+							- pos.z : 0);
 
 						//double len = delta.normalize();
 						double len = delta.length();
@@ -152,10 +147,12 @@ public class LinLogNodeParticle extends NodeParticle {
 							double degFactor = box.edgeBased ? deg * node.neighbours.size() : 1;
 							double factor = 1;
 							double r = box.r;
-							
-							factor = -degFactor * (Math.pow(len, r-2)) * node.weight * weight * box.rFactor;
-							
-							if(factor < -box.maxR) { factor = -box.maxR; }
+
+							factor = -degFactor * (Math.pow(len, r - 2)) * node.weight * weight * box.rFactor;
+
+							if (factor < -box.maxR) {
+								factor = -box.maxR;
+							}
 
 							energies.accumulateEnergy(factor);	// TODO check this
 							delta.scalarMult(factor);
@@ -167,8 +164,9 @@ public class LinLogNodeParticle extends NodeParticle {
 			} else {
 				int div = cell.getSpace().getDivisions();
 
-				for (int i = 0; i < div; i++)
+				for (int i = 0; i < div; i++) {
 					recurseRepulsion(cell.getSub(i), delta);
+				}
 			}
 		} else {
 			if (cell != this.cell) {
@@ -177,15 +175,16 @@ public class LinLogNodeParticle extends NodeParticle {
 				double size = cell.getSpace().getSize();
 
 				if ((!cell.isLeaf())
-						&& ((size / dist) > box.getBarnesHutTheta())) {
+					&& ((size / dist) > box.getBarnesHutTheta())) {
 					int div = cell.getSpace().getDivisions();
 
-					for (int i = 0; i < div; i++)
+					for (int i = 0; i < div; i++) {
 						recurseRepulsion(cell.getSub(i), delta);
+					}
 				} else {
 					if (bary.weight != 0) {
 						delta.set(bary.center.x - pos.x, bary.center.y - pos.y,
-								is3D ? bary.center.z - pos.z : 0);
+							is3D ? bary.center.z - pos.z : 0);
 
 						//double len = delta.normalize();
 						double len = delta.length();
@@ -194,11 +193,13 @@ public class LinLogNodeParticle extends NodeParticle {
 							double degFactor = box.edgeBased ? deg * bary.degree : 1;
 							double factor = 1;
 							double r = box.r;
-							
-							factor = -degFactor * (Math.pow(len, r-2)) * bary.weight * weight * box.rFactor;
 
-							if(factor < -box.maxR) { factor = -box.maxR; }
-							
+							factor = -degFactor * (Math.pow(len, r - 2)) * bary.weight * weight * box.rFactor;
+
+							if (factor < -box.maxR) {
+								factor = -box.maxR;
+							}
+
 							energies.accumulateEnergy(factor);	// TODO check this
 							delta.scalarMult(factor);
 							disp.add(delta);
@@ -225,11 +226,11 @@ public class LinLogNodeParticle extends NodeParticle {
 //				double len = delta.normalize();
 				double len = delta.length();
 
-				if(len > 0) {
+				if (len > 0) {
 					double factor = 1;
 					double a = box.a;
 
-					factor = (Math.pow(len, a-2)) * edge.weight * box.aFactor;
+					factor = (Math.pow(len, a - 2)) * edge.weight * box.aFactor;
 
 					energies.accumulateEnergy(factor);
 					delta.scalarMult(factor);
@@ -239,11 +240,11 @@ public class LinLogNodeParticle extends NodeParticle {
 			}
 		}
 	}
-	
+
 	@Override
 	protected void gravity(Vector3 delta) {
 	}
-	
+
 	protected boolean intersection(Cell cell) {
 		LinLog box = (LinLog) this.box;
 
@@ -265,14 +266,17 @@ public class LinLogNodeParticle extends NodeParticle {
 		double Y2 = pos.y + (k * vz);
 		double Z2 = pos.z + (k * vz);
 
-		if (X2 < x1 || X1 > x2)
+		if (X2 < x1 || X1 > x2) {
 			return false;
+		}
 
-		if (Y2 < y1 || Y1 > y2)
+		if (Y2 < y1 || Y1 > y2) {
 			return false;
+		}
 
-		if (Z2 < z1 || Z1 > z2)
+		if (Z2 < z1 || Z1 > z2) {
 			return false;
+		}
 
 		return true;
 	}

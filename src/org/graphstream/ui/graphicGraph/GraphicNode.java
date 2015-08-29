@@ -34,7 +34,6 @@ package org.graphstream.ui.graphicGraph;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
-import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.stylesheet.Selector;
 
@@ -48,12 +47,12 @@ import static org.graphstream.ui.graphicGraph.GraphPosLengthUtils.nodePosition;
 
 /**
  * Graphical node.
- * 
+ *
  * <p>
  * A graphic node defines a position (x,y,z), a string label, and a style from
  * the style sheet.
  * </p>
- * 
+ *
  * @see GraphicGraph
  */
 public class GraphicNode extends GraphicElement implements Node {
@@ -66,18 +65,17 @@ public class GraphicNode extends GraphicElement implements Node {
 
 	/**
 	 * New graphic node.
-	 * 
-	 * @param id
-	 *            The node identifier.
-	 * @param attributes
-	 *            The node attribute set (can be null).
+	 *
+	 * @param id The node identifier.
+	 * @param attributes The node attribute set (can be null).
 	 */
 	public GraphicNode(GraphicGraph graph, String id,
-			HashMap<String, Object> attributes) {
+		HashMap<String, Object> attributes) {
 		super(id, graph);
 
-		if (attributes != null)
-			addAttributes(attributes);
+		if (attributes != null) {
+			setAttributes(attributes);
+		}
 	}
 
 	@Override
@@ -113,62 +111,62 @@ public class GraphicNode extends GraphicElement implements Node {
 			positionned = true;
 		}
 
-		mygraph.graphChanged = true;
-		mygraph.boundsChanged = true;
+		graph.graphChanged = true;
+		graph.boundsChanged = true;
 	}
 
 	@Override
 	public void move(double x, double y, double z) {
 		moveFromEvent(x, y, z);
 
-		if (mygraph.feedbackXYZ)
+		if (graph.feedbackXYZ) {
 			setAttribute("xyz", x, y, z);
+		}
 	}
 
 	@Override
 	protected void attributeChanged(AttributeChangeEvent event,
-			String attribute, Object oldValue, Object newValue) {
+		String attribute, Object oldValue, Object newValue) {
 		super.attributeChanged(event, attribute, oldValue, newValue);
 		char c = attribute.charAt(0);
 
 		if (attribute.length() > 2 && c == 'u' && attribute.charAt(1) == 'i'
-				&& attribute.startsWith("ui.sprite.")) {
-			mygraph.spriteAttribute(event, this, attribute, newValue);
+			&& attribute.startsWith("ui.sprite.")) {
+			graph.spriteAttribute(event, this, attribute, newValue);
 		} else if ((event == AttributeChangeEvent.ADD || event == AttributeChangeEvent.CHANGE)) {
 			if (attribute.length() == 1) {
 				switch (c) {
-				case 'x':
-					moveFromEvent(numberAttribute(newValue), y, z);
-					break;
-				case 'y':
-					moveFromEvent(x, numberAttribute(newValue), z);
-					break;
-				case 'z':
-					moveFromEvent(x, y, numberAttribute(newValue));
-					break;
-				default:
-					break;
+					case 'x':
+						moveFromEvent(numberAttribute(newValue), y, z);
+						break;
+					case 'y':
+						moveFromEvent(x, numberAttribute(newValue), z);
+						break;
+					case 'z':
+						moveFromEvent(x, y, numberAttribute(newValue));
+						break;
+					default:
+						break;
 				}
 			} else if (c == 'x'
-					&& attribute.length() > 1
-					&& attribute.charAt(1) == 'y'
-					&& (attribute.length() == 2 || (attribute.length() == 3 && attribute
-							.charAt(2) == 'z'))) {
+				&& attribute.length() > 1
+				&& attribute.charAt(1) == 'y'
+				&& (attribute.length() == 2 || (attribute.length() == 3 && attribute
+				.charAt(2) == 'z'))) {
 
 				double pos[] = nodePosition(this);
 				moveFromEvent(pos[0], pos[1], pos[2]);
 			}
 		}
 
-		mygraph.listeners.sendAttributeChangedEvent(getId(), ElementType.NODE,
-				attribute, event, oldValue, newValue);
+		graph.listeners.sendAttributeChangedEvent(getId(), ElementType.NODE,
+			attribute, event, oldValue, newValue);
 	}
 
 	/**
 	 * Try to convert the object to a double.
-	 * 
-	 * @param value
-	 *            The object to convert.
+	 *
+	 * @param value The object to convert.
 	 * @return The value.
 	 */
 	protected double numberAttribute(Object value) {
@@ -195,122 +193,74 @@ public class GraphicNode extends GraphicElement implements Node {
 	}
 
 	// Node interface.
-
-	/**
-	 * Not implemented.
-	 */
-	public Iterator<Node> getBreadthFirstIterator() {
-		throw new RuntimeException("not implemented !");
-	}
-
-	/**
-	 * Not implemented.
-	 */
-	public Iterator<Node> getBreadthFirstIterator(boolean directed) {
-		throw new RuntimeException("not implemented !");
-	}
-
-	/**
-	 * Not implemented.
-	 */
-	public Iterator<Node> getDepthFirstIterator() {
-		throw new RuntimeException("not implemented !");
-	}
-
-	/**
-	 * Not implemented.
-	 */
-	public Iterator<Node> getDepthFirstIterator(boolean directed) {
-		throw new RuntimeException("not implemented !");
-	}
-
+	@Override
 	public int getDegree() {
-        List<GraphicEdge> edges = mygraph.connectivity.get(this);
+		List<GraphicEdge> edges = graph.connectivity.get(this);
 
-		if (edges != null)
+		if (edges != null) {
 			return edges.size();
+		}
 
 		return 0;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends Edge> T getEdge(int i) {
-        List<GraphicEdge> edges = mygraph.connectivity.get(this);
+		List<GraphicEdge> edges = graph.connectivity.get(this);
 
-		if (edges != null && i >= 0 && i < edges.size())
+		if (edges != null && i >= 0 && i < edges.size()) {
 			return (T) edges.get(i);
-
-		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T extends Edge> T getEdgeBetween(String id) {
-		if (hasEdgeToward(id))
-			return (T) getEdgeToward(id);
-		else
-			return (T) getEdgeFrom(id);
-	}
-
-	@SuppressWarnings("all")
-	public <T extends Edge> T getEdgeFrom(String id) {
-		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterator<T> getEdgeIterator() {
-        List<GraphicEdge> edges = mygraph.connectivity.get(this);
-
-		if (edges != null)
-			return (Iterator<T>) edges.iterator();
-
-		return null;
-	}
-
-	@SuppressWarnings("all")
-	public Iterator<Edge> iterator() {
-		return (Iterator<Edge>) getEdgeIterator();
-	}
-
-	@SuppressWarnings("all")
-	public <T extends Edge> Iterable<T> getEachEdge() {
-		return (Iterable<T>) mygraph.connectivity.get(this);
-	}
-
-	@SuppressWarnings("all")
-	public <T extends Edge> Collection<T> getEdgeSet() {
-		return (Collection<T>) Collections
-				.unmodifiableCollection(mygraph.connectivity.get(this));
-	}
-
-	@SuppressWarnings("all")
-	public <T extends Edge> T getEdgeToward(String id) {
-        List<? extends Edge> edges = mygraph.connectivity.get(this);
-
-		for (Edge edge : edges) {
-			if (edge.getOpposite(this).getId().equals(id))
-				return (T) edge;
 		}
 
 		return null;
 	}
 
-	@SuppressWarnings("all")
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterator<T> getEdgeIterator() {
+		List<GraphicEdge> edges = graph.connectivity.get(this);
+
+		if (edges != null) {
+			return (Iterator<T>) Collections.unmodifiableList(edges).iterator();
+		}
+
+		return null;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Collection<T> getEdgeSet() {
+		return (Collection<T>) Collections
+			.unmodifiableCollection(graph.connectivity.get(this));
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
 	public <T extends Edge> Iterator<T> getEnteringEdgeIterator() {
 		return getEdgeIterator();
 	}
 
-	@SuppressWarnings("all")
-	public <T extends Edge> Iterable<T> getEachEnteringEdge() {
+	@Override
+	public <T extends Edge> Collection<T> getEnteringEdgeSet() {
 		return getEdgeSet();
 	}
 
-	@SuppressWarnings("all")
-	public <T extends Edge> Collection<T> getEnteringEdgeSet() {
-		return (Collection<T>) Collections.unmodifiableCollection(getEdgeSet());
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Iterator<T> getLeavingEdgeIterator() {
+		return getEdgeIterator();
 	}
 
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> Collection<T> getLeavingEdgeSet() {
+		return getEdgeSet();
+	}
+
+	@Override
 	public Graph getGraph() {
-		return mygraph;
+		return graph;
 	}
 
 	public String getGraphName() {
@@ -321,130 +271,57 @@ public class GraphicNode extends GraphicElement implements Node {
 		throw new RuntimeException("impossible with GraphicGraph");
 	}
 
+	@Override
 	public int getInDegree() {
 		return getDegree();
 	}
 
-	@SuppressWarnings("all")
-	public <T extends Edge> Iterator<T> getLeavingEdgeIterator() {
-		return getEdgeIterator();
-	}
-
-	@SuppressWarnings("all")
-	public <T extends Edge> Iterable<T> getEachLeavingEdge() {
-		return getEdgeSet();
-	}
-
-	@SuppressWarnings("all")
-	public <T extends Edge> Collection<T> getLeavingEdgeSet() {
-		return (Collection<T>) Collections.unmodifiableCollection(getEdgeSet());
-	}
-
-	public Iterator<Node> getNeighborNodeIterator() {
-		return null;
-	}
-
+	@Override
 	public int getOutDegree() {
 		return getDegree();
 	}
 
-	public boolean hasEdgeBetween(String id) {
-		return (hasEdgeToward(id) || hasEdgeFrom(id));
-	}
-
-	public boolean hasEdgeFrom(String id) {
-		return false;
-	}
-
-	public boolean hasEdgeToward(String id) {
-		return false;
-	}
-
-	public boolean isDistributed() {
-		return false;
-	}
-
-	public void setGraph(Graph graph) {
-		throw new RuntimeException("impossible with GraphicGraph");
-	}
-
-	public void setGraphName(String newHost) {
-		throw new RuntimeException("impossible with GraphicGraph");
-	}
-
-	public void setHost(String newHost) {
-		throw new RuntimeException("impossible with GraphicGraph");
-	}
-
 	// XXX stubs for the new methods
+	@Override
+	public <T extends Edge> T getEdgeBetween(Node node) {
+		List<? extends Edge> edges = graph.connectivity.get(this);
 
-	public <T extends Edge> T getEdgeBetween(Node Node) {
-		// TODO Auto-generated method stub
+		for (Edge edge : edges) {
+			if (edge.getOpposite(this).getId().equals(node.getId())) {
+				return (T) edge;
+			}
+		}
+
 		return null;
 	}
 
-	public <T extends Edge> T getEdgeBetween(int index) {
-		// TODO Auto-generated method stub
-		return null;
+	@Override
+	public <T extends Edge> T getEdgeFrom(Node node) {
+		return getEdgeBetween(node);
 	}
 
-	public <T extends Edge> T getEdgeFrom(Node Node) {
-		// TODO Auto-generated method stub
-		return null;
+	@Override
+	public <T extends Edge> T getEdgeToward(Node node) {
+		return getEdgeBetween(node);
 	}
 
-	public <T extends Edge> T getEdgeFrom(int index) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public <T extends Edge> T getEdgeToward(Node Node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public <T extends Edge> T getEdgeToward(int index) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public boolean hasEdgeBetween(Node node) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasEdgeBetween(int index) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasEdgeFrom(Node node) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasEdgeFrom(int index) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasEdgeToward(Node node) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasEdgeToward(int index) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
+	@Override
+	@SuppressWarnings("unchecked")
 	public <T extends Edge> T getEnteringEdge(int i) {
-		// TODO Auto-generated method stub
-		return null;
+		List<GraphicEdge> edges = graph.connectivity.get(this);
+		if (i >= edges.size()) {
+			return null;
+		}
+		return (T) edges.get(i);
 	}
 
+	@Override
+	@SuppressWarnings("unchecked")
 	public <T extends Edge> T getLeavingEdge(int i) {
-		// TODO Auto-generated method stub
-		return null;
+		List<GraphicEdge> edges = graph.connectivity.get(this);
+		if (i >= edges.size()) {
+			return null;
+		}
+		return (T) edges.get(i);
 	}
 }

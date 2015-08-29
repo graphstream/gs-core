@@ -121,7 +121,6 @@ public class StyleConstants {
 	 */
 	public static enum TextAlignment {
 		CENTER, LEFT, RIGHT, AT_LEFT, AT_RIGHT, UNDER, ABOVE, JUSTIFY,
-
 		ALONG
 	}
 
@@ -138,22 +137,20 @@ public class StyleConstants {
 	 */
 	public static enum Shape {
 		CIRCLE(ShapeKind.ELLIPSOID), BOX(ShapeKind.RECTANGULAR), ROUNDED_BOX(
-				ShapeKind.RECTANGULAR), DIAMOND(ShapeKind.RECTANGULAR), POLYGON(
+			ShapeKind.RECTANGULAR), DIAMOND(ShapeKind.RECTANGULAR), POLYGON(
 				ShapeKind.RECTANGULAR), TRIANGLE(ShapeKind.RECTANGULAR), CROSS(
 				ShapeKind.RECTANGULAR), FREEPLANE(ShapeKind.RECTANGULAR), TEXT_BOX(
 				ShapeKind.RECTANGULAR), TEXT_ROUNDED_BOX(ShapeKind.RECTANGULAR), TEXT_PARAGRAPH(
 				ShapeKind.RECTANGULAR), TEXT_CIRCLE(ShapeKind.ELLIPSOID), TEXT_DIAMOND(
 				ShapeKind.RECTANGULAR), JCOMPONENT(ShapeKind.RECTANGULAR),
-
 		PIE_CHART(ShapeKind.ELLIPSOID), FLOW(ShapeKind.LINEAR), ARROW(
-				ShapeKind.RECTANGULAR), IMAGES(ShapeKind.RECTANGULAR),
-
+			ShapeKind.RECTANGULAR), IMAGES(ShapeKind.RECTANGULAR),
 		LINE(ShapeKind.LINEAR), ANGLE(ShapeKind.LINEAR), CUBIC_CURVE(
-				ShapeKind.CURVE), POLYLINE(ShapeKind.LINEAR),
-				POLYLINE_SCALED(ShapeKind.LINEAR),
-				SQUARELINE(ShapeKind.LINEAR), LSQUARELINE(ShapeKind.LINEAR),
-				HSQUARELINE(ShapeKind.LINEAR), VSQUARELINE(ShapeKind.LINEAR),
-				BLOB(ShapeKind.CURVE);
+			ShapeKind.CURVE), POLYLINE(ShapeKind.LINEAR),
+		POLYLINE_SCALED(ShapeKind.LINEAR),
+		SQUARELINE(ShapeKind.LINEAR), LSQUARELINE(ShapeKind.LINEAR),
+		HSQUARELINE(ShapeKind.LINEAR), VSQUARELINE(ShapeKind.LINEAR),
+		BLOB(ShapeKind.CURVE);
 
 		public ShapeKind kind;
 
@@ -184,29 +181,40 @@ public class StyleConstants {
 	}
 
 	// Static
-
-	/** A set of colour names mapped to real AWT Colour objects. */
+	/**
+	 * A set of colour names mapped to real AWT Colour objects.
+	 */
 	protected static HashMap<String, Color> colorMap;
 
-	/** Pattern to ensure a "#FFFFFF" colour is recognised. */
+	/**
+	 * Pattern to ensure a "#FFFFFF" colour is recognised.
+	 */
 	protected static Pattern sharpColor1, sharpColor2;
 
-	/** Pattern to ensure a CSS style "rgb(1,2,3)" colour is recognised. */
+	/**
+	 * Pattern to ensure a CSS style "rgb(1,2,3)" colour is recognised.
+	 */
 	protected static Pattern cssColor;
 
-	/** Pattern to ensure a CSS style "rgba(1,2,3,4)" colour is recognised. */
+	/**
+	 * Pattern to ensure a CSS style "rgba(1,2,3,4)" colour is recognised.
+	 */
 	protected static Pattern cssColorA;
 
 	/**
-	 * Pattern to ensure that java.awt.Color.toString() strings are recognised
-	 * as colour.
+	 * Pattern to ensure that java.awt.Color.toString() strings are
+	 * recognised as colour.
 	 */
 	protected static Pattern awtColor;
 
-	/** Pattern to ensure an hexadecimal number is a recognised colour. */
+	/**
+	 * Pattern to ensure an hexadecimal number is a recognised colour.
+	 */
 	protected static Pattern hexaColor;
 
-	/** Pattern to ensure a string is a Value in various units. */
+	/**
+	 * Pattern to ensure a string is a Value in various units.
+	 */
 	protected static Pattern numberUnit, number;
 
 	static {
@@ -214,32 +222,32 @@ public class StyleConstants {
 
 		number = Pattern.compile("\\s*(\\p{Digit}+([.]\\p{Digit})?)\\s*");
 		numberUnit = Pattern
-				.compile("\\s*(\\p{Digit}+(?:[.]\\p{Digit}+)?)\\s*(gu|px|%)\\s*");
+			.compile("\\s*(\\p{Digit}+(?:[.]\\p{Digit}+)?)\\s*(gu|px|%)\\s*");
 
 		sharpColor1 = Pattern
-				.compile("#(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})((\\p{XDigit}\\p{XDigit})?)");
+			.compile("#(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})((\\p{XDigit}\\p{XDigit})?)");
 		sharpColor2 = Pattern
-				.compile("#(\\p{XDigit})(\\p{XDigit})(\\p{XDigit})((\\p{XDigit})?)");
+			.compile("#(\\p{XDigit})(\\p{XDigit})(\\p{XDigit})((\\p{XDigit})?)");
 		hexaColor = Pattern
-				.compile("0[xX](\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})((\\p{XDigit}\\p{XDigit})?)");
+			.compile("0[xX](\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})((\\p{XDigit}\\p{XDigit})?)");
 		cssColor = Pattern
-				.compile("rgb\\s*\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)");
+			.compile("rgb\\s*\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)");
 		cssColorA = Pattern
-				.compile("rgba\\s*\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)");
+			.compile("rgba\\s*\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)");
 		awtColor = Pattern
-				.compile("java.awt.Color\\[r=([0-9]+),g=([0-9]+),b=([0-9]+)\\]");
+			.compile("java.awt.Color\\[r=([0-9]+),g=([0-9]+),b=([0-9]+)\\]");
 		colorMap = new HashMap<String, Color>();
 
 		// Load all the X11 predefined colour names and their RGB definition
 		// from a file stored in the graphstream.jar. This allows the DOT
 		// import to correctly map colour names to real AWT Color objects.
 		// There are more than 800 such colours...
-
 		URL url = StyleConstants.class.getResource("rgb.properties");
 
-		if (url == null)
+		if (url == null) {
 			throw new RuntimeException(
-					"corrupted graphstream.jar ? the org/miv/graphstream/ui/graphicGraph/rgb.properties file is not found");
+				"corrupted graphstream.jar ? the org/miv/graphstream/ui/graphicGraph/rgb.properties file is not found");
+		}
 
 		Properties p = new Properties();
 
@@ -259,22 +267,23 @@ public class StyleConstants {
 	}
 
 	/**
-	 * Try to convert the given string value to a colour. It understands the 600
-	 * colour names of the X11 RGB data base. It also understands colours given
-	 * in the "#FFFFFF" format and the hexadecimal "0xFFFFFF" format. Finally,
-	 * it understands colours given as a "rgb(1,10,100)", CSS-like format. If
-	 * the input value is null, the result is null.
-	 * 
-	 * @param anyValue
-	 *            The value to convert.
+	 * Try to convert the given string value to a colour. It understands the
+	 * 600 colour names of the X11 RGB data base. It also understands
+	 * colours given in the "#FFFFFF" format and the hexadecimal "0xFFFFFF"
+	 * format. Finally, it understands colours given as a "rgb(1,10,100)",
+	 * CSS-like format. If the input value is null, the result is null.
+	 *
+	 * @param anyValue The value to convert.
 	 * @return the converted colour or null if the conversion failed.
 	 */
 	public static Color convertColor(Object anyValue) {
-		if (anyValue == null)
+		if (anyValue == null) {
 			return null;
+		}
 
-		if (anyValue instanceof Color)
+		if (anyValue instanceof Color) {
 			return (Color) anyValue;
+		}
 
 		if (anyValue instanceof String) {
 			Color c = null;
@@ -311,8 +320,9 @@ public class StyleConstants {
 						int b = Integer.parseInt(m.group(3), 16) * 16;
 						int a = 255;
 
-						if (value.length() == 5)
+						if (value.length() == 5) {
 							a = Integer.parseInt(m.group(4), 16) * 16;
+						}
 
 						return new Color(r, g, b, a);
 					}
@@ -355,9 +365,9 @@ public class StyleConstants {
 						String a = m.group(4);
 
 						return new Color(Integer.parseInt(r, 16),
-								Integer.parseInt(g, 16),
-								Integer.parseInt(b, 16),
-								Integer.parseInt(a, 16));
+							Integer.parseInt(g, 16),
+							Integer.parseInt(b, 16),
+							Integer.parseInt(a, 16));
 					}
 				}
 			} else if (value.startsWith("java.awt.Color[")) {
@@ -380,44 +390,44 @@ public class StyleConstants {
 	}
 
 	/**
-	 * Check if the given value is an instance of CharSequence (String is) and
-	 * return it as a string. Else return null. If the input value is null, the
-	 * return value is null. If the value returned is larger than 128
-	 * characters, this method cuts it to 128 characters. TODO: allow to set the
-	 * max length of these strings.
-	 * 
-	 * @param value
-	 *            The value to convert.
+	 * Check if the given value is an instance of CharSequence (String is)
+	 * and return it as a string. Else return null. If the input value is
+	 * null, the return value is null. If the value returned is larger than
+	 * 128 characters, this method cuts it to 128 characters. TODO: allow to
+	 * set the max length of these strings.
+	 *
+	 * @param value The value to convert.
 	 * @return The corresponding string, or null.
 	 */
 	public static String convertLabel(Object value) {
 		String label = null;
 
 		if (value != null) {
-			if (value instanceof CharSequence)
+			if (value instanceof CharSequence) {
 				label = ((CharSequence) value).toString();
-			else
+			} else {
 				label = value.toString();
+			}
 
-			if (label.length() > 128)
+			if (label.length() > 128) {
 				label = String.format("%s...", label.substring(0, 128));
+			}
 		}
 
 		return label;
 	}
 
 	/**
-	 * Try to convert an arbitrary value to a float. If it is a descendant of
-	 * Number, the float value is returned. If it is a string, a conversion is
-	 * tried to change it into a number and if successful, this number is
-	 * returned as a float. Else, the -1 value is returned as no width can be
-	 * negative to indicate the conversion failed. If the input is null, the
-	 * return value is -1.
-	 * 
-	 * @param value
-	 *            The input to convert.
-	 * @return The value or -1 if the conversion failed. TODO should be named
-	 *         convertNumber
+	 * Try to convert an arbitrary value to a float. If it is a descendant
+	 * of Number, the float value is returned. If it is a string, a
+	 * conversion is tried to change it into a number and if successful,
+	 * this number is returned as a float. Else, the -1 value is returned as
+	 * no width can be negative to indicate the conversion failed. If the
+	 * input is null, the return value is -1.
+	 *
+	 * @param value The input to convert.
+	 * @return The value or -1 if the conversion failed. TODO should be
+	 *         named convertNumber
 	 */
 	public static float convertWidth(Object value) {
 		if (value instanceof CharSequence) {
@@ -436,14 +446,13 @@ public class StyleConstants {
 	}
 
 	/**
-	 * Convert an object to a value with units. The object can be a number, in
-	 * which case the value returned contains this number in pixel units. The
-	 * object can be a string. In this case the strings understood by this
-	 * method are of the form (spaces, number, spaces, unit, spaces). For
-	 * example "3px", "45gu", "5.5%", " 25.3  gu ", "4", "   28.1  ".
-	 * 
-	 * @param value
-	 *            A Number or a CharSequence.
+	 * Convert an object to a value with units. The object can be a number,
+	 * in which case the value returned contains this number in pixel units.
+	 * The object can be a string. In this case the strings understood by
+	 * this method are of the form (spaces, number, spaces, unit, spaces).
+	 * For example "3px", "45gu", "5.5%", " 25.3 gu ", "4", " 28.1 ".
+	 *
+	 * @param value A Number or a CharSequence.
 	 * @return A value.
 	 */
 	public static Value convertValue(Object value) {
@@ -452,42 +461,48 @@ public class StyleConstants {
 
 //			if (string == null)
 //				throw new RuntimeException("null size string ...");
-
-			if (string.length() < 0)
+			if (string.length() < 0) {
 				throw new RuntimeException("empty size string ...");
+			}
 
 			Matcher m = numberUnit.matcher(string);
 
-			if (m.matches())
+			if (m.matches()) {
 				return new Value(convertUnit(m.group(2)), Float.parseFloat(m
-						.group(1)));
+					.group(1)));
+			}
 
 			m = number.matcher(string);
 
-			if (m.matches())
+			if (m.matches()) {
 				return new Value(Units.PX, Float.parseFloat(m.group(1)));
+			}
 
 			throw new RuntimeException(String.format(
-					"string is not convertible to a value (%s)", string));
+				"string is not convertible to a value (%s)", string));
 		} else if (value instanceof Number) {
 			return new Value(Units.PX, ((Number) value).floatValue());
 		}
 
-		if (value == null)
+		if (value == null) {
 			throw new RuntimeException("cannot convert null value");
+		}
 
 		throw new RuntimeException(String.format("value is of class %s%n",
-				value.getClass().getName()));
+			value.getClass().getName()));
 	}
 
-	/** Convert "gu", "px" and "%" to Units.GU, Units.PX, Units.PERCENTS. */
+	/**
+	 * Convert "gu", "px" and "%" to Units.GU, Units.PX, Units.PERCENTS.
+	 */
 	protected static Units convertUnit(String unit) {
-		if (unit.equals("gu"))
+		if (unit.equals("gu")) {
 			return Units.GU;
-		else if (unit.equals("px"))
+		} else if (unit.equals("px")) {
 			return Units.PX;
-		else if (unit.equals("%"))
+		} else if (unit.equals("%")) {
 			return Units.PERCENTS;
+		}
 
 		return Units.PX;
 	}

@@ -41,7 +41,7 @@ import org.graphstream.graph.Node;
 
 /**
  * Nodes used with {@link AdjacencyListGraph}
- * 
+ *
  */
 public class AdjacencyListNode extends AbstractNode {
 	protected static final int INITIAL_EDGE_CAPACITY;
@@ -65,18 +65,17 @@ public class AdjacencyListNode extends AbstractNode {
 	protected int ioStart, oStart, degree;
 
 	// *** Constructor ***
-
-	protected AdjacencyListNode(AbstractGraph graph, String id) {
-		super(graph, id);
+	protected AdjacencyListNode(String id, AbstractGraph graph) {
+		super(id, graph);
 		edges = new AbstractEdge[INITIAL_EDGE_CAPACITY];
 		ioStart = oStart = degree = 0;
 	}
 
 	// *** Helpers ***
-
 	protected char edgeType(AbstractEdge e) {
-		if (!e.directed || e.source == e.target)
+		if (!e.directed || e.source == e.target) {
 			return IO_EDGE;
+		}
 		return e.source == this ? O_EDGE : I_EDGE;
 	}
 
@@ -85,14 +84,17 @@ public class AdjacencyListNode extends AbstractNode {
 		// where to search ?
 		int start = 0;
 		int end = degree;
-		if (type == I_EDGE)
+		if (type == I_EDGE) {
 			end = oStart;
-		else if (type == O_EDGE)
+		} else if (type == O_EDGE) {
 			start = ioStart;
+		}
 
-		for (int i = start; i < end; i++)
-			if (edges[i].getOpposite(this) == opposite)
+		for (int i = start; i < end; i++) {
+			if (edges[i].getOpposite(this) == opposite) {
 				return (T) edges[i];
+			}
+		}
 		return null;
 	}
 
@@ -118,7 +120,6 @@ public class AdjacencyListNode extends AbstractNode {
 	}
 
 	// *** Callbacks ***
-
 	@Override
 	protected boolean addEdgeCallback(AbstractEdge edge) {
 		// resize edges if necessary
@@ -153,12 +154,14 @@ public class AdjacencyListNode extends AbstractNode {
 		// locate the edge first
 		char type = edgeType(edge);
 		int i = 0;
-		if (type == IO_EDGE)
+		if (type == IO_EDGE) {
 			i = ioStart;
-		else if (type == O_EDGE)
+		} else if (type == O_EDGE) {
 			i = oStart;
-		while (edges[i] != edge)
+		}
+		while (edges[i] != edge) {
 			i++;
+		}
 
 		removeEdge(i);
 	}
@@ -170,7 +173,6 @@ public class AdjacencyListNode extends AbstractNode {
 	}
 
 	// *** Access methods ***
-
 	@Override
 	public int getDegree() {
 		return degree;
@@ -189,27 +191,30 @@ public class AdjacencyListNode extends AbstractNode {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Edge> T getEdge(int i) {
-		if (i < 0 || i >= degree)
+		if (i < 0 || i >= degree) {
 			throw new IndexOutOfBoundsException("Node \"" + this + "\""
-					+ " has no edge " + i);
+				+ " has no edge " + i);
+		}
 		return (T) edges[i];
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Edge> T getEnteringEdge(int i) {
-		if (i < 0 || i >= getInDegree())
+		if (i < 0 || i >= getInDegree()) {
 			throw new IndexOutOfBoundsException("Node \"" + this + "\""
-					+ " has no entering edge " + i);
+				+ " has no entering edge " + i);
+		}
 		return (T) edges[i];
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Edge> T getLeavingEdge(int i) {
-		if (i < 0 || i >= getOutDegree())
+		if (i < 0 || i >= getOutDegree()) {
 			throw new IndexOutOfBoundsException("Node \"" + this + "\""
-					+ " has no edge " + i);
+				+ " has no edge " + i);
+		}
 		return (T) edges[ioStart + i];
 	}
 
@@ -229,7 +234,6 @@ public class AdjacencyListNode extends AbstractNode {
 	}
 
 	// *** Iterators ***
-
 	protected class EdgeIterator<T extends Edge> implements Iterator<T> {
 		protected int iPrev, iNext, iEnd;
 
@@ -237,10 +241,11 @@ public class AdjacencyListNode extends AbstractNode {
 			iPrev = -1;
 			iNext = 0;
 			iEnd = degree;
-			if (type == I_EDGE)
+			if (type == I_EDGE) {
 				iEnd = oStart;
-			else if (type == O_EDGE)
+			} else if (type == O_EDGE) {
 				iNext = ioStart;
+			}
 		}
 
 		public boolean hasNext() {
@@ -249,19 +254,21 @@ public class AdjacencyListNode extends AbstractNode {
 
 		@SuppressWarnings("unchecked")
 		public T next() {
-			if (iNext >= iEnd)
+			if (iNext >= iEnd) {
 				throw new NoSuchElementException();
+			}
 			iPrev = iNext++;
 			return (T) edges[iPrev];
 		}
 
 		public void remove() {
-			if (iPrev == -1)
+			if (iPrev == -1) {
 				throw new IllegalStateException();
+			}
 			AbstractEdge e = edges[iPrev];
 			// do not call the callback because we already know the index
 			graph.removeEdge(e, true, e.source != AdjacencyListNode.this,
-					e.target != AdjacencyListNode.this);
+				e.target != AdjacencyListNode.this);
 			removeEdge(iPrev);
 			iNext = iPrev;
 			iPrev = -1;

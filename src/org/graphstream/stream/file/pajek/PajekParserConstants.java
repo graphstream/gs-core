@@ -37,124 +37,232 @@ package org.graphstream.stream.file.pajek;
  */
 public interface PajekParserConstants {
 
-	/** End of File. */
+	/**
+	 * End of File.
+	 */
 	int EOF = 0;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int EOL = 3;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int DIGIT = 4;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int HEXDIGIT = 5;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int INT = 6;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int REAL = 7;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int STRING = 8;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int NETWORK = 9;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int VERTICES = 10;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int ARCS = 11;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int EDGES = 12;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int EDGESLIST = 13;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int ARCSLIST = 14;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int MATRIX = 15;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int COMMENT = 16;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int ELLIPSE = 17;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int DIAMOND = 18;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int CROSS = 19;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int BOX = 20;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int TRIANGLE = 21;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int EMPTY = 22;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int SIZE = 23;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int XFACT = 24;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int YFACT = 25;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int PHI = 26;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int R = 27;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int Q = 28;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int IC = 29;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int BC = 30;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int BW = 31;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int LC = 32;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int LA = 33;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int LR = 34;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int LPHI = 35;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int FOS = 36;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int FONT = 37;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int C = 38;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int P = 39;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int W = 40;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int S = 41;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int A = 42;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int AP = 43;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int L = 44;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int LP = 45;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int H1 = 46;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int H2 = 47;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int K1 = 48;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int K2 = 49;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int A1 = 50;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int A2 = 51;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int B = 52;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int KEY = 53;
 
-	/** Lexical state. */
+	/**
+	 * Lexical state.
+	 */
 	int DEFAULT = 0;
 
-	/** Literal token values. */
-	String[] tokenImage = { "<EOF>", "\" \"", "\"\\t\"", "<EOL>", "<DIGIT>",
-			"<HEXDIGIT>", "<INT>", "<REAL>", "<STRING>", "\"*network\"",
-			"\"*vertices\"", "\"*arcs\"", "\"*edges\"", "\"*edgeslist\"",
-			"\"*arcslist\"", "\"*matrix\"", "<COMMENT>", "\"ellipse\"",
-			"\"diamond\"", "\"cross\"", "\"box\"", "\"triangle\"", "\"empty\"",
-			"<SIZE>", "\"x_fact\"", "\"y_fact\"", "\"phi\"", "\"r\"", "\"q\"",
-			"\"ic\"", "\"bc\"", "\"bw\"", "\"lc\"", "\"la\"", "\"lr\"",
-			"\"lphi\"", "\"fos\"", "\"font\"", "\"c\"", "\"p\"", "\"w\"",
-			"\"s\"", "\"a\"", "\"ap\"", "\"l\"", "\"lp\"", "\"h1\"", "\"h2\"",
-			"\"k1\"", "\"k2\"", "\"a1\"", "\"a2\"", "\"b\"", "<KEY>", };
+	/**
+	 * Literal token values.
+	 */
+	String[] tokenImage = {"<EOF>", "\" \"", "\"\\t\"", "<EOL>", "<DIGIT>",
+		"<HEXDIGIT>", "<INT>", "<REAL>", "<STRING>", "\"*network\"",
+		"\"*vertices\"", "\"*arcs\"", "\"*edges\"", "\"*edgeslist\"",
+		"\"*arcslist\"", "\"*matrix\"", "<COMMENT>", "\"ellipse\"",
+		"\"diamond\"", "\"cross\"", "\"box\"", "\"triangle\"", "\"empty\"",
+		"<SIZE>", "\"x_fact\"", "\"y_fact\"", "\"phi\"", "\"r\"", "\"q\"",
+		"\"ic\"", "\"bc\"", "\"bw\"", "\"lc\"", "\"la\"", "\"lr\"",
+		"\"lphi\"", "\"fos\"", "\"font\"", "\"c\"", "\"p\"", "\"w\"",
+		"\"s\"", "\"a\"", "\"ap\"", "\"l\"", "\"lp\"", "\"h1\"", "\"h2\"",
+		"\"k1\"", "\"k2\"", "\"a1\"", "\"a2\"", "\"b\"", "<KEY>",};
 
 }

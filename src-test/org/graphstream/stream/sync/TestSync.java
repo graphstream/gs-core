@@ -75,5 +75,17 @@ public class TestSync {
 			assertTrue(tst.isNewEvent(st.getSourceId(), timeId));
 			assertTrue(tst.isNewEvent(st.getSourceId(), timeId));
 		}
+
+		st.setSinkTime(tst);
+
+		if (tst.isSynchEnable()) {
+			long timeId = st.newEvent();
+
+			assertFalse(tst.isNewEvent(st.getSourceId(), timeId));
+		} else {
+			long timeId = st.newEvent();
+
+			assertTrue(tst.isNewEvent(st.getSourceId(), timeId));
+		}
 	}
 }

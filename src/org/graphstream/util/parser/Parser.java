@@ -36,28 +36,27 @@ import java.io.IOException;
 public interface Parser {
 	/**
 	 * Parse the whole stream.
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	void all() throws IOException, ParseException;
 
 	/**
 	 * Start parsing the stream.
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	void open() throws IOException, ParseException;
 
 	/**
-	 * 
-	 * @return
-	 * @throws ParseException
+	 *
+	 * @return @throws ParseException
 	 */
 	boolean next() throws IOException, ParseException;
 
 	/**
 	 * Close the stream.
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	void close() throws IOException;

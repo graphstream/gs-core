@@ -49,16 +49,16 @@ import org.graphstream.stream.file.FileSourceBase;
 
 /**
  * Class responsible for parsing files in the DGS format.
- * 
+ *
  * <p>
  * The DGS file format is especially designed for storing dynamic graph
  * definitions into a file. More information about the DGS file format will be
  * found on the GraphStream web site: <a
  * href="http://graphstream-project.org/">http://graphstream-project.org/</a>
  * </p>
- * 
+ *
  * The usual file name extension used for this format is ".dgs".
- * 
+ *
  * @see FileSource
  */
 public class OldFileSourceDGS extends FileSourceBase {
@@ -105,7 +105,6 @@ public class OldFileSourceDGS extends FileSourceBase {
 	protected boolean finished;
 
 	// Construction
-
 	/**
 	 * New reader for the DGS graph file format version 3.
 	 */
@@ -114,32 +113,32 @@ public class OldFileSourceDGS extends FileSourceBase {
 	}
 
 	// Command -- Parsing
-
 	@Override
 	public boolean nextEvents() throws IOException {
-		if (finished)
+		if (finished) {
 			return false;
+		}
 
 		return next(false, false);
 	}
 
 	public boolean nextStep() throws IOException {
-		if (finished)
+		if (finished) {
 			return false;
+		}
 
 		return next(true, false);
 	}
 
 	/**
 	 * Read either one event or several.
-	 * 
-	 * @param readSteps
-	 *            If true, read several events (usually starting with a step
-	 *            event, but it may be preceded by other events), until another
-	 *            step is encountered.
-	 * @param stop
-	 *            If true stop at the next step encountered (and push it back so
-	 *            that is is readable at the next call to this method).
+	 *
+	 * @param readSteps If true, read several events (usually starting with
+	 *                  a step event, but it may be preceded by other
+	 *                  events), until another step is encountered.
+	 * @param stop If true stop at the next step encountered (and push
+	 *                  it back so that is is readable at the next call to
+	 *                  this method).
 	 * @return True if it remains things to read.
 	 */
 	protected boolean next(boolean readSteps, boolean stop) throws IOException {
@@ -147,7 +146,6 @@ public class OldFileSourceDGS extends FileSourceBase {
 		boolean loop = readSteps;
 
 		// Sorted in probability of appearance ...
-
 		do {
 			key = getWordOrSymbolOrStringOrEolOrEof();
 
@@ -203,14 +201,16 @@ public class OldFileSourceDGS extends FileSourceBase {
 		for (String key : attributes.keySet()) {
 			Object value = attributes.get(key);
 
-			if (value == null)
+			if (value == null) {
 				sendEdgeAttributeRemoved(graphName, tag, key);
-			else
+			} else {
 				sendEdgeAttributeChanged(graphName, tag, key, null, value);
+			}
 		}
 
-		if (eatEolOrEof() == StreamTokenizer.TT_EOF)
+		if (eatEolOrEof() == StreamTokenizer.TT_EOF) {
 			pushBack();
+		}
 	}
 
 	protected void readCN() throws IOException {
@@ -221,14 +221,16 @@ public class OldFileSourceDGS extends FileSourceBase {
 		for (String key : attributes.keySet()) {
 			Object value = attributes.get(key);
 
-			if (value == null)
+			if (value == null) {
 				sendNodeAttributeRemoved(graphName, tag, key);
-			else
+			} else {
 				sendNodeAttributeChanged(graphName, tag, key, null, value);
+			}
 		}
 
-		if (eatEolOrEof() == StreamTokenizer.TT_EOF)
+		if (eatEolOrEof() == StreamTokenizer.TT_EOF) {
 			pushBack();
+		}
 	}
 
 	protected void readCG() throws IOException {
@@ -237,14 +239,16 @@ public class OldFileSourceDGS extends FileSourceBase {
 		for (String key : attributes.keySet()) {
 			Object value = attributes.get(key);
 
-			if (value == null)
+			if (value == null) {
 				sendGraphAttributeRemoved(graphName, key);
-			else
+			} else {
 				sendGraphAttributeChanged(graphName, key, null, value);
+			}
 		}
 
-		if (eatEolOrEof() == StreamTokenizer.TT_EOF)
+		if (eatEolOrEof() == StreamTokenizer.TT_EOF) {
 			pushBack();
+		}
 	}
 
 	protected void readAE() throws IOException {
@@ -285,8 +289,9 @@ public class OldFileSourceDGS extends FileSourceBase {
 			sendEdgeAttributeAdded(graphName, tag, key, value);
 		}
 
-		if (eatEolOrEof() == StreamTokenizer.TT_EOF)
+		if (eatEolOrEof() == StreamTokenizer.TT_EOF) {
 			pushBack();
+		}
 	}
 
 	protected void readAN() throws IOException {
@@ -301,8 +306,9 @@ public class OldFileSourceDGS extends FileSourceBase {
 			sendNodeAttributeAdded(graphName, tag, key, value);
 		}
 
-		if (eatEolOrEof() == StreamTokenizer.TT_EOF)
+		if (eatEolOrEof() == StreamTokenizer.TT_EOF) {
 			pushBack();
+		}
 	}
 
 	protected void readDE() throws IOException {
@@ -310,8 +316,9 @@ public class OldFileSourceDGS extends FileSourceBase {
 
 		sendEdgeRemoved(graphName, tag);
 
-		if (eatEolOrEof() == StreamTokenizer.TT_EOF)
+		if (eatEolOrEof() == StreamTokenizer.TT_EOF) {
 			pushBack();
+		}
 	}
 
 	protected void readDN() throws IOException {
@@ -319,8 +326,9 @@ public class OldFileSourceDGS extends FileSourceBase {
 
 		sendNodeRemoved(graphName, tag);
 
-		if (eatEolOrEof() == StreamTokenizer.TT_EOF)
+		if (eatEolOrEof() == StreamTokenizer.TT_EOF) {
 			pushBack();
+		}
 	}
 
 	protected void readST() throws IOException {
@@ -334,12 +342,13 @@ public class OldFileSourceDGS extends FileSourceBase {
 			parseError("expecting a number after `st', got `" + w + "'");
 		}
 
-		if (eatEolOrEof() == StreamTokenizer.TT_EOF)
+		if (eatEolOrEof() == StreamTokenizer.TT_EOF) {
 			pushBack();
+		}
 	}
 
 	protected void readAttributes(HashMap<String, Object> attributes)
-			throws IOException {
+		throws IOException {
 		boolean del = false;
 		String key = getWordOrSymbolOrStringOrEolOrEof();
 
@@ -350,14 +359,16 @@ public class OldFileSourceDGS extends FileSourceBase {
 			del = true;
 		}
 
-		if (key.equals("+"))
+		if (key.equals("+")) {
 			key = getWordOrSymbolOrStringOrEolOrEof();
+		}
 
 		while (!key.equals("EOF") && !key.equals("EOL") && !key.equals("]")) {
-			if (del)
+			if (del) {
 				attributes.put(key, null);
-			else
+			} else {
 				attributes.put(key, readAttributeValue(key));
+			}
 
 			key = getWordOrSymbolOrStringOrEolOrEof();
 
@@ -377,9 +388,8 @@ public class OldFileSourceDGS extends FileSourceBase {
 
 	/**
 	 * Read an attribute. The "key" (attribute name) is already read.
-	 * 
-	 * @param key
-	 *            The attribute name, already read.
+	 *
+	 * @param key The attribute name, already read.
 	 */
 	protected Object readAttributeValue(String key) throws IOException {
 		ArrayList<Object> vector = null;
@@ -387,8 +397,9 @@ public class OldFileSourceDGS extends FileSourceBase {
 		Object value2 = null;
 		String next = null;
 
-		if (key != null)
+		if (key != null) {
 			eatSymbols(":=");
+		}
 
 		value = getStringOrWordOrSymbolOrNumberO();
 
@@ -427,22 +438,22 @@ public class OldFileSourceDGS extends FileSourceBase {
 			}
 		}
 
-		if (vector != null)
+		if (vector != null) {
 			return vector.toArray();
-		else
+		} else {
 			return value;
+		}
 	}
 
 	/**
 	 * Read a list of values.
-	 * 
-	 * @param key
-	 *            attribute key
+	 *
+	 * @param key attribute key
 	 * @return a vector
 	 * @throws IOException
 	 */
 	protected ArrayList<Object> readAttributeArray(String key)
-			throws IOException {
+		throws IOException {
 		ArrayList<Object> list = new ArrayList<Object>();
 
 		Object value;
@@ -461,7 +472,6 @@ public class OldFileSourceDGS extends FileSourceBase {
 	}
 
 	// Command -- Basic parsing
-
 	@Override
 	public void begin(String filename) throws IOException {
 		super.begin(filename);
@@ -496,16 +506,17 @@ public class OldFileSourceDGS extends FileSourceBase {
 		graphName = getWordOrString();
 		stepCountAnnounced = (int) getNumber();// Integer.parseInt( getWord() );
 		eventCountAnnounced = (int) getNumber();// Integer.parseInt( getWord()
-												// );
+		// );
 		eatEol();
 
-		if (graphName != null)
+		if (graphName != null) {
 			sendGraphAttributeAdded(graphName, "label", graphName);
-		else
+		} else {
 			graphName = "DGS_";
+		}
 
 		graphName = String.format("%s_%d", graphName,
-				System.currentTimeMillis() + ((long) Math.random() * 10));
+			System.currentTimeMillis() + ((long) Math.random() * 10));
 	}
 
 	@Override
@@ -518,8 +529,9 @@ public class OldFileSourceDGS extends FileSourceBase {
 
 		is = new FileInputStream(file);
 
-		if (is.markSupported())
+		if (is.markSupported()) {
 			is.mark(128);
+		}
 
 		try {
 			is = new GZIPInputStream(is);
@@ -547,7 +559,7 @@ public class OldFileSourceDGS extends FileSourceBase {
 					//
 					e2.printStackTrace();
 				}
-				
+
 				is = new FileInputStream(file);
 			}
 		}
@@ -562,8 +574,9 @@ public class OldFileSourceDGS extends FileSourceBase {
 
 	@Override
 	protected void configureTokenizer(StreamTokenizer tok) throws IOException {
-		if (COMMENT_CHAR > 0)
+		if (COMMENT_CHAR > 0) {
 			tok.commentChar(COMMENT_CHAR);
+		}
 		// tok.quoteChar( QUOTE_CHAR );
 		tok.eolIsSignificant(eol_is_significant);
 		tok.parseNumbers();

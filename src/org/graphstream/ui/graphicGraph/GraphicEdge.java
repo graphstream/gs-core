@@ -33,7 +33,6 @@ package org.graphstream.ui.graphicGraph;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
-import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.ui.graphicGraph.stylesheet.Selector;
 
 import java.util.ArrayList;
@@ -41,12 +40,12 @@ import java.util.HashMap;
 
 /**
  * Graphical edge.
- * 
+ *
  * <p>
  * The graphic edge defines its source and target node as well as a direction, a
  * string label and a style from the style sheet.
  * </p>
- * 
+ *
  * @see GraphicGraph
  */
 public class GraphicEdge extends GraphicElement implements Edge {
@@ -74,50 +73,49 @@ public class GraphicEdge extends GraphicElement implements Edge {
 	public int multi;
 
 	/**
-	 * If non null, this gives the number of edges between the two same nodes.
+	 * If non null, this gives the number of edges between the two same
+	 * nodes.
 	 */
 	public EdgeGroup group;
 
 	/**
-	 * Control points for curved edges or polylines. This contains the control
-	 * points of an edge. If the edge is in 2D each sequence of two cells gives
-	 * the x and y coordinates of a control point. Else each sequence of three
-	 * cells gives the x, y and z coordinates. Therefore the number of control
-	 * points can be obtained by dividing by 2 or 3 the length of this array.
-	 * For example for cubic Bezier curves in 2D this array contains four cells.
-	 * The control points are ordered from node0 to node1.
+	 * Control points for curved edges or polylines. This contains the
+	 * control points of an edge. If the edge is in 2D each sequence of two
+	 * cells gives the x and y coordinates of a control point. Else each
+	 * sequence of three cells gives the x, y and z coordinates. Therefore
+	 * the number of control points can be obtained by dividing by 2 or 3
+	 * the length of this array. For example for cubic Bezier curves in 2D
+	 * this array contains four cells. The control points are ordered from
+	 * node0 to node1.
 	 */
 	public double[] ctrl;
 
 	// Constructors
-
 	/**
 	 * New graphic edge.
-	 * 
-	 * @param id
-	 *            The edge unique identifier.
-	 * @param from
-	 *            The source node.
-	 * @param to
-	 *            The target node.
-	 * @param dir
-	 *            True if the edge is directed in the direction from-to.
-	 * @param attributes
-	 *            A set of initial attributes.
+	 *
+	 * @param id The edge unique identifier.
+	 * @param from The source node.
+	 * @param to The target node.
+	 * @param dir True if the edge is directed in the direction
+	 *                   from-to.
+	 * @param attributes A set of initial attributes.
 	 */
 	public GraphicEdge(String id, GraphicNode from, GraphicNode to,
-			boolean dir, HashMap<String, Object> attributes) {
-		super(id, from.mygraph);
+		boolean dir, HashMap<String, Object> attributes) {
+		super(id, from.graph);
 
 		this.from = from;
 		this.to = to;
 		this.directed = dir;
 
-		if (this.attributes == null)
+		if (this.attributes == null) {
 			this.attributes = new HashMap<String, Object>();
+		}
 
-		if (attributes != null)
-			addAttributes(attributes);
+		if (attributes != null) {
+			setAttributes(attributes);
+		}
 	}
 
 	@Override
@@ -127,9 +125,8 @@ public class GraphicEdge extends GraphicElement implements Edge {
 
 	/**
 	 * Obtain the node that is not "n" attached to this edge.
-	 * 
-	 * @param n
-	 *            One of the node of this edge.
+	 *
+	 * @param n One of the node of this edge.
 	 * @return The other node of this edge.
 	 */
 	public GraphicNode otherNode(GraphicNode n) {
@@ -152,27 +149,27 @@ public class GraphicEdge extends GraphicElement implements Edge {
 	}
 
 	/**
-	 * Control points for curved edges or polylines. This contains the control
-	 * points of an edge. If the edge is in 2D each sequence of two cells gives
-	 * the x and y coordinates of a control point. Else each sequence of three
-	 * cells gives the x, y and z coordinates. Therefore the number of control
-	 * points can be obtained by dividing by 2 or 3 the length of this array.
-	 * For example for cubic Bezier curves in 2D this array contains four cells.
-	 * The control points are ordered from node0 to node1. The units are
-	 * "graph units".
-	 * 
-	 * @return The control points coordinates or null if this edge is a straight
-	 *         line.
+	 * Control points for curved edges or polylines. This contains the
+	 * control points of an edge. If the edge is in 2D each sequence of two
+	 * cells gives the x and y coordinates of a control point. Else each
+	 * sequence of three cells gives the x, y and z coordinates. Therefore
+	 * the number of control points can be obtained by dividing by 2 or 3
+	 * the length of this array. For example for cubic Bezier curves in 2D
+	 * this array contains four cells. The control points are ordered from
+	 * node0 to node1. The units are "graph units".
+	 *
+	 * @return The control points coordinates or null if this edge is a
+	 *         straight line.
 	 */
 	public double[] getControlPoints() {
 		return ctrl;
 	}
 
 	/**
-	 * True if the the edge defines control points to draw a curve or polyline.
-	 * This does not mean the edge style asks to paint the edge as a curve, only
-	 * that control points are defined.
-	 * 
+	 * True if the the edge defines control points to draw a curve or
+	 * polyline. This does not mean the edge style asks to paint the edge as
+	 * a curve, only that control points are defined.
+	 *
 	 * @return True if control points are available.
 	 */
 	public boolean isCurve() {
@@ -181,10 +178,10 @@ public class GraphicEdge extends GraphicElement implements Edge {
 
 	/**
 	 * Change the control points array for this edge.
-	 * 
-	 * @param points
-	 *            The new set of points. See the {@link #getControlPoints()}
-	 *            method for an explanation on the organisation of this array.
+	 *
+	 * @param points The new set of points. See the
+	 *               {@link #getControlPoints()} method for an explanation
+	 *               on the organisation of this array.
 	 * @see #getControlPoints()
 	 */
 	public void setControlPoints(double points[]) {
@@ -193,9 +190,9 @@ public class GraphicEdge extends GraphicElement implements Edge {
 
 	/**
 	 * This edge is the i-th between the two same nodes.
-	 * 
-	 * @return The edge index between the two nodes if there are several such
-	 *         edges.
+	 *
+	 * @return The edge index between the two nodes if there are several
+	 *         such edges.
 	 */
 	public int getMultiIndex() {
 		return multi;
@@ -208,38 +205,38 @@ public class GraphicEdge extends GraphicElement implements Edge {
 
 	@Override
 	protected void attributeChanged(AttributeChangeEvent event,
-			String attribute, Object oldValue, Object newValue) {
+		String attribute, Object oldValue, Object newValue) {
 		super.attributeChanged(event, attribute, oldValue, newValue);
 
 		if (attribute.startsWith("ui.sprite.")) {
-			mygraph.spriteAttribute(event, this, attribute, newValue);
+			graph.spriteAttribute(event, this, attribute, newValue);
 		}
 
-		mygraph.listeners.sendAttributeChangedEvent(getId(), ElementType.EDGE,
-				attribute, event, oldValue, newValue);
+		graph.listeners.sendAttributeChangedEvent(getId(), ElementType.EDGE,
+			attribute, event, oldValue, newValue);
 	}
 
 	/**
-	 * Count the number of identical edges between the two nodes of this edge
-	 * and create or update the edge group. The edge group contains all the
-	 * edges between two same nodes and allows to render faster multiple edges
-	 * in a multigraph.
-	 * 
-	 * @param edgeList
-	 *            The actual set of edges between two nodes (see the
-	 *            connectivity in the graphic graph).
+	 * Count the number of identical edges between the two nodes of this
+	 * edge and create or update the edge group. The edge group contains all
+	 * the edges between two same nodes and allows to render faster multiple
+	 * edges in a multigraph.
+	 *
+	 * @param edgeList The actual set of edges between two nodes (see the
+	 *                 connectivity in the graphic graph).
 	 */
 	protected void countSameEdges(Iterable<GraphicEdge> edgeList) {
 		for (GraphicEdge other : edgeList) {
 			if (other != this) {
 				if ((other.from == from && other.to == to)
-						|| (other.to == from && other.from == to)) {
+					|| (other.to == from && other.from == to)) {
 					group = other.group;
 
-					if (group == null)
+					if (group == null) {
 						group = new EdgeGroup(other, this);
-					else
+					} else {
 						group.increment(this);
+					}
 
 					break;
 				}
@@ -252,13 +249,13 @@ public class GraphicEdge extends GraphicElement implements Edge {
 		if (group != null) {
 			group.decrement(this);
 
-			if (group.getCount() == 1)
+			if (group.getCount() == 1) {
 				group = null;
+			}
 		}
 	}
 
 	// Edge interface
-
 	@SuppressWarnings("all")
 	public <T extends Node> T getNode0() {
 		return (T) from;
@@ -272,9 +269,9 @@ public class GraphicEdge extends GraphicElement implements Edge {
 	/**
 	 * If there are several edges between two nodes, this edge pertains to a
 	 * group. Else this method returns null.
-	 * 
-	 * @return The group of edges between two same nodes, null if the edge is
-	 *         alone between the two nodes.
+	 *
+	 * @return The group of edges between two same nodes, null if the edge
+	 *         is alone between the two nodes.
 	 */
 	public EdgeGroup getGroup() {
 		return group;
@@ -282,8 +279,9 @@ public class GraphicEdge extends GraphicElement implements Edge {
 
 	@SuppressWarnings("all")
 	public <T extends Node> T getOpposite(Node node) {
-		if (node == from)
+		if (node == from) {
 			return (T) to;
+		}
 
 		return (T) from;
 	}
@@ -318,12 +316,12 @@ public class GraphicEdge extends GraphicElement implements Edge {
 	}
 
 	// Nested classes
-
 	/**
 	 * An edge group contains the set of edges between two given nodes. This
-	 * allows to quickly know how many 'multi' edges there is between two nodes
-	 * in a multigraph and to associate invariant indices to edges (the
-	 * {@link GraphicEdge#multi} attribute) inside the multi-representation.
+	 * allows to quickly know how many 'multi' edges there is between two
+	 * nodes in a multigraph and to associate invariant indices to edges
+	 * (the {@link GraphicEdge#multi} attribute) inside the
+	 * multi-representation.
 	 */
 	public class EdgeGroup {
 		/**
@@ -333,11 +331,9 @@ public class GraphicEdge extends GraphicElement implements Edge {
 
 		/**
 		 * Create a new edge group, starting with two edges.
-		 * 
-		 * @param first
-		 *            The initial edge.
-		 * @param second
-		 *            The second edge.
+		 *
+		 * @param first The initial edge.
+		 * @param second The second edge.
 		 */
 		public EdgeGroup(GraphicEdge first, GraphicEdge second) {
 			edges = new ArrayList<GraphicEdge>();
@@ -351,9 +347,8 @@ public class GraphicEdge extends GraphicElement implements Edge {
 
 		/**
 		 * I-th edge of the group.
-		 * 
-		 * @param i
-		 *            The edge index.
+		 *
+		 * @param i The edge index.
 		 * @return The i-th edge.
 		 */
 		public GraphicEdge getEdge(int i) {
@@ -362,7 +357,7 @@ public class GraphicEdge extends GraphicElement implements Edge {
 
 		/**
 		 * Number of edges in this group.
-		 * 
+		 *
 		 * @return The edge count.
 		 */
 		public int getCount() {
@@ -371,9 +366,8 @@ public class GraphicEdge extends GraphicElement implements Edge {
 
 		/**
 		 * Add an edge in the group.
-		 * 
-		 * @param edge
-		 *            The edge to add.
+		 *
+		 * @param edge The edge to add.
 		 */
 		public void increment(GraphicEdge edge) {
 			edge.multi = getCount();
@@ -382,15 +376,15 @@ public class GraphicEdge extends GraphicElement implements Edge {
 
 		/**
 		 * Remove an edge from the group.
-		 * 
-		 * @param edge
-		 *            The edge to remove.
+		 *
+		 * @param edge The edge to remove.
 		 */
 		public void decrement(GraphicEdge edge) {
 			edges.remove(edges.indexOf(edge));
 
-			for (int i = 0; i < edges.size(); i++)
+			for (int i = 0; i < edges.size(); i++) {
 				edges.get(i).multi = i;
+			}
 		}
 	}
 

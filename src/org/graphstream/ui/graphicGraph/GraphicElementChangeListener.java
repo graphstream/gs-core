@@ -33,7 +33,7 @@ package org.graphstream.ui.graphicGraph;
 
 /**
  * Interface for entities interested in changes on graphic elements.
- * 
+ *
  * This interface main role is to advise renderer that an element changed and
  * therefore must be redrawn. This allows to avoid redrawing elements that did
  * not changed.

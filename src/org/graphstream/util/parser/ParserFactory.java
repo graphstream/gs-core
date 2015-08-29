@@ -39,9 +39,8 @@ import java.io.Reader;
 public interface ParserFactory {
 	/**
 	 * Create a new parser from a reader.
-	 * 
-	 * @param reader
-	 *            stream to be parsed
+	 *
+	 * @param reader stream to be parsed
 	 * @return a parser
 	 */
 	Parser newParser(Reader reader);

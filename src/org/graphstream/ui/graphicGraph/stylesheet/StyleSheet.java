@@ -54,7 +54,7 @@ import org.graphstream.util.parser.ParseException;
 
 /**
  * Implementation of the style sheets that can be stored in the graphic graph.
- * 
+ *
  * @author Antoine Dutot
  */
 public class StyleSheet {
@@ -91,7 +91,6 @@ public class StyleSheet {
 	public ArrayList<StyleSheetListener> listeners = new ArrayList<StyleSheetListener>();
 
 	// Constructors
-
 	/**
 	 * New style sheet initialised to defaults.
 	 */
@@ -100,10 +99,9 @@ public class StyleSheet {
 	}
 
 	// Access
-
 	/**
 	 * The default rule for graphs.
-	 * 
+	 *
 	 * @return A rule.
 	 */
 	public Rule getDefaultGraphRule() {
@@ -112,7 +110,7 @@ public class StyleSheet {
 
 	/**
 	 * The default rule for nodes.
-	 * 
+	 *
 	 * @return A rule.
 	 */
 	public Rule getDefaultNodeRule() {
@@ -121,7 +119,7 @@ public class StyleSheet {
 
 	/**
 	 * The default rule for edges.
-	 * 
+	 *
 	 * @return A rule.
 	 */
 	public Rule getDefaultEdgeRule() {
@@ -130,7 +128,7 @@ public class StyleSheet {
 
 	/**
 	 * The default rule for sprites.
-	 * 
+	 *
 	 * @return A rule.
 	 */
 	public Rule getDefaultSpriteRule() {
@@ -139,7 +137,7 @@ public class StyleSheet {
 
 	/**
 	 * The default style for graphs.
-	 * 
+	 *
 	 * @return A style.
 	 */
 	public Style getDefaultGraphStyle() {
@@ -148,7 +146,7 @@ public class StyleSheet {
 
 	/**
 	 * The default style for nodes.
-	 * 
+	 *
 	 * @return A style.
 	 */
 	public Style getDefaultNodeStyle() {
@@ -157,7 +155,7 @@ public class StyleSheet {
 
 	/**
 	 * The default style for edges.
-	 * 
+	 *
 	 * @return A style.
 	 */
 	public Style getDefaultEdgeStyle() {
@@ -166,7 +164,7 @@ public class StyleSheet {
 
 	/**
 	 * The default style for sprites.
-	 * 
+	 *
 	 * @return A style.
 	 */
 	public Style getDefaultSpriteStyle() {
@@ -175,7 +173,7 @@ public class StyleSheet {
 
 	/**
 	 * All the rules (default, specific and class) that apply to graphs.
-	 * 
+	 *
 	 * @return The set of rules for graphs.
 	 */
 	public NameSpace getGraphStyleNameSpace() {
@@ -184,7 +182,7 @@ public class StyleSheet {
 
 	/**
 	 * All the rules (default, specific and class) that apply to nodes.
-	 * 
+	 *
 	 * @return The set of rules for nodes.
 	 */
 	public NameSpace getNodeStyleNameSpace() {
@@ -193,7 +191,7 @@ public class StyleSheet {
 
 	/**
 	 * All the rules (default, specific and class) that apply to edges.
-	 * 
+	 *
 	 * @return The set of rules for edges.
 	 */
 	public NameSpace getEdgeStyleNameSpace() {
@@ -202,7 +200,7 @@ public class StyleSheet {
 
 	/**
 	 * All the rules (default, specific and class) that apply to sprites.
-	 * 
+	 *
 	 * @return The set of rules for sprites.
 	 */
 	public NameSpace getSpriteStyleNameSpace() {
@@ -211,20 +209,19 @@ public class StyleSheet {
 
 	/**
 	 * Get the rules that match a given element.
-	 * 
+	 *
 	 * First a rule for the identifier of the element is looked for. It is
-	 * looked for in its name space (nodes for Node element, etc.) If it is not
-	 * found, the default rule for this kind of element is used. This rule is
-	 * pushed at start of the returned array of rules.
-	 * 
+	 * looked for in its name space (nodes for Node element, etc.) If it is
+	 * not found, the default rule for this kind of element is used. This
+	 * rule is pushed at start of the returned array of rules.
+	 *
 	 * After a rule for the element is found, then the various classes the
-	 * element pertains to are looked at and each class rule found is added in
-	 * order in the returned array.
-	 * 
-	 * @param element
-	 *            The element a rules are searched for.
-	 * @return A set of rules matching the element, with the main rule at index
-	 *         0.
+	 * element pertains to are looked at and each class rule found is added
+	 * in order in the returned array.
+	 *
+	 * @param element The element a rules are searched for.
+	 * @return A set of rules matching the element, with the main rule at
+	 *         index 0.
 	 */
 	public ArrayList<Rule> getRulesFor(Element element) {
 		ArrayList<Rule> rules = null;
@@ -246,13 +243,11 @@ public class StyleSheet {
 	}
 
 	/**
-	 * Compute the name of the style group and element will pertain to knowing
-	 * its styling rules.
-	 * 
-	 * @param element
-	 *            The element.
-	 * @param rules
-	 *            The styling rules.
+	 * Compute the name of the style group and element will pertain to
+	 * knowing its styling rules.
+	 *
+	 * @param element The element.
+	 * @param rules The styling rules.
 	 * @return The unique identifier of the style group for the element.
 	 * @see #getRulesFor(Element)
 	 */
@@ -292,12 +287,11 @@ public class StyleSheet {
 	}
 
 	// Commands
-
 	/**
-	 * Create the default rules. This method is the place to set defaults for
-	 * specific element types. This is here that the edge width is reset to one,
-	 * since the default width is larger. The default z index that is different
-	 * for every class of element is also set here.
+	 * Create the default rules. This method is the place to set defaults
+	 * for specific element types. This is here that the edge width is reset
+	 * to one, since the default width is larger. The default z index that
+	 * is different for every class of element is also set here.
 	 */
 	protected void initRules() {
 		defaultRule = new Rule(new Selector(Selector.Type.ANY), null);
@@ -305,20 +299,20 @@ public class StyleSheet {
 		defaultRule.getStyle().setDefaults();
 
 		graphRules.defaultRule = new Rule(new Selector(Selector.Type.GRAPH),
-				defaultRule);
+			defaultRule);
 		nodeRules.defaultRule = new Rule(new Selector(Selector.Type.NODE),
-				defaultRule);
+			defaultRule);
 		edgeRules.defaultRule = new Rule(new Selector(Selector.Type.EDGE),
-				defaultRule);
+			defaultRule);
 		spriteRules.defaultRule = new Rule(new Selector(Selector.Type.SPRITE),
-				defaultRule);
+			defaultRule);
 
 		graphRules.defaultRule.getStyle().setValue("padding",
-				new Values(Style.Units.PX, 30));
+			new Values(Style.Units.PX, 30));
 		edgeRules.defaultRule.getStyle().setValue("shape",
-				StyleConstants.Shape.LINE);
+			StyleConstants.Shape.LINE);
 		edgeRules.defaultRule.getStyle().setValue("size",
-				new Values(Style.Units.PX, 1));
+			new Values(Style.Units.PX, 1));
 		edgeRules.defaultRule.getStyle().setValue("z-index", new Integer(1));
 		nodeRules.defaultRule.getStyle().setValue("z-index", new Integer(2));
 		spriteRules.defaultRule.getStyle().setValue("z-index", new Integer(3));
@@ -328,7 +322,7 @@ public class StyleSheet {
 
 		graphRules.defaultRule.getStyle().setValue("fill-color", colors);
 		graphRules.defaultRule.getStyle().setValue("stroke-mode",
-				StrokeMode.NONE);
+			StrokeMode.NONE);
 
 		for (StyleSheetListener listener : listeners) {
 			listener.styleAdded(defaultRule, defaultRule);
@@ -336,7 +330,7 @@ public class StyleSheet {
 			listener.styleAdded(nodeRules.defaultRule, nodeRules.defaultRule);
 			listener.styleAdded(edgeRules.defaultRule, edgeRules.defaultRule);
 			listener.styleAdded(spriteRules.defaultRule,
-					spriteRules.defaultRule);
+				spriteRules.defaultRule);
 		}
 
 		// for( StyleSheetListener listener: listeners )
@@ -355,11 +349,10 @@ public class StyleSheet {
 
 	/**
 	 * Add a listener for style events. You never receive events for default
-	 * rules and styles. You receive events only for the rules and styles that
-	 * are added after this listener is registered.
-	 * 
-	 * @param listener
-	 *            The new listener.
+	 * rules and styles. You receive events only for the rules and styles
+	 * that are added after this listener is registered.
+	 *
+	 * @param listener The new listener.
 	 */
 	public void addListener(StyleSheetListener listener) {
 		listeners.add(listener);
@@ -367,20 +360,20 @@ public class StyleSheet {
 
 	/**
 	 * Remove a previously registered listener.
-	 * 
-	 * @param listener
-	 *            The listener to remove.
+	 *
+	 * @param listener The listener to remove.
 	 */
 	public void removeListener(StyleSheetListener listener) {
 		int index = listeners.indexOf(listener);
 
-		if (index >= 0)
+		if (index >= 0) {
 			listeners.remove(index);
+		}
 	}
 
 	/**
-	 * Clear all specific rules and initialise the default rules. The listeners
-	 * are not changed.
+	 * Clear all specific rules and initialise the default rules. The
+	 * listeners are not changed.
 	 */
 	public void clear() {
 		graphRules.clear();
@@ -389,34 +382,32 @@ public class StyleSheet {
 		spriteRules.clear();
 		initRules();
 
-		for (StyleSheetListener listener : listeners)
+		for (StyleSheetListener listener : listeners) {
 			listener.styleSheetCleared();
+		}
 	}
 
 	/**
 	 * Parse a style sheet from a file. The style sheet will complete the
 	 * previously parsed style sheets.
-	 * 
-	 * @param fileName
-	 *            Name of the file containing the style sheet.
-	 * @throws IOException
-	 *             For any kind of I/O error or parse error.
+	 *
+	 * @param fileName Name of the file containing the style sheet.
+	 * @throws IOException For any kind of I/O error or parse error.
 	 */
 	public void parseFromFile(String fileName) throws IOException {
 		parse(new InputStreamReader(new BufferedInputStream(
-				new FileInputStream(fileName))));
+			new FileInputStream(fileName))));
 	}
 
 	/**
 	 * Parse a style sheet from an URL. The style sheet will complete the
-	 * previously parsed style sheets. First, this method will search the URL as
-	 * SystemRessource, then as a file and if there is no match, just try to
-	 * create an URL object giving the URL as constructor's parameter.
-	 * 
-	 * @param url
-	 *            Name of the file containing the style sheet.
-	 * @throws IOException
-	 *             For any kind of I/O error or parse error.
+	 * previously parsed style sheets. First, this method will search the
+	 * URL as SystemRessource, then as a file and if there is no match, just
+	 * try to create an URL object giving the URL as constructor's
+	 * parameter.
+	 *
+	 * @param url Name of the file containing the style sheet.
+	 * @throws IOException For any kind of I/O error or parse error.
 	 */
 	public void parseFromURL(String url) throws IOException {
 		URL u = StyleSheet.class.getClassLoader().getResource(url);
@@ -424,10 +415,11 @@ public class StyleSheet {
 			String fileUrl = url.replace("file://", "");
 			File f = new File(fileUrl);
 
-			if (f.exists())
+			if (f.exists()) {
 				u = f.toURI().toURL();
-			else
+			} else {
 				u = new URL(url);
+			}
 		}
 
 		parse(new InputStreamReader(u.openStream()));
@@ -436,29 +428,25 @@ public class StyleSheet {
 	/**
 	 * Parse a style sheet from a string. The style sheet will complete the
 	 * previously parsed style sheets.
-	 * 
-	 * @param styleSheet
-	 *            The string containing the whole style sheet.
-	 * @throws IOException
-	 *             For any kind of I/O error or parse error.
+	 *
+	 * @param styleSheet The string containing the whole style sheet.
+	 * @throws IOException For any kind of I/O error or parse error.
 	 */
 	public void parseFromString(String styleSheet) throws IOException {
 		parse(new StringReader(styleSheet));
 	}
 
 	/**
-	 * Parse only one style, create a rule with the given selector, and add this
-	 * rule.
-	 * 
-	 * @param select
-	 *            The elements for which this style must apply.
-	 * @param styleString
-	 *            The style string to parse.
+	 * Parse only one style, create a rule with the given selector, and add
+	 * this rule.
+	 *
+	 * @param select The elements for which this style must apply.
+	 * @param styleString The style string to parse.
 	 */
 	public void parseStyleFromString(Selector select, String styleString)
-			throws IOException {
+		throws IOException {
 		StyleSheetParser parser = new StyleSheetParser(this, new StringReader(
-				styleString));
+			styleString));
 
 		Style style = new Style();
 
@@ -475,28 +463,27 @@ public class StyleSheet {
 	}
 
 	/**
-	 * Load a style sheet from an attribute value, the value can either be the
-	 * contents of the whole style sheet, or begin by "url". If it starts with
-	 * "url", it must then contain between parenthesis the string of the URL to
-	 * load. For example:
-	 * 
+	 * Load a style sheet from an attribute value, the value can either be
+	 * the contents of the whole style sheet, or begin by "url". If it
+	 * starts with "url", it must then contain between parenthesis the
+	 * string of the URL to load. For example:
+	 *
 	 * <pre>
 	 * 		url('file:///some/path/on/the/file/system')
 	 * </pre>
-	 * 
+	 *
 	 * Or
-	 * 
+	 *
 	 * <pre>
 	 * 		url('http://some/web/url')
 	 * </pre>
-	 * 
-	 * The loaded style sheet will be merged with the styles already present in
-	 * the style sheet.
-	 * 
-	 * @param styleSheetValue
-	 *            The style sheet name of content.
-	 * @throws IOException
-	 *             If the loading or parsing of the style sheet failed.
+	 *
+	 * The loaded style sheet will be merged with the styles already present
+	 * in the style sheet.
+	 *
+	 * @param styleSheetValue The style sheet name of content.
+	 * @throws IOException If the loading or parsing of the style sheet
+	 *                     failed.
 	 */
 	public void load(String styleSheetValue) throws IOException {
 		if (styleSheetValue.startsWith("url")) {
@@ -505,19 +492,20 @@ public class StyleSheet {
 			int beg = styleSheetValue.indexOf('(');
 			int end = styleSheetValue.lastIndexOf(')');
 
-			if (beg >= 0 && end > beg)
+			if (beg >= 0 && end > beg) {
 				styleSheetValue = styleSheetValue.substring(beg + 1, end);
+			}
 
 			styleSheetValue = styleSheetValue.trim();
 
 			// Remove the quotes (') or (").
-
 			if (styleSheetValue.startsWith("'")) {
 				beg = 0;
 				end = styleSheetValue.lastIndexOf('\'');
 
-				if (beg >= 0 && end > beg)
+				if (beg >= 0 && end > beg) {
 					styleSheetValue = styleSheetValue.substring(beg + 1, end);
+				}
 			}
 
 			styleSheetValue = styleSheetValue.trim();
@@ -526,15 +514,15 @@ public class StyleSheet {
 				beg = 0;
 				end = styleSheetValue.lastIndexOf('"');
 
-				if (beg >= 0 && end > beg)
+				if (beg >= 0 && end > beg) {
 					styleSheetValue = styleSheetValue.substring(beg + 1, end);
+				}
 			}
 
 			// That's it.
-
 			parseFromURL(styleSheetValue);
 		} else // Parse from string, the value is considered to be the style
-				// sheet contents.
+		// sheet contents.
 		{
 			parseFromString(styleSheetValue);
 		}
@@ -542,11 +530,9 @@ public class StyleSheet {
 
 	/**
 	 * Parse the style sheet from the given reader.
-	 * 
-	 * @param reader
-	 *            The reader pointing at the style sheet.
-	 * @throws IOException
-	 *             For any kind of I/O error or parse error.
+	 *
+	 * @param reader The reader pointing at the style sheet.
+	 * @throws IOException For any kind of I/O error or parse error.
 	 */
 	protected void parse(Reader reader) throws IOException {
 		StyleSheetParser parser = new StyleSheetParser(this, reader);
@@ -559,43 +545,44 @@ public class StyleSheet {
 	}
 
 	/**
-	 * Add a new rule with its style. If the rule selector is just GRAPH, NODE,
-	 * EDGE or SPRITE, the default corresponding rules make a copy (or
-	 * augmentation) of its style. Else if an id or class is specified the rules
-	 * are added (or changed/augmented if the id or class was already set) and
-	 * their parent is set to the default graph, node, edge or sprite rules. If
-	 * this is an event rule (or meta-class rule), its sibling rule (the same
-	 * rule without the meta-class) is searched and created if not found and the
-	 * event rule is added as an alternative to it.
-	 * 
-	 * @param newRule
-	 *            The new rule.
+	 * Add a new rule with its style. If the rule selector is just GRAPH,
+	 * NODE, EDGE or SPRITE, the default corresponding rules make a copy (or
+	 * augmentation) of its style. Else if an id or class is specified the
+	 * rules are added (or changed/augmented if the id or class was already
+	 * set) and their parent is set to the default graph, node, edge or
+	 * sprite rules. If this is an event rule (or meta-class rule), its
+	 * sibling rule (the same rule without the meta-class) is searched and
+	 * created if not found and the event rule is added as an alternative to
+	 * it.
+	 *
+	 * @param newRule The new rule.
 	 */
 	public void addRule(Rule newRule) {
 		Rule oldRule = null;
 
 		switch (newRule.selector.getType()) {
-		case ANY:
-			throw new RuntimeException(
+			case ANY:
+				throw new RuntimeException(
 					"The ANY selector should never be used, it is created automatically.");
-		case GRAPH:
-			oldRule = graphRules.addRule(newRule);
-			break;
-		case NODE:
-			oldRule = nodeRules.addRule(newRule);
-			break;
-		case EDGE:
-			oldRule = edgeRules.addRule(newRule);
-			break;
-		case SPRITE:
-			oldRule = spriteRules.addRule(newRule);
-			break;
-		default:
-			throw new RuntimeException("Ho ho ho ?");
+			case GRAPH:
+				oldRule = graphRules.addRule(newRule);
+				break;
+			case NODE:
+				oldRule = nodeRules.addRule(newRule);
+				break;
+			case EDGE:
+				oldRule = edgeRules.addRule(newRule);
+				break;
+			case SPRITE:
+				oldRule = spriteRules.addRule(newRule);
+				break;
+			default:
+				throw new RuntimeException("Ho ho ho ?");
 		}
 
-		for (StyleSheetListener listener : listeners)
+		for (StyleSheetListener listener : listeners) {
 			listener.styleAdded(oldRule, newRule);
+		}
 	}
 
 	@Override
@@ -614,14 +601,13 @@ public class StyleSheet {
 	}
 
 	// Nested classes
-
 	/**
 	 * A name space is a tuple (default rule, id rule set, class rule set).
-	 * 
+	 *
 	 * <p>
-	 * The name space defines a default rule for a kind of elements, a set of
-	 * rules for this kind of elements with a given identifier, and a set or
-	 * rules for this kind of elements with a given class.
+	 * The name space defines a default rule for a kind of elements, a set
+	 * of rules for this kind of elements with a given identifier, and a set
+	 * or rules for this kind of elements with a given class.
 	 * </p>
 	 */
 	public class NameSpace {
@@ -638,26 +624,26 @@ public class StyleSheet {
 		public Rule defaultRule;
 
 		/**
-		 * The set of rules for this kind of elements with a given identifier.
+		 * The set of rules for this kind of elements with a given
+		 * identifier.
 		 */
 		public HashMap<String, Rule> byId = new HashMap<String, Rule>();
 
 		/**
-		 * The set of rules for this kind of elements with a given class.
+		 * The set of rules for this kind of elements with a given
+		 * class.
 		 */
 		public HashMap<String, Rule> byClass = new HashMap<String, Rule>();
 
 		// Constructor
-
 		public NameSpace(Selector.Type type) {
 			this.type = type;
 		}
 
 		// Access
-
 		/**
 		 * The kind of elements this name space applies rules to.
-		 * 
+		 *
 		 * @return A type of element (node, edge, sprite, graph).
 		 */
 		public Selector.Type getGraphElementType() {
@@ -666,7 +652,7 @@ public class StyleSheet {
 
 		/**
 		 * Number of specific (id) rules.
-		 * 
+		 *
 		 * @return The number of rules that apply to elements by their
 		 *         identifiers.
 		 */
@@ -676,49 +662,51 @@ public class StyleSheet {
 
 		/**
 		 * Number of specific (class) rules.
-		 * 
-		 * @return The number of rules that apply to elements by their classes.
+		 *
+		 * @return The number of rules that apply to elements by their
+		 *         classes.
 		 */
 		public int getClassRulesCount() {
 			return byClass.size();
 		}
 
 		/**
-		 * Get the rules that match a given element. The rules are returned in a
-		 * given order. The array always contain the "main" rule that matches
-		 * the element. This rule is either a default rule for the kind of
-		 * element given or the rule that matches its identifier if there is
-		 * one. Then class rules the element has can be appended to this array
-		 * in order.
-		 * 
-		 * @return an array of rules that match the element, with the main rule
-		 *         at index 0.
+		 * Get the rules that match a given element. The rules are
+		 * returned in a given order. The array always contain the
+		 * "main" rule that matches the element. This rule is either a
+		 * default rule for the kind of element given or the rule that
+		 * matches its identifier if there is one. Then class rules the
+		 * element has can be appended to this array in order.
+		 *
+		 * @return an array of rules that match the element, with the
+		 *         main rule at index 0.
 		 */
 		protected ArrayList<Rule> getRulesFor(Element element) {
 			Rule rule = byId.get(element.getId());
 			ArrayList<Rule> rules = new ArrayList<Rule>();
 
-			if (rule != null)
+			if (rule != null) {
 				rules.add(rule);
-			else
+			} else {
 				rules.add(defaultRule);
+			}
 
 			getClassRules(element, rules);
 
-			if (rules.isEmpty())
+			if (rules.isEmpty()) {
 				rules.add(defaultRule);
+			}
 
 			return rules;
 		}
 
 		/**
-		 * Search if the given element has classes attributes and fill the given
-		 * array with the set of rules that match these classes.
-		 * 
-		 * @param element
-		 *            The element for which classes must be found.
-		 * @param rules
-		 *            The rule array to fill.
+		 * Search if the given element has classes attributes and fill
+		 * the given array with the set of rules that match these
+		 * classes.
+		 *
+		 * @param element The element for which classes must be found.
+		 * @param rules The rule array to fill.
 		 */
 		protected void getClassRules(Element element, ArrayList<Rule> rules) {
 			Object o = element.getAttribute("ui.class");
@@ -729,8 +717,9 @@ public class StyleSheet {
 						if (s instanceof CharSequence) {
 							Rule rule = byClass.get((CharSequence) s);
 
-							if (rule != null)
+							if (rule != null) {
 								rules.add(rule);
+							}
 						}
 					}
 				} else if (o instanceof CharSequence) {
@@ -740,19 +729,19 @@ public class StyleSheet {
 					for (String c : classes) {
 						Rule rule = byClass.get(c);
 
-						if (rule != null)
+						if (rule != null) {
 							rules.add(rule);
+						}
 					}
 				} else {
 					throw new RuntimeException(
-							"Oups ! class attribute is of type "
-									+ o.getClass().getName());
+						"Oups ! class attribute is of type "
+						+ o.getClass().getName());
 				}
 			}
 		}
 
 		// Command
-
 		/**
 		 * Remove all styles.
 		 */
@@ -764,27 +753,26 @@ public class StyleSheet {
 
 		/**
 		 * Add a new rule.
-		 * 
+		 *
 		 * <p>
 		 * Several cases can occur :
 		 * </p>
-		 * 
+		 *
 		 * <ul>
-		 * <li>The rule to add has an ID or class and the rule does not yet
-		 * exists and is not an event rule : add it directly.</li>
-		 * <li>If the rule has an ID or class but the rule already exists,
-		 * augment to already existing rule.</li>
-		 * <li>If the rule has no ID or class and is not an event, augment the
-		 * default style.</li>
+		 * <li>The rule to add has an ID or class and the rule does not
+		 * yet exists and is not an event rule : add it directly.</li>
+		 * <li>If the rule has an ID or class but the rule already
+		 * exists, augment to already existing rule.</li>
+		 * <li>If the rule has no ID or class and is not an event,
+		 * augment the default style.</li>
 		 * <li>If the rule is an event, the corresponding normal rule is
-		 * searched, if it does not exists, it is created then or else, the
-		 * event is added to the found rule.</li>
+		 * searched, if it does not exists, it is created then or else,
+		 * the event is added to the found rule.</li>
 		 * </ul>
-		 * 
-		 * @param newRule
-		 *            The rule to add or copy.
-		 * @return It the rule added augments an existing rule, this existing
-		 *         rule is returned, else null is returned.
+		 *
+		 * @param newRule The rule to add or copy.
+		 * @return It the rule added augments an existing rule, this
+		 *         existing rule is returned, else null is returned.
 		 */
 		protected Rule addRule(Rule newRule) {
 			Rule oldRule = null;
@@ -816,7 +804,6 @@ public class StyleSheet {
 			}
 
 			// That's it.
-
 			return oldRule;
 		}
 
@@ -828,18 +815,18 @@ public class StyleSheet {
 
 				if (parentRule == null) {
 					parentRule = addRule(new Rule(new Selector(
-							newRule.selector.getType(),
-							newRule.selector.getId(),
-							newRule.selector.getClazz())));
+						newRule.selector.getType(),
+						newRule.selector.getId(),
+						newRule.selector.getClazz())));
 				}
 			} else if (newRule.selector.getClazz() != null) {
 				parentRule = byClass.get(newRule.selector.getClazz());
 
 				if (parentRule == null) {
 					parentRule = addRule(new Rule(new Selector(
-							newRule.selector.getType(),
-							newRule.selector.getId(),
-							newRule.selector.getClazz())));
+						newRule.selector.getType(),
+						newRule.selector.getId(),
+						newRule.selector.getClazz())));
 				}
 			} else {
 				parentRule = defaultRule;
@@ -847,7 +834,7 @@ public class StyleSheet {
 
 			newRule.getStyle().reparent(parentRule);
 			parentRule.getStyle().addAlternateStyle(
-					newRule.selector.getPseudoClass(), newRule);
+				newRule.selector.getPseudoClass(), newRule);
 
 			return parentRule;
 		}
@@ -861,30 +848,32 @@ public class StyleSheet {
 			String prefix = "";
 
 			if (level > 0) {
-				for (int i = 0; i < level; i++)
+				for (int i = 0; i < level; i++) {
 					prefix += "    ";
+				}
 			}
 
 			StringBuilder builder = new StringBuilder();
 
 			builder.append(String
-					.format("%s%s default style :%n", prefix, type));
+				.format("%s%s default style :%n", prefix, type));
 			builder.append(defaultRule.toString(level + 1));
 			toStringRules(level, builder, byId,
-					String.format("%s%s id styles", prefix, type));
+				String.format("%s%s id styles", prefix, type));
 			toStringRules(level, builder, byClass,
-					String.format("%s%s class styles", prefix, type));
+				String.format("%s%s class styles", prefix, type));
 
 			return builder.toString();
 		}
 
 		protected void toStringRules(int level, StringBuilder builder,
-				HashMap<String, Rule> rules, String title) {
+			HashMap<String, Rule> rules, String title) {
 			builder.append(title);
 			builder.append(String.format(" :%n"));
 
-			for (Rule rule : rules.values())
+			for (Rule rule : rules.values()) {
 				builder.append(rule.toString(level + 1));
+			}
 		}
 	}
 }

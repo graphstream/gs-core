@@ -33,9 +33,9 @@ package org.graphstream.stream.file.pajek;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import org.graphstream.graph.Element.ElementType;
 
 import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
-import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.stream.file.FileSourcePajek;
 import org.graphstream.util.parser.ParseException;
 import org.graphstream.util.parser.Token;
@@ -69,33 +69,33 @@ public class PajekContext {
 
 	protected void addGraphAttribute(String attr, String value) {
 		pajek.sendAttributeChangedEvent(sourceId, sourceId, ElementType.GRAPH,
-				attr, AttributeChangeEvent.ADD, null, value);
+			attr, AttributeChangeEvent.ADD, null, value);
 	}
 
 	protected void addNodeLabel(String nb, String label) {
 		pajek.sendAttributeChangedEvent(sourceId, nb, ElementType.NODE,
-				"ui.label", AttributeChangeEvent.ADD, null, label);
+			"ui.label", AttributeChangeEvent.ADD, null, label);
 	}
 
 	protected void addNodeGraphics(String id, NodeGraphics graphics) {
 		pajek.sendAttributeChangedEvent(sourceId, id, ElementType.NODE,
-				"ui.style", AttributeChangeEvent.ADD, null, graphics.getStyle());
+			"ui.style", AttributeChangeEvent.ADD, null, graphics.getStyle());
 	}
 
 	protected void addNodePosition(String id, Token x, Token y, Token z)
-			throws ParseException {
+		throws ParseException {
 		Object pos[] = new Object[3];
 		pos[0] = (Double) getReal(x);
 		pos[1] = (Double) getReal(y);
 		pos[2] = z != null ? (Double) getReal(z) : 0;
-		
+
 		pajek.sendAttributeChangedEvent(sourceId, id, ElementType.NODE,
-				"xyz", AttributeChangeEvent.ADD, null, pos);
+			"xyz", AttributeChangeEvent.ADD, null, pos);
 	}
 
 	protected String addEdge(String src, String trg) {
 		String id = String.format("%s_%s_%d", src, trg,
-				(long) (Math.random() * 100000) + System.currentTimeMillis());
+			(long) (Math.random() * 100000) + System.currentTimeMillis());
 
 		pajek.sendEdgeAdded(sourceId, id, src, trg, directed);
 
@@ -110,16 +110,16 @@ public class PajekContext {
 			for (int col = 0; col < size; col++) {
 				if (mat.hasEdge(line, col)) {
 					String id = String.format("%d_%d_%d", line + 1, col + 1,
-							edgeid++);
+						edgeid++);
 					if (mat.hasEdge(col, line)) {
 						pajek.sendEdgeAdded(sourceId, id,
-								String.format("%d", line + 1),
-								String.format("%d", col + 1), false);
+							String.format("%d", line + 1),
+							String.format("%d", col + 1), false);
 						mat.set(col, line, false);
 					} else {
 						pajek.sendEdgeAdded(sourceId, id,
-								String.format("%d", line + 1),
-								String.format("%d", col + 1), true);
+							String.format("%d", line + 1),
+							String.format("%d", col + 1), true);
 					}
 				}
 			}
@@ -128,12 +128,12 @@ public class PajekContext {
 
 	protected void addEdgeWeight(String id, Token nb) throws ParseException {
 		pajek.sendAttributeChangedEvent(sourceId, id, ElementType.EDGE,
-				weightAttributeName, AttributeChangeEvent.ADD, null, getReal(nb));
+			weightAttributeName, AttributeChangeEvent.ADD, null, getReal(nb));
 	}
 
 	protected void addEdgeGraphics(String id, EdgeGraphics graphics) {
 		pajek.sendAttributeChangedEvent(sourceId, id, ElementType.EDGE,
-				"ui.style", AttributeChangeEvent.ADD, null, graphics.getStyle());
+			"ui.style", AttributeChangeEvent.ADD, null, graphics.getStyle());
 	}
 
 	protected static int getInt(Token nb) throws ParseException {
@@ -141,7 +141,7 @@ public class PajekContext {
 			return Integer.parseInt(nb.image);
 		} catch (Exception e) {
 			throw new ParseException(String.format("%d:%d: %s not an integer",
-					nb.beginLine, nb.beginColumn, nb.image));
+				nb.beginLine, nb.beginColumn, nb.image));
 		}
 	}
 
@@ -150,18 +150,18 @@ public class PajekContext {
 			return Double.parseDouble(nb.image);
 		} catch (Exception e) {
 			throw new ParseException(String.format("%d:%d: %s not a real",
-					nb.beginLine, nb.beginColumn, nb.image));
+				nb.beginLine, nb.beginColumn, nb.image));
 		}
 	}
 
 	public static String toColorValue(Token R, Token G, Token B)
-			throws ParseException {
+		throws ParseException {
 		double r = getReal(R);
 		double g = getReal(G);
 		double b = getReal(B);
 
 		return String.format("rgb(%d, %d, %d)", (int) (r * 255),
-				(int) (g * 255), (int) (b * 255));
+			(int) (g * 255), (int) (b * 255));
 	}
 }
 
@@ -169,7 +169,7 @@ abstract class Graphics {
 	protected StringBuffer graphics = new StringBuffer();
 
 	public abstract void addKey(String key, String value, Token tk)
-			throws ParseException;
+		throws ParseException;
 
 	public String getStyle() {
 		return graphics.toString();
@@ -180,7 +180,7 @@ abstract class Graphics {
 			return Double.parseDouble(nb);
 		} catch (Exception e) {
 			throw new ParseException(String.format("%d:%d: %s not a real",
-					tk.beginLine, tk.beginColumn, nb));
+				tk.beginLine, tk.beginColumn, nb));
 		}
 	}
 
@@ -189,7 +189,7 @@ abstract class Graphics {
 			return Integer.parseInt(nb);
 		} catch (Exception e) {
 			throw new ParseException(String.format("%d:%d: %s not an integer",
-					tk.beginLine, tk.beginColumn, nb));
+				tk.beginLine, tk.beginColumn, nb));
 		}
 	}
 }
@@ -197,20 +197,20 @@ abstract class Graphics {
 class NodeGraphics extends Graphics {
 	@Override
 	public void addKey(String key, String value, Token tk)
-			throws ParseException {
+		throws ParseException {
 		if (key.equals("shape")) {
 			graphics.append(String.format("shape: %s;", value));
 		} else if (key.equals("ic")) {
 			graphics.append(String.format("fill-color: %s;", value));
 		} else if (key.equals("bc")) {
 			graphics.append(String.format(
-					"stroke-color: %s; stroke-mode: plain;", value));
+				"stroke-color: %s; stroke-mode: plain;", value));
 		} else if (key.equals("bw")) {
 			graphics.append(String.format(Locale.US, "stroke-width: %fpx;",
-					getReal(value, tk)));
+				getReal(value, tk)));
 		} else if (key.equals("s_size")) {
 			graphics.append(String.format(Locale.US, "size: %fpx;",
-					getReal(value, tk)));
+				getReal(value, tk)));
 		} else if (key.equals("lc")) {
 			graphics.append(String.format("text-color: %s;", value));
 		} else if (key.equals("fos")) {
@@ -224,16 +224,16 @@ class NodeGraphics extends Graphics {
 class EdgeGraphics extends Graphics {
 	@Override
 	public void addKey(String key, String value, Token tk)
-			throws ParseException {
+		throws ParseException {
 		if (key.equals("w")) {
 			graphics.append(String.format(Locale.US, "size: %fpx;",
-					getReal(value, tk)));
+				getReal(value, tk)));
 		} else if (key.equals("c")) {
 			graphics.append(String.format("fill-color: %s;", value));
 		} else if (key.equals("s")) {
 			double s = getReal(value, tk);
 			graphics.append(String.format("arrow-size: %spx, %spx;", s * 5,
-					s * 3));
+				s * 3));
 		} else if (key.equals("l")) {
 			// ?
 		} else if (key.equals("p")) {
@@ -282,10 +282,11 @@ class EdgeMatrix {
 				int n = mat.length * mat.length;
 				curLine = -1;
 				for (int i = 0; i < n; i++) {
-					if (i % mat.length == 0)
+					if (i % mat.length == 0) {
 						curLine++;
+					}
 					mat[curLine][i - (curLine * mat.length)] = line.get(i)
-							.equals("1");
+						.equals("1");
 				}
 			}
 		}

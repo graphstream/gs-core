@@ -41,7 +41,7 @@ import java.util.Collection;
 
 /**
  * Interface for classes that draw a GraphicGraph in a swing component.
- * 
+ *
  * <p>
  * There are two rendering mechanisms in the Swing ui package : the viewer and
  * the renderers. The viewer is a complete architecture to render a graph in a
@@ -50,7 +50,7 @@ import java.util.Collection;
  * When using the render you are must handle the graphic graph by yourself, but
  * you have a lot more flexibility.
  * </p>
- * 
+ *
  * <p>
  * The viewer mechanisms uses graph renderers.
  * </p>
@@ -63,10 +63,9 @@ public interface GraphRenderer {
 	void close();
 
 	// Access
-
 	/**
 	 * Get a camera object to provide control commands on the view.
-	 * 
+	 *
 	 * @return a Camera instance
 	 */
 	public abstract Camera getCamera();
@@ -74,11 +73,9 @@ public interface GraphRenderer {
 	/**
 	 * Search for the first node or sprite (in that order) that contains the
 	 * point at coordinates (x, y).
-	 * 
-	 * @param x
-	 *            The point abscissa.
-	 * @param y
-	 *            The point ordinate.
+	 *
+	 * @param x The point abscissa.
+	 * @param y The point ordinate.
 	 * @return The first node or sprite at the given coordinates or null if
 	 *         nothing found.
 	 */
@@ -87,91 +84,75 @@ public interface GraphRenderer {
 	/**
 	 * Search for all the nodes and sprites contained inside the rectangle
 	 * (x1,y1)-(x2,y2).
-	 * 
-	 * @param x1
-	 *            The rectangle lowest point abscissa.
-	 * @param y1
-	 *            The rectangle lowest point ordinate.
-	 * @param x2
-	 *            The rectangle highest point abscissa.
-	 * @param y2
-	 *            The rectangle highest point ordinate.
+	 *
+	 * @param x1 The rectangle lowest point abscissa.
+	 * @param y1 The rectangle lowest point ordinate.
+	 * @param x2 The rectangle highest point abscissa.
+	 * @param y2 The rectangle highest point ordinate.
 	 * @return The set of sprites and nodes in the given rectangle.
 	 */
 	public abstract Collection<GraphicElement> allNodesOrSpritesIn(double x1,
-			double y1, double x2, double y2);
+		double y1, double x2, double y2);
 
 	// Command
-
 	/**
 	 * Redisplay or update the graph.
 	 */
 	public abstract void render(Graphics2D g, int x, int y, int width, int height);
 
 	/**
-	 * Called by the mouse manager to specify where a node and sprite selection
-	 * started.
-	 * 
-	 * @param x1
-	 *            The selection start abscissa.
-	 * @param y1
-	 *            The selection start ordinate.
+	 * Called by the mouse manager to specify where a node and sprite
+	 * selection started.
+	 *
+	 * @param x1 The selection start abscissa.
+	 * @param y1 The selection start ordinate.
 	 */
 	public abstract void beginSelectionAt(double x1, double y1);
 
 	/**
 	 * The selection already started grows toward position (x, y).
-	 * 
-	 * @param x
-	 *            The new end selection abscissa.
-	 * @param y
-	 *            The new end selection ordinate.
+	 *
+	 * @param x The new end selection abscissa.
+	 * @param y The new end selection ordinate.
 	 */
 	public abstract void selectionGrowsAt(double x, double y);
 
 	/**
-	 * Called by the mouse manager to specify where a node and spite selection
-	 * stopped.
-	 * 
-	 * @param x2
-	 *            The selection stop abscissa.
-	 * @param y2
-	 *            The selection stop ordinate.
+	 * Called by the mouse manager to specify where a node and spite
+	 * selection stopped.
+	 *
+	 * @param x2 The selection stop abscissa.
+	 * @param y2 The selection stop ordinate.
 	 */
 	public abstract void endSelectionAt(double x2, double y2);
 
 	/**
 	 * Force an element to move at the given location in pixels.
-	 * 
-	 * @param element
-	 *            The element.
-	 * @param x
-	 *            The requested position abscissa in pixels.
-	 * @param y
-	 *            The requested position ordinate in pixels.
+	 *
+	 * @param element The element.
+	 * @param x The requested position abscissa in pixels.
+	 * @param y The requested position ordinate in pixels.
 	 */
 	public abstract void moveElementAtPx(GraphicElement element, double x,
-			double y);
-	
+		double y);
+
 	public abstract void screenshot(String filename, int width, int height);
 
 	/**
-	 * Set a layer renderer that will be called each time the graph needs to be
-	 * redrawn before the graph is rendered. Pass "null" to remove the layer
-	 * renderer.
-	 * 
-	 * @param renderer
-	 *            The renderer (or null to remove it).
+	 * Set a layer renderer that will be called each time the graph needs to
+	 * be redrawn before the graph is rendered. Pass "null" to remove the
+	 * layer renderer.
+	 *
+	 * @param renderer The renderer (or null to remove it).
 	 */
 	public abstract void setBackLayerRenderer(LayerRenderer renderer);
 
 	/**
-	 * Set a layer renderer that will be called each time the graph needs to be
-	 * redrawn after the graph is rendered. Pass "null" to remove the layer
-	 * renderer.
-	 * 
-	 * @param renderer
-	 *            The renderer (or null to remove it).
+	 * Set a layer renderer that will be called each time the graph needs to
+	 * be redrawn after the graph is rendered. Pass "null" to remove the
+	 * layer renderer.
+	 *
+	 * @param renderer The renderer (or null to remove it).
 	 */
 	public abstract void setForeLayoutRenderer(LayerRenderer renderer);
 }

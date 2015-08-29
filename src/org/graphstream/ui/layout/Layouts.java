@@ -37,28 +37,29 @@ import java.util.logging.Logger;
 
 /**
  * A factory in charge or creating various layout implementations.
- * 
+ *
  * This class is mainly used to create the default layout for the graph viewer.
  * You can also use layouts directly on your graphs, but in this case you do not
  * need this factory.
- * 
+ *
  * This class looks at the "gs.ui.layout" system property to create a layout
  * class. You can change this property using
  * <code>System.setProperty("gs.ui.layout", you_layout_class_name)</code>.
  */
 public class Layouts {
 
-    /**
-     * class level logger
-     */
-    private static final Logger logger = Logger.getLogger(Layouts.class.getSimpleName());
+	/**
+	 * class level logger
+	 */
+	private static final Logger logger = Logger.getLogger(Layouts.class.getSimpleName());
 
 	/**
-	 * Creates a layout according to the "org.graphstream.ui.layout" system property.
-	 * 
-	 * @return The new layout or the default GraphStream "Spring-Box" layout if
-	 *         the "gs.ui.layout" system property is either not set or contains
-	 *         a class that cannot be found.
+	 * Creates a layout according to the "org.graphstream.ui.layout" system
+	 * property.
+	 *
+	 * @return The new layout or the default GraphStream "Spring-Box" layout
+	 *         if the "gs.ui.layout" system property is either not set or
+	 *         contains a class that cannot be found.
 	 */
 	public static Layout newLayoutAlgorithm() {
 		String layoutClassName;
@@ -66,7 +67,7 @@ public class Layouts {
 		try {
 			layoutClassName = System.getProperty("gs.ui.layout");
 			if (layoutClassName != null) {
-                logger.log(Level.WARNING, "\"gs.ui.layout\" is deprecated, use \"org.graphstream.ui.layout\" instead.");
+				logger.log(Level.WARNING, "\"gs.ui.layout\" is deprecated, use \"org.graphstream.ui.layout\" instead.");
 			} else {
 				layoutClassName = System.getProperty("org.graphstream.ui.layout");
 			}
@@ -82,14 +83,14 @@ public class Layouts {
 				if (object instanceof Layout) {
 					return (Layout) object;
 				} else {
-                    logger.warning(String.format("class '%s' is not a 'GraphRenderer'%n", object));
+					logger.warning(String.format("class '%s' is not a 'GraphRenderer'%n", object));
 				}
 			} catch (Exception e) {
-                logger.log(Level.WARNING, "Cannot create layout.", e);
+				logger.log(Level.WARNING, "Cannot create layout.", e);
 			}
 		}
 
 		return new org.graphstream.ui.layout.springbox.implementations.SpringBox(
-				false);
+			false);
 	}
 }

@@ -50,7 +50,7 @@ import org.graphstream.graph.Element;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
-import org.graphstream.stream.SinkAdapter;
+import org.graphstream.stream.Sink;
 import org.graphstream.stream.file.FileSourceDGS;
 import org.graphstream.util.VerboseSink;
 import org.graphstream.util.parser.ParseException;
@@ -266,7 +266,7 @@ public class TestDGSParser {
 		source.end();
 	}
 
-	private static class TestAttributeRemoved extends SinkAdapter {
+	private static class TestAttributeRemoved implements Sink {
 		String nodeId;
 		boolean added;
 		boolean changed;

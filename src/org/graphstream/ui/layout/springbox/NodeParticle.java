@@ -41,16 +41,16 @@ import org.graphstream.ui.geom.Vector3;
 import org.miv.pherd.Particle;
 
 /**
- * Base implementation of a node particle to be used in the {@link BarnesHutLayout}
- * to represent nodes and choose their positions.
- * 
+ * Base implementation of a node particle to be used in the
+ * {@link BarnesHutLayout} to represent nodes and choose their positions.
+ *
  * <p>
  * Several abstract methods have to be overrided to provide a computation of the
- * layout (all the attraction/repulsion computation is done in this class):  
+ * layout (all the attraction/repulsion computation is done in this class):
  * <ul>
- * 		<li>{@link #attraction(Vector3)}</li>
- * 		<li>{@link #repulsionN2(Vector3)}</li>
- * 		<li>{@link #repulsionNLogN(Vector3)}</li>
+ * <li>{@link #attraction(Vector3)}</li>
+ * <li>{@link #repulsionN2(Vector3)}</li>
+ * <li>{@link #repulsionNLogN(Vector3)}</li>
  * </ul>
  * </p>
  */
@@ -96,20 +96,17 @@ public abstract class NodeParticle extends Particle {
 	protected BarnesHutLayout box;
 
 	// Constructors
-
 	/**
 	 * New node.
-	 * 
+	 *
 	 * The node is placed at random in the space of the simulation.
-	 * 
-	 * @param box
-	 *            The spring box.
-	 * @param id
-	 *            The node identifier.
+	 *
+	 * @param box The spring box.
+	 * @param id The node identifier.
 	 */
 	public NodeParticle(BarnesHutLayout box, String id) {
 //		this(box, id, box.getCenterPoint().x, box.getCenterPoint().y, box.is3D() ? box.getCenterPoint().z : 0);
-		this(box, id,  box.randomXInsideBounds(), box.randomYInsideBounds(), box.is3D ? box.randomZInsideBounds() : 0);	
+		this(box, id, box.randomXInsideBounds(), box.randomYInsideBounds(), box.is3D ? box.randomZInsideBounds() : 0);
 //		this(box, id, (box.random.nextDouble() * 2) - 1, (box.random
 //				.nextDouble() * 2) - 1,
 //				box.is3D ? (box.random.nextDouble() * 2) - 1 : 0);
@@ -119,20 +116,15 @@ public abstract class NodeParticle extends Particle {
 
 	/**
 	 * New node at a given position.
-	 * 
-	 * @param box
-	 *            The spring box.
-	 * @param id
-	 *            The node identifier.
-	 * @param x
-	 *            The abscissa.
-	 * @param y
-	 *            The ordinate.
-	 * @param z
-	 *            The depth.
+	 *
+	 * @param box The spring box.
+	 * @param id The node identifier.
+	 * @param x The abscissa.
+	 * @param y The ordinate.
+	 * @param z The depth.
 	 */
 	public NodeParticle(BarnesHutLayout box, String id, double x, double y,
-			double z) {
+		double z) {
 		super(id, x, y, box.is3D ? z : 0);
 		this.box = box;
 		disp = new Vector3();
@@ -146,7 +138,7 @@ public abstract class NodeParticle extends Particle {
 		if (box.outputNodeStats) {
 			try {
 				out = new PrintStream(new FileOutputStream("out" + getId()
-						+ ".data"));
+					+ ".data"));
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.exit(1);
@@ -156,7 +148,7 @@ public abstract class NodeParticle extends Particle {
 
 	/**
 	 * All the edges connected to this node.
-	 * 
+	 *
 	 * @return A set of edges.
 	 */
 	public Collection<EdgeSpring> getEdges() {
@@ -173,15 +165,17 @@ public abstract class NodeParticle extends Particle {
 			repE = 0;
 			attE = 0;
 
-			if (box.viewZone < 0)
+			if (box.viewZone < 0) {
 				repulsionN2(delta);
-			else
+			} else {
 				repulsionNLogN(delta);
+			}
 
 			attraction(delta);
-			
-			if(box.gravity != 0)
+
+			if (box.gravity != 0) {
 				gravity(delta);
+			}
 
 			disp.scalarMult(box.force);
 
@@ -194,8 +188,9 @@ public abstract class NodeParticle extends Particle {
 
 			box.avgLength += len;
 
-			if (len > box.maxMoveLength)
+			if (len > box.maxMoveLength) {
 				box.maxMoveLength = len;
+			}
 		}
 	}
 
@@ -205,16 +200,18 @@ public abstract class NodeParticle extends Particle {
 			nextPos.x = pos.x + disp.data[0];
 			nextPos.y = pos.y + disp.data[1];
 
-			if (box.is3D)
+			if (box.is3D) {
 				nextPos.z = pos.z + disp.data[2];
+			}
 
 			box.nodeMoveCount++;
 			moved = true;
 		} else {
 			nextPos.x = pos.x;
 			nextPos.y = pos.y;
-			if (box.is3D)
+			if (box.is3D) {
 				nextPos.z = pos.z;
+			}
 		}
 
 		if (out != null) {
@@ -227,13 +224,10 @@ public abstract class NodeParticle extends Particle {
 
 	/**
 	 * Force a node to move from a given vector.
-	 * 
-	 * @param dx
-	 *            The x component.
-	 * @param dy
-	 *            The y component.
-	 * @param dz
-	 *            The z component.
+	 *
+	 * @param dx The x component.
+	 * @param dy The y component.
+	 * @param dz The z component.
 	 */
 	public void moveOf(double dx, double dy, double dz) {
 		pos.set(pos.x + dx, pos.y + dy, pos.z + dz);
@@ -241,13 +235,10 @@ public abstract class NodeParticle extends Particle {
 
 	/**
 	 * Force a node to move at a given position.
-	 * 
-	 * @param x
-	 *            The new x.
-	 * @param y
-	 *            The new y.
-	 * @param z
-	 *            The new z.
+	 *
+	 * @param x The new x.
+	 * @param y The new y.
+	 * @param z The new z.
 	 */
 	public void moveTo(double x, double y, double z) {
 		pos.set(x, y, z);
@@ -255,45 +246,42 @@ public abstract class NodeParticle extends Particle {
 	}
 
 	/**
-	 * Compute the repulsion for each other node. This is the most precise way,
-	 * but the algorithm is a time hog : complexity is O(n^2).
-	 * 
-	 * @param delta
-	 *            The computed displacement vector.
+	 * Compute the repulsion for each other node. This is the most precise
+	 * way, but the algorithm is a time hog : complexity is O(n^2).
+	 *
+	 * @param delta The computed displacement vector.
 	 */
 	protected abstract void repulsionN2(Vector3 delta);
 
 	/**
-	 * Compute the repulsion for each node in the viewing distance, and use the
-	 * n-tree to find them. For a certain distance the node repulsion is
-	 * computed one by one. At a larger distance the repulsion is computed using
-	 * nodes barycenters.
-	 * 
-	 * @param delta
-	 *            The computed displacement vector.
+	 * Compute the repulsion for each node in the viewing distance, and use
+	 * the n-tree to find them. For a certain distance the node repulsion is
+	 * computed one by one. At a larger distance the repulsion is computed
+	 * using nodes barycenters.
+	 *
+	 * @param delta The computed displacement vector.
 	 */
 	protected abstract void repulsionNLogN(Vector3 delta);
 
 	/**
 	 * Compute the global attraction toward each connected node.
-	 * @param delta
-	 * 			The computed displacement vector.
+	 *
+	 * @param delta The computed displacement vector.
 	 */
 	protected abstract void attraction(Vector3 delta);
 
 	/**
 	 * Compute the global attraction toward the layout center (if enabled).
-	 * @param delta
-	 * 			The computed displacement vector.
+	 *
+	 * @param delta The computed displacement vector.
 	 * @see BarnesHutLayout#useGravity
 	 */
 	protected abstract void gravity(Vector3 delta);
-	
+
 	/**
 	 * The given edge is connected to this node.
-	 * 
-	 * @param e
-	 *            The edge to connect.
+	 *
+	 * @param e The edge to connect.
 	 */
 	public void registerEdge(EdgeSpring e) {
 		neighbours.add(e);
@@ -301,9 +289,8 @@ public abstract class NodeParticle extends Particle {
 
 	/**
 	 * The given edge is no more connected to this node.
-	 * 
-	 * @param e
-	 *            THe edge to disconnect.
+	 *
+	 * @param e THe edge to disconnect.
 	 */
 	public void unregisterEdge(EdgeSpring e) {
 		int i = neighbours.indexOf(e);
@@ -319,8 +306,9 @@ public abstract class NodeParticle extends Particle {
 	public void removeNeighborEdges() {
 		ArrayList<EdgeSpring> edges = new ArrayList<EdgeSpring>(neighbours);
 
-		for (EdgeSpring edge : edges)
+		for (EdgeSpring edge : edges) {
 			box.removeEdge(box.getLayoutAlgorithmName(), edge.id);
+		}
 
 		neighbours.clear();
 	}

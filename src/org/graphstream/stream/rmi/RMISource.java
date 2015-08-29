@@ -42,7 +42,7 @@ import org.graphstream.stream.Sink;
 import org.graphstream.stream.Source;
 
 public class RMISource extends UnicastRemoteObject implements RMIAdapterIn,
-		Source {
+	Source {
 	private static final long serialVersionUID = 6635146473737922832L;
 
 	ConcurrentLinkedQueue<AttributeSink> attributesListeners;
@@ -50,7 +50,7 @@ public class RMISource extends UnicastRemoteObject implements RMIAdapterIn,
 
 	public RMISource() throws RemoteException {
 		super();
-		
+
 		attributesListeners = new ConcurrentLinkedQueue<AttributeSink>();
 		elementsListeners = new ConcurrentLinkedQueue<ElementSink>();
 	}
@@ -69,101 +69,116 @@ public class RMISource extends UnicastRemoteObject implements RMIAdapterIn,
 	}
 
 	public void edgeAdded(String graphId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed)
-			throws RemoteException {
-		for (ElementSink gel : elementsListeners)
+		String fromNodeId, String toNodeId, boolean directed)
+		throws RemoteException {
+		for (ElementSink gel : elementsListeners) {
 			gel.edgeAdded(graphId, timeId, edgeId, fromNodeId, toNodeId,
-					directed);
+				directed);
+		}
 	}
 
 	public void edgeAttributeAdded(String graphId, long timeId, String edgeId,
-			String attribute, Object value) throws RemoteException {
-		for (AttributeSink gal : attributesListeners)
+		String attribute, Object value) throws RemoteException {
+		for (AttributeSink gal : attributesListeners) {
 			gal.edgeAttributeAdded(graphId, timeId, edgeId, attribute, value);
+		}
 	}
 
 	public void edgeAttributeChanged(String graphId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue)
-			throws RemoteException {
-		for (AttributeSink gal : attributesListeners)
+		String edgeId, String attribute, Object oldValue, Object newValue)
+		throws RemoteException {
+		for (AttributeSink gal : attributesListeners) {
 			gal.edgeAttributeChanged(graphId, timeId, edgeId, attribute,
-					oldValue, newValue);
+				oldValue, newValue);
+		}
 	}
 
 	public void edgeAttributeRemoved(String graphId, long timeId,
-			String edgeId, String attribute) throws RemoteException {
-		for (AttributeSink gal : attributesListeners)
+		String edgeId, String attribute) throws RemoteException {
+		for (AttributeSink gal : attributesListeners) {
 			gal.edgeAttributeRemoved(graphId, timeId, edgeId, attribute);
+		}
 	}
 
 	public void edgeRemoved(String graphId, long timeId, String edgeId)
-			throws RemoteException {
-		for (ElementSink gel : elementsListeners)
+		throws RemoteException {
+		for (ElementSink gel : elementsListeners) {
 			gel.edgeRemoved(graphId, timeId, edgeId);
+		}
 	}
 
 	public void graphAttributeAdded(String graphId, long timeId,
-			String attribute, Object value) throws RemoteException {
-		for (AttributeSink gal : attributesListeners)
+		String attribute, Object value) throws RemoteException {
+		for (AttributeSink gal : attributesListeners) {
 			gal.graphAttributeAdded(graphId, timeId, attribute, value);
+		}
 	}
 
 	public void graphAttributeChanged(String graphId, long timeId,
-			String attribute, Object oldValue, Object newValue)
-			throws RemoteException {
-		for (AttributeSink gal : attributesListeners)
+		String attribute, Object oldValue, Object newValue)
+		throws RemoteException {
+		for (AttributeSink gal : attributesListeners) {
 			gal.graphAttributeChanged(graphId, timeId, attribute, oldValue,
-					newValue);
+				newValue);
+		}
 	}
 
 	public void graphAttributeRemoved(String graphId, long timeId,
-			String attribute) throws RemoteException {
-		for (AttributeSink gal : attributesListeners)
+		String attribute) throws RemoteException {
+		for (AttributeSink gal : attributesListeners) {
 			gal.graphAttributeRemoved(graphId, timeId, attribute);
+		}
 	}
 
 	public void graphCleared(String graphId, long timeId)
-			throws RemoteException {
-		for (ElementSink gel : elementsListeners)
+		throws RemoteException {
+		for (ElementSink gel : elementsListeners) {
 			gel.graphCleared(graphId, timeId);
+		}
 	}
 
 	public void nodeAdded(String graphId, long timeId, String nodeId)
-			throws RemoteException {
-		for (ElementSink gel : elementsListeners)
+		throws RemoteException {
+		for (ElementSink gel : elementsListeners) {
 			gel.nodeAdded(graphId, timeId, nodeId);
+		}
 	}
 
 	public void nodeAttributeAdded(String graphId, long timeId, String nodeId,
-			String attribute, Object value) throws RemoteException {
-		for (AttributeSink gal : attributesListeners)
+		String attribute, Object value) throws RemoteException {
+		for (AttributeSink gal : attributesListeners) {
 			gal.nodeAttributeAdded(graphId, timeId, nodeId, attribute, value);
+		}
 	}
 
 	public void nodeAttributeChanged(String graphId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue)
-			throws RemoteException {
-		for (AttributeSink gal : attributesListeners)
+		String nodeId, String attribute, Object oldValue, Object newValue)
+		throws RemoteException {
+		for (AttributeSink gal : attributesListeners) {
 			gal.nodeAttributeChanged(graphId, timeId, nodeId, attribute,
-					oldValue, newValue);
+				oldValue, newValue);
+		}
 	}
 
 	public void nodeAttributeRemoved(String graphId, long timeId,
-			String nodeId, String attribute) throws RemoteException {
-		for (AttributeSink gal : attributesListeners)
+		String nodeId, String attribute) throws RemoteException {
+		for (AttributeSink gal : attributesListeners) {
 			gal.nodeAttributeRemoved(graphId, timeId, nodeId, attribute);
+		}
 	}
 
 	public void nodeRemoved(String graphId, long timeId, String nodeId)
-			throws RemoteException {
-		for (ElementSink gel : elementsListeners)
+		throws RemoteException {
+		for (ElementSink gel : elementsListeners) {
 			gel.nodeRemoved(graphId, timeId, nodeId);
+		}
 	}
 
 	public void stepBegins(String graphId, long timeId, double step)
-			throws RemoteException {
-		for (ElementSink gel : elementsListeners)
+		throws RemoteException {
+		for (ElementSink gel : elementsListeners) {
 			gel.stepBegins(graphId, timeId, step);
+		}
 	}
 
 	public void addAttributeSink(AttributeSink listener) {

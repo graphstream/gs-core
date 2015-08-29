@@ -32,7 +32,6 @@
 package org.graphstream.ui.graphicGraph;
 
 import org.graphstream.graph.Node;
-import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.ui.graphicGraph.stylesheet.Selector;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
@@ -62,20 +61,16 @@ public class GraphicSprite extends GraphicElement {
 	public Values position = new Values(StyleConstants.Units.GU, 0, 0, 0);
 
 	// Constructors
-
 	/**
 	 * New sprite.
-	 * 
-	 * @param id
-	 *            The sprite unique identifier.
-	 * @param graph
-	 *            The graph containing this sprite.
+	 *
+	 * @param id The sprite unique identifier.
+	 * @param graph The graph containing this sprite.
 	 */
 	public GraphicSprite(String id, GraphicGraph graph) {
 		super(id, graph);
 
 		// Get the position of a random node.
-
 		if (graph.getNodeCount() > 0) {
 			Iterator<? extends Node> nodes = graph.getNodeIterator();
 
@@ -88,15 +83,16 @@ public class GraphicSprite extends GraphicElement {
 
 		String myPrefix = String.format("ui.sprite.%s", id);
 
-		if (mygraph.getAttribute(myPrefix) == null)
-			mygraph.addAttribute(myPrefix, position);
+		if (this.graph.getAttribute(myPrefix) == null) {
+			this.graph.setAttribute(myPrefix, position);
+		}
 	}
 
 	// Access
-
 	/**
-	 * The node this sprite is attached to or null if not attached to an edge.
-	 * 
+	 * The node this sprite is attached to or null if not attached to an
+	 * edge.
+	 *
 	 * @return A graphic node.
 	 */
 	public GraphicNode getNodeAttachment() {
@@ -104,8 +100,9 @@ public class GraphicSprite extends GraphicElement {
 	}
 
 	/**
-	 * The edge this sprite is attached to or null if not attached to an edge.
-	 * 
+	 * The edge this sprite is attached to or null if not attached to an
+	 * edge.
+	 *
 	 * @return A graphic edge.
 	 */
 	public GraphicEdge getEdgeAttachment() {
@@ -115,14 +112,15 @@ public class GraphicSprite extends GraphicElement {
 	/**
 	 * Return the graphic object this sprite is attached to or null if not
 	 * attached.
-	 * 
+	 *
 	 * @return A graphic object or null if no attachment.
 	 */
 	public GraphicElement getAttachment() {
 		GraphicNode n = getNodeAttachment();
 
-		if (n != null)
+		if (n != null) {
 			return n;
+		}
 
 		return getEdgeAttachment();
 	}
@@ -173,7 +171,6 @@ public class GraphicSprite extends GraphicElement {
 	}
 
 	// Commands
-
 	@Override
 	public void move(double x, double y, double z) {
 		setPosition(x, y, z, Style.Units.GU);
@@ -181,9 +178,8 @@ public class GraphicSprite extends GraphicElement {
 
 	/**
 	 * Attach this sprite to the given node.
-	 * 
-	 * @param node
-	 *            A graphic node.
+	 *
+	 * @param node A graphic node.
 	 */
 	public void attachToNode(GraphicNode node) {
 		this.edge = null;
@@ -191,17 +187,17 @@ public class GraphicSprite extends GraphicElement {
 
 		String prefix = String.format("ui.sprite.%s", getId());
 
-		if (this.node.getAttribute(prefix) == null)
-			this.node.addAttribute(prefix);
+		if (this.node.getAttribute(prefix) == null) {
+			this.node.setAttribute(prefix);
+		}
 
-		mygraph.graphChanged = true;
+		graph.graphChanged = true;
 	}
 
 	/**
 	 * Attach this sprite to the given edge.
-	 * 
-	 * @param edge
-	 *            A graphic edge.
+	 *
+	 * @param edge A graphic edge.
 	 */
 	public void attachToEdge(GraphicEdge edge) {
 		this.node = null;
@@ -209,10 +205,11 @@ public class GraphicSprite extends GraphicElement {
 
 		String prefix = String.format("ui.sprite.%s", getId());
 
-		if (this.edge.getAttribute(prefix) == null)
-			this.edge.addAttribute(prefix);
+		if (this.edge.getAttribute(prefix) == null) {
+			this.edge.setAttribute(prefix);
+		}
 
-		mygraph.graphChanged = true;
+		graph.graphChanged = true;
 	}
 
 	/**
@@ -221,21 +218,21 @@ public class GraphicSprite extends GraphicElement {
 	public void detach() {
 		String prefix = String.format("ui.sprite.%s", getId());
 
-		if (this.node != null)
+		if (this.node != null) {
 			this.node.removeAttribute(prefix);
-		else if (this.edge != null)
+		} else if (this.edge != null) {
 			this.edge.removeAttribute(prefix);
+		}
 
 		this.edge = null;
 		this.node = null;
-		mygraph.graphChanged = true;
+		graph.graphChanged = true;
 	}
 
 	/**
 	 * Reposition this sprite.
-	 * 
-	 * @param value
-	 *            The coordinate.
+	 *
+	 * @param value The coordinate.
 	 */
 	public void setPosition(double value) {
 		setPosition(value, 0, 0, getUnits());
@@ -243,25 +240,23 @@ public class GraphicSprite extends GraphicElement {
 
 	/**
 	 * Reposition this sprite.
-	 * 
-	 * @param x
-	 *            First coordinate.
-	 * @param y
-	 *            Second coordinate.
-	 * @param z
-	 *            Third coordinate.
-	 * @param units
-	 *            The units to use for lengths and radii, null means
-	 *            "unchanged".
+	 *
+	 * @param x First coordinate.
+	 * @param y Second coordinate.
+	 * @param z Third coordinate.
+	 * @param units The units to use for lengths and radii, null means
+	 *              "unchanged".
 	 */
 	public void setPosition(double x, double y, double z, Style.Units units) {
 		/*
 		 * if( node != null ) { y = checkAngle( y ); z = checkAngle( z ); } else
-		 */if (edge != null) {
-			if (x < 0)
+		 */
+		if (edge != null) {
+			if (x < 0) {
 				x = 0;
-			else if (x > 1)
+			} else if (x > 1) {
 				x = 1;
+			}
 		}
 
 		boolean changed = false;
@@ -284,12 +279,12 @@ public class GraphicSprite extends GraphicElement {
 		}
 
 		if (changed) {
-			mygraph.graphChanged = true;
-			mygraph.boundsChanged = true;
+			graph.graphChanged = true;
+			graph.boundsChanged = true;
 
 			String prefix = String.format("ui.sprite.%s", getId());
 
-			mygraph.setAttribute(prefix, position);
+			graph.setAttribute(prefix, position);
 		}
 	}
 
@@ -298,41 +293,45 @@ public class GraphicSprite extends GraphicElement {
 		double y = 0;
 		double z = 0;
 
-		if (values.getValueCount() > 0)
+		if (values.getValueCount() > 0) {
 			x = values.get(0);
-		if (values.getValueCount() > 1)
+		}
+		if (values.getValueCount() > 1) {
 			y = values.get(1);
-		if (values.getValueCount() > 2)
+		}
+		if (values.getValueCount() > 2) {
 			z = values.get(2);
+		}
 
-		if (x == 1 && y == 1 && z == 1)
+		if (x == 1 && y == 1 && z == 1) {
 			throw new RuntimeException("WTF !!!");
+		}
 		setPosition(x, y, z, values.units);
 	}
 
 	protected double checkAngle(double angle) {
-		if (angle > Math.PI * 2)
+		if (angle > Math.PI * 2) {
 			angle = angle % (Math.PI * 2);
-		else if (angle < 0)
+		} else if (angle < 0) {
 			angle = (Math.PI * 2) - (angle % (Math.PI * 2));
+		}
 
 		return angle;
 	}
 
 	@Override
 	protected void attributeChanged(AttributeChangeEvent event,
-			String attribute, Object oldValue, Object newValue) {
+		String attribute, Object oldValue, Object newValue) {
 		super.attributeChanged(event, attribute, oldValue, newValue);
 
 		// if( attribute.equals( "ui.clicked" ) ) // Filter the clicks to avoid
 		// loops XXX BAD !!! XXX
 		// return;
-
 		String completeAttr = String.format("ui.sprite.%s.%s", getId(),
-				attribute);
+			attribute);
 
-		mygraph.listeners.sendAttributeChangedEvent(mygraph.getId(),
-				ElementType.GRAPH, completeAttr, event, oldValue, newValue);
+		graph.listeners.sendAttributeChangedEvent(graph.getId(),
+			ElementType.GRAPH, completeAttr, event, oldValue, newValue);
 	}
 
 	@Override

@@ -39,32 +39,31 @@ import java.util.HashSet;
 
 /**
  * Reader for the "LGL" graph format.
- * 
+ *
  * <p>
- * The LGL graph format is a simple format where each line beginning by a
- * sharp sign "#" describes a source vertex, and each subsequent line
- * not beginning by a sharp sign describe an edge target for this source.
+ * The LGL graph format is a simple format where each line beginning by a sharp
+ * sign "#" describes a source vertex, and each subsequent line not beginning by
+ * a sharp sign describe an edge target for this source.
  * </p>
- * 
+ *
  * <p>
  * Also, the format does not specify any direction for edges. By default all
  * edges are undirected.
  * </p>
- * 
+ *
  * <p>
  * This format only contains edges. To ensure the "add node" events are sent
  * before an edge referencing two nodes is created via an "add edge" event, this
  * reader has a hash set of already encountered nodes. The hash set allows to
  * issue "add node" events only when a node is encountered for the first time.
  * </p>
- * 
+ *
  * </p> This hash set consumes memory, but is the only way to ensure "add node"
  * events are correctly issued. If this input is directly connected to a graph,
  * as graphs can create non-existing nodes automatically, you can disable the
- * hash set of nodes using the constructor
- * {@link #FileSourceLGL(boolean)}, and giving "false" for the first
- * argument. </p>
- * 
+ * hash set of nodes using the constructor {@link #FileSourceLGL(boolean)}, and
+ * giving "false" for the first argument. </p>
+ *
  * The usual file name extension for this format is ".lgl".
  */
 public class FileSourceLGL extends FileSourceBase {
@@ -86,9 +85,8 @@ public class FileSourceLGL extends FileSourceBase {
 	protected String source;
 
 	protected String graphName = "LGL_";
-	
-	// Construction
 
+	// Construction
 	/**
 	 * New reader for the "LGL" format.
 	 */
@@ -98,16 +96,15 @@ public class FileSourceLGL extends FileSourceBase {
 
 	/**
 	 * New reader for the "LGL" format.
-	 * 
-	 * @param declareNodes
-	 *            If true (default=true) this reader outputs nodeAdded events.
+	 *
+	 * @param declareNodes If true (default=true) this reader outputs
+	 *                     nodeAdded events.
 	 */
 	public FileSourceLGL(boolean declareNodes) {
 		nodes = declareNodes ? new HashSet<String>() : null;
 	}
 
 	// Commands
-
 	@Override
 	protected void continueParsingInInclude() throws IOException {
 		// Should not happen, NCol files cannot be nested.
@@ -124,35 +121,35 @@ public class FileSourceLGL extends FileSourceBase {
 		} else if (id1.equals("#")) {
 			// A new sequence of edges starts
 			String src = getWordOrNumberOrStringOrEolOrEof();
-			
-			if(!src.equals("EOL") && !src.equals("EOF")) {
+
+			if (!src.equals("EOL") && !src.equals("EOF")) {
 				source = src;
 			} else {
 				source = null;
 			}
 		} else {
 			// we got a new target.
-			if(source != null) {
+			if (source != null) {
 				String weight = getWordOrNumberOrStringOrEolOrEof();
 				double w = 0.0;
-				
-				if(weight.equals("EOL") || weight.equals("EOF")) {
+
+				if (weight.equals("EOL") || weight.equals("EOF")) {
 					weight = null;
 					pushBack();
 				} else {
 					try {
 						w = Double.parseDouble(weight);
-					} catch(Exception e) {
+					} catch (Exception e) {
 						throw new IOException(String.format("cannot transform weight %s into a number", weight));
 					}
 				}
-				
+
 				String edgeId = Integer.toString(edgeid++);
-				
+
 				sendEdgeAdded(graphName, edgeId, source, id1, false);
-				
-				if(weight != null) {
-					sendEdgeAttributeAdded(graphName, edgeId, "weight", (Double)w);
+
+				if (weight != null) {
+					sendEdgeAttributeAdded(graphName, edgeId, "weight", (Double) w);
 				}
 			}
 		}
@@ -198,7 +195,7 @@ public class FileSourceLGL extends FileSourceBase {
 		st.commentChar('%');
 
 		graphName = String.format("%s_%d", graphName,
-				System.currentTimeMillis() + ((long) Math.random() * 10));
+			System.currentTimeMillis() + ((long) Math.random() * 10));
 	}
 
 	public boolean nextStep() throws IOException {

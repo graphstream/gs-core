@@ -32,21 +32,20 @@
 package org.graphstream.stream.netstream.packing;
 
 /**
-*
-* Copyright (c) 2010 University of Luxembourg
-*
-* @file Base64Unpacker.java
-* @date Dec 20, 2011
-*
-* @author Yoann Pigné
-*
-*/
-
+ *
+ * Copyright (c) 2010 University of Luxembourg
+ *
+ * @file Base64Unpacker.java
+ * @date Dec 20, 2011
+ *
+ * @author Yoann Pigné
+ *
+ */
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
- * 
+ *
  */
 public class Base64Unpacker extends NetStreamUnpacker {
 
@@ -55,11 +54,11 @@ public class Base64Unpacker extends NetStreamUnpacker {
 	 */
 	@Override
 	public ByteBuffer unpackMessage(ByteBuffer buffer, int startIndex,
-			int endIndex) {
+		int endIndex) {
 		try {
-			byte[] raw = Base64.decode(buffer.array(), startIndex, (endIndex-startIndex), Base64.NO_OPTIONS);
+			byte[] raw = Base64.decode(buffer.array(), startIndex, (endIndex - startIndex), Base64.NO_OPTIONS);
 			return ByteBuffer.wrap(raw);
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -73,7 +72,7 @@ public class Base64Unpacker extends NetStreamUnpacker {
 	@Override
 	public int unpackMessageSize(ByteBuffer buffer) {
 		try {
-			byte[] raw = Base64.decode(buffer.array(),buffer.position(), 8,Base64.NO_OPTIONS);
+			byte[] raw = Base64.decode(buffer.array(), buffer.position(), 8, Base64.NO_OPTIONS);
 			return ByteBuffer.wrap(raw).getInt();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -87,19 +86,19 @@ public class Base64Unpacker extends NetStreamUnpacker {
 		Base64Unpacker b = new Base64Unpacker();
 
 		ByteBuffer source = ByteBuffer.allocate(9);
-		
+
 		source.putInt(-1).putFloat(0.1f);
-		source.put((byte)'e');
-		
+		source.put((byte) 'e');
+
 		source.rewind();
-		
-		ByteBuffer bb = b.unpackMessage(packer.packMessage( source ) );
-		
+
+		ByteBuffer bb = b.unpackMessage(packer.packMessage(source));
+
 		bb.rewind();
-		
+
 		System.out.println(bb.getInt());
 		System.out.println(bb.getFloat());
-		System.out.println((char)bb.get());
+		System.out.println((char) bb.get());
 	}
 
 	/* (non-Javadoc)

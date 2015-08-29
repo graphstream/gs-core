@@ -80,9 +80,9 @@ class InitializeApplication extends JFrame implements Runnable {
 		graph.addEdge("AB", "A", "B");
 		graph.addEdge("BC", "B", "C");
 		graph.addEdge("CA", "C", "A");
-		graph.addAttribute( "ui.antialias" );
-		graph.addAttribute( "ui.quality" );
-		graph.addAttribute( "ui.stylesheet", styleSheet );
+		graph.setAttribute( "ui.antialias" );
+		graph.setAttribute( "ui.quality" );
+		graph.setAttribute( "ui.stylesheet", styleSheet );
    
 		graph.getNode("A").setAttribute("xyz", -1, 0, 0 );
 		graph.getNode("B").setAttribute("xyz",  1, 0, 0 );

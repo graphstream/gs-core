@@ -64,7 +64,6 @@ public abstract class ElementRenderer {
 	protected int textSize;
 
 	// Constructor
-
 	/**
 	 * New swing element renderer for the given style group.
 	 */
@@ -72,7 +71,6 @@ public abstract class ElementRenderer {
 	}
 
 	// Command
-
 	/**
 	 * Render all the (visible) elements of the group.
 	 */
@@ -83,10 +81,11 @@ public abstract class ElementRenderer {
 		for (Element e : group.bulkElements()) {
 			GraphicElement ge = (GraphicElement) e;
 
-			if (camera.isVisible(ge))
+			if (camera.isVisible(ge)) {
 				renderElement(group, g, camera, ge);
-			else
+			} else {
 				elementInvisible(group, g, camera, ge);
+			}
 		}
 
 		if (group.hasDynamicElements()) {
@@ -126,53 +125,44 @@ public abstract class ElementRenderer {
 
 	/**
 	 * Called before the whole rendering pass for all elements.
-	 * 
-	 * @param g
-	 *            The Swing graphics.
-	 * @param camera
-	 *            The camera.
+	 *
+	 * @param g The Swing graphics.
+	 * @param camera The camera.
 	 */
 	protected abstract void setupRenderingPass(StyleGroup group, Graphics2D g,
-			Camera camera);
+		Camera camera);
 
 	/**
 	 * Called before the rendering of bulk and event elements.
-	 * 
-	 * @param g
-	 *            The Swing graphics.
-	 * @param camera
-	 *            The camera.
+	 *
+	 * @param g The Swing graphics.
+	 * @param camera The camera.
 	 */
 	protected abstract void pushStyle(StyleGroup group, Graphics2D g,
-			Camera camera);
+		Camera camera);
 
 	/**
-	 * Called before the rendering of elements on dynamic styles. This must only
-	 * change the style properties that can change dynamically.
-	 * 
-	 * @param g
-	 *            The Swing graphics.
-	 * @param camera
-	 *            The camera.
-	 * @param element
-	 *            The graphic element concerned by the dynamic style change.
+	 * Called before the rendering of elements on dynamic styles. This must
+	 * only change the style properties that can change dynamically.
+	 *
+	 * @param g The Swing graphics.
+	 * @param camera The camera.
+	 * @param element The graphic element concerned by the dynamic style
+	 *                change.
 	 */
 	protected abstract void pushDynStyle(StyleGroup group, Graphics2D g,
-			Camera camera, GraphicElement element);
+		Camera camera, GraphicElement element);
 
 	/**
-	 * Render a single element knowing the style is already prepared. Elements
-	 * that are not visible are not drawn.
-	 * 
-	 * @param g
-	 *            The Swing graphics.
-	 * @param camera
-	 *            The camera.
-	 * @param element
-	 *            The element to render.
+	 * Render a single element knowing the style is already prepared.
+	 * Elements that are not visible are not drawn.
+	 *
+	 * @param g The Swing graphics.
+	 * @param camera The camera.
+	 * @param element The element to render.
 	 */
 	protected abstract void renderElement(StyleGroup group, Graphics2D g,
-			Camera camera, GraphicElement element);
+		Camera camera, GraphicElement element);
 
 	/**
 	 * Called during rendering in place of
@@ -180,19 +170,15 @@ public abstract class ElementRenderer {
 	 * to signal that the given element is not inside the view. The
 	 * renderElement() method will be called as soon as the element becomes
 	 * visible anew.
-	 * 
-	 * @param g
-	 *            The Swing graphics.
-	 * @param camera
-	 *            The camera.
-	 * @param element
-	 *            The element to render.
+	 *
+	 * @param g The Swing graphics.
+	 * @param camera The camera.
+	 * @param element The element to render.
 	 */
 	protected abstract void elementInvisible(StyleGroup group, Graphics2D g,
-			Camera camera, GraphicElement element);
+		Camera camera, GraphicElement element);
 
 	// Utility
-
 	protected void configureText(StyleGroup group, Camera camera) {
 		String fontName = group.getTextFont();
 		StyleConstants.TextStyle textStyle = group.getTextStyle();
@@ -200,42 +186,42 @@ public abstract class ElementRenderer {
 		textSize = (int) group.getTextSize().value;
 		textColor = group.getTextColor(0);
 		textFont = FontCache.defaultFontCache().getFont(fontName, textStyle,
-				textSize);
+			textSize);
 	}
 
 	protected void renderText(StyleGroup group, Graphics2D g, Camera camera,
-			GraphicElement element) {
+		GraphicElement element) {
 		String label = element.getLabel();
-		
+
 		if (label != null && group.getTextMode() != StyleConstants.TextMode.HIDDEN
-				&& group.getTextVisibilityMode() != StyleConstants.TextVisibilityMode.HIDDEN) {
+			&& group.getTextVisibilityMode() != StyleConstants.TextVisibilityMode.HIDDEN) {
 
 			Point3 p = null;
 			GraphicSprite s = null;
 			Point2D.Double pos = null;
 
 			if (element instanceof GraphicSprite) {
-				s   = (GraphicSprite) element;
+				s = (GraphicSprite) element;
 				pos = ((DefaultCamera) camera).getSpritePosition(s,
 					new Point2D.Double(), StyleConstants.Units.GU);
 			}
 
 			if (pos != null && s.getUnits() == Units.PX) {
 				double w = camera.getMetrics().lengthToPx(group.getSize(),
-						0);
+					0);
 				p = camera.transformGuToPx(pos.x, pos.y, 0);
-				p.x += w/2;
+				p.x += w / 2;
 			} else if (s != null && s.getUnits() == Units.PERCENTS) {
 				double w = camera.getMetrics().lengthToPx(group.getSize(),
-						0);
+					0);
 				p = camera.transformGuToPx(camera.getMetrics().viewport[2] * pos.x,
-					camera.getMetrics().viewport[3] *  pos.y, 0);
-				p.x += (w/2);
+					camera.getMetrics().viewport[3] * pos.y, 0);
+				p.x += (w / 2);
 			} else {
 				double w = camera.getMetrics().lengthToGu(group.getSize(),
-						0);
+					0);
 				p = camera.transformGuToPx(element.getX() + (w / 2), element
-						.getY(), 0);
+					.getY(), 0);
 			}
 
 			AffineTransform Tx = g.getTransform();
@@ -258,12 +244,13 @@ public abstract class ElementRenderer {
 
 		if (n > 1) {
 			if (element.hasNumber("ui.color") && n > 1) {
-				double value = element.getNumber("ui.color");
+				double value = element.getNumber("ui.color").doubleValue();
 
-				if (value < 0)
+				if (value < 0) {
 					value = 0;
-				else if (value > 1)
+				} else if (value > 1) {
 					value = 1;
+				}
 
 				if (value == 1) {
 					color = group.getFillColor(n - 1); // Simplification,
@@ -280,16 +267,16 @@ public abstract class ElementRenderer {
 					Color color0 = group.getFillColor(col);
 					Color color1 = group.getFillColor(col + 1);
 					double red = ((color0.getRed() * (1 - div)) + (color1
-							.getRed() * div)) / 255f;
+						.getRed() * div)) / 255f;
 					double green = ((color0.getGreen() * (1 - div)) + (color1
-							.getGreen() * div)) / 255f;
+						.getGreen() * div)) / 255f;
 					double blue = ((color0.getBlue() * (1 - div)) + (color1
-							.getBlue() * div)) / 255f;
+						.getBlue() * div)) / 255f;
 					double alpha = ((color0.getAlpha() * (1 - div)) + (color1
-							.getAlpha() * div)) / 255f;
+						.getAlpha() * div)) / 255f;
 
 					color = new Color((float) red, (float) green, (float) blue,
-							(float) alpha);
+						(float) alpha);
 				}
 			} else if (element.hasAttribute("ui.color", Color.class)) {
 				color = element.getAttribute("ui.color");

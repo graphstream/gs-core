@@ -32,6 +32,7 @@
 package org.graphstream.util;
 
 import org.graphstream.graph.Edge;
+import org.graphstream.graph.Element.ElementType;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
@@ -40,12 +41,12 @@ import org.graphstream.stream.SourceBase;
 import org.graphstream.stream.sync.SinkTime;
 
 /**
- * Helper object to handle events producted by a graph.
- * 
+ * Helper object to handle events produced by a graph.
+ *
  */
 public class GraphListeners extends SourceBase implements Pipe {
 	SinkTime sinkTime;
-	boolean passYourWay;
+	boolean reentrant;
 	Graph g;
 
 	public GraphListeners(Graph g) {
@@ -53,7 +54,6 @@ public class GraphListeners extends SourceBase implements Pipe {
 
 		this.sinkTime = new SinkTime();
 		this.sourceTime.setSinkTime(sinkTime);
-		this.passYourWay = false;
 		this.g = g;
 	}
 
@@ -62,57 +62,64 @@ public class GraphListeners extends SourceBase implements Pipe {
 	}
 
 	public void sendAttributeChangedEvent(String eltId, ElementType eltType,
-			String attribute, AttributeChangeEvent event, Object oldValue,
-			Object newValue) {
+		String attribute, AttributeChangeEvent event, Object oldValue,
+		Object newValue) {
 		//
 		// Attributes with name beginnig with a dot are hidden.
 		//
-		if (passYourWay || attribute.charAt(0) == '.')
+		if (reentrant || attribute.charAt(0) == '.') {
 			return;
+		}
 
 		sendAttributeChangedEvent(sourceId, newEvent(), eltId, eltType,
-				attribute, event, oldValue, newValue);
+			attribute, event, oldValue, newValue);
 	}
 
 	public void sendNodeAdded(String nodeId) {
-		if (passYourWay)
+		if (reentrant) {
 			return;
+		}
 
 		sendNodeAdded(sourceId, newEvent(), nodeId);
 	}
 
 	public void sendNodeRemoved(String nodeId) {
-		if (passYourWay)
+		if (reentrant) {
 			return;
+		}
 
 		sendNodeRemoved(sourceId, newEvent(), nodeId);
 	}
 
 	public void sendEdgeAdded(String edgeId, String source, String target,
-			boolean directed) {
-		if (passYourWay)
+		boolean directed) {
+		if (reentrant) {
 			return;
+		}
 
 		sendEdgeAdded(sourceId, newEvent(), edgeId, source, target, directed);
 	}
 
 	public void sendEdgeRemoved(String edgeId) {
-		if (passYourWay)
+		if (reentrant) {
 			return;
+		}
 
 		sendEdgeRemoved(sourceId, newEvent(), edgeId);
 	}
 
 	public void sendGraphCleared() {
-		if (passYourWay)
+		if (reentrant) {
 			return;
+		}
 
 		sendGraphCleared(sourceId, newEvent());
 	}
 
 	public void sendStepBegins(double step) {
-		if (passYourWay)
+		if (reentrant) {
 			return;
+		}
 
 		sendStepBegins(sourceId, newEvent(), step);
 	}
@@ -123,21 +130,22 @@ public class GraphListeners extends SourceBase implements Pipe {
 	 * @see org.graphstream.stream.AttributeSink#edgeAttributeAdded(java.lang
 	 * .String, long, java.lang.String, java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
 			Edge edge = g.getEdge(edgeId);
 			if (edge != null) {
-				passYourWay = true;
+				reentrant = true;
 
 				try {
-					edge.addAttribute(attribute, value);
+					edge.setAttribute(attribute, value);
 				} finally {
-					passYourWay = false;
+					reentrant = false;
 				}
 
 				sendEdgeAttributeAdded(sourceId, timeId, edgeId, attribute,
-						value);
+					value);
 			}
 		}
 	}
@@ -149,24 +157,26 @@ public class GraphListeners extends SourceBase implements Pipe {
 	 * .String, long, java.lang.String, java.lang.String, java.lang.Object,
 	 * java.lang.Object)
 	 */
+	@Override
 	public void edgeAttributeChanged(String sourceId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
+		String edgeId, String attribute, Object oldValue, Object newValue) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
 			Edge edge = g.getEdge(edgeId);
 			if (edge != null) {
-				passYourWay = true;
+				reentrant = true;
 
-				if (oldValue == null)
+				if (oldValue == null) {
 					oldValue = edge.getAttribute(attribute);
+				}
 
 				try {
-					edge.changeAttribute(attribute, newValue);
+					edge.setAttribute(attribute, newValue);
 				} finally {
-					passYourWay = false;
+					reentrant = false;
 				}
 
 				sendEdgeAttributeChanged(sourceId, timeId, edgeId, attribute,
-						oldValue, newValue);
+					oldValue, newValue);
 			}
 		}
 	}
@@ -177,18 +187,19 @@ public class GraphListeners extends SourceBase implements Pipe {
 	 * @see org.graphstream.stream.AttributeSink#edgeAttributeRemoved(java.lang
 	 * .String, long, java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void edgeAttributeRemoved(String sourceId, long timeId,
-			String edgeId, String attribute) {
+		String edgeId, String attribute) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
 			Edge edge = g.getEdge(edgeId);
 			if (edge != null) {
 				sendEdgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
-				passYourWay = true;
+				reentrant = true;
 
 				try {
 					edge.removeAttribute(attribute);
 				} finally {
-					passYourWay = false;
+					reentrant = false;
 				}
 
 			}
@@ -201,15 +212,16 @@ public class GraphListeners extends SourceBase implements Pipe {
 	 * @see org.graphstream.stream.AttributeSink#graphAttributeAdded(java.lang
 	 * .String, long, java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void graphAttributeAdded(String sourceId, long timeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
-			passYourWay = true;
+			reentrant = true;
 
 			try {
-				g.addAttribute(attribute, value);
+				g.setAttribute(attribute, value);
 			} finally {
-				passYourWay = false;
+				reentrant = false;
 			}
 
 			sendGraphAttributeAdded(sourceId, timeId, attribute, value);
@@ -222,22 +234,24 @@ public class GraphListeners extends SourceBase implements Pipe {
 	 * @see org.graphstream.stream.AttributeSink#graphAttributeChanged(java.lang
 	 * .String, long, java.lang.String, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public void graphAttributeChanged(String sourceId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
+		String attribute, Object oldValue, Object newValue) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
-			passYourWay = true;
+			reentrant = true;
 
-			if (oldValue == null)
+			if (oldValue == null) {
 				oldValue = g.getAttribute(attribute);
+			}
 
 			try {
-				g.changeAttribute(attribute, newValue);
+				g.setAttribute(attribute, newValue);
 			} finally {
-				passYourWay = false;
+				reentrant = false;
 			}
 
 			sendGraphAttributeChanged(sourceId, timeId, attribute, oldValue,
-					newValue);
+				newValue);
 		}
 	}
 
@@ -247,16 +261,17 @@ public class GraphListeners extends SourceBase implements Pipe {
 	 * @see org.graphstream.stream.AttributeSink#graphAttributeRemoved(java.lang
 	 * .String, long, java.lang.String)
 	 */
+	@Override
 	public void graphAttributeRemoved(String sourceId, long timeId,
-			String attribute) {
+		String attribute) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
 			sendGraphAttributeRemoved(sourceId, timeId, attribute);
-			passYourWay = true;
+			reentrant = true;
 
 			try {
 				g.removeAttribute(attribute);
 			} finally {
-				passYourWay = false;
+				reentrant = false;
 			}
 		}
 	}
@@ -267,21 +282,22 @@ public class GraphListeners extends SourceBase implements Pipe {
 	 * @see org.graphstream.stream.AttributeSink#nodeAttributeAdded(java.lang
 	 * .String, long, java.lang.String, java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
 			Node node = g.getNode(nodeId);
 			if (node != null) {
-				passYourWay = true;
+				reentrant = true;
 
 				try {
-					node.addAttribute(attribute, value);
+					node.setAttribute(attribute, value);
 				} finally {
-					passYourWay = false;
+					reentrant = false;
 				}
 
 				sendNodeAttributeAdded(sourceId, timeId, nodeId, attribute,
-						value);
+					value);
 			}
 		}
 	}
@@ -293,24 +309,26 @@ public class GraphListeners extends SourceBase implements Pipe {
 	 * .String, long, java.lang.String, java.lang.String, java.lang.Object,
 	 * java.lang.Object)
 	 */
+	@Override
 	public void nodeAttributeChanged(String sourceId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
+		String nodeId, String attribute, Object oldValue, Object newValue) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
 			Node node = g.getNode(nodeId);
 			if (node != null) {
-				passYourWay = true;
+				reentrant = true;
 
-				if (oldValue == null)
+				if (oldValue == null) {
 					oldValue = node.getAttribute(attribute);
+				}
 
 				try {
-					node.changeAttribute(attribute, newValue);
+					node.setAttribute(attribute, newValue);
 				} finally {
-					passYourWay = false;
+					reentrant = false;
 				}
 
 				sendNodeAttributeChanged(sourceId, timeId, nodeId, attribute,
-						oldValue, newValue);
+					oldValue, newValue);
 			}
 		}
 	}
@@ -321,18 +339,19 @@ public class GraphListeners extends SourceBase implements Pipe {
 	 * @see org.graphstream.stream.AttributeSink#nodeAttributeRemoved(java.lang
 	 * .String, long, java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void nodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute) {
+		String nodeId, String attribute) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
 			Node node = g.getNode(nodeId);
 			if (node != null) {
 				sendNodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
-				passYourWay = true;
+				reentrant = true;
 
 				try {
 					node.removeAttribute(attribute);
 				} finally {
-					passYourWay = false;
+					reentrant = false;
 				}
 			}
 		}
@@ -344,19 +363,20 @@ public class GraphListeners extends SourceBase implements Pipe {
 	 * @see org.graphstream.stream.ElementSink#edgeAdded(java.lang.String, long,
 	 * java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
+	@Override
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
+		String fromNodeId, String toNodeId, boolean directed) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
-			passYourWay = true;
+			reentrant = true;
 
 			try {
 				g.addEdge(edgeId, fromNodeId, toNodeId, directed);
 			} finally {
-				passYourWay = false;
+				reentrant = false;
 			}
 
 			sendEdgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId,
-					directed);
+				directed);
 		}
 	}
 
@@ -366,15 +386,16 @@ public class GraphListeners extends SourceBase implements Pipe {
 	 * @see org.graphstream.stream.ElementSink#edgeRemoved(java.lang.String,
 	 * long, java.lang.String)
 	 */
+	@Override
 	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
 			sendEdgeRemoved(sourceId, timeId, edgeId);
-			passYourWay = true;
+			reentrant = true;
 
 			try {
 				g.removeEdge(edgeId);
 			} finally {
-				passYourWay = false;
+				reentrant = false;
 			}
 		}
 	}
@@ -385,15 +406,16 @@ public class GraphListeners extends SourceBase implements Pipe {
 	 * @see org.graphstream.stream.ElementSink#graphCleared(java.lang.String,
 	 * long)
 	 */
+	@Override
 	public void graphCleared(String sourceId, long timeId) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
 			sendGraphCleared(sourceId, timeId);
-			passYourWay = true;
+			reentrant = true;
 
 			try {
 				g.clear();
 			} finally {
-				passYourWay = false;
+				reentrant = false;
 			}
 		}
 	}
@@ -404,14 +426,15 @@ public class GraphListeners extends SourceBase implements Pipe {
 	 * @see org.graphstream.stream.ElementSink#nodeAdded(java.lang.String, long,
 	 * java.lang.String)
 	 */
+	@Override
 	public void nodeAdded(String sourceId, long timeId, String nodeId) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
-			passYourWay = true;
+			reentrant = true;
 
 			try {
 				g.addNode(nodeId);
 			} finally {
-				passYourWay = false;
+				reentrant = false;
 			}
 
 			sendNodeAdded(sourceId, timeId, nodeId);
@@ -424,15 +447,16 @@ public class GraphListeners extends SourceBase implements Pipe {
 	 * @see org.graphstream.stream.ElementSink#nodeRemoved(java.lang.String,
 	 * long, java.lang.String)
 	 */
+	@Override
 	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
 			sendNodeRemoved(sourceId, timeId, nodeId);
-			passYourWay = true;
+			reentrant = true;
 
 			try {
 				g.removeNode(nodeId);
 			} finally {
-				passYourWay = false;
+				reentrant = false;
 			}
 		}
 	}
@@ -443,14 +467,15 @@ public class GraphListeners extends SourceBase implements Pipe {
 	 * @see org.graphstream.stream.ElementSink#stepBegins(java.lang.String,
 	 * long, double)
 	 */
+	@Override
 	public void stepBegins(String sourceId, long timeId, double step) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
-			passYourWay = true;
+			reentrant = true;
 
 			try {
 				g.stepBegins(step);
 			} finally {
-				passYourWay = false;
+				reentrant = false;
 			}
 
 			sendStepBegins(sourceId, timeId, step);
@@ -460,6 +485,6 @@ public class GraphListeners extends SourceBase implements Pipe {
 	@Override
 	public String toString() {
 		return String.format("GraphListeners of %s.%s", g.getClass()
-				.getSimpleName(), g.getId());
+			.getSimpleName(), g.getId());
 	}
 }

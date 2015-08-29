@@ -62,8 +62,8 @@ import javax.xml.stream.XMLStreamWriter;
 public class FileSinkGEXF extends FileSinkBase {
 	public static enum TimeFormat {
 		INTEGER(new DecimalFormat("#", new DecimalFormatSymbols(Locale.ROOT))), DOUBLE(
-				new DecimalFormat("#.0###################",
-						new DecimalFormatSymbols(Locale.ROOT))), DATE(
+			new DecimalFormat("#.0###################",
+				new DecimalFormatSymbols(Locale.ROOT))), DATE(
 				new SimpleDateFormat("yyyy-MM-dd")), DATETIME(
 				new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ"));
 		Format format;
@@ -126,19 +126,19 @@ public class FileSinkGEXF extends FileSinkBase {
 		Calendar cal = Calendar.getInstance();
 		Date date = cal.getTime();
 		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT,
-				DateFormat.SHORT);
+			DateFormat.SHORT);
 
 		try {
 			stream = XMLOutputFactory.newFactory()
-					.createXMLStreamWriter(output);
+				.createXMLStreamWriter(output);
 			stream.writeStartDocument("UTF-8", "1.0");
 
 			startElement(stream, "gexf");
 			stream.writeAttribute("xmlns", "http://www.gexf.net/1.2draft");
 			stream.writeAttribute("xmlns:xsi",
-					"http://www.w3.org/2001/XMLSchema-instance");
+				"http://www.w3.org/2001/XMLSchema-instance");
 			stream.writeAttribute("xsi:schemaLocation",
-					"http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd");
+				"http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd");
 			stream.writeAttribute("version", "1.2");
 
 			startElement(stream, "meta");
@@ -155,12 +155,13 @@ public class FileSinkGEXF extends FileSinkBase {
 	}
 
 	protected void startElement(XMLStreamWriter stream, String name)
-			throws XMLStreamException {
+		throws XMLStreamException {
 		if (smart) {
 			stream.writeCharacters("\n");
 
-			for (int i = 0; i < depth; i++)
+			for (int i = 0; i < depth; i++) {
 				stream.writeCharacters(" ");
+			}
 		}
 
 		stream.writeStartElement(name);
@@ -168,14 +169,15 @@ public class FileSinkGEXF extends FileSinkBase {
 	}
 
 	protected void endElement(XMLStreamWriter stream, boolean leaf)
-			throws XMLStreamException {
+		throws XMLStreamException {
 		depth--;
 
 		if (smart && !leaf) {
 			stream.writeCharacters("\n");
 
-			for (int i = 0; i < depth; i++)
+			for (int i = 0; i < depth; i++) {
 				stream.writeCharacters(" ");
+			}
 		}
 
 		stream.writeEndElement();
@@ -198,14 +200,16 @@ public class FileSinkGEXF extends FileSinkBase {
 				startElement(stream, "node");
 				stream.writeAttribute("id", n.getId());
 
-				if (n.hasAttribute("label"))
+				if (n.hasAttribute("label")) {
 					stream.writeAttribute("label", n.getAttribute("label")
-							.toString());
+						.toString());
+				}
 
 				if (n.getAttributeCount() > 0) {
 					startElement(stream, "attvalues");
-					for (String key : n.getAttributeKeySet())
+					for (String key : n.getAttributeKeySet()) {
 						nodeAttributes.push(stream, n, key);
+					}
 					endElement(stream, false);
 				}
 
@@ -223,8 +227,9 @@ public class FileSinkGEXF extends FileSinkBase {
 
 				if (e.getAttributeCount() > 0) {
 					startElement(stream, "attvalues");
-					for (String key : e.getAttributeKeySet())
+					for (String key : e.getAttributeKeySet()) {
 						edgeAttributes.push(stream, e, key);
+					}
 					endElement(stream, false);
 				}
 
@@ -240,9 +245,9 @@ public class FileSinkGEXF extends FileSinkBase {
 
 	protected void exportGraphSpells() {
 		GEXFAttributeMap nodeAttributes = new GEXFAttributeMap("node",
-				graphSpells);
+			graphSpells);
 		GEXFAttributeMap edgeAttributes = new GEXFAttributeMap("edge",
-				graphSpells);
+			graphSpells);
 
 		try {
 			startElement(stream, "graph");
@@ -259,11 +264,12 @@ public class FileSinkGEXF extends FileSinkBase {
 				stream.writeAttribute("id", nodeId);
 
 				CumulativeAttributes attr = graphSpells
-						.getNodeAttributes(nodeId);
+					.getNodeAttributes(nodeId);
 				Object label = attr.getAny("label");
 
-				if (label != null)
+				if (label != null) {
 					stream.writeAttribute("label", label.toString());
+				}
 
 				CumulativeSpells spells = graphSpells.getNodeSpells(nodeId);
 
@@ -286,7 +292,7 @@ public class FileSinkGEXF extends FileSinkBase {
 				}
 
 				endElement(stream,
-						spells.isEternal() && attr.getAttributesCount() == 0);
+					spells.isEternal() && attr.getAttributesCount() == 0);
 			}
 			endElement(stream, false);
 
@@ -301,7 +307,7 @@ public class FileSinkGEXF extends FileSinkBase {
 				stream.writeAttribute("target", data.getTarget());
 
 				CumulativeAttributes attr = graphSpells
-						.getEdgeAttributes(edgeId);
+					.getEdgeAttributes(edgeId);
 
 				CumulativeSpells spells = graphSpells.getEdgeSpells(edgeId);
 
@@ -324,7 +330,7 @@ public class FileSinkGEXF extends FileSinkBase {
 				}
 
 				endElement(stream,
-						spells.isEternal() && attr.getAttributesCount() == 0);
+					spells.isEternal() && attr.getAttributesCount() == 0);
 			}
 			endElement(stream, false);
 
@@ -335,74 +341,75 @@ public class FileSinkGEXF extends FileSinkBase {
 	}
 
 	protected void checkGraphSpells() {
-		if (graphSpells == null)
+		if (graphSpells == null) {
 			graphSpells = new GraphSpells();
+		}
 	}
 
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		checkGraphSpells();
 		graphSpells.edgeAttributeAdded(sourceId, timeId, edgeId, attribute,
-				value);
+			value);
 	}
 
 	public void edgeAttributeChanged(String sourceId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
+		String edgeId, String attribute, Object oldValue, Object newValue) {
 		checkGraphSpells();
 		graphSpells.edgeAttributeChanged(sourceId, timeId, edgeId, attribute,
-				oldValue, newValue);
+			oldValue, newValue);
 	}
 
 	public void edgeAttributeRemoved(String sourceId, long timeId,
-			String edgeId, String attribute) {
+		String edgeId, String attribute) {
 		checkGraphSpells();
 		graphSpells.edgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
 	}
 
 	public void graphAttributeAdded(String sourceId, long timeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		checkGraphSpells();
 		graphSpells.graphAttributeAdded(sourceId, timeId, attribute, value);
 	}
 
 	public void graphAttributeChanged(String sourceId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
+		String attribute, Object oldValue, Object newValue) {
 		checkGraphSpells();
 		graphSpells.graphAttributeChanged(sourceId, timeId, attribute,
-				oldValue, newValue);
+			oldValue, newValue);
 	}
 
 	public void graphAttributeRemoved(String sourceId, long timeId,
-			String attribute) {
+		String attribute) {
 		checkGraphSpells();
 		graphSpells.graphAttributeRemoved(sourceId, timeId, attribute);
 	}
 
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		checkGraphSpells();
 		graphSpells.nodeAttributeAdded(sourceId, timeId, nodeId, attribute,
-				value);
+			value);
 	}
 
 	public void nodeAttributeChanged(String sourceId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
+		String nodeId, String attribute, Object oldValue, Object newValue) {
 		checkGraphSpells();
 		graphSpells.nodeAttributeChanged(sourceId, timeId, nodeId, attribute,
-				oldValue, newValue);
+			oldValue, newValue);
 	}
 
 	public void nodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute) {
+		String nodeId, String attribute) {
 		checkGraphSpells();
 		graphSpells.nodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
 	}
 
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
+		String fromNodeId, String toNodeId, boolean directed) {
 		checkGraphSpells();
 		graphSpells.edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId,
-				directed);
+			directed);
 	}
 
 	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
@@ -451,10 +458,11 @@ public class FileSinkGEXF extends FileSinkBase {
 
 			Iterable<? extends Element> iterable;
 
-			if (type.equals("node"))
+			if (type.equals("node")) {
 				iterable = (Iterable<? extends Element>) g.getNodeSet();
-			else
+			} else {
 				iterable = (Iterable<? extends Element>) g.getEdgeSet();
+			}
 
 			for (Element e : iterable) {
 				for (String key : e.getAttributeKeySet()) {
@@ -470,7 +478,7 @@ public class FileSinkGEXF extends FileSinkBase {
 			if (type.equals("node")) {
 				for (String nodeId : spells.getNodes()) {
 					CumulativeAttributes attr = spells
-							.getNodeAttributes(nodeId);
+						.getNodeAttributes(nodeId);
 
 					for (String key : attr.getAttributes()) {
 						for (Spell s : attr.getAttributeSpells(key)) {
@@ -482,7 +490,7 @@ public class FileSinkGEXF extends FileSinkBase {
 			} else {
 				for (String edgeId : spells.getEdges()) {
 					CumulativeAttributes attr = spells
-							.getEdgeAttributes(edgeId);
+						.getEdgeAttributes(edgeId);
 
 					for (String key : attr.getAttributes()) {
 						for (Spell s : attr.getAttributeSpells(key)) {
@@ -498,23 +506,25 @@ public class FileSinkGEXF extends FileSinkBase {
 			String id = getID(key, value);
 			String attType = "string";
 
-			if (containsKey(id))
+			if (containsKey(id)) {
 				return;
+			}
 
-			if (value instanceof Integer || value instanceof Short)
+			if (value instanceof Integer || value instanceof Short) {
 				attType = "integer";
-			else if (value instanceof Long)
+			} else if (value instanceof Long) {
 				attType = "long";
-			else if (value instanceof Float)
+			} else if (value instanceof Float) {
 				attType = "float";
-			else if (value instanceof Double)
+			} else if (value instanceof Double) {
 				attType = "double";
-			else if (value instanceof Boolean)
+			} else if (value instanceof Boolean) {
 				attType = "boolean";
-			else if (value instanceof URL || value instanceof URI)
+			} else if (value instanceof URL || value instanceof URI) {
 				attType = "anyURI";
-			else if (value.getClass().isArray() || value instanceof Collection)
+			} else if (value.getClass().isArray() || value instanceof Collection) {
 				attType = "liststring";
+			}
 
 			put(id, new GEXFAttribute(key, attType));
 		}
@@ -524,8 +534,9 @@ public class FileSinkGEXF extends FileSinkBase {
 		}
 
 		void export(XMLStreamWriter stream) throws XMLStreamException {
-			if (size() == 0)
+			if (size() == 0) {
 				return;
+			}
 
 			startElement(stream, "attributes");
 			stream.writeAttribute("class", type);
@@ -542,7 +553,7 @@ public class FileSinkGEXF extends FileSinkBase {
 		}
 
 		void push(XMLStreamWriter stream, Element e, String key)
-				throws XMLStreamException {
+			throws XMLStreamException {
 			String id = getID(key, e.getAttribute(key));
 			GEXFAttribute a = get(id);
 
@@ -558,13 +569,14 @@ public class FileSinkGEXF extends FileSinkBase {
 		}
 
 		void push(XMLStreamWriter stream, String elementId, GraphSpells spells)
-				throws XMLStreamException {
+			throws XMLStreamException {
 			CumulativeAttributes attr;
 
-			if (type.equals("node"))
+			if (type.equals("node")) {
 				attr = spells.getNodeAttributes(elementId);
-			else
+			} else {
 				attr = spells.getEdgeAttributes(elementId);
+			}
 
 			for (String key : attr.getAttributes()) {
 				for (Spell s : attr.getAttributeSpells(key)) {

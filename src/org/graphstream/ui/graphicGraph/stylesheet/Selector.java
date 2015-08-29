@@ -34,7 +34,7 @@ package org.graphstream.ui.graphicGraph.stylesheet;
 /**
  * A selector is the part of a CSS rule that defines to which element a style
  * applies in the graph.
- * 
+ *
  * @author Antoine Dutot
  * @author Yoann Pign�
  */
@@ -68,9 +68,8 @@ public class Selector {
 
 	/**
 	 * New selector for a given type of element.
-	 * 
-	 * @param type
-	 *            The element type of this selector.
+	 *
+	 * @param type The element type of this selector.
 	 */
 	public Selector(Type type) {
 		this.type = type;
@@ -78,18 +77,15 @@ public class Selector {
 
 	/**
 	 * New selector for a given type of element. This constructor allows to
-	 * specify either an identifier or a class to restrict this selector. If the
-	 * identifier is given, the class will never be used (as identifiers are
-	 * finer than classes). If the identifier is null the class will be used.
-	 * The identifier allow to select only one element by its name. The class
-	 * allows to select several elements.
-	 * 
-	 * @param type
-	 *            The element type of this selector.
-	 * @param identifier
-	 *            The element name.
-	 * @param clazz
-	 *            The element class.
+	 * specify either an identifier or a class to restrict this selector. If
+	 * the identifier is given, the class will never be used (as identifiers
+	 * are finer than classes). If the identifier is null the class will be
+	 * used. The identifier allow to select only one element by its name.
+	 * The class allows to select several elements.
+	 *
+	 * @param type The element type of this selector.
+	 * @param identifier The element name.
+	 * @param clazz The element class.
 	 */
 	public Selector(Type type, String identifier, String clazz) {
 		this.type = type;
@@ -98,30 +94,29 @@ public class Selector {
 	}
 
 	/**
-	 * Utility constructor that assign the correct type to the selector from a
-	 * string. The type must be "node", "edge", "graph", or "sprite".
-	 * 
-	 * @param type
-	 *            Either "node", "edge", "graph" or "sprite".
+	 * Utility constructor that assign the correct type to the selector from
+	 * a string. The type must be "node", "edge", "graph", or "sprite".
+	 *
+	 * @param type Either "node", "edge", "graph" or "sprite".
 	 */
 	public Selector(String type) {
-		if (type.equals("node"))
+		if (type.equals("node")) {
 			this.type = Type.NODE;
-		else if (type.equals("edge"))
+		} else if (type.equals("edge")) {
 			this.type = Type.EDGE;
-		else if (type.equals("graph"))
+		} else if (type.equals("graph")) {
 			this.type = Type.GRAPH;
-		else if (type.equals("sprite"))
+		} else if (type.equals("sprite")) {
 			this.type = Type.SPRITE;
-		else
+		} else {
 			throw new RuntimeException("invalid matcher type '" + type + "'");
+		}
 	}
 
 	/**
 	 * New selector, copy of another.
-	 * 
-	 * @param other
-	 *            The other selector.
+	 *
+	 * @param other The other selector.
 	 */
 	public Selector(Selector other) {
 		this.type = other.type;
@@ -130,10 +125,10 @@ public class Selector {
 	}
 
 	/**
-	 * Specify the identifier of the unique element this selector applies to.
-	 * 
-	 * @param id
-	 *            A string that identifies an element of the graph.
+	 * Specify the identifier of the unique element this selector applies
+	 * to.
+	 *
+	 * @param id A string that identifies an element of the graph.
 	 */
 	public void setId(String id) {
 		this.id = id;
@@ -141,9 +136,8 @@ public class Selector {
 
 	/**
 	 * Specify the class of the elements this selector applies to.
-	 * 
-	 * @param clazz
-	 *            A string that matches all elements of a given class.
+	 *
+	 * @param clazz A string that matches all elements of a given class.
 	 */
 	public void setClass(String clazz) {
 		this.clazz = clazz;
@@ -151,9 +145,9 @@ public class Selector {
 
 	/**
 	 * Specify the pseudo-class of the elements this selector applies to.
-	 * 
-	 * @param pseudoClass
-	 *            A string that matches all elements of a given pseudo-class.
+	 *
+	 * @param pseudoClass A string that matches all elements of a given
+	 *                    pseudo-class.
 	 */
 	public void setPseudoClass(String pseudoClass) {
 		this.pseudoClass = pseudoClass;
@@ -161,7 +155,7 @@ public class Selector {
 
 	/**
 	 * The kind of elements this selector applies to.
-	 * 
+	 *
 	 * @return An element type.
 	 */
 	public Type getType() {
@@ -169,9 +163,9 @@ public class Selector {
 	}
 
 	/**
-	 * The identifier of the element this selector uniquely applies to. This can
-	 * be null if this selector is general.
-	 * 
+	 * The identifier of the element this selector uniquely applies to. This
+	 * can be null if this selector is general.
+	 *
 	 * @return The identifier or null if the selector is general.
 	 */
 	public String getId() {
@@ -179,9 +173,9 @@ public class Selector {
 	}
 
 	/**
-	 * The class of elements this selector applies to. This can be null if this
-	 * selector is general.
-	 * 
+	 * The class of elements this selector applies to. This can be null if
+	 * this selector is general.
+	 *
 	 * @return A class name or null if the selector is general.
 	 */
 	public String getClazz() {
@@ -189,8 +183,9 @@ public class Selector {
 	}
 
 	/**
-	 * The pseudo-class of elements this selector applies to. This can be null.
-	 * 
+	 * The pseudo-class of elements this selector applies to. This can be
+	 * null.
+	 *
 	 * @return A pseudo-class name or null.
 	 */
 	public String getPseudoClass() {
@@ -200,8 +195,8 @@ public class Selector {
 	@Override
 	public String toString() {
 		return String.format("%s%s%s%s", type.toString(),
-				id != null ? String.format("#%s", id) : "",
-				clazz != null ? String.format(".%s", clazz) : "",
-				pseudoClass != null ? String.format(":%s", pseudoClass) : "");
+			id != null ? String.format("#%s", id) : "",
+			clazz != null ? String.format(".%s", clazz) : "",
+			pseudoClass != null ? String.format(":%s", pseudoClass) : "");
 	}
 }

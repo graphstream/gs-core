@@ -33,34 +33,37 @@ package org.graphstream.ui.layout.springbox;
 
 /**
  * Represent the history of energy values for a force-based layout algorithm.
- * 
+ *
  * <p>
- * The main intended usage is with the various force layout algorithms that use a
- * an "energy" minimization process to compute a layout. This class allows to store
- * the energy at a current step of layout computation and to remember a history of
- * such steps.
+ * The main intended usage is with the various force layout algorithms that use
+ * a an "energy" minimization process to compute a layout. This class allows to
+ * store the energy at a current step of layout computation and to remember a
+ * history of such steps.
  * </p>
- * 
+ *
  * <p>
- * At a current step of layout computation, one can accumulate energy in the current
- * cell of the energies buffer using {@link #accumulateEnergy(double)}. When the step
- * finishes, one calls {@link #storeEnergy()} to store this accumulated energy in 
- * a cell of the memory, push a new cell on the memory and therefore start a new step.
+ * At a current step of layout computation, one can accumulate energy in the
+ * current cell of the energies buffer using {@link #accumulateEnergy(double)}.
+ * When the step finishes, one calls {@link #storeEnergy()} to store this
+ * accumulated energy in a cell of the memory, push a new cell on the memory and
+ * therefore start a new step.
  * </p>
- * 
+ *
  * <p>
- * At any time you can get the last energy value computed with {@link #getEnergy()}.
- * Be careful this is not the energy currently accumulated but the value of the last
- * energy stored with {@link #storeEnergy()}. You can also get at any time the average
- * energy in the memory with {@link #getAverageEnergy()}, as well as an estimate of
- * the stabilization (how much the energies are varying) using {@link #getStabilization()}.
+ * At any time you can get the last energy value computed with
+ * {@link #getEnergy()}. Be careful this is not the energy currently accumulated
+ * but the value of the last energy stored with {@link #storeEnergy()}. You can
+ * also get at any time the average energy in the memory with
+ * {@link #getAverageEnergy()}, as well as an estimate of the stabilization (how
+ * much the energies are varying) using {@link #getStabilization()}.
  * </p>
  */
 public class Energies {
 	/**
-	 * Global current energy (maybe actually updated). This is where users of this
-	 * class add energy for their current computation step. When finished this
-	 * energy value is stored in the energy buffer and cleared.
+	 * Global current energy (maybe actually updated). This is where users
+	 * of this class add energy for their current computation step. When
+	 * finished this energy value is stored in the energy buffer and
+	 * cleared.
 	 */
 	protected double energy;
 
@@ -83,7 +86,7 @@ public class Energies {
 	 * The current position in the energies array.
 	 */
 	protected int energiesPos = 0;
-	
+
 	/**
 	 * The sum of all memorized energies.
 	 */
@@ -91,7 +94,7 @@ public class Energies {
 
 	/**
 	 * The last computed energy value.
-	 * 
+	 *
 	 * @return The actual level of energy.
 	 */
 	public double getEnergy() {
@@ -107,27 +110,28 @@ public class Energies {
 
 	/**
 	 * A number in [0..1] with 1 meaning fully stabilized.
-	 * 
+	 *
 	 * @return A value that indicates the level of stabilization in [0-1].
 	 */
 	public double getStabilization() {
 		// The stability is attained when the global energy of the graph do not
 		// vary anymore.
 
-		int    range  = 200;
+		int range = 200;
 		double eprev1 = getPreviousEnergyValue(range);
-		double eprev2 = getPreviousEnergyValue(range-10);
-		double eprev3 = getPreviousEnergyValue(range-20);
-		double eprev  = (eprev1+eprev2+eprev3)/3.0;
-		double diff   = Math.abs(lastEnergy - eprev);
+		double eprev2 = getPreviousEnergyValue(range - 10);
+		double eprev3 = getPreviousEnergyValue(range - 20);
+		double eprev = (eprev1 + eprev2 + eprev3) / 3.0;
+		double diff = Math.abs(lastEnergy - eprev);
 
 		diff = diff < 1 ? 1 : diff;
-		
-		return 1.0/diff;
+
+		return 1.0 / diff;
 	}
-	
+
 	/**
 	 * The average energy in the whole buffer.
+	 *
 	 * @return The average energy.
 	 */
 	public double getAverageEnergy() {
@@ -136,27 +140,27 @@ public class Energies {
 
 	/**
 	 * A previous energy value.
-	 * 
-	 * @param stepsBack
-	 *            The number of steps back in history. This number must not be larger than
-	 *            the size of the memory (energy buffer) else it is set to this size.
+	 *
+	 * @param stepsBack The number of steps back in history. This number
+	 *                  must not be larger than the size of the memory
+	 *                  (energy buffer) else it is set to this size.
 	 * @return The energy value at stepsBack in time.
 	 */
 	public double getPreviousEnergyValue(int stepsBack) {
-		if (stepsBack >= energies.length)
+		if (stepsBack >= energies.length) {
 			stepsBack = energies.length - 1;
+		}
 
 		int pos = (energies.length + (energiesPos - stepsBack))
-				% energies.length;
+			% energies.length;
 
 		return energies[pos];
 	}
 
 	/**
 	 * Accumulate some energy in the current energy cell.
-	 * 
-	 * @param value
-	 *            The value to accumulate to the current cell.
+	 *
+	 * @param value The value to accumulate to the current cell.
 	 */
 	public void accumulateEnergy(double value) {
 		energy += value;
@@ -179,7 +183,8 @@ public class Energies {
 	 * Randomize the energies array.
 	 */
 	protected void clearEnergies() {
-		for (int i = 0; i < energies.length; ++i)
+		for (int i = 0; i < energies.length; ++i) {
 			energies[i] = ((Math.random() * 2000) - 1000);
+		}
 	}
 }

@@ -36,6 +36,7 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import org.graphstream.graph.CompoundAttribute;
 import org.graphstream.graph.Graph;
@@ -56,32 +57,30 @@ public class TestElement {
 
 		// Simple attributes.
 
-		A.addAttribute("foo");
+		A.setAttribute("foo");
 
 		assertEquals(1, A.getAttributeCount());
 		assertTrue(A.hasAttribute("foo"));
 		assertTrue(A.hasAttribute("foo", Boolean.class));
 		assertFalse(A.hasLabel("foo"));
 		assertFalse(A.hasNumber("foo"));
-		assertFalse(A.hasVector("foo"));
 		assertFalse(A.hasArray("foo"));
-		assertFalse(A.hasHash("foo"));
+		assertFalse(A.hasMap("foo"));
 		assertNotNull(A.getAttribute("foo"));
 		assertEquals(true, A.getAttribute("foo"));
 		assertEquals(Boolean.TRUE, A.getAttribute("foo"));
 
 		// Change.
 
-		A.changeAttribute("foo", false);
+		A.setAttribute("foo", false);
 
 		assertEquals(1, A.getAttributeCount());
 		assertTrue(A.hasAttribute("foo"));
 		assertTrue(A.hasAttribute("foo", Boolean.class));
 		assertFalse(A.hasLabel("foo"));
 		assertFalse(A.hasNumber("foo"));
-		assertFalse(A.hasVector("foo"));
 		assertFalse(A.hasArray("foo"));
-		assertFalse(A.hasHash("foo"));
+		assertFalse(A.hasMap("foo"));
 		assertNotNull(A.getAttribute("foo"));
 		assertEquals(false, A.getAttribute("foo"));
 		assertEquals(Boolean.FALSE, A.getAttribute("foo"));
@@ -112,60 +111,36 @@ public class TestElement {
 
 		// Label attributes.
 
-		A.addAttribute("foo", "bar");
+		A.setAttribute("foo", "bar");
 
 		assertEquals(1, A.getAttributeCount());
 		assertTrue(A.hasAttribute("foo"));
 		assertTrue(A.hasAttribute("foo", String.class));
 		assertTrue(A.hasLabel("foo"));
 		assertFalse(A.hasNumber("foo"));
-		assertFalse(A.hasVector("foo"));
 		assertFalse(A.hasArray("foo"));
-		assertFalse(A.hasHash("foo"));
+		assertFalse(A.hasMap("foo"));
 		assertNotNull(A.getAttribute("foo"));
 		assertEquals("bar", A.getAttribute("foo"));
 
 		// Number attributes.
 
-		A.addAttribute("pi", 3.1415);
+		A.setAttribute("pi", 3.1415);
 
 		assertEquals(2, A.getAttributeCount());
 		assertTrue(A.hasAttribute("pi"));
 		assertTrue(A.hasAttribute("pi", Number.class));
 		assertFalse(A.hasLabel("pi"));
 		assertTrue(A.hasNumber("pi"));
-		assertFalse(A.hasVector("pi"));
 		assertFalse(A.hasArray("pi"));
-		assertFalse(A.hasHash("pi"));
+		assertFalse(A.hasMap("pi"));
 		assertNotNull(A.getAttribute("pi"));
-		assertEquals(3.1415, A.getAttribute("pi"));
+		assertEquals(3.1415, A.getAttribute("pi"), 0);
 		assertEquals(new Double(3.1415), A.getAttribute("pi"));
 
 		A.setAttribute("pi", "3.1415");
 		
-		assertEquals(3.1415, A.getNumber("pi"), 0);
-		
-		// Vector of numbers.
-
-		ArrayList<Number> numbers = new ArrayList<Number>();
-
-		numbers.add(3);
-		numbers.add(1.4);
-		numbers.add(1.5f);
-
-		A.addAttribute("v", numbers);
-
-		assertEquals(3, A.getAttributeCount());
-		assertTrue(A.hasAttribute("v"));
-		assertTrue(A.hasAttribute("v", ArrayList.class));
-		assertFalse(A.hasLabel("v"));
-		assertFalse(A.hasNumber("v"));
-		assertTrue(A.hasVector("v"));
-		assertFalse(A.hasArray("v"));
-		assertFalse(A.hasHash("v"));
-		assertNotNull(A.getAttribute("v"));
-		assertEquals(numbers, A.getAttribute("v"));
-		assertEquals(numbers, A.getVector("v"));
+		assertEquals(3.1415, A.getNumber("pi").doubleValue(), 0);
 
 		// Hashes 1.
 
@@ -175,19 +150,18 @@ public class TestElement {
 		map.put("B", "b");
 		map.put("C", "c");
 
-		A.addAttribute("map", map);
+		A.setAttribute("map", map);
 
-		assertEquals(4, A.getAttributeCount());
+		assertEquals(3, A.getAttributeCount());
 		assertTrue(A.hasAttribute("map"));
 		assertTrue(A.hasAttribute("map", HashMap.class));
 		assertFalse(A.hasLabel("map"));
 		assertFalse(A.hasNumber("map"));
-		assertFalse(A.hasVector("map"));
 		assertFalse(A.hasArray("map"));
-		assertTrue(A.hasHash("map"));
+		assertTrue(A.hasMap("map"));
 		assertNotNull(A.getAttribute("map"));
 		assertEquals(map, A.getAttribute("map"));
-		assertEquals(map, A.getHash("map"));
+		assertEquals(map, A.getMap("map"));
 
 		// Hashes 2.
 
@@ -197,19 +171,18 @@ public class TestElement {
 		attr.put("B", "b");
 		attr.put("C", "c");
 
-		A.addAttribute("ca", attr);
+		A.setAttribute("ca", attr);
 
-		assertEquals(5, A.getAttributeCount());
+		assertEquals(4, A.getAttributeCount());
 		assertTrue(A.hasAttribute("ca"));
 		assertTrue(A.hasAttribute("ca", MyAttribute.class));
 		assertFalse(A.hasLabel("ca"));
 		assertFalse(A.hasNumber("ca"));
-		assertFalse(A.hasVector("ca"));
 		assertFalse(A.hasArray("ca"));
-		assertTrue(A.hasHash("ca"));
+		assertTrue(A.hasMap("ca"));
 		assertNotNull(A.getAttribute("ca"));
 		assertEquals(attr, A.getAttribute("ca"));
-		assertEquals(attr, A.getHash("ca"));
+		assertEquals(attr, A.getMap("ca"));
 
 		// Clear
 
@@ -243,7 +216,7 @@ public class TestElement {
 	public void testElementValueAttributeNull4() {
 		Graph graph = new MultiGraph("g");
 		graph.setNullAttributesAreErrors(true);
-		graph.addAttribute("foo","ah ah ah");
+		graph.setAttribute("foo","ah ah ah");
 		graph.getNumber("foo");
 	}
 	
@@ -258,7 +231,7 @@ public class TestElement {
 	public void testElementValueAttributeNull6() {
 		Graph graph = new MultiGraph("g");
 		graph.setNullAttributesAreErrors(true);
-		graph.addAttribute("foo",5);
+		graph.setAttribute("foo",5);
 		graph.getLabel("foo");
 	}
 
@@ -273,7 +246,7 @@ public class TestElement {
 
 		// Arrays
 
-		A.addAttribute("array", 0, 1.1, 1.3f, "foo");
+		A.setAttribute("array", 0, 1.1, 1.3f, "foo");
 
 		Object expected[] = { 0, 1.1, 1.3f, "foo" };
 
@@ -282,9 +255,8 @@ public class TestElement {
 		assertTrue(A.hasAttribute("array", Object[].class));
 		assertFalse(A.hasLabel("array"));
 		assertFalse(A.hasNumber("array"));
-		assertFalse(A.hasVector("array"));
 		assertTrue(A.hasArray("array"));
-		assertFalse(A.hasHash("array"));
+		assertFalse(A.hasMap("array"));
 		assertArrayEquals(expected, (Object[]) A.getAttribute("array"));
 		assertArrayEquals(expected, A.getArray("array"));
 		assertNotNull(A.getAttribute("array"));
@@ -301,9 +273,9 @@ public class TestElement {
 
 		// First attribute of.
 
-		A.addAttribute("C", "c");
-		A.addAttribute("I", "i");
-		A.addAttribute("Z", "z");
+		A.setAttribute("C", "c");
+		A.setAttribute("I", "i");
+		A.setAttribute("Z", "z");
 
 		String s = A.getFirstAttributeOf("A", "B", "C", "I", "Z");
 
@@ -312,8 +284,8 @@ public class TestElement {
 
 		// First attribute of 2.
 
-		A.addAttribute("J", 1);
-		A.addAttribute("X", 2);
+		A.setAttribute("J", 1);
+		A.setAttribute("X", 2);
 
 		Number n = A.getFirstAttributeOf(Number.class, "A", "B", "C", "I", "J",
 				"X", "Z");
@@ -333,9 +305,9 @@ public class TestElement {
 
 		// First attribute of.
 
-		A.addAttribute("A", "a");
-		A.addAttribute("B", "b");
-		A.addAttribute("C", "c");
+		A.setAttribute("A", "a");
+		A.setAttribute("B", "b");
+		A.setAttribute("C", "c");
 
 		assertEquals(3, A.getAttributeCount());
 
@@ -354,8 +326,8 @@ public class TestElement {
 	public void testNullAttributes() {
 		Graph graph = new MultiGraph("g1");
 
-		graph.addAttribute("foo");
-		graph.addAttribute("bar", (Object) null); // Yes an attribute with a
+		graph.setAttribute("foo");
+		graph.setAttribute("bar", (Object) null); // Yes an attribute with a
 													// null value, You can !
 
 		assertTrue(graph.hasAttribute("foo"));
@@ -376,7 +348,7 @@ public class TestElement {
 			return "MyAttribute";
 		}
 
-		public HashMap<?, ?> toHashMap() {
+		public Map<?, ?> toMap() {
 			return this;
 		}
 	}

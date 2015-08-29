@@ -98,8 +98,9 @@ public class GEXF extends PipeBase implements GEXFElement {
 		stream.stream.writeAttribute("xmlns", XMLNS);
 		stream.stream.writeAttribute("xmlns:xsi", XMLNS_XSI);
 
-		if (isExtensionEnable(Extension.VIZ))
+		if (isExtensionEnable(Extension.VIZ)) {
 			stream.stream.writeAttribute("xmlns:viz", XMLNS_VIZ);
+		}
 
 		stream.stream.writeAttribute("xsi:schemaLocation", XMLNS_SL);
 		stream.stream.writeAttribute("version", VERSION);

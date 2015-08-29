@@ -43,52 +43,51 @@ import java.util.logging.Logger;
 
 /**
  * Lots of small often used measuring algorithms on graphs.
- * 
+ *
  * <p>
  * Use this class with a static import.
  * </p>
  */
 public class GraphPosLengthUtils {
 
-    /**
-     * class level logger
-     */
-    private static final Logger logger = Logger.getLogger(GraphPosLengthUtils.class.getSimpleName());
+	/**
+	 * class level logger
+	 */
+	private static final Logger logger = Logger.getLogger(GraphPosLengthUtils.class.getSimpleName());
 
 	/**
-	 * Retrieve a node position from its attributes ("x", "y", "z", or "xy", or
-	 * "xyz").
-	 * 
-	 * @param id
-	 *            The node identifier.
-	 * @return A newly allocated array of three floats containing the (x,y,z)
-	 *         position of the node, or null if the node is not part of the
-	 *         graph.
+	 * Retrieve a node position from its attributes ("x", "y", "z", or "xy",
+	 * or "xyz").
+	 *
+	 * @param id The node identifier.
+	 * @return A newly allocated array of three floats containing the
+	 *         (x,y,z) position of the node, or null if the node is not part
+	 *         of the graph.
 	 */
 	public static double[] nodePosition(Graph graph, String id) {
 		Node node = graph.getNode(id);
 
-		if (node != null)
+		if (node != null) {
 			return nodePosition(node);
+		}
 
 		return null;
 	}
 
 	/**
-	 * Retrieve a node position from its attributes ("x", "y", "z", or "xy", or
-	 * "xyz").
-	 * 
-	 * @param id
-	 *            The node identifier.
-	 * @return A newly allocated point containing the (x,y,z)
-	 *         position of the node, or null if the node is not part of the
-	 *         graph.
+	 * Retrieve a node position from its attributes ("x", "y", "z", or "xy",
+	 * or "xyz").
+	 *
+	 * @param id The node identifier.
+	 * @return A newly allocated point containing the (x,y,z) position of
+	 *         the node, or null if the node is not part of the graph.
 	 */
 	public static Point3 nodePointPosition(Graph graph, String id) {
 		Node node = graph.getNode(id);
 
-		if (node != null)
+		if (node != null) {
 			return nodePointPosition(node);
+		}
 
 		return null;
 	}
@@ -96,11 +95,10 @@ public class GraphPosLengthUtils {
 	/**
 	 * Like {@link #nodePosition(Graph,String)} but use an existing node as
 	 * argument.
-	 * 
-	 * @param node
-	 *            The node to consider.
-	 * @return A newly allocated array of three floats containing the (x,y,z)
-	 *         position of the node.
+	 *
+	 * @param node The node to consider.
+	 * @return A newly allocated array of three floats containing the
+	 *         (x,y,z) position of the node.
 	 */
 	public static double[] nodePosition(Node node) {
 		double xyz[] = new double[3];
@@ -111,13 +109,12 @@ public class GraphPosLengthUtils {
 	}
 
 	/**
-	 * Like {@link #nodePointPosition(Graph,String)} but use an existing node as
-	 * argument.
-	 * 
-	 * @param node
-	 *            The node to consider.
-	 * @return A newly allocated point containing the (x,y,z)
-	 *         position of the node.
+	 * Like {@link #nodePointPosition(Graph,String)} but use an existing
+	 * node as argument.
+	 *
+	 * @param node The node to consider.
+	 * @return A newly allocated point containing the (x,y,z) position of
+	 *         the node.
 	 */
 	public static Point3 nodePointPosition(Node node) {
 		Point3 pos = new Point3();
@@ -129,95 +126,94 @@ public class GraphPosLengthUtils {
 
 	/**
 	 * Like {@link #nodePosition(Graph,String)}, but instead of returning a
-	 * newly allocated array, fill up the array given as parameter. This array
-	 * must have at least three cells.
-	 * 
-	 * @param id
-	 *            The node identifier.
-	 * @param xyz
-	 *            An array of at least three cells.
-	 * @throws RuntimeException
-	 *             If the node with the given identifier does not exist.
+	 * newly allocated array, fill up the array given as parameter. This
+	 * array must have at least three cells.
+	 *
+	 * @param id The node identifier.
+	 * @param xyz An array of at least three cells.
+	 * @throws RuntimeException If the node with the given identifier does
+	 *                          not exist.
 	 */
 	public static void nodePosition(Graph graph, String id, double xyz[]) {
 		Node node = graph.getNode(id);
 
-		if (node != null)
+		if (node != null) {
 			nodePosition(node, xyz);
+		}
 
 		throw new RuntimeException("node '" + id + "' does not exist");
 	}
-	
+
 	/**
-	 * Like {@link #nodePointPosition(Graph,String)}, but instead of returning a
-	 * newly allocated array, fill up the array given as parameter. This array
-	 * must have at least three cells.
-	 * 
-	 * @param id
-	 *            The node identifier.
-	 * @param pos
-	 *            A point that will receive the node position.
-	 * @throws RuntimeException
-	 *             If the node with the given identifier does not exist.
+	 * Like {@link #nodePointPosition(Graph,String)}, but instead of
+	 * returning a newly allocated array, fill up the array given as
+	 * parameter. This array must have at least three cells.
+	 *
+	 * @param id The node identifier.
+	 * @param pos A point that will receive the node position.
+	 * @throws RuntimeException If the node with the given identifier does
+	 *                          not exist.
 	 */
 	public static void nodePosition(Graph graph, String id, Point3 pos) {
 		Node node = graph.getNode(id);
 
-		if (node != null)
+		if (node != null) {
 			nodePosition(node, pos);
+		}
 
 		throw new RuntimeException("node '" + id + "' does not exist");
 	}
 
 	/**
-	 * Like {@link #nodePosition(Graph,String,double[])} but use an existing node
-	 * as argument.
-	 * 
-	 * @param node
-	 *            The node to consider.
-	 * @param xyz
-	 *            An array of at least three cells.
+	 * Like {@link #nodePosition(Graph,String,double[])} but use an existing
+	 * node as argument.
+	 *
+	 * @param node The node to consider.
+	 * @param xyz An array of at least three cells.
 	 */
 	public static void nodePosition(Node node, double xyz[]) {
-		if (xyz.length < 3)
+		if (xyz.length < 3) {
 			return;
+		}
 
 		if (node.hasAttribute("xyz") || node.hasAttribute("xy")) {
 			Object o = node.getAttribute("xyz");
 
-			if (o == null)
+			if (o == null) {
 				o = node.getAttribute("xy");
+			}
 
 			if (o != null) {
 				positionFromObject(o, xyz);
 			}
-			
+
 		} else if (node.hasAttribute("x")) {
 			xyz[0] = (double) node.getNumber("x");
 
-			if (node.hasAttribute("y"))
+			if (node.hasAttribute("y")) {
 				xyz[1] = (double) node.getNumber("y");
+			}
 
-			if (node.hasAttribute("z"))
+			if (node.hasAttribute("z")) {
 				xyz[2] = (double) node.getNumber("z");
+			}
 		}
 	}
-	
+
 	/**
-	 * Like {@link #nodePosition(Graph,String,Point3)} but use an existing node
-	 * as argument.
-	 * 
-	 * @param node
-	 *            The node to consider.
-	 * @param pos
-	 *            A point that will receive the node position.
+	 * Like {@link #nodePosition(Graph,String,Point3)} but use an existing
+	 * node as argument.
+	 *
+	 * @param node The node to consider.
+	 * @param pos A point that will receive the node position.
 	 */
 	public static void nodePosition(Node node, Point3 pos) {
 		if (node.hasAttribute("xyz") || node.hasAttribute("xy")) {
 			Object o = node.getAttribute("xyz");
 
-			if (o == null)
+			if (o == null) {
 				o = node.getAttribute("xy");
+			}
 
 			if (o != null) {
 				positionFromObject(o, pos);
@@ -225,11 +221,13 @@ public class GraphPosLengthUtils {
 		} else if (node.hasAttribute("x")) {
 			pos.x = (double) node.getNumber("x");
 
-			if (node.hasAttribute("y"))
+			if (node.hasAttribute("y")) {
 				pos.y = (double) node.getNumber("y");
+			}
 
-			if (node.hasAttribute("z"))
+			if (node.hasAttribute("z")) {
 				pos.z = (double) node.getNumber("z");
+			}
 		}
 
 //		if (node.hasAttribute("xyz") || node.hasAttribute("xy")) {
@@ -260,73 +258,120 @@ public class GraphPosLengthUtils {
 //				pos.z = (double) node.getNumber("z");
 //		}
 	}
-	
+
 	/**
-	 * Try to convert an object to a position. The object can be an array of 
+	 * Try to convert an object to a position. The object can be an array of
 	 * numbers, an array of base numeric types or their object counterparts.
-	 * @param o The object to try to convert.
+	 *
+	 * @param o   The object to try to convert.
 	 * @param xyz The result.
 	 */
 	public static void positionFromObject(Object o, double xyz[]) {
-		if(o instanceof Object[]) {
+		if (o instanceof Object[]) {
 			Object oo[] = (Object[]) o;
 
 			if (oo.length > 0 && oo[0] instanceof Number) {
 				xyz[0] = ((Number) oo[0]).doubleValue();
-				if (oo.length > 1) xyz[1] = ((Number) oo[1]).doubleValue();
-				if (oo.length > 2) xyz[2] = ((Number) oo[2]).doubleValue();
+				if (oo.length > 1) {
+					xyz[1] = ((Number) oo[1]).doubleValue();
+				}
+				if (oo.length > 2) {
+					xyz[2] = ((Number) oo[2]).doubleValue();
+				}
 			}
-		} else if(o instanceof Double[]) {
+		} else if (o instanceof Double[]) {
 			Double oo[] = (Double[]) o;
-			if(oo.length > 0) xyz[0] = oo[0];
-			if(oo.length > 1) xyz[1] = oo[1];
-			if(oo.length > 2) xyz[2] = oo[2];
-		} else if(o instanceof Float[]) {
+			if (oo.length > 0) {
+				xyz[0] = oo[0];
+			}
+			if (oo.length > 1) {
+				xyz[1] = oo[1];
+			}
+			if (oo.length > 2) {
+				xyz[2] = oo[2];
+			}
+		} else if (o instanceof Float[]) {
 			Float oo[] = (Float[]) o;
-			if(oo.length > 0) xyz[0] = oo[0];
-			if(oo.length > 1) xyz[1] = oo[1];
-			if(oo.length > 2) xyz[2] = oo[2];
-		} else if(o instanceof Integer[]) {
+			if (oo.length > 0) {
+				xyz[0] = oo[0];
+			}
+			if (oo.length > 1) {
+				xyz[1] = oo[1];
+			}
+			if (oo.length > 2) {
+				xyz[2] = oo[2];
+			}
+		} else if (o instanceof Integer[]) {
 			Integer oo[] = (Integer[]) o;
-			if(oo.length > 0) xyz[0] = oo[0];
-			if(oo.length > 1) xyz[1] = oo[1];
-			if(oo.length > 2) xyz[2] = oo[2];
-		} else if(o instanceof double[]) {
+			if (oo.length > 0) {
+				xyz[0] = oo[0];
+			}
+			if (oo.length > 1) {
+				xyz[1] = oo[1];
+			}
+			if (oo.length > 2) {
+				xyz[2] = oo[2];
+			}
+		} else if (o instanceof double[]) {
 			double oo[] = (double[]) o;
-			if(oo.length > 0) xyz[0] = oo[0];
-			if(oo.length > 1) xyz[1] = oo[1];
-			if(oo.length > 2) xyz[2] = oo[2];
-		} else if(o instanceof float[]) {
+			if (oo.length > 0) {
+				xyz[0] = oo[0];
+			}
+			if (oo.length > 1) {
+				xyz[1] = oo[1];
+			}
+			if (oo.length > 2) {
+				xyz[2] = oo[2];
+			}
+		} else if (o instanceof float[]) {
 			float oo[] = (float[]) o;
-			if(oo.length > 0) xyz[0] = oo[0];
-			if(oo.length > 1) xyz[1] = oo[1];
-			if(oo.length > 2) xyz[2] = oo[2];
-		} else if(o instanceof int[]) {
+			if (oo.length > 0) {
+				xyz[0] = oo[0];
+			}
+			if (oo.length > 1) {
+				xyz[1] = oo[1];
+			}
+			if (oo.length > 2) {
+				xyz[2] = oo[2];
+			}
+		} else if (o instanceof int[]) {
 			int oo[] = (int[]) o;
-			if(oo.length > 0) xyz[0] = oo[0];
-			if(oo.length > 1) xyz[1] = oo[1];
-			if(oo.length > 2) xyz[2] = oo[2];
-		} else if(o instanceof Number[]) {
+			if (oo.length > 0) {
+				xyz[0] = oo[0];
+			}
+			if (oo.length > 1) {
+				xyz[1] = oo[1];
+			}
+			if (oo.length > 2) {
+				xyz[2] = oo[2];
+			}
+		} else if (o instanceof Number[]) {
 			Number oo[] = (Number[]) o;
-			if(oo.length > 0) xyz[0] = oo[0].doubleValue();
-			if(oo.length > 1) xyz[1] = oo[1].doubleValue();
-			if(oo.length > 2) xyz[2] = oo[2].doubleValue();
-		} else if(o instanceof Point3) {
+			if (oo.length > 0) {
+				xyz[0] = oo[0].doubleValue();
+			}
+			if (oo.length > 1) {
+				xyz[1] = oo[1].doubleValue();
+			}
+			if (oo.length > 2) {
+				xyz[2] = oo[2].doubleValue();
+			}
+		} else if (o instanceof Point3) {
 			Point3 oo = (Point3) o;
 			xyz[0] = oo.x;
 			xyz[1] = oo.y;
 			xyz[2] = oo.z;
-		} else if(o instanceof Vector3) {
+		} else if (o instanceof Vector3) {
 			Vector3 oo = (Vector3) o;
 			xyz[0] = oo.data[0];
 			xyz[1] = oo.data[1];
 			xyz[2] = oo.data[2];
-		} else if(o instanceof Point2) {
+		} else if (o instanceof Point2) {
 			Point2 oo = (Point2) o;
 			xyz[0] = oo.x;
 			xyz[1] = oo.y;
 			xyz[2] = 0;
-		} else if(o instanceof Vector2) {
+		} else if (o instanceof Vector2) {
 			Vector2 oo = (Vector2) o;
 			xyz[0] = oo.data[0];
 			xyz[1] = oo.data[1];
@@ -335,97 +380,144 @@ public class GraphPosLengthUtils {
 			logger.warning(String.format("Do not know how to handle xyz attribute %s.", o.getClass().getName()));
 		}
 	}
-	
+
 	/**
-	 * Try to convert an object to a position. The object can be an array of 
+	 * Try to convert an object to a position. The object can be an array of
 	 * numbers, an array of base numeric types or their object counterparts.
-	 * @param o The object to try to convert.
+	 *
+	 * @param o   The object to try to convert.
 	 * @param pos The result.
 	 */
 	public static void positionFromObject(Object o, Point3 pos) {
-		if(o instanceof Object[]) {
+		if (o instanceof Object[]) {
 			Object oo[] = (Object[]) o;
 
 			if (oo.length > 0 && oo[0] instanceof Number) {
 				pos.x = ((Number) oo[0]).doubleValue();
-				if (oo.length > 1) pos.y = ((Number) oo[1]).doubleValue();
-				if (oo.length > 2) pos.z = ((Number) oo[2]).doubleValue();
+				if (oo.length > 1) {
+					pos.y = ((Number) oo[1]).doubleValue();
+				}
+				if (oo.length > 2) {
+					pos.z = ((Number) oo[2]).doubleValue();
+				}
 			}
-		} else if(o instanceof Double[]) {
+		} else if (o instanceof Double[]) {
 			Double oo[] = (Double[]) o;
-			if(oo.length > 0) pos.x = oo[0];
-			if(oo.length > 1) pos.y = oo[1];
-			if(oo.length > 2) pos.z = oo[2];
-		} else if(o instanceof Float[]) {
+			if (oo.length > 0) {
+				pos.x = oo[0];
+			}
+			if (oo.length > 1) {
+				pos.y = oo[1];
+			}
+			if (oo.length > 2) {
+				pos.z = oo[2];
+			}
+		} else if (o instanceof Float[]) {
 			Float oo[] = (Float[]) o;
-			if(oo.length > 0) pos.x = oo[0];
-			if(oo.length > 1) pos.y = oo[1];
-			if(oo.length > 2) pos.z = oo[2];
-		} else if(o instanceof Integer[]) {
+			if (oo.length > 0) {
+				pos.x = oo[0];
+			}
+			if (oo.length > 1) {
+				pos.y = oo[1];
+			}
+			if (oo.length > 2) {
+				pos.z = oo[2];
+			}
+		} else if (o instanceof Integer[]) {
 			Integer oo[] = (Integer[]) o;
-			if(oo.length > 0) pos.x = oo[0];
-			if(oo.length > 1) pos.y = oo[1];
-			if(oo.length > 2) pos.z = oo[2];
-		} else if(o instanceof double[]) {
+			if (oo.length > 0) {
+				pos.x = oo[0];
+			}
+			if (oo.length > 1) {
+				pos.y = oo[1];
+			}
+			if (oo.length > 2) {
+				pos.z = oo[2];
+			}
+		} else if (o instanceof double[]) {
 			double oo[] = (double[]) o;
-			if(oo.length > 0) pos.x = oo[0];
-			if(oo.length > 1) pos.y = oo[1];
-			if(oo.length > 2) pos.z = oo[2];
-		} else if(o instanceof float[]) {
+			if (oo.length > 0) {
+				pos.x = oo[0];
+			}
+			if (oo.length > 1) {
+				pos.y = oo[1];
+			}
+			if (oo.length > 2) {
+				pos.z = oo[2];
+			}
+		} else if (o instanceof float[]) {
 			float oo[] = (float[]) o;
-			if(oo.length > 0) pos.x = oo[0];
-			if(oo.length > 1) pos.y = oo[1];
-			if(oo.length > 2) pos.z = oo[2];
-		} else if(o instanceof int[]) {
+			if (oo.length > 0) {
+				pos.x = oo[0];
+			}
+			if (oo.length > 1) {
+				pos.y = oo[1];
+			}
+			if (oo.length > 2) {
+				pos.z = oo[2];
+			}
+		} else if (o instanceof int[]) {
 			int oo[] = (int[]) o;
-			if(oo.length > 0) pos.x = oo[0];
-			if(oo.length > 1) pos.y = oo[1];
-			if(oo.length > 2) pos.z = oo[2];
-		} else if(o instanceof Number[]) {
+			if (oo.length > 0) {
+				pos.x = oo[0];
+			}
+			if (oo.length > 1) {
+				pos.y = oo[1];
+			}
+			if (oo.length > 2) {
+				pos.z = oo[2];
+			}
+		} else if (o instanceof Number[]) {
 			Number oo[] = (Number[]) o;
-			if(oo.length > 0) pos.x = oo[0].doubleValue();
-			if(oo.length > 1) pos.y = oo[1].doubleValue();
-			if(oo.length > 2) pos.z = oo[2].doubleValue();
-		} else if(o instanceof Point3) {
+			if (oo.length > 0) {
+				pos.x = oo[0].doubleValue();
+			}
+			if (oo.length > 1) {
+				pos.y = oo[1].doubleValue();
+			}
+			if (oo.length > 2) {
+				pos.z = oo[2].doubleValue();
+			}
+		} else if (o instanceof Point3) {
 			Point3 oo = (Point3) o;
 			pos.x = oo.x;
 			pos.y = oo.y;
 			pos.z = oo.z;
-		} else if(o instanceof Vector3) {
+		} else if (o instanceof Vector3) {
 			Vector3 oo = (Vector3) o;
 			pos.x = oo.data[0];
 			pos.y = oo.data[1];
 			pos.z = oo.data[2];
-		} else if(o instanceof Point2) {
+		} else if (o instanceof Point2) {
 			Point2 oo = (Point2) o;
 			pos.x = oo.x;
 			pos.y = oo.y;
 			pos.z = 0;
-		} else if(o instanceof Vector2) {
+		} else if (o instanceof Vector2) {
 			Vector2 oo = (Vector2) o;
 			pos.x = oo.data[0];
 			pos.y = oo.data[1];
 			pos.z = 0;
 		} else {
-            logger.warning(String.format("Do not know how to handle xyz attribute %s%n", o.getClass().getName()));
+			logger.warning(String.format("Do not know how to handle xyz attribute %s%n", o.getClass().getName()));
 		}
 	}
 
 	/**
 	 * Compute the edge length of the given edge according to its two nodes
 	 * positions.
-	 * 
-	 * @param id
-	 *            The identifier of the edge.
-	 * @return The edge length or -1 if the nodes of the edge have no positions.
-	 * @throws RuntimeException
-	 *             If the edge cannot be found.
+	 *
+	 * @param id The identifier of the edge.
+	 * @return The edge length or -1 if the nodes of the edge have no
+	 *         positions.
+	 * @throws RuntimeException If the edge cannot be found.
 	 */
 	public static double edgeLength(Graph graph, String id) {
 		Edge edge = graph.getEdge(id);
 
-		if (edge != null)
+		if (edge != null) {
 			return edgeLength(edge);
+		}
 
 		throw new RuntimeException("edge '" + id + "' cannot be found");
 	}
@@ -433,22 +525,24 @@ public class GraphPosLengthUtils {
 	/**
 	 * Like {@link #edgeLength(Graph,String)} but use an existing edge as
 	 * argument.
-	 * 
+	 *
 	 * @param edge
-	 * @return The edge length or -1 if the nodes of the edge have no positions.
+	 * @return The edge length or -1 if the nodes of the edge have no
+	 *         positions.
 	 */
 	public static double edgeLength(Edge edge) {
 		double xyz0[] = nodePosition(edge.getNode0());
 		double xyz1[] = nodePosition(edge.getNode1());
 
-		if (xyz0 == null || xyz1 == null)
+		if (xyz0 == null || xyz1 == null) {
 			return -1;
+		}
 
 		xyz0[0] = xyz1[0] - xyz0[0];
 		xyz0[1] = xyz1[1] - xyz0[1];
 		xyz0[2] = xyz1[2] - xyz0[2];
 
 		return Math.sqrt(xyz0[0] * xyz0[0] + xyz0[1] * xyz0[1]
-				+ xyz0[2] * xyz0[2]);
+			+ xyz0[2] * xyz0[2]);
 	}
 }

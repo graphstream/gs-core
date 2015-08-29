@@ -74,13 +74,15 @@ public class GEXFSpells implements GEXFElement {
 	 * .file.gexf.SmartXMLWriter)
 	 */
 	public void export(SmartXMLWriter stream) throws XMLStreamException {
-		if (spells.size() == 0)
+		if (spells.size() == 0) {
 			return;
+		}
 
 		stream.startElement("spells");
 
-		for (int i = 0; i < spells.size(); i++)
+		for (int i = 0; i < spells.size(); i++) {
 			spells.get(i).export(stream);
+		}
 
 		stream.endElement(); // SPELLS
 	}

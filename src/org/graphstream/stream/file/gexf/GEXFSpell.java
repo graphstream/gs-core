@@ -60,9 +60,9 @@ public class GEXFSpell implements GEXFElement {
 		stream.startElement("spell");
 
 		stream.stream.writeAttribute("start",
-				root.getTimeFormat().format.format(start));
+			root.getTimeFormat().format.format(start));
 		stream.stream.writeAttribute("end",
-				root.getTimeFormat().format.format(closed ? end : root.step));
+			root.getTimeFormat().format.format(closed ? end : root.step));
 
 		stream.endElement(); // SPELL
 

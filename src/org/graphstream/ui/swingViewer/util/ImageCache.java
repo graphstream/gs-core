@@ -47,16 +47,16 @@ import java.util.logging.Logger;
 /**
  * A simple cache for images to avoid reloading them constantly and to allow
  * sharing.
- * 
+ *
  * TODO have a policy to release images if they have not been used for a given
  * time.
  */
 public class ImageCache {
 
-    /**
-     * class level logger
-     */
-    private static final Logger logger = Logger.getLogger(DefaultCamera.class.getSimpleName());
+	/**
+	 * class level logger
+	 */
+	private static final Logger logger = Logger.getLogger(DefaultCamera.class.getSimpleName());
 
 	/**
 	 * The image cache.
@@ -79,7 +79,7 @@ public class ImageCache {
 	 */
 	public ImageCache() {
 		BufferedImage img = new BufferedImage(16, 16,
-				BufferedImage.TYPE_INT_RGB);
+			BufferedImage.TYPE_INT_RGB);
 		Graphics2D g2 = img.createGraphics();
 
 		g2.setColor(Color.RED);
@@ -91,26 +91,26 @@ public class ImageCache {
 	}
 
 	/**
-	 * Default singleton image cache instance that can be shared. This method
-	 * and singleton must be used only in the Swing thread.
-	 * 
+	 * Default singleton image cache instance that can be shared. This
+	 * method and singleton must be used only in the Swing thread.
+	 *
 	 * @return The default singleton image cache instance.
 	 */
 	public static ImageCache defaultImageCache() {
-		if (defaultImageCache == null)
+		if (defaultImageCache == null) {
 			defaultImageCache = new ImageCache();
+		}
 
 		return defaultImageCache;
 	}
 
 	/**
-	 * Lookup an image based on its name, if found return it, else try to load
-	 * it. If an image is not found once, the cache remembers it and will not
-	 * try to reload it again if the same image is requested anew. Therefore
-	 * using getImage() is fast and smooth.
-	 * 
-	 * @param fileNameOrUrl
-	 *            A file name or an URL pointing at the image.
+	 * Lookup an image based on its name, if found return it, else try to
+	 * load it. If an image is not found once, the cache remembers it and
+	 * will not try to reload it again if the same image is requested anew.
+	 * Therefore using getImage() is fast and smooth.
+	 *
+	 * @param fileNameOrUrl A file name or an URL pointing at the image.
 	 * @return An image or null if the image cannot be found.
 	 */
 	public Image getImage(String fileNameOrUrl) {
@@ -118,24 +118,24 @@ public class ImageCache {
 	}
 
 	/**
-	 * The same as {@link #getImage(String)} but you can force the cache to try
-	 * to reload an image that where not found before.
-	 * 
-	 * @param fileNameOrUrl
-	 *            A file name or an URL pointing at the image.
-	 * @param forceTryReload
-	 *            If true, try to reload an image that where not found before.
+	 * The same as {@link #getImage(String)} but you can force the cache to
+	 * try to reload an image that where not found before.
+	 *
+	 * @param fileNameOrUrl A file name or an URL pointing at the image.
+	 * @param forceTryReload If true, try to reload an image that where not
+	 *                       found before.
 	 * @return An image or null if the image cannot be found.
 	 */
 	public Image getImage(String fileNameOrUrl, boolean forceTryReload) {
 		Image ii = imageCache.get(fileNameOrUrl);
 
-		if (ii == dummy && !forceTryReload)
+		if (ii == dummy && !forceTryReload) {
 			return null;
+		}
 
 		if (ii == null) {
 			URL url = ImageCache.class.getClassLoader().getResource(
-					fileNameOrUrl);
+				fileNameOrUrl);
 
 			if (url != null) {
 				try {
@@ -156,7 +156,7 @@ public class ImageCache {
 						imageCache.put(fileNameOrUrl, ii);
 					} catch (IOException ee) {
 						imageCache.put(fileNameOrUrl, dummy);
-                        logger.log(Level.WARNING, String.format("Cannot read image '%s'.", fileNameOrUrl), e);
+						logger.log(Level.WARNING, String.format("Cannot read image '%s'.", fileNameOrUrl), e);
 					}
 				}
 			}
@@ -167,7 +167,7 @@ public class ImageCache {
 
 	/**
 	 * A dummy 16x16 image.
-	 * 
+	 *
 	 * @return An image.
 	 */
 	public Image getDummyImage() {

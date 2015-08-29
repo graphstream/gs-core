@@ -42,31 +42,29 @@ import org.graphstream.graph.Node;
  * Nodes used with {@link SingleGraph}
  *
  */
-
 public class SingleNode extends AdjacencyListNode {
 	protected static class TwoEdges {
 		AbstractEdge in, out;
 	}
-	
+
 	protected HashMap<AbstractNode, TwoEdges> neighborMap;
 
 	// *** Constructor ***
-
-	protected SingleNode(AbstractGraph graph, String id) {
-		super(graph, id);
+	protected SingleNode(String id, AbstractGraph graph) {
+		super(id, graph);
 		neighborMap = new HashMap<AbstractNode, TwoEdges>(
-				4 * INITIAL_EDGE_CAPACITY / 3 + 1);
+			4 * INITIAL_EDGE_CAPACITY / 3 + 1);
 	}
 
 	// *** Helpers ***
-
 	@SuppressWarnings("unchecked")
 	@Override
 	protected <T extends Edge> T locateEdge(Node opposite, char type) {
 		TwoEdges ee = neighborMap.get(opposite);
-		if (ee == null)
+		if (ee == null) {
 			return null;
-		return (T)(type == I_EDGE ? ee.in : ee.out);
+		}
+		return (T) (type == I_EDGE ? ee.in : ee.out);
 	}
 
 	@Override
@@ -74,32 +72,37 @@ public class SingleNode extends AdjacencyListNode {
 		AbstractNode opposite = edges[i].getOpposite(this);
 		TwoEdges ee = neighborMap.get(opposite);
 		char type = edgeType(edges[i]);
-		if (type != O_EDGE)
+		if (type != O_EDGE) {
 			ee.in = null;
-		if (type != I_EDGE)
+		}
+		if (type != I_EDGE) {
 			ee.out = null;
-		if (ee.in == null && ee.out == null)
+		}
+		if (ee.in == null && ee.out == null) {
 			neighborMap.remove(opposite);
+		}
 		super.removeEdge(i);
 	}
 
 	// *** Callbacks ***
-
 	@Override
 	protected boolean addEdgeCallback(AbstractEdge edge) {
 		AbstractNode opposite = edge.getOpposite(this);
 		TwoEdges ee = neighborMap.get(opposite);
-		if (ee == null)
+		if (ee == null) {
 			ee = new TwoEdges();
+		}
 		char type = edgeType(edge);
 		if (type != O_EDGE) {
-			if (ee.in != null)
+			if (ee.in != null) {
 				return false;
+			}
 			ee.in = edge;
 		}
 		if (type != I_EDGE) {
-			if (ee.out != null)
+			if (ee.out != null) {
 				return false;
+			}
 			ee.out = edge;
 		}
 		neighborMap.put(opposite, ee);
@@ -113,11 +116,10 @@ public class SingleNode extends AdjacencyListNode {
 	}
 
 	// *** Others ***
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Node> Iterator<T> getNeighborNodeIterator() {
 		return (Iterator<T>) Collections.unmodifiableSet(neighborMap.keySet())
-				.iterator();
+			.iterator();
 	}
 }

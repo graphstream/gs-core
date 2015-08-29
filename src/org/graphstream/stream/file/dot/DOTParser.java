@@ -38,8 +38,8 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import org.graphstream.graph.Element.ElementType;
 
-import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.stream.file.FileSourceDOT;
 import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
 
@@ -51,10 +51,10 @@ import org.graphstream.util.parser.TokenMgrError;
 
 /**
  * This class defines a DOT parser.
- * 
+ *
  * It respects the specifications of the DOT language that can be found <a
  * href="http://www.graphviz.org/doc/info/lang.html">here</a>.
- * 
+ *
  * Subgraph produces no error but has no effect on the graph.
  */
 @SuppressWarnings("unused")
@@ -95,7 +95,8 @@ public class DOTParser implements Parser, DOTParserConstants {
 	private HashSet<String> nodeAdded;
 
 	/**
-	 * Create a new parser associated with a DOT source from an input stream.
+	 * Create a new parser associated with a DOT source from an input
+	 * stream.
 	 */
 	public DOTParser(FileSourceDOT dot, InputStream stream) {
 		this(stream);
@@ -128,36 +129,40 @@ public class DOTParser implements Parser, DOTParserConstants {
 	}
 
 	private void addNode(String nodeId, String[] port,
-			HashMap<String, Object> attr) {
+		HashMap<String, Object> attr) {
 		if (nodeAdded.contains(nodeId)) {
 			if (attr != null) {
-				for (String key : attr.keySet())
+				for (String key : attr.keySet()) {
 					dot.sendAttributeChangedEvent(sourceId, nodeId,
-							ElementType.NODE, key, AttributeChangeEvent.ADD,
-							null, attr.get(key));
+						ElementType.NODE, key, AttributeChangeEvent.ADD,
+						null, attr.get(key));
+				}
 			}
 		} else {
 			dot.sendNodeAdded(sourceId, nodeId);
 			nodeAdded.add(nodeId);
 
 			if (attr == null) {
-				for (String key : globalNodesAttributes.keySet())
+				for (String key : globalNodesAttributes.keySet()) {
 					dot.sendAttributeChangedEvent(sourceId, nodeId,
-							ElementType.NODE, key, AttributeChangeEvent.ADD,
-							null, globalNodesAttributes.get(key));
+						ElementType.NODE, key, AttributeChangeEvent.ADD,
+						null, globalNodesAttributes.get(key));
+				}
 			} else {
 				for (String key : globalNodesAttributes.keySet()) {
-					if (!attr.containsKey(key))
+					if (!attr.containsKey(key)) {
 						dot.sendAttributeChangedEvent(sourceId, nodeId,
-								ElementType.NODE, key,
-								AttributeChangeEvent.ADD, null,
-								globalNodesAttributes.get(key));
+							ElementType.NODE, key,
+							AttributeChangeEvent.ADD, null,
+							globalNodesAttributes.get(key));
+					}
 				}
 
-				for (String key : attr.keySet())
+				for (String key : attr.keySet()) {
 					dot.sendAttributeChangedEvent(sourceId, nodeId,
-							ElementType.NODE, key, AttributeChangeEvent.ADD,
-							null, attr.get(key));
+						ElementType.NODE, key, AttributeChangeEvent.ADD,
+						null, attr.get(key));
+				}
 			}
 		}
 	}
@@ -172,10 +177,12 @@ public class DOTParser implements Parser, DOTParserConstants {
 			String from = edges.get(i);
 			String to = edges.get(i + 2);
 
-			if (!nodeAdded.contains(from))
+			if (!nodeAdded.contains(from)) {
 				addNode(from, null, null);
-			if (!nodeAdded.contains(to))
+			}
+			if (!nodeAdded.contains(to)) {
 				addNode(to, null, null);
+			}
 
 			String edgeId = String.format("(%s;%s)", from, to);
 			String rev = String.format("(%s;%s)", to, from);
@@ -200,58 +207,64 @@ public class DOTParser implements Parser, DOTParserConstants {
 
 		for (int i = 0; i < count; i++) {
 			dot.sendEdgeAdded(sourceId, ids[i], edges.get(i * 2), edges
-					.get((i + 1) * 2), directed[i]);
+				.get((i + 1) * 2), directed[i]);
 
 			if (attr == null) {
-				for (String key : globalEdgesAttributes.keySet())
+				for (String key : globalEdgesAttributes.keySet()) {
 					dot.sendAttributeChangedEvent(sourceId, ids[i],
-							ElementType.EDGE, key, AttributeChangeEvent.ADD,
-							null, globalEdgesAttributes.get(key));
+						ElementType.EDGE, key, AttributeChangeEvent.ADD,
+						null, globalEdgesAttributes.get(key));
+				}
 			} else {
 				for (String key : globalEdgesAttributes.keySet()) {
-					if (!attr.containsKey(key))
+					if (!attr.containsKey(key)) {
 						dot.sendAttributeChangedEvent(sourceId, ids[i],
-								ElementType.EDGE, key,
-								AttributeChangeEvent.ADD, null,
-								globalEdgesAttributes.get(key));
+							ElementType.EDGE, key,
+							AttributeChangeEvent.ADD, null,
+							globalEdgesAttributes.get(key));
+					}
 				}
 
-				for (String key : attr.keySet())
+				for (String key : attr.keySet()) {
 					dot.sendAttributeChangedEvent(sourceId, ids[i],
-							ElementType.EDGE, key, AttributeChangeEvent.ADD,
-							null, attr.get(key));
+						ElementType.EDGE, key, AttributeChangeEvent.ADD,
+						null, attr.get(key));
+				}
 			}
 		}
 	}
 
 	private void setGlobalAttributes(String who, HashMap<String, Object> attr) {
 		if (who.equalsIgnoreCase("graph")) {
-			for (String key : attr.keySet())
+			for (String key : attr.keySet()) {
 				dot.sendAttributeChangedEvent(sourceId, sourceId,
-						ElementType.GRAPH, key, AttributeChangeEvent.ADD, null,
-						attr.get(key));
-		} else if (who.equalsIgnoreCase("node"))
+					ElementType.GRAPH, key, AttributeChangeEvent.ADD, null,
+					attr.get(key));
+			}
+		} else if (who.equalsIgnoreCase("node")) {
 			globalNodesAttributes.putAll(attr);
-		else if (who.equalsIgnoreCase("edge"))
+		} else if (who.equalsIgnoreCase("edge")) {
 			globalEdgesAttributes.putAll(attr);
+		}
 	}
 
 	final public void all() throws ParseException {
 		graph();
-		label_1: while (true) {
+		label_1:
+		while (true) {
 			switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-			case GRAPH:
-			case SUBGRAPH:
-			case NODE:
-			case EDGE:
-			case REAL:
-			case STRING:
-			case WORD:
+				case GRAPH:
+				case SUBGRAPH:
+				case NODE:
+				case EDGE:
+				case REAL:
+				case STRING:
+				case WORD:
 				;
-				break;
-			default:
-				jj_la1[0] = jj_gen;
-				break label_1;
+					break;
+				default:
+					jj_la1[0] = jj_gen;
+					break label_1;
 			}
 			statement();
 		}
@@ -261,26 +274,26 @@ public class DOTParser implements Parser, DOTParserConstants {
 	final public boolean next() throws ParseException {
 		boolean hasMore = false;
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-		case GRAPH:
-		case SUBGRAPH:
-		case NODE:
-		case EDGE:
-		case REAL:
-		case STRING:
-		case WORD:
-			statement();
-			hasMore = true;
-			break;
-		case RBRACE:
-			jj_consume_token(RBRACE);
-			break;
-		case 0:
-			jj_consume_token(0);
-			break;
-		default:
-			jj_la1[1] = jj_gen;
-			jj_consume_token(-1);
-			throw new ParseException();
+			case GRAPH:
+			case SUBGRAPH:
+			case NODE:
+			case EDGE:
+			case REAL:
+			case STRING:
+			case WORD:
+				statement();
+				hasMore = true;
+				break;
+			case RBRACE:
+				jj_consume_token(RBRACE);
+				break;
+			case 0:
+				jj_consume_token(0);
+				break;
+			default:
+				jj_la1[1] = jj_gen;
+				jj_consume_token(-1);
+				throw new ParseException();
 		}
 
 		return hasMore;
@@ -297,36 +310,36 @@ public class DOTParser implements Parser, DOTParserConstants {
 		globalNodesAttributes.clear();
 		globalEdgesAttributes.clear();
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-		case STRICT:
-			jj_consume_token(STRICT);
-			strict = true;
-			break;
-		default:
-			jj_la1[2] = jj_gen;
-			;
+			case STRICT:
+				jj_consume_token(STRICT);
+				strict = true;
+				break;
+			default:
+				jj_la1[2] = jj_gen;
+				;
 		}
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-		case GRAPH:
-			jj_consume_token(GRAPH);
-			break;
-		case DIGRAPH:
-			jj_consume_token(DIGRAPH);
-			directed = true;
-			break;
-		default:
-			jj_la1[3] = jj_gen;
-			jj_consume_token(-1);
-			throw new ParseException();
+			case GRAPH:
+				jj_consume_token(GRAPH);
+				break;
+			case DIGRAPH:
+				jj_consume_token(DIGRAPH);
+				directed = true;
+				break;
+			default:
+				jj_la1[3] = jj_gen;
+				jj_consume_token(-1);
+				throw new ParseException();
 		}
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-		case REAL:
-		case STRING:
-		case WORD:
-			this.sourceId = id();
-			break;
-		default:
-			jj_la1[4] = jj_gen;
-			;
+			case REAL:
+			case STRING:
+			case WORD:
+				this.sourceId = id();
+				break;
+			default:
+				jj_la1[4] = jj_gen;
+				;
 		}
 		jj_consume_token(LBRACE);
 	}
@@ -334,30 +347,31 @@ public class DOTParser implements Parser, DOTParserConstants {
 	final private void subgraph() throws ParseException {
 		jj_consume_token(SUBGRAPH);
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-		case REAL:
-		case STRING:
-		case WORD:
-			id();
-			break;
-		default:
-			jj_la1[5] = jj_gen;
-			;
-		}
-		jj_consume_token(LBRACE);
-		label_2: while (true) {
-			switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-			case GRAPH:
-			case SUBGRAPH:
-			case NODE:
-			case EDGE:
 			case REAL:
 			case STRING:
 			case WORD:
-				;
+				id();
 				break;
 			default:
-				jj_la1[6] = jj_gen;
-				break label_2;
+				jj_la1[5] = jj_gen;
+				;
+		}
+		jj_consume_token(LBRACE);
+		label_2:
+		while (true) {
+			switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
+				case GRAPH:
+				case SUBGRAPH:
+				case NODE:
+				case EDGE:
+				case REAL:
+				case STRING:
+				case WORD:
+				;
+					break;
+				default:
+					jj_la1[6] = jj_gen;
+					break label_2;
 			}
 			statement();
 		}
@@ -368,22 +382,22 @@ public class DOTParser implements Parser, DOTParserConstants {
 		Token t;
 		String id;
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-		case STRING:
-			t = jj_consume_token(STRING);
-			id = t.image.substring(1, t.image.length() - 1);
-			break;
-		case REAL:
-			t = jj_consume_token(REAL);
-			id = t.image;
-			break;
-		case WORD:
-			t = jj_consume_token(WORD);
-			id = t.image;
-			break;
-		default:
-			jj_la1[7] = jj_gen;
-			jj_consume_token(-1);
-			throw new ParseException();
+			case STRING:
+				t = jj_consume_token(STRING);
+				id = t.image.substring(1, t.image.length() - 1);
+				break;
+			case REAL:
+				t = jj_consume_token(REAL);
+				id = t.image;
+				break;
+			case WORD:
+				t = jj_consume_token(WORD);
+				id = t.image;
+				break;
+			default:
+				jj_la1[7] = jj_gen;
+				jj_consume_token(-1);
+				throw new ParseException();
 		}
 
 		return id;
@@ -394,23 +408,23 @@ public class DOTParser implements Parser, DOTParserConstants {
 			edgeStatement();
 		} else {
 			switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-			case REAL:
-			case STRING:
-			case WORD:
-				nodeStatement();
-				break;
-			case GRAPH:
-			case NODE:
-			case EDGE:
-				attributeStatement();
-				break;
-			case SUBGRAPH:
-				subgraph();
-				break;
-			default:
-				jj_la1[8] = jj_gen;
-				jj_consume_token(-1);
-				throw new ParseException();
+				case REAL:
+				case STRING:
+				case WORD:
+					nodeStatement();
+					break;
+				case GRAPH:
+				case NODE:
+				case EDGE:
+					attributeStatement();
+					break;
+				case SUBGRAPH:
+					subgraph();
+					break;
+				default:
+					jj_la1[8] = jj_gen;
+					jj_consume_token(-1);
+					throw new ParseException();
 			}
 		}
 		jj_consume_token(27);
@@ -424,20 +438,20 @@ public class DOTParser implements Parser, DOTParserConstants {
 		port = null;
 		nodeId = id();
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-		case COLON:
-			port = port();
-			break;
-		default:
-			jj_la1[9] = jj_gen;
-			;
+			case COLON:
+				port = port();
+				break;
+			default:
+				jj_la1[9] = jj_gen;
+				;
 		}
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-		case LSQBR:
-			attr = attributesList();
-			break;
-		default:
-			jj_la1[10] = jj_gen;
-			;
+			case LSQBR:
+				attr = attributesList();
+				break;
+			default:
+				jj_la1[10] = jj_gen;
+				;
 		}
 		addNode(nodeId, port, attr);
 	}
@@ -445,79 +459,79 @@ public class DOTParser implements Parser, DOTParserConstants {
 	final private String compassPoint() throws ParseException {
 		Token pt = null;
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-		case 28:
-			pt = jj_consume_token(28);
-			break;
-		case 29:
-			pt = jj_consume_token(29);
-			break;
-		case 30:
-			pt = jj_consume_token(30);
-			break;
-		case 31:
-			pt = jj_consume_token(31);
-			break;
-		case 32:
-			pt = jj_consume_token(32);
-			break;
-		case 33:
-			pt = jj_consume_token(33);
-			break;
-		case 34:
-			pt = jj_consume_token(34);
-			break;
-		case 35:
-			pt = jj_consume_token(35);
-			break;
-		case 36:
-			pt = jj_consume_token(36);
-			break;
-		case 37:
-			pt = jj_consume_token(37);
-			break;
-		default:
-			jj_la1[11] = jj_gen;
-			jj_consume_token(-1);
-			throw new ParseException();
+			case 28:
+				pt = jj_consume_token(28);
+				break;
+			case 29:
+				pt = jj_consume_token(29);
+				break;
+			case 30:
+				pt = jj_consume_token(30);
+				break;
+			case 31:
+				pt = jj_consume_token(31);
+				break;
+			case 32:
+				pt = jj_consume_token(32);
+				break;
+			case 33:
+				pt = jj_consume_token(33);
+				break;
+			case 34:
+				pt = jj_consume_token(34);
+				break;
+			case 35:
+				pt = jj_consume_token(35);
+				break;
+			case 36:
+				pt = jj_consume_token(36);
+				break;
+			case 37:
+				pt = jj_consume_token(37);
+				break;
+			default:
+				jj_la1[11] = jj_gen;
+				jj_consume_token(-1);
+				throw new ParseException();
 		}
 
 		return pt.image;
 	}
 
 	final private String[] port() throws ParseException {
-		String[] p = { null, null };
+		String[] p = {null, null};
 		jj_consume_token(COLON);
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-		case REAL:
-		case STRING:
-		case WORD:
-			p[0] = id();
-			switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-			case COLON:
-				jj_consume_token(COLON);
+			case REAL:
+			case STRING:
+			case WORD:
+				p[0] = id();
+				switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
+					case COLON:
+						jj_consume_token(COLON);
+						p[1] = compassPoint();
+						break;
+					default:
+						jj_la1[12] = jj_gen;
+						;
+				}
+				break;
+			case 28:
+			case 29:
+			case 30:
+			case 31:
+			case 32:
+			case 33:
+			case 34:
+			case 35:
+			case 36:
+			case 37:
 				p[1] = compassPoint();
 				break;
 			default:
-				jj_la1[12] = jj_gen;
-				;
-			}
-			break;
-		case 28:
-		case 29:
-		case 30:
-		case 31:
-		case 32:
-		case 33:
-		case 34:
-		case 35:
-		case 36:
-		case 37:
-			p[1] = compassPoint();
-			break;
-		default:
-			jj_la1[13] = jj_gen;
-			jj_consume_token(-1);
-			throw new ParseException();
+				jj_la1[13] = jj_gen;
+				jj_consume_token(-1);
+				throw new ParseException();
 		}
 
 		return p;
@@ -531,12 +545,12 @@ public class DOTParser implements Parser, DOTParserConstants {
 		edges.add(id);
 		edgeRHS(edges);
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-		case LSQBR:
-			attr = attributesList();
-			break;
-		default:
-			jj_la1[14] = jj_gen;
-			;
+			case LSQBR:
+				attr = attributesList();
+				break;
+			default:
+				jj_la1[14] = jj_gen;
+				;
 		}
 		addEdges(edges, attr);
 	}
@@ -549,12 +563,12 @@ public class DOTParser implements Parser, DOTParserConstants {
 		i = id();
 		edges.add(i);
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-		case EDGE_OP:
-			edgeRHS(edges);
-			break;
-		default:
-			jj_la1[15] = jj_gen;
-			;
+			case EDGE_OP:
+				edgeRHS(edges);
+				break;
+			default:
+				jj_la1[15] = jj_gen;
+				;
 		}
 	}
 
@@ -562,59 +576,61 @@ public class DOTParser implements Parser, DOTParserConstants {
 		Token t;
 		HashMap<String, Object> attr;
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-		case GRAPH:
-			t = jj_consume_token(GRAPH);
-			break;
-		case NODE:
-			t = jj_consume_token(NODE);
-			break;
-		case EDGE:
-			t = jj_consume_token(EDGE);
-			break;
-		default:
-			jj_la1[16] = jj_gen;
-			jj_consume_token(-1);
-			throw new ParseException();
+			case GRAPH:
+				t = jj_consume_token(GRAPH);
+				break;
+			case NODE:
+				t = jj_consume_token(NODE);
+				break;
+			case EDGE:
+				t = jj_consume_token(EDGE);
+				break;
+			default:
+				jj_la1[16] = jj_gen;
+				jj_consume_token(-1);
+				throw new ParseException();
 		}
 		attr = attributesList();
 		setGlobalAttributes(t.image, attr);
 	}
 
 	final private HashMap<String, Object> attributesList()
-			throws ParseException {
+		throws ParseException {
 		HashMap<String, Object> attributes = new HashMap<String, Object>();
-		label_3: while (true) {
+		label_3:
+		while (true) {
 			jj_consume_token(LSQBR);
 			switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-			case REAL:
-			case STRING:
-			case WORD:
-				attributeList(attributes);
-				label_4: while (true) {
-					switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-					case COMMA:
-						;
-						break;
-					default:
-						jj_la1[17] = jj_gen;
-						break label_4;
-					}
-					jj_consume_token(COMMA);
+				case REAL:
+				case STRING:
+				case WORD:
 					attributeList(attributes);
-				}
-				break;
-			default:
-				jj_la1[18] = jj_gen;
-				;
+					label_4:
+					while (true) {
+						switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
+							case COMMA:
+						;
+								break;
+							default:
+								jj_la1[17] = jj_gen;
+								break label_4;
+						}
+						jj_consume_token(COMMA);
+						attributeList(attributes);
+					}
+					break;
+				default:
+					jj_la1[18] = jj_gen;
+					;
 			}
 			jj_consume_token(RSQBR);
 			switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-			case LSQBR:
+				case LSQBR:
 				;
-				break;
-			default:
-				jj_la1[19] = jj_gen;
-				break label_3;
+					break;
+				default:
+					jj_la1[19] = jj_gen;
+					break label_3;
 			}
 		}
 
@@ -622,7 +638,7 @@ public class DOTParser implements Parser, DOTParserConstants {
 	}
 
 	final private void attributeList(HashMap<String, Object> attributes)
-			throws ParseException {
+		throws ParseException {
 		String key;
 		Object val;
 
@@ -630,28 +646,28 @@ public class DOTParser implements Parser, DOTParserConstants {
 		key = id();
 		val = Boolean.TRUE;
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-		case EQUALS:
-			jj_consume_token(EQUALS);
-			if (jj_2_2(2)) {
-				t = jj_consume_token(REAL);
-				val = Double.parseDouble(t.image);
-			} else {
-				switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-				case REAL:
-				case STRING:
-				case WORD:
-					val = id();
-					break;
-				default:
-					jj_la1[20] = jj_gen;
-					jj_consume_token(-1);
-					throw new ParseException();
+			case EQUALS:
+				jj_consume_token(EQUALS);
+				if (jj_2_2(2)) {
+					t = jj_consume_token(REAL);
+					val = Double.parseDouble(t.image);
+				} else {
+					switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
+						case REAL:
+						case STRING:
+						case WORD:
+							val = id();
+							break;
+						default:
+							jj_la1[20] = jj_gen;
+							jj_consume_token(-1);
+							throw new ParseException();
+					}
 				}
-			}
-			break;
-		default:
-			jj_la1[21] = jj_gen;
-			;
+				break;
+			default:
+				jj_la1[21] = jj_gen;
+				;
 		}
 		attributes.put(key, val);
 	}
@@ -687,65 +703,81 @@ public class DOTParser implements Parser, DOTParserConstants {
 			jj_scanpos = xsp;
 			if (jj_3R_9()) {
 				jj_scanpos = xsp;
-				if (jj_3R_10())
+				if (jj_3R_10()) {
 					return true;
+				}
 			}
 		}
 		return false;
 	}
 
 	private boolean jj_3_2() {
-		if (jj_scan_token(REAL))
+		if (jj_scan_token(REAL)) {
 			return true;
+		}
 		return false;
 	}
 
 	private boolean jj_3R_8() {
-		if (jj_scan_token(STRING))
+		if (jj_scan_token(STRING)) {
 			return true;
+		}
 		return false;
 	}
 
 	private boolean jj_3R_10() {
-		if (jj_scan_token(WORD))
+		if (jj_scan_token(WORD)) {
 			return true;
+		}
 		return false;
 	}
 
 	private boolean jj_3R_7() {
-		if (jj_scan_token(EDGE_OP))
+		if (jj_scan_token(EDGE_OP)) {
 			return true;
-		if (jj_3R_6())
+		}
+		if (jj_3R_6()) {
 			return true;
+		}
 		return false;
 	}
 
 	private boolean jj_3R_9() {
-		if (jj_scan_token(REAL))
+		if (jj_scan_token(REAL)) {
 			return true;
+		}
 		return false;
 	}
 
 	private boolean jj_3R_5() {
-		if (jj_3R_6())
+		if (jj_3R_6()) {
 			return true;
-		if (jj_3R_7())
+		}
+		if (jj_3R_7()) {
 			return true;
+		}
 		return false;
 	}
 
 	private boolean jj_3_1() {
-		if (jj_3R_5())
+		if (jj_3R_5()) {
 			return true;
+		}
 		return false;
 	}
 
-	/** Generated Token Manager. */
+	/**
+	 * Generated Token Manager.
+	 */
 	public DOTParserTokenManager token_source;
 	SimpleCharStream jj_input_stream;
-	/** Current token. */
+	/**
+	 * Current token.
+	 */
 	public Token token;
-	/** Next token. */
+	/**
+	 * Next token.
+	 */
 	public Token jj_nt;
 	private int jj_ntk;
 	private Token jj_scanpos, jj_lastpos;
@@ -754,34 +786,39 @@ public class DOTParser implements Parser, DOTParserConstants {
 	final private int[] jj_la1 = new int[22];
 	static private int[] jj_la1_0;
 	static private int[] jj_la1_1;
+
 	static {
 		jj_la1_init_0();
 		jj_la1_init_1();
 	}
 
 	private static void jj_la1_init_0() {
-		jj_la1_0 = new int[] { 0x73a0000, 0x73a2001, 0x400000, 0x60000,
-				0x7000000, 0x7000000, 0x73a0000, 0x7000000, 0x73a0000, 0x4000,
-				0x400, 0xf0000000, 0x4000, 0xf7000000, 0x400, 0x800000,
-				0x320000, 0x8000, 0x7000000, 0x400, 0x7000000, 0x10000, };
+		jj_la1_0 = new int[]{0x73a0000, 0x73a2001, 0x400000, 0x60000,
+			0x7000000, 0x7000000, 0x73a0000, 0x7000000, 0x73a0000, 0x4000,
+			0x400, 0xf0000000, 0x4000, 0xf7000000, 0x400, 0x800000,
+			0x320000, 0x8000, 0x7000000, 0x400, 0x7000000, 0x10000,};
 	}
 
 	private static void jj_la1_init_1() {
-		jj_la1_1 = new int[] { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-				0x0, 0x0, 0x3f, 0x0, 0x3f, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-				0x0, };
+		jj_la1_1 = new int[]{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+			0x0, 0x0, 0x3f, 0x0, 0x3f, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+			0x0,};
 	}
 
 	final private JJCalls[] jj_2_rtns = new JJCalls[2];
 	private boolean jj_rescan = false;
 	private int jj_gc = 0;
 
-	/** Constructor with InputStream. */
+	/**
+	 * Constructor with InputStream.
+	 */
 	public DOTParser(java.io.InputStream stream) {
 		this(stream, null);
 	}
 
-	/** Constructor with InputStream and supplied encoding */
+	/**
+	 * Constructor with InputStream and supplied encoding
+	 */
 	public DOTParser(java.io.InputStream stream, String encoding) {
 		try {
 			jj_input_stream = new SimpleCharStream(stream, encoding, 1, 1);
@@ -792,18 +829,24 @@ public class DOTParser implements Parser, DOTParserConstants {
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 22; i++)
+		for (int i = 0; i < 22; i++) {
 			jj_la1[i] = -1;
-		for (int i = 0; i < jj_2_rtns.length; i++)
+		}
+		for (int i = 0; i < jj_2_rtns.length; i++) {
 			jj_2_rtns[i] = new JJCalls();
+		}
 	}
 
-	/** Reinitialise. */
+	/**
+	 * Reinitialise.
+	 */
 	public void ReInit(java.io.InputStream stream) {
 		ReInit(stream, null);
 	}
 
-	/** Reinitialise. */
+	/**
+	 * Reinitialise.
+	 */
 	public void ReInit(java.io.InputStream stream, String encoding) {
 		try {
 			jj_input_stream.ReInit(stream, encoding, 1, 1);
@@ -814,68 +857,87 @@ public class DOTParser implements Parser, DOTParserConstants {
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 22; i++)
+		for (int i = 0; i < 22; i++) {
 			jj_la1[i] = -1;
-		for (int i = 0; i < jj_2_rtns.length; i++)
+		}
+		for (int i = 0; i < jj_2_rtns.length; i++) {
 			jj_2_rtns[i] = new JJCalls();
+		}
 	}
 
-	/** Constructor. */
+	/**
+	 * Constructor.
+	 */
 	public DOTParser(java.io.Reader stream) {
 		jj_input_stream = new SimpleCharStream(stream, 1, 1);
 		token_source = new DOTParserTokenManager(jj_input_stream);
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 22; i++)
+		for (int i = 0; i < 22; i++) {
 			jj_la1[i] = -1;
-		for (int i = 0; i < jj_2_rtns.length; i++)
+		}
+		for (int i = 0; i < jj_2_rtns.length; i++) {
 			jj_2_rtns[i] = new JJCalls();
+		}
 	}
 
-	/** Reinitialise. */
+	/**
+	 * Reinitialise.
+	 */
 	public void ReInit(java.io.Reader stream) {
 		jj_input_stream.ReInit(stream, 1, 1);
 		token_source.ReInit(jj_input_stream);
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 22; i++)
+		for (int i = 0; i < 22; i++) {
 			jj_la1[i] = -1;
-		for (int i = 0; i < jj_2_rtns.length; i++)
+		}
+		for (int i = 0; i < jj_2_rtns.length; i++) {
 			jj_2_rtns[i] = new JJCalls();
+		}
 	}
 
-	/** Constructor with generated Token Manager. */
+	/**
+	 * Constructor with generated Token Manager.
+	 */
 	public DOTParser(DOTParserTokenManager tm) {
 		token_source = tm;
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 22; i++)
+		for (int i = 0; i < 22; i++) {
 			jj_la1[i] = -1;
-		for (int i = 0; i < jj_2_rtns.length; i++)
+		}
+		for (int i = 0; i < jj_2_rtns.length; i++) {
 			jj_2_rtns[i] = new JJCalls();
+		}
 	}
 
-	/** Reinitialise. */
+	/**
+	 * Reinitialise.
+	 */
 	public void ReInit(DOTParserTokenManager tm) {
 		token_source = tm;
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 22; i++)
+		for (int i = 0; i < 22; i++) {
 			jj_la1[i] = -1;
-		for (int i = 0; i < jj_2_rtns.length; i++)
+		}
+		for (int i = 0; i < jj_2_rtns.length; i++) {
 			jj_2_rtns[i] = new JJCalls();
+		}
 	}
 
 	private Token jj_consume_token(int kind) throws ParseException {
 		Token oldToken;
-		if ((oldToken = token).next != null)
+		if ((oldToken = token).next != null) {
 			token = token.next;
-		else
+		} else {
 			token = token.next = token_source.getNextToken();
+		}
 		jj_ntk = -1;
 		if (token.kind == kind) {
 			jj_gen++;
@@ -884,8 +946,9 @@ public class DOTParser implements Parser, DOTParserConstants {
 				for (int i = 0; i < jj_2_rtns.length; i++) {
 					JJCalls c = jj_2_rtns[i];
 					while (c != null) {
-						if (c.gen < jj_gen)
+						if (c.gen < jj_gen) {
 							c.first = null;
+						}
 						c = c.next;
 					}
 				}
@@ -908,7 +971,7 @@ public class DOTParser implements Parser, DOTParserConstants {
 			jj_la--;
 			if (jj_scanpos.next == null) {
 				jj_lastpos = jj_scanpos = jj_scanpos.next = token_source
-						.getNextToken();
+					.getNextToken();
 			} else {
 				jj_lastpos = jj_scanpos = jj_scanpos.next;
 			}
@@ -922,44 +985,54 @@ public class DOTParser implements Parser, DOTParserConstants {
 				i++;
 				tok = tok.next;
 			}
-			if (tok != null)
+			if (tok != null) {
 				jj_add_error_token(kind, i);
+			}
 		}
-		if (jj_scanpos.kind != kind)
+		if (jj_scanpos.kind != kind) {
 			return true;
-		if (jj_la == 0 && jj_scanpos == jj_lastpos)
+		}
+		if (jj_la == 0 && jj_scanpos == jj_lastpos) {
 			throw jj_ls;
+		}
 		return false;
 	}
 
-	/** Get the next Token. */
+	/**
+	 * Get the next Token.
+	 */
 	final public Token getNextToken() {
-		if (token.next != null)
+		if (token.next != null) {
 			token = token.next;
-		else
+		} else {
 			token = token.next = token_source.getNextToken();
+		}
 		jj_ntk = -1;
 		jj_gen++;
 		return token;
 	}
 
-	/** Get the specific Token. */
+	/**
+	 * Get the specific Token.
+	 */
 	final public Token getToken(int index) {
 		Token t = token;
 		for (int i = 0; i < index; i++) {
-			if (t.next != null)
+			if (t.next != null) {
 				t = t.next;
-			else
+			} else {
 				t = t.next = token_source.getNextToken();
+			}
 		}
 		return t;
 	}
 
 	private int jj_ntk() {
-		if ((jj_nt = token.next) == null)
+		if ((jj_nt = token.next) == null) {
 			return (jj_ntk = (token.next = token_source.getNextToken()).kind);
-		else
+		} else {
 			return (jj_ntk = jj_nt.kind);
+		}
 	}
 
 	private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
@@ -969,8 +1042,9 @@ public class DOTParser implements Parser, DOTParserConstants {
 	private int jj_endpos;
 
 	private void jj_add_error_token(int kind, int pos) {
-		if (pos >= 100)
+		if (pos >= 100) {
 			return;
+		}
 		if (pos == jj_endpos + 1) {
 			jj_lasttokens[jj_endpos++] = kind;
 		} else if (jj_endpos != 0) {
@@ -978,8 +1052,9 @@ public class DOTParser implements Parser, DOTParserConstants {
 			for (int i = 0; i < jj_endpos; i++) {
 				jj_expentry[i] = jj_lasttokens[i];
 			}
-			jj_entries_loop: for (java.util.Iterator<?> it = jj_expentries
-					.iterator(); it.hasNext();) {
+			jj_entries_loop:
+			for (java.util.Iterator<?> it = jj_expentries
+				.iterator(); it.hasNext();) {
 				int[] oldentry = (int[]) (it.next());
 				if (oldentry.length == jj_expentry.length) {
 					for (int i = 0; i < jj_expentry.length; i++) {
@@ -991,12 +1066,15 @@ public class DOTParser implements Parser, DOTParserConstants {
 					break jj_entries_loop;
 				}
 			}
-			if (pos != 0)
+			if (pos != 0) {
 				jj_lasttokens[(jj_endpos = pos) - 1] = kind;
+			}
 		}
 	}
 
-	/** Generate ParseException. */
+	/**
+	 * Generate ParseException.
+	 */
 	public ParseException generateParseException() {
 		jj_expentries.clear();
 		boolean[] la1tokens = new boolean[38];
@@ -1033,11 +1111,15 @@ public class DOTParser implements Parser, DOTParserConstants {
 		return new ParseException(token, exptokseq, tokenImage);
 	}
 
-	/** Enable tracing. */
+	/**
+	 * Enable tracing.
+	 */
 	final public void enable_tracing() {
 	}
 
-	/** Disable tracing. */
+	/**
+	 * Disable tracing.
+	 */
 	final public void disable_tracing() {
 	}
 
@@ -1051,12 +1133,12 @@ public class DOTParser implements Parser, DOTParserConstants {
 						jj_la = p.arg;
 						jj_lastpos = jj_scanpos = p.first;
 						switch (i) {
-						case 0:
-							jj_3_1();
-							break;
-						case 1:
-							jj_3_2();
-							break;
+							case 0:
+								jj_3_1();
+								break;
+							case 1:
+								jj_3_2();
+								break;
 						}
 					}
 					p = p.next;

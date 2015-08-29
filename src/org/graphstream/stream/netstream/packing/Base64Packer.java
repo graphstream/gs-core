@@ -32,28 +32,24 @@
 package org.graphstream.stream.netstream.packing;
 
 /**
-*
-* @file Base64Packer.java
-* @date Dec 14, 2011
-*
-* @author Yoann Pigné
-*
-*/
-
+ *
+ * @file Base64Packer.java
+ * @date Dec 14, 2011
+ *
+ * @author Yoann Pigné
+ *
+ */
 import java.nio.ByteBuffer;
 
-
 public class Base64Packer extends NetStreamPacker {
-
-	
 
 	/* (non-Javadoc)
 	 * @see org.graphstream.stream.netstream.packing.NetStreamPacker#packMessage(java.nio.ByteBuffer, int, int)
 	 */
 	@Override
 	public ByteBuffer packMessage(ByteBuffer buffer, int startIndex,
-			int endIndex) {
-		String encoded = Base64.encodeBytes(buffer.array(),startIndex,endIndex-startIndex);
+		int endIndex) {
+		String encoded = Base64.encodeBytes(buffer.array(), startIndex, endIndex - startIndex);
 		return ByteBuffer.wrap(encoded.getBytes());
 	}
 

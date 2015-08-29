@@ -56,18 +56,19 @@ public class NodeRenderer extends ElementRenderer {
 
 	@Override
 	protected void setupRenderingPass(StyleGroup group, Graphics2D g,
-			Camera camera) {
+		Camera camera) {
 		metrics = camera.getMetrics();
 		configureText(group, camera);
 	}
 
 	@Override
 	protected void pushDynStyle(StyleGroup group, Graphics2D g, Camera camera,
-			GraphicElement element) {
+		GraphicElement element) {
 		Color color = group.getFillColor(0);
 
-		if (element != null && group.getFillMode() == FillMode.DYN_PLAIN)
+		if (element != null && group.getFillMode() == FillMode.DYN_PLAIN) {
 			color = interpolateColor(group, element);
+		}
 
 		g.setColor(color);
 
@@ -105,12 +106,12 @@ public class NodeRenderer extends ElementRenderer {
 
 	@Override
 	protected void elementInvisible(StyleGroup group, Graphics2D g,
-			Camera camera, GraphicElement element) {
+		Camera camera, GraphicElement element) {
 	}
 
 	@Override
 	protected void renderElement(StyleGroup group, Graphics2D g, Camera camera,
-			GraphicElement element) {
+		GraphicElement element) {
 		GraphicNode node = (GraphicNode) element;
 
 		shape.setFrame(node.x - w2, node.y - h2, width, height);

@@ -58,12 +58,12 @@ import org.graphstream.stream.SourceBase;
  * source has to define actions after the document start and before the document
  * end. The {@link #nextEvents()}, called between start and end, has to be
  * defined too.
- * 
+ *
  * @author Guilhelm Savin
- * 
+ *
  */
 public abstract class FileSourceXML extends SourceBase implements FileSource,
-		XMLStreamConstants {
+	XMLStreamConstants {
 
 	/**
 	 * XML events stream. Should not be used directly but with
@@ -158,22 +158,22 @@ public abstract class FileSourceXML extends SourceBase implements FileSource,
 	 * Called after the event
 	 * {@link javax.xml.stream.events.XMLEvent.START_DOCUMENT} has been
 	 * received.
-	 * 
+	 *
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
 	protected abstract void afterStartDocument() throws IOException,
-			XMLStreamException;
+		XMLStreamException;
 
 	/**
 	 * Called before trying to receive the events
 	 * {@link javax.xml.stream.event.END_DOCUMENT}.
-	 * 
+	 *
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
 	protected abstract void beforeEndDocument() throws IOException,
-			XMLStreamException;
+		XMLStreamException;
 
 	/*
 	 * (non-Javadoc)
@@ -201,9 +201,9 @@ public abstract class FileSourceXML extends SourceBase implements FileSource,
 	}
 
 	/**
-	 * Get a new event from the stream. This method has to be used to allow the
-	 * {@link #pushback(XMLEvent)} method to work.
-	 * 
+	 * Get a new event from the stream. This method has to be used to allow
+	 * the {@link #pushback(XMLEvent)} method to work.
+	 *
 	 * @return the next event in the stream
 	 * @throws IOException
 	 * @throws XMLStreamException
@@ -211,17 +211,17 @@ public abstract class FileSourceXML extends SourceBase implements FileSource,
 	protected XMLEvent getNextEvent() throws IOException, XMLStreamException {
 		skipWhiteSpaces();
 
-		if (events.size() > 0)
+		if (events.size() > 0) {
 			return events.pop();
+		}
 
 		return reader.nextEvent();
 	}
 
 	/**
 	 * Pushback an event in the stream.
-	 * 
-	 * @param e
-	 *            the event
+	 *
+	 * @param e the event
 	 */
 	protected void pushback(XMLEvent e) {
 		events.push(e);
@@ -229,29 +229,23 @@ public abstract class FileSourceXML extends SourceBase implements FileSource,
 
 	/**
 	 * Generate a new parse exception.
-	 * 
-	 * @param e
-	 *            event producing an error
-	 * @param msg
-	 *            message to put in the exception
-	 * @param args
-	 *            arguments of the message
+	 *
+	 * @param e event producing an error
+	 * @param msg message to put in the exception
+	 * @param args arguments of the message
 	 * @return a new parse exception
 	 */
 	protected XMLStreamException newParseError(XMLEvent e, String msg,
-			Object... args) {
+		Object... args) {
 		return new XMLStreamException(String.format(msg, args), e.getLocation());
 	}
 
 	/**
 	 * Check is an event has an expected type and name.
-	 * 
-	 * @param e
-	 *            event to check
-	 * @param type
-	 *            expected type
-	 * @param name
-	 *            expected name
+	 *
+	 * @param e event to check
+	 * @param type expected type
+	 * @param name expected name
 	 * @return true is type and name are valid
 	 */
 	protected boolean isEvent(XMLEvent e, int type, String name) {
@@ -259,23 +253,23 @@ public abstract class FileSourceXML extends SourceBase implements FileSource,
 
 		if (valid) {
 			switch (type) {
-			case START_ELEMENT:
-				valid = e.asStartElement().getName().getLocalPart()
+				case START_ELEMENT:
+					valid = e.asStartElement().getName().getLocalPart()
 						.equals(name);
-				break;
-			case END_ELEMENT:
-				valid = e.asEndElement().getName().getLocalPart().equals(name);
-				break;
-			case ATTRIBUTE:
-				valid = ((Attribute) e).getName().getLocalPart().equals(name);
-				break;
-			case CHARACTERS:
-			case NAMESPACE:
-			case PROCESSING_INSTRUCTION:
-			case COMMENT:
-			case START_DOCUMENT:
-			case END_DOCUMENT:
-			case DTD:
+					break;
+				case END_ELEMENT:
+					valid = e.asEndElement().getName().getLocalPart().equals(name);
+					break;
+				case ATTRIBUTE:
+					valid = ((Attribute) e).getName().getLocalPart().equals(name);
+					break;
+				case CHARACTERS:
+				case NAMESPACE:
+				case PROCESSING_INSTRUCTION:
+				case COMMENT:
+				case START_DOCUMENT:
+				case END_DOCUMENT:
+				case DTD:
 			}
 		}
 
@@ -283,40 +277,37 @@ public abstract class FileSourceXML extends SourceBase implements FileSource,
 	}
 
 	/**
-	 * Check is the event has valid type and name. If not, a new exception is
-	 * thrown.
-	 * 
-	 * @param e
-	 *            event to check
-	 * @param type
-	 *            expected type
-	 * @param name
-	 *            expected name
-	 * @throws XMLStreamException
-	 *             if event has invalid type or name
+	 * Check is the event has valid type and name. If not, a new exception
+	 * is thrown.
+	 *
+	 * @param e event to check
+	 * @param type expected type
+	 * @param name expected name
+	 * @throws XMLStreamException if event has invalid type or name
 	 */
 	protected void checkValid(XMLEvent e, int type, String name)
-			throws XMLStreamException {
+		throws XMLStreamException {
 		boolean valid = isEvent(e, type, name);
 
-		if (!valid)
+		if (!valid) {
 			throw newParseError(e, "expecting %s, got %s", gotWhat(type, name),
-					gotWhat(e));
+				gotWhat(e));
+		}
 	}
 
 	private String gotWhat(XMLEvent e) {
 		String v = null;
 
 		switch (e.getEventType()) {
-		case START_ELEMENT:
-			v = e.asStartElement().getName().getLocalPart();
-			break;
-		case END_ELEMENT:
-			v = e.asEndElement().getName().getLocalPart();
-			break;
-		case ATTRIBUTE:
-			v = ((Attribute) e).getName().getLocalPart();
-			break;
+			case START_ELEMENT:
+				v = e.asStartElement().getName().getLocalPart();
+				break;
+			case END_ELEMENT:
+				v = e.asEndElement().getName().getLocalPart();
+				break;
+			case ATTRIBUTE:
+				v = ((Attribute) e).getName().getLocalPart();
+				break;
 		}
 
 		return gotWhat(e.getEventType(), v);
@@ -324,28 +315,28 @@ public abstract class FileSourceXML extends SourceBase implements FileSource,
 
 	private String gotWhat(int type, String v) {
 		switch (type) {
-		case START_ELEMENT:
-			return String.format("'<%s>'", v);
-		case END_ELEMENT:
-			return String.format("'</%s>'", v);
-		case ATTRIBUTE:
-			return String.format("attribute '%s'", v);
-		case NAMESPACE:
-			return "namespace";
-		case PROCESSING_INSTRUCTION:
-			return "processing instruction";
-		case COMMENT:
-			return "comment";
-		case START_DOCUMENT:
-			return "document start";
-		case END_DOCUMENT:
-			return "document end";
-		case DTD:
-			return "dtd";
-		case CHARACTERS:
-			return "characters";
-		default:
-			return "UNKNOWN";
+			case START_ELEMENT:
+				return String.format("'<%s>'", v);
+			case END_ELEMENT:
+				return String.format("'</%s>'", v);
+			case ATTRIBUTE:
+				return String.format("attribute '%s'", v);
+			case NAMESPACE:
+				return "namespace";
+			case PROCESSING_INSTRUCTION:
+				return "processing instruction";
+			case COMMENT:
+				return "comment";
+			case START_DOCUMENT:
+				return "document start";
+			case END_DOCUMENT:
+				return "document end";
+			case DTD:
+				return "dtd";
+			case CHARACTERS:
+				return "characters";
+			default:
+				return "UNKNOWN";
 		}
 	}
 
@@ -353,25 +344,27 @@ public abstract class FileSourceXML extends SourceBase implements FileSource,
 		XMLEvent e;
 
 		do {
-			if (events.size() > 0)
+			if (events.size() > 0) {
 				e = events.pop();
-			else
+			} else {
 				e = reader.nextEvent();
+			}
 		} while (isEvent(e, XMLEvent.CHARACTERS, null)
-				&& e.asCharacters().getData().matches("^\\s*$"));
+			&& e.asCharacters().getData().matches("^\\s*$"));
 
 		pushback(e);
 	}
 
 	/**
 	 * Open a new xml events stream.
-	 * 
+	 *
 	 * @param stream
 	 * @throws IOException
 	 */
 	protected void openStream(Reader stream) throws IOException {
-		if (reader != null)
+		if (reader != null) {
 			closeStream();
+		}
 
 		try {
 			XMLEvent e;
@@ -391,7 +384,7 @@ public abstract class FileSourceXML extends SourceBase implements FileSource,
 
 	/**
 	 * Close the current opened stream.
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	protected void closeStream() throws IOException {
@@ -407,7 +400,7 @@ public abstract class FileSourceXML extends SourceBase implements FileSource,
 
 	/**
 	 * Convert an attribute to a valid constant name.
-	 * 
+	 *
 	 * @see #toConstantName(String)
 	 * @param a
 	 * @return
@@ -417,9 +410,9 @@ public abstract class FileSourceXML extends SourceBase implements FileSource,
 	}
 
 	/**
-	 * Convert a string to a valid constant name. String is put to upper case
-	 * and all non-word characters are replaced by '_'.
-	 * 
+	 * Convert a string to a valid constant name. String is put to upper
+	 * case and all non-word characters are replaced by '_'.
+	 *
 	 * @param value
 	 * @return
 	 */
@@ -429,13 +422,14 @@ public abstract class FileSourceXML extends SourceBase implements FileSource,
 
 	/**
 	 * Base for parsers, providing some usefull features.
-	 * 
+	 *
 	 */
 	protected class Parser {
 		/**
-		 * Read a sequence of characters and return these characters as a
-		 * string. Characters are read until a non-character event is reached.
-		 * 
+		 * Read a sequence of characters and return these characters as
+		 * a string. Characters are read until a non-character event is
+		 * reached.
+		 *
 		 * @return a sequence of characters
 		 * @throws IOException
 		 * @throws XMLStreamException
@@ -457,33 +451,32 @@ public abstract class FileSourceXML extends SourceBase implements FileSource,
 		}
 
 		/**
-		 * Get attributes of a start element in a map. Attributes should be
-		 * described in an enumeration such that
-		 * {@link FileSourceXML#toConstantName(Attribute)} correspond to names
-		 * of enumeration constants.
-		 * 
-		 * @param <T>
-		 *            type of the enumeration describing attributes
-		 * @param cls
-		 *            class of the enumeration T
-		 * @param e
-		 *            start event from which attributes have to be extracted
-		 * @return a mapping between enum constants and attribute values.
+		 * Get attributes of a start element in a map. Attributes should
+		 * be described in an enumeration such that
+		 * {@link FileSourceXML#toConstantName(Attribute)} correspond to
+		 * names of enumeration constants.
+		 *
+		 * @param <T> type of the enumeration describing attributes
+		 * @param cls class of the enumeration T
+		 * @param e start event from which attributes have to be
+		 *            extracted
+		 * @return a mapping between enum constants and attribute
+		 *         values.
 		 */
 		protected <T extends Enum<T>> EnumMap<T, String> getAttributes(
-				Class<T> cls, StartElement e) {
+			Class<T> cls, StartElement e) {
 			EnumMap<T, String> values = new EnumMap<T, String>(cls);
 
 			@SuppressWarnings("unchecked")
 			Iterator<? extends Attribute> attributes = e.asStartElement()
-					.getAttributes();
+				.getAttributes();
 
 			while (attributes.hasNext()) {
 				Attribute a = attributes.next();
 
 				for (int i = 0; i < cls.getEnumConstants().length; i++) {
 					if (cls.getEnumConstants()[i].name().equals(
-							toConstantName(a))) {
+						toConstantName(a))) {
 						values.put(cls.getEnumConstants()[i], a.getValue());
 						break;
 					}
@@ -495,29 +488,27 @@ public abstract class FileSourceXML extends SourceBase implements FileSource,
 
 		/**
 		 * Check if all required attributes are present.
-		 * 
-		 * @param <T>
-		 *            type of the enumeration describing attributes
-		 * @param e
-		 *            the event
-		 * @param attributes
-		 *            extracted attributes
-		 * @param required
-		 *            array of required attributes
-		 * @throws XMLStreamException
-		 *             if at least one required attribute is not found
+		 *
+		 * @param <T> type of the enumeration describing
+		 *                   attributes
+		 * @param e the event
+		 * @param attributes extracted attributes
+		 * @param required array of required attributes
+		 * @throws XMLStreamException if at least one required attribute
+		 *                            is not found
 		 */
 		protected <T extends Enum<T>> void checkRequiredAttributes(XMLEvent e,
-				EnumMap<T, String> attributes, T... required)
-				throws XMLStreamException {
+			EnumMap<T, String> attributes, T... required)
+			throws XMLStreamException {
 			if (required != null) {
 				for (int i = 0; i < required.length; i++) {
-					if (!attributes.containsKey(required[i]))
+					if (!attributes.containsKey(required[i])) {
 						throw newParseError(e,
-								"'%s' attribute is required for <%s> element",
-								required[i].name().toLowerCase(), e
-										.asStartElement().getName()
-										.getLocalPart());
+							"'%s' attribute is required for <%s> element",
+							required[i].name().toLowerCase(), e
+							.asStartElement().getName()
+							.getLocalPart());
+					}
 				}
 			}
 		}

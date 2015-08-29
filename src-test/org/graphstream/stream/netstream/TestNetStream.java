@@ -36,6 +36,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -44,10 +45,9 @@ import java.util.Vector;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
-import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.stream.Sink;
-import org.graphstream.stream.SinkAdapter;
 import org.graphstream.stream.netstream.packing.Base64Packer;
 import org.graphstream.stream.netstream.packing.Base64Unpacker;
 import org.graphstream.stream.thread.ThreadProxyPipe;
@@ -84,7 +84,7 @@ public class TestNetStream {
 		try {
 			ThreadProxyPipe pipe = net.getDefaultStream();
 
-			pipe.addSink(new SinkAdapter() {
+			pipe.addSink(new Sink() {
 
 				public void graphAttributeAdded(String sourceId, long timeId,
 						String attribute, Object value) {
@@ -110,14 +110,14 @@ public class TestNetStream {
 
 					g.addSink(nsc);
 
-					g.addAttribute("attribute", "foo");
-					g.changeAttribute("attribute", false);
+					g.setAttribute("attribute", "foo");
+					g.setAttribute("attribute", false);
 					Edge e = g.addEdge("AB", "A", "B");
-					e.addAttribute("attribute", "foo");
-					e.changeAttribute("attribute", false);
+					e.setAttribute("attribute", "foo");
+					e.setAttribute("attribute", false);
 					Node n = e.getNode0();
-					n.addAttribute("attribute", "foo");
-					n.changeAttribute("attribute", false);
+					n.setAttribute("attribute", "foo");
+					n.setAttribute("attribute", false);
 
 					try {
 						nsc.close();
@@ -174,7 +174,7 @@ public class TestNetStream {
 
 		ThreadProxyPipe pipe = net.getDefaultStream();
 
-		pipe.addSink(new SinkAdapter() {
+		pipe.addSink(new Sink() {
 
 			public void graphAttributeAdded(String sourceId, long timeId,
 					String attribute, Object value) {
@@ -312,28 +312,28 @@ public class TestNetStream {
 
 				g.addSink(nsc);
 
-				g.addAttribute("intArray", 0, Integer.MAX_VALUE,
+				g.setAttribute("intArray", 0, Integer.MAX_VALUE,
 						Integer.MIN_VALUE);
-				g.addAttribute("floatArray", 0f, Float.MAX_VALUE,
+				g.setAttribute("floatArray", 0f, Float.MAX_VALUE,
 						Float.MIN_VALUE);
-				g.addAttribute("doubleArray", 0.0, Double.MAX_VALUE,
+				g.setAttribute("doubleArray", 0.0, Double.MAX_VALUE,
 						Double.MIN_VALUE);
-				g.addAttribute("shortArray", (short) 0, Short.MAX_VALUE,
+				g.setAttribute("shortArray", (short) 0, Short.MAX_VALUE,
 						Short.MIN_VALUE);
-				g.addAttribute("longArray", 0L, Long.MAX_VALUE, Long.MIN_VALUE);
-				g.addAttribute("byteArray", (byte) 0, Byte.MAX_VALUE,
+				g.setAttribute("longArray", 0L, Long.MAX_VALUE, Long.MIN_VALUE);
+				g.setAttribute("byteArray", (byte) 0, Byte.MAX_VALUE,
 						Byte.MIN_VALUE);
-				g.addAttribute("booleanArray", true, false);
+				g.setAttribute("booleanArray", true, false);
 				// Object[] three = {new Short((short) 3),new Long(3L),"3"};
-				// g.addAttribute("typeArray","one", 2 , three);
-				g.addAttribute("int", 1);
-				g.addAttribute("float", 1f);
-				g.addAttribute("double", 1.0);
-				g.addAttribute("short", (short) 0);
-				g.addAttribute("long", 1L);
-				g.addAttribute("byte", (byte) 0);
-				g.addAttribute("boolean", true);
-				g.addAttribute("string", "true");
+				// g.setAttribute("typeArray","one", 2 , three);
+				g.setAttribute("int", 1);
+				g.setAttribute("float", 1f);
+				g.setAttribute("double", 1.0);
+				g.setAttribute("short", (short) 0);
+				g.setAttribute("long", 1L);
+				g.setAttribute("byte", (byte) 0);
+				g.setAttribute("boolean", true);
+				g.setAttribute("string", "true");
 
 				try {
 					nsc.close();
@@ -467,7 +467,7 @@ public class TestNetStream {
 				}
 				g.addSink(nsc);
 
-				g.addAttribute("id", id);
+				g.setAttribute("id", id);
 
 				for (int i = 0; i < 30; i++) {
 					g.addNode(prefix + i + "_1");
@@ -498,11 +498,14 @@ public class TestNetStream {
 	public void testNetStreamEvents() {
 		errors.clear();
 
-		final Graph g1 = new DefaultGraph("G");
+		final Graph g1 = new SingleGraph("G");
 		NetStreamReceiver net = null;
 		try {
 			net = new NetStreamReceiver("localhost", 2002, debug);
-		} catch (UnknownHostException e1) {
+		} catch (BindException e1) {
+                    // Cannot bind, out of our control
+                    return;
+                } catch (UnknownHostException e1) {
 			fail(e1.toString());
 		} catch (IOException e1) {
 			fail(e1.toString());
@@ -618,14 +621,14 @@ public class TestNetStream {
 				g.addSink(nsc);
 				Node node0 = g.addNode("node0");
 				Edge edge = g.addEdge("edge", "node0", "node1", true);
-				node0.addAttribute("nodeAttribute", 0);
-				node0.changeAttribute("nodeAttribute", 1);
+				node0.setAttribute("nodeAttribute", 0);
+				node0.setAttribute("nodeAttribute", 1);
 				node0.removeAttribute("nodeAttribute");
-				edge.addAttribute("edgeAttribute", 0);
-				edge.changeAttribute("edgeAttribute", 1);
+				edge.setAttribute("edgeAttribute", 0);
+				edge.setAttribute("edgeAttribute", 1);
 				edge.removeAttribute("edgeAttribute");
-				g.addAttribute("graphAttribute", 0);
-				g.changeAttribute("graphAttribute", 1);
+				g.setAttribute("graphAttribute", 0);
+				g.setAttribute("graphAttribute", 1);
 				g.removeAttribute("graphAttribute");
 				g.stepBegins(1.1);
 				g.removeEdge("edge");

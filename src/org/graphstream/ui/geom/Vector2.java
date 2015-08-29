@@ -44,7 +44,6 @@ public class Vector2 implements java.io.Serializable {
 	public double data[];
 
 	// Constructors
-
 	/**
 	 * New zero vector.
 	 */
@@ -78,7 +77,7 @@ public class Vector2 implements java.io.Serializable {
 		data = new double[2];
 		copy(point);
 	}
-	
+
 	public Vector2(Point2 from, Point2 to) {
 		data = new double[2];
 		data[0] = to.x - from.x;
@@ -86,7 +85,6 @@ public class Vector2 implements java.io.Serializable {
 	}
 
 	// Predicates
-
 	/**
 	 * Are all components to zero?.
 	 */
@@ -112,7 +110,7 @@ public class Vector2 implements java.io.Serializable {
 
 	/**
 	 * Is i the index of a component ?
-	 * 
+	 *
 	 * In other words, is i &gt;= 0 &amp;&amp; &lt; than #count() ?
 	 */
 	public boolean validComponent(int i) {
@@ -120,18 +118,17 @@ public class Vector2 implements java.io.Serializable {
 	}
 
 	// Accessors:
-
 	/**
 	 * i-th element.
 	 */
 	public double at(int i) {
 		return data[i];
 	}
-	
+
 	public double x() {
 		return data[0];
 	}
-	
+
 	public double y() {
 		return data[1];
 	}
@@ -142,7 +139,6 @@ public class Vector2 implements java.io.Serializable {
 	}
 
 	// Accessors
-
 	public double dotProduct(double ox, double oy) {
 		return ((data[0] * ox) + (data[1] * oy));
 	}
@@ -162,7 +158,6 @@ public class Vector2 implements java.io.Serializable {
 	}
 
 	// Commands
-
 	/**
 	 * Assign value to all elements.
 	 */
@@ -243,7 +238,7 @@ public class Vector2 implements java.io.Serializable {
 
 	/**
 	 * Transform this into an unit vector.
-	 * 
+	 *
 	 * @return the vector length.
 	 */
 	public double normalize() {
@@ -258,7 +253,6 @@ public class Vector2 implements java.io.Serializable {
 	}
 
 	// Utility
-
 	/**
 	 * Make this a copy of other.
 	 */
@@ -276,7 +270,6 @@ public class Vector2 implements java.io.Serializable {
 	}
 
 	// Misc.
-
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer("[");
@@ -289,10 +282,8 @@ public class Vector2 implements java.io.Serializable {
 		return sb.toString();
 	}
 
-
-    @Override
-    public int hashCode()
-    {
-        return data != null ? Arrays.hashCode(data) : 0;
-    }
+	@Override
+	public int hashCode() {
+		return data != null ? Arrays.hashCode(data) : 0;
+	}
 }

@@ -51,7 +51,7 @@ public class DemoViewerJComponents {
 
 	public DemoViewerJComponents() {
 		Graph graph = new MultiGraph("main graph");
-		ThreadProxyPipe toSwing = new ThreadProxyPipe(graph);
+		ThreadProxyPipe toSwing = ThreadProxyPipe.create(graph);
 		Viewer viewer = new Viewer(toSwing);
 		ProxyPipe fromSwing = viewer.newThreadProxyOnGraphicGraph();
 		SpriteManager sman = new SpriteManager(graph);
@@ -67,15 +67,15 @@ public class DemoViewerJComponents {
 		graph.addEdge("BC", "B", "C");
 		graph.addEdge("CA", "C", "A");
 
-		A.addAttribute("xyz", 0, 1, 0);
-		B.addAttribute("xyz", 1, 0, 0);
-		C.addAttribute("xyz", -1, 0, 0);
+		A.setAttribute("xyz", 0, 1, 0);
+		B.setAttribute("xyz", 1, 0, 0);
+		C.setAttribute("xyz", -1, 0, 0);
 
-		A.addAttribute("ui.label", "Quit");
-		B.addAttribute("ui.label", "Editable text");
-		C.addAttribute("ui.label", "Click to edit");
+		A.setAttribute("ui.label", "Quit");
+		B.setAttribute("ui.label", "Editable text");
+		C.setAttribute("ui.label", "Click to edit");
 
-		graph.addAttribute("ui.stylesheet", styleSheet);
+		graph.setAttribute("ui.stylesheet", styleSheet);
 
 		Sprite s1 = sman.addSprite("S1");
 		Sprite s2 = sman.addSprite("S2");
@@ -86,9 +86,9 @@ public class DemoViewerJComponents {
 		s1.setPosition(StyleConstants.Units.PX, 1, 0, 0);
 		s2.setPosition(0.5f);
 		s3.setPosition(0, 0.5f, 0);
-		s1.addAttribute("ui.label", "1");
-		s2.addAttribute("ui.label", "2");
-		// s3.addAttribute( "ui.label", "" );
+		s1.setAttribute("ui.label", "1");
+		s2.setAttribute("ui.label", "2");
+		// s3.setAttribute( "ui.label", "" );
 
 		boolean loop = true;
 		// float x = 0;
@@ -124,7 +124,7 @@ public class DemoViewerJComponents {
 					if (C.hasAttribute("ui.class"))
 						C.removeAttribute("ui.class");
 					else
-						C.addAttribute("ui.class", "editable");
+						C.setAttribute("ui.class", "editable");
 				}
 
 				angle += 0.01;

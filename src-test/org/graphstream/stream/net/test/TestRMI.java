@@ -43,7 +43,7 @@ import java.util.LinkedList;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
-import org.graphstream.graph.implementations.DefaultGraph;
+import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.stream.rmi.RMISink;
 import org.graphstream.stream.rmi.RMISource;
 import org.junit.Test;
@@ -55,8 +55,8 @@ public class TestRMI {
 		RMISink sink;
 		RMISource source;
 
-		Graph g1 = new DefaultGraph("g1");
-		Graph g2 = new DefaultGraph("g2");
+		Graph g1 = new SingleGraph("g1");
+		Graph g2 = new SingleGraph("g2");
 
 		try {
 			LocateRegistry.createRegistry(1099);
@@ -87,17 +87,17 @@ public class TestRMI {
 		Edge AC = g1.addEdge("AC", "A", "C", true);
 		Edge BC = g1.addEdge("BC", "B", "C", false);
 
-		A.addAttribute("int", 1);
-		B.addAttribute("string", "test");
-		C.addAttribute("double", 2.0);
+		A.setAttribute("int", 1);
+		B.setAttribute("string", "test");
+		C.setAttribute("double", 2.0);
 
-		AB.addAttribute("points",
+		AB.setAttribute("points",
 				(Object) (new double[][] { { 1, 1 }, { 2, 2 } }));
 		LinkedList<Integer> list = new LinkedList<Integer>();
 		list.add(1);
 		list.add(2);
-		AC.addAttribute("list", list);
-		BC.addAttribute("boolean", true);
+		AC.setAttribute("list", list);
+		BC.setAttribute("boolean", true);
 
 		// -----
 
@@ -130,9 +130,9 @@ public class TestRMI {
 		assertTrue(AC.isDirected());
 		assertTrue(!BC.isDirected());
 		
-		assertEquals(A.getAttribute("int"), 1);
+		assertEquals((int) A.getAttribute("int"), 1);
 		assertEquals(B.getAttribute("string"), "test");
-		assertEquals(C.getAttribute("double"), 2.0);
+		assertEquals((double) C.getAttribute("double"), 2.0d, 0d);
 
 		try {
 			double[][] points = AB.getAttribute("points");

@@ -33,7 +33,7 @@ package org.graphstream.stream;
 
 /**
  * Proxy pipe.
- * 
+ *
  * <p>
  * A proxy is a kind of event buffer that allows to pass some kind of barrier.
  * The barrier can be a thread or a network for example. A proxy completely
@@ -41,13 +41,13 @@ package org.graphstream.stream;
  * when possible it sends them to the listeners at the sink. In other words, a
  * proxy is indirect, non synchronized and non blocking.
  * </p>
- * 
+ *
  * <p>
  * The usual source/sink mechanism is synchronized, direct and blocking : when
  * the event occurs, all listeners are called, and we have to wait they finish
  * to process these events to continue and send new events.
  * </p>
- * 
+ *
  * <p>
  * With proxies, there is a buffer often compared to a mail box. Each event
  * produced as source is buffered and when the sink is free to receive these
@@ -55,7 +55,7 @@ package org.graphstream.stream;
  * events. This way of doing is completely non synchronized and non blocking
  * (due to the mail box).
  * </p>
- * 
+ *
  * <p>
  * This way of doing allows for example to pass a thread frontier with a minimum
  * of synchronization : only the mail box has to be synchronized. And the source
@@ -64,13 +64,13 @@ package org.graphstream.stream;
  * waiting one another since most of the work in GraphStream is centered on
  * graphs.
  * </p>
- * 
+ *
  * <p>
  * For networks, this is the same thing : events are buffered before sending
  * them to the network. When the other end is ready it can check these events in
  * one operation.
  * </p>
- * 
+ *
  * <p>
  * However proxies have a limitation : they force the receiving end to check for
  * events regularly. This can be compared to "pumping" since the whole
@@ -88,18 +88,20 @@ public interface ProxyPipe extends Pipe {
 	void pump();
 
 	/**
-	 * Same as {@link #pump()} but try to block until new events were available.
-	 * Note that this feature will not be available on all proxy pipe
-	 * implementation and may throws an
+	 * Same as {@link #pump()} but try to block until new events were
+	 * available. Note that this feature will not be available on all proxy
+	 * pipe implementation and may throws an
 	 * {@link java.lang.UnsupportedOperationException}. It can throw an
 	 * {@link java.lang.InterruptedException} if the current thread is
 	 * interrupted while proxy is waiting for events.
+	 *
+	 * @throws java.lang.InterruptedException
 	 */
 	void blockingPump() throws InterruptedException;
 
 	/**
 	 * Same as {@link #blockingPump()} but including a timeout delay.
-	 * 
+	 *
 	 * @param timeout
 	 * @throws InterruptedException
 	 */

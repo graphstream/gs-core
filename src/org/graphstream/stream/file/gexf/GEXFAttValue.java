@@ -63,14 +63,15 @@ public class GEXFAttValue implements GEXFElement {
 		stream.stream.writeAttribute("for", forId);
 		stream.stream.writeAttribute("value", value);
 
-		if (Double.isNaN(end))
+		if (Double.isNaN(end)) {
 			end = root.step;
+		}
 
 		if (root.isExtensionEnable(Extension.DYNAMICS)) {
 			stream.stream.writeAttribute("start",
-					root.getTimeFormat().format.format(start));
+				root.getTimeFormat().format.format(start));
 			stream.stream.writeAttribute("end",
-					root.getTimeFormat().format.format(end));
+				root.getTimeFormat().format.format(end));
 		}
 
 		stream.endElement(); // ATTVALUE

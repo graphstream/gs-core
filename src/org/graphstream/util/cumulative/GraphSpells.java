@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 public class GraphSpells implements Sink {
-    private static final Logger logger = Logger.getLogger(GraphSpells.class.getSimpleName());
+	private static final Logger logger = Logger.getLogger(GraphSpells.class.getSimpleName());
 
 	CumulativeSpells graph;
 	CumulativeAttributes graphAttributes;
@@ -71,15 +71,15 @@ public class GraphSpells implements Sink {
 		String source;
 		String target;
 		boolean directed;
-		
+
 		public String getSource() {
 			return source;
 		}
-		
+
 		public String getTarget() {
 			return target;
 		}
-		
+
 		public boolean isDirected() {
 			return directed;
 		}
@@ -147,7 +147,7 @@ public class GraphSpells implements Sink {
 	}
 
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
+		String fromNodeId, String toNodeId, boolean directed) {
 		if (!edges.containsKey(edgeId)) {
 			edges.put(edgeId, new CumulativeSpells());
 			edgesAttributes.put(edgeId, new CumulativeAttributes(date));
@@ -165,9 +165,10 @@ public class GraphSpells implements Sink {
 		EdgeData data = edgesData.get(edgeId);
 
 		if (!data.source.equals(fromNodeId) || !data.target.equals(toNodeId)
-				|| data.directed != directed)
-            logger.warning("An edge with this id but different properties"
-					+ " has already be created in the past.");
+			|| data.directed != directed) {
+			logger.warning("An edge with this id but different properties"
+				+ " has already be created in the past.");
+		}
 	}
 
 	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
@@ -190,47 +191,47 @@ public class GraphSpells implements Sink {
 	}
 
 	public void graphAttributeAdded(String sourceId, long timeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		graphAttributes.set(attribute, value);
 	}
 
 	public void graphAttributeChanged(String sourceId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
+		String attribute, Object oldValue, Object newValue) {
 		graphAttributes.set(attribute, newValue);
 	}
 
 	public void graphAttributeRemoved(String sourceId, long timeId,
-			String attribute) {
+		String attribute) {
 		graphAttributes.remove(attribute);
 	}
 
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		nodesAttributes.get(nodeId).set(attribute, value);
 	}
 
 	public void nodeAttributeChanged(String sourceId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
+		String nodeId, String attribute, Object oldValue, Object newValue) {
 		nodesAttributes.get(nodeId).set(attribute, newValue);
 	}
 
 	public void nodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute) {
+		String nodeId, String attribute) {
 		nodesAttributes.get(nodeId).remove(attribute);
 	}
 
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		edgesAttributes.get(edgeId).set(attribute, value);
 	}
 
 	public void edgeAttributeChanged(String sourceId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
+		String edgeId, String attribute, Object oldValue, Object newValue) {
 		edgesAttributes.get(edgeId).set(attribute, newValue);
 	}
 
 	public void edgeAttributeRemoved(String sourceId, long timeId,
-			String edgeId, String attribute) {
+		String edgeId, String attribute) {
 		edgesAttributes.get(edgeId).remove(attribute);
 	}
 
@@ -239,13 +240,13 @@ public class GraphSpells implements Sink {
 
 		for (String id : nodes.keySet()) {
 			buffer.append("node#\"").append(id).append("\" ")
-					.append(nodes.get(id)).append(" ")
-					.append(nodesAttributes.get(id)).append("\n");
+				.append(nodes.get(id)).append(" ")
+				.append(nodesAttributes.get(id)).append("\n");
 		}
 
 		for (String id : edges.keySet()) {
 			buffer.append("edge#\"").append(id).append("\" ")
-					.append(edges.get(id)).append("\n");
+				.append(edges.get(id)).append("\n");
 		}
 
 		return buffer.toString();

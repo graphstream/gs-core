@@ -33,7 +33,7 @@ package org.graphstream.stream;
 
 /**
  * Raised when a parse error occurred while reading a graph file.
- * 
+ *
  * @since 19 Sept. 2004
  */
 public class GraphParseException extends Exception {

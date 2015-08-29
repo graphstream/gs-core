@@ -39,41 +39,38 @@ import java.util.HashSet;
 
 /**
  * Reader for the "ncol" graph format.
- * 
+ *
  * <p>
- * The ncol graph format is a simple format where each line
- * describes an edge by giving two node names and an optional third
- * parameters giving the edge weight. The nodes are created implicitly.
+ * The ncol graph format is a simple format where each line describes an edge by
+ * giving two node names and an optional third parameters giving the edge
+ * weight. The nodes are created implicitly.
  * </p>
- * 
+ *
  * <p>
  * Also, the format does not specify any direction for edges. By default all
- * edges are undirected. It is specified in the format that you will never
- * have directed edges and that the lines:
+ * edges are undirected. It is specified in the format that you will never have
+ * directed edges and that the lines:
  * <pre>
  *     node1Name node2Name
- * </pre>
- * and
+ * </pre> and
  * <pre>
  *     node2Name node1Name
- * </pre>
- * Cannot both appear at the same time in a file.
+ * </pre> Cannot both appear at the same time in a file.
  * </p>
- * 
+ *
  * <p>
  * This format only contains edges. To ensure the "add node" events are sent
  * before an edge referencing two nodes is created via an "add edge" event, this
  * reader has a hash set of already encountered nodes. The hash set allows to
  * issue "add node" events only when a node is encountered for the first time.
  * </p>
- * 
+ *
  * </p> This hash set consumes memory, but is the only way to ensure "add node"
  * events are correctly issued. If this input is directly connected to a graph,
  * as graphs can create non-existing nodes automatically, you can disable the
- * hash set of nodes using the constructor
- * {@link #FileSourceNCol(boolean)}, and giving "false" for the first
- * argument. </p>
- * 
+ * hash set of nodes using the constructor {@link #FileSourceNCol(boolean)}, and
+ * giving "false" for the first argument. </p>
+ *
  * The usual file name extension for this format is ".ncol".
  */
 public class FileSourceNCol extends FileSourceBase {
@@ -92,7 +89,6 @@ public class FileSourceNCol extends FileSourceBase {
 	protected String graphName = "NCOL_";
 
 	// Construction
-
 	/**
 	 * New reader for the "ncol" format.
 	 */
@@ -102,16 +98,15 @@ public class FileSourceNCol extends FileSourceBase {
 
 	/**
 	 * New reader for the "ncol" format.
-	 * 
-	 * @param declareNodes
-	 *            If true (default=true) this reader outputs nodeAdded events.
+	 *
+	 * @param declareNodes If true (default=true) this reader outputs
+	 *                     nodeAdded events.
 	 */
 	public FileSourceNCol(boolean declareNodes) {
 		nodes = declareNodes ? new HashSet<String>() : null;
 	}
 
 	// Commands
-
 	@Override
 	protected void continueParsingInInclude() throws IOException {
 		// Should not happen, NCol files cannot be nested.
@@ -130,31 +125,32 @@ public class FileSourceNCol extends FileSourceBase {
 
 			String id2 = getWordOrNumberOrStringOrEolOrEof();
 
-			if(!id2.equals("EOL") && !id2.equals("EOF")) {
+			if (!id2.equals("EOL") && !id2.equals("EOF")) {
 				// Loops are not accepted by the format.
 				if (!id1.equals(id2)) {
 					// There may be a weight.
 					String weight = getWordOrNumberOrStringOrEolOrEof();
 					double w = 0.0;
-					
-					if(weight.equals("EOL") || weight.equals("EOF")) {
+
+					if (weight.equals("EOL") || weight.equals("EOF")) {
 						weight = null;
 						pushBack();
 					} else {
 						try {
 							w = Double.parseDouble(weight);
-						} catch(Exception e) {
+						} catch (Exception e) {
 							throw new IOException(String.format("cannot transform weight %s into a number", weight));
 						}
 					}
-					
+
 					String edgeId = Integer.toString(edgeid++);
 
 					declareNode(id2);
 					sendEdgeAdded(graphName, edgeId, id1, id2, false);
-					
-					if(weight != null)
-						sendEdgeAttributeAdded(graphName, edgeId, "weight", (Double)w);
+
+					if (weight != null) {
+						sendEdgeAttributeAdded(graphName, edgeId, "weight", (Double) w);
+					}
 				}
 			} else {
 				throw new IOException("unexpected EOL or EOF");
@@ -202,7 +198,7 @@ public class FileSourceNCol extends FileSourceBase {
 		st.commentChar('#');
 
 		graphName = String.format("%s_%d", graphName,
-				System.currentTimeMillis() + ((long) Math.random() * 10));
+			System.currentTimeMillis() + ((long) Math.random() * 10));
 	}
 
 	public boolean nextStep() throws IOException {

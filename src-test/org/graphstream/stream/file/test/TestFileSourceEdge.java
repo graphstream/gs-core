@@ -88,7 +88,7 @@ public class TestFileSourceEdge extends TestFileSourceBase {
 		try {
 			input.addSink(graph);
 			input.readAll(new StringReader(aDirectedTriangle()));
-			String BCid = graph.getNode("B").getEdgeToward("C").getId();
+			String BCid = graph.getNode("B").getEdgeToward(graph.getNode("C")).getId();
 			graph.removeEdge(BCid);
 			graph.addEdge(BCid, "B", "C", false);
 			directedTriangleTests();

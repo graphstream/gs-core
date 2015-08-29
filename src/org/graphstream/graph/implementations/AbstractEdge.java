@@ -33,14 +33,13 @@ package org.graphstream.graph.implementations;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
-import org.graphstream.stream.SourceBase.ElementType;
 
 /**
  * <p>
  * This class provides a basic implementation of {@code Edge} interface, to
  * minimize the effort required to implement this interface.
  * </p>
- * 
+ *
  * <p>
  * Although this class is abstract it implements all the methods of
  * {@link org.graphstream.graph.Edge} and
@@ -52,7 +51,6 @@ import org.graphstream.stream.SourceBase.ElementType;
 public class AbstractEdge extends AbstractElement implements Edge {
 
 	// *** Fields ***
-
 	/**
 	 * The source node
 	 */
@@ -74,43 +72,40 @@ public class AbstractEdge extends AbstractElement implements Edge {
 	protected AbstractGraph graph;
 
 	// *** Constructors ***
-
 	/**
-	 * Constructs a new edge. This constructor copies the parameters into the
-	 * corresponding fields.
-	 * 
-	 * @param id
-	 *            Unique identifier of this edge.
-	 * @param source
-	 *            Source node.
-	 * @param target
-	 *            Target node.
-	 * @param directed
-	 *            Indicates if the edge is directed.
+	 * Constructs a new edge. This constructor copies the parameters into
+	 * the corresponding fields.
+	 *
+	 * @param id       Unique identifier of this edge.
+	 * @param source   Source node.
+	 * @param target   Target node.
+	 * @param directed Indicates if the edge is directed.
 	 */
 	protected AbstractEdge(String id, AbstractNode source, AbstractNode target,
-			boolean directed) {
+		boolean directed) {
 		super(id);
 		assert source != null && target != null : "An edge cannot have null endpoints";
 		this.source = source;
 		this.target = target;
 		this.directed = directed;
-		this.graph = (AbstractGraph) source.getGraph();
+		this.graph = source.getGraph();
 	}
 
 	// *** Inherited from AbstractElement ***
-
 	@Override
 	protected void attributeChanged(AttributeChangeEvent event,
-			String attribute, Object oldValue, Object newValue) {
+		String attribute, Object oldValue, Object newValue) {
 		graph.listeners.sendAttributeChangedEvent(id, ElementType.EDGE,
-				attribute, event, oldValue, newValue);
+			attribute, event, oldValue, newValue);
 	}
 
 	/**
-	 * This implementation calls the corresponding method of the parent graph
-	 * 
-	 * @see org.graphstream.graph.implementations.AbstractElement#nullAttributesAreErrors()
+	 * This implementation calls the corresponding method of the parent
+	 * graph
+	 *
+	 * @return
+	 * @see
+	 * org.graphstream.graph.implementations.AbstractElement#nullAttributesAreErrors()
 	 */
 	@Override
 	protected boolean nullAttributesAreErrors() {
@@ -120,44 +115,52 @@ public class AbstractEdge extends AbstractElement implements Edge {
 	@Override
 	public String toString() {
 		return String.format("%s[%s-%s%s]", getId(), source, directed ? ">"
-				: "-", target);
+			: "-", target);
 	}
 
 	// *** Inherited from Edge ***
-
 	@SuppressWarnings("unchecked")
+	@Override
 	public <T extends Node> T getNode0() {
 		return (T) source;
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	public <T extends Node> T getNode1() {
 		return (T) target;
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	public <T extends Node> T getOpposite(Node node) {
-		if (node == source)
+		if (node == source) {
 			return (T) target;
-		if (node == target)
+		}
+		if (node == target) {
 			return (T) source;
+		}
 		return null;
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	public <T extends Node> T getSourceNode() {
 		return (T) source;
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	public <T extends Node> T getTargetNode() {
 		return (T) target;
 	}
 
+	@Override
 	public boolean isDirected() {
 		return directed;
 	}
 
+	@Override
 	public boolean isLoop() {
 		return source == target;
 	}

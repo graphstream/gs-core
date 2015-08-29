@@ -31,12 +31,12 @@
  */
 package org.graphstream.graph;
 
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Definition of some compound value that can be used as attribute and can be
- * transformed to a hash map.
- * 
+ * transformed to a map.
+ *
  * <p>
  * The purpose of this class is to allow to specify how some values are stored
  * in the graph and can be exported to files (or others) when the graph is
@@ -45,32 +45,31 @@ import java.util.HashMap;
  * store more complex attributes, made of several elements. The DGS writer is
  * able to understand these kinds of attributes and store them in files.
  * </p>
- * 
+ *
  * <p>
  * The compound attribute is made of fields. Each fields has a name and a value.
  * For these fields to be exported successfully, they must be transformable to a
  * hash map where each element is indexed by its name (a String).
  * </p>
- * 
+ *
  * <p>
  * For the values to be exported successfully, they must either be basic types,
  * or be themselves instances of CompountAttribute.
  * </p>
  */
-public interface CompoundAttribute {
+public interface CompoundAttribute<K, V> {
+
 	/**
-	 * Transforms this object to a hash map where each field is stored as a pair
-	 * (key,value) where the key is the field name. As we cannot enforce the
-	 * types of the key and value, the key are considered strings (or
-	 * Object.toString()). The value is an arbitrary object.
-	 * 
+	 * Transforms this object to a map where each field is stored as a pair
+	 * (key,value) where the key is the field name.
+	 *
 	 * @return The conversion of this attribute to a hash.
 	 */
-	HashMap<?, ?> toHashMap();
+	Map<K, V> toMap();
 
 	/**
 	 * The usual key used to store this attribute inside a graph element.
-	 * 
+	 *
 	 * @return The attribute usual name.
 	 */
 	String getKey();

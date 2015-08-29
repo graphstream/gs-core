@@ -37,59 +37,105 @@ package org.graphstream.stream.file.dot;
  */
 public interface DOTParserConstants {
 
-	/** End of File. */
+	/**
+	 * End of File.
+	 */
 	int EOF = 0;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int EOL = 7;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int DIGIT = 8;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int HEXDIGIT = 9;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int LSQBR = 10;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int RSQBR = 11;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int LBRACE = 12;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int RBRACE = 13;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int COLON = 14;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int COMMA = 15;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int EQUALS = 16;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int GRAPH = 17;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int DIGRAPH = 18;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int SUBGRAPH = 19;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int NODE = 20;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int EDGE = 21;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int STRICT = 22;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int EDGE_OP = 23;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int REAL = 24;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int STRING = 25;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int WORD = 26;
 
-	/** Lexical state. */
+	/**
+	 * Lexical state.
+	 */
 	int DEFAULT = 0;
 
-	/** Literal token values. */
-	String[] tokenImage = { "<EOF>", "\" \"", "\"\\r\"", "\"\\t\"", "\"\\n\"",
-			"<token of kind 5>", "<token of kind 6>", "<EOL>", "<DIGIT>",
-			"<HEXDIGIT>", "\"[\"", "\"]\"", "\"{\"", "\"}\"", "\":\"", "\",\"",
-			"\"=\"", "\"graph\"", "\"digraph\"", "\"subgraph\"", "\"node\"",
-			"\"edge\"", "\"strict\"", "<EDGE_OP>", "<REAL>", "<STRING>",
-			"<WORD>", "\";\"", "\"n\"", "\"ne\"", "\"e\"", "\"se\"", "\"s\"",
-			"\"sw\"", "\"w\"", "\"nw\"", "\"c\"", "\"_\"", };
+	/**
+	 * Literal token values.
+	 */
+	String[] tokenImage = {"<EOF>", "\" \"", "\"\\r\"", "\"\\t\"", "\"\\n\"",
+		"<token of kind 5>", "<token of kind 6>", "<EOL>", "<DIGIT>",
+		"<HEXDIGIT>", "\"[\"", "\"]\"", "\"{\"", "\"}\"", "\":\"", "\",\"",
+		"\"=\"", "\"graph\"", "\"digraph\"", "\"subgraph\"", "\"node\"",
+		"\"edge\"", "\"strict\"", "<EDGE_OP>", "<REAL>", "<STRING>",
+		"<WORD>", "\";\"", "\"n\"", "\"ne\"", "\"e\"", "\"se\"", "\"s\"",
+		"\"sw\"", "\"w\"", "\"nw\"", "\"c\"", "\"_\"",};
 
 }

@@ -54,8 +54,9 @@ public class DepthFirstIterator<T extends Node> implements Iterator<T> {
 		depth = new int[n];
 
 		int s = startNode.getIndex();
-		for (int i = 0; i < n; i++)
+		for (int i = 0; i < n; i++) {
 			depth[i] = i == s ? 0 : -1;
+		}
 		next = startNode;
 	}
 
@@ -68,10 +69,11 @@ public class DepthFirstIterator<T extends Node> implements Iterator<T> {
 				if (iterator[j] == null) {
 					parent[j] = next;
 					iterator[j] = directed ? neighbor.getLeavingEdgeIterator()
-							: neighbor.getEnteringEdgeIterator();
+						: neighbor.getEnteringEdgeIterator();
 					depth[j] = depth[i] + 1;
-					if (depth[j] > maxDepth)
+					if (depth[j] > maxDepth) {
 						maxDepth = depth[j];
+					}
 					next = neighbor;
 					return;
 				}
@@ -84,24 +86,28 @@ public class DepthFirstIterator<T extends Node> implements Iterator<T> {
 		this(startNode, true);
 	}
 
+	@Override
 	public boolean hasNext() {
 		return next != null;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public T next() {
-		if (next == null)
+		if (next == null) {
 			throw new NoSuchElementException();
+		}
 		iterator[next.getIndex()] = directed ? next.getLeavingEdgeIterator()
-				: next.getEnteringEdgeIterator();
+			: next.getEnteringEdgeIterator();
 		Node previous = next;
 		gotoNext();
 		return (T) previous;
 	}
 
+	@Override
 	public void remove() {
 		throw new UnsupportedOperationException(
-				"This iterator does not support remove");
+			"This iterator does not support remove");
 	}
 
 	public int getDepthOf(Node node) {

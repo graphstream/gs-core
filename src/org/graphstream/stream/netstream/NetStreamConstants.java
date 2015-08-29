@@ -33,7 +33,7 @@ package org.graphstream.stream.netstream;
 
 /**
  * <h1 class="title">NetStream</h1>
- * 
+ *
  * <p>
  * The NetStream framework allows to export the idea of &quot;streams of graph
  * events&quot; to other languages than Java, through a network interface. The
@@ -108,44 +108,32 @@ package org.graphstream.stream.netstream;
  * those functions always return a pipe. On the opposite, any new stream
  * introduced by a sender will be created by the receiver.
  * </p>
- * 
+ *
  * <div class="section" id="example"> <h2>
  * Example</h2>
- * 
+ *
  * <pre class="code-java literal-block">
- * import java.io.IOException;
- * import java.net.UnknownHostException;
- * 
- * import org.graphstream.graph.Graph;
- * import org.graphstream.graph.implementations.MultiGraph;
- * import org.graphstream.stream.thread.ThreadProxyPipe;
- * 
+ * import java.io.IOException; import java.net.UnknownHostException;
+ *
+ * import org.graphstream.graph.Graph; import
+ * org.graphstream.graph.implementations.MultiGraph; import
+ * org.graphstream.stream.thread.ThreadProxyPipe;
+ *
  * // A simple example of use of the NetStream receiver.
- * 
+ *
  * public class ReceiverExample {
- * 
- * 	public static void main(String[] args) throws UnknownHostException,
- * 			IOException, InterruptedException {
- * 		// ----- On the receiver side -----
- * 		//
- * 		// - a graph that will display the received events
- * 		Graph g = new MultiGraph(&quot;G&quot;);
- * 		g.display();
- * 		// - the receiver that waits for events
- * 		NetStreamReceiver net = new NetStreamReceiver(2001);
- * 		// - received events end up in the &quot;default&quot; pipe
- * 		ThreadProxyPipe pipe = net.getDefaultStream();
- * 		// - plug the pipe to the sink of the graph
- * 		pipe.addSink(g);
- * 		// -The receiver pro-actively checks for events on the ThreadProxyPipe
- * 		while (true) {
- * 			pipe.pump();
- * 			Thread.sleep(100);
- * 		}
- * 	}
- * }
+ *
+ * public static void main(String[] args) throws UnknownHostException,
+ * IOException, InterruptedException { // ----- On the receiver side ----- // //
+ * - a graph that will display the received events Graph g = new
+ * MultiGraph(&quot;G&quot;); g.display(); // - the receiver that waits for
+ * events NetStreamReceiver net = new NetStreamReceiver(2001); // - received
+ * events end up in the &quot;default&quot; pipe ThreadProxyPipe pipe =
+ * net.getDefaultStream(); // - plug the pipe to the sink of the graph
+ * pipe.addSink(g); // -The receiver pro-actively checks for events on the
+ * ThreadProxyPipe while (true) { pipe.pump(); Thread.sleep(100); } } }
  * </pre>
- * 
+ *
  * </div> </div> <div class="section" id="sender"> <h1>Sender</h1>
  * <p>
  * A sender, from the GraphStream API, is first of all a sink where one can plug
@@ -155,49 +143,35 @@ package org.graphstream.stream.netstream;
  * <strong>host</strong> and <strong>stream ID</strong>.
  * </p>
  * <div class="section" id="id1"> <h2>Example</h2>
- * 
+ *
  * <pre class="code-java literal-block">
- * import java.io.IOException;
- * import java.net.UnknownHostException;
- * 
- * import org.graphstream.graph.Graph;
- * import org.graphstream.graph.implementations.MultiGraph;
- * 
+ * import java.io.IOException; import java.net.UnknownHostException;
+ *
+ * import org.graphstream.graph.Graph; import
+ * org.graphstream.graph.implementations.MultiGraph;
+ *
  * // A simple example of use of the NetStream sender.
- * 
+ *
  * public class SenderExample {
- * 
- * 	public static void main(String[] args) {
- * 		Graph g = new MultiGraph(&quot;G&quot;);
- * 		// - the sender
- * 		NetStreamSender nsc = null;
- * 		try {
- * 			nsc = new NetStreamSender(2001);
- * 		} catch (UnknownHostException e) {
- * 			e.printStackTrace();
- * 		} catch (IOException e) {
- * 			e.printStackTrace();
- * 		}
- * 		// - plug the graph to the sender so that graph events can be
- * 		// sent automatically
- * 		g.addSink(nsc);
- * 		// - generate some events on the client side
- * 		String style = &quot;node{fill-mode:plain;fill-color:#567;size:6px;}&quot;;
- * 		g.addAttribute(&quot;stylesheet&quot;, style);
- * 		g.addAttribute(&quot;ui.antialias&quot;, true);
- * 		g.addAttribute(&quot;layout.stabilization-limit&quot;, 0);
- * 		for (int i = 0; i &lt; 500; i++) {
- * 			g.addNode(i + &quot;&quot;);
- * 			if (i &gt; 0) {
- * 				g.addEdge(i + &quot;-&quot; + (i - 1), i + &quot;&quot;, (i - 1) + &quot;&quot;);
- * 				g.addEdge(i + &quot;--&quot; + (i / 2), i + &quot;&quot;, (i / 2) + &quot;&quot;);
- * 			}
- * 		}
- * 	}
- * 
+ *
+ * public static void main(String[] args) { Graph g = new
+ * MultiGraph(&quot;G&quot;); // - the sender NetStreamSender nsc = null; try {
+ * nsc = new NetStreamSender(2001); } catch (UnknownHostException e) {
+ * e.printStackTrace(); } catch (IOException e) { e.printStackTrace(); } // -
+ * plug the graph to the sender so that graph events can be // sent
+ * automatically g.addSink(nsc); // - generate some events on the client side
+ * String style = &quot;node{fill-mode:plain;fill-color:#567;size:6px;}&quot;;
+ * g.addAttribute(&quot;stylesheet&quot;, style);
+ * g.addAttribute(&quot;ui.antialias&quot;, true);
+ * g.addAttribute(&quot;layout.stabilization-limit&quot;, 0); for (int i = 0; i
+ * &lt; 500; i++) { g.addNode(i + &quot;&quot;); if (i &gt; 0) { g.addEdge(i +
+ * &quot;-&quot; + (i - 1), i + &quot;&quot;, (i - 1) + &quot;&quot;);
+ * g.addEdge(i + &quot;--&quot; + (i / 2), i + &quot;&quot;, (i / 2) +
+ * &quot;&quot;); } } }
+ *
  * }
  * </pre>
- * 
+ *
  * </div> </div> <div class="section" id="the-netstream-protocol"> <h1>The
  * NetStream Protocol</h1>
  * <p>
@@ -604,30 +578,31 @@ package org.graphstream.stream.netstream;
  * </li>
  * </ul>
  * </div> </div>
- * 
- * 
- * 
+ *
+ *
+ *
  * Copyright (c) 2010-2012 University of Luxembourg - University of Le Havre
- * 
+ *
  * NetStreamConstants.java
+ *
  * @since Aug 3, 2011
- * 
+ *
  * @author Yoann Pigné
- * 
+ *
  */
 public class NetStreamConstants {
 	/**
-	 * Followed by an 32-bit signed integer for this protocol version. Certainly
-	 * useless.
+	 * Followed by an 32-bit signed integer for this protocol version.
+	 * Certainly useless.
 	 */
 	public static int EVENT_GETVERSION = 0x00;
 	/**
 	 * Not used.
 	 */
 	public static int EVENT_START = 0x01;
-	
+
 	/**
-	 * Constant indicating that the client has disconnected. 
+	 * Constant indicating that the client has disconnected.
 	 */
 	public static int EVENT_END = 0x02;
 
@@ -636,7 +611,6 @@ public class NetStreamConstants {
 	// GraphStream's graph events
 	// ----------------------------------
 	//
-
 	/**
 	 * Followed by a node id (TYPE_STRING format)
 	 */
@@ -649,8 +623,8 @@ public class NetStreamConstants {
 
 	/**
 	 * Followed by - an edge id (TYPE_STRING format), - an source node id
-	 * (TYPE_STRING format), - a target node id (TYPE_STRING format - a boolean
-	 * indicating if directed (TYPE_BOOLEAN format)
+	 * (TYPE_STRING format), - a target node id (TYPE_STRING format - a
+	 * boolean indicating if directed (TYPE_BOOLEAN format)
 	 */
 	public static int EVENT_ADD_EDGE = 0x12;
 
@@ -664,18 +638,18 @@ public class NetStreamConstants {
 	 */
 	public static int EVENT_STEP = 0x14;
 	/**
-	 * 
+	 *
 	 */
 	public static int EVENT_CLEARED = 0x15;
 
 	/**
-	 * Followed by - an attribute id (TYPE_STRING format) - the attribute TYPE -
-	 * the attribute value
+	 * Followed by - an attribute id (TYPE_STRING format) - the attribute
+	 * TYPE - the attribute value
 	 */
 	public static int EVENT_ADD_GRAPH_ATTR = 0x16;
 	/**
-	 * Followed by - an attribute id (TYPE_STRING format) - the attribute TYPE -
-	 * the attribute old value - the attribute new value
+	 * Followed by - an attribute id (TYPE_STRING format) - the attribute
+	 * TYPE - the attribute old value - the attribute new value
 	 */
 	public static int EVENT_CHG_GRAPH_ATTR = 0x17;
 	/**
@@ -684,13 +658,13 @@ public class NetStreamConstants {
 	public static int EVENT_DEL_GRAPH_ATTR = 0x18;
 
 	/**
-	 * Followed by - an attribute id (TYPE_STRING format) - the attribute TYPE -
-	 * the attribute value
+	 * Followed by - an attribute id (TYPE_STRING format) - the attribute
+	 * TYPE - the attribute value
 	 */
 	public static int EVENT_ADD_NODE_ATTR = 0x19;
 	/**
-	 * Followed by - an attribute id (TYPE_STRING format) - the attribute TYPE -
-	 * the attribute old value - the attribute new value
+	 * Followed by - an attribute id (TYPE_STRING format) - the attribute
+	 * TYPE - the attribute old value - the attribute new value
 	 */
 	public static int EVENT_CHG_NODE_ATTR = 0x1a;
 	/**
@@ -700,13 +674,13 @@ public class NetStreamConstants {
 	public static int EVENT_DEL_NODE_ATTR = 0x1b;
 
 	/**
-	 * Followed by - an attribute id (TYPE_STRING format) - the attribute TYPE -
-	 * the attribute value
+	 * Followed by - an attribute id (TYPE_STRING format) - the attribute
+	 * TYPE - the attribute value
 	 */
 	public static int EVENT_ADD_EDGE_ATTR = 0x1c;
 	/**
-	 * Followed by - an attribute id (TYPE_STRING format) - the attribute TYPE -
-	 * the attribute old value - the attribute new value
+	 * Followed by - an attribute id (TYPE_STRING format) - the attribute
+	 * TYPE - the attribute old value - the attribute new value
 	 */
 	public static int EVENT_CHG_EDGE_ATTR = 0x1d;
 	/**
@@ -716,16 +690,15 @@ public class NetStreamConstants {
 	public static int EVENT_DEL_EDGE_ATTR = 0x1e;
 
 	// Values types
-
 	public static int TYPE_UNKNOWN = 0x00;
-	
+
 	/**
 	 * Followed by a byte who's value is 0 or 1
 	 */
 	public static int TYPE_BOOLEAN = 0x50;
 	/**
-	 * An array of booleans. Followed by first, a 16-bits integer for the number
-	 * of booleans and then, a list of bytes who's value is 0 or 1
+	 * An array of booleans. Followed by first, a 16-bits integer for the
+	 * number of booleans and then, a list of bytes who's value is 0 or 1
 	 */
 	public static int TYPE_BOOLEAN_ARRAY = 0x51;
 	/**
@@ -733,8 +706,8 @@ public class NetStreamConstants {
 	 */
 	public static int TYPE_BYTE = 0x52;
 	/**
-	 * An array of bytes. Followed by first, a 16-bits integer for the number of
-	 * integers and then, a list of signed bytes.
+	 * An array of bytes. Followed by first, a 16-bits integer for the
+	 * number of integers and then, a list of signed bytes.
 	 */
 	public static int TYPE_BYTE_ARRAY = 0x53;
 	/**
@@ -742,8 +715,8 @@ public class NetStreamConstants {
 	 */
 	public static int TYPE_SHORT = 0x54;
 	/**
-	 * An array of shorts. Followed by first, a 16-bits integer for the number
-	 * of integers and then, a list of 16-bit signed shorts
+	 * An array of shorts. Followed by first, a 16-bits integer for the
+	 * number of integers and then, a list of 16-bit signed shorts
 	 */
 	public static int TYPE_SHORT_ARRAY = 0x55;
 	/**
@@ -751,8 +724,8 @@ public class NetStreamConstants {
 	 */
 	public static int TYPE_INT = 0x56;
 	/**
-	 * An array of integers. Followed by first, a 16-bits integer for the number
-	 * of integers and then, a list of 32-bit signed integers
+	 * An array of integers. Followed by first, a 16-bits integer for the
+	 * number of integers and then, a list of 32-bit signed integers
 	 */
 	public static int TYPE_INT_ARRAY = 0x57;
 	/**
@@ -760,8 +733,8 @@ public class NetStreamConstants {
 	 */
 	public static int TYPE_LONG = 0x58;
 	/**
-	 * An array of longs. Followed by first, a 16-bits integer for the number of
-	 * longs and then, a list of 62-bit signed integers
+	 * An array of longs. Followed by first, a 16-bits integer for the
+	 * number of longs and then, a list of 62-bit signed integers
 	 */
 	public static int TYPE_LONG_ARRAY = 0x59;
 	/**
@@ -769,8 +742,8 @@ public class NetStreamConstants {
 	 */
 	public static int TYPE_FLOAT = 0x5a;
 	/**
-	 * Array of double. Followed by first, a 16-bits integer for the number of
-	 * floats and then, a list of 32-bit floats
+	 * Array of double. Followed by first, a 16-bits integer for the number
+	 * of floats and then, a list of 32-bit floats
 	 */
 	public static int TYPE_FLOAT_ARRAY = 0x5b;
 	/**
@@ -778,41 +751,41 @@ public class NetStreamConstants {
 	 */
 	public static int TYPE_DOUBLE = 0x5c;
 	/**
-	 * Array of double. Followed by first, a 16-bits integer for the number of
-	 * doubles and then, a list of 64-bit doubles
+	 * Array of double. Followed by first, a 16-bits integer for the number
+	 * of doubles and then, a list of 64-bit doubles
 	 */
 	public static int TYPE_DOUBLE_ARRAY = 0x5d;
 	/**
-	 * Array of characters. Followed by first, a 16-bits integer for the size in
-	 * bytes (not in number of characters) of the string, then by the unicode
-	 * string
+	 * Array of characters. Followed by first, a 16-bits integer for the
+	 * size in bytes (not in number of characters) of the string, then by
+	 * the unicode string
 	 */
 	public static int TYPE_STRING = 0x5e;
 	/**
-	 * Raw data, good for serialization. Followed by first, a 16-bits integer
-	 * indicating the length in bytes of the dataset, and then the data itself.
+	 * Raw data, good for serialization. Followed by first, a 16-bits
+	 * integer indicating the length in bytes of the dataset, and then the
+	 * data itself.
 	 */
 	public static int TYPE_RAW = 0x5f;
 
 	/**
 	 * An type-unspecified array. Followed by first, a 16-bits integer
-	 * indicating the number of elements, and then, the elements themselves. The
-	 * elements themselves have to give their type.
+	 * indicating the number of elements, and then, the elements themselves.
+	 * The elements themselves have to give their type.
 	 */
 	public static byte TYPE_ARRAY = 0x60;
-	
+
 	public static int TYPE_NULL = 0x61;
-	
-	
-	
+
 	/**
-	 *  Constant that indicates that this message is a COMMAND, not and EVENT.
-	 *  
-	 *  For now it is followed by a string that has to be parssed at the application level.
-	 *  
-	 *  THIS IS EXPERIMENTAL AND MAY (WILL) CHANGE ! 
+	 * Constant that indicates that this message is a COMMAND, not and
+	 * EVENT.
+	 *
+	 * For now it is followed by a string that has to be parssed at the
+	 * application level.
+	 *
+	 * THIS IS EXPERIMENTAL AND MAY (WILL) CHANGE !
 	 */
 	public static int COMMAND = 0x70;
-	
 
 }

@@ -39,60 +39,52 @@ import javax.swing.JPanel;
  * A view on a graphic graph.
  * <p>
  * <p>
- * Basically a view is a Swing panel where a {@link org.graphstream.ui.swingViewer.GraphRenderer} renders the
- * graphic graph. If you are in the Swing thread, you can change the view on the
- * graphic graph using methods to translate, zoom and rotate the view.
+ * Basically a view is a Swing panel where a
+ * {@link org.graphstream.ui.swingViewer.GraphRenderer} renders the graphic
+ * graph. If you are in the Swing thread, you can change the view on the graphic
+ * graph using methods to translate, zoom and rotate the view.
  * </p>
  */
-public abstract class ViewPanel extends JPanel implements View
-{
-    private static final long serialVersionUID = 4372240131578395549L;
+public abstract class ViewPanel extends JPanel implements View {
+	private static final long serialVersionUID = 4372240131578395549L;
 
+	/**
+	 * The view identifier.
+	 */
+	private final String id;
 
-    /**
-     * The view identifier.
-     */
-    private final String id;
+	/**
+	 * New view.
+	 *
+	 * @param identifier The view unique identifier.
+	 */
+	public ViewPanel(final String identifier) {
+		if (null == identifier || identifier.isEmpty()) {
+			throw new IllegalArgumentException("View id cannot be null/empty.");
+		}
+		id = identifier;
+	}
 
+	public String getId() {
+		return id;
+	}
 
-    /**
-     * New view.
-     *
-     * @param identifier The view unique identifier.
-     */
-    public ViewPanel(final String identifier)
-    {
-        if (null == identifier || identifier.isEmpty())
-        {
-            throw new IllegalArgumentException("View id cannot be null/empty.");
-        }
-        id = identifier;
-    }
+	/**
+	 * Open this view JPanel in a frame. The argument allows to put the
+	 * panel in a new frame or to remove it from the frame (if it already
+	 * exists). Called by the Viewer.
+	 *
+	 * @param on Add the panel in its own frame or remove it if it already
+	 *           was in its own frame.
+	 */
+	public abstract void openInAFrame(boolean on);
 
-
-    public String getId()
-    {
-        return id;
-    }
-
-
-    /**
-     * Open this view JPanel in a frame. The argument allows to put the panel in
-     * a new frame or to remove it from the frame (if it already exists). Called
-     * by the Viewer.
-     *
-     * @param on Add the panel in its own frame or remove it if it already was
-     *           in its own frame.
-     */
-    public abstract void openInAFrame(boolean on);
-
-
-    /**
-     * Set the size of the view frame, if any. If this view has been open in a frame, this changes
-     * the size of the frame containing it.
-     *
-     * @param width  The new width.
-     * @param height The new height.
-     */
-    public abstract void resizeFrame(int width, int height);
+	/**
+	 * Set the size of the view frame, if any. If this view has been open in
+	 * a frame, this changes the size of the frame containing it.
+	 *
+	 * @param width  The new width.
+	 * @param height The new height.
+	 */
+	public abstract void resizeFrame(int width, int height);
 }

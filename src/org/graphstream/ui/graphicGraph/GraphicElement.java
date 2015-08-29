@@ -42,18 +42,18 @@ import java.util.regex.Pattern;
 
 /**
  * Super class of all graphic node, edge, and sprite elements.
- * 
+ *
  * <p>
  * Each graphic element references a style, a graphic graph and has a label.
  * </p>
- * 
+ *
  * <p>
  * The element also defines the basic behaviour to reload the style when needed,
  * defines abstract methods to set and get the position and bounds in spaces of
  * the element, and to do appropriate actions when specific predefined
  * attributes change (most of them starting with the prefix "ui.").
  * </p>
- * 
+ *
  * <p>
  * The graphic element has the ability to store attributes like any other graph
  * element, however the attributes stored by the graphic element are restricted.
@@ -71,10 +71,10 @@ import java.util.regex.Pattern;
  */
 public abstract class GraphicElement extends AbstractElement {
 
-    /**
-     * class level logger
-     */
-    private static final Logger logger = Logger.getLogger(GraphicElement.class.getSimpleName());
+	/**
+	 * class level logger
+	 */
+	private static final Logger logger = Logger.getLogger(GraphicElement.class.getSimpleName());
 
 	/**
 	 * Interface for renderers registered in each style group.
@@ -85,7 +85,7 @@ public abstract class GraphicElement extends AbstractElement {
 	/**
 	 * Graph containing this element.
 	 */
-	protected GraphicGraph mygraph;
+	protected GraphicGraph graph;
 
 	/**
 	 * The label or null if not specified.
@@ -112,16 +112,16 @@ public abstract class GraphicElement extends AbstractElement {
 	 */
 	public GraphicElement(String id, GraphicGraph graph) {
 		super(id);
-		this.mygraph = graph;
+		this.graph = graph;
 	}
 
-	public GraphicGraph myGraph() {
-		return mygraph;
+	public GraphicGraph graph() {
+		return graph;
 	}
 
 	@Override
 	protected boolean nullAttributesAreErrors() {
-		return mygraph.nullAttributesAreErrors();
+		return graph.nullAttributesAreErrors();
 	}
 
 	/**
@@ -131,7 +131,7 @@ public abstract class GraphicElement extends AbstractElement {
 
 	/**
 	 * Style group. An style group may reference several elements.
-	 * 
+	 *
 	 * @return The style group corresponding to this element.
 	 */
 	public StyleGroup getStyle() {
@@ -146,26 +146,26 @@ public abstract class GraphicElement extends AbstractElement {
 	}
 
 	/**
-	 * Abscissa of the element, always in GU (graph units). For edges this is
-	 * the X of the "from" node.
+	 * Abscissa of the element, always in GU (graph units). For edges this
+	 * is the X of the "from" node.
 	 */
 	public abstract double getX();
 
 	/**
-	 * Ordinate of the element, always in GU (graph units). For edges this is
-	 * the Y of the "from" node.
+	 * Ordinate of the element, always in GU (graph units). For edges this
+	 * is the Y of the "from" node.
 	 */
 	public abstract double getY();
 
 	/**
-	 * Depth of the element, always in GU (graph units). For edges this is the Z
-	 * of the "from" node.
+	 * Depth of the element, always in GU (graph units). For edges this is
+	 * the Z of the "from" node.
 	 */
 	public abstract double getZ();
 
 	/**
 	 * The associated GUI component.
-	 * 
+	 *
 	 * @return An object.
 	 */
 	public Object getComponent() {
@@ -173,7 +173,6 @@ public abstract class GraphicElement extends AbstractElement {
 	}
 
 	// Commands
-
 	/**
 	 * The graphic element was removed from the graphic graph, clean up.
 	 */
@@ -182,21 +181,17 @@ public abstract class GraphicElement extends AbstractElement {
 	/**
 	 * Try to force the element to move at the give location in graph units
 	 * (GU). For edges, this may move the two attached nodes.
-	 * 
-	 * @param x
-	 *            The new X.
-	 * @param y
-	 *            The new Y.
-	 * @param z
-	 *            the new Z.
+	 *
+	 * @param x The new X.
+	 * @param y The new Y.
+	 * @param z the new Z.
 	 */
 	public abstract void move(double x, double y, double z);
 
 	/**
 	 * Set the GUI component of this element.
-	 * 
-	 * @param component
-	 *            The component.
+	 *
+	 * @param component The component.
 	 */
 	public void setComponent(Object component) {
 		this.component = component;
@@ -207,112 +202,107 @@ public abstract class GraphicElement extends AbstractElement {
 	 */
 	@Override
 	protected void attributeChanged(AttributeChangeEvent event,
-			String attribute, Object oldValue, Object newValue) {
+		String attribute, Object oldValue, Object newValue) {
 		if (event == AttributeChangeEvent.ADD
-				|| event == AttributeChangeEvent.CHANGE) {
-			if (attribute.charAt(0) == 'u' && attribute.charAt(1) == 'i') {
-				if (attribute.equals("ui.class")) {
-					mygraph.styleGroups.checkElementStyleGroup(this);
-					// mygraph.styleGroups.removeElement( tis );
-					// mygraph.styleGroups.addElement( this );
-					mygraph.graphChanged = true;
-				} else if (attribute.equals("ui.label")) {
-					label = StyleConstants.convertLabel(newValue);
-					mygraph.graphChanged = true;
-				} else if (attribute.equals("ui.style")) {
-					// Cascade the new style in the style sheet.
+			|| event == AttributeChangeEvent.CHANGE) {
+			if (attribute.startsWith("ui")) {
+				switch (attribute) {
+					case "ui.class":
+						graph.styleGroups.checkElementStyleGroup(this);
+						break;
+					case "ui.label":
+						label = StyleConstants.convertLabel(newValue);
+						break;
+					case "ui.style":
+						// Cascade the new style in the style sheet.
 
-					if (newValue instanceof String) {
-						try {
-							mygraph.styleSheet.parseStyleFromString(
+						if (newValue instanceof String) {
+							try {
+								graph.styleSheet.parseStyleFromString(
 									new Selector(getSelectorType(), getId(),
-											null), (String) newValue);
-						} catch (Exception e) {
-                            logger.log(Level.WARNING, String.format("Error while parsing style for %S '%s' :", getSelectorType(), getId()), e);
+										null), (String) newValue);
+							} catch (Exception e) {
+								logger.log(Level.WARNING, String.format("Error while parsing style for %S '%s' :", getSelectorType(), getId()), e);
+							}
+						} else {
+							logger.warning("Unknown value for style [" + newValue + "].");
 						}
-						mygraph.graphChanged = true;
-					} else {
-						logger.warning("Unknown value for style [" + newValue + "].");
-					}
-				} else if (attribute.equals("ui.hide")) {
-					hidden = true;
-					mygraph.graphChanged = true;
-				} else if (attribute.equals("ui.clicked")) {
-					style.pushEventFor(this, "clicked");
-					mygraph.graphChanged = true;
-				} else if (attribute.equals("ui.selected")) {
-					style.pushEventFor(this, "selected");
-					mygraph.graphChanged = true;
-				} else if (attribute.equals("ui.color")) {
-					style.pushElementAsDynamic(this);
-					mygraph.graphChanged = true;
-				} else if (attribute.equals("ui.size")) {
-					style.pushElementAsDynamic(this);
-					mygraph.graphChanged = true;
-				} else if (attribute.equals("ui.icon")) {
-					mygraph.graphChanged = true;
+						break;
+					case "ui.hide":
+						hidden = true;
+						break;
+					case "ui.clicked":
+						style.pushEventFor(this, "clicked");
+						break;
+					case "ui.selected":
+						style.pushEventFor(this, "selected");
+						break;
+					case "ui.color":
+						style.pushElementAsDynamic(this);
+						break;
+					case "ui.size":
+						style.pushElementAsDynamic(this);
+						break;
+					case "ui.icon":
+						break;
 				}
-				// else if( attribute.equals( "ui.state" ) )
-				// {
-				// if( newValue == null )
-				// state = null;
-				// else if( newValue instanceof String )
-				// state = (String) newValue;
-				// }
+				graph.graphChanged = true;
 			} else if (attribute.equals("label")) {
 				label = StyleConstants.convertLabel(newValue);
-				mygraph.graphChanged = true;
+				graph.graphChanged = true;
+
 			}
 		} else // REMOVE
 		{
-			if (attribute.charAt(0) == 'u' && attribute.charAt(1) == 'i') {
-				if (attribute.equals("ui.class")) {
-					Object o = attributes.remove("ui.class"); // Not yet removed
-																// at
-																// this point !
-					mygraph.styleGroups.checkElementStyleGroup(this);
-					attributes.put("ui.class", o);
-					mygraph.graphChanged = true;
-				} else if (attribute.equals("ui.label")) {
-					label = "";
-					mygraph.graphChanged = true;
-				} else if (attribute.equals("ui.hide")) {
-					hidden = false;
-					mygraph.graphChanged = true;
-				} else if (attribute.equals("ui.clicked")) {
-					style.popEventFor(this, "clicked");
-					mygraph.graphChanged = true;
-				} else if (attribute.equals("ui.selected")) {
-					style.popEventFor(this, "selected");
-					mygraph.graphChanged = true;
-				} else if (attribute.equals("ui.color")) {
-					style.popElementAsDynamic(this);
-					mygraph.graphChanged = true;
-				} else if (attribute.equals("ui.size")) {
-					style.popElementAsDynamic(this);
-					mygraph.graphChanged = true;
+			if (attribute.startsWith("ui")) {
+				switch (attribute) {
+					case "ui.class":
+						Object o = attributes.remove("ui.class");
+						// Not yet removed at this point!
+						graph.styleGroups.checkElementStyleGroup(this);
+						attributes.put("ui.class", o);
+						break;
+					case "ui.label":
+						label = "";
+						break;
+					case "ui.hide":
+						hidden = false;
+						break;
+					case "ui.clicked":
+						style.popEventFor(this, "clicked");
+						break;
+					case "ui.selected":
+						style.popEventFor(this, "selected");
+						break;
+					case "ui.color":
+						style.popElementAsDynamic(this);
+						break;
+					case "ui.size":
+						style.popElementAsDynamic(this);
+						break;
 				}
+				graph.graphChanged = true;
 			} else if (attribute.equals("label")) {
 				label = "";
-				mygraph.graphChanged = true;
+				graph.graphChanged = true;
 			}
 		}
 	}
 
 	// Overriding of standard attribute changing to filter them.
-
 	protected static Pattern acceptedAttribute;
 
 	static {
 		acceptedAttribute = Pattern
-				.compile("(ui[.].*)|(layout[.].*)|x|y|z|xy|xyz|label|stylesheet");
+			.compile("(ui[.].*)|(layout[.].*)|x|y|z|xy|xyz|label|stylesheet");
 	}
 
 	@Override
-	public void addAttribute(String attribute, Object... values) {
+	public void setAttribute(String attribute, Object... values) {
 		Matcher matcher = acceptedAttribute.matcher(attribute);
 
-		if (matcher.matches())
-			super.addAttribute(attribute, values);
+		if (matcher.matches()) {
+			super.setAttribute(attribute, values);
+		}
 	}
 }

@@ -50,15 +50,14 @@ public class LinLog extends BarnesHutLayout {
 	protected double rFactor = 1f;
 
 	protected boolean edgeBased = true;
-	
+
 	protected double maxR = 0.5;
-	
+
 	protected double a = 0;
-	
+
 	protected double r = -1.2;
-	
+
 	//protected
-	
 	/**
 	 * New "LinLog" 2D Barnes-Hut simulation.
 	 */
@@ -68,9 +67,8 @@ public class LinLog extends BarnesHutLayout {
 
 	/**
 	 * New "LinLog" Barnes-Hut simulation.
-	 * 
-	 * @param is3D
-	 *            If true the simulation dimensions count is 3 else 2.
+	 *
+	 * @param is3D If true the simulation dimensions count is 3 else 2.
 	 */
 	public LinLog(boolean is3D) {
 		this(is3D, new Random(System.currentTimeMillis()));
@@ -78,18 +76,17 @@ public class LinLog extends BarnesHutLayout {
 
 	/**
 	 * New "LinLog" Barnes-Hut simulation.
-	 * 
-	 * @param is3D
-	 *            If true the simulation dimensions count is 3 else 2.
-	 * @param randomNumberGenerator
-	 *            The random number generator to use.
+	 *
+	 * @param is3D If true the simulation dimensions count
+	 *                              is 3 else 2.
+	 * @param randomNumberGenerator The random number generator to use.
 	 */
 	public LinLog(boolean is3D, Random randomNumberGenerator) {
 		super(is3D, randomNumberGenerator);
 		setQuality(1);
 		force = 3;
 	}
-	
+
 	public void configure(double a, double r, boolean edgeBased, double force) {
 		this.a = a;
 		this.r = r;
@@ -112,11 +109,12 @@ public class LinLog extends BarnesHutLayout {
 			viewZone = k;
 		}
 	}
-	
+
 	@Override
 	public void compute() {
-		if(viewZone > 0)
-			viewZone = area/1.5;
+		if (viewZone > 0) {
+			viewZone = area / 1.5;
+		}
 		super.compute();
 	}
 

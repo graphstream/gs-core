@@ -33,10 +33,11 @@ package org.graphstream.ui.graphicGraph.stylesheet;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * Several values and the units of these values.
- * 
+ *
  * <p>
  * As a style sheet may express values in several different units. This class
  * purpose is to pack the value and the units it is expressed in into a single
@@ -57,27 +58,24 @@ public class Values implements Iterable<Double> {
 	public Style.Units units;
 
 	// Constructor
-
 	/**
 	 * New value set with one initial value.
-	 * 
-	 * @param units
-	 *            The values units.
-	 * @param values
-	 *            A variable count of values.
+	 *
+	 * @param units The values units.
+	 * @param values A variable count of values.
 	 */
 	public Values(Style.Units units, double... values) {
 		this.units = units;
 
-		for (double value : values)
+		for (double value : values) {
 			this.values.add(value);
+		}
 	}
 
 	/**
 	 * New copy of another value set.
-	 * 
-	 * @param other
-	 *            The other values to copy.
+	 *
+	 * @param other The other values to copy.
 	 */
 	public Values(Values other) {
 		this.values = new ArrayList<Double>(other.values);
@@ -86,9 +84,8 @@ public class Values implements Iterable<Double> {
 
 	/**
 	 * New set of one value.
-	 * 
-	 * @param value
-	 *            The value to copy with its units.
+	 *
+	 * @param value The value to copy with its units.
 	 */
 	public Values(Value value) {
 		this.values = new ArrayList<Double>();
@@ -99,7 +96,7 @@ public class Values implements Iterable<Double> {
 
 	/**
 	 * Number of values in this set.
-	 * 
+	 *
 	 * @return The number of values.
 	 */
 	public int size() {
@@ -108,7 +105,7 @@ public class Values implements Iterable<Double> {
 
 	/**
 	 * Number of values in this set.
-	 * 
+	 *
 	 * @return The number of values.
 	 */
 	public int getValueCount() {
@@ -117,25 +114,25 @@ public class Values implements Iterable<Double> {
 
 	/**
 	 * The i-th value of this set. If the index is less than zero, the first
-	 * value is given, if the index if greater or equal to the number of values,
-	 * the last value is given.
-	 * 
-	 * @param i
-	 *            The value index.
+	 * value is given, if the index if greater or equal to the number of
+	 * values, the last value is given.
+	 *
+	 * @param i The value index.
 	 * @return The corresponding value.
 	 */
 	public double get(int i) {
-		if (i < 0)
+		if (i < 0) {
 			return values.get(0);
-		else if (i >= values.size())
+		} else if (i >= values.size()) {
 			return values.get(values.size() - 1);
-		else
+		} else {
 			return values.get(i);
+		}
 	}
 
 	/**
 	 * Values units.
-	 * 
+	 *
 	 * @return The units used for each value.
 	 */
 	public Style.Units getUnits() {
@@ -143,24 +140,36 @@ public class Values implements Iterable<Double> {
 	}
 
 	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 47 * hash + Objects.hashCode(this.values);
+		hash = 47 * hash + Objects.hashCode(this.units);
+		return hash;
+	}
+
+	@Override
 	public boolean equals(Object o) {
 		if (o != this) {
-			if (!(o instanceof Values))
+			if (!(o instanceof Values)) {
 				return false;
+			}
 
 			Values other = (Values) o;
 
-			if (other.units != units)
+			if (other.units != units) {
 				return false;
+			}
 
 			int n = values.size();
 
-			if (other.values.size() != n)
+			if (other.values.size() != n) {
 				return false;
+			}
 
 			for (int i = 0; i < n; i++) {
-				if (!other.values.get(i).equals(values.get(i)))
+				if (!other.values.get(i).equals(values.get(i))) {
 					return false;
+				}
 			}
 		}
 
@@ -183,18 +192,18 @@ public class Values implements Iterable<Double> {
 		builder.append(" )");
 
 		switch (units) {
-		case GU:
-			builder.append("gu");
-			break;
-		case PX:
-			builder.append("px");
-			break;
-		case PERCENTS:
-			builder.append("%");
-			break;
-		default:
-			builder.append("wtf (what's the fuck?)");
-			break;
+			case GU:
+				builder.append("gu");
+				break;
+			case PX:
+				builder.append("px");
+				break;
+			case PERCENTS:
+				builder.append("%");
+				break;
+			default:
+				builder.append("wtf (what's the fuck?)");
+				break;
 		}
 
 		return builder.toString();
@@ -202,9 +211,8 @@ public class Values implements Iterable<Double> {
 
 	/**
 	 * Copy the given values to this set. The units are also copied.
-	 * 
-	 * @param values
-	 *            The values to copy.
+	 *
+	 * @param values The values to copy.
 	 */
 	public void copy(Values values) {
 		units = values.units;
@@ -214,22 +222,20 @@ public class Values implements Iterable<Double> {
 
 	/**
 	 * Append the given set of values at the end of this set.
-	 * 
-	 * @param values
-	 *            The value set to append.
+	 *
+	 * @param values The value set to append.
 	 */
 	public void addValues(double... values) {
-		for (double value : values)
+		for (double value : values) {
 			this.values.add(value);
+		}
 	}
 
 	/**
 	 * Insert the given value at the given index.
-	 * 
-	 * @param i
-	 *            Where to insert the value.
-	 * @param value
-	 *            The value to insert.
+	 *
+	 * @param i Where to insert the value.
+	 * @param value The value to insert.
 	 */
 	public void insertValue(int i, double value) {
 		values.add(i, value);
@@ -237,11 +243,9 @@ public class Values implements Iterable<Double> {
 
 	/**
 	 * Change the i-th value.
-	 * 
-	 * @param i
-	 *            The value index.
-	 * @param value
-	 *            The value to put.
+	 *
+	 * @param i The value index.
+	 * @param value The value to put.
 	 */
 	public void setValue(int i, double value) {
 		values.set(i, value);
@@ -249,9 +253,8 @@ public class Values implements Iterable<Double> {
 
 	/**
 	 * Remove the i-th value.
-	 * 
-	 * @param i
-	 *            The index at which the value is to be removed.
+	 *
+	 * @param i The index at which the value is to be removed.
 	 */
 	public void removeValue(int i) {
 		values.remove(i);
@@ -259,9 +262,8 @@ public class Values implements Iterable<Double> {
 
 	/**
 	 * Change the values units.
-	 * 
-	 * @param units
-	 *            The units.
+	 *
+	 * @param units The units.
 	 */
 	public void setUnits(Style.Units units) {
 		this.units = units;

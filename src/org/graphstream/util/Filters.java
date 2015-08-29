@@ -39,33 +39,25 @@ import org.graphstream.graph.Node;
 
 public class Filters {
 	public static <T extends Element> Filter<T> falseFilter() {
-		return new Filter<T>() {
-			public boolean isAvailable(T e) {
-				return false;
-			}
-		};
+		return e -> false;
 	}
 
 	public static <T extends Element> Filter<T> trueFilter() {
-		return new Filter<T>() {
-			public boolean isAvailable(T e) {
-				return true;
-			}
-		};
+		return e -> true;
 	}
 
 	public static <T extends Element> Filter<T> byAttributeFilter(String key,
-			Object expectedValue) {
+		Object expectedValue) {
 		return new ByAttributeFilter<T>(key, expectedValue);
 	}
 
 	public static <T extends Element, U extends Element> Filter<Element> separateNodeAndEdgeFilter(
-			Filter<T> nodeFilter, Filter<U> edgeFilter) {
+		Filter<T> nodeFilter, Filter<U> edgeFilter) {
 		return new SeparateNodeEdgeFilter<T, U>(nodeFilter, edgeFilter);
 	}
 
 	public static <T extends Element, U extends Element> Filter<T> byExtremitiesFilter(
-			Filter<U> f) {
+		Filter<U> f) {
 		return new ExtremitiesFilter<T, U>(f);
 	}
 
@@ -74,21 +66,13 @@ public class Filters {
 	}
 
 	public static <T extends Element> Filter<T> isContained(
-			final Collection<? extends T> set) {
-		return new Filter<T>() {
-			public boolean isAvailable(T e) {
-				return set.contains(e);
-			}
-		};
+		final Collection<? extends T> set) {
+		return (e) -> set.contains(e);
 	}
 
 	public static <T extends Element> Filter<T> isIdContained(
-			final Collection<String> set) {
-		return new Filter<T>() {
-			public boolean isAvailable(T e) {
-				return set.contains(e.getId());
-			}
-		};
+		final Collection<String> set) {
+		return (e) -> set.contains(e.getId());
 	}
 
 	public static <T extends Element> Filter<T> and(Filter<T> f1, Filter<T> f2) {
@@ -119,8 +103,8 @@ public class Filters {
 
 		public boolean isAvailable(T e) {
 			return e.hasAttribute(key)
-					&& (value == null ? e.getAttribute(key) == null : value
-							.equals(e.getAttribute(key)));
+				&& (value == null ? e.getAttribute(key) == null : value
+					.equals(e.getAttribute(key)));
 		}
 	}
 
@@ -138,15 +122,16 @@ public class Filters {
 		}
 
 		public boolean isAvailable(Element e) {
-			if (e instanceof Edge)
+			if (e instanceof Edge) {
 				return e.getId().matches(edgePattern);
+			}
 
 			return e.getId().matches(nodePattern);
 		}
 	}
 
 	static class SeparateNodeEdgeFilter<T extends Element, U extends Element>
-			implements Filter<Element> {
+		implements Filter<Element> {
 
 		Filter<T> nodeFilter;
 		Filter<U> edgeFilter;
@@ -158,15 +143,16 @@ public class Filters {
 
 		@SuppressWarnings("unchecked")
 		public boolean isAvailable(Element e) {
-			if (e instanceof Edge)
+			if (e instanceof Edge) {
 				return edgeFilter.isAvailable((U) e);
+			}
 
 			return nodeFilter.isAvailable((T) e);
 		}
 	}
 
 	static class ExtremitiesFilter<T extends Element, U extends Element>
-			implements Filter<T> {
+		implements Filter<T> {
 		Filter<U> f;
 
 		ExtremitiesFilter(Filter<U> f) {
@@ -175,11 +161,12 @@ public class Filters {
 
 		@SuppressWarnings("unchecked")
 		public boolean isAvailable(T e) {
-			if (e instanceof Node)
+			if (e instanceof Node) {
 				return true;
+			}
 
 			return f.isAvailable((U) ((Edge) e).getNode0())
-					&& f.isAvailable((U) ((Edge) e).getNode1());
+				&& f.isAvailable((U) ((Edge) e).getNode1());
 		}
 	}
 

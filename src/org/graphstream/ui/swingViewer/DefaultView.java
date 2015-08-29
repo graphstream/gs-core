@@ -52,7 +52,7 @@ import java.util.Collection;
 
 /**
  * Base for constructing views.
- * 
+ *
  * <p>
  * This base view is an abstract class that provides mechanism that are
  * necessary in any view :
@@ -62,38 +62,38 @@ import java.util.Collection;
  * <li>the frame closing protocol.</li>
  * </ul>
  * </p>
- * 
+ *
  * <p>
  * This view also handle a current selection of nodes and sprites.
  * </p>
- * 
+ *
  * <h3>The painting mechanism</h3>
- * 
+ *
  * <p>
  * The main method to implement is {@link #render(Graphics2D)}. This method is
  * called each time the graph needs to be rendered anew in the canvas.
  * </p>
- * 
+ *
  * <p>
  * The {@link #render(Graphics2D)} is called only when a repainting is really
  * needed.
  * </p>
- * 
+ *
  * <p>
  * All the painting, by default, is deferred to a {@link GraphRenderer}
  * instance. This mechanism allows developers that do not want to mess with the
  * viewer/view mechanisms to render a graph in any Swing surface.
  * </p>
- * 
+ *
  * <h3>The optional frame handling</h3>
- * 
+ *
  * <p>
  * This abstract view is able to create a frame that is added around this panel
  * (each view is a JPanel instance). The frame can be removed at any time.
  * </p>
- * 
+ *
  * <h3>The frame closing protocol</h3>
- * 
+ *
  * <p>
  * This abstract view handles the closing protocol. This means that it will
  * close the view if needed, or only hide it to allow reopening it later.
@@ -102,8 +102,7 @@ import java.util.Collection;
  * graph attribute is the identifier of the view.
  * </p>
  */
-public class DefaultView extends ViewPanel implements WindowListener, ComponentListener
-{
+public class DefaultView extends ViewPanel implements WindowListener, ComponentListener {
 	private static final long serialVersionUID = - 4489484861592064398L;
 
 	/**
@@ -137,7 +136,6 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 	protected GraphRenderer renderer;
 
 	// Construction
-
 	public DefaultView(Viewer viewer, String identifier, GraphRenderer renderer) {
 		super(identifier);
 
@@ -153,19 +151,15 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 	}
 
 	// Access
-
 	// Command
-
-
 	public Camera getCamera() {
 		return renderer.getCamera();
 	}
 
-
 	public void display(GraphicGraph graph, boolean graphChanged) {
 		repaint();
 	}
-	
+
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -177,28 +171,30 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 	protected void checkTitle() {
 		if (frame != null) {
 			String titleAttr = String.format("ui.%s.title", getId());
-			String title = (String) graph.getLabel(titleAttr);
+			String title = graph.getLabel(titleAttr);
 
 			if (title == null) {
-				title = (String) graph.getLabel("ui.default.title");
+				title = graph.getLabel("ui.default.title");
 
-				if (title == null)
-					title = (String) graph.getLabel("ui.title");
+				if (title == null) {
+					title = graph.getLabel("ui.title");
+				}
 			}
 
-			if (title != null)
+			if (title != null) {
 				frame.setTitle(title);
+			}
 		}
 	}
 
 	public void close(GraphicGraph graph) {
 		renderer.close();
-		graph.addAttribute("ui.viewClosed", getId());
-	
+		graph.setAttribute("ui.viewClosed", getId());
+
 		removeKeyListener(shortcuts);
 		shortcuts.release();
 		mouseClicks.release();
-		
+
 		openInAFrame(false);
 	}
 
@@ -247,7 +243,6 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 	}
 
 	// Selection
-
 	public void beginSelectionAt(double x1, double y1) {
 		renderer.beginSelectionAt(x1, y1);
 		repaint();
@@ -264,7 +259,6 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 	}
 
 	// Window Listener
-
 	public void windowActivated(WindowEvent e) {
 	}
 
@@ -272,25 +266,22 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 	}
 
 	public void windowClosing(WindowEvent e) {
-		graph.addAttribute("ui.viewClosed", getId());
+		graph.setAttribute("ui.viewClosed", getId());
 
 		switch (viewer.getCloseFramePolicy()) {
-		case CLOSE_VIEWER:
-			viewer.removeView(getId());
-			break;
-		case HIDE_ONLY:
-			if (frame != null)
-				frame.setVisible(false);
-			break;
-		case EXIT:
-			System.exit(0);
-		default:
-			throw new RuntimeException(
-					String
-							.format(
-									"The %s view is not up to date, do not know %s CloseFramePolicy.",
-									getClass().getName(), viewer
-											.getCloseFramePolicy()));
+			case CLOSE_VIEWER:
+				viewer.removeView(getId());
+				break;
+			case HIDE_ONLY:
+				if (frame != null) {
+					frame.setVisible(false);
+				}
+				break;
+			case EXIT:
+				System.exit(0);
+			default:
+				throw new RuntimeException(String.format("The %s view is not up to date, do not know %s CloseFramePolicy.",
+					getClass().getName(), viewer.getCloseFramePolicy()));
 		}
 	}
 
@@ -311,23 +302,21 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 		repaint();
 	}
 
- 	public void componentMoved(ComponentEvent e) {
+	public void componentMoved(ComponentEvent e) {
 		repaint();
- 	}
+	}
 
- 	public void componentResized(ComponentEvent e) {
+	public void componentResized(ComponentEvent e) {
 		repaint();
- 	}
+	}
 
- 	public void componentShown(ComponentEvent e) {
- 		repaint();
- 	}
-
+	public void componentShown(ComponentEvent e) {
+		repaint();
+	}
 
 	// Methods deferred to the renderer
-
 	public Collection<GraphicElement> allNodesOrSpritesIn(double x1, double y1,
-			double x2, double y2) {
+		double x2, double y2) {
 		return renderer.allNodesOrSpritesIn(x1, y1, x2, y2);
 	}
 
@@ -347,8 +336,8 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 	}
 
 	public void freezeElement(GraphicElement element, boolean frozen) {
-		if(frozen) {
-			element.addAttribute("layout.frozen");
+		if (frozen) {
+			element.setAttribute("layout.frozen");
 		} else {
 			element.removeAttribute("layout.frozen");
 		}
@@ -365,26 +354,30 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 	}
 
 	public void setMouseManager(MouseManager manager) {
-		if(mouseClicks != null)
+		if (mouseClicks != null) {
 			mouseClicks.release();
-		
-		if(manager == null)
+		}
+
+		if (manager == null) {
 			manager = new DefaultMouseManager();
+		}
 
 		manager.init(graph, this);
-		
+
 		mouseClicks = manager;
 	}
 
 	public void setShortcutManager(ShortcutManager manager) {
-		if(shortcuts != null)
+		if (shortcuts != null) {
 			shortcuts.release();
-		
-		if(manager == null)
+		}
+
+		if (manager == null) {
 			manager = new DefaultShortcutManager();
-		
+		}
+
 		manager.init(graph, this);
-		
+
 		shortcuts = manager;
 	}
 }

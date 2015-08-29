@@ -34,25 +34,30 @@ package org.graphstream.stream.netstream.packing;
 import java.nio.ByteBuffer;
 
 /**
- * 
+ *
  */
 public abstract class NetStreamPacker {
 
 	/**
-	 * Pack the given ByteBuffer from startIndex to endIdex 
-	 * @param buffer The buffer to pack/encode
-	 * @param startIndex the index at which the encoding starts in the buffer
-	 * @param endIndex the index at which the encoding stops
-	 * @return a ByteBuffer that is the packed version of the input one. It may not have the same size.
+	 * Pack the given ByteBuffer from startIndex to endIdex
+	 *
+	 * @param buffer     The buffer to pack/encode
+	 * @param startIndex the index at which the encoding starts in the
+	 *                   buffer
+	 * @param endIndex   the index at which the encoding stops
+	 * @return a ByteBuffer that is the packed version of the input one. It
+	 *         may not have the same size.
 	 */
 	public abstract ByteBuffer packMessage(ByteBuffer buffer, int startIndex, int endIndex);
 
 	/**
 	 * Pack the given ByteBuffer form its position to its capacity.
+	 *
 	 * @param buffer The buffer to pack/encode
-	 * @return a ByteBuffer that is the packed version of the input one. It may not have the same size.
+	 * @return a ByteBuffer that is the packed version of the input one. It
+	 *         may not have the same size.
 	 */
-	public ByteBuffer packMessage(ByteBuffer buffer){
+	public ByteBuffer packMessage(ByteBuffer buffer) {
 		return this.packMessage(buffer, 0, buffer.capacity());
 	}
 
@@ -60,6 +65,6 @@ public abstract class NetStreamPacker {
 	 * @param capacity
 	 * @return
 	 */
-	public abstract ByteBuffer packMessageSize(int capacity) ;
-	
+	public abstract ByteBuffer packMessageSize(int capacity);
+
 }

@@ -38,8 +38,7 @@ import org.graphstream.ui.view.View;
 
 import java.awt.event.KeyEvent;
 
-public class DefaultShortcutManager implements ShortcutManager
-{
+public class DefaultShortcutManager implements ShortcutManager {
 	// Attributes
 
 	/**
@@ -54,7 +53,6 @@ public class DefaultShortcutManager implements ShortcutManager
 	protected double rotation = 0;
 
 	// Construction
-
 	public void init(GraphicGraph graph, View view) {
 		this.view = view;
 		view.addKeyListener(this);
@@ -65,18 +63,17 @@ public class DefaultShortcutManager implements ShortcutManager
 	}
 
 	// Events
-
 	/**
 	 * A key has been pressed.
-	 * 
-	 * @param event  The event that generated the key.
+	 *
+	 * @param event The event that generated the key.
 	 */
 	public void keyPressed(KeyEvent event) {
 		Camera camera = view.getCamera();
 
 		if (event.getKeyCode() == KeyEvent.VK_PAGE_UP) {
 			camera.setViewPercent(Math.max(0.0001f,
-					camera.getViewPercent() * 0.9f));
+				camera.getViewPercent() * 0.9f));
 		} else if (event.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
 			camera.setViewPercent(camera.getViewPercent() * 1.1f);
 		} else if (event.getKeyCode() == KeyEvent.VK_LEFT) {
@@ -86,10 +83,11 @@ public class DefaultShortcutManager implements ShortcutManager
 			} else {
 				double delta = 0;
 
-				if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0)
+				if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0) {
 					delta = camera.getGraphDimension() * 0.1f;
-				else
+				} else {
 					delta = camera.getGraphDimension() * 0.01f;
+				}
 
 				delta *= camera.getViewPercent();
 
@@ -103,10 +101,11 @@ public class DefaultShortcutManager implements ShortcutManager
 			} else {
 				double delta = 0;
 
-				if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0)
+				if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0) {
 					delta = camera.getGraphDimension() * 0.1f;
-				else
+				} else {
 					delta = camera.getGraphDimension() * 0.01f;
+				}
 
 				delta *= camera.getViewPercent();
 
@@ -116,10 +115,11 @@ public class DefaultShortcutManager implements ShortcutManager
 		} else if (event.getKeyCode() == KeyEvent.VK_UP) {
 			double delta = 0;
 
-			if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0)
+			if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0) {
 				delta = camera.getGraphDimension() * 0.1f;
-			else
+			} else {
 				delta = camera.getGraphDimension() * 0.01f;
+			}
 
 			delta *= camera.getViewPercent();
 
@@ -128,10 +128,11 @@ public class DefaultShortcutManager implements ShortcutManager
 		} else if (event.getKeyCode() == KeyEvent.VK_DOWN) {
 			double delta = 0;
 
-			if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0)
+			if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0) {
 				delta = camera.getGraphDimension() * 0.1f;
-			else
+			} else {
 				delta = camera.getGraphDimension() * 0.01f;
+			}
 
 			delta *= camera.getViewPercent();
 
@@ -142,18 +143,16 @@ public class DefaultShortcutManager implements ShortcutManager
 
 	/**
 	 * A key has been pressed.
-	 * 
-	 * @param event
-	 *            The event that generated the key.
+	 *
+	 * @param event The event that generated the key.
 	 */
 	public void keyReleased(KeyEvent event) {
 	}
 
 	/**
 	 * A key has been typed.
-	 * 
-	 * @param event
-	 *            The event that generated the key.
+	 *
+	 * @param event The event that generated the key.
 	 */
 	public void keyTyped(KeyEvent event) {
 		if (event.getKeyChar() == 'R') {

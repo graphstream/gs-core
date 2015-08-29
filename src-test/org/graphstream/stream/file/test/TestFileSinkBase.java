@@ -223,11 +223,11 @@ public abstract class TestFileSinkBase {
 				outGraph.addEdge("BC", "B", "C");
 				outGraph.addEdge("CA", "C", "A");
 				outGraph.stepBegins(2);
-				outGraph.addAttribute("a", 1);
-				outGraph.addAttribute("b", "foo");
-				outGraph.getNode("A").addAttribute("a", 1);
-				outGraph.getNode("B").addAttribute("b", "foo");
-				outGraph.getNode("C").addAttribute("c", "bar");
+				outGraph.setAttribute("a", 1);
+				outGraph.setAttribute("b", "foo");
+				outGraph.getNode("A").setAttribute("a", 1);
+				outGraph.getNode("B").setAttribute("b", "foo");
+				outGraph.getNode("C").setAttribute("c", "bar");
 				outGraph.stepBegins(3);
 				outGraph.removeNode("A");
 				outGraph.stepBegins(4);
@@ -287,11 +287,11 @@ public abstract class TestFileSinkBase {
 		outGraph.addEdge("AB", "A", "B", true);
 		outGraph.addEdge("BC", "B", "C", false);
 		outGraph.addEdge("CA", "A", "C", true);
-		outGraph.addAttribute("a", 1);
-		outGraph.addAttribute("b", "foo");
-		outGraph.getNode("A").addAttribute("a", 1);
-		outGraph.getNode("B").addAttribute("b", "foo");
-		outGraph.getNode("C").addAttribute("c", "bar");
+		outGraph.setAttribute("a", 1);
+		outGraph.setAttribute("b", "foo");
+		outGraph.getNode("A").setAttribute("a", 1);
+		outGraph.getNode("B").setAttribute("b", "foo");
+		outGraph.getNode("C").setAttribute("c", "bar");
 	}
 
 	protected void testUndirectedTriangle() {
@@ -312,12 +312,12 @@ public abstract class TestFileSinkBase {
 			assertNotNull(inGraph.getEdge("CA"));
 		}
 
-		assertTrue(A.hasEdgeToward("B"));
-		assertTrue(B.hasEdgeToward("C"));
-		assertTrue(C.hasEdgeToward("A"));
-		assertTrue(A.hasEdgeToward("C"));
-		assertTrue(B.hasEdgeToward("A"));
-		assertTrue(C.hasEdgeToward("B"));
+		assertTrue(A.hasEdgeToward(B));
+		assertTrue(B.hasEdgeToward(C));
+		assertTrue(C.hasEdgeToward(A));
+		assertTrue(A.hasEdgeToward(C));
+		assertTrue(B.hasEdgeToward(A));
+		assertTrue(C.hasEdgeToward(B));
 	}
 
 	protected void testDirectedTriangle() {
@@ -332,16 +332,16 @@ public abstract class TestFileSinkBase {
 		assertNotNull(B);
 		assertNotNull(C);
 
-		assertTrue(A.hasEdgeToward("B"));
-		assertTrue(A.hasEdgeToward("C"));
-		assertFalse(B.hasEdgeToward("A"));
-		assertTrue(B.hasEdgeToward("C"));
-		assertFalse(C.hasEdgeToward("A"));
-		assertTrue(C.hasEdgeToward("B"));
+		assertTrue(A.hasEdgeToward(B));
+		assertTrue(A.hasEdgeToward(C));
+		assertFalse(B.hasEdgeToward(A));
+		assertTrue(B.hasEdgeToward(C));
+		assertFalse(C.hasEdgeToward(A));
+		assertTrue(C.hasEdgeToward(B));
 
-		Edge AB = A.getEdgeToward("B");
-		Edge BC = B.getEdgeToward("C");
-		Edge CA = A.getEdgeToward("C");
+		Edge AB = A.getEdgeToward(B);
+		Edge BC = B.getEdgeToward(C);
+		Edge CA = A.getEdgeToward(C);
 
 		assertTrue(AB.isDirected());
 		assertFalse(BC.isDirected());
@@ -403,12 +403,12 @@ public abstract class TestFileSinkBase {
 		assertNotNull(B);
 		assertNotNull(C);
 
-		assertTrue(A.hasEdgeToward("B"));
-		assertTrue(A.hasEdgeToward("C"));
-		assertTrue(B.hasEdgeToward("A"));
-		assertTrue(B.hasEdgeToward("C"));
-		assertTrue(C.hasEdgeToward("A"));
-		assertTrue(C.hasEdgeToward("B"));
+		assertTrue(A.hasEdgeToward(B));
+		assertTrue(A.hasEdgeToward(C));
+		assertTrue(B.hasEdgeToward(A));
+		assertTrue(B.hasEdgeToward(C));
+		assertTrue(C.hasEdgeToward(A));
+		assertTrue(C.hasEdgeToward(B));
 	}
 
 	protected void testDynamicTriangleStep2_3() {
@@ -429,9 +429,9 @@ public abstract class TestFileSinkBase {
 		assertTrue(B.hasAttribute("b"));
 		assertTrue(C.hasAttribute("c"));
 
-		assertEquals(1, inGraph.getAttribute("a"));
+		assertEquals(1, (int) inGraph.getAttribute("a"));
 		assertEquals("foo", inGraph.getAttribute("b"));
-		assertEquals(1, A.getAttribute("a"));
+		assertEquals(1, (int) A.getAttribute("a"), 0);
 		assertEquals("foo", B.getAttribute("b"));
 		assertEquals("bar", C.getAttribute("c"));
 	}
@@ -448,10 +448,10 @@ public abstract class TestFileSinkBase {
 		assertNotNull(B);
 		assertNotNull(C);
 
-		assertFalse(B.hasEdgeToward("A"));
-		assertTrue(B.hasEdgeToward("C"));
-		assertFalse(C.hasEdgeToward("A"));
-		assertTrue(C.hasEdgeToward("B"));
+		assertFalse(B.hasEdgeToward(A));
+		assertTrue(B.hasEdgeToward(C));
+		assertFalse(C.hasEdgeToward(A));
+		assertTrue(C.hasEdgeToward(B));
 	}
 
 	protected void testDynamicTriangleStep4() {
@@ -466,10 +466,10 @@ public abstract class TestFileSinkBase {
 		assertNotNull(B);
 		assertNotNull(C);
 
-		assertFalse(B.hasEdgeToward("A"));
-		assertFalse(B.hasEdgeToward("C"));
-		assertFalse(C.hasEdgeToward("A"));
-		assertFalse(C.hasEdgeToward("B"));
+		assertFalse(B.hasEdgeToward(A));
+		assertFalse(B.hasEdgeToward(C));
+		assertFalse(C.hasEdgeToward(A));
+		assertFalse(C.hasEdgeToward(B));
 	}
 
 	protected void removeFile(String fileName) {

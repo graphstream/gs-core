@@ -39,8 +39,7 @@ import org.graphstream.ui.view.View;
 
 import java.awt.event.MouseEvent;
 
-public class DefaultMouseManager implements MouseManager
-{
+public class DefaultMouseManager implements MouseManager {
 	// Attribute
 
 	/**
@@ -54,54 +53,54 @@ public class DefaultMouseManager implements MouseManager
 	protected GraphicGraph graph;
 
 	// Construction
-
 	public void init(GraphicGraph graph, View view) {
 		this.view = view;
 		this.graph = graph;
 		view.addMouseListener(this);
 		view.addMouseMotionListener(this);
 	}
-	
+
 	public void release() {
 		view.removeMouseListener(this);
 		view.removeMouseMotionListener(this);
 	}
 
 	// Command
-
 	protected void mouseButtonPress(MouseEvent event) {
 		view.requestFocus();
 
 		// Unselect all.
-
 		if (!event.isShiftDown()) {
 			for (Node node : graph) {
-				if (node.hasAttribute("ui.selected"))
+				if (node.hasAttribute("ui.selected")) {
 					node.removeAttribute("ui.selected");
+				}
 			}
 
 			for (GraphicSprite sprite : graph.spriteSet()) {
-				if (sprite.hasAttribute("ui.selected"))
+				if (sprite.hasAttribute("ui.selected")) {
 					sprite.removeAttribute("ui.selected");
+				}
 			}
 		}
 	}
 
 	protected void mouseButtonRelease(MouseEvent event,
-			Iterable<GraphicElement> elementsInArea) {
+		Iterable<GraphicElement> elementsInArea) {
 		for (GraphicElement element : elementsInArea) {
-			if (!element.hasAttribute("ui.selected"))
-				element.addAttribute("ui.selected");
+			if (!element.hasAttribute("ui.selected")) {
+				element.setAttribute("ui.selected");
+			}
 		}
 	}
 
 	protected void mouseButtonPressOnElement(GraphicElement element,
-			MouseEvent event) {
+		MouseEvent event) {
 		view.freezeElement(element, true);
 		if (event.getButton() == 3) {
-			element.addAttribute("ui.selected");
+			element.setAttribute("ui.selected");
 		} else {
-			element.addAttribute("ui.clicked");
+			element.setAttribute("ui.clicked");
 		}
 	}
 
@@ -110,7 +109,7 @@ public class DefaultMouseManager implements MouseManager
 	}
 
 	protected void mouseButtonReleaseOffElement(GraphicElement element,
-			MouseEvent event) {
+		MouseEvent event) {
 		view.freezeElement(element, false);
 		if (event.getButton() != 3) {
 			element.removeAttribute("ui.clicked");
@@ -119,7 +118,6 @@ public class DefaultMouseManager implements MouseManager
 	}
 
 	// Mouse Listener
-
 	protected GraphicElement curElement;
 
 	protected float x1, y1;

@@ -38,7 +38,7 @@ import java.util.Iterator;
 
 /**
  * A style is a whole set of settings for a graphic element.
- * 
+ *
  * <p>
  * Styles inherit each others. By default a style is all set to invalid values
  * meaning "unset". This means that the value is to be taken from the parent.
@@ -60,27 +60,26 @@ public class Style extends StyleConstants {
 	protected HashMap<String, Object> values = null;
 
 	/**
-	 * The set of special styles that must override this style when some event
-	 * occurs.
+	 * The set of special styles that must override this style when some
+	 * event occurs.
 	 */
 	protected HashMap<String, Rule> alternates = null;
 
 	// Constructors
-
 	/**
-	 * New style with all settings to a special value meaning "unset". In this
-	 * modeField, all the settings are inherited from the parent (when set).
+	 * New style with all settings to a special value meaning "unset". In
+	 * this modeField, all the settings are inherited from the parent (when
+	 * set).
 	 */
 	public Style() {
 		this(null);
 	}
 
 	/**
-	 * New style with all settings to a special value meaning "unset". In this
-	 * modeField, all the settings are inherited from the parent.
-	 * 
-	 * @param parent
-	 *            The parent style.
+	 * New style with all settings to a special value meaning "unset". In
+	 * this modeField, all the settings are inherited from the parent.
+	 *
+	 * @param parent The parent style.
 	 */
 	public Style(Rule parent) {
 		this.parent = parent;
@@ -88,10 +87,9 @@ public class Style extends StyleConstants {
 	}
 
 	// Access
-
 	/**
 	 * The parent style.
-	 * 
+	 *
 	 * @return a style from which some settings are inherited.
 	 */
 	public Rule getParent() {
@@ -100,25 +98,24 @@ public class Style extends StyleConstants {
 
 	/**
 	 * Get the value of a given property.
-	 * 
-	 * This code is the same for all "getX" methods so we explain it once here.
-	 * This is the implementation of style inheritance.
-	 * 
+	 *
+	 * This code is the same for all "getX" methods so we explain it once
+	 * here. This is the implementation of style inheritance.
+	 *
 	 * First if some event is actually occurring, the alternative styles are
-	 * searched first. If these events have unset values for the property, their
-	 * parent are then searched.
-	 * 
+	 * searched first. If these events have unset values for the property,
+	 * their parent are then searched.
+	 *
 	 * If the value for the property is not found in the alternative styles,
-	 * alternative styles parents, or if there is no event occurring actually,
-	 * this style is checked.
-	 * 
+	 * alternative styles parents, or if there is no event occurring
+	 * actually, this style is checked.
+	 *
 	 * If its value is unset, the parents of this style are checked.
-	 * 
+	 *
 	 * Classes are not checked here, they are processed in the
 	 * {@link org.graphstream.ui.graphicGraph.StyleGroup} class.
-	 * 
-	 * @param property
-	 *            The style property the value is searched for.
+	 *
+	 * @param property The style property the value is searched for.
 	 */
 	public Object getValue(String property, String... events) {
 		if (events != null && events.length > 0)// && alternates != null )
@@ -131,15 +128,17 @@ public class Style extends StyleConstants {
 				i--;
 			} while (o == null && i >= 0);
 
-			if (o != null)
+			if (o != null) {
 				return o;
+			}
 		}
 
 		Object value = values.get(property);
 
 		if (value == null) {
-			if (parent != null)
+			if (parent != null) {
 				return parent.style.getValue(property, events);
+			}
 		}
 
 		return value;
@@ -152,8 +151,9 @@ public class Style extends StyleConstants {
 			if (rule != null) {
 				Object o = rule.getStyle().values.get(property);
 
-				if (o != null)
+				if (o != null) {
 					return o;
+				}
 			}
 		} else if (parent != null) {
 			return parent.style.getValueForEvent(property, event);
@@ -164,9 +164,8 @@ public class Style extends StyleConstants {
 
 	/**
 	 * True if the given field exists in this style only (not the parents).
-	 * 
-	 * @param field
-	 *            The field to test.
+	 *
+	 * @param field The field to test.
 	 * @return True if this style has a value for the given field.
 	 */
 	public boolean hasValue(String field, String... events) {
@@ -184,7 +183,6 @@ public class Style extends StyleConstants {
 	}
 
 	// Individual style properties.
-
 	/**
 	 * How to fill the content of an element.
 	 */
@@ -202,8 +200,9 @@ public class Style extends StyleConstants {
 	public int getFillColorCount() {
 		Colors colors = (Colors) getValue("fill-color");
 
-		if (colors != null)
+		if (colors != null) {
 			return colors.size();
+		}
 
 		return 0;
 	}
@@ -211,8 +210,9 @@ public class Style extends StyleConstants {
 	public Color getFillColor(int i) {
 		Colors colors = (Colors) getValue("fill-color");
 
-		if (colors != null)
+		if (colors != null) {
 			return colors.get(i);
+		}
 
 		return null;
 	}
@@ -241,8 +241,9 @@ public class Style extends StyleConstants {
 	public int getStrokeColorCount() {
 		Colors colors = (Colors) getValue("stroke-color");
 
-		if (colors != null)
+		if (colors != null) {
 			return colors.size();
+		}
 
 		return 0;
 	}
@@ -250,8 +251,9 @@ public class Style extends StyleConstants {
 	public Color getStrokeColor(int i) {
 		Colors colors = (Colors) getValue("stroke-color");
 
-		if (colors != null)
+		if (colors != null) {
 			return colors.get(i);
+		}
 
 		return null;
 	}
@@ -280,8 +282,9 @@ public class Style extends StyleConstants {
 	public int getShadowColorCount() {
 		Colors colors = (Colors) getValue("shadow-color");
 
-		if (colors != null)
+		if (colors != null) {
 			return colors.size();
+		}
 
 		return 0;
 	}
@@ -289,8 +292,9 @@ public class Style extends StyleConstants {
 	public Color getShadowColor(int i) {
 		Colors colors = (Colors) getValue("shadow-color");
 
-		if (colors != null)
+		if (colors != null) {
 			return colors.get(i);
+		}
 
 		return null;
 	}
@@ -310,8 +314,8 @@ public class Style extends StyleConstants {
 	}
 
 	/**
-	 * Additional space to add inside the element between its contour and its
-	 * contents.
+	 * Additional space to add inside the element between its contour and
+	 * its contents.
 	 */
 	public Values getPadding() {
 		return (Values) getValue("padding");
@@ -348,8 +352,9 @@ public class Style extends StyleConstants {
 	public int getTextColorCount() {
 		Colors colors = (Colors) getValue("text-color");
 
-		if (colors != null)
+		if (colors != null) {
 			return colors.size();
+		}
 
 		return 0;
 	}
@@ -357,8 +362,9 @@ public class Style extends StyleConstants {
 	public Color getTextColor(int i) {
 		Colors colors = (Colors) getValue("text-color");
 
-		if (colors != null)
+		if (colors != null) {
 			return colors.get(i);
+		}
 
 		return null;
 	}
@@ -451,12 +457,13 @@ public class Style extends StyleConstants {
 	public Color getTextBackgroundColor(int i) {
 		Colors colors = (Colors) getValue("text-background-color");
 
-		if (colors != null)
+		if (colors != null) {
 			return colors.get(i);
+		}
 
 		return null;
 	}
-	
+
 	/**
 	 * Offset of the text from its computed position.
 	 */
@@ -523,8 +530,9 @@ public class Style extends StyleConstants {
 	public int getCanvasColorCount() {
 		Colors colors = (Colors) getValue("canvas-color");
 
-		if (colors != null)
+		if (colors != null) {
 			return colors.size();
+		}
 
 		return 0;
 	}
@@ -532,8 +540,9 @@ public class Style extends StyleConstants {
 	public Color getCanvasColor(int i) {
 		Colors colors = (Colors) getValue("canvas-color");
 
-		if (colors != null)
+		if (colors != null) {
 			return colors.get(i);
+		}
 
 		return null;
 	}
@@ -543,7 +552,6 @@ public class Style extends StyleConstants {
 	}
 
 	// Commands
-
 	/**
 	 * Set the default values for each setting.
 	 */
@@ -617,11 +625,10 @@ public class Style extends StyleConstants {
 
 	/**
 	 * Copy all the settings of the other style that are set, excepted the
-	 * parent. Only the settings that have a value (different from "unset") are
-	 * copied. The parent field is never copied.
-	 * 
-	 * @param other
-	 *            Another style.
+	 * parent. Only the settings that have a value (different from "unset")
+	 * are copied. The parent field is never copied.
+	 *
+	 * @param other Another style.
 	 */
 	public void augment(Style other) {
 		if (other != this) {
@@ -681,22 +688,22 @@ public class Style extends StyleConstants {
 		Object value = other.values.get(field);
 
 		if (value != null) {
-			if (value instanceof Value)
+			if (value instanceof Value) {
 				setValue(field, new Value((Value) value));
-			else if (value instanceof Values)
+			} else if (value instanceof Values) {
 				setValue(field, new Values((Values) value));
-			else if (value instanceof Colors)
+			} else if (value instanceof Colors) {
 				setValue(field, new Colors((Colors) value));
-			else
+			} else {
 				setValue(field, value);
+			}
 		}
 	}
 
 	/**
 	 * Set or change the parent of the style.
-	 * 
-	 * @param parent
-	 *            The new parent.
+	 *
+	 * @param parent The new parent.
 	 */
 	public void reparent(Rule parent) {
 		this.parent = parent;
@@ -704,27 +711,24 @@ public class Style extends StyleConstants {
 
 	/**
 	 * Add an alternative style for specific events.
-	 * 
-	 * @param event
-	 *            The event that triggers the alternate style.
-	 * @param alternateStyle
-	 *            The alternative style.
+	 *
+	 * @param event The event that triggers the alternate style.
+	 * @param alternateStyle The alternative style.
 	 */
 	public void addAlternateStyle(String event, Rule alternateStyle) {
-		if (alternates == null)
+		if (alternates == null) {
 			alternates = new HashMap<String, Rule>();
+		}
 
 		alternates.put(event, alternateStyle);
 	}
 
 	// Commands -- Setters
-
 	public void setValue(String field, Object value) {
 		values.put(field, value);
 	}
 
 	// Utility
-
 	@Override
 	public String toString() {
 		return toString(-1);
@@ -736,13 +740,13 @@ public class Style extends StyleConstants {
 		String sprefix = "    ";
 
 		if (level > 0) {
-			for (int i = 0; i < level; i++)
+			for (int i = 0; i < level; i++) {
 				prefix += "    ";
+			}
 		}
 
 		// builder.append( String.format( "%s%s%n", prefix, super.toString() )
 		// );
-
 		if (parent != null) {
 			Rule p = parent;
 
@@ -774,19 +778,20 @@ public class Style extends StyleConstants {
 
 				if (array.size() > 0) {
 					builder.append(String.format("%s%s%s%s: ", prefix, sprefix,
-							sprefix, key));
+						sprefix, key));
 
-					for (Object p : array)
+					for (Object p : array) {
 						builder.append(String.format("%s ", p.toString()));
+					}
 
 					builder.append(String.format("%n"));
 				} else {
 					builder.append(String.format("%s%s%s%s: <empty>%n", prefix,
-							sprefix, sprefix, key));
+						sprefix, sprefix, key));
 				}
 			} else {
 				builder.append(String.format("%s%s%s%s: %s%n", prefix, sprefix,
-						sprefix, key, o != null ? o.toString() : "<null>"));
+					sprefix, key, o != null ? o.toString() : "<null>"));
 			}
 		}
 
@@ -798,8 +803,9 @@ public class Style extends StyleConstants {
 		 */
 		String res = builder.toString();
 
-		if (res.length() == 0)
+		if (res.length() == 0) {
 			return String.format("%s%s<empty>%n", prefix, prefix);
+		}
 
 		return res;
 	}

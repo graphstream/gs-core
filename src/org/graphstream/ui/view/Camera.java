@@ -38,26 +38,23 @@ import org.graphstream.ui.swingViewer.util.GraphMetrics;
 public interface Camera {
 	/**
 	 * The view centre (a point in graph units).
-	 * 
+	 *
 	 * @return The view centre.
 	 */
 	Point3 getViewCenter();
 
 	/**
 	 * Change the view centre.
-	 * 
-	 * @param x
-	 *            The new abscissa.
-	 * @param y
-	 *            The new ordinate.
-	 * @param z
-	 *            The new depth.
+	 *
+	 * @param x The new abscissa.
+	 * @param y The new ordinate.
+	 * @param z The new depth.
 	 */
 	void setViewCenter(double x, double y, double z);
 
 	/**
 	 * The portion of the graph visible.
-	 * 
+	 *
 	 * @return A real for which value 1 means the graph is fully visible and
 	 *         uses the whole view port.
 	 */
@@ -65,15 +62,14 @@ public interface Camera {
 
 	/**
 	 * Zoom the view.
-	 * 
-	 * @param percent
-	 *            Percent of the graph visible.
+	 *
+	 * @param percent Percent of the graph visible.
 	 */
 	void setViewPercent(double percent);
 
 	/**
 	 * The current rotation angle.
-	 * 
+	 *
 	 * @return The rotation angle in degrees.
 	 */
 	double getViewRotation();
@@ -81,25 +77,24 @@ public interface Camera {
 	/**
 	 * Rotate the view around its centre point by a given theta angles (in
 	 * degrees).
-	 * 
-	 * @param theta
-	 *            The rotation angle in degrees.
+	 *
+	 * @param theta The rotation angle in degrees.
 	 */
 	void setViewRotation(double theta);
 
 	/**
-	 * A number in GU that gives the approximate graph size (often the diagonal
-	 * of the graph). This allows to compute displacements in the graph as
-	 * percent of its overall size. For example this can be used to move the
-	 * view centre.
-	 * 
+	 * A number in GU that gives the approximate graph size (often the
+	 * diagonal of the graph). This allows to compute displacements in the
+	 * graph as percent of its overall size. For example this can be used to
+	 * move the view centre.
+	 *
 	 * @return The graph estimated size in graph units.
 	 */
 	double getGraphDimension();
 
 	/**
 	 * Remove the specified graph view port.
-	 * 
+	 *
 	 * @see #setGraphViewport(double, double, double, double)
 	 */
 	void removeGraphViewport();
@@ -107,15 +102,11 @@ public interface Camera {
 	/**
 	 * Specify exactly the minimum and maximum points in GU that are visible
 	 * (more points may be visible due to aspect-ratio constraints).
-	 * 
-	 * @param minx
-	 *            The minimum abscissa visible.
-	 * @param miny
-	 *            The minimum ordinate visible.
-	 * @param maxx
-	 *            The maximum abscissa visible.
-	 * @param maxy
-	 *            The maximum abscissa visible.
+	 *
+	 * @param minx The minimum abscissa visible.
+	 * @param miny The minimum ordinate visible.
+	 * @param maxx The maximum abscissa visible.
+	 * @param maxy The maximum abscissa visible.
 	 * @see #removeGraphViewport()
 	 */
 	void setGraphViewport(double minx, double miny, double maxx, double maxy);
@@ -127,72 +118,64 @@ public interface Camera {
 
 	/**
 	 * Set the bounds of the graphic graph in GU. Called by the Viewer.
-	 * 
-	 * @param minx
-	 *            Lowest abscissa.
-	 * @param miny
-	 *            Lowest ordinate.
-	 * @param minz
-	 *            Lowest depth.
-	 * @param maxx
-	 *            Highest abscissa.
-	 * @param maxy
-	 *            Highest ordinate.
-	 * @param maxz
-	 *            Highest depth.
+	 *
+	 * @param minx Lowest abscissa.
+	 * @param miny Lowest ordinate.
+	 * @param minz Lowest depth.
+	 * @param maxx Highest abscissa.
+	 * @param maxy Highest ordinate.
+	 * @param maxz Highest depth.
 	 */
 	void setBounds(double minx, double miny, double minz, double maxx,
-			double maxy, double maxz);
+		double maxy, double maxz);
 
 	/**
-	 * Get the {@link org.graphstream.ui.swingViewer.util.GraphMetrics} object linked to this Camera. It can be used
-	 * to convert pixels to graphic units and vice versa.
-	 * 
+	 * Get the {@link org.graphstream.ui.swingViewer.util.GraphMetrics}
+	 * object linked to this Camera. It can be used to convert pixels to
+	 * graphic units and vice versa.
+	 *
 	 * @return a GraphMetrics instance
 	 */
 	GraphMetrics getMetrics();
-	
+
 	/**
 	 * Enable or disable automatic adjustment of the view to see the entire
 	 * graph.
-	 * 
-	 * @param on
-	 *            If true, automatic adjustment is enabled.
+	 *
+	 * @param on If true, automatic adjustment is enabled.
 	 */
 	void setAutoFitView(boolean on);
 
 	/**
 	 * Transform a point in graph units into pixels.
-	 * 
+	 *
 	 * @return The transformed point.
 	 */
 	Point3 transformGuToPx(double x, double y, double z);
-	
+
 	/**
-	 * Return the given point in pixels converted in graph units (GU) using the
-	 * inverse transformation of the current projection matrix. The inverse
-	 * matrix is computed only once each time a new projection matrix is
-	 * created.
-	 * 
-	 * @param x
-	 *            The source point abscissa in pixels.
-	 * @param y
-	 *            The source point ordinate in pixels.
+	 * Return the given point in pixels converted in graph units (GU) using
+	 * the inverse transformation of the current projection matrix. The
+	 * inverse matrix is computed only once each time a new projection
+	 * matrix is created.
+	 *
+	 * @param x The source point abscissa in pixels.
+	 * @param y The source point ordinate in pixels.
 	 * @return The resulting points in graph units.
 	 */
 	Point3 transformPxToGu(double x, double y);
-	
+
 	/**
 	 * True if the element would be visible on screen. The method used is to
 	 * transform the center of the element (which is always in graph units)
-	 * using the camera actual transformation to put it in pixel units. Then to
-	 * look in the style sheet the size of the element and to test if its
-	 * enclosing rectangle intersects the view port. For edges, its two nodes
-	 * are used.
-	 * 
-	 * @param element
-	 *            The element to test.
-	 * @return True if the element is visible and therefore must be rendered.
+	 * using the camera actual transformation to put it in pixel units. Then
+	 * to look in the style sheet the size of the element and to test if its
+	 * enclosing rectangle intersects the view port. For edges, its two
+	 * nodes are used.
+	 *
+	 * @param element The element to test.
+	 * @return True if the element is visible and therefore must be
+	 *         rendered.
 	 */
 	boolean isVisible(GraphicElement element);
 }

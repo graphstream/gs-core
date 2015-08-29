@@ -40,8 +40,8 @@ public class NullAttributeException extends RuntimeException {
 	public NullAttributeException() {
 		super("Attribute does not exist or is not of the expected type");
 	}
-	
+
 	public NullAttributeException(String message) {
-		super("Attribute does not exist or is not of the expected type: "+message);
+		super("Attribute does not exist or is not of the expected type: " + message);
 	}
 }

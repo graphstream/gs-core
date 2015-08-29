@@ -47,14 +47,14 @@ import java.util.zip.GZIPInputStream;
 /**
  * Class responsible for parsing files in the DGS format (old versions of the
  * format).
- * 
+ *
  * <p>
  * The DGS file format is especially designed for storing dynamic graph
  * definitions into a file. More information about the DGS file format will be
  * found on the GraphStream web site: <a
  * href="http://graphstream-project.org/">http://graphstream-project.org/</a>
  * </p>
- * 
+ *
  * @see OldFileSourceDGS
  * @see FileSource
  */
@@ -84,11 +84,9 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 
 		/**
 		 * New format descriptor for an attribute.
-		 * 
-		 * @param name
-		 *            The attribute name.
-		 * @param type
-		 *            The attribute type.
+		 *
+		 * @param name The attribute name.
+		 * @param type The attribute type.
 		 */
 		public AttributeFormat(String name, AttributeType type) {
 			this.name = name;
@@ -97,7 +95,7 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 
 		/**
 		 * Attribute name.
-		 * 
+		 *
 		 * @return The name.
 		 */
 		public String getName() {
@@ -106,7 +104,7 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 
 		/**
 		 * Attribute format.
-		 * 
+		 *
 		 * @return The format.
 		 */
 		public AttributeType getType() {
@@ -115,7 +113,6 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 	}
 
 	// Attributes
-
 	/**
 	 * Format version.
 	 */
@@ -147,12 +144,14 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 	protected int eventCount;
 
 	/**
-	 * Attribute count and type expected for each node add and modify command.
+	 * Attribute count and type expected for each node add and modify
+	 * command.
 	 */
 	protected ArrayList<AttributeFormat> nodesFormat = new ArrayList<AttributeFormat>();
 
 	/**
-	 * Attribute count and type expected for each edges add and modify command.
+	 * Attribute count and type expected for each edges add and modify
+	 * command.
 	 */
 	protected ArrayList<AttributeFormat> edgesFormat = new ArrayList<AttributeFormat>();
 
@@ -162,7 +161,6 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 	protected HashMap<String, Object> attributes = new HashMap<String, Object>();
 
 	// Constructors
-
 	/**
 	 * New reader for the DGS graph file format versions 1 and 2.
 	 */
@@ -171,9 +169,7 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 	}
 
 	// Access
-
 	// Command
-
 	@Override
 	public boolean nextEvents() throws IOException {
 		String key = getWordOrSymbolOrStringOrEolOrEof();
@@ -189,8 +185,9 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 				sendEdgeAttributeChanged(graphName, tag, k, null, value);
 			}
 
-			if (eatEolOrEof() == StreamTokenizer.TT_EOF)
+			if (eatEolOrEof() == StreamTokenizer.TT_EOF) {
 				return false;
+			}
 		} else if (key.equals("cn")) {
 			tag = getStringOrWordOrNumber();
 
@@ -201,8 +198,9 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 				sendNodeAttributeChanged(graphName, tag, k, null, value);
 			}
 
-			if (eatEolOrEof() == StreamTokenizer.TT_EOF)
+			if (eatEolOrEof() == StreamTokenizer.TT_EOF) {
 				return false;
+			}
 		} else if (key.equals("ae")) {
 			tag = getStringOrWordOrNumber();
 			String fromTag = getStringOrWordOrNumber();
@@ -219,8 +217,9 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 				}
 			}
 
-			if (eatEolOrEof() == StreamTokenizer.TT_EOF)
+			if (eatEolOrEof() == StreamTokenizer.TT_EOF) {
 				return false;
+			}
 		} else if (key.equals("an")) {
 			tag = getStringOrWordOrNumber();
 
@@ -234,22 +233,25 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 				}
 			}
 
-			if (eatEolOrEof() == StreamTokenizer.TT_EOF)
+			if (eatEolOrEof() == StreamTokenizer.TT_EOF) {
 				return false;
+			}
 		} else if (key.equals("de")) {
 			tag = getStringOrWordOrNumber();
 
 			sendEdgeRemoved(graphName, tag);
 
-			if (eatEolOrEof() == StreamTokenizer.TT_EOF)
+			if (eatEolOrEof() == StreamTokenizer.TT_EOF) {
 				return false;
+			}
 		} else if (key.equals("dn")) {
 			tag = getStringOrWordOrNumber();
 
 			sendNodeRemoved(graphName, tag);
 
-			if (eatEolOrEof() == StreamTokenizer.TT_EOF)
+			if (eatEolOrEof() == StreamTokenizer.TT_EOF) {
 				return false;
+			}
 		} else if (key.equals("st")) {
 			String w = getWordOrNumber();
 
@@ -261,8 +263,9 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 				parseError("expecting a number after `st', got `" + w + "'");
 			}
 
-			if (eatEolOrEof() == StreamTokenizer.TT_EOF)
+			if (eatEolOrEof() == StreamTokenizer.TT_EOF) {
 				return false;
+			}
 		} else if (key == "#") {
 			eatAllUntilEol();
 		} else if (key == "EOL") {
@@ -271,7 +274,7 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 			return false;
 		} else {
 			parseError("found an unknown key in file '" + key
-					+ "' (expecting an,ae,cn,ce,dn,de or st)");
+				+ "' (expecting an,ae,cn,ce,dn,de or st)");
 		}
 
 		return true;
@@ -297,8 +300,9 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 					sendEdgeAttributeChanged(graphName, tag, k, null, value);
 				}
 
-				if (eatEolOrEof() == StreamTokenizer.TT_EOF)
+				if (eatEolOrEof() == StreamTokenizer.TT_EOF) {
 					return false;
+				}
 			} else if (key.equals("cn")) {
 				tag = getStringOrWordOrNumber();
 
@@ -309,8 +313,9 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 					sendNodeAttributeChanged(graphName, tag, k, null, value);
 				}
 
-				if (eatEolOrEof() == StreamTokenizer.TT_EOF)
+				if (eatEolOrEof() == StreamTokenizer.TT_EOF) {
 					return false;
+				}
 			} else if (key.equals("ae")) {
 				tag = getStringOrWordOrNumber();
 				String fromTag = getStringOrWordOrNumber();
@@ -326,8 +331,9 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 					}
 				}
 
-				if (eatEolOrEof() == StreamTokenizer.TT_EOF)
+				if (eatEolOrEof() == StreamTokenizer.TT_EOF) {
 					return false;
+				}
 			} else if (key.equals("an")) {
 				tag = getStringOrWordOrNumber();
 
@@ -341,22 +347,25 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 					}
 				}
 
-				if (eatEolOrEof() == StreamTokenizer.TT_EOF)
+				if (eatEolOrEof() == StreamTokenizer.TT_EOF) {
 					return false;
+				}
 			} else if (key.equals("de")) {
 				tag = getStringOrWordOrNumber();
 
 				sendEdgeRemoved(graphName, tag);
 
-				if (eatEolOrEof() == StreamTokenizer.TT_EOF)
+				if (eatEolOrEof() == StreamTokenizer.TT_EOF) {
 					return false;
+				}
 			} else if (key.equals("dn")) {
 				tag = getStringOrWordOrNumber();
 
 				sendNodeRemoved(graphName, tag);
 
-				if (eatEolOrEof() == StreamTokenizer.TT_EOF)
+				if (eatEolOrEof() == StreamTokenizer.TT_EOF) {
 					return false;
+				}
 			} else if (key.equals("st")) {
 				String w = getWordOrNumber();
 
@@ -367,8 +376,9 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 					parseError("expecting a number after `st', got `" + w + "'");
 				}
 
-				if (eatEolOrEof() == StreamTokenizer.TT_EOF)
+				if (eatEolOrEof() == StreamTokenizer.TT_EOF) {
 					return false;
+				}
 			} else if (key == "#") {
 				eatAllUntilEol();
 			} else if (key == "EOL") {
@@ -377,7 +387,7 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 				return false;
 			} else {
 				parseError("found an unknown key in file '" + key
-						+ "' (expecting an,ae,cn,ce,dn,de or st)");
+					+ "' (expecting an,ae,cn,ce,dn,de or st)");
 			}
 		}
 
@@ -385,7 +395,7 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 	}
 
 	protected void readAttributes(ArrayList<AttributeFormat> formats)
-			throws IOException {
+		throws IOException {
 		attributes.clear();
 
 		if (formats.size() > 0) {
@@ -427,8 +437,9 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 			ArrayList<Double> vector = new ArrayList<Double>();
 
 			while (loop) {
-				if (tok != StreamTokenizer.TT_NUMBER)
+				if (tok != StreamTokenizer.TT_NUMBER) {
 					parseError("expecting a number, " + gotWhat(tok));
+				}
 
 				vector.add(st.nval);
 
@@ -453,8 +464,9 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 	}
 
 	protected boolean isNull(int tok) {
-		if (tok == StreamTokenizer.TT_WORD)
+		if (tok == StreamTokenizer.TT_WORD) {
 			return (st.sval.equals("null"));
+		}
 
 		return false;
 	}
@@ -488,16 +500,17 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 
 		String magic = eatOneOfTwoWords("DGS001", "DGS002");
 
-		if (magic.equals("DGS001"))
+		if (magic.equals("DGS001")) {
 			version = 1;
-		else
+		} else {
 			version = 2;
+		}
 
 		eatEol();
 		graphName = getWord();
 		stepCountAnnounced = (int) getNumber();// Integer.parseInt( getWord() );
 		eventCountAnnounced = (int) getNumber();// Integer.parseInt( getWord()
-												// );
+		// );
 		eatEol();
 
 		if (graphName != null) {
@@ -509,7 +522,7 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 		}
 
 		graphName = String.format("%s_%d", graphName,
-				System.currentTimeMillis() + ((long) Math.random() * 10));
+			System.currentTimeMillis() + ((long) Math.random() * 10));
 
 		readAttributeFormat();
 	}
@@ -530,7 +543,7 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 	}
 
 	protected void parseAttributeFormat(ArrayList<AttributeFormat> format)
-			throws IOException {
+		throws IOException {
 		int tok = st.nextToken();
 
 		while (tok != StreamTokenizer.TT_EOL) {
@@ -546,25 +559,25 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 
 					if (type.equals("number") || type.equals("n")) {
 						format.add(new AttributeFormat(name,
-								AttributeType.NUMBER));
+							AttributeType.NUMBER));
 					} else if (type.equals("string") || type.equals("s")) {
 						format.add(new AttributeFormat(name,
-								AttributeType.STRING));
+							AttributeType.STRING));
 					} else if (type.equals("vector") || type.equals("v")) {
 						format.add(new AttributeFormat(name,
-								AttributeType.VECTOR));
+							AttributeType.VECTOR));
 					} else {
 						parseError("unknown attribute type `"
-								+ type
-								+ "' (only `number', `vector' and `string' are accepted)");
+							+ type
+							+ "' (only `number', `vector' and `string' are accepted)");
 					}
 				} else {
 					parseError("expecting an attribute type, got `"
-							+ gotWhat(tok) + "'");
+						+ gotWhat(tok) + "'");
 				}
 			} else {
 				parseError("expecting an attribute name, got `" + gotWhat(tok)
-						+ "'");
+					+ "'");
 			}
 
 			tok = st.nextToken();
@@ -596,8 +609,9 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 
 	@Override
 	protected void configureTokenizer(StreamTokenizer tok) throws IOException {
-		if (COMMENT_CHAR > 0)
+		if (COMMENT_CHAR > 0) {
 			tok.commentChar(COMMENT_CHAR);
+		}
 		// tok.quoteChar( QUOTE_CHAR );
 		tok.eolIsSignificant(eol_is_significant);
 		tok.wordChars('_', '_');

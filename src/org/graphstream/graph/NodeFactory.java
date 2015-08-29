@@ -33,13 +33,14 @@ package org.graphstream.graph;
 
 /**
  * An interface aimed at dynamically creating node objects.
- * 
+ *
  * @since September 2007
  */
+@FunctionalInterface
 public interface NodeFactory<T extends Node> {
 	/**
 	 * Create a new instance of node.
-	 * 
+	 *
 	 * @return The newly created edge.
 	 */
 	T newInstance(String id, Graph graph);

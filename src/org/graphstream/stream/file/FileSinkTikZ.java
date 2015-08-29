@@ -58,27 +58,27 @@ import org.graphstream.ui.layout.springbox.implementations.SpringBox;
 /**
  * An export of a graph to PGF/TikZ format.
  * <a>http://sourceforge.net/projects/pgf/</a>
- * 
+ *
  * This allows to include graph in a latex document. Only
  * <code>writeAll(Graph,*)</code> is working, dynamics is not handle. If the
  * exported graph is a GraphicGraph, then CSS style of the graph will be used.
- * 
+ *
  * For a better rendering, it is strongly recommended to run previously a layout
  * algorithm that will add coordinates on nodes. Else, random coordinates will
  * be choosen for nodes. Layout can be run in this way : <code>
  * Graph g;
  * ...
  * SpringBox sbox = new SpringBox();
- * 
+ *
  * g.addSink(sbox);
  * sbox.addAttributeSink(g);
- * 
+ *
  * do sbox.compute(); while (sbox.getStabilization() < 0.9);
- * 
+ *
  * g.removeSink(sbox);
  * sbox.remoteAttributeSink(g);
  * </code>
- * 
+ *
  * TikZ pictures are scalable so pixel units is not handle here. The picture is
  * bounded in a box which width and height can be defined by adding attributes
  * to the graph:
@@ -87,13 +87,13 @@ import org.graphstream.ui.layout.springbox.implementations.SpringBox;
  * <li>"ui.tikz.height"</li>
  * </ul>
  * The value of these attributes has to be considered as centimeters.
- * 
+ *
  * Common supported style :
  * <ul>
  * <li>"fill-color", alpha is supported to</li>
  * <li>"size" in "gu"</li>
  * </ul>
- * 
+ *
  * Node supported style :
  * <ul>
  * <li>"shape" with "box", "rounded-box", "circle", "triangle", "diamond"</li>
@@ -101,14 +101,14 @@ import org.graphstream.ui.layout.springbox.implementations.SpringBox;
  * <li>"stroke-color", alpha is supported to</li>
  * <li>"stroke-width" in "gu"</li>
  * </ul>
- * 
+ *
  * Edge supported style :
  * <ul>
  * </ul>
  */
 public class FileSinkTikZ extends FileSinkBase {
 	private static final Logger LOGGER = Logger.getLogger(FileSinkTikZ.class
-			.getName());
+		.getName());
 
 	/**
 	 * Node attribute storing coordinates.
@@ -130,14 +130,14 @@ public class FileSinkTikZ extends FileSinkBase {
 	public static final double DEFAULT_HEIGHT = 10;
 
 	/**
-	 * Define the default minimum size of nodes when using a dynamic size. This
-	 * size is in millimeter.
+	 * Define the default minimum size of nodes when using a dynamic size.
+	 * This size is in millimeter.
 	 */
 	public static final double DISPLAY_MIN_SIZE_IN_MM = 2;
 
 	/**
-	 * Define the default maximum size of nodes when using a dynamic size. This
-	 * size is in millimeter.
+	 * Define the default maximum size of nodes when using a dynamic size.
+	 * This size is in millimeter.
 	 */
 	public static final double DISPLAY_MAX_SIZE_IN_MM = 10;
 
@@ -210,21 +210,25 @@ public class FileSinkTikZ extends FileSinkBase {
 	}
 
 	protected double getNodeX(Node n) {
-		if (n.hasAttribute(XYZ_ATTR))
+		if (n.hasAttribute(XYZ_ATTR)) {
 			return ((Number) (n.getArray(XYZ_ATTR)[0])).doubleValue();
+		}
 
-		if (n.hasAttribute("x"))
-			return n.getNumber("x");
+		if (n.hasAttribute("x")) {
+			return n.getNumber("x").doubleValue();
+		}
 
 		return Double.NaN;
 	}
 
 	protected double getNodeY(Node n) {
-		if (n.hasAttribute(XYZ_ATTR))
+		if (n.hasAttribute(XYZ_ATTR)) {
 			return ((Number) (n.getArray(XYZ_ATTR)[1])).doubleValue();
+		}
 
-		if (n.hasAttribute("y"))
-			return n.getNumber("y");
+		if (n.hasAttribute("y")) {
+			return n.getNumber("y").doubleValue();
+		}
 
 		return Double.NaN;
 	}
@@ -238,39 +242,42 @@ public class FileSinkTikZ extends FileSinkBase {
 			style = classNames.get(gn.style.getId());
 
 			if (gn.style.getFillMode() == FillMode.DYN_PLAIN) {
-				double uicolor = gn.getNumber("ui.color");
+				double uicolor = gn.getNumber("ui.color").doubleValue();
 
-				if (Double.isNaN(uicolor))
+				if (Double.isNaN(uicolor)) {
 					uicolor = 0;
+				}
 
 				int c = gn.style.getFillColorCount();
 				int s = 1;
 				double d = 1.0 / (c - 1);
 
-				while (s * d < uicolor && s < c)
+				while (s * d < uicolor && s < c) {
 					s++;
+				}
 
 				uicolor -= (s - 1) * d;
 				uicolor *= c;
 
 				style += String.format(Locale.ROOT, ", fill=%s!%d!%s",
-						checkColor(gn.style.getFillColor(0)),
-						(int) (uicolor * 100),
-						checkColor(gn.style.getFillColor(1)));
+					checkColor(gn.style.getFillColor(0)),
+					(int) (uicolor * 100),
+					checkColor(gn.style.getFillColor(1)));
 			}
 
 			if (gn.style.getSizeMode() == SizeMode.DYN_SIZE) {
-				double uisize = gn.getNumber("ui.size");
+				double uisize = gn.getNumber("ui.size").doubleValue();
 
-				if (Double.isNaN(uisize))
+				if (Double.isNaN(uisize)) {
 					uisize = minSize;
+				}
 
 				uisize = (uisize - minSize) / (maxSize - minSize);
 				uisize = uisize * (displayMaxSize - displayMinSize)
-						+ displayMinSize;
+					+ displayMinSize;
 
 				style += String.format(Locale.ROOT, ", minimum size=%fmm",
-						uisize);
+					uisize);
 			}
 		}
 
@@ -286,35 +293,38 @@ public class FileSinkTikZ extends FileSinkBase {
 			style = classNames.get(ge.style.getId());
 
 			if (ge.style.getFillMode() == FillMode.DYN_PLAIN) {
-				double uicolor = ge.getNumber("ui.color");
+				double uicolor = ge.getNumber("ui.color").doubleValue();
 
-				if (Double.isNaN(uicolor))
+				if (Double.isNaN(uicolor)) {
 					uicolor = 0;
+				}
 
 				int c = ge.style.getFillColorCount();
 				int s = 1;
 				double d = 1.0 / (c - 1);
 
-				while (s * d < uicolor && s < c)
+				while (s * d < uicolor && s < c) {
 					s++;
+				}
 
 				uicolor -= (s - 1) * d;
 				uicolor *= c;
 
 				style += String.format(Locale.ROOT, ", draw=%s!%d!%s",
-						checkColor(ge.style.getFillColor(s - 1)),
-						(int) (uicolor * 100),
-						checkColor(ge.style.getFillColor(s)));
+					checkColor(ge.style.getFillColor(s - 1)),
+					(int) (uicolor * 100),
+					checkColor(ge.style.getFillColor(s)));
 			}
 
 			if (ge.style.getSizeMode() == SizeMode.DYN_SIZE) {
-				double uisize = ge.getNumber("ui.size");
+				double uisize = ge.getNumber("ui.size").doubleValue();
 
-				if (Double.isNaN(uisize) || uisize < 0.01)
+				if (Double.isNaN(uisize) || uisize < 0.01) {
 					uisize = 1;
+				}
 
 				style += String
-						.format(Locale.ROOT, ", line width=%fpt", uisize);
+					.format(Locale.ROOT, ", line width=%fpt", uisize);
 			}
 		}
 
@@ -323,11 +333,12 @@ public class FileSinkTikZ extends FileSinkBase {
 
 	protected String checkColor(Color c) {
 		String rgb = String.format(Locale.ROOT, "%.3f,%.3f,%.3f",
-				c.getRed() / 255.0f, c.getGreen() / 255.0f,
-				c.getBlue() / 255.0f);
+			c.getRed() / 255.0f, c.getGreen() / 255.0f,
+			c.getBlue() / 255.0f);
 
-		if (colors.containsKey(rgb))
+		if (colors.containsKey(rgb)) {
 			return colors.get(rgb);
+		}
 
 		String key = String.format("tikzC%02d", colorIndex++);
 		colors.put(rgb, key);
@@ -337,124 +348,128 @@ public class FileSinkTikZ extends FileSinkBase {
 
 	/**
 	 * Convert a StyleGroup to tikz style.
-	 * 
-	 * @param group
-	 *            the style group to convert
+	 *
+	 * @param group the style group to convert
 	 * @return string representation of the style group usable in TikZ.
 	 */
 	protected String getTikzStyle(StyleGroup group) {
 		StringBuilder buffer = new StringBuilder();
 		LinkedList<String> style = new LinkedList<String>();
 
-		for (int i = 0; i < group.getFillColorCount(); i++)
+		for (int i = 0; i < group.getFillColorCount(); i++) {
 			checkColor(group.getFillColor(i));
+		}
 
 		switch (group.getType()) {
-		case NODE: {
-			if (group.getFillMode() != FillMode.DYN_PLAIN) {
-				String fill = checkColor(group.getFillColor(0));
-				style.add("fill=" + fill);
-			}
+			case NODE: {
+				if (group.getFillMode() != FillMode.DYN_PLAIN) {
+					String fill = checkColor(group.getFillColor(0));
+					style.add("fill=" + fill);
+				}
 
-			if (group.getFillColor(0).getAlpha() < 255)
-				style.add(String.format(Locale.ROOT, "fill opacity=%.2f", group
+				if (group.getFillColor(0).getAlpha() < 255) {
+					style.add(String.format(Locale.ROOT, "fill opacity=%.2f", group
 						.getFillColor(0).getAlpha() / 255.0f));
+				}
 
-			switch (group.getStrokeMode()) {
-			case DOTS:
-			case DASHES:
-			case PLAIN:
-				String stroke = checkColor(group.getStrokeColor(0));
-				style.add("draw=" + stroke);
-				style.add("line width="
-						+ String.format(Locale.ROOT, "%.1fpt",
+				switch (group.getStrokeMode()) {
+					case DOTS:
+					case DASHES:
+					case PLAIN:
+						String stroke = checkColor(group.getStrokeColor(0));
+						style.add("draw=" + stroke);
+						style.add("line width="
+							+ String.format(Locale.ROOT, "%.1fpt",
 								group.getStrokeWidth().value));
 
-				if (group.getStrokeColor(0).getAlpha() < 255)
-					style.add(String.format(Locale.ROOT, "draw opacity=%.2f",
-							group.getStrokeColor(0).getAlpha() / 255.0f));
+						if (group.getStrokeColor(0).getAlpha() < 255) {
+							style.add(String.format(Locale.ROOT, "draw opacity=%.2f",
+								group.getStrokeColor(0).getAlpha() / 255.0f));
+						}
 
-				break;
-			default:
-				LOGGER.warning(String.format("unhandled stroke mode : %s%n",
-						group.getStrokeMode()));
-			}
+						break;
+					default:
+						LOGGER.warning(String.format("unhandled stroke mode : %s%n",
+							group.getStrokeMode()));
+				}
 
-			switch (group.getShape()) {
-			case CIRCLE:
-				style.add("circle");
-				break;
-			case ROUNDED_BOX:
-				style.add("rounded corners=2pt");
-			case BOX:
-				style.add("rectangle");
-				break;
-			case TRIANGLE:
-				style.add("isosceles triangle");
-				break;
-			case DIAMOND:
-				style.add("diamond");
-				break;
-			default:
-				LOGGER.warning(String.format("unhandled shape : %s%n",
-						group.getShape()));
-			}
+				switch (group.getShape()) {
+					case CIRCLE:
+						style.add("circle");
+						break;
+					case ROUNDED_BOX:
+						style.add("rounded corners=2pt");
+					case BOX:
+						style.add("rectangle");
+						break;
+					case TRIANGLE:
+						style.add("isosceles triangle");
+						break;
+					case DIAMOND:
+						style.add("diamond");
+						break;
+					default:
+						LOGGER.warning(String.format("unhandled shape : %s%n",
+							group.getShape()));
+				}
 
-			String text = checkColor(group.getTextColor(0));
-			style.add("text=" + text);
+				String text = checkColor(group.getTextColor(0));
+				style.add("text=" + text);
 
-			switch (group.getSize().units) {
-			case GU:
-				style.add("minimum size="
-						+ String.format(Locale.ROOT, "%.1fcm",
+				switch (group.getSize().units) {
+					case GU:
+						style.add("minimum size="
+							+ String.format(Locale.ROOT, "%.1fcm",
 								group.getSize().values.get(0)));
-				break;
-			case PX:
-				style.add("minimum size="
-						+ String.format(Locale.ROOT, "%.1fpt",
+						break;
+					case PX:
+						style.add("minimum size="
+							+ String.format(Locale.ROOT, "%.1fpt",
 								group.getSize().values.get(0)));
-				break;
-			default:
-				LOGGER.warning(String
-						.format("%% [warning] units %s are not compatible with TikZ.%n",
+						break;
+					default:
+						LOGGER.warning(String
+							.format("%% [warning] units %s are not compatible with TikZ.%n",
 								group.getSize().units));
-			}
+				}
 
-			style.add("inner sep=0pt");
-		}
+				style.add("inner sep=0pt");
+			}
 			break;
-		case EDGE: {
-			if (group.getFillMode() != FillMode.DYN_PLAIN) {
-				String fill = checkColor(group.getFillColor(0));
-				style.add("draw=" + fill);
-			}
+			case EDGE: {
+				if (group.getFillMode() != FillMode.DYN_PLAIN) {
+					String fill = checkColor(group.getFillColor(0));
+					style.add("draw=" + fill);
+				}
 
-			if (group.getFillColor(0).getAlpha() < 255)
-				style.add(String.format(Locale.ROOT, "draw opacity=%.2f", group
+				if (group.getFillColor(0).getAlpha() < 255) {
+					style.add(String.format(Locale.ROOT, "draw opacity=%.2f", group
 						.getFillColor(0).getAlpha() / 255.0f));
+				}
 
-			switch (group.getSize().units) {
-			case PX:
-			case GU:
-				style.add("line width="
-						+ String.format(Locale.ROOT, "%.1fpt",
+				switch (group.getSize().units) {
+					case PX:
+					case GU:
+						style.add("line width="
+							+ String.format(Locale.ROOT, "%.1fpt",
 								group.getSize().values.get(0)));
-				break;
-			default:
-				LOGGER.warning(String
-						.format("%% [warning] units %s are not compatible with TikZ.%n",
+						break;
+					default:
+						LOGGER.warning(String
+							.format("%% [warning] units %s are not compatible with TikZ.%n",
 								group.getSize().units));
+				}
 			}
-		}
 			break;
-		default:
-			LOGGER.warning(String.format("unhandled group type : %s%n",
+			default:
+				LOGGER.warning(String.format("unhandled group type : %s%n",
 					group.getType()));
 		}
 
 		for (int i = 0; i < style.size(); i++) {
-			if (i > 0)
+			if (i > 0) {
 				buffer.append(",");
+			}
 
 			buffer.append(style.get(i));
 		}
@@ -484,23 +499,26 @@ public class FileSinkTikZ extends FileSinkBase {
 	 */
 	protected void outputEndOfFile() throws IOException {
 		if (Double.isNaN(width)) {
-			if (buffer.hasNumber(WIDTH_ATTR))
-				width = buffer.getNumber(WIDTH_ATTR);
-			else
+			if (buffer.hasNumber(WIDTH_ATTR)) {
+				width = buffer.getNumber(WIDTH_ATTR).doubleValue();
+			} else {
 				width = DEFAULT_WIDTH;
+			}
 		}
 
 		if (Double.isNaN(height)) {
-			if (buffer.hasNumber(HEIGHT_ATTR))
-				height = buffer.getNumber(HEIGHT_ATTR);
-			else
+			if (buffer.hasNumber(HEIGHT_ATTR)) {
+				height = buffer.getNumber(HEIGHT_ATTR).doubleValue();
+			} else {
 				height = DEFAULT_WIDTH;
+			}
 		}
 
 		checkLayout();
 
-		if (css != null)
-			buffer.addAttribute("ui.stylesheet", css);
+		if (css != null) {
+			buffer.setAttribute("ui.stylesheet", css);
+		}
 
 		points = new PointsWrapper();
 
@@ -528,7 +546,7 @@ public class FileSinkTikZ extends FileSinkBase {
 			}
 
 			out.printf(l, "\t\\node[inner sep=0pt] (%s) at (%f,%f) {};%n",
-					formatId(n.getId()), x, y);
+				formatId(n.getId()), x, y);
 		}
 
 		StyleGroupSet sgs = buffer.getStyleGroups();
@@ -536,15 +554,17 @@ public class FileSinkTikZ extends FileSinkBase {
 		for (HashSet<StyleGroup> groups : sgs.zIndex()) {
 			for (StyleGroup group : groups) {
 				switch (group.getType()) {
-				case NODE:
-					for (Element e : group.elements())
-						outputNode((Node) e);
-					break;
-				case EDGE:
-					for (Element e : group.elements())
-						outputEdge((Edge) e);
-					break;
-				default:
+					case NODE:
+						for (Element e : group.elements()) {
+							outputNode((Node) e);
+						}
+						break;
+					case EDGE:
+						for (Element e : group.elements()) {
+							outputEdge((Edge) e);
+						}
+						break;
+					default:
 				}
 			}
 		}
@@ -556,8 +576,9 @@ public class FileSinkTikZ extends FileSinkBase {
 	}
 
 	private void checkLayout() {
-		if (!layout)
+		if (!layout) {
 			return;
+		}
 
 		SpringBox sbox = new SpringBox();
 
@@ -567,9 +588,9 @@ public class FileSinkTikZ extends FileSinkBase {
 
 		replay.replay(buffer);
 
-		do
+		do {
 			sbox.compute();
-		while (sbox.getStabilization() < 0.9);
+		} while (sbox.getStabilization() < 0.9);
 
 		buffer.removeSink(sbox);
 		sbox.removeAttributeSink(buffer);
@@ -592,17 +613,18 @@ public class FileSinkTikZ extends FileSinkBase {
 				ymax = Math.max(ymax, y);
 			} else {
 				LOGGER.warning(String
-						.format("%% [warning] missing node (x,y).%n"));
+					.format("%% [warning] missing node (x,y).%n"));
 			}
 
 			if (n.hasNumber("ui.size")) {
-				minSize = Math.min(minSize, n.getNumber("ui.size"));
-				maxSize = Math.max(maxSize, n.getNumber("ui.size"));
+				minSize = Math.min(minSize, n.getNumber("ui.size").doubleValue());
+				maxSize = Math.max(maxSize, n.getNumber("ui.size").doubleValue());
 			}
 		}
 
-		if (minSize == maxSize)
+		if (minSize == maxSize) {
 			maxSize += 1;
+		}
 
 		for (Edge e : buffer.getEachEdge()) {
 			points.setElement(e);
@@ -634,17 +656,19 @@ public class FileSinkTikZ extends FileSinkBase {
 
 		out.printf("[%n");
 
-		for (String key : classes.keySet())
+		for (String key : classes.keySet()) {
 			out.printf(l, "\t%s/.style={%s},%n", key, classes.get(key));
+		}
 
 		out.printf(l, "\ttikzgsnode/.style={%s},%n", nodeStyle);
 		out.printf(l, "\ttikzgsedge/.style={%s}%n", edgeStyle);
 
 		out.printf("]%n");
 
-		for (String rgb : colors.keySet())
+		for (String rgb : colors.keySet()) {
 			out.printf(l, "\t\\definecolor{%s}{rgb}{%s}%n", colors.get(rgb),
-					rgb);
+				rgb);
+		}
 	}
 
 	private void outputNode(Node n) {
@@ -652,11 +676,11 @@ public class FileSinkTikZ extends FileSinkBase {
 		String style = getNodeStyle(n);
 
 		label = n.hasAttribute("label") ? (String) n.getLabel("label") : (n
-				.hasAttribute("ui.label") ? (String) n.getLabel("ui.label")
+			.hasAttribute("ui.label") ? (String) n.getLabel("ui.label")
 				: "");
 
 		out.printf(l, "\t\\node[%s] at (%s) {%s};%n", style,
-				formatId(n.getId()), label);
+			formatId(n.getId()), label);
 	}
 
 	private void outputEdge(Edge e) {
@@ -674,12 +698,12 @@ public class FileSinkTikZ extends FileSinkBase {
 				y = height * (y - ymin) / (ymax - ymin);
 
 				uiPoints = String
-						.format(l, "%s-- (%.3f,%.3f) ", uiPoints, x, y);
+					.format(l, "%s-- (%.3f,%.3f) ", uiPoints, x, y);
 			}
 		}
 
 		out.printf(l, "\t\\draw[%s] (%s) %s%s (%s);%n", style, formatId(e
-				.getSourceNode().getId()), uiPoints, e.isDirected() ? "->"
+			.getSourceNode().getId()), uiPoints, e.isDirected() ? "->"
 				: "--", formatId(e.getTargetNode().getId()));
 	}
 
@@ -691,7 +715,7 @@ public class FileSinkTikZ extends FileSinkBase {
 	 * , long, java.lang.String, java.lang.Object)
 	 */
 	public void graphAttributeAdded(String sourceId, long timeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		buffer.graphAttributeAdded(sourceId, timeId, attribute, value);
 	}
 
@@ -703,9 +727,9 @@ public class FileSinkTikZ extends FileSinkBase {
 	 * String, long, java.lang.String, java.lang.Object, java.lang.Object)
 	 */
 	public void graphAttributeChanged(String sourceId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
+		String attribute, Object oldValue, Object newValue) {
 		buffer.graphAttributeChanged(sourceId, timeId, attribute, oldValue,
-				newValue);
+			newValue);
 	}
 
 	/*
@@ -716,7 +740,7 @@ public class FileSinkTikZ extends FileSinkBase {
 	 * String, long, java.lang.String)
 	 */
 	public void graphAttributeRemoved(String sourceId, long timeId,
-			String attribute) {
+		String attribute) {
 		buffer.graphAttributeRemoved(sourceId, timeId, attribute);
 	}
 
@@ -728,7 +752,7 @@ public class FileSinkTikZ extends FileSinkBase {
 	 * long, java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		buffer.nodeAttributeAdded(sourceId, timeId, nodeId, attribute, value);
 	}
 
@@ -741,9 +765,9 @@ public class FileSinkTikZ extends FileSinkBase {
 	 * java.lang.Object)
 	 */
 	public void nodeAttributeChanged(String sourceId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
+		String nodeId, String attribute, Object oldValue, Object newValue) {
 		buffer.nodeAttributeChanged(sourceId, timeId, nodeId, attribute,
-				oldValue, newValue);
+			oldValue, newValue);
 	}
 
 	/*
@@ -754,7 +778,7 @@ public class FileSinkTikZ extends FileSinkBase {
 	 * , long, java.lang.String, java.lang.String)
 	 */
 	public void nodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute) {
+		String nodeId, String attribute) {
 		buffer.nodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
 	}
 
@@ -766,7 +790,7 @@ public class FileSinkTikZ extends FileSinkBase {
 	 * long, java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		buffer.edgeAttributeAdded(sourceId, timeId, edgeId, attribute, value);
 	}
 
@@ -779,9 +803,9 @@ public class FileSinkTikZ extends FileSinkBase {
 	 * java.lang.Object)
 	 */
 	public void edgeAttributeChanged(String sourceId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
+		String edgeId, String attribute, Object oldValue, Object newValue) {
 		buffer.edgeAttributeChanged(sourceId, timeId, edgeId, attribute,
-				oldValue, newValue);
+			oldValue, newValue);
 	}
 
 	/*
@@ -792,7 +816,7 @@ public class FileSinkTikZ extends FileSinkBase {
 	 * , long, java.lang.String, java.lang.String)
 	 */
 	public void edgeAttributeRemoved(String sourceId, long timeId,
-			String edgeId, String attribute) {
+		String edgeId, String attribute) {
 		buffer.edgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
 	}
 
@@ -823,9 +847,9 @@ public class FileSinkTikZ extends FileSinkBase {
 	 * java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
+		String fromNodeId, String toNodeId, boolean directed) {
 		buffer.edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId,
-				directed);
+			directed);
 	}
 
 	/*
@@ -865,20 +889,23 @@ public class FileSinkTikZ extends FileSinkBase {
 		}
 
 		public void setElement(Element e) {
-			if (e.hasArray("ui.points"))
+			if (e.hasArray("ui.points")) {
 				points = e.getArray("ui.points");
-			else
+			} else {
 				points = null;
+			}
 		}
 
 		public boolean check() {
-			if (points == null)
+			if (points == null) {
 				return false;
+			}
 
 			for (int i = 0; i < points.length; i++) {
 				if (!(points[i] instanceof Point3)
-						&& !points[i].getClass().isArray())
+					&& !points[i].getClass().isArray()) {
 					return false;
+				}
 			}
 
 			return true;
@@ -889,38 +916,42 @@ public class FileSinkTikZ extends FileSinkBase {
 		}
 
 		public double getX(int i) {
-			if (points == null || i >= points.length)
+			if (points == null || i >= points.length) {
 				return Double.NaN;
+			}
 
 			Object p = points[i];
 
-			if (p instanceof Point3)
+			if (p instanceof Point3) {
 				return ((Point3) p).x;
-			else {
+			} else {
 				Object x = Array.get(p, 0);
 
-				if (x instanceof Number)
+				if (x instanceof Number) {
 					return ((Number) x).doubleValue();
-				else
+				} else {
 					return Array.getDouble(p, 0);
+				}
 			}
 		}
 
 		public double getY(int i) {
-			if (i >= points.length)
+			if (i >= points.length) {
 				return Double.NaN;
+			}
 
 			Object p = points[i];
 
-			if (p instanceof Point3)
+			if (p instanceof Point3) {
 				return ((Point3) p).y;
-			else {
+			} else {
 				Object y = Array.get(p, 0);
 
-				if (y instanceof Number)
+				if (y instanceof Number) {
 					return ((Number) y).doubleValue();
-				else
+				} else {
 					return Array.getDouble(p, 1);
+				}
 			}
 		}
 	}

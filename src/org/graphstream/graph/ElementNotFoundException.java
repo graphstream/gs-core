@@ -33,7 +33,7 @@ package org.graphstream.graph;
 
 /**
  * Thrown when a searched object is not found.
- * 
+ *
  * @since 20020615
  */
 public class ElementNotFoundException extends RuntimeException {
@@ -48,9 +48,8 @@ public class ElementNotFoundException extends RuntimeException {
 
 	/**
 	 * Throws <code>message</code>.
-	 * 
-	 * @param message
-	 *            The message to throw.
+	 *
+	 * @param message The message to throw.
 	 */
 	public ElementNotFoundException(String message, Object... args) {
 		super(String.format(message, args));

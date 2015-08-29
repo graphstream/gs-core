@@ -35,10 +35,9 @@ import java.lang.reflect.Array;
 import java.util.HashMap;
 
 import javax.xml.stream.XMLStreamException;
+import org.graphstream.stream.Sink;
 
-import org.graphstream.stream.SinkAdapter;
-
-public class GEXFNodes extends SinkAdapter implements GEXFElement {
+public class GEXFNodes implements GEXFElement, Sink {
 	GEXF root;
 	HashMap<String, GEXFNode> nodes;
 
@@ -50,18 +49,20 @@ public class GEXFNodes extends SinkAdapter implements GEXFElement {
 	}
 
 	private float[] convertToXYZ(Object value) {
-		if (value == null || !value.getClass().isArray())
+		if (value == null || !value.getClass().isArray()) {
 			return null;
+		}
 
 		float[] xyz = new float[Array.getLength(value)];
 
 		for (int i = 0; i < xyz.length; i++) {
 			Object o = Array.get(value, i);
 
-			if (o instanceof Number)
+			if (o instanceof Number) {
 				xyz[i] = ((Number) o).floatValue();
-			else
+			} else {
 				return null;
+			}
 		}
 
 		return xyz;
@@ -77,8 +78,9 @@ public class GEXFNodes extends SinkAdapter implements GEXFElement {
 	public void export(SmartXMLWriter stream) throws XMLStreamException {
 		stream.startElement("nodes");
 
-		for (GEXFNode node : nodes.values())
+		for (GEXFNode node : nodes.values()) {
 			node.export(stream);
+		}
 
 		stream.endElement(); // NODES
 	}
@@ -125,32 +127,33 @@ public class GEXFNodes extends SinkAdapter implements GEXFElement {
 	 * long, java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		GEXFNode node = nodes.get(nodeId);
 
 		if (("ui.label".equals(attribute) || "label".equals(attribute))
-				&& value != null)
+			&& value != null) {
 			node.label = value.toString();
+		}
 
 		if ("xyz".equals(attribute)) {
 			float[] xyz = convertToXYZ(value);
 
 			switch (xyz.length) {
-			default:
-				node.z = xyz[2];
-			case 2:
-				node.y = xyz[1];
-			case 1:
-				node.x = xyz[0];
-			case 0:
-				break;
+				default:
+					node.z = xyz[2];
+				case 2:
+					node.y = xyz[1];
+				case 1:
+					node.x = xyz[0];
+				case 0:
+					break;
 			}
 
 			node.position = true;
 		}
 
 		node.attvalues
-				.attributeUpdated(root.getNodeAttribute(attribute), value);
+			.attributeUpdated(root.getNodeAttribute(attribute), value);
 	}
 
 	/*
@@ -162,7 +165,7 @@ public class GEXFNodes extends SinkAdapter implements GEXFElement {
 	 * java.lang.Object)
 	 */
 	public void nodeAttributeChanged(String sourceId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
+		String nodeId, String attribute, Object oldValue, Object newValue) {
 		nodeAttributeAdded(sourceId, timeId, nodeId, attribute, newValue);
 	}
 
@@ -174,7 +177,7 @@ public class GEXFNodes extends SinkAdapter implements GEXFElement {
 	 * long, java.lang.String, java.lang.String)
 	 */
 	public void nodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute) {
+		String nodeId, String attribute) {
 		GEXFNode node = nodes.get(nodeId);
 		node.attvalues.attributeUpdated(root.getNodeAttribute(attribute), null);
 	}
@@ -186,7 +189,8 @@ public class GEXFNodes extends SinkAdapter implements GEXFElement {
 	 * long)
 	 */
 	public void graphCleared(String sourceId, long timeId) {
-		for (GEXFNode node : nodes.values())
+		for (GEXFNode node : nodes.values()) {
 			node.spells.end();
+		}
 	}
 }

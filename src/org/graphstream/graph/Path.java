@@ -39,7 +39,7 @@ import java.util.logging.Logger;
 
 /**
  * Path description.
- * 
+ *
  * <p>
  * A path is a class that stores ordered lists of nodes and links that are
  * adjacent. Such a path may be manipulated with nodes and/or edges added or
@@ -47,33 +47,32 @@ import java.util.logging.Logger;
  * during the construction of the path. Only edges need to be added, the nodes
  * list is maintained automatically.
  * </p>
- * 
+ *
  * <p>
  * The two lists (one for nodes, one for edges) may be acceded at any moment in
  * constant time.
  * </p>
- * 
+ *
  * <p>
  * The constraint of this class is that it needs to know the first node of the
  * path (the root). This root can be set with the {@link #setRoot(Node)} method
  * or by using the {@link #add(Node, Edge)} method.
  * </p>
- * 
+ *
  * <p>
  * The normal use with this class is to first use the {@link #setRoot(Node)}
  * method to initialize the path; then to use the {@link #add(Edge)} method to
  * grow it and the {@link #popEdge()} or {@link #popNode()}.
- * 
+ *
  */
 public class Path implements Structure {
 
-    /**
-     * class level logger
-     */
-    private static final Logger logger = Logger.getLogger(Path.class.getSimpleName());
+	/**
+	 * class level logger
+	 */
+	private static final Logger logger = Logger.getLogger(Path.class.getSimpleName());
 
 	// ------------- ATTRIBUTES ------------
-
 	/**
 	 * The root of the path;
 	 */
@@ -90,20 +89,18 @@ public class Path implements Structure {
 	Stack<Node> nodePath;
 
 	// ------------- CONSTRUCTORS ------------
-
 	/**
 	 * New empty path.
 	 */
 	public Path() {
-		edgePath = new Stack<Edge>();
-		nodePath = new Stack<Node>();
+		edgePath = new Stack<>();
+		nodePath = new Stack<>();
 	}
 
 	// -------------- ACCESSORS --------------
-
 	/**
 	 * Get the root (the first node) of the path.
-	 * 
+	 *
 	 * @return the root of the path.
 	 */
 	public Node getRoot() {
@@ -112,24 +109,22 @@ public class Path implements Structure {
 
 	/**
 	 * Set the root (first node) of the path.
-	 * 
-	 * @param root
-	 *            The root of the path.
+	 *
+	 * @param root The root of the path.
 	 */
 	public void setRoot(Node root) {
 		if (this.root == null) {
 			this.root = root;
 			nodePath.push(root);
 		} else {
-            logger.warning("Root node is not null - first use the clear method.");
+			logger.warning("Root node is not null - first use the clear method.");
 		}
 	}
 
 	/**
 	 * Says whether the path contains this node or not.
-	 * 
-	 * @param node
-	 *            The node tested for existence in the path.
+	 *
+	 * @param node The node tested for existence in the path.
 	 * @return <code>true</code> if the path contains the node.
 	 */
 	public boolean contains(Node node) {
@@ -138,9 +133,8 @@ public class Path implements Structure {
 
 	/**
 	 * Says whether the path contains this edge or not.
-	 * 
-	 * @param edge
-	 *            The edge tested for existence in the path.
+	 *
+	 * @param edge The edge tested for existence in the path.
 	 * @return <code>true</code> if the path contains the edge.
 	 */
 	public boolean contains(Edge edge) {
@@ -149,7 +143,7 @@ public class Path implements Structure {
 
 	/**
 	 * Returns true if the path is empty.
-	 * 
+	 *
 	 * @return <code>true</code> if the path is empty.
 	 */
 	public boolean empty() {
@@ -164,24 +158,23 @@ public class Path implements Structure {
 	}
 
 	/**
-	 * It returns the sum of the <code>characteristic</code> given value in the
-	 * Edges of the path.
-	 * 
-	 * @param characteristic
-	 *            The characteristic.
+	 * It returns the sum of the <code>characteristic</code> given value in
+	 * the Edges of the path.
+	 *
+	 * @param characteristic The characteristic.
 	 * @return Sum of the characteristics.
 	 */
 	public Double getPathWeight(String characteristic) {
 		double d = 0;
 		for (Edge l : edgePath) {
-			d += (Double) l.getAttribute(characteristic, Number.class);
+			d += l.getAttribute(Number.class, characteristic).doubleValue();
 		}
 		return d;
 	}
 
 	/**
 	 * Returns the list of edges representing the path.
-	 * 
+	 *
 	 * @return The list of edges representing the path.
 	 */
 	public List<Edge> getEdgePath() {
@@ -190,7 +183,7 @@ public class Path implements Structure {
 
 	/**
 	 * Construct an return a list of nodes that represents the path.
-	 * 
+	 *
 	 * @return A list of nodes representing the path.
 	 */
 	public List<Node> getNodePath() {
@@ -198,16 +191,13 @@ public class Path implements Structure {
 	}
 
 	// -------------- MODIFIERS -------------
-
 	/**
 	 * Method that adds a node (and an edge) to the path. Parameters are the
-	 * start node : the one who already belong to the path or the first one if
-	 * the path is empty. The other parameter is the the new edge to add.
-	 * 
-	 * @param from
-	 *            The start node.
-	 * @param edge
-	 *            The edge used.
+	 * start node : the one who already belong to the path or the first one
+	 * if the path is empty. The other parameter is the the new edge to add.
+	 *
+	 * @param from The start node.
+	 * @param edge The edge used.
 	 */
 	public void add(Node from, Edge edge) {
 		if (root == null) {
@@ -223,9 +213,9 @@ public class Path implements Structure {
 		}
 
 		if (nodePath.size() == 1
-				|| ((nodePath.peek() == from) && (from == edgePath.peek()
-						.getSourceNode() || from == edgePath.peek()
-						.getTargetNode()))) {
+			|| ((nodePath.peek() == from) && (from == edgePath.peek()
+			.getSourceNode() || from == edgePath.peek()
+			.getTargetNode()))) {
 
 			nodePath.push(edge.getOpposite(from));
 			edgePath.push(edge);
@@ -235,11 +225,10 @@ public class Path implements Structure {
 	}
 
 	/**
-	 * Method that adds an edge an a node to the path. The new edge to add is
-	 * given.
-	 * 
-	 * @param edge
-	 *            The edge to add to the path.
+	 * Method that adds an edge an a node to the path. The new edge to add
+	 * is given.
+	 *
+	 * @param edge The edge to add to the path.
 	 */
 	public void add(Edge edge) {
 		if (nodePath.isEmpty()) {
@@ -266,7 +255,7 @@ public class Path implements Structure {
 	/**
 	 * This methods pops the 2 stacks (<code>edgePath</code> and
 	 * <code>nodePath</code>) and returns the removed edge.
-	 * 
+	 *
 	 * @return The edge that have just been removed.
 	 */
 	public Edge popEdge() {
@@ -277,7 +266,7 @@ public class Path implements Structure {
 	/**
 	 * This methods pops the 2 stacks (<code>edgePath</code> and
 	 * <code>nodePath</code>) and returns the removed node.
-	 * 
+	 *
 	 * @return The node that have just been removed.
 	 */
 	public Node popNode() {
@@ -286,9 +275,9 @@ public class Path implements Structure {
 	}
 
 	/**
-	 * Looks at the node at the top of the stack without removing it from the
-	 * stack.
-	 * 
+	 * Looks at the node at the top of the stack without removing it from
+	 * the stack.
+	 *
 	 * @return The node at the top of the stack.
 	 */
 	public Node peekNode() {
@@ -296,12 +285,11 @@ public class Path implements Structure {
 	}
 
 	/**
-	 * Looks at the edge at the top of the stack without removing it from the
-	 * stack.
-	 * 
+	 * Looks at the edge at the top of the stack without removing it from
+	 * the stack.
+	 *
 	 * @return The edge at the top of the stack.
 	 */
-
 	public Edge peekEdge() {
 		return edgePath.peek();
 	}
@@ -318,7 +306,7 @@ public class Path implements Structure {
 
 	/**
 	 * Get a copy of this path
-	 * 
+	 *
 	 * @return A copy of this path.
 	 */
 	@SuppressWarnings("unchecked")
@@ -332,8 +320,8 @@ public class Path implements Structure {
 	}
 
 	/**
-	 * Remove all parts of the path that start at a given node and pass a new at
-	 * this node.
+	 * Remove all parts of the path that start at a given node and pass a
+	 * new at this node.
 	 */
 	public void removeLoops() {
 		int n = nodePath.size();
@@ -355,14 +343,13 @@ public class Path implements Structure {
 				}
 			}
 		}
-    }
+	}
 
 	/**
-	 * Compare the content of the current path and the specified path to decide
-	 * weather they are equal or not.
-	 * 
-	 * @param p
-	 *            A path to compare to the curent one.
+	 * Compare the content of the current path and the specified path to
+	 * decide whether they are equal or not.
+	 *
+	 * @param p A path to compare to the current one.
 	 * @return True if both paths are equal.
 	 */
 	public boolean equals(Path p) {
@@ -379,10 +366,9 @@ public class Path implements Structure {
 	}
 
 	// ------------ UTILITY METHODS ------------
-
 	/**
 	 * Returns a String description of the path.
-	 * 
+	 *
 	 * @return A String representation of the path.
 	 */
 	@Override
@@ -392,7 +378,7 @@ public class Path implements Structure {
 
 	/**
 	 * Returns the size of the path. Identical to {@link #size()}.
-	 * 
+	 *
 	 * @return The size of the path.
 	 */
 	public int getNodeCount() {

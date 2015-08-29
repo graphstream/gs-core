@@ -40,10 +40,10 @@ import java.util.HashMap;
 import org.graphstream.stream.thread.ThreadProxyPipe;
 
 /**
- * 
+ *
  */
 public class DefaultNetStreamDecoder implements NetStreamDecoder {
-	
+
 	/**
 	 * Show debugging messages.
 	 */
@@ -55,10 +55,10 @@ public class DefaultNetStreamDecoder implements NetStreamDecoder {
 	protected ThreadProxyPipe currentStream;
 
 	/**
-	 * Pairs (key,value) where the key is the listener ID and the value the MBox
-	 * of the listener. This can be modified by other threads and must be
-	 * properly locked.
-	 * 
+	 * Pairs (key,value) where the key is the listener ID and the value the
+	 * MBox of the listener. This can be modified by other threads and must
+	 * be properly locked.
+	 *
 	 * @see #register(String,ThreadProxyPipe)
 	 */
 	// protected HashMap<String,MBox> boxes = new HashMap<String,MBox>();
@@ -91,21 +91,24 @@ public class DefaultNetStreamDecoder implements NetStreamDecoder {
 	/* (non-Javadoc)
 	 * @see org.graphstream.stream.netstream.NetStreamDecoder#register(java.lang.String, org.graphstream.stream.thread.ThreadProxyPipe)
 	 */
+
 	public synchronized void register(String name, ThreadProxyPipe stream)
-			throws Exception {
-		if (streams.containsKey(name))
+		throws Exception {
+		if (streams.containsKey(name)) {
 			throw new Exception("name " + name + " already registered");
+		}
 
 		streams.put(name, stream);
 
-		if (debug)
+		if (debug) {
 			debug("registered pipe %s", name);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.graphstream.stream.netstream.NetStreamDecoder#decodeMessage(java.io.InputStream)
 	 */
-	public void decodeMessage(InputStream in) throws IOException {	
+	public void decodeMessage(InputStream in) throws IOException {
 
 		int cmd = 0;
 
@@ -158,9 +161,7 @@ public class DefaultNetStreamDecoder implements NetStreamDecoder {
 			cmd = in.read();
 		}
 	}
-	
-	
-	
+
 	/**
 	 * @param in
 	 * @see NetStreamConstants.EVENT_DEL_EDGE
@@ -193,7 +194,7 @@ public class DefaultNetStreamDecoder implements NetStreamDecoder {
 		Object newValue = readValue(in, newValueType);
 
 		currentStream.edgeAttributeChanged(sourceId, timeId, edgeId, attrId,
-				oldValue, newValue);
+			oldValue, newValue);
 
 	}
 
@@ -211,7 +212,7 @@ public class DefaultNetStreamDecoder implements NetStreamDecoder {
 		Object value = readValue(in, readType(in));
 
 		currentStream.edgeAttributeAdded(sourceId, timeId, edgeId, attrId,
-				value);
+			value);
 
 	}
 
@@ -248,7 +249,7 @@ public class DefaultNetStreamDecoder implements NetStreamDecoder {
 		Object newValue = readValue(in, newValueType);
 
 		currentStream.nodeAttributeChanged(sourceId, timeId, nodeId, attrId,
-				oldValue, newValue);
+			oldValue, newValue);
 	}
 
 	/**
@@ -265,7 +266,7 @@ public class DefaultNetStreamDecoder implements NetStreamDecoder {
 		Object value = readValue(in, readType(in));
 
 		currentStream.nodeAttributeAdded(sourceId, timeId, nodeId, attrId,
-				value);
+			value);
 	}
 
 	/**
@@ -298,7 +299,7 @@ public class DefaultNetStreamDecoder implements NetStreamDecoder {
 		Object newValue = readValue(in, newValueType);
 
 		currentStream.graphAttributeChanged(sourceId, timeId, attrId, oldValue,
-				newValue);
+			newValue);
 
 	}
 
@@ -315,7 +316,7 @@ public class DefaultNetStreamDecoder implements NetStreamDecoder {
 		Object value = readValue(in, readType(in));
 		if (debug) {
 			debug("NetStreamServer | EVENT_ADD_GRAPH_ATTR | %s=%s", attrId,
-					value.toString());
+				value.toString());
 		}
 		currentStream.graphAttributeAdded(sourceId, timeId, attrId, value);
 
@@ -415,7 +416,7 @@ public class DefaultNetStreamDecoder implements NetStreamDecoder {
 				return 0;
 			}
 			if (debug) {
-				debug("NetStreamServer: type "+data);
+				debug("NetStreamServer: type " + data);
 			}
 			return data;
 		} catch (IOException e) {
@@ -525,9 +526,9 @@ public class DefaultNetStreamDecoder implements NetStreamDecoder {
 			long[] data = new long[9];
 			do {
 				data[size] = in.read();
-				
+
 				size++;
-				
+
 				//int bt =data[size-1]; 
 				//if (bt < 0) bt = (bt & 127) + (bt & 128);
 				//System.out.println("test "+bt+"  -> "+(data[size - 1]& 128) );
@@ -536,9 +537,9 @@ public class DefaultNetStreamDecoder implements NetStreamDecoder {
 			for (int i = 0; i < size; i++) {
 
 				number ^= (data[i] & 127L) << (i * 7L);
-				
+
 			}
-			
+
 			return number;
 
 		} catch (IOException e) {
@@ -547,8 +548,6 @@ public class DefaultNetStreamDecoder implements NetStreamDecoder {
 		}
 		return 0L;
 	}
-	
-	
 
 	protected long readVarint(InputStream in) {
 		long number = readUnsignedVarint(in);
@@ -607,7 +606,7 @@ public class DefaultNetStreamDecoder implements NetStreamDecoder {
 	 * @throws IOException
 	 */
 	protected Integer[] readIntArray(InputStream in) {
-		
+
 		int len = (int) readUnsignedVarint(in);
 
 		Integer[] res = new Integer[len];
@@ -753,10 +752,7 @@ public class DefaultNetStreamDecoder implements NetStreamDecoder {
 		}
 		return res;
 	}
-	
-	
-	
-	
+
 	protected void debug(String message, Object... data) {
 		// System.err.print( LIGHT_YELLOW );
 		System.err.printf("[//NetStreamDecoder | ");

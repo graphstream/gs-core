@@ -33,9 +33,9 @@ package org.graphstream.stream.file.gml;
 
 import java.io.IOException;
 import java.util.HashMap;
+import org.graphstream.graph.Element.ElementType;
 
 import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
-import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.stream.file.FileSourceGML;
 
 public class GMLContext {
@@ -49,7 +49,7 @@ public class GMLContext {
 	GMLContext(FileSourceGML gml) {
 		this.gml = gml;
 		this.sourceId = String.format("<GML stream %d>",
-				System.currentTimeMillis());
+			System.currentTimeMillis());
 	}
 
 	void handleKeyValues(KeyValues kv) throws IOException {
@@ -74,7 +74,7 @@ public class GMLContext {
 	public void setDirected(boolean on) {
 		directed = on;
 	}
-	
+
 	void setIsInGraph(boolean on) {
 		inGraph = on;
 	}
@@ -95,10 +95,10 @@ public class GMLContext {
 				} else if (kv.key.equals("del-edge") || kv.key.equals("-edge")) {
 					handleDelEdge(kv);
 				} else if (kv.key.equals("change-node")
-						|| kv.key.equals("+node")) {
+					|| kv.key.equals("+node")) {
 					handleChangeNode(kv);
 				} else if (kv.key.equals("change-edge")
-						|| kv.key.equals("+edge")) {
+					|| kv.key.equals("+edge")) {
 					handleChangeEdge(kv);
 				} else if (kv.key.equals("step")) {
 					handleStep(kv);
@@ -107,13 +107,13 @@ public class GMLContext {
 				} else {
 					if (kv.key.startsWith("-")) {
 						gml.sendAttributeChangedEvent(sourceId, sourceId,
-								ElementType.GRAPH, kv.key.substring(1),
-								AttributeChangeEvent.REMOVE, null, null);
+							ElementType.GRAPH, kv.key.substring(1),
+							AttributeChangeEvent.REMOVE, null, null);
 					} else {
 						gml.sendAttributeChangedEvent(sourceId, sourceId,
-								ElementType.GRAPH, kv.key,
-								AttributeChangeEvent.ADD, null,
-								compositeAttribute(kv));
+							ElementType.GRAPH, kv.key,
+							AttributeChangeEvent.ADD, null,
+							compositeAttribute(kv));
 					}
 				}
 			} else {
@@ -122,13 +122,13 @@ public class GMLContext {
 
 				if (kv.key.startsWith("-")) {
 					gml.sendAttributeChangedEvent(sourceId, sourceId,
-							ElementType.GRAPH, kv.key.substring(1),
-							AttributeChangeEvent.REMOVE, null, null);
+						ElementType.GRAPH, kv.key.substring(1),
+						AttributeChangeEvent.REMOVE, null, null);
 				} else {
 					gml.sendAttributeChangedEvent(sourceId, sourceId,
-							ElementType.GRAPH, kv.key,
-							AttributeChangeEvent.ADD, null,
-							compositeAttribute(kv));
+						ElementType.GRAPH, kv.key,
+						AttributeChangeEvent.ADD, null,
+						compositeAttribute(kv));
 				}
 			}
 		}
@@ -144,10 +144,12 @@ public class GMLContext {
 
 	protected void handleAddNode(KeyValues kv) throws IOException {
 		Object thing = kv.get("node");
-		if (thing == null)
+		if (thing == null) {
 			thing = kv.get("add-node");
-		if (thing == null)
+		}
+		if (thing == null) {
 			kv.error("expecting a node or add-node token here");
+		}
 
 		if (thing instanceof String) {
 			String id = (String) thing;
@@ -167,12 +169,15 @@ public class GMLContext {
 
 	protected void handleAddEdge(KeyValues kv) throws IOException {
 		Object thing = kv.get("edge");
-		if (thing == null)
+		if (thing == null) {
 			thing = kv.get("add-edge");
-		if (thing == null)
+		}
+		if (thing == null) {
 			kv.error("expecting a edge or add-edge token here");
-		if (!(thing instanceof KeyValues))
+		}
+		if (!(thing instanceof KeyValues)) {
 			kv.error("expecting a set of values for the new edge");
+		}
 
 		KeyValues edge = (KeyValues) thing;
 		String id = edge.optString("id");
@@ -180,11 +185,12 @@ public class GMLContext {
 		String src = edge.reqStringOrNumber("source");
 		String trg = edge.reqStringOrNumber("target");
 
-		if (id == null)
+		if (id == null) {
 			id = String.format("%s_%s_%d", src, trg, edgeid++);
+		}
 
 		String dir = edge.optString("directed");
-		
+
 		boolean directed = this.directed;
 
 		if (dir != null) {
@@ -198,10 +204,12 @@ public class GMLContext {
 
 	protected void handleDelNode(KeyValues kv) throws IOException {
 		Object thing = kv.get("del-node");
-		if (thing == null)
+		if (thing == null) {
 			thing = kv.get("-node");
-		if (thing == null)
+		}
+		if (thing == null) {
 			kv.error("expecting a del-node or -node token here");
+		}
 
 		if (thing instanceof String) {
 			String id = (String) thing;
@@ -217,10 +225,12 @@ public class GMLContext {
 
 	protected void handleDelEdge(KeyValues kv) throws IOException {
 		Object thing = kv.get("del-edge");
-		if (thing == null)
+		if (thing == null) {
 			thing = kv.get("-edge");
-		if (thing == null)
+		}
+		if (thing == null) {
 			kv.error("expecting a del-edge or -edge token here");
+		}
 
 		if (thing instanceof String) {
 			String id = (String) thing;
@@ -236,12 +246,15 @@ public class GMLContext {
 
 	protected void handleChangeNode(KeyValues kv) throws IOException {
 		Object thing = kv.get("change-node");
-		if (thing == null)
+		if (thing == null) {
 			thing = kv.get("+node");
-		if (thing == null)
+		}
+		if (thing == null) {
 			kv.error("expecting a change-node or +node token here");
-		if (!(thing instanceof KeyValues))
+		}
+		if (!(thing instanceof KeyValues)) {
 			kv.error("expecting a set of values");
+		}
 
 		KeyValues node = (KeyValues) thing;
 		String id = node.reqString("id");
@@ -251,12 +264,15 @@ public class GMLContext {
 
 	protected void handleChangeEdge(KeyValues kv) throws IOException {
 		Object thing = kv.get("change-edge");
-		if (thing == null)
+		if (thing == null) {
 			thing = kv.get("+edge");
-		if (thing == null)
+		}
+		if (thing == null) {
 			kv.error("expecting a change-edge or +edge token here");
-		if (!(thing instanceof KeyValues))
+		}
+		if (!(thing instanceof KeyValues)) {
 			kv.error("expecting a set of values");
+		}
 
 		KeyValues edge = (KeyValues) thing;
 		String id = edge.reqString("id");
@@ -267,41 +283,43 @@ public class GMLContext {
 	protected void handleNodeAttributes(String id, KeyValues node) {
 		for (String key : node.keySet()) {
 			if (key.startsWith("-")) {
-				if (key.equals("-label"))
+				if (key.equals("-label")) {
 					key = "-ui.label";
+				}
 
 				gml.sendAttributeChangedEvent(sourceId, id, ElementType.NODE,
-						key.substring(1), AttributeChangeEvent.REMOVE, null,
-						null);
+					key.substring(1), AttributeChangeEvent.REMOVE, null,
+					null);
 			} else {
 				if (key.equals("graphics")
-						&& node.get("graphics") instanceof KeyValues) {
+					&& node.get("graphics") instanceof KeyValues) {
 					Graphics graphics = optNodeStyle((KeyValues) node
-							.get("graphics"));
+						.get("graphics"));
 
 					if (graphics != null) {
 						if (graphics.position != null) {
 							gml.sendAttributeChangedEvent(sourceId, id,
-									ElementType.NODE, "xyz",
-									AttributeChangeEvent.ADD, null,
-									graphics.getPosition());
+								ElementType.NODE, "xyz",
+								AttributeChangeEvent.ADD, null,
+								graphics.getPosition());
 						}
 						if (graphics.style != null) {
 							gml.sendAttributeChangedEvent(sourceId, id,
-									ElementType.NODE, "ui.style",
-									AttributeChangeEvent.ADD, null,
-									graphics.style);
+								ElementType.NODE, "ui.style",
+								AttributeChangeEvent.ADD, null,
+								graphics.style);
 						}
 					}
 				} else {
 					String k = key;
 
-					if (key.equals("label"))
+					if (key.equals("label")) {
 						k = "ui.label";
+					}
 
 					gml.sendAttributeChangedEvent(sourceId, id,
-							ElementType.NODE, k, AttributeChangeEvent.ADD,
-							null, node.get(key));
+						ElementType.NODE, k, AttributeChangeEvent.ADD,
+						null, node.get(key));
 				}
 			}
 		}
@@ -310,35 +328,37 @@ public class GMLContext {
 	protected void handleEdgeAttributes(String id, KeyValues edge) {
 		for (String key : edge.keySet()) {
 			if (key.startsWith("-")) {
-				if (key.equals("-label"))
+				if (key.equals("-label")) {
 					key = "-ui.label";
+				}
 
 				gml.sendAttributeChangedEvent(sourceId, id, ElementType.EDGE,
-						key.substring(1), AttributeChangeEvent.REMOVE, null,
-						null);
+					key.substring(1), AttributeChangeEvent.REMOVE, null,
+					null);
 			} else {
 				if (key.equals("graphics")
-						&& edge.get("graphics") instanceof KeyValues) {
+					&& edge.get("graphics") instanceof KeyValues) {
 					Graphics graphics = optEdgeStyle((KeyValues) edge
-							.get("graphics"));
+						.get("graphics"));
 
 					if (graphics != null) {
 						if (graphics.style != null) {
 							gml.sendAttributeChangedEvent(sourceId, id,
-									ElementType.EDGE, "ui.style",
-									AttributeChangeEvent.ADD, null,
-									graphics.style);
+								ElementType.EDGE, "ui.style",
+								AttributeChangeEvent.ADD, null,
+								graphics.style);
 						}
 					}
 				} else {
 					String k = key;
 
-					if (key.equals("label"))
+					if (key.equals("label")) {
 						k = "ui.label";
+					}
 
 					gml.sendAttributeChangedEvent(sourceId, id,
-							ElementType.EDGE, k, AttributeChangeEvent.ADD,
-							null, edge.get(key));
+						ElementType.EDGE, k, AttributeChangeEvent.ADD,
+						null, edge.get(key));
 				}
 			}
 		}
@@ -379,11 +399,11 @@ public class GMLContext {
 				int hh = h != null ? (int) asDouble(h) : 0;
 				int dd = d != null ? (int) asDouble(d) : 0;
 				style.append(String.format("size: %dpx, %dpx, %dpx; ", ww, hh,
-						dd));
+					dd));
 			}
 			if (kv.get("type") != null) {
 				style.append(String.format("shape: %s; ",
-						asNodeShape((String) kv.get("type"))));
+					asNodeShape((String) kv.get("type"))));
 			}
 
 			commonGraphicsAttributes(kv, style);
@@ -412,7 +432,7 @@ public class GMLContext {
 			}
 			if (kv.get("type") != null) {
 				style.append(String.format("shape: %s; ",
-						asEdgeShape((String) kv.get("type"))));
+					asEdgeShape((String) kv.get("type"))));
 			}
 
 			commonGraphicsAttributes(kv, style);
@@ -431,22 +451,22 @@ public class GMLContext {
 		}
 		if (kv.get("outline_width") != null) {
 			style.append(String.format("stroke-width: %spx; ",
-					kv.get("outline_width")));
+				kv.get("outline_width")));
 		}
 		if ((kv.get("outline") != null) || (kv.get("outline_width") != null)) {
 			style.append("stroke-mode: plain; ");
 		}
 		if (kv.get("anchor") != null) {
 			style.append(String.format("text-alginment: %s; ",
-					asTextAlignment((String) kv.get("anchor"))));
+				asTextAlignment((String) kv.get("anchor"))));
 		}
 		if (kv.get("image") != null) {
 			style.append(String.format("icon-mode: at-left; icon: %s; ",
-					(String) kv.get("image")));
+				(String) kv.get("image")));
 		}
 		if (kv.get("arrow") != null) {
 			style.append(String.format("arrow-shape: %s; ",
-					asArrowShape((String) kv.get("arrow"))));
+				asArrowShape((String) kv.get("arrow"))));
 		}
 		if (kv.get("font") != null) {
 			style.append(String.format("font: %s; ", (String) kv.get("font")));
@@ -530,11 +550,11 @@ public class GMLContext {
 	}
 
 	protected boolean getBoolean(Object bool) {
-		if(bool instanceof String) {
+		if (bool instanceof String) {
 			return (bool.equals("1") || bool.equals("true") || bool.equals("yes")
 				|| bool.equals("y"));
-		} else if(bool instanceof Number) {
-			return (((Number)bool).doubleValue() != 0);
+		} else if (bool instanceof Number) {
+			return (((Number) bool).doubleValue() != 0);
 		}
 		return false;
 	}
@@ -545,22 +565,25 @@ class Graphics {
 	public String style = null;
 
 	public void setX(double value) {
-		if (position == null)
+		if (position == null) {
 			position = new double[3];
+		}
 
 		position[0] = value;
 	}
 
 	public void setY(double value) {
-		if (position == null)
+		if (position == null) {
 			position = new double[3];
+		}
 
 		position[1] = value;
 	}
 
 	public void setZ(double value) {
-		if (position == null)
+		if (position == null) {
 			position = new double[3];
+		}
 
 		position[2] = value;
 	}
@@ -591,17 +614,20 @@ class KeyValues extends HashMap<String, Object> {
 	public String optString(String key) throws IOException {
 		Object o = get(key);
 
-		if (o == null)
+		if (o == null) {
 			return null;
+		}
 
-		if (o instanceof Number)
+		if (o instanceof Number) {
 			o = o.toString();
-		
-		if (!(o instanceof String))
+		}
+
+		if (!(o instanceof String)) {
 			throw new IOException(
-					String.format(
-							"%d:%d: expecting a string or number value for tag %s, got a list of values",
-							line, column, key));
+				String.format(
+					"%d:%d: expecting a string or number value for tag %s, got a list of values",
+					line, column, key));
+		}
 
 		remove(key);
 		return (String) o;
@@ -610,16 +636,18 @@ class KeyValues extends HashMap<String, Object> {
 	protected String reqString(String key) throws IOException {
 		Object o = get(key);
 
-		if (o == null)
+		if (o == null) {
 			throw new IOException(String.format(
-					"%d:%d: expecting a tag %s but none found", line, column,
-					key));
+				"%d:%d: expecting a tag %s but none found", line, column,
+				key));
+		}
 
-		if (!(o instanceof String))
+		if (!(o instanceof String)) {
 			throw new IOException(
-					String.format(
-							"%d:%d: expecting a string or number value for tag %s, got a list of values",
-							line, column, key));
+				String.format(
+					"%d:%d: expecting a string or number value for tag %s, got a list of values",
+					line, column, key));
+		}
 
 		remove(key);
 
@@ -629,23 +657,25 @@ class KeyValues extends HashMap<String, Object> {
 	protected String reqStringOrNumber(String key) throws IOException {
 		Object o = get(key);
 
-		if (o == null)
+		if (o == null) {
 			throw new IOException(String.format(
-					"%d:%d: expecting a tag %s but none found", line, column,
-					key));
+				"%d:%d: expecting a tag %s but none found", line, column,
+				key));
+		}
 
-		if (!(o instanceof String) && !(o instanceof Number))
+		if (!(o instanceof String) && !(o instanceof Number)) {
 			throw new IOException(
-					String.format(
-							"%d:%d: expecting a string or number value for tag %s, got a list of values",
-							line, column, key));
+				String.format(
+					"%d:%d: expecting a string or number value for tag %s, got a list of values",
+					line, column, key));
+		}
 
 		remove(key);
 
-		if(o instanceof Number) {
+		if (o instanceof Number) {
 			o = o.toString();
 		}
-		
+
 		return (String) o;
 	}
 
@@ -653,24 +683,26 @@ class KeyValues extends HashMap<String, Object> {
 		Object o = get(key);
 		double v = 0.0;
 
-		if (o == null)
+		if (o == null) {
 			throw new IOException(String.format(
-					"%d:%d: expecting a tag %s but none found", line, column,
-					key));
+				"%d:%d: expecting a tag %s but none found", line, column,
+				key));
+		}
 
-		if (!(o instanceof String))
+		if (!(o instanceof String)) {
 			throw new IOException(
-					String.format(
-							"%d:%d expecting a string or number value for tag %s, got a list of values",
-							line, column, key));
+				String.format(
+					"%d:%d expecting a string or number value for tag %s, got a list of values",
+					line, column, key));
+		}
 
 		try {
 			remove(key);
 			v = Double.parseDouble((String) o);
 		} catch (NumberFormatException e) {
 			throw new IOException(String.format(
-					"%d:%d: expecting a number value for tag %s, got a string",
-					line, column, key));
+				"%d:%d: expecting a number value for tag %s, got a string",
+				line, column, key));
 		}
 
 		return v;
@@ -679,14 +711,16 @@ class KeyValues extends HashMap<String, Object> {
 	protected KeyValues optKeyValues(String key) throws IOException {
 		Object o = get(key);
 
-		if (o == null)
+		if (o == null) {
 			return null;
+		}
 
-		if (!(o instanceof KeyValues))
+		if (!(o instanceof KeyValues)) {
 			throw new IOException(
-					String.format(
-							"%d:%d: expecting a list of values for tag %s, got a string or number",
-							line, column, key));
+				String.format(
+					"%d:%d: expecting a list of values for tag %s, got a string or number",
+					line, column, key));
+		}
 
 		remove(key);
 
@@ -696,16 +730,18 @@ class KeyValues extends HashMap<String, Object> {
 	protected KeyValues reqKeyValues(String key) throws IOException {
 		Object o = get(key);
 
-		if (o == null)
+		if (o == null) {
 			throw new IOException(String.format(
-					"%d:%d: expecting a tag %s but none found", line, column,
-					key));
+				"%d:%d: expecting a tag %s but none found", line, column,
+				key));
+		}
 
-		if (!(o instanceof KeyValues))
+		if (!(o instanceof KeyValues)) {
 			throw new IOException(
-					String.format(
-							"%d:%d: expecting a list of values for tag %s, got a string or number",
-							line, column, key));
+				String.format(
+					"%d:%d: expecting a list of values for tag %s, got a string or number",
+					line, column, key));
+		}
 
 		remove(key);
 

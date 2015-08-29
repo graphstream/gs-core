@@ -58,24 +58,25 @@ public class SpriteRenderer extends ElementRenderer {
 
 	@Override
 	protected void setupRenderingPass(StyleGroup group, Graphics2D g,
-			Camera camera) {
+		Camera camera) {
 		metrics = camera.getMetrics();
 		configureText(group, camera);
 	}
 
 	@Override
 	protected void pushDynStyle(StyleGroup group, Graphics2D g, Camera camera,
-			GraphicElement element) {
+		GraphicElement element) {
 		Color color = group.getFillColor(0);
 
-		if (element != null && group.getFillMode() == FillMode.DYN_PLAIN)
+		if (element != null && group.getFillMode() == FillMode.DYN_PLAIN) {
 			color = interpolateColor(group, element);
+		}
 
 		g.setColor(color);
 
 		if (group.getSizeMode() == SizeMode.DYN_SIZE) {
 			width = metrics.lengthToGu(StyleConstants.convertValue(element
-					.getAttribute("ui.size")));
+				.getAttribute("ui.size")));
 			height = width;
 			w2 = width / 2;
 			h2 = height / 2;
@@ -98,15 +99,15 @@ public class SpriteRenderer extends ElementRenderer {
 
 	@Override
 	protected void elementInvisible(StyleGroup group, Graphics2D g,
-			Camera camera, GraphicElement element) {
+		Camera camera, GraphicElement element) {
 	}
 
 	@Override
 	protected void renderElement(StyleGroup group, Graphics2D g, Camera camera,
-			GraphicElement element) {
+		GraphicElement element) {
 		GraphicSprite sprite = (GraphicSprite) element;
 		Point2D.Double pos = ((DefaultCamera) camera).getSpritePosition(sprite,
-				new Point2D.Double(), StyleConstants.Units.GU);
+			new Point2D.Double(), StyleConstants.Units.GU);
 
 		shape.setFrame(pos.x - w2, pos.y - h2, width, height);
 		g.fill(shape);

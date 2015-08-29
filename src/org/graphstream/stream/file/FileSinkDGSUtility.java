@@ -35,6 +35,7 @@ import java.awt.Color;
 import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.graphstream.graph.CompoundAttribute;
 
@@ -44,16 +45,18 @@ public class FileSinkDGSUtility {
 	}
 
 	protected static String attributeString(String key, Object value, boolean remove) {
-		if (key == null || key.length() == 0)
+		if (key == null || key.length() == 0) {
 			return null;
+		}
 
 		if (remove) {
 			return String.format(" -\"%s\"", key);
 		} else {
-			if (value != null && value.getClass().isArray())
+			if (value != null && value.getClass().isArray()) {
 				return String.format(" \"%s\":%s", key, arrayString(value));
-			else
+			} else {
 				return String.format(" \"%s\":%s", key, valueString(value));
+			}
 		}
 	}
 
@@ -62,14 +65,16 @@ public class FileSinkDGSUtility {
 			StringBuilder sb = new StringBuilder();
 			sb.append("{");
 
-			if (Array.getLength(value) == 0)
+			if (Array.getLength(value) == 0) {
 				sb.append("\"\"");
-			else
+			} else {
 				sb.append(arrayString(Array.get(value, 0)));
+			}
 
-			for (int i = 1; i < Array.getLength(value); ++i)
+			for (int i = 1; i < Array.getLength(value); ++i) {
 				sb.append(String
-						.format(",%s", arrayString(Array.get(value, i))));
+					.format(",%s", arrayString(Array.get(value, i))));
+			}
 
 			sb.append("}");
 			return sb.toString();
@@ -79,23 +84,26 @@ public class FileSinkDGSUtility {
 	}
 
 	protected static String valueString(Object value) {
-		if (value == null)
+		if (value == null) {
 			return "\"\"";
+		}
 
 		if (value instanceof CharSequence) {
-			if (value instanceof String)
+			if (value instanceof String) {
 				return String.format("\"%s\"",
-						formatStringForQuoting((String) value));
-			else
+					formatStringForQuoting((String) value));
+			} else {
 				return String.format("\"%s\"", (CharSequence) value);
+			}
 		} else if (value instanceof Number) {
 			Number nval = (Number) value;
 
 			if (value instanceof Integer || value instanceof Short
-					|| value instanceof Byte || value instanceof Long)
+				|| value instanceof Byte || value instanceof Long) {
 				return String.format(Locale.US, "%d", nval.longValue());
-			else
+			} else {
 				return String.format(Locale.US, "%f", nval.doubleValue());
+			}
 		} else if (value instanceof Boolean) {
 			return String.format(Locale.US, "%b", ((Boolean) value));
 		} else if (value instanceof Character) {
@@ -105,8 +113,9 @@ public class FileSinkDGSUtility {
 			int n = array.length;
 			StringBuffer sb = new StringBuffer();
 
-			if (array.length > 0)
+			if (array.length > 0) {
 				sb.append(valueString(array[0]));
+			}
 
 			for (int i = 1; i < n; i++) {
 				sb.append(",");
@@ -115,25 +124,26 @@ public class FileSinkDGSUtility {
 
 			return sb.toString();
 		} else if (value instanceof HashMap<?, ?>
-				|| value instanceof CompoundAttribute) {
-			HashMap<?, ?> hash;
+			|| value instanceof CompoundAttribute) {
+			Map<?, ?> hash;
 
-			if (value instanceof CompoundAttribute)
-				hash = ((CompoundAttribute) value).toHashMap();
-			else
+			if (value instanceof CompoundAttribute) {
+				hash = ((CompoundAttribute) value).toMap();
+			} else {
 				hash = (HashMap<?, ?>) value;
+			}
 
 			return hashToString(hash);
 		} else if (value instanceof Color) {
 			Color c = (Color) value;
 			return String.format("#%02X%02X%02X%02X", c.getRed(), c.getGreen(),
-					c.getBlue(), c.getAlpha());
+				c.getBlue(), c.getAlpha());
 		} else {
 			return String.format("\"%s\"", value.toString());
 		}
 	}
 
-	protected static String hashToString(HashMap<?, ?> hash) {
+	protected static String hashToString(Map<?, ?> hash) {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("[ ");

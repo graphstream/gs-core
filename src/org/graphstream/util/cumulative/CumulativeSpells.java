@@ -46,7 +46,7 @@ public class CumulativeSpells {
 		private Object data;
 
 		public Spell(double start, boolean startOpen, double end,
-				boolean endOpen) {
+			boolean endOpen) {
 			this.start = start;
 			this.startOpen = startOpen;
 			this.end = end;
@@ -109,14 +109,16 @@ public class CumulativeSpells {
 			if (isStarted()) {
 				str += isStartOpen() ? "]" : "[";
 				str += start + "; ";
-			} else
+			} else {
 				str += "[...; ";
+			}
 
 			if (isEnded()) {
 				str += end;
 				str += isEndOpen() ? "[" : "]";
-			} else
+			} else {
 				str += "...]";
+			}
 
 			return str;
 		}
@@ -141,8 +143,9 @@ public class CumulativeSpells {
 		if (spells.size() > 0 && !Double.isNaN(currentDate)) {
 			Spell s = spells.getLast();
 
-			if (!s.closed)
+			if (!s.closed) {
 				s.end = currentDate;
+			}
 		}
 
 		currentDate = date;
@@ -164,8 +167,9 @@ public class CumulativeSpells {
 	public Spell getCurrentSpell() {
 		Spell s = spells.getLast();
 
-		if (s == null)
+		if (s == null) {
 			return null;
+		}
 
 		return s.closed ? null : s;
 	}
@@ -181,15 +185,16 @@ public class CumulativeSpells {
 	public Spell getOrCreateSpell(double date) {
 		Spell s = getCurrentSpell();
 
-		if (s == null)
+		if (s == null) {
 			s = startSpell(date);
+		}
 
 		return s;
 	}
 
 	public boolean isEternal() {
 		return spells.size() == 1 && !spells.get(0).isStarted()
-				&& !spells.get(0).isEnded();
+			&& !spells.get(0).isEnded();
 	}
 
 	public String toString() {
@@ -198,8 +203,9 @@ public class CumulativeSpells {
 		buffer.append("{");
 
 		for (int i = 0; i < spells.size(); i++) {
-			if (i > 0)
+			if (i > 0) {
 				buffer.append(", ");
+			}
 
 			buffer.append(spells.get(i).toString());
 		}

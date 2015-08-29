@@ -39,17 +39,17 @@ import org.graphstream.util.parser.ParserFactory;
 
 /**
  * Source for the Tulip file format (TLP).
- * 
+ *
  * TLP files begins with :
- * 
+ *
  * <pre>
  * (tlp "2.0"
  * ; file content
  * )
  * </pre>
- * 
+ *
  * Some meta informations can be done :
- * 
+ *
  * <pre>
  * (tlp "2.0"
  * 	(author "author name")
@@ -58,9 +58,9 @@ import org.graphstream.util.parser.ParserFactory;
  *  ...
  * )
  * </pre>
- * 
+ *
  * Node indexes are integer. They can be declared in a "nodes" tag :
- * 
+ *
  * <pre>
  * 	(tlp "2.0"
  * 		(nodes 1 2 3)
@@ -69,10 +69,10 @@ import org.graphstream.util.parser.ParserFactory;
  *  	(edge 3 2 3)
  * 	)
  * </pre>
- * 
+ *
  * Then edge can be defined with an int index followed by the index of the
  * source node and the target nodes.
- * 
+ *
  * Clusters can be created with an index and a name:
  * <pre>
  * 	(tlp "2.0"
@@ -86,9 +86,9 @@ import org.graphstream.util.parser.ParserFactory;
  *  	)
  * 	)
  * </pre>
- * 
+ *
  * Cluster 0 is the root graph.
- * 
+ *
  * Properties can be applied to cluster:
  * <pre>
  * 	(tlp "2.0"
@@ -103,7 +103,7 @@ import org.graphstream.util.parser.ParserFactory;
  *  	)
  * 	)
  * </pre>
- * 
+ *
  * Type of properties can be one of :
  * <ul>
  * <li>bool</li>

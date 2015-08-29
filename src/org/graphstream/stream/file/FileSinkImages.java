@@ -62,7 +62,7 @@ import org.graphstream.ui.swingViewer.GraphRenderer;
 
 /**
  * Output graph in image files.
- * 
+ *
  * <p>
  * Given a prefix "dir/prefix_" and an output policy, this sink will output
  * graph in an image file which name is prefix + a growing counter.
@@ -71,11 +71,11 @@ import org.graphstream.ui.swingViewer.GraphRenderer;
  * Then images can be processed to produce a movie. For example, with mencoder,
  * the following produce high quality movie :
  * </p>
- * 
+ *
  * <pre>
- * 
+ *
  * #!/bin/bash
- * 
+ *
  * EXT=png
  * CODEC=msmpeg4v2
  * BITRATE=6000
@@ -83,9 +83,9 @@ import org.graphstream.ui.swingViewer.GraphRenderer;
  * FPS=15
  * PREFIX=$1
  * OUTPUT=$2
- * 
+ *
  * mencoder "mf://$PREFIX*.$EXT" -mf fps=$FPS:type=$EXT -ovc lavc -lavcopts $OPTS -o $OUTPUT -nosound -vf scale
- * 
+ *
  * </pre>
  */
 public class FileSinkImages implements FileSink {
@@ -103,15 +103,13 @@ public class FileSinkImages implements FileSink {
 	 */
 	public static enum Resolutions implements Resolution {
 		QVGA(320, 240), CGA(320, 200), VGA(640, 480), NTSC(720, 480), PAL(768,
-				576), WVGA_5by3(800, 480), SVGA(800, 600), WVGA_16by9(854, 480), WSVGA(
+			576), WVGA_5by3(800, 480), SVGA(800, 600), WVGA_16by9(854, 480), WSVGA(
 				1024, 600), XGA(1024, 768), HD720(1280, 720), WXGA_5by3(1280,
 				768), WXGA_8by5(1280, 800), SXGA(1280, 1024), FWXGA(1366, 768), SXGAp(
 				1400, 1050), WSXGAp(1680, 1050), UXGA(1600, 1200), HD1080(1920,
 				1080), WUXGA(1920, 1200), TwoK(2048, 1080), QXGA(2048, 1536), WQXGA(
 				2560, 1600), QSXGA(2560, 2048), UHD_4K(3840, 2160), UHD_8K_16by9(
-				7680, 4320), UHD_8K_17by8(8192, 4320), UHD_8K_1by1(8192, 8192)
-
-		;
+				7680, 4320), UHD_8K_17by8(8192, 4320), UHD_8K_1by1(8192, 8192);
 
 		final int width, height;
 
@@ -164,11 +162,9 @@ public class FileSinkImages implements FileSink {
 	 */
 	public static enum OutputType {
 		PNG(BufferedImage.TYPE_INT_ARGB, "png"), JPG(
-				BufferedImage.TYPE_INT_RGB, "jpg"), png(
+			BufferedImage.TYPE_INT_RGB, "jpg"), png(
 				BufferedImage.TYPE_INT_ARGB, "png"), jpg(
-				BufferedImage.TYPE_INT_RGB, "jpg")
-
-		;
+				BufferedImage.TYPE_INT_RGB, "jpg");
 
 		final int imageType;
 		final String ext;
@@ -191,11 +187,11 @@ public class FileSinkImages implements FileSink {
 	}
 
 	/**
-	 * Layout policy. Specify how layout is computed. It can be computed in its
-	 * own thread with a LayoutRunner but if image rendering takes too much
-	 * time, node positions will be very different between two images. To have a
-	 * better result, we can choose to compute layout when a new image is
-	 * rendered. This will smooth the move of nodes in the movie.
+	 * Layout policy. Specify how layout is computed. It can be computed in
+	 * its own thread with a LayoutRunner but if image rendering takes too
+	 * much time, node positions will be very different between two images.
+	 * To have a better result, we can choose to compute layout when a new
+	 * image is rendered. This will smooth the move of nodes in the movie.
 	 */
 	public static enum LayoutPolicy {
 		NO_LAYOUT, COMPUTED_IN_LAYOUT_RUNNER, COMPUTED_ONCE_AT_NEW_IMAGE, COMPUTED_FULLY_AT_NEW_IMAGE
@@ -222,14 +218,15 @@ public class FileSinkImages implements FileSink {
 		int x, y;
 
 		public AddLogoRenderer(String logoFile, int x, int y)
-				throws IOException {
+			throws IOException {
 			File f = new File(logoFile);
 
-			if (f.exists())
+			if (f.exists()) {
 				this.logo = ImageIO.read(f);
-			else
+			} else {
 				this.logo = ImageIO.read(ClassLoader
-						.getSystemResource(logoFile));
+					.getSystemResource(logoFile));
+			}
 
 			this.x = x;
 			this.y = y;
@@ -245,10 +242,8 @@ public class FileSinkImages implements FileSink {
 	 */
 	public static enum RendererType {
 		BASIC(
-				"org.graphstream.ui.swingViewer.basicRenderer.SwingBasicGraphRenderer"), SCALA(
-				"org.graphstream.ui.j2dviewer.J2DGraphRenderer")
-
-		;
+			"org.graphstream.ui.swingViewer.basicRenderer.SwingBasicGraphRenderer"), SCALA(
+				"org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 
 		final String classname;
 
@@ -262,7 +257,7 @@ public class FileSinkImages implements FileSink {
 	}
 
 	private static final Logger LOGGER = Logger.getLogger(FileSinkImages.class
-			.getName());
+		.getName());
 
 	protected Resolution resolution;
 	protected OutputType outputType;
@@ -301,7 +296,7 @@ public class FileSinkImages implements FileSink {
 	}
 
 	public FileSinkImages(String prefix, OutputType type,
-			Resolution resolution, OutputPolicy outputPolicy) {
+		Resolution resolution, OutputPolicy outputPolicy) {
 		this.resolution = resolution;
 		this.outputType = type;
 		this.filePrefix = prefix;
@@ -325,46 +320,50 @@ public class FileSinkImages implements FileSink {
 	 */
 	public void setQuality(Quality q) {
 		switch (q) {
-		case LOW:
-			if (gg.hasAttribute("ui.quality"))
-				gg.removeAttribute("ui.quality");
-			if (gg.hasAttribute("ui.antialias"))
-				gg.removeAttribute("ui.antialias");
+			case LOW:
+				if (gg.hasAttribute("ui.quality")) {
+					gg.removeAttribute("ui.quality");
+				}
+				if (gg.hasAttribute("ui.antialias")) {
+					gg.removeAttribute("ui.antialias");
+				}
 
-			break;
-		case MEDIUM:
-			if (!gg.hasAttribute("ui.quality"))
-				gg.addAttribute("ui.quality");
-			if (gg.hasAttribute("ui.antialias"))
-				gg.removeAttribute("ui.antialias");
+				break;
+			case MEDIUM:
+				if (!gg.hasAttribute("ui.quality")) {
+					gg.setAttribute("ui.quality");
+				}
+				if (gg.hasAttribute("ui.antialias")) {
+					gg.removeAttribute("ui.antialias");
+				}
 
-			break;
-		case HIGH:
-			if (!gg.hasAttribute("ui.quality"))
-				gg.addAttribute("ui.quality");
-			if (!gg.hasAttribute("ui.antialias"))
-				gg.addAttribute("ui.antialias");
+				break;
+			case HIGH:
+				if (!gg.hasAttribute("ui.quality")) {
+					gg.setAttribute("ui.quality");
+				}
+				if (!gg.hasAttribute("ui.antialias")) {
+					gg.setAttribute("ui.antialias");
+				}
 
-			break;
+				break;
 		}
 	}
 
 	/**
 	 * Defines style of the graph as a css stylesheet.
-	 * 
-	 * @param styleSheet
-	 *            the style sheet
+	 *
+	 * @param styleSheet the style sheet
 	 */
 	public void setStyleSheet(String styleSheet) {
 		this.styleSheet = styleSheet;
-		gg.addAttribute("ui.stylesheet", styleSheet);
+		gg.setAttribute("ui.stylesheet", styleSheet);
 	}
 
 	/**
 	 * Set resolution of images.
-	 * 
-	 * @param r
-	 *            resolution
+	 *
+	 * @param r resolution
 	 */
 	public void setResolution(Resolution r) {
 		if (r != resolution) {
@@ -375,13 +374,13 @@ public class FileSinkImages implements FileSink {
 
 	/**
 	 * Set a custom resolution.
-	 * 
+	 *
 	 * @param width
 	 * @param height
 	 */
 	public void setResolution(int width, int height) {
 		if (resolution == null || resolution.getWidth() != width
-				|| resolution.getHeight() != height) {
+			|| resolution.getHeight() != height) {
 			resolution = new CustomResolution(width, height);
 			initImage();
 		}
@@ -389,19 +388,20 @@ public class FileSinkImages implements FileSink {
 
 	/**
 	 * Set the renderer type. This is experimental.
-	 * 
+	 *
 	 * @param rendererType
 	 */
 	@SuppressWarnings("unchecked")
 	public void setRenderer(RendererType rendererType) {
 		try {
 			Class<? extends GraphRenderer> clazz = (Class<? extends GraphRenderer>) Class
-					.forName(rendererType.classname);
+				.forName(rendererType.classname);
 
 			GraphRenderer obj = clazz.newInstance();
 
-			if (this.renderer != null)
+			if (this.renderer != null) {
 				this.renderer.close();
+			}
 
 			this.renderer = obj;
 			this.renderer.open(gg, null);
@@ -409,7 +409,7 @@ public class FileSinkImages implements FileSink {
 			e.printStackTrace();
 		} catch (ClassCastException e) {
 			LOGGER.warning(String.format("not a renderer \"%s\"%n",
-					rendererType.classname));
+				rendererType.classname));
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
@@ -419,9 +419,8 @@ public class FileSinkImages implements FileSink {
 
 	/**
 	 * Set the output policy.
-	 * 
-	 * @param policy
-	 *            policy defining when images are produced
+	 *
+	 * @param policy policy defining when images are produced
 	 */
 	public void setOutputPolicy(OutputPolicy policy) {
 		this.outputPolicy = policy;
@@ -429,44 +428,43 @@ public class FileSinkImages implements FileSink {
 
 	/**
 	 * Set the layout policy.
-	 * 
-	 * @param policy
-	 *            policy defining how the layout is computed
+	 *
+	 * @param policy policy defining how the layout is computed
 	 */
 	public synchronized void setLayoutPolicy(LayoutPolicy policy) {
 		if (policy != layoutPolicy) {
 			switch (layoutPolicy) {
-			case COMPUTED_IN_LAYOUT_RUNNER:
-				// layout.removeListener(this);
-				optLayout.release();
-				optLayout = null;
-				layoutPipeIn.removeAttributeSink(gg);
-				layoutPipeIn = null;
-				layout = null;
-				break;
-			case COMPUTED_ONCE_AT_NEW_IMAGE:
-				// layout.removeListener(this);
-				gg.removeSink(layout);
-				layout.removeAttributeSink(gg);
-				layout = null;
-				break;
-			default:
-				break;
+				case COMPUTED_IN_LAYOUT_RUNNER:
+					// layout.removeListener(this);
+					optLayout.release();
+					optLayout = null;
+					layoutPipeIn.removeAttributeSink(gg);
+					layoutPipeIn = null;
+					layout = null;
+					break;
+				case COMPUTED_ONCE_AT_NEW_IMAGE:
+					// layout.removeListener(this);
+					gg.removeSink(layout);
+					layout.removeAttributeSink(gg);
+					layout = null;
+					break;
+				default:
+					break;
 			}
 
 			switch (policy) {
-			case COMPUTED_IN_LAYOUT_RUNNER:
-				layout = Layouts.newLayoutAlgorithm();
-				optLayout = new InnerLayoutRunner();
-				break;
-			case COMPUTED_FULLY_AT_NEW_IMAGE:
-			case COMPUTED_ONCE_AT_NEW_IMAGE:
-				layout = Layouts.newLayoutAlgorithm();
-				gg.addSink(layout);
-				layout.addAttributeSink(gg);
-				break;
-			default:
-				break;
+				case COMPUTED_IN_LAYOUT_RUNNER:
+					layout = Layouts.newLayoutAlgorithm();
+					optLayout = new InnerLayoutRunner();
+					break;
+				case COMPUTED_FULLY_AT_NEW_IMAGE:
+				case COMPUTED_ONCE_AT_NEW_IMAGE:
+					layout = Layouts.newLayoutAlgorithm();
+					gg.addSink(layout);
+					layout.addAttributeSink(gg);
+					break;
+				default:
+					break;
 			}
 
 			// layout.addListener(this);
@@ -475,11 +473,10 @@ public class FileSinkImages implements FileSink {
 	}
 
 	/**
-	 * Set the amount of step before output a new image. This is used only in
-	 * ByLayoutStepOutput output policy.
-	 * 
-	 * @param spf
-	 *            step per frame
+	 * Set the amount of step before output a new image. This is used only
+	 * in ByLayoutStepOutput output policy.
+	 *
+	 * @param spf step per frame
 	 */
 	public void setLayoutStepPerFrame(int spf) {
 		this.layoutStepPerFrame = spf;
@@ -487,38 +484,35 @@ public class FileSinkImages implements FileSink {
 
 	/**
 	 * Set the amount of steps after the stabilization of the algorithm.
-	 * 
-	 * @param sas
-	 *            step after stabilization.
+	 *
+	 * @param sas step after stabilization.
 	 */
 	public void setLayoutStepAfterStabilization(int sas) {
 		this.layoutStepAfterStabilization = sas;
 	}
 
 	/**
-	 * Set the stabilization limit of the layout used to compute coordinates of
-	 * nodes. See
+	 * Set the stabilization limit of the layout used to compute coordinates
+	 * of nodes. See
 	 * {@link org.graphstream.ui.layout.Layout#setStabilizationLimit(double)}
 	 * for more informations about this limit.
-	 * 
+	 *
 	 * @param limit
 	 */
 	public void setLayoutStabilizationLimit(double limit) {
-		if (layout == null)
+		if (layout == null) {
 			throw new NullPointerException("did you enable layout ?");
+		}
 
 		layout.setStabilizationLimit(limit);
 	}
 
 	/**
 	 * Add a logo on images.
-	 * 
-	 * @param logoFile
-	 *            path to the logo picture-file
-	 * @param x
-	 *            x position of the logo (top-left corner is (0;0))
-	 * @param y
-	 *            y position of the logo
+	 *
+	 * @param logoFile path to the logo picture-file
+	 * @param x x position of the logo (top-left corner is (0;0))
+	 * @param y y position of the logo
 	 */
 	public void addLogo(String logoFile, int x, int y) {
 		PostRenderer pr;
@@ -536,8 +530,9 @@ public class FileSinkImages implements FileSink {
 			outputRunnerAlive = false;
 
 			try {
-				if (outputRunner != null)
+				if (outputRunner != null) {
 					outputRunner.join();
+				}
 			} catch (InterruptedException e) {
 				// ... ?
 			}
@@ -545,16 +540,16 @@ public class FileSinkImages implements FileSink {
 			outputRunner = null;
 			sink = gg;
 
-			if (outputRunnerProxy != null)
+			if (outputRunnerProxy != null) {
 				outputRunnerProxy.pump();
+			}
 		}
 
 		outputRunnerAlive = on;
 
 		if (outputRunnerAlive) {
 			if (outputRunnerProxy == null) {
-				outputRunnerProxy = new ThreadProxyPipe();
-				outputRunnerProxy.init(gg);
+				outputRunnerProxy = ThreadProxyPipe.create(gg);
 			}
 
 			sink = outputRunnerProxy;
@@ -569,8 +564,9 @@ public class FileSinkImages implements FileSink {
 
 	public void stabilizeLayout(double limit) {
 		if (layout != null) {
-			while (layout.getStabilization() < limit)
+			while (layout.getStabilization() < limit) {
 				layout.compute();
+			}
 		}
 	}
 
@@ -591,7 +587,7 @@ public class FileSinkImages implements FileSink {
 	}
 
 	public void setGraphViewport(double minx, double miny, double maxx,
-			double maxy) {
+		double maxy) {
 		renderer.getCamera().setGraphViewport(minx, miny, maxx, maxy);
 	}
 
@@ -605,7 +601,7 @@ public class FileSinkImages implements FileSink {
 
 	protected void initImage() {
 		image = new BufferedImage(resolution.getWidth(),
-				resolution.getHeight(), outputType.imageType);
+			resolution.getHeight(), outputType.imageType);
 
 		g2d = image.createGraphics();
 	}
@@ -613,11 +609,13 @@ public class FileSinkImages implements FileSink {
 	protected void clearGG() {
 		gg.clear();
 
-		if (styleSheet != null)
+		if (styleSheet != null) {
 			gg.setAttribute("ui.stylesheet", styleSheet);
+		}
 
-		if (layout != null)
+		if (layout != null) {
 			layout.clear();
+		}
 	}
 
 	/**
@@ -625,33 +623,37 @@ public class FileSinkImages implements FileSink {
 	 */
 	public void outputNewImage() {
 		outputNewImage(String.format("%s%06d.%s", filePrefix, counter++,
-				outputType.ext));
+			outputType.ext));
 	}
 
 	public synchronized void outputNewImage(String filename) {
 		switch (layoutPolicy) {
-		case COMPUTED_IN_LAYOUT_RUNNER:
-			layoutPipeIn.pump();
-			break;
-		case COMPUTED_ONCE_AT_NEW_IMAGE:
-			if (layout != null)
-				layout.compute();
-			break;
-		case COMPUTED_FULLY_AT_NEW_IMAGE:
-			stabilizeLayout(layout.getStabilizationLimit());
-			break;
-		default:
-			break;
+			case COMPUTED_IN_LAYOUT_RUNNER:
+				layoutPipeIn.pump();
+				break;
+			case COMPUTED_ONCE_AT_NEW_IMAGE:
+				if (layout != null) {
+					layout.compute();
+				}
+				break;
+			case COMPUTED_FULLY_AT_NEW_IMAGE:
+				stabilizeLayout(layout.getStabilizationLimit());
+				break;
+			default:
+				break;
 		}
 
 		if (resolution.getWidth() != image.getWidth()
-				|| resolution.getHeight() != image.getHeight())
+			|| resolution.getHeight() != image.getHeight()) {
 			initImage();
+		}
 
 		if (clearImageBeforeOutput) {
-			for (int x = 0; x < resolution.getWidth(); x++)
-				for (int y = 0; y < resolution.getHeight(); y++)
+			for (int x = 0; x < resolution.getWidth(); x++) {
+				for (int y = 0; y < resolution.getHeight(); y++) {
 					image.setRGB(x, y, 0x00000000);
+				}
+			}
 		}
 
 		if (gg.getNodeCount() > 0) {
@@ -662,23 +664,25 @@ public class FileSinkImages implements FileSink {
 				Point3 hi = gg.getMaxPos();
 
 				renderer.getCamera().setBounds(lo.x, lo.y, lo.z, hi.x, hi.y,
-						hi.z);
+					hi.z);
 			}
 
 			renderer.render(g2d, 0, 0, resolution.getWidth(),
-					resolution.getHeight());
+				resolution.getHeight());
 		}
 
-		for (PostRenderer action : postRenderers)
+		for (PostRenderer action : postRenderers) {
 			action.render(g2d);
+		}
 
 		image.flush();
 
 		try {
 			File out = new File(filename);
 
-			if (out.getParent() != null && !out.getParentFile().exists())
+			if (out.getParent() != null && !out.getParentFile().exists()) {
 				out.getParentFile().mkdirs();
+			}
 
 			ImageIO.write(image, outputType.name(), out);
 
@@ -690,7 +694,7 @@ public class FileSinkImages implements FileSink {
 
 	protected void printProgress() {
 		LOGGER.info(String.format("\033[s\033[K%d images written\033[u",
-				counter));
+			counter));
 	}
 
 	/*
@@ -770,11 +774,11 @@ public class FileSinkImages implements FileSink {
 	 * , java.lang.String)
 	 */
 	public synchronized void writeAll(Graph g, String filename)
-			throws IOException {
+		throws IOException {
 		clearGG();
 
 		GraphReplay replay = new GraphReplay(String.format(
-				"file_sink_image-write_all-replay-%x", System.nanoTime()));
+			"file_sink_image-write_all-replay-%x", System.nanoTime()));
 
 		replay.addSink(gg);
 		replay.replay(g);
@@ -789,19 +793,20 @@ public class FileSinkImages implements FileSink {
 	 * @see org.graphstream.stream.Sink
 	 */
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		sink.edgeAttributeAdded(sourceId, timeId, edgeId, attribute, value);
 
 		switch (outputPolicy) {
-		case BY_EVENT:
-		case BY_EDGE_EVENT:
-		case BY_EDGE_ATTRIBUTE:
-		case BY_ATTRIBUTE_EVENT:
-			if (hasBegan)
-				outputNewImage();
-			break;
-		default:
-			break;
+			case BY_EVENT:
+			case BY_EDGE_EVENT:
+			case BY_EDGE_ATTRIBUTE:
+			case BY_ATTRIBUTE_EVENT:
+				if (hasBegan) {
+					outputNewImage();
+				}
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -809,20 +814,21 @@ public class FileSinkImages implements FileSink {
 	 * @see org.graphstream.stream.Sink
 	 */
 	public void edgeAttributeChanged(String sourceId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
+		String edgeId, String attribute, Object oldValue, Object newValue) {
 		sink.edgeAttributeChanged(sourceId, timeId, edgeId, attribute,
-				oldValue, newValue);
+			oldValue, newValue);
 
 		switch (outputPolicy) {
-		case BY_EVENT:
-		case BY_EDGE_EVENT:
-		case BY_EDGE_ATTRIBUTE:
-		case BY_ATTRIBUTE_EVENT:
-			if (hasBegan)
-				outputNewImage();
-			break;
-		default:
-			break;
+			case BY_EVENT:
+			case BY_EDGE_EVENT:
+			case BY_EDGE_ATTRIBUTE:
+			case BY_ATTRIBUTE_EVENT:
+				if (hasBegan) {
+					outputNewImage();
+				}
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -830,19 +836,20 @@ public class FileSinkImages implements FileSink {
 	 * @see org.graphstream.stream.Sink
 	 */
 	public void edgeAttributeRemoved(String sourceId, long timeId,
-			String edgeId, String attribute) {
+		String edgeId, String attribute) {
 		sink.edgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
 
 		switch (outputPolicy) {
-		case BY_EVENT:
-		case BY_EDGE_EVENT:
-		case BY_EDGE_ATTRIBUTE:
-		case BY_ATTRIBUTE_EVENT:
-			if (hasBegan)
-				outputNewImage();
-			break;
-		default:
-			break;
+			case BY_EVENT:
+			case BY_EDGE_EVENT:
+			case BY_EDGE_ATTRIBUTE:
+			case BY_ATTRIBUTE_EVENT:
+				if (hasBegan) {
+					outputNewImage();
+				}
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -850,19 +857,20 @@ public class FileSinkImages implements FileSink {
 	 * @see org.graphstream.stream.Sink
 	 */
 	public void graphAttributeAdded(String sourceId, long timeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		sink.graphAttributeAdded(sourceId, timeId, attribute, value);
 
 		switch (outputPolicy) {
-		case BY_EVENT:
-		case BY_GRAPH_EVENT:
-		case BY_GRAPH_ATTRIBUTE:
-		case BY_ATTRIBUTE_EVENT:
-			if (hasBegan)
-				outputNewImage();
-			break;
-		default:
-			break;
+			case BY_EVENT:
+			case BY_GRAPH_EVENT:
+			case BY_GRAPH_ATTRIBUTE:
+			case BY_ATTRIBUTE_EVENT:
+				if (hasBegan) {
+					outputNewImage();
+				}
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -870,20 +878,21 @@ public class FileSinkImages implements FileSink {
 	 * @see org.graphstream.stream.Sink
 	 */
 	public void graphAttributeChanged(String sourceId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
+		String attribute, Object oldValue, Object newValue) {
 		sink.graphAttributeChanged(sourceId, timeId, attribute, oldValue,
-				newValue);
+			newValue);
 
 		switch (outputPolicy) {
-		case BY_EVENT:
-		case BY_GRAPH_EVENT:
-		case BY_GRAPH_ATTRIBUTE:
-		case BY_ATTRIBUTE_EVENT:
-			if (hasBegan)
-				outputNewImage();
-			break;
-		default:
-			break;
+			case BY_EVENT:
+			case BY_GRAPH_EVENT:
+			case BY_GRAPH_ATTRIBUTE:
+			case BY_ATTRIBUTE_EVENT:
+				if (hasBegan) {
+					outputNewImage();
+				}
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -891,19 +900,20 @@ public class FileSinkImages implements FileSink {
 	 * @see org.graphstream.stream.Sink
 	 */
 	public void graphAttributeRemoved(String sourceId, long timeId,
-			String attribute) {
+		String attribute) {
 		sink.graphAttributeRemoved(sourceId, timeId, attribute);
 
 		switch (outputPolicy) {
-		case BY_EVENT:
-		case BY_GRAPH_EVENT:
-		case BY_GRAPH_ATTRIBUTE:
-		case BY_ATTRIBUTE_EVENT:
-			if (hasBegan)
-				outputNewImage();
-			break;
-		default:
-			break;
+			case BY_EVENT:
+			case BY_GRAPH_EVENT:
+			case BY_GRAPH_ATTRIBUTE:
+			case BY_ATTRIBUTE_EVENT:
+				if (hasBegan) {
+					outputNewImage();
+				}
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -911,19 +921,20 @@ public class FileSinkImages implements FileSink {
 	 * @see org.graphstream.stream.Sink
 	 */
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		sink.nodeAttributeAdded(sourceId, timeId, nodeId, attribute, value);
 
 		switch (outputPolicy) {
-		case BY_EVENT:
-		case BY_NODE_EVENT:
-		case BY_NODE_ATTRIBUTE:
-		case BY_ATTRIBUTE_EVENT:
-			if (hasBegan)
-				outputNewImage();
-			break;
-		default:
-			break;
+			case BY_EVENT:
+			case BY_NODE_EVENT:
+			case BY_NODE_ATTRIBUTE:
+			case BY_ATTRIBUTE_EVENT:
+				if (hasBegan) {
+					outputNewImage();
+				}
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -931,20 +942,21 @@ public class FileSinkImages implements FileSink {
 	 * @see org.graphstream.stream.Sink
 	 */
 	public void nodeAttributeChanged(String sourceId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
+		String nodeId, String attribute, Object oldValue, Object newValue) {
 		sink.nodeAttributeChanged(sourceId, timeId, nodeId, attribute,
-				oldValue, newValue);
+			oldValue, newValue);
 
 		switch (outputPolicy) {
-		case BY_EVENT:
-		case BY_NODE_EVENT:
-		case BY_NODE_ATTRIBUTE:
-		case BY_ATTRIBUTE_EVENT:
-			if (hasBegan)
-				outputNewImage();
-			break;
-		default:
-			break;
+			case BY_EVENT:
+			case BY_NODE_EVENT:
+			case BY_NODE_ATTRIBUTE:
+			case BY_ATTRIBUTE_EVENT:
+				if (hasBegan) {
+					outputNewImage();
+				}
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -952,19 +964,20 @@ public class FileSinkImages implements FileSink {
 	 * @see org.graphstream.stream.Sink
 	 */
 	public void nodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute) {
+		String nodeId, String attribute) {
 		sink.nodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
 
 		switch (outputPolicy) {
-		case BY_EVENT:
-		case BY_NODE_EVENT:
-		case BY_NODE_ATTRIBUTE:
-		case BY_ATTRIBUTE_EVENT:
-			if (hasBegan)
-				outputNewImage();
-			break;
-		default:
-			break;
+			case BY_EVENT:
+			case BY_NODE_EVENT:
+			case BY_NODE_ATTRIBUTE:
+			case BY_ATTRIBUTE_EVENT:
+				if (hasBegan) {
+					outputNewImage();
+				}
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -972,19 +985,20 @@ public class FileSinkImages implements FileSink {
 	 * @see org.graphstream.stream.Sink
 	 */
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
+		String fromNodeId, String toNodeId, boolean directed) {
 		sink.edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId, directed);
 
 		switch (outputPolicy) {
-		case BY_EVENT:
-		case BY_EDGE_EVENT:
-		case BY_EDGE_ADDED_REMOVED:
-		case BY_ELEMENT_EVENT:
-			if (hasBegan)
-				outputNewImage();
-			break;
-		default:
-			break;
+			case BY_EVENT:
+			case BY_EDGE_EVENT:
+			case BY_EDGE_ADDED_REMOVED:
+			case BY_ELEMENT_EVENT:
+				if (hasBegan) {
+					outputNewImage();
+				}
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -995,15 +1009,16 @@ public class FileSinkImages implements FileSink {
 		sink.edgeRemoved(sourceId, timeId, edgeId);
 
 		switch (outputPolicy) {
-		case BY_EVENT:
-		case BY_EDGE_EVENT:
-		case BY_EDGE_ADDED_REMOVED:
-		case BY_ELEMENT_EVENT:
-			if (hasBegan)
-				outputNewImage();
-			break;
-		default:
-			break;
+			case BY_EVENT:
+			case BY_EDGE_EVENT:
+			case BY_EDGE_ADDED_REMOVED:
+			case BY_ELEMENT_EVENT:
+				if (hasBegan) {
+					outputNewImage();
+				}
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -1014,16 +1029,17 @@ public class FileSinkImages implements FileSink {
 		sink.graphCleared(sourceId, timeId);
 
 		switch (outputPolicy) {
-		case BY_EVENT:
-		case BY_GRAPH_EVENT:
-		case BY_NODE_ADDED_REMOVED:
-		case BY_EDGE_ADDED_REMOVED:
-		case BY_ELEMENT_EVENT:
-			if (hasBegan)
-				outputNewImage();
-			break;
-		default:
-			break;
+			case BY_EVENT:
+			case BY_GRAPH_EVENT:
+			case BY_NODE_ADDED_REMOVED:
+			case BY_EDGE_ADDED_REMOVED:
+			case BY_ELEMENT_EVENT:
+				if (hasBegan) {
+					outputNewImage();
+				}
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -1034,15 +1050,16 @@ public class FileSinkImages implements FileSink {
 		sink.nodeAdded(sourceId, timeId, nodeId);
 
 		switch (outputPolicy) {
-		case BY_EVENT:
-		case BY_NODE_EVENT:
-		case BY_NODE_ADDED_REMOVED:
-		case BY_ELEMENT_EVENT:
-			if (hasBegan)
-				outputNewImage();
-			break;
-		default:
-			break;
+			case BY_EVENT:
+			case BY_NODE_EVENT:
+			case BY_NODE_ADDED_REMOVED:
+			case BY_ELEMENT_EVENT:
+				if (hasBegan) {
+					outputNewImage();
+				}
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -1053,15 +1070,16 @@ public class FileSinkImages implements FileSink {
 		sink.nodeRemoved(sourceId, timeId, nodeId);
 
 		switch (outputPolicy) {
-		case BY_EVENT:
-		case BY_NODE_EVENT:
-		case BY_NODE_ADDED_REMOVED:
-		case BY_ELEMENT_EVENT:
-			if (hasBegan)
-				outputNewImage();
-			break;
-		default:
-			break;
+			case BY_EVENT:
+			case BY_NODE_EVENT:
+			case BY_NODE_ADDED_REMOVED:
+			case BY_ELEMENT_EVENT:
+				if (hasBegan) {
+					outputNewImage();
+				}
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -1072,13 +1090,14 @@ public class FileSinkImages implements FileSink {
 		sink.stepBegins(sourceId, timeId, step);
 
 		switch (outputPolicy) {
-		case BY_EVENT:
-		case BY_STEP:
-			if (hasBegan)
-				outputNewImage();
-			break;
-		default:
-			break;
+			case BY_EVENT:
+			case BY_STEP:
+				if (hasBegan) {
+					outputNewImage();
+				}
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -1090,13 +1109,10 @@ public class FileSinkImages implements FileSink {
 	// break;
 	// }
 	// }
-
 	// public void nodeInfos(String id, double dx, double dy, double dz) {
 	// }
-
 	// public void edgeChanged(String id, double[] points) {
 	// }
-
 	// public void nodesMoved(Map<String, double[]> nodes) {
 	// switch (outputPolicy) {
 	// case BY_NODE_MOVED:
@@ -1105,10 +1121,8 @@ public class FileSinkImages implements FileSink {
 	// break;
 	// }
 	// }
-
 	// public void edgesChanged(Map<String, double[]> edges) {
 	// }
-
 	// public void stepCompletion(double percent) {
 	// switch (outputPolicy) {
 	// case BY_LAYOUT_STEP:
@@ -1123,23 +1137,22 @@ public class FileSinkImages implements FileSink {
 	// break;
 	// }
 	// }
-
 	public static enum Option {
 		IMAGE_PREFIX("image-prefix", 'p', "prefix of outputted images", true,
-				true, "image_"), IMAGE_TYPE("image-type", 't',
+			true, "image_"), IMAGE_TYPE("image-type", 't',
 				"image type. one of " + Arrays.toString(OutputType.values()),
 				true, true, "PNG"), IMAGE_RESOLUTION("image-resolution", 'r',
 				"defines images resolution. \"width x height\" or one of "
-						+ Arrays.toString(Resolutions.values()), true, true,
+				+ Arrays.toString(Resolutions.values()), true, true,
 				"HD720"), OUTPUT_POLICY("output-policy", 'e',
 				"defines when images are outputted. one of "
-						+ Arrays.toString(OutputPolicy.values()), true, true,
+				+ Arrays.toString(OutputPolicy.values()), true, true,
 				"ByStepOutput"), LOGO("logo", 'l', "add a logo to images",
 				true, true, null), STYLESHEET("stylesheet", 's',
 				"defines stylesheet of graph. can be a file or a string.",
 				true, true, null), QUALITY("quality", 'q',
 				"defines quality of rendering. one of "
-						+ Arrays.toString(Quality.values()), true, true, "HIGH");
+				+ Arrays.toString(Quality.values()), true, true, "HIGH");
 		String fullopts;
 		char shortopts;
 		String description;
@@ -1148,7 +1161,7 @@ public class FileSinkImages implements FileSink {
 		String defaultValue;
 
 		Option(String fullopts, char shortopts, String description,
-				boolean optional, boolean valuable, String defaultValue) {
+			boolean optional, boolean valuable, String defaultValue) {
 			this.fullopts = fullopts;
 			this.shortopts = shortopts;
 			this.description = description;
@@ -1162,11 +1175,10 @@ public class FileSinkImages implements FileSink {
 
 		public InnerLayoutRunner() {
 			super(FileSinkImages.this.gg, FileSinkImages.this.layout, true,
-					true);
+				true);
 
 			FileSinkImages.this.layoutPipeIn = newLayoutPipe();
-			FileSinkImages.this.layoutPipeIn
-					.addAttributeSink(FileSinkImages.this.gg);
+			FileSinkImages.this.layoutPipeIn.addAttributeSink(FileSinkImages.this.gg);
 		}
 
 		public void run() {
@@ -1177,15 +1189,17 @@ public class FileSinkImages implements FileSink {
 				pumpPipe.pump();
 				layout.compute();
 
-				if (layout.getStabilization() > layout.getStabilizationLimit())
+				if (layout.getStabilization() > layout.getStabilizationLimit()) {
 					stepAfterStabilization++;
-				else
+				} else {
 					stepAfterStabilization = 0;
+				}
 
 				nap(80);
 
-				if (stepAfterStabilization > layoutStepAfterStabilization)
+				if (stepAfterStabilization > layoutStepAfterStabilization) {
 					loop = false;
+				}
 			} while (loop);
 		}
 	}
@@ -1198,8 +1212,9 @@ public class FileSinkImages implements FileSink {
 		public void run() {
 			while (outputRunnerAlive && outputPolicy == OutputPolicy.ON_RUNNER) {
 				outputRunnerProxy.pump();
-				if (hasBegan)
+				if (hasBegan) {
 					outputNewImage();
+				}
 
 				try {
 					Thread.sleep(outputRunnerDelay);
@@ -1212,13 +1227,13 @@ public class FileSinkImages implements FileSink {
 
 	public static void usage() {
 		LOGGER.info(String.format("usage: java %s [options] fichier.dgs%n",
-				FileSinkImages.class.getName()));
+			FileSinkImages.class.getName()));
 		LOGGER.info(String.format("where options in:%n"));
 		for (Option option : Option.values()) {
 			LOGGER.info(String.format("%n --%s%s , -%s %s%n%s%n",
-					option.fullopts, option.valuable ? "=..." : "",
-					option.shortopts, option.valuable ? "..." : "",
-					option.description));
+				option.fullopts, option.valuable ? "=..." : "",
+				option.shortopts, option.valuable ? "..." : "",
+				option.description));
 		}
 	}
 
@@ -1227,18 +1242,20 @@ public class FileSinkImages implements FileSink {
 		HashMap<Option, String> options = new HashMap<Option, String>();
 		LinkedList<String> others = new LinkedList<String>();
 
-		for (Option option : Option.values())
-			if (option.defaultValue != null)
+		for (Option option : Option.values()) {
+			if (option.defaultValue != null) {
 				options.put(option, option.defaultValue);
+			}
+		}
 
 		if (args != null && args.length > 0) {
 			Pattern valueGetter = Pattern
-					.compile("^--\\w[\\w-]*\\w?(?:=(?:\"([^\"]*)\"|([^\\s]*)))$");
+				.compile("^--\\w[\\w-]*\\w?(?:=(?:\"([^\"]*)\"|([^\\s]*)))$");
 
 			for (int i = 0; i < args.length; i++) {
 
 				if (args[i]
-						.matches("^--\\w[\\w-]*\\w?(=(\"[^\"]*\"|[^\\s]*))?$")) {
+					.matches("^--\\w[\\w-]*\\w?(=(\"[^\"]*\"|[^\\s]*))?$")) {
 					boolean found = false;
 					for (Option option : Option.values()) {
 						if (args[i].startsWith("--" + option.fullopts + "=")) {
@@ -1246,9 +1263,9 @@ public class FileSinkImages implements FileSink {
 
 							if (m.matches()) {
 								options.put(
-										option,
-										m.group(1) == null ? m.group(2) : m
-												.group(1));
+									option,
+									m.group(1) == null ? m.group(2) : m
+										.group(1));
 							}
 
 							found = true;
@@ -1258,7 +1275,7 @@ public class FileSinkImages implements FileSink {
 
 					if (!found) {
 						LOGGER.severe(String.format("unknown option: %s%n",
-								args[i].substring(0, args[i].indexOf('='))));
+							args[i].substring(0, args[i].indexOf('='))));
 						System.exit(1);
 					}
 				} else if (args[i].matches("^-\\w$")) {
@@ -1273,7 +1290,7 @@ public class FileSinkImages implements FileSink {
 
 					if (!found) {
 						LOGGER.severe(String.format("unknown option: %s%n",
-								args[i]));
+							args[i]));
 						System.exit(1);
 					}
 				} else {
@@ -1309,10 +1326,10 @@ public class FileSinkImages implements FileSink {
 
 		try {
 			outputPolicy = OutputPolicy.valueOf(options
-					.get(Option.OUTPUT_POLICY));
+				.get(Option.OUTPUT_POLICY));
 		} catch (IllegalArgumentException e) {
 			errors.add("bad output policy: "
-					+ options.get(Option.OUTPUT_POLICY));
+				+ options.get(Option.OUTPUT_POLICY));
 		}
 
 		try {
@@ -1326,17 +1343,17 @@ public class FileSinkImages implements FileSink {
 
 		try {
 			resolution = Resolutions.valueOf(options
-					.get(Option.IMAGE_RESOLUTION));
+				.get(Option.IMAGE_RESOLUTION));
 		} catch (IllegalArgumentException e) {
 			Pattern p = Pattern.compile("^\\s*(\\d+)\\s*x\\s*(\\d+)\\s*$");
 			Matcher m = p.matcher(options.get(Option.IMAGE_RESOLUTION));
 
 			if (m.matches()) {
 				resolution = new CustomResolution(Integer.parseInt(m.group(1)),
-						Integer.parseInt(m.group(2)));
+					Integer.parseInt(m.group(2)));
 			} else {
 				errors.add("bad resolution: "
-						+ options.get(Option.IMAGE_RESOLUTION));
+					+ options.get(Option.IMAGE_RESOLUTION));
 			}
 		}
 
@@ -1360,39 +1377,44 @@ public class FileSinkImages implements FileSink {
 
 		{
 			File test = new File(others.peek());
-			if (!test.exists())
+			if (!test.exists()) {
 				errors.add(String.format("file \"%s\" does not exist",
-						others.peek()));
+					others.peek()));
+			}
 		}
 
 		if (errors.size() > 0) {
 			LOGGER.info(String.format("error:%n"));
 
-			for (String error : errors)
+			for (String error : errors) {
 				LOGGER.info(String.format("- %s%n", error));
+			}
 
 			System.exit(1);
 		}
 
 		FileSourceDGS dgs = new FileSourceDGS();
 		FileSinkImages fsi = new FileSinkImages(imagePrefix, outputType,
-				resolution, outputPolicy);
+			resolution, outputPolicy);
 
 		dgs.addSink(fsi);
 
-		if (logo != null)
+		if (logo != null) {
 			fsi.addLogo(logo, 0, 0);
+		}
 
 		fsi.setQuality(quality);
-		if (stylesheet != null)
+		if (stylesheet != null) {
 			fsi.setStyleSheet(stylesheet);
+		}
 
 		boolean next = true;
 
 		dgs.begin(others.get(0));
 
-		while (next)
+		while (next) {
 			next = dgs.nextStep();
+		}
 
 		dgs.end();
 	}

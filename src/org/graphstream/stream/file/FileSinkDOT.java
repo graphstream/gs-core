@@ -76,21 +76,18 @@ public class FileSinkDOT extends FileSinkBase {
 
 	/**
 	 * Build a new DOT sink specifying if the graph is directed or not.
-	 * 
-	 * @param digraph
-	 *            true if the graph is directed
+	 *
+	 * @param digraph true if the graph is directed
 	 */
 	public FileSinkDOT(boolean digraph) {
 		this.digraph = digraph;
 	}
 
 	// Command
-
 	/**
 	 * Set flag indicating if exported graph is directed or not.
-	 * 
-	 * @param digraph
-	 *            true is exported graph is directed
+	 *
+	 * @param digraph true is exported graph is directed
 	 */
 	public void setDirected(boolean digraph) {
 		this.digraph = digraph;
@@ -98,7 +95,7 @@ public class FileSinkDOT extends FileSinkBase {
 
 	/**
 	 * Get the flag indicating if exported graph is directed or not.
-	 * 
+	 *
 	 * @return true if exported graph is directed
 	 */
 	public boolean isDirected() {
@@ -110,8 +107,9 @@ public class FileSinkDOT extends FileSinkBase {
 		String graphId = graph.getId();
 		long timeId = 0;
 
-		for (String key : graph.getAttributeKeySet())
+		for (String key : graph.getAttributeKeySet()) {
 			graphAttributeAdded(graphId, timeId++, key, graph.getAttribute(key));
+		}
 
 		for (Node node : graph) {
 			String nodeId = node.getId();
@@ -126,10 +124,12 @@ public class FileSinkDOT extends FileSinkBase {
 			if (digraph) {
 				out.printf("\t\"%s\" -> \"%s\"", fromNodeId, toNodeId);
 
-				if (!edge.isDirected())
+				if (!edge.isDirected()) {
 					out.printf(" -> \"%s\"", fromNodeId);
-			} else
+				}
+			} else {
 				out.printf("\t\"%s\" -- \"%s\"", fromNodeId, toNodeId);
+			}
 
 			out.printf(" %s;%n", attr);
 		}
@@ -140,8 +140,9 @@ public class FileSinkDOT extends FileSinkBase {
 		out = (PrintWriter) output;
 		out.printf("%s {%n", digraph ? "digraph" : "graph");
 
-		if (graphName.length() > 0)
+		if (graphName.length() > 0) {
 			out.printf("\tgraph [label=%s];%n", graphName);
+		}
 	}
 
 	@Override
@@ -150,64 +151,66 @@ public class FileSinkDOT extends FileSinkBase {
 	}
 
 	public void edgeAttributeAdded(String graphId, long timeId, String edgeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		// NOP
 	}
 
 	public void edgeAttributeChanged(String graphId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
+		String edgeId, String attribute, Object oldValue, Object newValue) {
 		// NOP
 	}
 
 	public void edgeAttributeRemoved(String graphId, long timeId,
-			String edgeId, String attribute) {
+		String edgeId, String attribute) {
 		// NOP
 	}
 
 	public void graphAttributeAdded(String graphId, long timeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		out.printf("\tgraph [ %s ];%n", outputAttribute(attribute, value, true));
 	}
 
 	public void graphAttributeChanged(String graphId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
+		String attribute, Object oldValue, Object newValue) {
 		out.printf("\tgraph [ %s ];%n",
-				outputAttribute(attribute, newValue, true));
+			outputAttribute(attribute, newValue, true));
 	}
 
 	public void graphAttributeRemoved(String graphId, long timeId,
-			String attribute) {
+		String attribute) {
 		// NOP
 	}
 
 	public void nodeAttributeAdded(String graphId, long timeId, String nodeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		out.printf("\t\"%s\" [ %s ];%n", nodeId,
-				outputAttribute(attribute, value, true));
+			outputAttribute(attribute, value, true));
 	}
 
 	public void nodeAttributeChanged(String graphId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
+		String nodeId, String attribute, Object oldValue, Object newValue) {
 		out.printf("\t\"%s\" [ %s ];%n", nodeId,
-				outputAttribute(attribute, newValue, true));
+			outputAttribute(attribute, newValue, true));
 	}
 
 	public void nodeAttributeRemoved(String graphId, long timeId,
-			String nodeId, String attribute) {
+		String nodeId, String attribute) {
 		// NOP
 	}
 
 	public void edgeAdded(String graphId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
+		String fromNodeId, String toNodeId, boolean directed) {
 		if (digraph) {
 			out.printf("\t\"%s\" -> \"%s\"", fromNodeId, toNodeId);
 
-			if (!directed)
+			if (!directed) {
 				out.printf(" -> \"%s\"", fromNodeId);
+			}
 
 			out.printf(";%n");
-		} else
+		} else {
 			out.printf("\t\"%s\" -- \"%s\";%n", fromNodeId, toNodeId);
+		}
 	}
 
 	public void edgeRemoved(String graphId, long timeId, String edgeId) {
@@ -253,16 +256,18 @@ public class FileSinkDOT extends FileSinkBase {
 	protected String outputAttribute(String key, Object value, boolean first) {
 		boolean quote = true;
 
-		if (value instanceof Number)
+		if (value instanceof Number) {
 			quote = false;
+		}
 
 		return String.format("%s\"%s\"=%s%s%s", first ? "" : ",", key,
-				quote ? "\"" : "", value, quote ? "\"" : "");
+			quote ? "\"" : "", value, quote ? "\"" : "");
 	}
 
 	protected String outputAttributes(Element e) {
-		if (e.getAttributeCount() == 0)
+		if (e.getAttributeCount() == 0) {
 			return "";
+		}
 
 		StringBuilder buffer = new StringBuilder("[");
 		boolean first = true;
@@ -271,11 +276,12 @@ public class FileSinkDOT extends FileSinkBase {
 			boolean quote = true;
 			Object value = e.getAttribute(key);
 
-			if (value instanceof Number)
+			if (value instanceof Number) {
 				quote = false;
+			}
 
 			buffer.append(String.format("%s\"%s\"=%s%s%s", first ? "" : ",",
-					key, quote ? "\"" : "", value, quote ? "\"" : ""));
+				key, quote ? "\"" : "", value, quote ? "\"" : ""));
 
 			first = false;
 		}

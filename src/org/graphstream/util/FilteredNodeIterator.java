@@ -45,7 +45,7 @@ public class FilteredNodeIterator<T extends Node> implements Iterator<T> {
 	public FilteredNodeIterator(Graph g, Filter<Node> filter) {
 		this(g.<T>getNodeIterator(), filter);
 	}
-	
+
 	public FilteredNodeIterator(Iterator<T> ite, Filter<Node> filter) {
 		this.globalIterator = ite;
 		this.filter = filter;
@@ -59,8 +59,9 @@ public class FilteredNodeIterator<T extends Node> implements Iterator<T> {
 		while (globalIterator.hasNext() && next == null) {
 			next = globalIterator.next();
 
-			if (!filter.isAvailable(next))
+			if (!filter.isAvailable(next)) {
 				next = null;
+			}
 		}
 	}
 

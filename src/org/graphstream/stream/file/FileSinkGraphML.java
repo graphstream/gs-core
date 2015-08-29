@@ -69,29 +69,31 @@ public class FileSinkGraphML extends FileSinkBase {
 						Object value = n.getAttribute(k);
 						String type;
 
-						if (value == null)
+						if (value == null) {
 							continue;
+						}
 
 						String id = String.format("attr%04X", attribute++);
 
-						if (value instanceof Boolean)
+						if (value instanceof Boolean) {
 							type = "boolean";
-						else if (value instanceof Long)
+						} else if (value instanceof Long) {
 							type = "long";
-						else if (value instanceof Integer)
+						} else if (value instanceof Integer) {
 							type = "int";
-						else if (value instanceof Double)
+						} else if (value instanceof Double) {
 							type = "double";
-						else if (value instanceof Float)
+						} else if (value instanceof Float) {
 							type = "float";
-						else
+						} else {
 							type = "string";
+						}
 
 						nodeAttributes.put(k, id);
 
 						print(
-								"\t<key id=\"%s\" for=\"node\" attr.name=\"%s\" attr.type=\"%s\"/>\n",
-								id, k, type);
+							"\t<key id=\"%s\" for=\"node\" attr.name=\"%s\" attr.type=\"%s\"/>\n",
+							id, k, type);
 					}
 				}
 			}
@@ -102,28 +104,30 @@ public class FileSinkGraphML extends FileSinkBase {
 						Object value = n.getAttribute(k);
 						String type;
 
-						if (value == null)
+						if (value == null) {
 							continue;
+						}
 
 						String id = String.format("attr%04X", attribute++);
 
-						if (value instanceof Boolean)
+						if (value instanceof Boolean) {
 							type = "boolean";
-						else if (value instanceof Long)
+						} else if (value instanceof Long) {
 							type = "long";
-						else if (value instanceof Integer)
+						} else if (value instanceof Integer) {
 							type = "int";
-						else if (value instanceof Double)
+						} else if (value instanceof Double) {
 							type = "double";
-						else if (value instanceof Float)
+						} else if (value instanceof Float) {
 							type = "float";
-						else
+						} else {
 							type = "string";
+						}
 
 						edgeAttributes.put(k, id);
 						print(
-								"\t<key id=\"%s\" for=\"edge\" attr.name=\"%s\" attr.type=\"%s\"/>\n",
-								id, k, type);
+							"\t<key id=\"%s\" for=\"edge\" attr.name=\"%s\" attr.type=\"%s\"/>\n",
+							id, k, type);
 					}
 				}
 			}
@@ -134,18 +138,18 @@ public class FileSinkGraphML extends FileSinkBase {
 				print("\t\t<node id=\"%s\">\n", n.getId());
 				for (String k : n.getAttributeKeySet()) {
 					print("\t\t\t<data key=\"%s\">%s</data>\n", nodeAttributes
-							.get(k), n.getAttribute(k).toString());
+						.get(k), n.getAttribute(k).toString());
 				}
 				print("\t\t</node>\n");
 			}
 			for (Edge e : g.getEachEdge()) {
 				print(
-						"\t\t<edge id=\"%s\" source=\"%s\" target=\"%s\" directed=\"%s\">\n",
-						e.getId(), e.getSourceNode().getId(), e.getTargetNode()
-								.getId(), e.isDirected());
+					"\t\t<edge id=\"%s\" source=\"%s\" target=\"%s\" directed=\"%s\">\n",
+					e.getId(), e.getSourceNode().getId(), e.getTargetNode()
+					.getId(), e.isDirected());
 				for (String k : e.getAttributeKeySet()) {
 					print("\t\t\t<data key=\"%s\">%s</data>\n", edgeAttributes
-							.get(k), e.getAttribute(k).toString());
+						.get(k), e.getAttribute(k).toString());
 				}
 				print("\t\t</edge>\n");
 			}
@@ -156,52 +160,52 @@ public class FileSinkGraphML extends FileSinkBase {
 	}
 
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		throw new UnsupportedOperationException();
 	}
 
 	public void edgeAttributeChanged(String sourceId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
+		String edgeId, String attribute, Object oldValue, Object newValue) {
 		throw new UnsupportedOperationException();
 	}
 
 	public void edgeAttributeRemoved(String sourceId, long timeId,
-			String edgeId, String attribute) {
+		String edgeId, String attribute) {
 		throw new UnsupportedOperationException();
 	}
 
 	public void graphAttributeAdded(String sourceId, long timeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		throw new UnsupportedOperationException();
 	}
 
 	public void graphAttributeChanged(String sourceId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
+		String attribute, Object oldValue, Object newValue) {
 		throw new UnsupportedOperationException();
 	}
 
 	public void graphAttributeRemoved(String sourceId, long timeId,
-			String attribute) {
+		String attribute) {
 		throw new UnsupportedOperationException();
 	}
 
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		throw new UnsupportedOperationException();
 	}
 
 	public void nodeAttributeChanged(String sourceId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
+		String nodeId, String attribute, Object oldValue, Object newValue) {
 		throw new UnsupportedOperationException();
 	}
 
 	public void nodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute) {
+		String nodeId, String attribute) {
 		throw new UnsupportedOperationException();
 	}
 
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
+		String fromNodeId, String toNodeId, boolean directed) {
 		throw new UnsupportedOperationException();
 	}
 

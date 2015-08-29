@@ -49,11 +49,11 @@ public class DemoTwoGraphsInOneViewer {
 	public DemoTwoGraphsInOneViewer() {
 		Graph graph1 = new MultiGraph("g1");
 		Graph graph2 = new MultiGraph("g2");
-		Viewer viewer1 = new Viewer(new ThreadProxyPipe(graph1));
-		Viewer viewer2 = new Viewer(new ThreadProxyPipe(graph2));
+		Viewer viewer1 = new Viewer(ThreadProxyPipe.create(graph1));
+		Viewer viewer2 = new Viewer(ThreadProxyPipe.create(graph2));
 
-		graph1.addAttribute("ui.stylesheet", styleSheet1);
-		graph2.addAttribute("ui.stylesheet", styleSheet2);
+		graph1.setAttribute("ui.stylesheet", styleSheet1);
+		graph2.setAttribute("ui.stylesheet", styleSheet2);
 		//View view1 =
 		viewer1.addDefaultView(true);
 		viewer2.addDefaultView(true);

@@ -46,7 +46,7 @@ import org.graphstream.util.parser.ParserFactory;
 /**
  * This defines source using a {@link org.graphstream.util.parser.Parser} object
  * to parse a stream and generate graph events.
- * 
+ *
  */
 public abstract class FileSourceParser extends SourceBase implements FileSource {
 	/**
@@ -61,7 +61,7 @@ public abstract class FileSourceParser extends SourceBase implements FileSource 
 
 	/**
 	 * Get a new parser factory.
-	 * 
+	 *
 	 * @return a parser factory
 	 */
 	public abstract ParserFactory getNewParserFactory();
@@ -93,7 +93,7 @@ public abstract class FileSourceParser extends SourceBase implements FileSource 
 	 */
 	public void readAll(URL url) throws IOException {
 		Parser parser = factory.newParser(new InputStreamReader(url
-				.openStream()));
+			.openStream()));
 
 		try {
 			parser.all();
@@ -141,8 +141,9 @@ public abstract class FileSourceParser extends SourceBase implements FileSource 
 	 * @see org.graphstream.stream.file.FileSource#begin(java.lang.String)
 	 */
 	public void begin(String fileName) throws IOException {
-		if (parser != null)
+		if (parser != null) {
 			end();
+		}
 
 		parser = factory.newParser(createReaderForFile(fileName));
 

@@ -61,34 +61,37 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 	protected void checkAttribute(String key, Object value) {
 		AttrType type = detectType(value);
 
-		if (!attributes.containsKey(key))
+		if (!attributes.containsKey(key)) {
 			attributes.put(key, new GEXFAttribute(root, key, type));
-		else {
+		} else {
 			GEXFAttribute a = attributes.get(key);
 
-			if (a.type != type && value != null)
+			if (a.type != type && value != null) {
 				a.type = AttrType.STRING;
+			}
 		}
 	}
 
 	protected AttrType detectType(Object value) {
-		if (value == null)
+		if (value == null) {
 			return AttrType.STRING;
+		}
 
-		if (value instanceof Integer || value instanceof Short)
+		if (value instanceof Integer || value instanceof Short) {
 			return AttrType.INTEGER;
-		else if (value instanceof Long)
+		} else if (value instanceof Long) {
 			return AttrType.LONG;
-		else if (value instanceof Float)
+		} else if (value instanceof Float) {
 			return AttrType.FLOAT;
-		else if (value instanceof Double)
+		} else if (value instanceof Double) {
 			return AttrType.DOUBLE;
-		else if (value instanceof Boolean)
+		} else if (value instanceof Boolean) {
 			return AttrType.BOOLEAN;
-		else if (value instanceof URL || value instanceof URI)
+		} else if (value instanceof URL || value instanceof URI) {
 			return AttrType.ANYURI;
-		else if (value.getClass().isArray() || value instanceof Collection)
+		} else if (value.getClass().isArray() || value instanceof Collection) {
 			return AttrType.LISTSTRING;
+		}
 
 		return AttrType.STRING;
 	}
@@ -101,14 +104,16 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 	 * .file.gexf.SmartXMLWriter)
 	 */
 	public void export(SmartXMLWriter stream) throws XMLStreamException {
-		if (attributes.size() == 0)
+		if (attributes.size() == 0) {
 			return;
+		}
 
 		stream.startElement("attributes");
 		stream.stream.writeAttribute("class", type.qname);
 
-		for (GEXFAttribute attribute : attributes.values())
+		for (GEXFAttribute attribute : attributes.values()) {
 			attribute.export(stream);
+		}
 
 		stream.endElement(); // ATTRIBUTES
 	}
@@ -121,9 +126,10 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 	 * long, java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-			String attribute, Object value) {
-		if (type == ClassType.NODE)
+		String attribute, Object value) {
+		if (type == ClassType.NODE) {
 			checkAttribute(attribute, value);
+		}
 	}
 
 	/*
@@ -135,9 +141,10 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 	 * java.lang.Object)
 	 */
 	public void nodeAttributeChanged(String sourceId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
-		if (type == ClassType.NODE)
+		String nodeId, String attribute, Object oldValue, Object newValue) {
+		if (type == ClassType.NODE) {
 			checkAttribute(attribute, newValue);
+		}
 	}
 
 	/*
@@ -148,9 +155,10 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 	 * long, java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
-			String attribute, Object value) {
-		if (type == ClassType.EDGE)
+		String attribute, Object value) {
+		if (type == ClassType.EDGE) {
 			checkAttribute(attribute, value);
+		}
 	}
 
 	/*
@@ -162,9 +170,10 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 	 * java.lang.Object)
 	 */
 	public void edgeAttributeChanged(String sourceId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
-		if (type == ClassType.EDGE)
+		String edgeId, String attribute, Object oldValue, Object newValue) {
+		if (type == ClassType.EDGE) {
 			checkAttribute(attribute, newValue);
+		}
 	}
 
 	/*
@@ -175,7 +184,7 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 	 * , long, java.lang.String, java.lang.String)
 	 */
 	public void nodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute) {
+		String nodeId, String attribute) {
 	}
 
 	/*
@@ -186,7 +195,7 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 	 * , long, java.lang.String, java.lang.Object)
 	 */
 	public void graphAttributeAdded(String sourceId, long timeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 	}
 
 	/*
@@ -197,7 +206,7 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 	 * String, long, java.lang.String, java.lang.Object, java.lang.Object)
 	 */
 	public void graphAttributeChanged(String sourceId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
+		String attribute, Object oldValue, Object newValue) {
 	}
 
 	/*
@@ -208,7 +217,7 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 	 * String, long, java.lang.String)
 	 */
 	public void graphAttributeRemoved(String sourceId, long timeId,
-			String attribute) {
+		String attribute) {
 	}
 
 	/*
@@ -219,6 +228,6 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 	 * , long, java.lang.String, java.lang.String)
 	 */
 	public void edgeAttributeRemoved(String sourceId, long timeId,
-			String edgeId, String attribute) {
+		String edgeId, String attribute) {
 	}
 }

@@ -46,13 +46,13 @@ import javax.xml.stream.events.XMLEvent;
 /**
  * File source for the <a href="http://gexf.net/format/">GEXF</a> file format
  * used by <a href="http://www.gephi.org">Gephi</a>.
- * 
+ *
  * @author Guilhelm Savin
- * 
+ *
  */
 public class FileSourceGEXF extends FileSourceXML {
 	private static final Pattern IS_DOUBLE = Pattern
-			.compile("^-?\\d+([.]\\d+)?$");
+		.compile("^-?\\d+([.]\\d+)?$");
 
 	/**
 	 * The GEXF parser.
@@ -105,49 +105,52 @@ public class FileSourceGEXF extends FileSourceXML {
 			Object r;
 
 			switch (type) {
-			case INTEGER:
-				r = Integer.valueOf(value);
-				break;
-			case LONG:
-				r = Long.valueOf(value);
-				break;
-			case FLOAT:
-				r = Float.valueOf(value);
-				break;
-			case DOUBLE:
-				r = Double.valueOf(value);
-				break;
-			case BOOLEAN:
-				r = Boolean.valueOf(value);
-				break;
-			case LISTSTRING:
-				String[] list = value.split("\\|");
+				case INTEGER:
+					r = Integer.valueOf(value);
+					break;
+				case LONG:
+					r = Long.valueOf(value);
+					break;
+				case FLOAT:
+					r = Float.valueOf(value);
+					break;
+				case DOUBLE:
+					r = Double.valueOf(value);
+					break;
+				case BOOLEAN:
+					r = Boolean.valueOf(value);
+					break;
+				case LISTSTRING:
+					String[] list = value.split("\\|");
 
-				boolean isDouble = true;
+					boolean isDouble = true;
 
-				for (int i = 0; i < list.length; i++)
-					isDouble = isDouble && IS_DOUBLE.matcher(list[i]).matches();
+					for (int i = 0; i < list.length; i++) {
+						isDouble = isDouble && IS_DOUBLE.matcher(list[i]).matches();
+					}
 
-				if (isDouble) {
-					double[] dlist = new double[list.length];
+					if (isDouble) {
+						double[] dlist = new double[list.length];
 
-					for (int i = 0; i < list.length; i++)
-						dlist[i] = Double.parseDouble(list[i]);
+						for (int i = 0; i < list.length; i++) {
+							dlist[i] = Double.parseDouble(list[i]);
+						}
 
-					r = dlist;
-				} else
-					r = list;
+						r = dlist;
+					} else {
+						r = list;
+					}
 
-				break;
-			case ANYURI:
-				try {
-					r = new URI(value);
-				} catch (URISyntaxException e) {
-					throw new IllegalArgumentException(e);
-				}
-				break;
-			default:
-				r = value;
+					break;
+				case ANYURI:
+					try {
+						r = new URI(value);
+					} catch (URISyntaxException e) {
+						throw new IllegalArgumentException(e);
+					}
+					break;
+				default:
+					r = value;
 			}
 
 			return r;
@@ -180,25 +183,26 @@ public class FileSourceGEXF extends FileSourceXML {
 			long t = 0;
 
 			switch (timeFormat) {
-			case INTEGER:
-				t = Integer.valueOf(time);
-				break;
-			case DOUBLE:
-				// TODO
-				break;
-			case DATE:
-				// TODO
-				break;
-			case DATETIME:
-				// TODO
-				break;
+				case INTEGER:
+					t = Integer.valueOf(time);
+					break;
+				case DOUBLE:
+					// TODO
+					break;
+				case DATE:
+					// TODO
+					break;
+				case DATETIME:
+					// TODO
+					break;
 			}
 
 			return t;
 		}
 
 		/**
-		 * name : GEXF attributes : GEXFAttribute structure : META ? GRAPH
+		 * name : GEXF attributes : GEXFAttribute structure : META ?
+		 * GRAPH
 		 */
 		private void __gexf() throws IOException, XMLStreamException {
 			XMLEvent e;
@@ -211,8 +215,9 @@ public class FileSourceGEXF extends FileSourceXML {
 			if (isEvent(e, XMLEvent.START_ELEMENT, "meta")) {
 				pushback(e);
 				__meta();
-			} else
+			} else {
 				pushback(e);
+			}
 
 			__graph();
 
@@ -233,9 +238,10 @@ public class FileSourceGEXF extends FileSourceXML {
 
 			attributes = getAttributes(METAAttribute.class, e.asStartElement());
 
-			if (attributes.containsKey(METAAttribute.LASTMODIFIEDDATE))
+			if (attributes.containsKey(METAAttribute.LASTMODIFIEDDATE)) {
 				sendGraphAttributeAdded(sourceId, "lastmodifieddate",
-						attributes.get(METAAttribute.LASTMODIFIEDDATE));
+					attributes.get(METAAttribute.LASTMODIFIEDDATE));
+			}
 
 			e = getNextEvent();
 
@@ -243,30 +249,30 @@ public class FileSourceGEXF extends FileSourceXML {
 				try {
 					String str;
 					Balise b = Balise.valueOf(toConstantName(e.asStartElement()
-							.getName().getLocalPart()));
+						.getName().getLocalPart()));
 
 					pushback(e);
 
 					switch (b) {
-					case CREATOR:
-						str = __creator();
-						sendGraphAttributeAdded(sourceId, "creator", str);
-						break;
-					case KEYWORDS:
-						str = __keywords();
-						sendGraphAttributeAdded(sourceId, "keywords", str);
-						break;
-					case DESCRIPTION:
-						str = __description();
-						sendGraphAttributeAdded(sourceId, "description", str);
-						break;
-					default:
-						throw newParseError(e,
+						case CREATOR:
+							str = __creator();
+							sendGraphAttributeAdded(sourceId, "creator", str);
+							break;
+						case KEYWORDS:
+							str = __keywords();
+							sendGraphAttributeAdded(sourceId, "keywords", str);
+							break;
+						case DESCRIPTION:
+							str = __description();
+							sendGraphAttributeAdded(sourceId, "description", str);
+							break;
+						default:
+							throw newParseError(e,
 								"meta children should be one of 'creator','keywords' or 'description'");
 					}
 				} catch (IllegalArgumentException ex) {
 					throw newParseError(e, "unknown element '%s'", e
-							.asStartElement().getName().getLocalPart());
+						.asStartElement().getName().getLocalPart());
 				}
 
 				e = getNextEvent();
@@ -352,22 +358,22 @@ public class FileSourceGEXF extends FileSourceXML {
 			if (attributes.containsKey(GRAPHAttribute.DEFAULTEDGETYPE)) {
 				try {
 					defaultEdgeType = EdgeType
-							.valueOf(toConstantName(attributes
-									.get(GRAPHAttribute.DEFAULTEDGETYPE)));
+						.valueOf(toConstantName(attributes
+								.get(GRAPHAttribute.DEFAULTEDGETYPE)));
 				} catch (IllegalArgumentException ex) {
 					throw newParseError(e,
-							"'defaultedgetype' value should be one of 'directed', 'undirected' or 'mutual'");
+						"'defaultedgetype' value should be one of 'directed', 'undirected' or 'mutual'");
 				}
 			}
 
 			if (attributes.containsKey(GRAPHAttribute.TIMEFORMAT)) {
 				try {
 					timeFormat = TimeFormatType
-							.valueOf(toConstantName(attributes
-									.get(GRAPHAttribute.TIMEFORMAT)));
+						.valueOf(toConstantName(attributes
+								.get(GRAPHAttribute.TIMEFORMAT)));
 				} catch (IllegalArgumentException ex) {
 					throw newParseError(e,
-							"'timeformat' value should be one of 'integer', 'double', 'date' or 'datetime'");
+						"'timeformat' value should be one of 'integer', 'double', 'date' or 'datetime'");
 				}
 			}
 
@@ -381,7 +387,7 @@ public class FileSourceGEXF extends FileSourceXML {
 			}
 
 			while (isEvent(e, XMLEvent.START_ELEMENT, "nodes")
-					|| isEvent(e, XMLEvent.START_ELEMENT, "edges")) {
+				|| isEvent(e, XMLEvent.START_ELEMENT, "edges")) {
 				if (isEvent(e, XMLEvent.START_ELEMENT, "nodes")) {
 					pushback(e);
 					__nodes();
@@ -414,22 +420,23 @@ public class FileSourceGEXF extends FileSourceXML {
 			checkValid(e, XMLEvent.START_ELEMENT, "attributes");
 
 			attributes = getAttributes(ATTRIBUTESAttribute.class,
-					e.asStartElement());
+				e.asStartElement());
 
 			checkRequiredAttributes(e, attributes, ATTRIBUTESAttribute.CLASS);
 
 			try {
 				type = ClassType.valueOf(toConstantName(attributes
-						.get(ATTRIBUTESAttribute.CLASS)));
+					.get(ATTRIBUTESAttribute.CLASS)));
 			} catch (IllegalArgumentException ex) {
 				throw newParseError(e,
-						"'class' value shoudl be one of 'node' or 'edge'");
+					"'class' value shoudl be one of 'node' or 'edge'");
 			}
 
-			if (type == ClassType.NODE)
+			if (type == ClassType.NODE) {
 				attr = nodeAttributesDefinition;
-			else
+			} else {
 				attr = edgeAttributesDefinition;
+			}
 
 			e = getNextEvent();
 
@@ -462,21 +469,21 @@ public class FileSourceGEXF extends FileSourceXML {
 			checkValid(e, XMLEvent.START_ELEMENT, "attribute");
 
 			attributes = getAttributes(ATTRIBUTEAttribute.class,
-					e.asStartElement());
+				e.asStartElement());
 
 			checkRequiredAttributes(e, attributes, ATTRIBUTEAttribute.ID,
-					ATTRIBUTEAttribute.TITLE, ATTRIBUTEAttribute.TYPE);
+				ATTRIBUTEAttribute.TITLE, ATTRIBUTEAttribute.TYPE);
 
 			id = attributes.get(ATTRIBUTEAttribute.ID);
 			title = attributes.get(ATTRIBUTEAttribute.TITLE);
 
 			try {
 				type = AttributeType.valueOf(toConstantName(attributes
-						.get(ATTRIBUTEAttribute.TYPE)));
+					.get(ATTRIBUTEAttribute.TYPE)));
 			} catch (IllegalArgumentException ex) {
 				throw newParseError(
-						e,
-						"'type' of attribute should be one of 'integer', 'long', 'float, 'double', 'string', 'liststring', 'anyURI' or 'boolean'");
+					e,
+					"'type' of attribute should be one of 'integer', 'long', 'float, 'double', 'string', 'liststring', 'anyURI' or 'boolean'");
 			}
 
 			theAttribute = new Attribute(id, title, type);
@@ -486,29 +493,29 @@ public class FileSourceGEXF extends FileSourceXML {
 			while (!isEvent(e, XMLEvent.END_ELEMENT, "attribute")) {
 				try {
 					Balise b = Balise.valueOf(toConstantName(e.asStartElement()
-							.getName().getLocalPart()));
+						.getName().getLocalPart()));
 
 					pushback(e);
 
 					switch (b) {
-					case DEFAULT:
-						try {
-							theAttribute.setDefault(__default());
-						} catch (Exception invalid) {
-							throw newParseError(e, "invalid 'default' value");
-						}
+						case DEFAULT:
+							try {
+								theAttribute.setDefault(__default());
+							} catch (Exception invalid) {
+								throw newParseError(e, "invalid 'default' value");
+							}
 
-						break;
-					case OPTIONS:
-						theAttribute.setOptions(__options());
-						break;
-					default:
-						throw newParseError(e,
+							break;
+						case OPTIONS:
+							theAttribute.setOptions(__options());
+							break;
+						default:
+							throw newParseError(e,
 								"attribute children should be one of 'default' or 'options'");
 					}
 				} catch (IllegalArgumentException ex) {
 					throw newParseError(e, "unknown element '%s'", e
-							.asStartElement().getName().getLocalPart());
+						.asStartElement().getName().getLocalPart());
 				}
 
 				e = getNextEvent();
@@ -522,7 +529,7 @@ public class FileSourceGEXF extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name 		: DEFAULT
-		 * attributes 	: 
+		 * attributes 	:
 		 * structure 	: string
 		 * </pre>
 		 */
@@ -593,7 +600,8 @@ public class FileSourceGEXF extends FileSourceXML {
 		 * <pre>
 		 * name 		: NODE
 		 * attributes 	: NODEAttribute { 'pid', 'id', 'label', 'start', 'startopen', 'end', 'endopen' }
-		 * structure 	: ( ATTVALUES | SPELLS | ( NODES | EDGES ) | PARENTS | ( COLOR | POSITION | SIZE | NODESHAPE ) ) *
+		 * structure 	: ( ATTVALUES | SPELLS | ( NODES | EDGES ) | PARENTS | ( COLOR | POSITION | SIZE | NODESHAPE ) )
+		 * *
 		 * </pre>
 		 */
 		private void __node() throws IOException, XMLStreamException {
@@ -612,55 +620,56 @@ public class FileSourceGEXF extends FileSourceXML {
 			id = attributes.get(NODEAttribute.ID);
 			sendNodeAdded(sourceId, id);
 
-			if (attributes.containsKey(NODEAttribute.LABEL))
+			if (attributes.containsKey(NODEAttribute.LABEL)) {
 				sendNodeAttributeAdded(sourceId, id, "label",
-						attributes.get(NODEAttribute.LABEL));
+					attributes.get(NODEAttribute.LABEL));
+			}
 
 			e = getNextEvent();
 
 			while (!isEvent(e, XMLEvent.END_ELEMENT, "node")) {
 				try {
 					Balise b = Balise.valueOf(toConstantName(e.asStartElement()
-							.getName().getLocalPart()));
+						.getName().getLocalPart()));
 
 					pushback(e);
 
 					switch (b) {
-					case ATTVALUES:
-						defined.addAll(__attvalues(ClassType.NODE, id));
-						break;
-					case COLOR:
-						__color(ClassType.NODE, id);
-						break;
-					case POSITION:
-						__position(id);
-						break;
-					case SIZE:
-						__size(id);
-						break;
-					case SHAPE:
-						__node_shape(id);
-						break;
-					case SPELLS:
-						__spells();
-						break;
-					case NODES:
-						__nodes();
-						break;
-					case EDGES:
-						__edges();
-						break;
-					case PARENTS:
-						__parents(id);
-						break;
-					default:
-						throw newParseError(
+						case ATTVALUES:
+							defined.addAll(__attvalues(ClassType.NODE, id));
+							break;
+						case COLOR:
+							__color(ClassType.NODE, id);
+							break;
+						case POSITION:
+							__position(id);
+							break;
+						case SIZE:
+							__size(id);
+							break;
+						case SHAPE:
+							__node_shape(id);
+							break;
+						case SPELLS:
+							__spells();
+							break;
+						case NODES:
+							__nodes();
+							break;
+						case EDGES:
+							__edges();
+							break;
+						case PARENTS:
+							__parents(id);
+							break;
+						default:
+							throw newParseError(
 								e,
 								"attribute children should be one of 'attvalues', 'color', 'position', 'size', shape', 'spells', 'nodes, 'edges' or 'parents'");
 					}
 				} catch (IllegalArgumentException ex) {
 					throw newParseError(e, "unknown element '%s'", e
-							.asStartElement().getName().getLocalPart());
+						.asStartElement().getName().getLocalPart());
 				}
 
 				e = getNextEvent();
@@ -669,7 +678,7 @@ public class FileSourceGEXF extends FileSourceXML {
 			for (Attribute theAttribute : nodeAttributesDefinition.values()) {
 				if (!defined.contains(theAttribute.id)) {
 					sendNodeAttributeAdded(sourceId, id, theAttribute.title,
-							theAttribute.def);
+						theAttribute.def);
 				}
 			}
 
@@ -684,7 +693,7 @@ public class FileSourceGEXF extends FileSourceXML {
 		 * </spell>
 		 */
 		private HashSet<String> __attvalues(ClassType type, String elementId)
-				throws IOException, XMLStreamException {
+			throws IOException, XMLStreamException {
 			XMLEvent e;
 			HashSet<String> defined = new HashSet<String>();
 
@@ -713,7 +722,7 @@ public class FileSourceGEXF extends FileSourceXML {
 		 * </pre>
 		 */
 		private String __attvalue(ClassType type, String elementId)
-				throws IOException, XMLStreamException {
+			throws IOException, XMLStreamException {
 			XMLEvent e;
 			EnumMap<ATTVALUEAttribute, String> attributes;
 			Attribute theAttribute;
@@ -723,38 +732,40 @@ public class FileSourceGEXF extends FileSourceXML {
 			checkValid(e, XMLEvent.START_ELEMENT, "attvalue");
 
 			attributes = getAttributes(ATTVALUEAttribute.class,
-					e.asStartElement());
+				e.asStartElement());
 
 			checkRequiredAttributes(e, attributes, ATTVALUEAttribute.FOR,
-					ATTVALUEAttribute.VALUE);
+				ATTVALUEAttribute.VALUE);
 
-			if (type == ClassType.NODE)
+			if (type == ClassType.NODE) {
 				theAttribute = nodeAttributesDefinition.get(attributes
-						.get(ATTVALUEAttribute.FOR));
-			else
+					.get(ATTVALUEAttribute.FOR));
+			} else {
 				theAttribute = edgeAttributesDefinition.get(attributes
-						.get(ATTVALUEAttribute.FOR));
+					.get(ATTVALUEAttribute.FOR));
+			}
 
-			if (theAttribute == null)
+			if (theAttribute == null) {
 				throw newParseError(e, "undefined attribute \"%s\"",
-						attributes.get(ATTVALUEAttribute.FOR));
+					attributes.get(ATTVALUEAttribute.FOR));
+			}
 
 			try {
 				value = theAttribute.getValue(attributes
-						.get(ATTVALUEAttribute.VALUE));
+					.get(ATTVALUEAttribute.VALUE));
 			} catch (Exception ex) {
 				throw newParseError(e, "invalid 'value' value");
 			}
 
 			switch (type) {
-			case NODE:
-				sendNodeAttributeAdded(sourceId, elementId, theAttribute.title,
+				case NODE:
+					sendNodeAttributeAdded(sourceId, elementId, theAttribute.title,
 						value);
-				break;
-			case EDGE:
-				sendEdgeAttributeAdded(sourceId, elementId, theAttribute.title,
+					break;
+				case EDGE:
+					sendEdgeAttributeAdded(sourceId, elementId, theAttribute.title,
 						value);
-				break;
+					break;
 			}
 
 			e = getNextEvent();
@@ -766,7 +777,7 @@ public class FileSourceGEXF extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name 		: SPELLS
-		 * attributes 	: 
+		 * attributes 	:
 		 * structure 	: SPELL +
 		 * </pre>
 		 */
@@ -802,7 +813,6 @@ public class FileSourceGEXF extends FileSourceXML {
 			attributes = getAttributes(SPELLAttribute.class, e.asStartElement());
 
 			// TODO Handle spell
-
 			e = getNextEvent();
 			checkValid(e, XMLEvent.END_ELEMENT, "spell");
 		}
@@ -810,12 +820,12 @@ public class FileSourceGEXF extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name 		: PARENTS
-		 * attributes 	: 
+		 * attributes 	:
 		 * structure 	: PARENT *
 		 * </pre>
 		 */
 		private void __parents(String nodeId) throws IOException,
-				XMLStreamException {
+			XMLStreamException {
 			XMLEvent e;
 
 			e = getNextEvent();
@@ -839,7 +849,7 @@ public class FileSourceGEXF extends FileSourceXML {
 		 * </pre>
 		 */
 		private void __parent(String nodeId) throws IOException,
-				XMLStreamException {
+			XMLStreamException {
 			XMLEvent e;
 			EnumMap<PARENTAttribute, String> attributes;
 
@@ -847,11 +857,11 @@ public class FileSourceGEXF extends FileSourceXML {
 			checkValid(e, XMLEvent.START_ELEMENT, "parent");
 
 			attributes = getAttributes(PARENTAttribute.class,
-					e.asStartElement());
+				e.asStartElement());
 
 			checkRequiredAttributes(e, attributes, PARENTAttribute.FOR);
 			sendNodeAttributeAdded(sourceId,
-					attributes.get(PARENTAttribute.FOR), "parent", nodeId);
+				attributes.get(PARENTAttribute.FOR), "parent", nodeId);
 
 			e = getNextEvent();
 			checkValid(e, XMLEvent.END_ELEMENT, "parent");
@@ -865,7 +875,7 @@ public class FileSourceGEXF extends FileSourceXML {
 		 * </pre>
 		 */
 		private void __color(ClassType type, String id) throws IOException,
-				XMLStreamException {
+			XMLStreamException {
 			XMLEvent e;
 			EnumMap<COLORAttribute, String> attributes;
 			Color color;
@@ -877,24 +887,25 @@ public class FileSourceGEXF extends FileSourceXML {
 			attributes = getAttributes(COLORAttribute.class, e.asStartElement());
 
 			checkRequiredAttributes(e, attributes, COLORAttribute.R,
-					COLORAttribute.G, COLORAttribute.B);
+				COLORAttribute.G, COLORAttribute.B);
 
 			r = Integer.valueOf(attributes.get(COLORAttribute.R));
 			g = Integer.valueOf(attributes.get(COLORAttribute.G));
 			b = Integer.valueOf(attributes.get(COLORAttribute.B));
 
-			if (attributes.containsKey(COLORAttribute.A))
+			if (attributes.containsKey(COLORAttribute.A)) {
 				a = Integer.valueOf(attributes.get(COLORAttribute.A));
+			}
 
 			color = new Color(r, g, b, a);
 
 			switch (type) {
-			case NODE:
-				sendNodeAttributeAdded(sourceId, id, "ui.color", color);
-				break;
-			case EDGE:
-				sendEdgeAttributeAdded(sourceId, id, "ui.color", color);
-				break;
+				case NODE:
+					sendNodeAttributeAdded(sourceId, id, "ui.color", color);
+					break;
+				case EDGE:
+					sendEdgeAttributeAdded(sourceId, id, "ui.color", color);
+					break;
 			}
 
 			e = getNextEvent();
@@ -917,19 +928,19 @@ public class FileSourceGEXF extends FileSourceXML {
 		 * </pre>
 		 */
 		private void __position(String nodeId) throws IOException,
-				XMLStreamException {
+			XMLStreamException {
 			XMLEvent e;
 			EnumMap<POSITIONAttribute, String> attributes;
-			double[] xyz = { 0, 0, 0 };
+			double[] xyz = {0, 0, 0};
 
 			e = getNextEvent();
 			checkValid(e, XMLEvent.START_ELEMENT, "position");
 
 			attributes = getAttributes(POSITIONAttribute.class,
-					e.asStartElement());
+				e.asStartElement());
 
 			checkRequiredAttributes(e, attributes, POSITIONAttribute.X,
-					POSITIONAttribute.Y, POSITIONAttribute.Z);
+				POSITIONAttribute.Y, POSITIONAttribute.Z);
 
 			xyz[0] = Double.valueOf(attributes.get(POSITIONAttribute.X));
 			xyz[1] = Double.valueOf(attributes.get(POSITIONAttribute.Y));
@@ -957,7 +968,7 @@ public class FileSourceGEXF extends FileSourceXML {
 		 * </pre>
 		 */
 		private void __size(String nodeId) throws IOException,
-				XMLStreamException {
+			XMLStreamException {
 			XMLEvent e;
 			EnumMap<SIZEAttribute, String> attributes;
 			double value;
@@ -993,7 +1004,7 @@ public class FileSourceGEXF extends FileSourceXML {
 		 * </pre>
 		 */
 		private void __node_shape(String nodeId) throws IOException,
-				XMLStreamException {
+			XMLStreamException {
 			XMLEvent e;
 			EnumMap<NODESHAPEAttribute, String> attributes;
 			NodeShapeType type;
@@ -1003,36 +1014,37 @@ public class FileSourceGEXF extends FileSourceXML {
 			checkValid(e, XMLEvent.START_ELEMENT, "shape");
 
 			attributes = getAttributes(NODESHAPEAttribute.class,
-					e.asStartElement());
+				e.asStartElement());
 
 			checkRequiredAttributes(e, attributes, NODESHAPEAttribute.VALUE);
 
 			try {
 				type = NodeShapeType.valueOf(toConstantName(attributes
-						.get(NODESHAPEAttribute.VALUE)));
+					.get(NODESHAPEAttribute.VALUE)));
 			} catch (IllegalArgumentException ex) {
 				throw newParseError(e,
-						"'value' should be one of 'disc', 'diamond', 'triangle', 'square' or 'image'");
+					"'value' should be one of 'disc', 'diamond', 'triangle', 'square' or 'image'");
 			}
 
 			switch (type) {
-			case IMAGE:
-				if (!attributes.containsKey(NODESHAPEAttribute.URI))
-					throw newParseError(e,
+				case IMAGE:
+					if (!attributes.containsKey(NODESHAPEAttribute.URI)) {
+						throw newParseError(e,
 							"'image' shape type needs 'uri' attribute");
+					}
 
-				uri = attributes.get(NODESHAPEAttribute.URI);
-				sendNodeAttributeAdded(
+					uri = attributes.get(NODESHAPEAttribute.URI);
+					sendNodeAttributeAdded(
 						sourceId,
 						nodeId,
 						"ui.style",
 						String.format(
-								"fill-mode: image-scaled; fill-image: url('%s');",
-								uri));
+							"fill-mode: image-scaled; fill-image: url('%s');",
+							uri));
 
-				break;
-			default:
-				sendNodeAttributeAdded(sourceId, nodeId, "ui.style",
+					break;
+				default:
+					sendNodeAttributeAdded(sourceId, nodeId, "ui.style",
 						String.format("shape: %s;", type.name().toLowerCase()));
 			}
 
@@ -1077,7 +1089,8 @@ public class FileSourceGEXF extends FileSourceXML {
 		 * <pre>
 		 * name 		: EDGE
 		 * attributes 	: EDGEAttribute { START, STARTOPEN, END, ENDOPEN, ID!, TYPE, LABEL, SOURCE!, TARGET!, WEIGHT }
-		 * structure 	: ( ATTVALUES | SPELLS | ( COLOR | THICKNESS | EDGESHAPE ) ) *
+		 * structure 	: ( ATTVALUES | SPELLS | ( COLOR | THICKNESS | EDGESHAPE ) )
+		 * *
 		 * </pre>
 		 */
 		private void __edge() throws IOException, XMLStreamException {
@@ -1093,7 +1106,7 @@ public class FileSourceGEXF extends FileSourceXML {
 			attributes = getAttributes(EDGEAttribute.class, e.asStartElement());
 
 			checkRequiredAttributes(e, attributes, EDGEAttribute.ID,
-					EDGEAttribute.SOURCE, EDGEAttribute.TARGET);
+				EDGEAttribute.SOURCE, EDGEAttribute.TARGET);
 
 			id = attributes.get(EDGEAttribute.ID);
 			source = attributes.get(EDGEAttribute.SOURCE);
@@ -1102,35 +1115,36 @@ public class FileSourceGEXF extends FileSourceXML {
 			if (attributes.containsKey(EDGEAttribute.TYPE)) {
 				try {
 					type = EdgeType.valueOf(toConstantName(attributes
-							.get(EDGEAttribute.TYPE)));
+						.get(EDGEAttribute.TYPE)));
 				} catch (IllegalArgumentException ex) {
 					throw newParseError(e,
-							"edge type should be one of 'undirected', 'undirected' or 'mutual'");
+						"edge type should be one of 'undirected', 'undirected' or 'mutual'");
 				}
 			}
 
 			switch (type) {
-			case DIRECTED:
-				sendEdgeAdded(sourceId, id, source, target, true);
-				break;
-			case MUTUAL:
-			case UNDIRECTED:
-				sendEdgeAdded(sourceId, id, source, target, false);
-				break;
+				case DIRECTED:
+					sendEdgeAdded(sourceId, id, source, target, true);
+					break;
+				case MUTUAL:
+				case UNDIRECTED:
+					sendEdgeAdded(sourceId, id, source, target, false);
+					break;
 			}
 
-			if (attributes.containsKey(EDGEAttribute.LABEL))
+			if (attributes.containsKey(EDGEAttribute.LABEL)) {
 				sendEdgeAttributeAdded(sourceId, id, "ui.label",
-						attributes.get(EDGEAttribute.LABEL));
+					attributes.get(EDGEAttribute.LABEL));
+			}
 
 			if (attributes.containsKey(EDGEAttribute.WEIGHT)) {
 				try {
 					double d = Double.valueOf(attributes
-							.get(EDGEAttribute.WEIGHT));
+						.get(EDGEAttribute.WEIGHT));
 					sendEdgeAttributeAdded(sourceId, id, "weight", d);
 				} catch (NumberFormatException ex) {
 					throw newParseError(e,
-							"'weight' attribute of edge should be a real");
+						"'weight' attribute of edge should be a real");
 				}
 			}
 
@@ -1139,43 +1153,44 @@ public class FileSourceGEXF extends FileSourceXML {
 			while (!isEvent(e, XMLEvent.END_ELEMENT, "edge")) {
 				try {
 					Balise b = Balise.valueOf(toConstantName(e.asStartElement()
-							.getName().getLocalPart()));
+						.getName().getLocalPart()));
 
 					pushback(e);
 
 					switch (b) {
-					case ATTVALUES:
-						defined.addAll(__attvalues(ClassType.EDGE, id));
-						break;
-					case SPELLS:
-						__spells();
-						break;
-					case COLOR:
-						__color(ClassType.EDGE, id);
-						break;
-					case THICKNESS:
-						__thickness(id);
-						break;
-					case SHAPE:
-						__edge_shape(id);
-						break;
-					default:
-						throw newParseError(
+						case ATTVALUES:
+							defined.addAll(__attvalues(ClassType.EDGE, id));
+							break;
+						case SPELLS:
+							__spells();
+							break;
+						case COLOR:
+							__color(ClassType.EDGE, id);
+							break;
+						case THICKNESS:
+							__thickness(id);
+							break;
+						case SHAPE:
+							__edge_shape(id);
+							break;
+						default:
+							throw newParseError(
 								e,
 								"edge children should be one of 'attvalues', 'color', 'thicknes', 'shape' or 'spells'");
 					}
 				} catch (IllegalArgumentException ex) {
 					throw newParseError(e, "unknown tag '%s'", e
-							.asStartElement().getName().getLocalPart());
+						.asStartElement().getName().getLocalPart());
 				}
 
 				e = getNextEvent();
 			}
 
 			for (String key : edgeAttributesDefinition.keySet()) {
-				if (!defined.contains(key))
+				if (!defined.contains(key)) {
 					sendEdgeAttributeAdded(sourceId, id, key,
-							edgeAttributesDefinition.get(key).def);
+						edgeAttributesDefinition.get(key).def);
+				}
 			}
 
 			checkValid(e, XMLEvent.END_ELEMENT, "edge");
@@ -1190,7 +1205,7 @@ public class FileSourceGEXF extends FileSourceXML {
 		 */
 		@SuppressWarnings("unused")
 		private void __edge_shape(String edgeId) throws IOException,
-				XMLStreamException {
+			XMLStreamException {
 			XMLEvent e;
 			EnumMap<EDGESHAPEAttribute, String> attributes;
 			EdgeShapeType type;
@@ -1199,19 +1214,18 @@ public class FileSourceGEXF extends FileSourceXML {
 			checkValid(e, XMLEvent.START_ELEMENT, "shape");
 
 			attributes = getAttributes(EDGESHAPEAttribute.class,
-					e.asStartElement());
+				e.asStartElement());
 			checkRequiredAttributes(e, attributes, EDGESHAPEAttribute.VALUE);
 
 			try {
 				type = EdgeShapeType.valueOf(toConstantName(attributes
-						.get(EDGESHAPEAttribute.VALUE)));
+					.get(EDGESHAPEAttribute.VALUE)));
 			} catch (IllegalArgumentException ex) {
 				throw newParseError(e,
-						"'value' of shape should be one of 'solid', 'dotted', 'dashed' or 'double'");
+					"'value' of shape should be one of 'solid', 'dotted', 'dashed' or 'double'");
 			}
 
 			// TODO Handle shape of edges
-
 			e = getNextEvent();
 
 			if (isEvent(e, XMLEvent.START_ELEMENT, "spells")) {
@@ -1232,7 +1246,7 @@ public class FileSourceGEXF extends FileSourceXML {
 		 * </pre>
 		 */
 		private void __thickness(String edgeId) throws IOException,
-				XMLStreamException {
+			XMLStreamException {
 			XMLEvent e;
 			EnumMap<THICKNESSAttribute, String> attributes;
 
@@ -1240,7 +1254,7 @@ public class FileSourceGEXF extends FileSourceXML {
 			checkValid(e, XMLEvent.START_ELEMENT, "thickness");
 
 			attributes = getAttributes(THICKNESSAttribute.class,
-					e.asStartElement());
+				e.asStartElement());
 
 			checkRequiredAttributes(e, attributes, THICKNESSAttribute.VALUE);
 

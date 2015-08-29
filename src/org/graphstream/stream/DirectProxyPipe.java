@@ -29,4 +29,56 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.graph;
+package org.graphstream.stream;
+
+import java.util.Objects;
+import org.graphstream.stream.thread.ThreadProxyPipe;
+
+/**
+ * This is a pseudo-ProxyPipe. The behavior of this class imitates a regular
+ * Pipe, but has the empty methods of ProxyPipe.
+ *
+ *
+ */
+public class DirectProxyPipe extends PipeBase implements ProxyPipe {
+
+	public static DirectProxyPipe create() {
+		return new DirectProxyPipe();
+	}
+
+	public static DirectProxyPipe create(Source source) {
+		DirectProxyPipe tpp = new DirectProxyPipe();
+		source.addSink(tpp);
+		return tpp;
+	}
+
+	public static DirectProxyPipe createAndReplay(Source source) {
+		Objects.requireNonNull(source, "Source must not be null");
+		DirectProxyPipe dpp = new DirectProxyPipe();
+
+		source.addSink(dpp);
+
+		if (source instanceof Replayable) {
+			Replayable.Controller rc = ((Replayable) source).getReplayController();
+			rc.addSink(dpp);
+			rc.replay();
+		}
+
+		return dpp;
+	}
+
+	protected DirectProxyPipe() {
+	}
+
+	@Override
+	public void pump() {
+	}
+
+	@Override
+	public void blockingPump() throws InterruptedException {
+	}
+
+	@Override
+	public void blockingPump(long timeout) throws InterruptedException {
+	}
+}

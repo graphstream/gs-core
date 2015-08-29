@@ -49,8 +49,9 @@ public class BreadthFirstIterator<T extends Node> implements Iterator<T> {
 		depth = new int[n];
 
 		int s = startNode.getIndex();
-		for (int i = 0; i < n; i++)
+		for (int i = 0; i < n; i++) {
 			depth[i] = i == s ? 0 : -1;
+		}
 		queue[0] = startNode;
 		qHead = 0;
 		qTail = 1;
@@ -60,18 +61,21 @@ public class BreadthFirstIterator<T extends Node> implements Iterator<T> {
 		this(startNode, true);
 	}
 
+	@Override
 	public boolean hasNext() {
 		return qHead < qTail;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public T next() {
-		if (qHead >= qTail)
+		if (qHead >= qTail) {
 			throw new NoSuchElementException();
+		}
 		Node current = queue[qHead++];
 		int level = depth[current.getIndex()] + 1;
 		Iterable<Edge> edges = directed ? current.getEachLeavingEdge()
-				: current.getEachEdge();
+			: current.getEachEdge();
 		for (Edge e : edges) {
 			Node node = e.getOpposite(current);
 			int j = node.getIndex();
@@ -80,12 +84,13 @@ public class BreadthFirstIterator<T extends Node> implements Iterator<T> {
 				depth[j] = level;
 			}
 		}
-		return (T)current;
+		return (T) current;
 	}
 
+	@Override
 	public void remove() {
 		throw new UnsupportedOperationException(
-				"This iterator does not support remove");
+			"This iterator does not support remove");
 	}
 
 	public int getDepthOf(Node node) {

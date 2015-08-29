@@ -40,7 +40,7 @@ import java.util.TreeMap;
 
 /**
  * A cache for fonts.
- * 
+ *
  * <p>
  * This cache allows to avoid reloading fonts and allows to quickly lookup a
  * font based on its name, its style (bold, italic) and its size.
@@ -73,7 +73,7 @@ public class FontCache {
 
 	/**
 	 * The default font.
-	 * 
+	 *
 	 * @return A font.
 	 */
 	public Font getDefaultFont() {
@@ -81,14 +81,15 @@ public class FontCache {
 	}
 
 	/**
-	 * Default singleton instance for shared font cache. This method and cache
-	 * can only be used in the Swing thread.
-	 * 
+	 * Default singleton instance for shared font cache. This method and
+	 * cache can only be used in the Swing thread.
+	 *
 	 * @return The default singleton font cache instance.
 	 */
 	public static FontCache defaultFontCache() {
-		if (defaultFontCache == null)
+		if (defaultFontCache == null) {
 			defaultFontCache = new FontCache();
+		}
 
 		return defaultFontCache;
 	}
@@ -98,15 +99,13 @@ public class FontCache {
 	}
 
 	/**
-	 * Lookup a font, and if not found, try to load it, if still not available,
-	 * return the default font.
-	 * 
-	 * @param name
-	 *            The font name.
-	 * @param style
-	 *            A style, taken from the styles available in the style sheets.
-	 * @param size
-	 *            The font size in points.
+	 * Lookup a font, and if not found, try to load it, if still not
+	 * available, return the default font.
+	 *
+	 * @param name The font name.
+	 * @param style A style, taken from the styles available in the style
+	 *              sheets.
+	 * @param size The font size in points.
 	 * @return A font.
 	 */
 	public Font getFont(String name, StyleConstants.TextStyle style, int size) {
@@ -123,7 +122,7 @@ public class FontCache {
 
 /**
  * simple container for a font name.
- * 
+ *
  * <p>
  * This container allows to group all the fonts that match a name. It stores the
  * font for sizes and styles.
@@ -147,37 +146,41 @@ class FontSlot {
 
 	protected Map<Integer, Font> mapFromStyle(StyleConstants.TextStyle style) {
 		switch (style) {
-		case BOLD:
-			if (bold == null)
-				bold = new HashMap<Integer, Font>();
-			return bold;
-		case ITALIC:
-			if (italic == null)
-				italic = new HashMap<Integer, Font>();
-			return italic;
-		case BOLD_ITALIC:
-			if (boldItalic == null)
-				boldItalic = new HashMap<Integer, Font>();
-			return boldItalic;
-		case NORMAL:
-		default:
-			if (normal == null)
-				normal = new HashMap<Integer, Font>();
-			return normal;
+			case BOLD:
+				if (bold == null) {
+					bold = new HashMap<Integer, Font>();
+				}
+				return bold;
+			case ITALIC:
+				if (italic == null) {
+					italic = new HashMap<Integer, Font>();
+				}
+				return italic;
+			case BOLD_ITALIC:
+				if (boldItalic == null) {
+					boldItalic = new HashMap<Integer, Font>();
+				}
+				return boldItalic;
+			case NORMAL:
+			default:
+				if (normal == null) {
+					normal = new HashMap<Integer, Font>();
+				}
+				return normal;
 		}
 	}
 
 	protected int toJavaStyle(StyleConstants.TextStyle style) {
 		switch (style) {
-		case BOLD:
-			return Font.BOLD;
-		case ITALIC:
-			return Font.ITALIC;
-		case BOLD_ITALIC:
-			return Font.BOLD + Font.ITALIC;
-		case NORMAL:
-		default:
-			return Font.PLAIN;
+			case BOLD:
+				return Font.BOLD;
+			case ITALIC:
+				return Font.ITALIC;
+			case BOLD_ITALIC:
+				return Font.BOLD + Font.ITALIC;
+			case NORMAL:
+			default:
+				return Font.PLAIN;
 		}
 	}
 
@@ -201,8 +204,9 @@ class FontSlot {
 
 		Font font = map.get(size);
 
-		if (font == null)
+		if (font == null) {
 			font = insert(map, toJavaStyle(style), size);
+		}
 
 		return font;
 	}

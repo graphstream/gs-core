@@ -50,7 +50,6 @@ public class GEXFNode implements GEXFElement {
 	boolean position;
 
 	//
-
 	public GEXFNode(GEXF root, String id) {
 		this.root = root;
 
@@ -85,8 +84,9 @@ public class GEXFNode implements GEXFElement {
 
 		attvalues.export(stream);
 
-		if (root.isExtensionEnable(Extension.DYNAMICS))
+		if (root.isExtensionEnable(Extension.DYNAMICS)) {
 			spells.export(stream);
+		}
 
 		stream.endElement(); // SPELLS
 	}

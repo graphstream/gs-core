@@ -47,31 +47,35 @@ public class GEXFAttValues implements GEXFElement {
 	}
 
 	public void attributeUpdated(GEXFAttribute decl, Object value) {
-		if (!values.containsKey(decl.id))
+		if (!values.containsKey(decl.id)) {
 			values.put(decl.id, new LinkedList<GEXFAttValue>());
+		}
 
 		LinkedList<GEXFAttValue> attr = values.get(decl.id);
 
 		if (value != null) {
 			if (attr.size() > 0) {
-				if (attr.getLast().start == root.step)
+				if (attr.getLast().start == root.step) {
 					attr.removeLast();
-				else
+				} else {
 					attr.getLast().end = root.step;
+				}
 			}
 
 			GEXFAttValue av = new GEXFAttValue(root, Integer.toString(decl.id),
-					formatValue(value));
+				formatValue(value));
 			attr.add(av);
 		} else {
-			if (attr.size() > 0)
+			if (attr.size() > 0) {
 				attr.getLast().end = root.step;
+			}
 		}
 	}
 
 	String formatValue(Object o) {
-		if (o == null)
+		if (o == null) {
 			return "<null>";
+		}
 
 		if (o.getClass().isArray()) {
 			StringBuilder buffer = new StringBuilder();
@@ -79,11 +83,13 @@ public class GEXFAttValues implements GEXFElement {
 			for (int i = 0; i < Array.getLength(o); i++) {
 				Object ochild = Array.get(o, i);
 
-				if (i > 0)
+				if (i > 0) {
 					buffer.append("|");
+				}
 
-				if (ochild != null)
+				if (ochild != null) {
 					buffer.append(ochild.toString());
+				}
 			}
 
 			o = buffer;
@@ -100,14 +106,16 @@ public class GEXFAttValues implements GEXFElement {
 	 * .file.gexf.SmartXMLWriter)
 	 */
 	public void export(SmartXMLWriter stream) throws XMLStreamException {
-		if (values.size() == 0)
+		if (values.size() == 0) {
 			return;
+		}
 
 		stream.startElement("attvalues");
 
 		for (LinkedList<GEXFAttValue> attrValues : values.values()) {
-			for (int i = 0; i < attrValues.size(); i++)
+			for (int i = 0; i < attrValues.size(); i++) {
 				attrValues.get(i).export(stream);
+			}
 		}
 
 		stream.endElement(); // ATTVALUES

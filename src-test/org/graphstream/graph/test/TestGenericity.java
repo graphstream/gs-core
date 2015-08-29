@@ -55,7 +55,7 @@ import static org.junit.Assert.*;
 public class TestGenericity {
 	protected static class BadTypedNode extends SingleNode {
 		public BadTypedNode(Graph graph, String id) {
-			super((AbstractGraph) graph, id);
+			super(id, (AbstractGraph) graph);
 		}
 	}
 
@@ -67,7 +67,7 @@ public class TestGenericity {
 
 	protected static class MyALGNode extends AdjacencyListNode {
 		public MyALGNode(Graph graph, String id) {
-			super((AbstractGraph)graph, id);
+			super(id, (AbstractGraph)graph);
 		}
 	}
 
@@ -92,7 +92,7 @@ public class TestGenericity {
 
 	protected static class MySingleNode extends SingleNode {
 		public MySingleNode(Graph graph, String id) {
-			super((AbstractGraph)graph, id);
+			super(id, (AbstractGraph)graph);
 		}
 	}
 
@@ -119,7 +119,7 @@ public class TestGenericity {
 
 	protected static class MyMultiNode extends MultiNode {
 		public MyMultiNode(Graph graph, String id) {
-			super((AbstractGraph)graph, id);
+			super(id, (AbstractGraph)graph);
 		}
 	}
 

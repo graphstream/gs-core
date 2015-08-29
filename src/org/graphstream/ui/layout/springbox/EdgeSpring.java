@@ -35,7 +35,7 @@ import org.graphstream.ui.geom.Vector3;
 
 /**
  * Edge representation.
- * 
+ *
  * <p>
  * This is mainly used to store data about an edge, all the computation is done
  * in the node particle.
@@ -79,13 +79,10 @@ public class EdgeSpring {
 
 	/**
 	 * New edge between two given nodes.
-	 * 
-	 * @param id
-	 *            The edge identifier.
-	 * @param n0
-	 *            The first node.
-	 * @param n1
-	 *            The second node.
+	 *
+	 * @param id The edge identifier.
+	 * @param n0 The first node.
+	 * @param n1 The second node.
 	 */
 	public EdgeSpring(String id, NodeParticle n0, NodeParticle n1) {
 		this.id = id;
@@ -94,11 +91,10 @@ public class EdgeSpring {
 	}
 
 	/**
-	 * Considering the two nodes of the edge, return the one that was not given
-	 * as argument.
-	 * 
-	 * @param node
-	 *            One of the nodes of the edge.
+	 * Considering the two nodes of the edge, return the one that was not
+	 * given as argument.
+	 *
+	 * @param node One of the nodes of the edge.
 	 * @return The other node.
 	 */
 	public NodeParticle getOpposite(NodeParticle node) {

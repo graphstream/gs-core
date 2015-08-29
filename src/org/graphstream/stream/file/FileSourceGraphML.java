@@ -68,16 +68,16 @@ import org.graphstream.stream.SourceBase;
  * <li>application-specific attribute data, and</li>
  * <li>light-weight parsers.</li>
  * </ul>
- * 
+ *
  * Unlike many other file formats for graphs, GraphML does not use a custom
  * syntax. Instead, it is based on XML and hence ideally suited as a common
  * denominator for all kinds of services generating, archiving, or processing
  * graphs.
- * 
+ *
  * <a href="http://graphml.graphdrawing.org/index.html">Source</a>
  */
 public class FileSourceGraphML extends SourceBase implements FileSource,
-		XMLStreamConstants {
+	XMLStreamConstants {
 
 	protected static enum Balise {
 		GRAPHML, GRAPH, NODE, EDGE, HYPEREDGE, DESC, DATA, LOCATOR, PORT, KEY, DEFAULT
@@ -144,22 +144,23 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 		}
 
 		Object getKeyValue(String value) {
-			if (value == null)
+			if (value == null) {
 				return null;
+			}
 
 			switch (type) {
-			case STRING:
-				return value;
-			case INT:
-				return Integer.valueOf(value);
-			case LONG:
-				return Long.valueOf(value);
-			case FLOAT:
-				return Float.valueOf(value);
-			case DOUBLE:
-				return Double.valueOf(value);
-			case BOOLEAN:
-				return Boolean.valueOf(value);
+				case STRING:
+					return value;
+				case INT:
+					return Integer.valueOf(value);
+				case LONG:
+					return Long.valueOf(value);
+				case FLOAT:
+					return Float.valueOf(value);
+				case DOUBLE:
+					return Double.valueOf(value);
+				case BOOLEAN:
+					return Boolean.valueOf(value);
 			}
 
 			return value;
@@ -350,8 +351,9 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 	protected XMLEvent getNextEvent() throws IOException, XMLStreamException {
 		skipWhiteSpaces();
 
-		if (events.size() > 0)
+		if (events.size() > 0) {
 			return events.pop();
+		}
 
 		return reader.nextEvent();
 	}
@@ -361,7 +363,7 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 	}
 
 	private XMLStreamException newParseError(XMLEvent e, String msg,
-			Object... args) {
+		Object... args) {
 		return new XMLStreamException(String.format(msg, args), e.getLocation());
 	}
 
@@ -370,23 +372,23 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 
 		if (valid) {
 			switch (type) {
-			case START_ELEMENT:
-				valid = e.asStartElement().getName().getLocalPart()
+				case START_ELEMENT:
+					valid = e.asStartElement().getName().getLocalPart()
 						.equals(name);
-				break;
-			case END_ELEMENT:
-				valid = e.asEndElement().getName().getLocalPart().equals(name);
-				break;
-			case ATTRIBUTE:
-				valid = ((Attribute) e).getName().getLocalPart().equals(name);
-				break;
-			case CHARACTERS:
-			case NAMESPACE:
-			case PROCESSING_INSTRUCTION:
-			case COMMENT:
-			case START_DOCUMENT:
-			case END_DOCUMENT:
-			case DTD:
+					break;
+				case END_ELEMENT:
+					valid = e.asEndElement().getName().getLocalPart().equals(name);
+					break;
+				case ATTRIBUTE:
+					valid = ((Attribute) e).getName().getLocalPart().equals(name);
+					break;
+				case CHARACTERS:
+				case NAMESPACE:
+				case PROCESSING_INSTRUCTION:
+				case COMMENT:
+				case START_DOCUMENT:
+				case END_DOCUMENT:
+				case DTD:
 			}
 		}
 
@@ -394,27 +396,28 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 	}
 
 	private void checkValid(XMLEvent e, int type, String name)
-			throws XMLStreamException {
+		throws XMLStreamException {
 		boolean valid = isEvent(e, type, name);
 
-		if (!valid)
+		if (!valid) {
 			throw newParseError(e, "expecting %s, got %s", gotWhat(type, name),
-					gotWhat(e));
+				gotWhat(e));
+		}
 	}
 
 	private String gotWhat(XMLEvent e) {
 		String v = null;
 
 		switch (e.getEventType()) {
-		case START_ELEMENT:
-			v = e.asStartElement().getName().getLocalPart();
-			break;
-		case END_ELEMENT:
-			v = e.asEndElement().getName().getLocalPart();
-			break;
-		case ATTRIBUTE:
-			v = ((Attribute) e).getName().getLocalPart();
-			break;
+			case START_ELEMENT:
+				v = e.asStartElement().getName().getLocalPart();
+				break;
+			case END_ELEMENT:
+				v = e.asEndElement().getName().getLocalPart();
+				break;
+			case ATTRIBUTE:
+				v = ((Attribute) e).getName().getLocalPart();
+				break;
 		}
 
 		return gotWhat(e.getEventType(), v);
@@ -422,45 +425,45 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 
 	private String gotWhat(int type, String v) {
 		switch (type) {
-		case START_ELEMENT:
-			return String.format("'<%s>'", v);
-		case END_ELEMENT:
-			return String.format("'</%s>'", v);
-		case ATTRIBUTE:
-			return String.format("attribute '%s'", v);
-		case NAMESPACE:
-			return "namespace";
-		case PROCESSING_INSTRUCTION:
-			return "processing instruction";
-		case COMMENT:
-			return "comment";
-		case START_DOCUMENT:
-			return "document start";
-		case END_DOCUMENT:
-			return "document end";
-		case DTD:
-			return "dtd";
-		case CHARACTERS:
-			return "characters";
-		default:
-			return "UNKNOWN";
+			case START_ELEMENT:
+				return String.format("'<%s>'", v);
+			case END_ELEMENT:
+				return String.format("'</%s>'", v);
+			case ATTRIBUTE:
+				return String.format("attribute '%s'", v);
+			case NAMESPACE:
+				return "namespace";
+			case PROCESSING_INSTRUCTION:
+				return "processing instruction";
+			case COMMENT:
+				return "comment";
+			case START_DOCUMENT:
+				return "document start";
+			case END_DOCUMENT:
+				return "document end";
+			case DTD:
+				return "dtd";
+			case CHARACTERS:
+				return "characters";
+			default:
+				return "UNKNOWN";
 		}
 	}
 
 	private Object getValue(Data data) {
 		switch (data.key.type) {
-		case BOOLEAN:
-			return Boolean.parseBoolean(data.value);
-		case INT:
-			return Integer.parseInt(data.value);
-		case LONG:
-			return Long.parseLong(data.value);
-		case FLOAT:
-			return Float.parseFloat(data.value);
-		case DOUBLE:
-			return Double.parseDouble(data.value);
-		case STRING:
-			return data.value;
+			case BOOLEAN:
+				return Boolean.parseBoolean(data.value);
+			case INT:
+				return Integer.parseInt(data.value);
+			case LONG:
+				return Long.parseLong(data.value);
+			case FLOAT:
+				return Float.parseFloat(data.value);
+			case DOUBLE:
+				return Double.parseDouble(data.value);
+			case STRING:
+				return data.value;
 		}
 
 		return data.value;
@@ -468,33 +471,38 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 
 	private Object getDefaultValue(Key key) {
 		switch (key.type) {
-		case BOOLEAN:
-			return Boolean.TRUE;
-		case INT:
-			if (key.def != null)
-				return Integer.valueOf(key.def);
+			case BOOLEAN:
+				return Boolean.TRUE;
+			case INT:
+				if (key.def != null) {
+					return Integer.valueOf(key.def);
+				}
 
-			return Integer.valueOf(0);
-		case LONG:
-			if (key.def != null)
-				return Long.valueOf(key.def);
+				return Integer.valueOf(0);
+			case LONG:
+				if (key.def != null) {
+					return Long.valueOf(key.def);
+				}
 
-			return Long.valueOf(0);
-		case FLOAT:
-			if (key.def != null)
-				return Float.valueOf(key.def);
+				return Long.valueOf(0);
+			case FLOAT:
+				if (key.def != null) {
+					return Float.valueOf(key.def);
+				}
 
-			return Float.valueOf(0.0f);
-		case DOUBLE:
-			if (key.def != null)
-				return Double.valueOf(key.def);
+				return Float.valueOf(0.0f);
+			case DOUBLE:
+				if (key.def != null) {
+					return Double.valueOf(key.def);
+				}
 
-			return Double.valueOf(0.0);
-		case STRING:
-			if (key.def != null)
-				return key.def;
+				return Double.valueOf(0.0);
+			case STRING:
+				if (key.def != null) {
+					return key.def;
+				}
 
-			return "";
+				return "";
 		}
 
 		return key.def != null ? key.def : Boolean.TRUE;
@@ -504,19 +512,21 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 		XMLEvent e;
 
 		do {
-			if (events.size() > 0)
+			if (events.size() > 0) {
 				e = events.pop();
-			else
+			} else {
 				e = reader.nextEvent();
+			}
 		} while (isEvent(e, XMLEvent.CHARACTERS, null)
-				&& e.asCharacters().getData().matches("^\\s*$"));
+			&& e.asCharacters().getData().matches("^\\s*$"));
 
 		pushback(e);
 	}
 
 	protected void openStream(Reader stream) throws IOException {
-		if (reader != null)
+		if (reader != null) {
 			closeStream();
+		}
 
 		try {
 			XMLEvent e;
@@ -555,7 +565,7 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 	 * <pre>
 	 * <!ELEMENT graphml  ((desc)?,(key)*,((data)|(graph))*)>
 	 * </pre>
-	 * 
+	 *
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
@@ -582,7 +592,7 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 		}
 
 		while (isEvent(e, XMLEvent.START_ELEMENT, "data")
-				|| isEvent(e, XMLEvent.START_ELEMENT, "graph")) {
+			|| isEvent(e, XMLEvent.START_ELEMENT, "graph")) {
 			pushback(e);
 
 			if (isEvent(e, XMLEvent.START_ELEMENT, "data")) {
@@ -617,9 +627,8 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 	 * <pre>
 	 * <!ELEMENT desc (#PCDATA)>
 	 * </pre>
-	 * 
-	 * @return
-	 * @throws IOException
+	 *
+	 * @return @throws IOException
 	 * @throws XMLStreamException
 	 */
 	private String __desc() throws IOException, XMLStreamException {
@@ -640,15 +649,14 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 	/**
 	 * <pre>
 	 * <!ELEMENT locator EMPTY>
-	 * <!ATTLIST locator 
+	 * <!ATTLIST locator
 	 *           xmlns:xlink   CDATA    #FIXED    "http://www.w3.org/TR/2000/PR-xlink-20001220/"
 	 *           xlink:href    CDATA    #REQUIRED
 	 *           xlink:type    (simple) #FIXED    "simple"
 	 * >
 	 * </pre>
-	 * 
-	 * @return
-	 * @throws IOException
+	 *
+	 * @return @throws IOException
 	 * @throws XMLStreamException
 	 */
 	private Locator __locator() throws IOException, XMLStreamException {
@@ -659,7 +667,7 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 
 		@SuppressWarnings("unchecked")
 		Iterator<? extends Attribute> attributes = e.asStartElement()
-				.getAttributes();
+			.getAttributes();
 
 		Locator loc = new Locator();
 
@@ -668,30 +676,31 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 
 			try {
 				LocatorAttribute attribute = LocatorAttribute
-						.valueOf(toConstantName(a));
+					.valueOf(toConstantName(a));
 
 				switch (attribute) {
-				case XMLNS_XLINK:
-					loc.xlink = a.getValue();
-					break;
-				case XLINK_HREF:
-					loc.href = a.getValue();
-					break;
-				case XLINK_TYPE:
-					loc.type = a.getValue();
-					break;
+					case XMLNS_XLINK:
+						loc.xlink = a.getValue();
+						break;
+					case XLINK_HREF:
+						loc.href = a.getValue();
+						break;
+					case XLINK_TYPE:
+						loc.type = a.getValue();
+						break;
 				}
 			} catch (IllegalArgumentException ex) {
 				throw newParseError(e, "invalid locator attribute '%s'", a
-						.getName().getLocalPart());
+					.getName().getLocalPart());
 			}
 		}
 
 		e = getNextEvent();
 		checkValid(e, XMLEvent.END_ELEMENT, "locator");
 
-		if (loc.href == null)
+		if (loc.href == null) {
 			throw newParseError(e, "locator requires an href");
+		}
 
 		return loc;
 	}
@@ -699,12 +708,12 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 	/**
 	 * <pre>
 	 * <!ELEMENT key (#PCDATA)>
-	 * <!ATTLIST key 
+	 * <!ATTLIST key
 	 *           id  ID                                            #REQUIRED
 	 *           for (graphml|graph|node|edge|hyperedge|port|endpoint|all) "all"
 	 * >
 	 * </pre>
-	 * 
+	 *
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
@@ -716,7 +725,7 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 
 		@SuppressWarnings("unchecked")
 		Iterator<? extends Attribute> attributes = e.asStartElement()
-				.getAttributes();
+			.getAttributes();
 
 		String id = null;
 		KeyDomain domain = KeyDomain.ALL;
@@ -729,41 +738,41 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 
 			try {
 				KeyAttribute attribute = KeyAttribute
-						.valueOf(toConstantName(a));
+					.valueOf(toConstantName(a));
 
 				switch (attribute) {
-				case ID:
-					id = a.getValue();
+					case ID:
+						id = a.getValue();
 
-					break;
-				case FOR:
-					try {
-						domain = KeyDomain
+						break;
+					case FOR:
+						try {
+							domain = KeyDomain
 								.valueOf(toConstantName(a.getValue()));
-					} catch (IllegalArgumentException ex) {
-						throw newParseError(e, "invalid key domain '%s'",
+						} catch (IllegalArgumentException ex) {
+							throw newParseError(e, "invalid key domain '%s'",
 								a.getValue());
-					}
+						}
 
-					break;
-				case ATTR_TYPE:
-					try {
-						type = KeyAttrType
+						break;
+					case ATTR_TYPE:
+						try {
+							type = KeyAttrType
 								.valueOf(toConstantName(a.getValue()));
-					} catch (IllegalArgumentException ex) {
-						throw newParseError(e, "invalid key type '%s'",
+						} catch (IllegalArgumentException ex) {
+							throw newParseError(e, "invalid key type '%s'",
 								a.getValue());
-					}
+						}
 
-					break;
-				case ATTR_NAME:
-					name = a.getValue();
+						break;
+					case ATTR_NAME:
+						name = a.getValue();
 
-					break;
+						break;
 				}
 			} catch (IllegalArgumentException ex) {
 				throw newParseError(e, "invalid key attribute '%s'", a
-						.getName().getLocalPart());
+					.getName().getLocalPart());
 			}
 		}
 
@@ -780,11 +789,13 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 
 		checkValid(e, XMLEvent.END_ELEMENT, "key");
 
-		if (id == null)
+		if (id == null) {
 			throw newParseError(e, "key requires an id");
+		}
 
-		if (name == null)
+		if (name == null) {
 			name = id;
+		}
 
 		System.out.printf("add key \"%s\"\n", id);
 
@@ -804,9 +815,8 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 	 *           name    NMTOKEN  #REQUIRED
 	 * >
 	 * </pre>
-	 * 
-	 * @return
-	 * @throws IOException
+	 *
+	 * @return @throws IOException
 	 * @throws XMLStreamException
 	 */
 	private Port __port() throws IOException, XMLStreamException {
@@ -818,28 +828,29 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 		Port port = new Port();
 		@SuppressWarnings("unchecked")
 		Iterator<? extends Attribute> attributes = e.asStartElement()
-				.getAttributes();
+			.getAttributes();
 		while (attributes.hasNext()) {
 			Attribute a = attributes.next();
 
 			try {
 				PortAttribute attribute = PortAttribute
-						.valueOf(toConstantName(a));
+					.valueOf(toConstantName(a));
 
 				switch (attribute) {
-				case NAME:
-					port.name = a.getValue();
-					break;
+					case NAME:
+						port.name = a.getValue();
+						break;
 				}
 			} catch (IllegalArgumentException ex) {
 				throw newParseError(e, "invalid attribute '%s' for '<port>'", a
-						.getName().getLocalPart());
+					.getName().getLocalPart());
 			}
 		}
 
-		if (port.name == null)
+		if (port.name == null) {
 			throw newParseError(e,
-					"'<port>' element requires a 'name' attribute");
+				"'<port>' element requires a 'name' attribute");
+		}
 
 		e = getNextEvent();
 		if (isEvent(e, XMLEvent.START_ELEMENT, "desc")) {
@@ -847,7 +858,7 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 			port.desc = __desc();
 		} else {
 			while (isEvent(e, XMLEvent.START_ELEMENT, "data")
-					|| isEvent(e, XMLEvent.START_ELEMENT, "port")) {
+				|| isEvent(e, XMLEvent.START_ELEMENT, "port")) {
 				if (isEvent(e, XMLEvent.START_ELEMENT, "data")) {
 					Data data;
 
@@ -877,16 +888,15 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 	/**
 	 * <pre>
 	 * <!ELEMENT endpoint ((desc)?)>
-	 * <!ATTLIST endpoint 
+	 * <!ATTLIST endpoint
 	 *           id    ID             #IMPLIED
 	 *           node  IDREF          #REQUIRED
 	 *           port  NMTOKEN        #IMPLIED
 	 *           type  (in|out|undir) "undir"
 	 * >
 	 * </pre>
-	 * 
-	 * @return
-	 * @throws IOException
+	 *
+	 * @return @throws IOException
 	 * @throws XMLStreamException
 	 */
 	private EndPoint __endpoint() throws IOException, XMLStreamException {
@@ -897,7 +907,7 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 
 		@SuppressWarnings("unchecked")
 		Iterator<? extends Attribute> attributes = e.asStartElement()
-				.getAttributes();
+			.getAttributes();
 		EndPoint ep = new EndPoint();
 
 		while (attributes.hasNext()) {
@@ -905,39 +915,40 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 
 			try {
 				EndPointAttribute attribute = EndPointAttribute
-						.valueOf(toConstantName(a));
+					.valueOf(toConstantName(a));
 
 				switch (attribute) {
-				case NODE:
-					ep.node = a.getValue();
-					break;
-				case ID:
-					ep.id = a.getValue();
-					break;
-				case PORT:
-					ep.port = a.getValue();
-					break;
-				case TYPE:
-					try {
-						ep.type = EndPointType.valueOf(toConstantName(a
+					case NODE:
+						ep.node = a.getValue();
+						break;
+					case ID:
+						ep.id = a.getValue();
+						break;
+					case PORT:
+						ep.port = a.getValue();
+						break;
+					case TYPE:
+						try {
+							ep.type = EndPointType.valueOf(toConstantName(a
 								.getValue()));
-					} catch (IllegalArgumentException ex) {
-						throw newParseError(e, "invalid end point type '%s'",
+						} catch (IllegalArgumentException ex) {
+							throw newParseError(e, "invalid end point type '%s'",
 								a.getValue());
-					}
+						}
 
-					break;
+						break;
 				}
 			} catch (IllegalArgumentException ex) {
 				throw newParseError(e,
-						"invalid attribute '%s' for '<endpoint>'", a.getName()
-								.getLocalPart());
+					"invalid attribute '%s' for '<endpoint>'", a.getName()
+					.getLocalPart());
 			}
 		}
 
-		if (ep.node == null)
+		if (ep.node == null) {
 			throw newParseError(e,
-					"'<endpoint>' element requires a 'node' attribute");
+				"'<endpoint>' element requires a 'node' attribute");
+		}
 
 		e = getNextEvent();
 
@@ -955,14 +966,13 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 	/**
 	 * <pre>
 	 * <!ELEMENT data  (#PCDATA)>
-	 * <!ATTLIST data 
+	 * <!ATTLIST data
 	 *           key      IDREF        #REQUIRED
 	 *           id       ID           #IMPLIED
 	 * >
 	 * </pre>
-	 * 
-	 * @return
-	 * @throws IOException
+	 *
+	 * @return @throws IOException
 	 * @throws XMLStreamException
 	 */
 	private Data __data() throws IOException, XMLStreamException {
@@ -974,7 +984,7 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 
 		@SuppressWarnings("unchecked")
 		Iterator<? extends Attribute> attributes = e.asStartElement()
-				.getAttributes();
+			.getAttributes();
 		String key = null, id = null;
 
 		while (attributes.hasNext()) {
@@ -982,25 +992,26 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 
 			try {
 				DataAttribute attribute = DataAttribute
-						.valueOf(toConstantName(a));
+					.valueOf(toConstantName(a));
 
 				switch (attribute) {
-				case KEY:
-					key = a.getValue();
-					break;
-				case ID:
-					id = a.getValue();
-					break;
+					case KEY:
+						key = a.getValue();
+						break;
+					case ID:
+						id = a.getValue();
+						break;
 				}
 			} catch (IllegalArgumentException ex) {
 				throw newParseError(e, "invalid attribute '%s' for '<data>'", a
-						.getName().getLocalPart());
+					.getName().getLocalPart());
 			}
 		}
 
-		if (key == null)
+		if (key == null) {
 			throw newParseError(e,
-					"'<data>' element must have a 'key' attribute");
+				"'<data>' element must have a 'key' attribute");
+		}
 
 		e = getNextEvent();
 
@@ -1011,8 +1022,9 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 
 		checkValid(e, XMLEvent.END_ELEMENT, "data");
 
-		if (keys.containsKey(key))
+		if (keys.containsKey(key)) {
 			newParseError(e, "unknown key '%s'", key);
+		}
 
 		Data d = new Data();
 
@@ -1026,12 +1038,12 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 	/**
 	 * <pre>
 	 * <!ELEMENT graph    ((desc)?,((((data)|(node)|(edge)|(hyperedge))*)|(locator)))>
-	 * <!ATTLIST graph    
+	 * <!ATTLIST graph
 	 *     id          ID                    #IMPLIED
 	 *     edgedefault (directed|undirected) #REQUIRED
 	 * >
 	 * </pre>
-	 * 
+	 *
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
@@ -1043,7 +1055,7 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 
 		@SuppressWarnings("unchecked")
 		Iterator<? extends Attribute> attributes = e.asStartElement()
-				.getAttributes();
+			.getAttributes();
 
 		String id = null;
 		String desc = null;
@@ -1055,43 +1067,47 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 
 			try {
 				GraphAttribute attribute = GraphAttribute
-						.valueOf(toConstantName(a));
+					.valueOf(toConstantName(a));
 
 				switch (attribute) {
-				case ID:
-					id = a.getValue();
-					break;
-				case EDGEDEFAULT:
-					if (a.getValue().equals("directed"))
-						directed = true;
-					else if (a.getValue().equals("undirected"))
-						directed = false;
-					else
-						throw newParseError(e,
+					case ID:
+						id = a.getValue();
+						break;
+					case EDGEDEFAULT:
+						if (a.getValue().equals("directed")) {
+							directed = true;
+						} else if (a.getValue().equals("undirected")) {
+							directed = false;
+						} else {
+							throw newParseError(e,
 								"invalid 'edgefault' value '%s'", a.getValue());
+						}
 
-					directedSet = true;
+						directedSet = true;
 
-					break;
+						break;
 				}
 			} catch (IllegalArgumentException ex) {
 				throw newParseError(e, "invalid node attribute '%s'", a
-						.getName().getLocalPart());
+					.getName().getLocalPart());
 			}
 		}
 
-		if (!directedSet)
+		if (!directedSet) {
 			throw newParseError(e, "graph requires attribute 'edgedefault'");
+		}
 
 		String gid = "";
 
-		if (graphId.size() > 0)
+		if (graphId.size() > 0) {
 			gid = graphId.peek() + ":";
+		}
 
-		if (id != null)
+		if (id != null) {
 			gid += id;
-		else
+		} else {
 			gid += Integer.toString(graphCounter++);
+		}
 
 		graphId.push(gid);
 
@@ -1113,9 +1129,9 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 			e = getNextEvent();
 		} else {
 			while (isEvent(e, XMLEvent.START_ELEMENT, "data")
-					|| isEvent(e, XMLEvent.START_ELEMENT, "node")
-					|| isEvent(e, XMLEvent.START_ELEMENT, "edge")
-					|| isEvent(e, XMLEvent.START_ELEMENT, "hyperedge")) {
+				|| isEvent(e, XMLEvent.START_ELEMENT, "node")
+				|| isEvent(e, XMLEvent.START_ELEMENT, "edge")
+				|| isEvent(e, XMLEvent.START_ELEMENT, "hyperedge")) {
 				pushback(e);
 
 				if (isEvent(e, XMLEvent.START_ELEMENT, "data")) {
@@ -1139,11 +1155,11 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 	/**
 	 * <pre>
 	 * <!ELEMENT node   (desc?,(((data|port)*,graph?)|locator))>
-	 * <!ATTLIST node   
+	 * <!ATTLIST node
 	 *     		 id        ID      #REQUIRED
 	 * >
 	 * </pre>
-	 * 
+	 *
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
@@ -1155,7 +1171,7 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 
 		@SuppressWarnings("unchecked")
 		Iterator<? extends Attribute> attributes = e.asStartElement()
-				.getAttributes();
+			.getAttributes();
 
 		String id = null;
 		HashSet<Key> sentAttributes = new HashSet<Key>();
@@ -1165,21 +1181,22 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 
 			try {
 				NodeAttribute attribute = NodeAttribute
-						.valueOf(toConstantName(a));
+					.valueOf(toConstantName(a));
 
 				switch (attribute) {
-				case ID:
-					id = a.getValue();
-					break;
+					case ID:
+						id = a.getValue();
+						break;
 				}
 			} catch (IllegalArgumentException ex) {
 				throw newParseError(e, "invalid node attribute '%s'", a
-						.getName().getLocalPart());
+					.getName().getLocalPart());
 			}
 		}
 
-		if (id == null)
+		if (id == null) {
 			throw newParseError(e, "node requires an id");
+		}
 
 		sendNodeAdded(sourceId, id);
 
@@ -1198,7 +1215,7 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 			__locator();
 		} else {
 			while (isEvent(e, XMLEvent.START_ELEMENT, "data")
-					|| isEvent(e, XMLEvent.START_ELEMENT, "port")) {
+				|| isEvent(e, XMLEvent.START_ELEMENT, "port")) {
 				if (isEvent(e, XMLEvent.START_ELEMENT, "data")) {
 					Data data;
 
@@ -1206,7 +1223,7 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 					data = __data();
 
 					sendNodeAttributeAdded(sourceId, id, data.key.name,
-							getValue(data));
+						getValue(data));
 
 					sentAttributes.add(data.key);
 				} else {
@@ -1220,16 +1237,17 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 
 		for (Key k : keys.values()) {
 			if ((k.domain == KeyDomain.NODE || k.domain == KeyDomain.ALL)
-					&& !sentAttributes.contains(k))
+				&& !sentAttributes.contains(k)) {
 				sendNodeAttributeAdded(sourceId, id, k.name, getDefaultValue(k));
+			}
 		}
 
 		if (isEvent(e, XMLEvent.START_ELEMENT, "graph")) {
 			Location loc = e.getLocation();
 
 			System.err.printf(
-					"[WARNING] %d:%d graph inside node is not implemented",
-					loc.getLineNumber(), loc.getColumnNumber());
+				"[WARNING] %d:%d graph inside node is not implemented",
+				loc.getLineNumber(), loc.getColumnNumber());
 
 			pushback(e);
 			__graph();
@@ -1243,7 +1261,7 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 	/**
 	 * <pre>
 	 * <!ELEMENT edge ((desc)?,(data)*,(graph)?)>
-	 * <!ATTLIST edge 
+	 * <!ATTLIST edge
 	 *           id         ID           #IMPLIED
 	 *           source     IDREF        #REQUIRED
 	 *           sourceport NMTOKEN      #IMPLIED
@@ -1252,13 +1270,13 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 	 *           directed   (true|false) #IMPLIED
 	 * >
 	 * </pre>
-	 * 
+	 *
 	 * @param edgedefault
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
 	private void __edge(boolean edgedefault) throws IOException,
-			XMLStreamException {
+		XMLStreamException {
 		XMLEvent e;
 
 		e = getNextEvent();
@@ -1266,7 +1284,7 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 
 		@SuppressWarnings("unchecked")
 		Iterator<? extends Attribute> attributes = e.asStartElement()
-				.getAttributes();
+			.getAttributes();
 
 		HashSet<Key> sentAttributes = new HashSet<Key>();
 		String id = null;
@@ -1279,37 +1297,39 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 
 			try {
 				EdgeAttribute attribute = EdgeAttribute
-						.valueOf(toConstantName(a));
+					.valueOf(toConstantName(a));
 
 				switch (attribute) {
-				case ID:
-					id = a.getValue();
-					break;
-				case DIRECTED:
-					directed = Boolean.parseBoolean(a.getValue());
-					break;
-				case SOURCE:
-					source = a.getValue();
-					break;
-				case TARGET:
-					target = a.getValue();
-					break;
-				case SOURCEPORT:
-				case TARGETPORT:
-					throw newParseError(e,
+					case ID:
+						id = a.getValue();
+						break;
+					case DIRECTED:
+						directed = Boolean.parseBoolean(a.getValue());
+						break;
+					case SOURCE:
+						source = a.getValue();
+						break;
+					case TARGET:
+						target = a.getValue();
+						break;
+					case SOURCEPORT:
+					case TARGETPORT:
+						throw newParseError(e,
 							"sourceport and targetport not implemented");
 				}
 			} catch (IllegalArgumentException ex) {
 				throw newParseError(e, "invalid graph attribute '%s'", a
-						.getName().getLocalPart());
+					.getName().getLocalPart());
 			}
 		}
 
-		if (id == null)
+		if (id == null) {
 			throw newParseError(e, "edge must have an id");
+		}
 
-		if (source == null || target == null)
+		if (source == null || target == null) {
 			throw newParseError(e, "edge must have a source and a target");
+		}
 
 		sendEdgeAdded(sourceId, id, source, target, directed);
 
@@ -1330,7 +1350,7 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 				data = __data();
 
 				sendEdgeAttributeAdded(sourceId, id, data.key.name,
-						getValue(data));
+					getValue(data));
 
 				sentAttributes.add(data.key);
 
@@ -1340,16 +1360,17 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 
 		for (Key k : keys.values()) {
 			if ((k.domain == KeyDomain.EDGE || k.domain == KeyDomain.ALL)
-					&& !sentAttributes.contains(k))
+				&& !sentAttributes.contains(k)) {
 				sendEdgeAttributeAdded(sourceId, id, k.name, getDefaultValue(k));
+			}
 		}
 
 		if (isEvent(e, XMLEvent.START_ELEMENT, "graph")) {
 			Location loc = e.getLocation();
 
 			System.err.printf(
-					"[WARNING] %d:%d graph inside node is not implemented",
-					loc.getLineNumber(), loc.getColumnNumber());
+				"[WARNING] %d:%d graph inside node is not implemented",
+				loc.getLineNumber(), loc.getColumnNumber());
 
 			pushback(e);
 			__graph();
@@ -1363,11 +1384,11 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 	/**
 	 * <pre>
 	 * <!ELEMENT hyperedge  ((desc)?,((data)|(endpoint))*,(graph)?)>
-	 * <!ATTLIST hyperedge 
+	 * <!ATTLIST hyperedge
 	 *           id     ID      #IMPLIED
 	 * >
 	 * </pre>
-	 * 
+	 *
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
@@ -1380,37 +1401,38 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 		Location loc = e.getLocation();
 
 		System.err.printf(
-				"[WARNING] %d:%d hyperedge feature is not implemented",
-				loc.getLineNumber(), loc.getColumnNumber());
+			"[WARNING] %d:%d hyperedge feature is not implemented",
+			loc.getLineNumber(), loc.getColumnNumber());
 
 		String id = null;
 
 		@SuppressWarnings("unchecked")
 		Iterator<? extends Attribute> attributes = e.asStartElement()
-				.getAttributes();
+			.getAttributes();
 
 		while (attributes.hasNext()) {
 			Attribute a = attributes.next();
 
 			try {
 				HyperEdgeAttribute attribute = HyperEdgeAttribute
-						.valueOf(toConstantName(a));
+					.valueOf(toConstantName(a));
 
 				switch (attribute) {
-				case ID:
-					id = a.getValue();
-					break;
+					case ID:
+						id = a.getValue();
+						break;
 				}
 			} catch (IllegalArgumentException ex) {
 				throw newParseError(e,
-						"invalid attribute '%s' for '<endpoint>'", a.getName()
-								.getLocalPart());
+					"invalid attribute '%s' for '<endpoint>'", a.getName()
+					.getLocalPart());
 			}
 		}
 
-		if (id == null)
+		if (id == null) {
 			throw newParseError(e,
-					"'<hyperedge>' element requires a 'node' attribute");
+				"'<hyperedge>' element requires a 'node' attribute");
+		}
 
 		e = getNextEvent();
 
@@ -1419,7 +1441,7 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 			__desc();
 		} else {
 			while (isEvent(e, XMLEvent.START_ELEMENT, "data")
-					|| isEvent(e, XMLEvent.START_ELEMENT, "endpoint")) {
+				|| isEvent(e, XMLEvent.START_ELEMENT, "endpoint")) {
 				if (isEvent(e, XMLEvent.START_ELEMENT, "data")) {
 					pushback(e);
 					__data();
@@ -1436,8 +1458,8 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 			loc = e.getLocation();
 
 			System.err.printf(
-					"[WARNING] %d:%d graph inside node is not implemented",
-					loc.getLineNumber(), loc.getColumnNumber());
+				"[WARNING] %d:%d graph inside node is not implemented",
+				loc.getLineNumber(), loc.getColumnNumber());
 
 			pushback(e);
 			__graph();

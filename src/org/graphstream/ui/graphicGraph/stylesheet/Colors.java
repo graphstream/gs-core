@@ -48,12 +48,10 @@ public class Colors extends ArrayList<Color> {
 
 	/**
 	 * New copy of the other colour set.
-	 * 
-	 * @param others
-	 *            The other colour set to copy.
+	 *
+	 * @param others The other colour set to copy.
 	 */
 	public Colors(Colors others) {
-		for (Color color : others)
-			add(color);
+		super(others);
 	}
 }

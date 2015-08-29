@@ -70,8 +70,7 @@ public class TestGraphSynchronisationProxyThread {
 		// graphic graph.
 
 		Graph main = new MultiGraph("main");
-		ThreadProxyPipe toGraphic = new ThreadProxyPipe();
-		toGraphic.init(main);
+		ThreadProxyPipe toGraphic = ThreadProxyPipe.createAndReplay(main);
 		
 		InTheSwingThread viewerThread = new InTheSwingThread(toGraphic);
 		ThreadProxyPipe toMain = viewerThread.getProxy();
@@ -100,10 +99,10 @@ public class TestGraphSynchronisationProxyThread {
 		S3.setPosition(2, 3, 2);
 		S3.setPosition(3, 2, 1);
 
-		A.addAttribute("ui.foo", "bar");
-		B.addAttribute("ui.bar", "foo");
-		C.addAttribute("truc"); // Not prefixed by UI, will not pass.
-		S1.addAttribute("ui.foo", "bar");
+		A.setAttribute("ui.foo", "bar");
+		B.setAttribute("ui.bar", "foo");
+		C.setAttribute("truc"); // Not prefixed by UI, will not pass.
+		S1.setAttribute("ui.foo", "bar");
 		main.stepBegins(1);
 
 		toMain.pump();
@@ -111,7 +110,7 @@ public class TestGraphSynchronisationProxyThread {
 		// We ask the Swing thread to modify the graphic graph.
 
 		main.stepBegins(2);
-		main.addAttribute("ui.EQUIP"); // Remember GraphicGraph filters
+		main.setAttribute("ui.EQUIP"); // Remember GraphicGraph filters
 										// attributes.
 
 		// Wait and stop.
@@ -120,7 +119,7 @@ public class TestGraphSynchronisationProxyThread {
 		sleep(1000);
 		toMain.pump();
 
-		main.addAttribute("ui.STOP");
+		main.setAttribute("ui.STOP");
 
 		toMain.pump();
 		sleep(1000);
@@ -243,17 +242,17 @@ public class TestGraphSynchronisationProxyThread {
 				Node C = graphic.getNode("C");
 
 				if (A != null)
-					A.addAttribute("xyz", 4, 3, 2);
+					A.setAttribute("xyz", 4, 3, 2);
 				if (B != null)
-					B.addAttribute("xyz", 2, 1, 0);
+					B.setAttribute("xyz", 2, 1, 0);
 				if (C != null)
-					C.addAttribute("xyz", 3, 2, 1);
+					C.setAttribute("xyz", 3, 2, 1);
 
 				GraphicSprite S1 = graphic.getSprite("S1");
 				GraphicSprite S2 = graphic.getSprite("S2");
 
 				if (S2 != null) {
-					S2.addAttribute("ui.foobar", "foobar");
+					S2.setAttribute("ui.foobar", "foobar");
 					S2.setPosition(1, 2, 3, Style.Units.GU);
 				}
 
@@ -269,8 +268,7 @@ public class TestGraphSynchronisationProxyThread {
 		}
 
 		public ThreadProxyPipe getProxy() {
-			ThreadProxyPipe toMain = new ThreadProxyPipe();
-			toMain.init(graphic);
+			ThreadProxyPipe toMain = ThreadProxyPipe.create(graphic);
 
 			// fromMain.synchronizeWith( toMain, graphic );
 

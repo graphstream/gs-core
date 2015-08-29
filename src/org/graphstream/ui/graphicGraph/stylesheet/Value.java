@@ -33,7 +33,7 @@ package org.graphstream.ui.graphicGraph.stylesheet;
 
 /**
  * A value and the units of the value.
- * 
+ *
  * <p>
  * As a style sheet may express values in several different units. This class
  * purpose is to pack the value and the units it is expressed in into a single
@@ -56,14 +56,11 @@ public class Value extends Number {
 	public Style.Units units;
 
 	// Constructor
-
 	/**
 	 * New value.
-	 * 
-	 * @param units
-	 *            The value units.
-	 * @param value
-	 *            The value.
+	 *
+	 * @param units The value units.
+	 * @param value The value.
 	 */
 	public Value(Style.Units units, double value) {
 		this.value = value;
@@ -72,9 +69,8 @@ public class Value extends Number {
 
 	/**
 	 * New copy of another value.
-	 * 
-	 * @param other
-	 *            The other value to copy.
+	 *
+	 * @param other The other value to copy.
 	 */
 	public Value(Value other) {
 		this.value = other.value;
@@ -83,7 +79,7 @@ public class Value extends Number {
 
 	@Override
 	public float floatValue() {
-		return (float)value;
+		return (float) value;
 	}
 
 	@Override
@@ -93,7 +89,7 @@ public class Value extends Number {
 
 	@Override
 	public int intValue() {
-		return (int)Math.round(value);
+		return (int) Math.round(value);
 	}
 
 	@Override
@@ -108,18 +104,18 @@ public class Value extends Number {
 		builder.append(value);
 
 		switch (units) {
-		case GU:
-			builder.append("gu");
-			break;
-		case PX:
-			builder.append("px");
-			break;
-		case PERCENTS:
-			builder.append("%");
-			break;
-		default:
-			builder.append("wtf (what's the fuck?)");
-			break;
+			case GU:
+				builder.append("gu");
+				break;
+			case PX:
+				builder.append("px");
+				break;
+			case PERCENTS:
+				builder.append("%");
+				break;
+			default:
+				builder.append("wtf (what's the fuck?)");
+				break;
 		}
 
 		return builder.toString();
@@ -127,16 +123,19 @@ public class Value extends Number {
 
 	public boolean equals(Value o) {
 		if (o != this) {
-			if (!(o instanceof Value))
+			if (!(o instanceof Value)) {
 				return false;
+			}
 
 			Value other = (Value) o;
 
-			if (other.units != units)
+			if (other.units != units) {
 				return false;
+			}
 
-			if (other.value != value)
+			if (other.value != value) {
 				return false;
+			}
 		}
 
 		return true;

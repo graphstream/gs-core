@@ -33,12 +33,12 @@ package org.graphstream.ui.geom;
 
 /**
  * 2D point.
- * 
+ *
  * A Point2 is a 2D location in an affine space described by three values along
  * the X, and Y axes. This differs from the Vector3 and Vector4 classes in that
  * it is only 2D and has no vector arithmetic bound to it (to points cannot be
  * added, this would have no mathematical meaning).
- * 
+ *
  * @author Antoine Dutot
  * @since 20001121 creation
  * @version 0.1
@@ -59,14 +59,12 @@ public class Point2 implements java.io.Serializable {
 	public double y;
 
 	// Attributes -- Shared
-
 	/**
 	 * Specific point at (0,0).
 	 */
 	public static final Point2 NULL_POINT2 = new Point2(0, 0);
 
 	// Constructors
-
 	/**
 	 * New 2D point at (0,0).
 	 */
@@ -95,7 +93,6 @@ public class Point2 implements java.io.Serializable {
 	}
 
 	// Accessors
-
 	/**
 	 * Are all components to zero?.
 	 */
@@ -113,16 +110,15 @@ public class Point2 implements java.io.Serializable {
 	// and y == other.y
 	// and z == other.z );
 	// }
-
 	/**
-	 * Create a new point linear interpolation of this and <code>other</code>.
-	 * The new point is located between this and <code>other</code> if
-	 * <code>factor</code> is between 0 and 1 (0 yields this point, 1 yields the
-	 * <code>other</code> point).
+	 * Create a new point linear interpolation of this and
+	 * <code>other</code>. The new point is located between this and
+	 * <code>other</code> if <code>factor</code> is between 0 and 1 (0
+	 * yields this point, 1 yields the <code>other</code> point).
 	 */
 	public Point2 interpolate(Point2 other, double factor) {
 		Point2 p = new Point2(x + ((other.x - x) * factor), y
-				+ ((other.y - y) * factor));
+			+ ((other.y - y) * factor));
 
 		return p;
 	}
@@ -137,7 +133,6 @@ public class Point2 implements java.io.Serializable {
 	}
 
 	// Commands
-
 	/**
 	 * Make this a copy of other.
 	 */
@@ -155,7 +150,6 @@ public class Point2 implements java.io.Serializable {
 	}
 
 	// Commands -- moving
-
 	/**
 	 * Move to absolute position (x,y).
 	 */
@@ -242,7 +236,6 @@ public class Point2 implements java.io.Serializable {
 	}
 
 	// Commands -- misc.
-
 	@Override
 	public String toString() {
 		StringBuffer buf;
@@ -257,43 +250,35 @@ public class Point2 implements java.io.Serializable {
 		return buf.toString();
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
 
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass())
-        {
-            return false;
-        }
+		Point2 point2 = (Point2) o;
 
-        Point2 point2 = (Point2) o;
+		if (Double.compare(point2.x, x) != 0) {
+			return false;
+		}
+		if (Double.compare(point2.y, y) != 0) {
+			return false;
+		}
 
-        if (Double.compare(point2.x, x) != 0)
-        {
-            return false;
-        }
-        if (Double.compare(point2.y, y) != 0)
-        {
-            return false;
-        }
+		return true;
+	}
 
-        return true;
-    }
-
-
-    @Override
-    public int hashCode()
-    {
-        int result;
-        long temp;
-        temp = Double.doubleToLongBits(x);
-        result = (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(y);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		int result;
+		long temp;
+		temp = Double.doubleToLongBits(x);
+		result = (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(y);
+		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
 }

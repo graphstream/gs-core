@@ -33,7 +33,7 @@ package org.graphstream.ui.geom;
 
 /**
  * A three component vector made of doubles.
- * 
+ *
  * @author Antoine Dutot
  * @since 20000613
  * @version 0.1
@@ -44,7 +44,6 @@ public class Vector3 extends Vector2 {
 	private static final long serialVersionUID = 8839258036865851454L;
 
 	// Constructors
-
 	/**
 	 * New zero vector.
 	 */
@@ -82,7 +81,6 @@ public class Vector3 extends Vector2 {
 	}
 
 	// Predicates
-
 	/**
 	 * Are all components to zero?.
 	 */
@@ -109,7 +107,7 @@ public class Vector3 extends Vector2 {
 
 	/**
 	 * Is i the index of a component ?
-	 * 
+	 *
 	 * In other words, is i &gt;= 0 &amp;&amp; &lt; than #count() ?
 	 */
 	@Override
@@ -118,14 +116,12 @@ public class Vector3 extends Vector2 {
 	}
 
 	// Access
-
 	@Override
 	public Object clone() {
 		return new Vector3(this);
 	}
 
 	// Access
-
 	public double dotProduct(double ox, double oy, double oz) {
 		return ((data[0] * ox) + (data[1] * oy) + (data[2] * oz));
 	}
@@ -143,15 +139,14 @@ public class Vector3 extends Vector2 {
 	@Override
 	public double length() {
 		return Math.sqrt((data[0] * data[0]) + (data[1] * data[1])
-				+ (data[2] * data[2]));
+			+ (data[2] * data[2]));
 	}
-	
+
 	public double z() {
 		return data[2];
 	}
 
 	// Commands
-
 	/**
 	 * Assign value to all elements.
 	 */
@@ -269,7 +264,7 @@ public class Vector3 extends Vector2 {
 
 	/**
 	 * Transform this into an unit vector.
-	 * 
+	 *
 	 * @return the vector length.
 	 */
 	@Override
@@ -286,7 +281,6 @@ public class Vector3 extends Vector2 {
 	}
 
 	// Utility
-
 	/**
 	 * Make this a copy of other.
 	 */
@@ -306,7 +300,6 @@ public class Vector3 extends Vector2 {
 	}
 
 	// Misc.
-
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer("[");

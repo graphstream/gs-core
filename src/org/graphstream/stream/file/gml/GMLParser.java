@@ -41,7 +41,6 @@ import org.graphstream.util.parser.ParseException;
 import org.graphstream.util.parser.Parser;
 import org.graphstream.util.parser.SimpleCharStream;
 import org.graphstream.util.parser.Token;
-import org.graphstream.util.parser.TokenMgrError;
 
 @SuppressWarnings("unused")
 public class GMLParser implements Parser, GMLParserConstants {
@@ -78,11 +77,13 @@ public class GMLParser implements Parser, GMLParserConstants {
 		KeyValues kv = null;
 		step = false;
 
-		while ((kv = nextEvents()) != null && !step)
+		while ((kv = nextEvents()) != null && !step) {
 			ctx.handleKeyValues(kv);
+		}
 
-		if (kv != null)
+		if (kv != null) {
 			ctx.setNextStep(kv);
+		}
 
 		return (kv != null);
 	}
@@ -94,11 +95,16 @@ public class GMLParser implements Parser, GMLParserConstants {
 		jj_input_stream.close();
 	}
 
-	/*****************************************************************/
+	/**
+	 * **************************************************************
+	 */
 	/* The parser. */
-	/*****************************************************************/
-
-	/** Unused rule, call it to slurp in the whole file. */
+	/**
+	 * **************************************************************
+	 */
+	/**
+	 * Unused rule, call it to slurp in the whole file.
+	 */
 	final public void start() throws ParseException {
 		list();
 	}
@@ -107,31 +113,32 @@ public class GMLParser implements Parser, GMLParserConstants {
 		KeyValues values = new KeyValues();
 		String key;
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-		case GRAPH:
-			graphStart();
-			ctx.setIsInGraph(true);
-			ctx.setDirected(false);
-			break;
-		case DIGRAPH:
-			diGraphStart();
-			ctx.setIsInGraph(true);
-			ctx.setDirected(true);
-			break;
-		default:
-			jj_la1[0] = jj_gen;
-			jj_consume_token(-1);
-			throw new ParseException();
-		}
-		label_1: while (true) {
-			switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-			case STRING:
-			case KEY:
-			case COMMENT:
-				;
+			case GRAPH:
+				graphStart();
+				ctx.setIsInGraph(true);
+				ctx.setDirected(false);
+				break;
+			case DIGRAPH:
+				diGraphStart();
+				ctx.setIsInGraph(true);
+				ctx.setDirected(true);
 				break;
 			default:
-				jj_la1[1] = jj_gen;
-				break label_1;
+				jj_la1[0] = jj_gen;
+				jj_consume_token(-1);
+				throw new ParseException();
+		}
+		label_1:
+		while (true) {
+			switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
+				case STRING:
+				case KEY:
+				case COMMENT:
+				;
+					break;
+				default:
+					jj_la1[1] = jj_gen;
+					break label_1;
 			}
 			key = keyValue(values);
 			values.key = key;
@@ -159,9 +166,9 @@ public class GMLParser implements Parser, GMLParserConstants {
 	}
 
 	/**
-	 * The top-level method to be called by the file source. Returns a set of
-	 * top-level key values or null if the end of the file was reached.
-	 * 
+	 * The top-level method to be called by the file source. Returns a set
+	 * of top-level key values or null if the end of the file was reached.
+	 *
 	 * Top-level key values are nodes and edges as well as all key-values
 	 * defined before and after the graph.
 	 */
@@ -169,41 +176,42 @@ public class GMLParser implements Parser, GMLParserConstants {
 		KeyValues values = new KeyValues();
 		String key;
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-		case GRAPH:
-			graphStart();
-			values.key = null;
-			ctx.setIsInGraph(true);
-			ctx.setDirected(false);
-			break;
-		case DIGRAPH:
-			diGraphStart();
-			values.key = null;
-			ctx.setIsInGraph(true);
-			ctx.setDirected(true);
-			break;
-		case RSQBR:
-			graphEnd();
-			values.key = null;
-			ctx.setIsInGraph(false);
-			break;
-		case STRING:
-		case KEY:
-		case COMMENT:
-			key = keyValue(values);
-			values.key = key;
-			break;
-		case 0:
-			jj_consume_token(0);
-			values = null;
-			break;
-		default:
-			jj_la1[2] = jj_gen;
-			jj_consume_token(-1);
-			throw new ParseException();
+			case GRAPH:
+				graphStart();
+				values.key = null;
+				ctx.setIsInGraph(true);
+				ctx.setDirected(false);
+				break;
+			case DIGRAPH:
+				diGraphStart();
+				values.key = null;
+				ctx.setIsInGraph(true);
+				ctx.setDirected(true);
+				break;
+			case RSQBR:
+				graphEnd();
+				values.key = null;
+				ctx.setIsInGraph(false);
+				break;
+			case STRING:
+			case KEY:
+			case COMMENT:
+				key = keyValue(values);
+				values.key = key;
+				break;
+			case 0:
+				jj_consume_token(0);
+				values = null;
+				break;
+			default:
+				jj_la1[2] = jj_gen;
+				jj_consume_token(-1);
+				throw new ParseException();
 		}
 		{
-			if (true)
+			if (true) {
 				return values;
+			}
 		}
 		throw new Error("Missing return statement in function");
 	}
@@ -213,71 +221,76 @@ public class GMLParser implements Parser, GMLParserConstants {
 	 */
 	final public KeyValues list() throws ParseException {
 		KeyValues values = new KeyValues();
-		label_2: while (true) {
+		label_2:
+		while (true) {
 			switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-			case STRING:
-			case KEY:
-			case COMMENT:
+				case STRING:
+				case KEY:
+				case COMMENT:
 				;
-				break;
-			default:
-				jj_la1[3] = jj_gen;
-				break label_2;
+					break;
+				default:
+					jj_la1[3] = jj_gen;
+					break label_2;
 			}
 			keyValue(values);
 		}
 		{
-			if (true)
+			if (true) {
 				return values;
+			}
 		}
 		throw new Error("Missing return statement in function");
 	}
 
 	/**
 	 * A set of key and value, the value can recursively be a list of
-	 * key-values. Only the key-value list "graph [ ... ]" is not parsed by this
-	 * rule, and parsed by another rules, so that the nextEvent() rule can be
-	 * called repeatedly.
+	 * key-values. Only the key-value list "graph [ ... ]" is not parsed by
+	 * this rule, and parsed by another rules, so that the nextEvent() rule
+	 * can be called repeatedly.
 	 */
 	final public String keyValue(KeyValues values) throws ParseException {
 		Token k;
 		String key;
 		Object v;
 		boolean isGraph = false;
-		label_3: while (true) {
+		label_3:
+		while (true) {
 			switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-			case COMMENT:
+				case COMMENT:
 				;
-				break;
-			default:
-				jj_la1[4] = jj_gen;
-				break label_3;
+					break;
+				default:
+					jj_la1[4] = jj_gen;
+					break label_3;
 			}
 			jj_consume_token(COMMENT);
 		}
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-		case KEY:
-			k = jj_consume_token(KEY);
-			key = k.image;
-			if (key.equalsIgnoreCase("step"))
-				step = true;
-			break;
-		case STRING:
-			k = jj_consume_token(STRING);
-			key = k.image.substring(1, k.image.length() - 2);
-			break;
-		default:
-			jj_la1[5] = jj_gen;
-			jj_consume_token(-1);
-			throw new ParseException();
+			case KEY:
+				k = jj_consume_token(KEY);
+				key = k.image;
+				if (key.equalsIgnoreCase("step")) {
+					step = true;
+				}
+				break;
+			case STRING:
+				k = jj_consume_token(STRING);
+				key = k.image.substring(1, k.image.length() - 2);
+				break;
+			default:
+				jj_la1[5] = jj_gen;
+				jj_consume_token(-1);
+				throw new ParseException();
 		}
 		v = value(key);
 		values.put(key, v);
 		values.line = k.beginLine;
 		values.column = k.beginColumn;
 		{
-			if (true)
+			if (true) {
 				return key;
+			}
 		}
 		throw new Error("Missing return statement in function");
 	}
@@ -291,65 +304,78 @@ public class GMLParser implements Parser, GMLParserConstants {
 		Object val;
 		KeyValues kv;
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-		case REAL:
-			t = jj_consume_token(REAL);
-			if (t.image.indexOf('.') < 0)
-				val = Integer.valueOf(t.image);
-			else
-				val = Double.valueOf(t.image);
-			break;
-		case STRING:
-			t = jj_consume_token(STRING);
-			val = t.image.substring(1, t.image.length() - 1);
-			break;
-		case KEY:
-			t = jj_consume_token(KEY);
-			val = t.image;
-			break;
-		case LSQBR:
-			jj_consume_token(LSQBR);
-			kv = list();
-			val = kv;
-			jj_consume_token(RSQBR);
-			break;
-		default:
-			jj_la1[6] = jj_gen;
-			jj_consume_token(-1);
-			throw new ParseException();
+			case REAL:
+				t = jj_consume_token(REAL);
+				if (t.image.indexOf('.') < 0) {
+					val = Integer.valueOf(t.image);
+				} else {
+					val = Double.valueOf(t.image);
+				}
+				break;
+			case STRING:
+				t = jj_consume_token(STRING);
+				val = t.image.substring(1, t.image.length() - 1);
+				break;
+			case KEY:
+				t = jj_consume_token(KEY);
+				val = t.image;
+				break;
+			case LSQBR:
+				jj_consume_token(LSQBR);
+				kv = list();
+				val = kv;
+				jj_consume_token(RSQBR);
+				break;
+			default:
+				jj_la1[6] = jj_gen;
+				jj_consume_token(-1);
+				throw new ParseException();
 		}
 		{
-			if (true)
+			if (true) {
 				return val;
+			}
 		}
 		throw new Error("Missing return statement in function");
 	}
 
-	/** Generated Token Manager. */
+	/**
+	 * Generated Token Manager.
+	 */
 	public GMLParserTokenManager token_source;
 	SimpleCharStream jj_input_stream;
-	/** Current token. */
+	/**
+	 * Current token.
+	 */
 	public Token token;
-	/** Next token. */
+	/**
+	 * Next token.
+	 */
 	public Token jj_nt;
 	private int jj_ntk;
 	private int jj_gen;
 	final private int[] jj_la1 = new int[7];
 	static private int[] jj_la1_0;
+
 	static {
 		jj_la1_init_0();
 	}
 
 	private static void jj_la1_init_0() {
-		jj_la1_0 = new int[] { 0x3000, 0xc800, 0xfa01, 0xc800, 0x8000, 0x4800,
-				0x4d00, };
+		jj_la1_0 = new int[]{0x3000, 0xc800, 0xfa01, 0xc800, 0x8000, 0x4800,
+			0x4d00,};
 	}
 
-	/** Constructor with InputStream. */
+	/**
+	 * Constructor with InputStream.
+	 */
 	public GMLParser(java.io.InputStream stream) {
 		this(stream, null);
 	}
 
-	/** Constructor with InputStream and supplied encoding */
+	/**
+	 * Constructor with InputStream and supplied encoding
+	 */
 	public GMLParser(java.io.InputStream stream, String encoding) {
 		try {
 			jj_input_stream = new SimpleCharStream(stream, encoding, 1, 1);
@@ -360,16 +386,21 @@ public class GMLParser implements Parser, GMLParserConstants {
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 7; i++)
+		for (int i = 0; i < 7; i++) {
 			jj_la1[i] = -1;
+		}
 	}
 
-	/** Reinitialise. */
+	/**
+	 * Reinitialise.
+	 */
 	public void ReInit(java.io.InputStream stream) {
 		ReInit(stream, null);
 	}
 
-	/** Reinitialise. */
+	/**
+	 * Reinitialise.
+	 */
 	public void ReInit(java.io.InputStream stream, String encoding) {
 		try {
 			jj_input_stream.ReInit(stream, encoding, 1, 1);
@@ -380,58 +411,72 @@ public class GMLParser implements Parser, GMLParserConstants {
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 7; i++)
+		for (int i = 0; i < 7; i++) {
 			jj_la1[i] = -1;
+		}
 	}
 
-	/** Constructor. */
+	/**
+	 * Constructor.
+	 */
 	public GMLParser(java.io.Reader stream) {
 		jj_input_stream = new SimpleCharStream(stream, 1, 1);
 		token_source = new GMLParserTokenManager(jj_input_stream);
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 7; i++)
+		for (int i = 0; i < 7; i++) {
 			jj_la1[i] = -1;
+		}
 	}
 
-	/** Reinitialise. */
+	/**
+	 * Reinitialise.
+	 */
 	public void ReInit(java.io.Reader stream) {
 		jj_input_stream.ReInit(stream, 1, 1);
 		token_source.ReInit(jj_input_stream);
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 7; i++)
+		for (int i = 0; i < 7; i++) {
 			jj_la1[i] = -1;
+		}
 	}
 
-	/** Constructor with generated Token Manager. */
+	/**
+	 * Constructor with generated Token Manager.
+	 */
 	public GMLParser(GMLParserTokenManager tm) {
 		token_source = tm;
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 7; i++)
+		for (int i = 0; i < 7; i++) {
 			jj_la1[i] = -1;
+		}
 	}
 
-	/** Reinitialise. */
+	/**
+	 * Reinitialise.
+	 */
 	public void ReInit(GMLParserTokenManager tm) {
 		token_source = tm;
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 7; i++)
+		for (int i = 0; i < 7; i++) {
 			jj_la1[i] = -1;
+		}
 	}
 
 	private Token jj_consume_token(int kind) throws ParseException {
 		Token oldToken;
-		if ((oldToken = token).next != null)
+		if ((oldToken = token).next != null) {
 			token = token.next;
-		else
+		} else {
 			token = token.next = token_source.getNextToken();
+		}
 		jj_ntk = -1;
 		if (token.kind == kind) {
 			jj_gen++;
@@ -442,41 +487,50 @@ public class GMLParser implements Parser, GMLParserConstants {
 		throw generateParseException();
 	}
 
-	/** Get the next Token. */
+	/**
+	 * Get the next Token.
+	 */
 	final public Token getNextToken() {
-		if (token.next != null)
+		if (token.next != null) {
 			token = token.next;
-		else
+		} else {
 			token = token.next = token_source.getNextToken();
+		}
 		jj_ntk = -1;
 		jj_gen++;
 		return token;
 	}
 
-	/** Get the specific Token. */
+	/**
+	 * Get the specific Token.
+	 */
 	final public Token getToken(int index) {
 		Token t = token;
 		for (int i = 0; i < index; i++) {
-			if (t.next != null)
+			if (t.next != null) {
 				t = t.next;
-			else
+			} else {
 				t = t.next = token_source.getNextToken();
+			}
 		}
 		return t;
 	}
 
 	private int jj_ntk() {
-		if ((jj_nt = token.next) == null)
+		if ((jj_nt = token.next) == null) {
 			return (jj_ntk = (token.next = token_source.getNextToken()).kind);
-		else
+		} else {
 			return (jj_ntk = jj_nt.kind);
+		}
 	}
 
 	private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
 	private int[] jj_expentry;
 	private int jj_kind = -1;
 
-	/** Generate ParseException. */
+	/**
+	 * Generate ParseException.
+	 */
 	public ParseException generateParseException() {
 		jj_expentries.clear();
 		boolean[] la1tokens = new boolean[16];
@@ -507,11 +561,15 @@ public class GMLParser implements Parser, GMLParserConstants {
 		return new ParseException(token, exptokseq, tokenImage);
 	}
 
-	/** Enable tracing. */
+	/**
+	 * Enable tracing.
+	 */
 	final public void enable_tracing() {
 	}
 
-	/** Disable tracing. */
+	/**
+	 * Disable tracing.
+	 */
 	final public void disable_tracing() {
 	}
 

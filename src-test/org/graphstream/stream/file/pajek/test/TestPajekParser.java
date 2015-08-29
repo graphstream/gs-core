@@ -171,18 +171,18 @@ public class TestPajekParser {
 		Graph graph = new MultiGraph("foo");
 		FileSourcePajek in = new FileSourcePajek();
 
-		graph.addAttribute("ui.quality");
+		graph.setAttribute("ui.quality");
 		if (!entry.veryLarge)
-			graph.addAttribute("ui.antialias");
+			graph.setAttribute("ui.antialias");
 		if (entry.addLabels)
-			graph.addAttribute(
+			graph.setAttribute(
 					"ui.stylesheet",
 					String.format(
 							"node { text-alignment: center; size: %dpx; fill-color: grey; %s } edge { fill-color: #333; }",
 							entry.veryLarge ? 6 : 16, entry.veryLarge ? ""
 									: "stroke-mode: plain; stroke-color: #333;"));
 		else
-			graph.addAttribute(
+			graph.setAttribute(
 					"ui.stylesheet",
 					String.format(
 							"node { text-alignment: at-right; size: %dpx; fill-color: grey; %s text-background-mode: plain; text-offset: 2px, 0px; text-padding: 2px; text-background-color: #FFFFFFAA; } edge { fill-color: #333; }",
@@ -198,7 +198,7 @@ public class TestPajekParser {
 
 		if (entry.addLabels) {
 			for (Node node : graph) {
-				node.addAttribute("ui.label", node.getId());
+				node.setAttribute("ui.label", node.getId());
 			}
 		}
 		

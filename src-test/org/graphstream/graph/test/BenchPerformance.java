@@ -289,7 +289,7 @@ public class BenchPerformance {
 				String n1id = n1.getId();
 				for (int j = i + 1; j < d; j++) {
 					Node n2 = n0.getEdge(j).getOpposite(n0);
-					if (n2.hasEdgeBetween(n1id))
+					if (n2.hasEdgeBetween(n1))
 						count++;
 				}
 			}
@@ -328,7 +328,7 @@ public class BenchPerformance {
 		for (String id1 : nodeIds) {
 			Node n1 = g.getNode(id1);
 			for (String id2 : nodeIds) {
-				Edge e = n1.getEdgeBetween(id2);
+				Edge e = n1.getEdgeBetween(g.getNode(id2));
 				if (e != null && e.hasAttribute("foo"))
 					foo++;
 			}
@@ -341,7 +341,7 @@ public class BenchPerformance {
 		for (String id1 : nodeIds) {
 			Node n1 = g.getNode(id1);
 			for (String id2 : nodeIds) {
-				Edge e = n1.getEdgeToward(id2);
+				Edge e = n1.getEdgeToward(g.getNode(id2));
 				if (e != null && e.hasAttribute("foo"))
 					foo++;
 			}
@@ -354,7 +354,7 @@ public class BenchPerformance {
 		for (String id1 : nodeIds) {
 			Node n1 = g.getNode(id1);
 			for (String id2 : nodeIds) {
-				Edge e = n1.getEdgeFrom(id2);
+				Edge e = n1.getEdgeFrom(g.getNode(id2));
 				if (e != null && e.hasAttribute("foo"))
 					foo++;
 			}

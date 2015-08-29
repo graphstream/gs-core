@@ -38,38 +38,29 @@ import java.awt.Graphics2D;
 /**
  * A specific rendering class that can be plugged in any view and is called to
  * draw under or above the graph.
- * 
+ *
  * @see org.graphstream.ui.view.View#setForeLayoutRenderer(LayerRenderer)
  * @see org.graphstream.ui.view.View#setBackLayerRenderer(LayerRenderer)
  */
 public interface LayerRenderer {
 	/**
 	 * Render something under or above the graph.
-	 * 
-	 * @param graphics
-	 *            The Swing graphics.
-	 * @param graph
-	 *            The graphic representation of the graph.
-	 * @param px2Gu
-	 *            The ratio to pass from pixels to graph units.
-	 * @param widthPx
-	 *            The width in pixels of the view port.
-	 * @param heightPx
-	 *            The height in pixels of the view port.
-	 * @param minXGu
-	 *            The minimum visible point abscissa of the graph in graph
-	 *            units.
-	 * @param minYGu
-	 *            The minimum visible point ordinate of the graph in graph
-	 *            units.
-	 * @param maxXGu
-	 *            The maximum visible point abscissa of the graph in graph
-	 *            units.
-	 * @param maxYGu
-	 *            The maximum visible point ordinate of the graph in graph
-	 *            units.
+	 *
+	 * @param graphics The Swing graphics.
+	 * @param graph The graphic representation of the graph.
+	 * @param px2Gu The ratio to pass from pixels to graph units.
+	 * @param widthPx The width in pixels of the view port.
+	 * @param heightPx The height in pixels of the view port.
+	 * @param minXGu The minimum visible point abscissa of the graph in
+	 *                 graph units.
+	 * @param minYGu The minimum visible point ordinate of the graph in
+	 *                 graph units.
+	 * @param maxXGu The maximum visible point abscissa of the graph in
+	 *                 graph units.
+	 * @param maxYGu The maximum visible point ordinate of the graph in
+	 *                 graph units.
 	 */
 	void render(Graphics2D graphics, GraphicGraph graph, double px2Gu,
-			int widthPx, int heightPx, double minXGu, double minYGu,
-			double maxXGu, double maxYGu);
+		int widthPx, int heightPx, double minXGu, double minYGu,
+		double maxXGu, double maxYGu);
 }

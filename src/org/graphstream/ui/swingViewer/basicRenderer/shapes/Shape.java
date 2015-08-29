@@ -39,9 +39,8 @@ public abstract class Shape {
 	/**
 	 * Same as calling {@link #renderStroke(Graphics2D,GraphMetrics)} and
 	 * {@link #renderFill(Graphics2D,GraphMetrics)} at once.
-	 * 
-	 * @param g
-	 *            The Swing graphics.
+	 *
+	 * @param g The Swing graphics.
 	 */
 	public void render(Graphics2D g, GraphMetrics metrics) {
 		renderStroke(g, metrics);
@@ -50,17 +49,15 @@ public abstract class Shape {
 
 	/**
 	 * Render the stroke of the shape.
-	 * 
-	 * @param g
-	 *            The Swing graphics.
+	 *
+	 * @param g The Swing graphics.
 	 */
 	public abstract void renderStroke(Graphics2D g, GraphMetrics metrics);
 
 	/**
 	 * Render the filled part of the shape.
-	 * 
-	 * @param g
-	 *            The Swing graphics.
+	 *
+	 * @param g The Swing graphics.
 	 */
 	public abstract void renderFill(Graphics2D g, GraphMetrics metrics);
 }

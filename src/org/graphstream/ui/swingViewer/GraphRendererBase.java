@@ -40,7 +40,7 @@ import java.awt.Container;
 import java.awt.Graphics2D;
 
 public abstract class GraphRendererBase implements GraphRenderer,
-		StyleGroupListener {
+	StyleGroupListener {
 	// Attribute
 
 	/**
@@ -59,11 +59,11 @@ public abstract class GraphRendererBase implements GraphRenderer,
 	protected Container renderingSurface;
 
 	// Initialisation
-
 	public void open(GraphicGraph graph, Container renderingSurface) {
-		if (this.graph != null)
+		if (this.graph != null) {
 			throw new RuntimeException(
-					"renderer already open, cannot open twice");
+				"renderer already open, cannot open twice");
+		}
 
 		this.graph = graph;
 		this.renderingSurface = renderingSurface;
@@ -79,16 +79,15 @@ public abstract class GraphRendererBase implements GraphRenderer,
 	}
 
 	// Access
-
 	public Container getRenderingSurface() {
 		return renderingSurface;
 	}
 
 	// Selection
-
 	public void beginSelectionAt(double x1, double y1) {
-		if (selection == null)
+		if (selection == null) {
 			selection = new Selection();
+		}
 
 		selection.x1 = x1;
 		selection.y1 = y1;
@@ -106,7 +105,6 @@ public abstract class GraphRendererBase implements GraphRenderer,
 	}
 
 	// Utilities
-
 	protected void displayNothingToDo(Graphics2D g, int w, int h) {
 		String msg1 = "Graph width/height/depth is zero !!";
 		String msg2 = "Place components using the 'xyz' attribute.";
@@ -122,7 +120,7 @@ public abstract class GraphRendererBase implements GraphRenderer,
 		double y = h / 2;
 
 		g.setColor(Color.BLACK);
-		g.drawString(msg1, (float)(x - msg1length / 2), (float)(y - 20));
-		g.drawString(msg2, (float)(x - msg2length / 2), (float)(y + 20));
+		g.drawString(msg1, (float) (x - msg1length / 2), (float) (y - 20));
+		g.drawString(msg2, (float) (x - msg2length / 2), (float) (y + 20));
 	}
 }

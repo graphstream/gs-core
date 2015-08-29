@@ -54,23 +54,23 @@ import org.miv.mbox.net.PositionableByteArrayInputStream;
  * This class implements a receiver according to specifications the NetStream
  * protocol.
  * </p>
- * 
+ *
  * <p>
  * See {@link NetStreamConstants} for a full description of the protocol, the
  * sender and the receiver.
  * </p>
- * 
+ *
  * @see NetStreamConstants
  * @see NetStreamSender
- * 
- * 
- *      Copyright (c) 2010 University of Luxembourg
- * 
- *      NetStreamReceiver.java
+ *
+ *
+ * Copyright (c) 2010 University of Luxembourg
+ *
+ * NetStreamReceiver.java
  * @since Aug 13, 2011
- * 
+ *
  * @author Yoann Pigné
- * 
+ *
  */
 public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 
@@ -120,10 +120,10 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 	protected ThreadProxyPipe currentStream;
 
 	/**
-	 * Utility class that decodes messages according to the NetStream Protocol
+	 * Utility class that decodes messages according to the NetStream
+	 * Protocol
 	 */
 	protected NetStreamDecoder decoder;
-	
 
 	/**
 	 * Current active incoming connections.
@@ -134,7 +134,7 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 
 		@Override
 		public ByteBuffer unpackMessage(ByteBuffer buffer, int startIndex,
-				int endIndex) {
+			int endIndex) {
 			return buffer;
 		}
 
@@ -158,45 +158,39 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 	private NetStreamUnpacker unpacker;
 
 	// Constructors
-
 	/**
-	 * New NetStream Receiver, awaiting in its own thread at the given host name
-	 * and port, for new graph events.
-	 * 
-	 * @param hostname
-	 *            The host name to listen at messages.
-	 * @param port
-	 *            The port to listen at messages.
+	 * New NetStream Receiver, awaiting in its own thread at the given host
+	 * name and port, for new graph events.
+	 *
+	 * @param hostname The host name to listen at messages.
+	 * @param port The port to listen at messages.
 	 */
 	public NetStreamReceiver(String hostname, int port) throws IOException,
-			UnknownHostException {
+		UnknownHostException {
 		this(hostname, port, false);
 	}
 
 	/**
-	 * New NetStream Receiver, awaiting in its own thread at "localhost" on the
-	 * given port, for new graph events.
-	 * 
-	 * @param port
-	 *            The port to listen at messages.
+	 * New NetStream Receiver, awaiting in its own thread at "localhost" on
+	 * the given port, for new graph events.
+	 *
+	 * @param port The port to listen at messages.
 	 */
 	public NetStreamReceiver(int port) throws IOException, UnknownHostException {
 		this("localhost", port, false);
 	}
 
 	/**
-	 * New NetStream Receiver, awaiting in its own thread at the given host name
-	 * and port, for new graph events.
-	 * 
-	 * @param hostname
-	 *            The host name to listen at messages.
-	 * @param port
-	 *            The port to listen at messages.
-	 * @param debug
-	 *            If true informations are output for each message received.
+	 * New NetStream Receiver, awaiting in its own thread at the given host
+	 * name and port, for new graph events.
+	 *
+	 * @param hostname The host name to listen at messages.
+	 * @param port The port to listen at messages.
+	 * @param debug If true informations are output for each message
+	 *                 received.
 	 */
 	public NetStreamReceiver(String hostname, int port, boolean debug)
-			throws IOException, UnknownHostException {
+		throws IOException, UnknownHostException {
 		this.hostname = hostname;
 		this.port = port;
 		this.unpacker = new DefaultUnpacker();
@@ -207,7 +201,6 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 	}
 
 	// Access
-
 	/**
 	 * False as soon as the receiver terminates.
 	 */
@@ -215,9 +208,7 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 		return loop;
 	}
 
-
 	// Commands
-
 	/**
 	 * Initialize the server socket.
 	 */
@@ -232,12 +223,12 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 
 		server.socket().bind(isa);
 
-		if (debug)
+		if (debug) {
 			debug("bound to socket %s:%d", server.socket().getInetAddress(),
-					server.socket().getLocalPort());
+				server.socket().getLocalPort());
+		}
 
 		// Register a first server socket inside the multiplexer.
-
 		key = server.register(selector, SelectionKey.OP_ACCEPT);
 	}
 
@@ -249,7 +240,6 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 		decoder.setDebugOn(on);
 	}
 
-
 	/**
 	 * Stop the receiver.
 	 */
@@ -257,8 +247,9 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 		loop = false;
 		key.selector().wakeup();
 
-		if (debug)
+		if (debug) {
 			debug("stopped");
+		}
 	}
 
 	/**
@@ -269,17 +260,18 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 	}
 
 	/**
-	 * Sets an optional NetStreamUnpaker whose "unpack" method will be called on
-	 * each message.
-	 * 
+	 * Sets an optional NetStreamUnpaker whose "unpack" method will be
+	 * called on each message.
+	 *
 	 * It allows to do extra decoding on the all byte array message. You can
 	 * also decrypt things.
-	 * 
+	 *
 	 * @param unpaker
 	 */
 	public void setUnpacker(NetStreamUnpacker unpaker) {
 		this.unpacker = unpaker;
 	}
+
 	public void removeUnpacker() {
 		unpacker = new DefaultUnpacker();
 	}
@@ -316,9 +308,9 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 	}
 
 	/**
-	 * Wait until one or several chunks of message are acceptable. This method
-	 * should be called in a loop. It can be used to block a program until some
-	 * data is available.
+	 * Wait until one or several chunks of message are acceptable. This
+	 * method should be called in a loop. It can be used to block a program
+	 * until some data is available.
 	 */
 	public void poll() {
 		try {
@@ -338,13 +330,14 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 						// in the multiplexer.
 
 						ServerSocketChannel ssocket = (ServerSocketChannel) akey
-								.channel();
+							.channel();
 						SocketChannel socket = ssocket.accept();
 
-						if (debug)
+						if (debug) {
 							debug("accepting socket %s:%d", socket.socket()
-									.getInetAddress(), socket.socket()
-									.getPort());
+								.getInetAddress(), socket.socket()
+								.getPort());
+						}
 
 						socket.configureBlocking(false);
 						socket.finishConnect();
@@ -363,7 +356,7 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 			}
 		} catch (IOException e) {
 			error(e, "I/O error in receiver //%s:%d thread: aborting: %s",
-					hostname, port, e.getMessage());
+				hostname, port, e.getMessage());
 
 			loop = false;
 		} catch (Throwable e) {
@@ -385,9 +378,10 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 			incoming.put(key, buf);
 			SocketChannel socket = (SocketChannel) key.channel();
 
-			if (debug)
+			if (debug) {
 				debug("creating buffer for new connection from %s:%d", socket
-						.socket().getInetAddress(), socket.socket().getPort());
+					.socket().getInetAddress(), socket.socket().getPort());
+			}
 		}
 
 		try {
@@ -397,23 +391,23 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 			incoming.remove(key);
 			e.printStackTrace();
 			error(e,
-					"receiver //%s:%d cannot read object socket channel (I/O error): %s",
-					hostname, port, e.getMessage());
+				"receiver //%s:%d cannot read object socket channel (I/O error): %s",
+				hostname, port, e.getMessage());
 			loop = false;
 		}
 
 		if (!buf.active) {
 			incoming.remove(key);
-			if (debug)
+			if (debug) {
 				debug("removing buffer %s from incoming for geting inactive. %d left",
-						key.toString(), incoming.size());
+					key.toString(), incoming.size());
+			}
 
 		}
 
 	}
 
 	// Utilities
-
 	protected void error(String message, Object... data) {
 		error(null, message, data);
 	}
@@ -430,8 +424,9 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 		System.err.printf("]%n");
 		// System.err.println( RESET );
 
-		if (e != null)
+		if (e != null) {
 			e.printStackTrace();
+		}
 	}
 
 	protected void debug(String message, Object... data) {
@@ -445,10 +440,9 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 	}
 
 	// Nested classes
-
 	/**
 	 * The connection to a sender.
-	 * 
+	 *
 	 * The receiver maintains several incoming connections and demultiplexes
 	 * them.
 	 */
@@ -471,57 +465,57 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 
 		/**
 		 * Index in the buffer of the first byte that forms the currents
-		 * message. Beg does not count the 4 bytes that give the size of the
-		 * message. While the header is being read, beg is the first byte of the
-		 * header.
+		 * message. Beg does not count the 4 bytes that give the size of
+		 * the message. While the header is being read, beg is the first
+		 * byte of the header.
 		 */
 		protected int beg = 0;
 
 		/**
-		 * Position inside beg and end past the last byte read. All bytes at and
-		 * after pos have unspecified contents. Pos always verifies pos&gt;=beg
-		 * and pos&lt;end. While the header is being read, pos is past the last
-		 * byte of the header that has been read.
+		 * Position inside beg and end past the last byte read. All
+		 * bytes at and after pos have unspecified contents. Pos always
+		 * verifies pos&gt;=beg and pos&lt;end. While the header is
+		 * being read, pos is past the last byte of the header that has
+		 * been read.
 		 */
 		protected int pos = 0;
 
 		/**
-		 * Object input stream for reading the buffer. This input stream reads
-		 * data from the "bin" positionable byte array input stream, itself
-		 * mapped on the current message to decode.
+		 * Object input stream for reading the buffer. This input stream
+		 * reads data from the "bin" positionable byte array input
+		 * stream, itself mapped on the current message to decode.
 		 */
 		PositionableByteArrayInputStream in;
 
 		/**
 		 * Input stream filter on the buffer. This descendant of
-		 * ByteArrayInputStream is able to change its offset and length so that
-		 * we can map exactly the message to decode inside the buffer.
+		 * ByteArrayInputStream is able to change its offset and length
+		 * so that we can map exactly the message to decode inside the
+		 * buffer.
 		 */
 		PositionableByteArrayInputStream bin;
 
 		/**
-		 * When false the socket is closed and this buffer must be removed from
-		 * the active connections.
+		 * When false the socket is closed and this buffer must be
+		 * removed from the active connections.
 		 */
 		protected boolean active = true;
 
 		// Constructors
-
 		public IncomingBuffer() {
 		}
 
 		// Commands
-
 		/**
-		 * Read the available bytes and buffers them. If one or more complete
-		 * serialised objects are available, send them to their respective
-		 * MBoxes.
-		 * 
+		 * Read the available bytes and buffers them. If one or more
+		 * complete serialised objects are available, send them to their
+		 * respective MBoxes.
+		 *
 		 * Here is the junk...
 		 */
 		public void readDataChunk(SelectionKey key) throws IOException {
 			int limit = 0; // Index past the last byte read during the current
-							// invocation.
+			// invocation.
 			int nbytes = 0; // Number of bytes read.
 			SocketChannel socket = (SocketChannel) key.channel();
 
@@ -531,13 +525,14 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 			nbytes = bufferize(pos, socket);
 			limit = pos + nbytes;
 
-			if (nbytes <= 0)
+			if (nbytes <= 0) {
 				return;
+			}
 
 			if (debug) {
 				debug("<chunk (%d bytes) from "
-						+ socket.socket().getInetAddress() + ":"
-						+ socket.socket().getPort() + ">", nbytes);
+					+ socket.socket().getInetAddress() + ":"
+					+ socket.socket().getPort() + ">", nbytes);
 				int at = buf.position();
 				for (int i = 0; i < nbytes; i++) {
 					System.err.printf("%d ", buf.get(at + i));
@@ -559,9 +554,10 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 					int size = unpacker.unpackMessageSize(buf);
 					end = size + sizeOfInt;
 					beg = sizeOfInt;
-					if (debug)
+					if (debug) {
 						debug("start to bufferize a %d byte long messsage",
-								size);
+							size);
+					}
 				} else {
 					// The header is incomplete, wait next call to complete it.
 
@@ -570,7 +566,6 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 			}
 
 			// Read one or more messages or wait next call to buffers more.
-
 			if (end > 0) {
 				while (end < limit) {
 					// While the end of the message is in the limit of what was
@@ -586,9 +581,9 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 						in = new PositionableByteArrayInputStream(buf.array(), beg, end - beg);
 					} else {
 						in = new PositionableByteArrayInputStream(
-								unpackedBuffer.array(), 0, unpackedBuffer.capacity());
+							unpackedBuffer.array(), 0, unpackedBuffer.capacity());
 					}
-					
+
 					decoder.decodeMessage(in);
 					buf.position(end);
 
@@ -625,11 +620,11 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 						in = new PositionableByteArrayInputStream(buf.array(), beg, end - beg);
 					} else {
 						in = new PositionableByteArrayInputStream(
-								unpackedBuffer.array(), 0, unpackedBuffer.capacity());
+							unpackedBuffer.array(), 0, unpackedBuffer.capacity());
 					}
-					
+
 					decoder.decodeMessage(in);
-					
+
 					buf.clear();
 					pos = 0;
 					beg = 0;
@@ -644,27 +639,28 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 
 					pos = limit;
 
-					if (end > buf.capacity())
+					if (end > buf.capacity()) {
 						compactBuffer();
+					}
 				}
 			}
 		}
 
 		/**
-		 * Read more data from the <code>socket</code> and put it in the buffer
-		 * at <code>at</code>. If the read returns -1 bytes (meaning the
-		 * connection ended), the socket is closed and this buffer will be made
-		 * inactive (and therefore removed from the active connections by the
-		 * Receiver that called it).
-		 * 
+		 * Read more data from the <code>socket</code> and put it in the
+		 * buffer at <code>at</code>. If the read returns -1 bytes
+		 * (meaning the connection ended), the socket is closed and this
+		 * buffer will be made inactive (and therefore removed from the
+		 * active connections by the Receiver that called it).
+		 *
 		 * @return the number of bytes read.
-		 * @throws IOException
-		 *             if an I/O error occurs, in between the socket is closed
-		 *             and the connection is made inactive, then the exception
-		 *             is thrown.
+		 * @throws IOException if an I/O error occurs, in between the
+		 *                     socket is closed and the connection is
+		 *                     made inactive, then the exception is
+		 *                     thrown.
 		 */
 		protected int bufferize(int at, SocketChannel socket)
-				throws IOException {
+			throws IOException {
 			int nbytes = 0;
 			// int limit = 0;
 
@@ -675,17 +671,19 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 
 				if (nbytes < 0) {
 					active = false;
-					if (in != null)
+					if (in != null) {
 						in.close();
+					}
 					socket.close();
-					if (debug)
+					if (debug) {
 						debug("socket from %s:%d closed", socket.socket()
-								.getInetAddress(), socket.socket().getPort());
+							.getInetAddress(), socket.socket().getPort());
+					}
 					return nbytes;
 				} else if (nbytes == 0) {
 					throw new RuntimeException(
-							"should not happen: buffer to small, 0 bytes read: compact does not function? messages is larger than "
-									+ buf.capacity() + "?");
+						"should not happen: buffer to small, 0 bytes read: compact does not function? messages is larger than "
+						+ buf.capacity() + "?");
 					// This means that there are no bytes remaining in the
 					// buffer... it is full.
 					// compactBuffer();
@@ -696,25 +694,26 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 
 				return nbytes;
 			} catch (IOException e) {
-				if (debug)
+				if (debug) {
 					debug("socket from %s:%d I/O error: %s", socket.socket()
-							.getInetAddress(), socket.socket().getPort(),
-							e.getMessage());
+						.getInetAddress(), socket.socket().getPort(),
+						e.getMessage());
+				}
 				active = false;
-				if (in != null)
+				if (in != null) {
 					in.close();
+				}
 				socket.close();
 				throw e;
 			}
 		}
-		
 
 		/**
-		 * Compact the buffer by removing all read data before <code>beg</code>.
-		 * The <code>beg</code>, <code>end</code> and <code>pos</code> markers
-		 * are updated accordingly. Compact works only if beg is larger than
-		 * four (the size of a header).
-		 * 
+		 * Compact the buffer by removing all read data before
+		 * <code>beg</code>. The <code>beg</code>, <code>end</code> and
+		 * <code>pos</code> markers are updated accordingly. Compact
+		 * works only if beg is larger than four (the size of a header).
+		 *
 		 * @return the offset.
 		 */
 		protected int compactBuffer() {
@@ -736,8 +735,8 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 		}
 
 		/**
-		 * Not used in the current implementation, we assumes that no message
-		 * will be larger than the size of the buffer.
+		 * Not used in the current implementation, we assumes that no
+		 * message will be larger than the size of the buffer.
 		 */
 		protected void enlargeBuffer() {
 			ByteBuffer tmp = ByteBuffer.allocate(buf.capacity() * 2);
@@ -749,8 +748,9 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 
 			buf = tmp;
 
-			if (bin != null)
+			if (bin != null) {
 				bin.changeBuffer(buf.array());
+			}
 		}
 	}
 
@@ -780,8 +780,7 @@ public class NetStreamReceiver extends Thread implements NetStreamDecoder {
 	 */
 	public void decodeMessage(InputStream in) throws IOException {
 		decoder.decodeMessage(in);
-		
-	}
 
+	}
 
 }

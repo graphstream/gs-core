@@ -60,29 +60,30 @@ public class EdgeRenderer extends ElementRenderer {
 
 	@Override
 	protected void setupRenderingPass(StyleGroup group, Graphics2D g,
-			Camera camera) {
+		Camera camera) {
 		configureText(group, camera);
 	}
 
 	@Override
 	protected void pushDynStyle(StyleGroup group, Graphics2D g, Camera camera,
-			GraphicElement element) {
+		GraphicElement element) {
 		Color color = group.getFillColor(0);
 
-		if (element != null && group.getFillMode() == FillMode.DYN_PLAIN)
+		if (element != null && group.getFillMode() == FillMode.DYN_PLAIN) {
 			color = interpolateColor(group, element);
+		}
 
 		g.setColor(color);
 
 		if (group.getSizeMode() == SizeMode.DYN_SIZE) {
 			width = camera.getMetrics().lengthToGu(
-					StyleConstants
-							.convertValue(element.getAttribute("ui.size")));
+				StyleConstants
+				.convertValue(element.getAttribute("ui.size")));
 			// width = camera.getMetrics().lengthToGu( (double)
 			// element.getNumber( "ui.size" ), Units.PX );
 
 			g.setStroke(new BasicStroke((float) width, BasicStroke.CAP_BUTT,
-					BasicStroke.JOIN_BEVEL));
+				BasicStroke.JOIN_BEVEL));
 		}
 	}
 
@@ -91,21 +92,21 @@ public class EdgeRenderer extends ElementRenderer {
 		width = camera.getMetrics().lengthToGu(group.getSize(), 0);
 		arrowLength = camera.getMetrics().lengthToGu(group.getArrowSize(), 0);
 		arrowWidth = camera.getMetrics().lengthToGu(group.getArrowSize(),
-				group.getArrowSize().size() > 1 ? 1 : 0);
+			group.getArrowSize().size() > 1 ? 1 : 0);
 
 		g.setColor(group.getFillColor(0));
 		g.setStroke(new BasicStroke((float) width, BasicStroke.CAP_BUTT,
-				BasicStroke.JOIN_BEVEL));
+			BasicStroke.JOIN_BEVEL));
 	}
 
 	@Override
 	protected void elementInvisible(StyleGroup group, Graphics2D g,
-			Camera camera, GraphicElement element) {
+		Camera camera, GraphicElement element) {
 	}
 
 	@Override
 	protected void renderElement(StyleGroup group, Graphics2D g, Camera camera,
-			GraphicElement element) {
+		GraphicElement element) {
 		GraphicEdge edge = (GraphicEdge) element;
 		GraphicNode node0 = (GraphicNode) edge.getNode0();
 		GraphicNode node1 = (GraphicNode) edge.getNode1();
@@ -117,7 +118,7 @@ public class EdgeRenderer extends ElementRenderer {
 	}
 
 	protected void renderArrow(StyleGroup group, Graphics2D g, Camera camera,
-			GraphicEdge edge) {
+		GraphicEdge edge) {
 		if (edge.isDirected() && arrowWidth > 0 && arrowLength > 0) {
 			if (group.getArrowShape() != ArrowShape.NONE) {
 				Path2D shape = new Path2D.Double();
@@ -125,27 +126,26 @@ public class EdgeRenderer extends ElementRenderer {
 				GraphicNode node1 = (GraphicNode) edge.getNode1();
 				double off = evalEllipseRadius(edge, node0, node1, camera);
 				Vector2 theDirection = new Vector2(node1.getX() - node0.getX(),
-						node1.getY() - node0.getY());
+					node1.getY() - node0.getY());
 
 				theDirection.normalize();
 
 				double x = node1.x - (theDirection.data[0] * off);
 				double y = node1.y - (theDirection.data[1] * off);
 				Vector2 perp = new Vector2(theDirection.data[1],
-						-theDirection.data[0]);
+					-theDirection.data[0]);
 
 				perp.normalize();
 				theDirection.scalarMult(arrowLength);
 				perp.scalarMult(arrowWidth);
 
 				// Create a polygon.
-
 				shape.reset();
 				shape.moveTo(x, y);
 				shape.lineTo(x - theDirection.data[0] + perp.data[0], y
-						- theDirection.data[1] + perp.data[1]);
+					- theDirection.data[1] + perp.data[1]);
 				shape.lineTo(x - theDirection.data[0] - perp.data[0], y
-						- theDirection.data[1] - perp.data[1]);
+					- theDirection.data[1] - perp.data[1]);
 				shape.closePath();
 
 				g.fill(shape);
@@ -154,42 +154,38 @@ public class EdgeRenderer extends ElementRenderer {
 	}
 
 	protected double evalEllipseRadius(GraphicEdge edge, GraphicNode node0,
-			GraphicNode node1, Camera camera) {
+		GraphicNode node1, Camera camera) {
 		Values size = node1.getStyle().getSize();
 		double w = camera.getMetrics().lengthToGu(size.get(0), size.getUnits());
 		double h = size.size() > 1 ? camera.getMetrics().lengthToGu(
-				size.get(1), size.getUnits()) : w;
+			size.get(1), size.getUnits()) : w;
 
 		w /= 2;
 		h /= 2;
-				
-		if (w == h)
-			return w; // Welcome simplification for circles ...
 
+		if (w == h) {
+			return w; // Welcome simplification for circles ...
+		}
 		// Vector of the entering edge.
 		double dx = node1.getX() - node0.getX();
 		double dy = node1.getY() - node0.getY();
 
 		// The entering edge must be deformed by the ellipse ratio to find the
 		// correct angle.
-
 		dy *= (w / h);
 
 		// Find the angle of the entering vector with (1,0).
-
 		double d = Math.sqrt(dx * dx + dy * dy);
 		double a = dx / d;
 
 		// Compute the coordinates at which the entering vector and the ellipse
 		// cross.
-
 		a = Math.acos(a);
 		dx = Math.cos(a) * w;
 		dy = Math.sin(a) * h;
 
 		// The distance from the ellipse center to the crossing point of the
 		// ellipse and vector:
-
 		return Math.sqrt(dx * dx + dy * dy);
 	}
 }

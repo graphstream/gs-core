@@ -54,8 +54,8 @@ public class DemoViewerColorInterpolation implements ViewerListener {
 		Graph graph = new MultiGraph("main graph");
 		ViewerPipe pipe = graph.display(false).newViewerPipe();
 
-		// graph.addAttribute( "ui.quality" );
-		graph.addAttribute("ui.antialias");
+		// graph.setAttribute( "ui.quality" );
+		graph.setAttribute("ui.antialias");
 
 		pipe.addViewerListener(this);
 
@@ -67,11 +67,11 @@ public class DemoViewerColorInterpolation implements ViewerListener {
 		graph.addEdge("BC", "B", "C", true);
 		graph.addEdge("CA", "C", "A", true);
 
-		A.addAttribute("xyz", 0, 1, 0);
-		B.addAttribute("xyz", 1, 0, 0);
-		C.addAttribute("xyz", -1, 0, 0);
+		A.setAttribute("xyz", 0, 1, 0);
+		B.setAttribute("xyz", 1, 0, 0);
+		C.setAttribute("xyz", -1, 0, 0);
 
-		graph.addAttribute("ui.stylesheet", styleSheet);
+		graph.setAttribute("ui.stylesheet", styleSheet);
 
 		float color = 0;
 		float dir = 0.01f;

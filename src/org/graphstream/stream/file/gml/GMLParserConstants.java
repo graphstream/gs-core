@@ -37,37 +37,65 @@ package org.graphstream.stream.file.gml;
  */
 public interface GMLParserConstants {
 
-	/** End of File. */
+	/**
+	 * End of File.
+	 */
 	int EOF = 0;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int EOL = 5;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int DIGIT = 6;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int HEXDIGIT = 7;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int LSQBR = 8;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int RSQBR = 9;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int REAL = 10;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int STRING = 11;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int GRAPH = 12;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int DIGRAPH = 13;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int KEY = 14;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int COMMENT = 15;
 
-	/** Lexical state. */
+	/**
+	 * Lexical state.
+	 */
 	int DEFAULT = 0;
 
-	/** Literal token values. */
-	String[] tokenImage = { "<EOF>", "\" \"", "\"\\r\"", "\"\\t\"", "\"\\n\"",
-			"<EOL>", "<DIGIT>", "<HEXDIGIT>", "\"[\"", "\"]\"", "<REAL>",
-			"<STRING>", "\"graph\"", "\"digraph\"", "<KEY>", "<COMMENT>", };
+	/**
+	 * Literal token values.
+	 */
+	String[] tokenImage = {"<EOF>", "\" \"", "\"\\r\"", "\"\\t\"", "\"\\n\"",
+		"<EOL>", "<DIGIT>", "<HEXDIGIT>", "\"[\"", "\"]\"", "<REAL>",
+		"<STRING>", "\"graph\"", "\"digraph\"", "<KEY>", "<COMMENT>",};
 
 }

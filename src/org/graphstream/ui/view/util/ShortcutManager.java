@@ -42,13 +42,12 @@ import java.awt.event.KeyListener;
 public interface ShortcutManager extends KeyListener {
 	/**
 	 * Make the manager active on the given graph and view.
-	 * @param graph
-	 *            The graph to control.
-	 * @param view
-	 *            The view to control.
+	 *
+	 * @param graph The graph to control.
+	 * @param view The view to control.
 	 */
 	void init(GraphicGraph graph, View view);
-	
+
 	/**
 	 * Release the links between this manager and the view and the graph.
 	 */

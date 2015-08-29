@@ -31,149 +31,174 @@
  */
 package org.graphstream.graph;
 
+import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
 
 /**
  * Structures are generic objects which may contain nodes and edges.
- * 
+ *
  */
 public interface Structure {
 	/**
 	 * Number of nodes in this graph.
-	 * 
+	 *
 	 * @return The number of nodes.
 	 */
 	int getNodeCount();
 
 	/**
 	 * Number of edges in this graph.
-	 * 
+	 *
 	 * @return The number of edges.
 	 */
 	int getEdgeCount();
 
 	/**
 	 * Iterator on the set of nodes, in an undefined order. This method is
-	 * implicitly generic and returns an Iterator over something which extends
-	 * Node. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
-	 * 
+	 * implicitly generic and returns an Iterator over something which
+	 * extends Node. The return type is the one of the left part of the
+	 * assignment. For example, in the following call :
+	 *
 	 * <pre>
 	 * Iterator&lt;ExtendedNode&gt; ite = graph.getNodeIterator();
 	 * </pre>
-	 * 
-	 * the method will return an Iterator&lt;ExtendedNode&gt;. If no left part
-	 * exists, method will just return an Iterator&lt;Node&gt;.
-	 * 
+	 *
+	 * the method will return an Iterator&lt;ExtendedNode&gt;. If no left
+	 * part exists, method will just return an Iterator&lt;Node&gt;.
+	 *
 	 * @return The iterator.
 	 */
 	<T extends Node> Iterator<T> getNodeIterator();
 
 	/**
 	 * Iterator on the set of edges, in an undefined order. This method is
-	 * implicitly generic and returns an Iterator over something which extends
-	 * Edge. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
-	 * 
+	 * implicitly generic and returns an Iterator over something which
+	 * extends Edge. The return type is the one of the left part of the
+	 * assignment. For example, in the following call :
+	 *
 	 * <pre>
 	 * Iterator&lt;ExtendedEdge&gt; ite = graph.getEdgeIterator();
 	 * </pre>
-	 * 
-	 * the method will return an Iterator&lt;ExtendedEdge&gt;. If no left part
-	 * exists, method will just return an Iterator&lt;Edge&gt;.
-	 * 
+	 *
+	 * the method will return an Iterator&lt;ExtendedEdge&gt;. If no left
+	 * part exists, method will just return an Iterator&lt;Edge&gt;.
+	 *
 	 * @return The iterator.
 	 */
 	<T extends Edge> Iterator<T> getEdgeIterator();
 
 	/**
-	 * Set of nodes usable in a for-each instruction. This method is implicitly
-	 * generic and returns an Iterable over something which extends Node. The
-	 * return type is the one of the left part of the assignment. For example,
-	 * in the following call :
-	 * 
+	 * Set of nodes usable in a for-each instruction. This method is
+	 * implicitly generic and returns an Iterable over something which
+	 * extends Node. The return type is the one of the left part of the
+	 * assignment. For example, in the following call :
+	 *
 	 * <pre>
 	 * Iterable&lt;ExtendedNode&gt; ite = struct.getEachNode();
 	 * </pre>
-	 * 
-	 * the method will return an Iterable&lt;ExtendedNode&gt;. If no left part
-	 * exists, method will just return an Iterable&lt;Node&gt;. It is possible
-	 * to use it in a for-each loop by giving the parameter :
-	 * 
+	 *
+	 * the method will return an Iterable&lt;ExtendedNode&gt;. If no left
+	 * part exists, method will just return an Iterable&lt;Node&gt;. It is
+	 * possible to use it in a for-each loop by giving the parameter :
+	 *
 	 * <pre>
 	 * for (ExtendedNode n : struct.&lt;ExtendedNode&gt; getEachNode()) {
 	 * 	// ...
 	 * }
 	 * </pre>
-	 * 
+	 *
 	 * @return An "iterable" view of the set of nodes.
 	 * @see #getNodeIterator()
 	 * @see #getEachNode()
 	 */
-	<T extends Node> Iterable<? extends T> getEachNode();
+	default <T extends Node> Iterable<? extends T> getEachNode() {
+		return this::getNodeIterator;
+	}
 
 	/**
-	 * Set of edges usable in a for-each instruction. This method is implicitly
-	 * generic and returns an Iterable over something which extends Edge. The
-	 * return type is the one of the left part of the assignment. For example,
-	 * in the following call :
-	 * 
+	 * Set of edges usable in a for-each instruction. This method is
+	 * implicitly generic and returns an Iterable over something which
+	 * extends Edge. The return type is the one of the left part of the
+	 * assignment. For example, in the following call :
+	 *
 	 * <pre>
 	 * Iterable&lt;ExtendedNEdge&gt; ite = struct.getEachEdge();
 	 * </pre>
-	 * 
-	 * the method will return an Iterable&lt;ExtendedEdge&gt;. If no left part
-	 * exists, method will just return an Iterable&lt;Edge&gt;. It is possible
-	 * to use it in a for-each loop by giving the parameter :
-	 * 
+	 *
+	 * the method will return an Iterable&lt;ExtendedEdge&gt;. If no left
+	 * part exists, method will just return an Iterable&lt;Edge&gt;. It is
+	 * possible to use it in a for-each loop by giving the parameter :
+	 *
 	 * <pre>
 	 * for (ExtendedEdge e : struct.&lt;ExtendedEdge&gt; getEachEdge()) {
 	 * 	// ...
 	 * }
 	 * </pre>
-	 * 
+	 *
 	 * @return An "iterable" view of the set of edges.
 	 * @see #getEdgeIterator()
 	 * @see #getEdgeSet()
 	 */
-	<T extends Edge> Iterable<? extends T> getEachEdge();
+	default <T extends Edge> Iterable<? extends T> getEachEdge() {
+		return this::getEdgeIterator;
+	}
 
 	/**
-	 * Unmodifiable view of the set of nodes. This method is implicitly generic
-	 * and returns a Collection of something which extends Node. The return type
-	 * is the one of the left part of the assignment. For example, in the
-	 * following call :
-	 * 
+	 * Unmodifiable view of the set of nodes. This method is implicitly
+	 * generic and returns a Collection of something which extends Node. The
+	 * return type is the one of the left part of the assignment. For
+	 * example, in the following call :
+	 *
 	 * <pre>
 	 * Collection&lt;ExtendedNode&gt; c = struct.getNodeSet();
 	 * </pre>
-	 * 
-	 * the method will return a Collection&lt;ExtendedNode&gt;. If no left part
-	 * exists, method will just return a Collection&lt;Node&gt;.
-	 * 
+	 *
+	 * the method will return a Collection&lt;ExtendedNode&gt;. If no left
+	 * part exists, method will just return a Collection&lt;Node&gt;.
+	 *
 	 * @return A set of nodes that can only be read, not changed.
 	 * @see #getNodeIterator()
 	 * @see #getEachNode()
 	 */
-	<T extends Node> Collection<T> getNodeSet();
+	default <T extends Node> Collection<T> getNodeSet() {
+		return new AbstractCollection<T>() {
+			public Iterator<T> iterator() {
+				return getNodeIterator();
+			}
+
+			public int size() {
+				return getNodeCount();
+			}
+		};
+	}
 
 	/**
-	 * Unmodifiable view of the set of edges. This method is implicitly generic
-	 * and returns a Collection of something which extends Edge. The return type
-	 * is the one of the left part of the assignment. For example, in the
-	 * following call :
-	 * 
+	 * Unmodifiable view of the set of edges. This method is implicitly
+	 * generic and returns a Collection of something which extends Edge. The
+	 * return type is the one of the left part of the assignment. For
+	 * example, in the following call :
+	 *
 	 * <pre>
 	 * Collection&lt;ExtendedEdge&gt; c = struct.getEdgeSet();
 	 * </pre>
-	 * 
-	 * the method will return a Collection&lt;ExtendedEdge&gt;. If no left part
-	 * exists, method will just return a Collection&lt;Edge&gt;.
-	 * 
+	 *
+	 * the method will return a Collection&lt;ExtendedEdge&gt;. If no left
+	 * part exists, method will just return a Collection&lt;Edge&gt;.
+	 *
 	 * @return A set of edges that can only be read, not changed.
 	 * @see #getEdgeIterator()
 	 * @see #getEachEdge()
 	 */
-	<T extends Edge> Collection<T> getEdgeSet();
+	default <T extends Edge> Collection<T> getEdgeSet() {
+		return new AbstractCollection<T>() {
+			public Iterator<T> iterator() {
+				return getEdgeIterator();
+			}
+
+			public int size() {
+				return getEdgeCount();
+			}
+		};
+	}
 }

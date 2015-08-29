@@ -45,7 +45,7 @@ public class FilteredEdgeIterator<T extends Edge> implements Iterator<T> {
 	public FilteredEdgeIterator(Graph g, Filter<Edge> filter) {
 		this(g.<T>getEdgeIterator(), filter);
 	}
-	
+
 	public FilteredEdgeIterator(Iterator<T> ite, Filter<Edge> filter) {
 		this.globalIterator = ite;
 		this.filter = (Filter<Edge>) filter;
@@ -59,8 +59,9 @@ public class FilteredEdgeIterator<T extends Edge> implements Iterator<T> {
 		while (globalIterator.hasNext() && next == null) {
 			next = globalIterator.next();
 
-			if (!filter.isAvailable(next))
+			if (!filter.isAvailable(next)) {
 				next = null;
+			}
 		}
 	}
 

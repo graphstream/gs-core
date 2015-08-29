@@ -34,44 +34,53 @@ package org.graphstream.stream.netstream.packing;
 import java.nio.ByteBuffer;
 
 /**
- * 
+ *
  */
 public abstract class NetStreamUnpacker {
-	
+
 	/**
-	 * An unpacker has to be abble to indicated what is the size of an int after being packed.
+	 * An unpacker has to be abble to indicated what is the size of an int
+	 * after being packed.
+	 *
 	 * @return
 	 */
 	public abstract int sizeOfInt();
-	
+
 	/**
-	 * Unpack the given ByteBuffer from startIndex to endIdex 
-	 * @param buffer The buffer to unpack/decode
-	 * @param startIndex the index at which the decoding starts in the buffer
-	 * @param endIndex the index at which the decoding stops
-	 * @return a ByteBuffer that is the unpacked version of the input one. It may not have the same size.
+	 * Unpack the given ByteBuffer from startIndex to endIdex
+	 *
+	 * @param buffer     The buffer to unpack/decode
+	 * @param startIndex the index at which the decoding starts in the
+	 *                   buffer
+	 * @param endIndex   the index at which the decoding stops
+	 * @return a ByteBuffer that is the unpacked version of the input one.
+	 *         It may not have the same size.
 	 */
 	public abstract ByteBuffer unpackMessage(ByteBuffer buffer, int startIndex, int endIndex);
 
 	/**
-	 * Unpack the given ByteBuffer 
+	 * Unpack the given ByteBuffer
+	 *
 	 * @param buffer The buffer to unpack/decode
-	 * @return a ByteBuffer that is the unpacked version of the input one. It may not have the same size.
+	 * @return a ByteBuffer that is the unpacked version of the input one.
+	 *         It may not have the same size.
 	 */
-	public ByteBuffer unpackMessage(ByteBuffer buffer){
+	public ByteBuffer unpackMessage(ByteBuffer buffer) {
 		return this.unpackMessage(buffer, 0, buffer.capacity());
 	}
 
 	/**
-	 * Unpacks the data necessary to decode a 4 bytes integer that indicates the size of the following message. 
-	 * 
-	 * The given buffer's position may be important for the unpacker to work. This method may also change the given bytebuffer's position attribute. 
-	 * 
-	 * @param buffer The byteBuffer who's content has the encoded value of the needed  size integer.
+	 * Unpacks the data necessary to decode a 4 bytes integer that indicates
+	 * the size of the following message.
+	 *
+	 * The given buffer's position may be important for the unpacker to
+	 * work. This method may also change the given bytebuffer's position
+	 * attribute.
+	 *
+	 * @param buffer The byteBuffer who's content has the encoded value of
+	 *               the needed size integer.
 	 * @return
 	 */
 	public abstract int unpackMessageSize(ByteBuffer buffer);
-	
-	
-	
+
 }

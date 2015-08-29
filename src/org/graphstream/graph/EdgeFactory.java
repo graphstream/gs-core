@@ -33,21 +33,19 @@ package org.graphstream.graph;
 
 /**
  * An interface aimed at dynamically creating edge objects.
- * 
+ *
  * @since September 2007
  */
+@FunctionalInterface
 public interface EdgeFactory<T extends Edge> {
 	/**
 	 * Create a new instance of edge.
-	 * 
-	 * @param id
-	 *            The new edge identifier.
-	 * @param src
-	 *            The source node.
-	 * @param dst
-	 *            The target node.
-	 * @param directed
-	 *            Is the edge directed (in the direction source toward target).
+	 *
+	 * @param id       The new edge identifier.
+	 * @param src      The source node.
+	 * @param dst      The target node.
+	 * @param directed Is the edge directed (in the direction source toward
+	 *                 target).
 	 * @return The newly created edge.
 	 */
 	T newInstance(String id, Node src, Node dst, boolean directed);

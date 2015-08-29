@@ -43,7 +43,7 @@ import org.graphstream.stream.Sink;
  * A sink that can be used to display event in a PrintStream like System.out.
  * Format of messages can be customized, inserting keywords quoted with '%' in
  * the format.
- * 
+ *
  * '%sourceId%' and '%timeId%' keywords are defined for each event. Following
  * defines keywords available for each event types:
  * <dl>
@@ -179,15 +179,15 @@ public class VerboseSink implements Sink {
 
 	/**
 	 * Enumeration defining type of events.
-	 * 
+	 *
 	 */
 	public static enum EventType {
 		ADD_NODE, ADD_NODE_ATTRIBUTE, SET_NODE_ATTRIBUTE, DEL_NODE_ATTRIBUTE, DEL_NODE, ADD_EDGE, ADD_EDGE_ATTRIBUTE, SET_EDGE_ATTRIBUTE, DEL_EDGE_ATTRIBUTE, DEL_EDGE, ADD_GRAPH_ATTRIBUTE, SET_GRAPH_ATTRIBUTE, DEL_GRAPH_ATTRIBUTE, CLEAR, STEP_BEGINS
 	}
 
 	/**
-	 * Flag used to indicate if the sink has to flush the output when writting a
-	 * message.
+	 * Flag used to indicate if the sink has to flush the output when
+	 * writting a message.
 	 */
 	protected boolean autoflush;
 	/**
@@ -220,9 +220,8 @@ public class VerboseSink implements Sink {
 
 	/**
 	 * Create a new verbose sink.
-	 * 
-	 * @param out
-	 *            stream used to output message
+	 *
+	 * @param out stream used to output message
 	 */
 	public VerboseSink(PrintStream out) {
 		this.out = out;
@@ -249,8 +248,9 @@ public class VerboseSink implements Sink {
 		formats.put(EventType.CLEAR, DEFAULT_CL_FORMAT);
 		formats.put(EventType.STEP_BEGINS, DEFAULT_ST_FORMAT);
 
-		for (EventType t : EventType.values())
+		for (EventType t : EventType.values()) {
 			enable.put(t, Boolean.TRUE);
+		}
 
 		suffix = "";
 		prefix = "";
@@ -258,9 +258,8 @@ public class VerboseSink implements Sink {
 
 	/**
 	 * Enable or disable autoflush.
-	 * 
-	 * @param on
-	 *            true to enable autoflush
+	 *
+	 * @param on true to enable autoflush
 	 */
 	public void setAutoFlush(boolean on) {
 		this.autoflush = on;
@@ -268,11 +267,9 @@ public class VerboseSink implements Sink {
 
 	/**
 	 * Redefines message format of an event.
-	 * 
-	 * @param type
-	 *            type of the event
-	 * @param format
-	 *            new format of the message attached with the event
+	 *
+	 * @param type type of the event
+	 * @param format new format of the message attached with the event
 	 */
 	public void setEventFormat(EventType type, String format) {
 		formats.put(type, format);
@@ -280,11 +277,9 @@ public class VerboseSink implements Sink {
 
 	/**
 	 * Enable or disable an event.
-	 * 
-	 * @param type
-	 *            type of the event
-	 * @param on
-	 *            true to enable message for this event
+	 *
+	 * @param type type of the event
+	 * @param on true to enable message for this event
 	 */
 	public void setEventEnabled(EventType type, boolean on) {
 		enable.put(type, on);
@@ -292,9 +287,8 @@ public class VerboseSink implements Sink {
 
 	/**
 	 * Enable or disable all messages associated with attribute events.
-	 * 
-	 * @param on
-	 *            true to enable events
+	 *
+	 * @param on true to enable events
 	 */
 	public void setElementEventEnabled(boolean on) {
 		enable.put(EventType.ADD_EDGE_ATTRIBUTE, on);
@@ -310,9 +304,8 @@ public class VerboseSink implements Sink {
 
 	/**
 	 * Enable or disable all messages associated with element events.
-	 * 
-	 * @param on
-	 *            true to enable events
+	 *
+	 * @param on true to enable events
 	 */
 	public void setAttributeEventEnabled(boolean on) {
 		enable.put(EventType.ADD_EDGE, on);
@@ -324,9 +317,8 @@ public class VerboseSink implements Sink {
 
 	/**
 	 * Set prefix used in messages.
-	 * 
-	 * @param prefix
-	 *            new prefix
+	 *
+	 * @param prefix new prefix
 	 */
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
@@ -334,41 +326,43 @@ public class VerboseSink implements Sink {
 
 	/**
 	 * Set suffix used in messages.
-	 * 
-	 * @param suffix
-	 *            new suffix
+	 *
+	 * @param suffix new suffix
 	 */
 	public void setSuffix(String suffix) {
 		this.suffix = suffix;
 	}
 
 	private void print(EventType type, Args args) {
-		if (!enable.get(type))
+		if (!enable.get(type)) {
 			return;
+		}
 
 		String out = formats.get(type);
 
 		for (String k : args.keySet()) {
 			Object o = args.get(k);
 			out = out.replace(String.format("%%%s%%", k), o == null ? "null"
-					: o.toString());
+				: o.toString());
 		}
 
 		this.out.print(out);
 		this.out.printf("\n");
 
-		if (autoflush)
+		if (autoflush) {
 			this.out.flush();
+		}
 
 		argsPnP(args);
 	}
 
 	private Args argsPnP(Args args) {
 		if (args == null) {
-			if (argsStack.size() > 0)
+			if (argsStack.size() > 0) {
 				args = argsStack.pop();
-			else
+			} else {
 				args = new Args();
+			}
 
 			args.put("prefix", prefix);
 			args.put("suffix", suffix);
@@ -383,18 +377,20 @@ public class VerboseSink implements Sink {
 	}
 
 	private String toStringValue(Object o) {
-		if (o == null)
+		if (o == null) {
 			return "<null>";
+		}
 
-		if (o instanceof String)
+		if (o instanceof String) {
 			return "\"" + ((String) o).replace("\"", "\\\"");
-		else if (o.getClass().isArray()) {
+		} else if (o.getClass().isArray()) {
 			StringBuilder buffer = new StringBuilder();
 			buffer.append("{");
 
 			for (int i = 0; i < Array.getLength(o); i++) {
-				if (i > 0)
+				if (i > 0) {
 					buffer.append(", ");
+				}
 				buffer.append(toStringValue(Array.get(o, i)));
 			}
 
@@ -413,7 +409,7 @@ public class VerboseSink implements Sink {
 	 * long, java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		Args args = argsPnP(null);
 
 		args.put("sourceId", sourceId);
@@ -434,7 +430,7 @@ public class VerboseSink implements Sink {
 	 * java.lang.Object)
 	 */
 	public void edgeAttributeChanged(String sourceId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
+		String edgeId, String attribute, Object oldValue, Object newValue) {
 		Args args = argsPnP(null);
 
 		args.put("sourceId", sourceId);
@@ -454,7 +450,7 @@ public class VerboseSink implements Sink {
 	 * , long, java.lang.String, java.lang.String)
 	 */
 	public void edgeAttributeRemoved(String sourceId, long timeId,
-			String edgeId, String attribute) {
+		String edgeId, String attribute) {
 		Args args = argsPnP(null);
 
 		args.put("sourceId", sourceId);
@@ -473,7 +469,7 @@ public class VerboseSink implements Sink {
 	 * , long, java.lang.String, java.lang.Object)
 	 */
 	public void graphAttributeAdded(String sourceId, long timeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		Args args = argsPnP(null);
 
 		args.put("sourceId", sourceId);
@@ -492,7 +488,7 @@ public class VerboseSink implements Sink {
 	 * String, long, java.lang.String, java.lang.Object, java.lang.Object)
 	 */
 	public void graphAttributeChanged(String sourceId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
+		String attribute, Object oldValue, Object newValue) {
 		Args args = argsPnP(null);
 
 		args.put("sourceId", sourceId);
@@ -511,7 +507,7 @@ public class VerboseSink implements Sink {
 	 * String, long, java.lang.String)
 	 */
 	public void graphAttributeRemoved(String sourceId, long timeId,
-			String attribute) {
+		String attribute) {
 		Args args = argsPnP(null);
 
 		args.put("sourceId", sourceId);
@@ -529,7 +525,7 @@ public class VerboseSink implements Sink {
 	 * long, java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		Args args = argsPnP(null);
 
 		args.put("sourceId", sourceId);
@@ -550,7 +546,7 @@ public class VerboseSink implements Sink {
 	 * java.lang.Object)
 	 */
 	public void nodeAttributeChanged(String sourceId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
+		String nodeId, String attribute, Object oldValue, Object newValue) {
 		Args args = argsPnP(null);
 
 		args.put("sourceId", sourceId);
@@ -570,7 +566,7 @@ public class VerboseSink implements Sink {
 	 * , long, java.lang.String, java.lang.String)
 	 */
 	public void nodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute) {
+		String nodeId, String attribute) {
 		Args args = argsPnP(null);
 
 		args.put("sourceId", sourceId);
@@ -588,7 +584,7 @@ public class VerboseSink implements Sink {
 	 * java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
+		String fromNodeId, String toNodeId, boolean directed) {
 		Args args = argsPnP(null);
 
 		args.put("sourceId", sourceId);

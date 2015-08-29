@@ -40,7 +40,7 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Element;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
-import org.graphstream.graph.implementations.DefaultGraph;
+import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.graphicGraph.StyleGroup;
 import org.graphstream.ui.graphicGraph.StyleGroupSet;
 import org.graphstream.ui.graphicGraph.StyleGroup.ElementEvents;
@@ -74,7 +74,7 @@ public class TestStyleSheet {
 
 	@Before
 	public void setUp() {
-		graph = new DefaultGraph("g1");
+		graph = new SingleGraph("g1");
 
 		A = graph.addNode("A");
 		B = graph.addNode("B");
@@ -85,12 +85,12 @@ public class TestStyleSheet {
 		CD = graph.addEdge("CD", "C", "D");
 		DA = graph.addEdge("DA", "D", "A");
 
-		B.addAttribute("ui.class", "foo");
-		C.addAttribute("ui.class", "foo");
-		D.addAttribute("ui.class", "bar", "foo");
+		B.setAttribute("ui.class", "foo");
+		C.setAttribute("ui.class", "foo");
+		D.setAttribute("ui.class", "bar", "foo");
 
-		AB.addAttribute("ui.class", "foo");
-		BC.addAttribute("ui.class", "foo");
+		AB.setAttribute("ui.class", "foo");
+		BC.setAttribute("ui.class", "foo");
 
 		//       B (foo)
 		//     _/ \_
@@ -841,7 +841,7 @@ public class TestStyleSheet {
 
 		// Now test the fact
 
-		B.addAttribute("ui.color", 2);
+		B.setAttribute("ui.color", 2);
 		sgs.pushEventFor(B, "clicked"); // This is normally done automatically
 										// by the GraphicElement
 		sgs.pushElementAsDynamic(B); // This is normally done automatically by

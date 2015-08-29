@@ -60,7 +60,7 @@ import com.sun.net.httpserver.HttpServer;
  * <li>st : step begins</li>
  * <li>clear : clear the whole graph</li>
  * </ul>
- * 
+ *
  * Each of these actions needs some argument.
  * <dl>
  * <dt>an</dt>
@@ -130,22 +130,19 @@ public class HTTPSource extends SourceBase {
 
 	/**
 	 * Create a new http source. The source will be available on
-	 * 'http://localhost/graphId' where graphId is passed as parameter of this
-	 * constructor.
-	 * 
-	 * @param graphId
-	 *            id of the graph
-	 * @param port
-	 *            port on which server will be bound
-	 * @throws IOException
-	 *             if server creation failed.
+	 * 'http://localhost/graphId' where graphId is passed as parameter of
+	 * this constructor.
+	 *
+	 * @param graphId id of the graph
+	 * @param port port on which server will be bound
+	 * @throws IOException if server creation failed.
 	 */
 	public HTTPSource(String graphId, int port) throws IOException {
 		super(String.format("http://%s", graphId));
 
 		server = HttpServer.create(new InetSocketAddress(port), 4);
 		server.createContext(String.format("/%s/edit", graphId),
-				new EditHandler());
+			new EditHandler());
 
 	}
 
@@ -177,33 +174,33 @@ public class HTTPSource extends SourceBase {
 			}
 
 			switch (a) {
-			case AN:
-				HTTPSource.this.sendNodeAdded(sourceId, get.get("id")
+				case AN:
+					HTTPSource.this.sendNodeAdded(sourceId, get.get("id")
 						.toString());
-				break;
-			case CN:
-				break;
-			case DN:
-				HTTPSource.this.sendNodeRemoved(sourceId, get.get("id")
+					break;
+				case CN:
+					break;
+				case DN:
+					HTTPSource.this.sendNodeRemoved(sourceId, get.get("id")
 						.toString());
-				break;
-			case AE:
-				HTTPSource.this.sendEdgeAdded(sourceId, get.get("id")
+					break;
+				case AE:
+					HTTPSource.this.sendEdgeAdded(sourceId, get.get("id")
 						.toString(), get.get("from").toString(), get.get("to")
 						.toString(), get.containsKey("directed"));
-				break;
-			case CE:
-				break;
-			case DE:
-				HTTPSource.this.sendEdgeRemoved(sourceId, get.get("id")
+					break;
+				case CE:
+					break;
+				case DE:
+					HTTPSource.this.sendEdgeRemoved(sourceId, get.get("id")
 						.toString());
-				break;
-			case CG:
-				break;
-			case ST:
-				HTTPSource.this.sendStepBegins(sourceId, Double.valueOf(get
+					break;
+				case CG:
+					break;
+				case ST:
+					HTTPSource.this.sendStepBegins(sourceId, Double.valueOf(get
 						.get("step").toString()));
-				break;
+					break;
 			}
 
 			ex.sendResponseHeaders(200, 0);
@@ -212,7 +209,7 @@ public class HTTPSource extends SourceBase {
 	}
 
 	protected static void error(HttpExchange ex, String message)
-			throws IOException {
+		throws IOException {
 		byte[] data = message.getBytes();
 
 		ex.sendResponseHeaders(400, data.length);
@@ -233,20 +230,22 @@ public class HTTPSource extends SourceBase {
 			v = null;
 
 			try {
-				if (kv.length > 0)
+				if (kv.length > 0) {
 					k = URLDecoder.decode(kv[0], System
-							.getProperty("file.encoding"));
+						.getProperty("file.encoding"));
+				}
 
-				if (kv.length > 1)
+				if (kv.length > 1) {
 					v = URLDecoder.decode(kv[1], System
-							.getProperty("file.encoding"));
+						.getProperty("file.encoding"));
+				}
 
 				if (get.containsKey(k)) {
 					Object o = get.get(k);
 
-					if (o instanceof LinkedList<?>)
+					if (o instanceof LinkedList<?>) {
 						((LinkedList<Object>) o).add(v);
-					else {
+					} else {
 						LinkedList<Object> l = new LinkedList<Object>();
 						l.add(o);
 						l.add(v);

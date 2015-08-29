@@ -36,15 +36,13 @@ package org.graphstream.stream;
  */
 public interface AttributePredicate {
 	/**
-	 * Tell if an attribute is recognized or not. The predicate can work on the
-	 * name of the attribute, on its value or on both.
-	 * 
-	 * @param attributeName
-	 *            The name of the attribute.
-	 * @param attributeValue
-	 *            The value of the attribute.
-	 * @return True if the attribute must be removed from the stream of graph
-	 *         events.
+	 * Tell if an attribute is recognized or not. The predicate can work on
+	 * the name of the attribute, on its value or on both.
+	 *
+	 * @param attributeName  The name of the attribute.
+	 * @param attributeValue The value of the attribute.
+	 * @return True if the attribute must be removed from the stream of
+	 *         graph events.
 	 */
 	boolean matches(String attributeName, Object attributeValue);
 }

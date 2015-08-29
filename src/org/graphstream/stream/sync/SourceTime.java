@@ -38,7 +38,7 @@ public class SourceTime {
 	 */
 	protected long currentTimeId;
 	/**
-	 * 
+	 *
 	 */
 	protected SinkTime sinkTime;
 
@@ -51,7 +51,7 @@ public class SourceTime {
 
 	/**
 	 * Create a new SourceTime for a given id and a given time.
-	 * 
+	 *
 	 * @param currentTimeId
 	 */
 	public SourceTime(long currentTimeId) {
@@ -68,7 +68,7 @@ public class SourceTime {
 
 	/**
 	 * Create a new SourceTime for a given id and a given time.
-	 * 
+	 *
 	 * @param currentTimeId
 	 */
 	public SourceTime(String sourceId, long currentTimeId) {
@@ -100,8 +100,9 @@ public class SourceTime {
 	public long newEvent() {
 		currentTimeId++;
 
-		if (sinkTime != null)
+		if (sinkTime != null) {
 			sinkTime.setTimeFor(sourceId, currentTimeId);
+		}
 
 		return currentTimeId;
 	}

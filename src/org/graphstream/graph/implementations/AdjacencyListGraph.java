@@ -38,7 +38,6 @@ import java.util.NoSuchElementException;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeFactory;
-import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.NodeFactory;
 
@@ -47,7 +46,7 @@ import org.graphstream.graph.NodeFactory;
  * A lightweight graph class intended to allow the construction of big graphs
  * (millions of elements).
  * </p>
- * 
+ *
  * <p>
  * The main purpose here is to minimize memory consumption even if the
  * management of such a graph implies more CPU consuming. See the
@@ -71,56 +70,48 @@ public class AdjacencyListGraph extends AbstractGraph {
 	protected int edgeCount;
 
 	// *** Constructors ***
-
 	/**
 	 * Creates an empty graph.
-	 * 
-	 * @param id
-	 *            Unique identifier of the graph.
-	 * @param strictChecking
-	 *            If true any non-fatal error throws an exception.
-	 * @param autoCreate
-	 *            If true (and strict checking is false), nodes are
-	 *            automatically created when referenced when creating a edge,
-	 *            even if not yet inserted in the graph.
-	 * @param initialNodeCapacity
-	 *            Initial capacity of the node storage data structures. Use this
-	 *            if you know the approximate maximum number of nodes of the
-	 *            graph. The graph can grow beyond this limit, but storage
-	 *            reallocation is expensive operation.
-	 * @param initialEdgeCapacity
-	 *            Initial capacity of the edge storage data structures. Use this
-	 *            if you know the approximate maximum number of edges of the
-	 *            graph. The graph can grow beyond this limit, but storage
-	 *            reallocation is expensive operation.
+	 *
+	 * @param id Unique identifier of the graph.
+	 * @param strictChecking If true any non-fatal error throws an
+	 *                            exception.
+	 * @param autoCreate If true (and strict checking is false),
+	 *                            nodes are automatically created when
+	 *                            referenced when creating a edge, even if
+	 *                            not yet inserted in the graph.
+	 * @param initialNodeCapacity Initial capacity of the node storage data
+	 *                            structures. Use this if you know the
+	 *                            approximate maximum number of nodes of the
+	 *                            graph. The graph can grow beyond this
+	 *                            limit, but storage reallocation is
+	 *                            expensive operation.
+	 * @param initialEdgeCapacity Initial capacity of the edge storage data
+	 *                            structures. Use this if you know the
+	 *                            approximate maximum number of edges of the
+	 *                            graph. The graph can grow beyond this
+	 *                            limit, but storage reallocation is
+	 *                            expensive operation.
 	 */
 	public AdjacencyListGraph(String id, boolean strictChecking, boolean autoCreate,
-			int initialNodeCapacity, int initialEdgeCapacity) {
+		int initialNodeCapacity, int initialEdgeCapacity) {
 		super(id, strictChecking, autoCreate);
 
-		setNodeFactory(new NodeFactory<AdjacencyListNode>() {
-			public AdjacencyListNode newInstance(String id, Graph graph) {
-				return new AdjacencyListNode((AbstractGraph) graph, id);
-			}
-		});
+		NodeFactory<AdjacencyListNode> nf = (i, g) -> (new AdjacencyListNode(i, (AbstractGraph) g));
+		setNodeFactory(nf);
 
-		setEdgeFactory(new EdgeFactory<AbstractEdge>() {
-			public AbstractEdge newInstance(String id, Node src, Node dst,
-					boolean directed) {
-				return new AbstractEdge(id, (AbstractNode) src,
-						(AbstractNode) dst, directed);
-			}
-		});
+		EdgeFactory<AbstractEdge> ef = (i, s, ds, di) -> (new AbstractEdge(i, (AbstractNode) s, (AbstractNode) ds, di));
+		setEdgeFactory(ef);
 
-		if (initialNodeCapacity < DEFAULT_NODE_CAPACITY)
+		if (initialNodeCapacity < DEFAULT_NODE_CAPACITY) {
 			initialNodeCapacity = DEFAULT_NODE_CAPACITY;
-		if (initialEdgeCapacity < DEFAULT_EDGE_CAPACITY)
+		}
+		if (initialEdgeCapacity < DEFAULT_EDGE_CAPACITY) {
 			initialEdgeCapacity = DEFAULT_EDGE_CAPACITY;
+		}
 
-		nodeMap = new HashMap<String, AbstractNode>(
-				4 * initialNodeCapacity / 3 + 1);
-		edgeMap = new HashMap<String, AbstractEdge>(
-				4 * initialEdgeCapacity / 3 + 1);
+		nodeMap = new HashMap<>(4 * initialNodeCapacity / 3 + 1);
+		edgeMap = new HashMap<>(4 * initialEdgeCapacity / 3 + 1);
 		nodeArray = new AbstractNode[initialNodeCapacity];
 		edgeArray = new AbstractEdge[initialEdgeCapacity];
 		nodeCount = edgeCount = 0;
@@ -128,33 +119,31 @@ public class AdjacencyListGraph extends AbstractGraph {
 
 	/**
 	 * Creates an empty graph with default edge and node capacity.
-	 * 
-	 * @param id
-	 *            Unique identifier of the graph.
-	 * @param strictChecking
-	 *            If true any non-fatal error throws an exception.
-	 * @param autoCreate
-	 *            If true (and strict checking is false), nodes are
-	 *            automatically created when referenced when creating a edge,
-	 *            even if not yet inserted in the graph.
+	 *
+	 * @param id Unique identifier of the graph.
+	 * @param strictChecking If true any non-fatal error throws an
+	 *                       exception.
+	 * @param autoCreate If true (and strict checking is false), nodes
+	 *                       are automatically created when referenced when
+	 *                       creating a edge, even if not yet inserted in
+	 *                       the graph.
 	 */
 	public AdjacencyListGraph(String id, boolean strictChecking, boolean autoCreate) {
 		this(id, strictChecking, autoCreate, DEFAULT_NODE_CAPACITY,
-				DEFAULT_EDGE_CAPACITY);
+			DEFAULT_EDGE_CAPACITY);
 	}
 
 	/**
-	 * Creates an empty graph with strict checking and without auto-creation.
-	 * 
-	 * @param id
-	 *            Unique identifier of the graph.
+	 * Creates an empty graph with strict checking and without
+	 * auto-creation.
+	 *
+	 * @param id Unique identifier of the graph.
 	 */
 	public AdjacencyListGraph(String id) {
 		this(id, true, false);
 	}
 
 	// *** Callbacks ***
-
 	@Override
 	protected void addEdgeCallback(AbstractEdge edge) {
 		edgeMap.put(edge.getId(), edge);
@@ -217,9 +206,10 @@ public class AdjacencyListGraph extends AbstractGraph {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Edge> T getEdge(int index) {
-		if (index < 0 || index >= edgeCount)
+		if (index < 0 || index >= edgeCount) {
 			throw new IndexOutOfBoundsException("Edge " + index
-					+ " does not exist");
+				+ " does not exist");
+		}
 		return (T) edgeArray[index];
 	}
 
@@ -237,9 +227,10 @@ public class AdjacencyListGraph extends AbstractGraph {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Node> T getNode(int index) {
-		if (index < 0 || index > nodeCount)
+		if (index < 0 || index > nodeCount) {
 			throw new IndexOutOfBoundsException("Node " + index
-					+ " does not exist");
+				+ " does not exist");
+		}
 		return (T) nodeArray[index];
 	}
 
@@ -249,7 +240,6 @@ public class AdjacencyListGraph extends AbstractGraph {
 	}
 
 	// *** Iterators ***
-
 	protected class EdgeIterator<T extends Edge> implements Iterator<T> {
 		int iNext = 0;
 		int iPrev = -1;
@@ -260,15 +250,17 @@ public class AdjacencyListGraph extends AbstractGraph {
 
 		@SuppressWarnings("unchecked")
 		public T next() {
-			if (iNext >= edgeCount)
+			if (iNext >= edgeCount) {
 				throw new NoSuchElementException();
+			}
 			iPrev = iNext++;
 			return (T) edgeArray[iPrev];
 		}
 
 		public void remove() {
-			if (iPrev == -1)
+			if (iPrev == -1) {
 				throw new IllegalStateException();
+			}
 			removeEdge(edgeArray[iPrev], true, true, true);
 			iNext = iPrev;
 			iPrev = -1;
@@ -285,15 +277,17 @@ public class AdjacencyListGraph extends AbstractGraph {
 
 		@SuppressWarnings("unchecked")
 		public T next() {
-			if (iNext >= nodeCount)
+			if (iNext >= nodeCount) {
 				throw new NoSuchElementException();
+			}
 			iPrev = iNext++;
 			return (T) nodeArray[iPrev];
 		}
 
 		public void remove() {
-			if (iPrev == -1)
+			if (iPrev == -1) {
 				throw new IllegalStateException();
+			}
 			removeNode(nodeArray[iPrev], true);
 			iNext = iPrev;
 			iPrev = -1;
@@ -302,12 +296,12 @@ public class AdjacencyListGraph extends AbstractGraph {
 
 	@Override
 	public <T extends Edge> Iterator<T> getEdgeIterator() {
-		return new EdgeIterator<T>();
+		return new EdgeIterator<>();
 	}
 
 	@Override
 	public <T extends Node> Iterator<T> getNodeIterator() {
-		return new NodeIterator<T>();
+		return new NodeIterator<>();
 	}
 
 	/*

@@ -44,14 +44,14 @@ import java.util.Map;
 
 /**
  * A base implementation of an element.
- * 
+ *
  * <p>
  * This class is the Base class for {@link org.graphstream.graph.Node},
  * {@link org.graphstream.graph.Edge} and {@link org.graphstream.graph.Graph}.
  * An element is made of an unique and arbitrary identifier that identifies it,
  * and a set of attributes.
  * </p>
- * 
+ *
  * @since 20040910
  */
 public abstract class AbstractElement implements Element {
@@ -60,9 +60,6 @@ public abstract class AbstractElement implements Element {
 	};
 
 	// Attribute
-
-	// protected static Set<String> emptySet = new HashSet<String>();
-
 	/**
 	 * Tag of this element.
 	 */
@@ -74,23 +71,22 @@ public abstract class AbstractElement implements Element {
 	private int index;
 
 	/**
-	 * Attributes map. This map is created only when needed. It contains pairs
-	 * (key,value) where the key is the attribute name and the value an Object.
+	 * Attributes map. This map is created only when needed. It contains
+	 * pairs (key,value) where the key is the attribute name and the value
+	 * an Object.
 	 */
 	protected HashMap<String, Object> attributes = null;
 
 	/**
-	 * Vector used when removing attributes to avoid recursive removing.
+	 * ArrayList used when removing attributes to avoid recursive removing.
 	 */
 	protected ArrayList<String> attributesBeingRemoved = null;
 
 	// Construction
-
 	/**
 	 * New element.
-	 * 
-	 * @param id
-	 *            The unique identifier of this element.
+	 *
+	 * @param id The unique identifier of this element.
 	 */
 	public AbstractElement(String id) {
 		assert id != null : "Graph elements cannot have a null identifier";
@@ -98,86 +94,70 @@ public abstract class AbstractElement implements Element {
 	}
 
 	// Access
-
+	@Override
 	public String getId() {
 		return id;
 	}
 
+	@Override
 	public int getIndex() {
 		return index;
 	}
 
 	/**
 	 * Used by subclasses to change the index of an element
-	 * 
-	 * @param index
-	 *            the new index
+	 *
+	 * @param index the new index
 	 */
 	protected void setIndex(int index) {
 		this.index = index;
 	}
 
-	// XXX UGLY. how to create events in the abstract element ?
-	// XXX The various methods that add and remove attributes will propagate an
-	// event
-	// XXX sometimes this is in response to another event and the
-	// sourceId/timeId is given
-	// XXX sometimes this comes from a direct call to
-	// add/change/removeAttribute() methods
-	// XXX in which case we need to generate a new event (sourceId/timeId) using
-	// the graph
-	// XXX id and a new time. These methods allow access to this.
-	// protected abstract String myGraphId(); // XXX
-
-	// protected abstract long newEvent(); // XXX
-
-	protected abstract boolean nullAttributesAreErrors(); // XXX
+	protected abstract boolean nullAttributesAreErrors();
 
 	/**
 	 * Called for each change in the attribute set. This method must be
 	 * implemented by sub-elements in order to send events to the graph
 	 * listeners.
-	 * 
-	 * @param attribute
-	 *            The attribute name that changed.
-	 * @param event
-	 *            The type of event among ADD, CHANGE and REMOVE.
-	 * @param oldValue
-	 *            The old value of the attribute, null if the attribute was
-	 *            added.
-	 * @param newValue
-	 *            The new value of the attribute, null if the attribute is about
-	 *            to be removed.
+	 *
+	 * @param attribute The attribute name that changed.
+	 * @param event     The type of event among ADD, CHANGE and REMOVE.
+	 * @param oldValue  The old value of the attribute, null if the
+	 *                  attribute was added.
+	 * @param newValue  The new value of the attribute, null if the
+	 *                  attribute is about to be removed.
 	 */
 	protected abstract void attributeChanged(AttributeChangeEvent event,
-			String attribute, Object oldValue, Object newValue);
+		String attribute, Object oldValue, Object newValue);
 
 	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this
-	 *             element.
+	 * element.
 	 */
-	// public Object getAttribute( String key )
-	@SuppressWarnings("all")
+	@Override
+	@SuppressWarnings("unchecked")
 	public <T> T getAttribute(String key) {
 		if (attributes != null) {
 			T value = (T) attributes.get(key);
 
-			if (value != null)
+			if (value != null) {
 				return value;
+			}
 		}
 
-		if (nullAttributesAreErrors())
+		if (nullAttributesAreErrors()) {
 			throw new NullAttributeException(key);
+		}
 
 		return null;
 	}
 
 	/**
 	 * @complexity O(log(n*m)) with n being the number of attributes of this
-	 *             element and m the number of keys given.
+	 * element and m the number of keys given.
 	 */
-	// public Object getFirstAttributeOf( String ... keys )
-	@SuppressWarnings("all")
+	@Override
+	@SuppressWarnings("unchecked")
 	public <T> T getFirstAttributeOf(String... keys) {
 		Object o = null;
 
@@ -185,193 +165,192 @@ public abstract class AbstractElement implements Element {
 			for (String key : keys) {
 				o = attributes.get(key);
 
-				if (o != null)
+				if (o != null) {
 					return (T) o;
+				}
 			}
 		}
 
-		if (o == null && nullAttributesAreErrors())
+		if (o == null && nullAttributesAreErrors()) {
 			throw new NullAttributeException();
+		}
 
 		return (T) o;
 	}
 
 	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this
-	 *             element.
+	 * element.
 	 */
-	// public Object getAttribute( String key, Class<?> clazz )
+	@Override
 	@SuppressWarnings("all")
-	public <T> T getAttribute(String key, Class<T> clazz) {
+	public <T> T getAttribute(Class<T> clazz, String key) {
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
-			if (o != null && clazz.isInstance(o))
+			if (o != null && clazz.isInstance(o)) {
 				return (T) o;
+			}
 		}
 
-		if (nullAttributesAreErrors())
+		if (nullAttributesAreErrors()) {
 			throw new NullAttributeException(key);
+		}
 
 		return null;
 	}
 
 	/**
 	 * @complexity O(log(n*m)) with n being the number of attributes of this
-	 *             element and m the number of keys given.
+	 * element and m the number of keys given.
 	 */
-	// public Object getFirstAttributeOf( Class<?> clazz, String ... keys )
-	@SuppressWarnings("all")
+	@Override
+	@SuppressWarnings("unchecked")
 	public <T> T getFirstAttributeOf(Class<T> clazz, String... keys) {
 		Object o = null;
 
-		if (attributes == null)
+		if (attributes == null) {
 			return null;
+		}
 
 		for (String key : keys) {
 			o = attributes.get(key);
 
-			if (o != null && clazz.isInstance(o))
+			if (o != null && clazz.isInstance(o)) {
 				return (T) o;
+			}
 		}
 
-		if (nullAttributesAreErrors())
+		if (nullAttributesAreErrors()) {
 			throw new NullAttributeException();
+		}
 
 		return null;
 	}
 
 	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this
-	 *             element.
+	 * element.
 	 */
+	@Override
 	public String getLabel(String key) {
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
-			if (o != null && o instanceof CharSequence)
-				return o.toString();
+			if (o != null && o instanceof String) {
+				return (String) o;
+			}
 		}
 
-		if (nullAttributesAreErrors())
+		if (nullAttributesAreErrors()) {
 			throw new NullAttributeException(key);
+		}
 
 		return null;
 	}
 
 	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this
-	 *             element.
+	 * element.
 	 */
-	public double getNumber(String key) {
+	@Override
+	public Number getNumber(String key) {
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
 			if (o != null) {
-				if (o instanceof Number)
-					return ((Number) o).doubleValue();
+				if (o instanceof Number) {
+					return (Number) o;
+				}
 
 				if (o instanceof String) {
 					try {
 						return Double.parseDouble((String) o);
 					} catch (NumberFormatException e) {
 					}
-				} else if (o instanceof CharSequence) {
-					try {
-						return Double
-								.parseDouble(((CharSequence) o).toString());
-					} catch (NumberFormatException e) {
-					}
 				}
 			}
 		}
 
-		if (nullAttributesAreErrors())
+		if (nullAttributesAreErrors()) {
 			throw new NullAttributeException(key);
+		}
 
 		return Double.NaN;
 	}
 
 	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this
-	 *             element.
+	 * element.
 	 */
-	@SuppressWarnings("unchecked")
-	public ArrayList<? extends Number> getVector(String key) {
-		if (attributes != null) {
-			Object o = attributes.get(key);
-
-			if (o != null && o instanceof ArrayList)
-				return ((ArrayList<? extends Number>) o);
-		}
-
-		if (nullAttributesAreErrors())
-			throw new NullAttributeException(key);
-
-		return null;
-	}
-
-	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this
-	 *             element.
-	 */
+	@Override
 	public Object[] getArray(String key) {
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
-			if (o != null && o instanceof Object[])
+			if (o != null && o instanceof Object[]) {
 				return ((Object[]) o);
+			}
 		}
 
-		if (nullAttributesAreErrors())
+		if (nullAttributesAreErrors()) {
 			throw new NullAttributeException(key);
+		}
 
 		return null;
 	}
 
 	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this
-	 *             element.
+	 * element.
 	 */
-	public HashMap<?, ?> getHash(String key) {
+	@Override
+	public Map<?, ?> getMap(String key) {
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
 			if (o != null) {
-				if (o instanceof HashMap<?, ?>)
-					return ((HashMap<?, ?>) o);
-				if (o instanceof CompoundAttribute)
-					return ((CompoundAttribute) o).toHashMap();
+				if (o instanceof Map<?, ?>) {
+					return ((Map<?, ?>) o);
+				}
+				if (o instanceof CompoundAttribute) {
+					return ((CompoundAttribute) o).toMap();
+				}
 			}
 		}
 
-		if (nullAttributesAreErrors())
+		if (nullAttributesAreErrors()) {
 			throw new NullAttributeException(key);
+		}
 
 		return null;
 	}
 
 	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this
-	 *             element.
+	 * element.
 	 */
+	@Override
 	public boolean hasAttribute(String key) {
-		if (attributes != null)
+		if (attributes != null) {
 			return attributes.containsKey(key);
+		}
 
 		return false;
 	}
 
 	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this
-	 *             element.
+	 * element.
 	 */
+	@Override
 	public boolean hasAttribute(String key, Class<?> clazz) {
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
-			if (o != null)
+			if (o != null) {
 				return (clazz.isInstance(o));
+			}
 		}
 
 		return false;
@@ -379,14 +358,16 @@ public abstract class AbstractElement implements Element {
 
 	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this
-	 *             element.
+	 * element.
 	 */
+	@Override
 	public boolean hasLabel(String key) {
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
-			if (o != null)
-				return (o instanceof CharSequence);
+			if (o != null) {
+				return (o instanceof String);
+			}
 		}
 
 		return false;
@@ -394,14 +375,16 @@ public abstract class AbstractElement implements Element {
 
 	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this
-	 *             element.
+	 * element.
 	 */
+	@Override
 	public boolean hasNumber(String key) {
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
-			if (o != null)
+			if (o != null) {
 				return (o instanceof Number);
+			}
 		}
 
 		return false;
@@ -409,29 +392,16 @@ public abstract class AbstractElement implements Element {
 
 	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this
-	 *             element.
+	 * element.
 	 */
-	public boolean hasVector(String key) {
-		if (attributes != null) {
-			Object o = attributes.get(key);
-
-			if (o != null && o instanceof ArrayList<?>)
-				return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this
-	 *             element.
-	 */
+	@Override
 	public boolean hasArray(String key) {
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
-			if (o != null && o instanceof Object[])
+			if (o != null && o instanceof Object[]) {
 				return true;
+			}
 		}
 
 		return false;
@@ -439,168 +409,158 @@ public abstract class AbstractElement implements Element {
 
 	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this
-	 *             element.
+	 * element.
 	 */
-	public boolean hasHash(String key) {
+	@Override
+	public boolean hasMap(String key) {
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
 			if (o != null
-					&& (o instanceof HashMap<?, ?> || o instanceof CompoundAttribute))
+				&& (o instanceof Map<?, ?> || o instanceof CompoundAttribute)) {
 				return true;
+			}
 		}
 
 		return false;
 	}
 
+	@Override
 	public Iterator<String> getAttributeKeyIterator() {
-		if (attributes != null)
+		if (attributes != null) {
 			return attributes.keySet().iterator();
+		}
 
 		return null;
 	}
 
+	@Override
 	public Iterable<String> getEachAttributeKey() {
 		return getAttributeKeySet();
 	}
 
+	@Override
 	public Collection<String> getAttributeKeySet() {
-		if (attributes != null)
-			return (Collection<String>) Collections
-					.unmodifiableCollection(attributes.keySet());
+		if (attributes != null) {
+			return Collections
+				.unmodifiableCollection(attributes.keySet());
+		}
 
 		return Collections.emptySet();
 	}
 
-	// public Map<String,Object> getAttributeMap()
-	// {
-	// if( attributes != null )
-	// {
-	// if( constMap == null )
-	// constMap = new ConstMap<String,Object>( attributes );
-	//
-	// return constMap;
-	// }
-	//
-	// return null;
-	// }
-
-	/**
-	 * Override the Object method
-	 */
 	@Override
 	public String toString() {
 		return id;
 	}
 
+	@Override
 	public int getAttributeCount() {
-		if (attributes != null)
+		if (attributes != null) {
 			return attributes.size();
+		}
 
 		return 0;
 	}
 
 	// Command
-
+	@Override
 	public void clearAttributes() {
 		if (attributes != null) {
-			for (Map.Entry<String, Object> entry : attributes.entrySet())
+			for (Map.Entry<String, Object> entry : attributes.entrySet()) {
 				attributeChanged(AttributeChangeEvent.REMOVE, entry.getKey(),
-						entry.getValue(), null);
+					entry.getValue(), null);
+			}
 
 			attributes.clear();
 		}
 	}
 
 	protected void clearAttributesWithNoEvent() {
-		if (attributes != null)
+		if (attributes != null) {
 			attributes.clear();
+		}
 	}
 
 	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this
-	 *             element.
+	 * element.
 	 */
-	public void addAttribute(String attribute, Object... values) {
-		if (attributes == null)
-			attributes = new HashMap<String, Object>(1);
+	@Override
+	public void setAttribute(String attribute, Object... values) {
+		if (attributes == null) {
+			attributes = new HashMap<>(1);
+		}
 
 		Object oldValue;
 		Object value;
 
-		if (values.length == 0)
+		if (values.length == 0) {
 			value = true;
-		else if (values.length == 1)
+		} else if (values.length == 1) {
 			value = values[0];
-		else
+		} else {
 			value = values;
+		}
 
 		AttributeChangeEvent event = AttributeChangeEvent.ADD;
 
 		if (attributes.containsKey(attribute)) // In case the value is null,
+		{
 			event = AttributeChangeEvent.CHANGE; // but the attribute exists.
-
+		}
 		oldValue = attributes.put(attribute, value);
 		attributeChanged(event, attribute, oldValue, value);
 	}
 
 	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this
-	 *             element.
+	 * element.
 	 */
-	public void changeAttribute(String attribute, Object... values) {
-		addAttribute(attribute, values);
-	}
-
-	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this
-	 *             element.
-	 */
-	public void setAttribute(String attribute, Object... values) {
-		addAttribute(attribute, values);
-	}
-
-	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this
-	 *             element.
-	 */
-	public void addAttributes(Map<String, Object> attributes) {
-		if (this.attributes == null)
-			this.attributes = new HashMap<String, Object>(attributes.size());
+	@Override
+	public void setAttributes(Map<String, Object> attributes) {
+		if (this.attributes == null) {
+			this.attributes = new HashMap<>(attributes.size());
+		}
 
 		Iterator<String> i = attributes.keySet().iterator();
 		Iterator<Object> j = attributes.values().iterator();
 
-		while (i.hasNext() && j.hasNext())
-			addAttribute(i.next(), j.next());
+		while (i.hasNext() && j.hasNext()) {
+			setAttribute(i.next(), j.next());
+		}
 	}
 
 	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this
-	 *             element.
+	 * element.
 	 */
-	public void removeAttribute(String attribute) {
+	@Override
+	public boolean removeAttribute(String attribute) {
 		if (attributes != null) {
 			//
 			// 'attributesBeingRemoved' is created only if this is required.
 			//
-			if (attributesBeingRemoved == null)
-				attributesBeingRemoved = new ArrayList<String>();
+			if (attributesBeingRemoved == null) {
+				attributesBeingRemoved = new ArrayList<>();
+			}
 
 			//
 			// Avoid recursive calls when synchronizing graphs.
 			//
 			if (attributes.containsKey(attribute)
-					&& !attributesBeingRemoved.contains(attribute)) {
+				&& !attributesBeingRemoved.contains(attribute)) {
 				attributesBeingRemoved.add(attribute);
 
 				attributeChanged(AttributeChangeEvent.REMOVE, attribute,
-						attributes.get(attribute), null);
+					attributes.get(attribute), null);
 
 				attributesBeingRemoved
-						.remove(attributesBeingRemoved.size() - 1);
+					.remove(attributesBeingRemoved.size() - 1);
 				attributes.remove(attribute);
+				return true;
 			}
 		}
+		return false;
 	}
 }

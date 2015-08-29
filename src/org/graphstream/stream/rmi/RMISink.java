@@ -65,20 +65,22 @@ public class RMISink extends UnicastRemoteObject implements RMIAdapterOut, Sink 
 		try {
 			RMIAdapterIn in = (RMIAdapterIn) Naming.lookup(url);
 
-			if (in != null)
+			if (in != null) {
 				inputs.put(url, in);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void unregister(String url) throws RemoteException {
-		if (inputs.containsKey(url))
+		if (inputs.containsKey(url)) {
 			inputs.remove(url);
+		}
 	}
 
 	public void edgeAttributeAdded(String graphId, long timeId, String edgeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		for (RMIAdapterIn in : inputs.values()) {
 			try {
 				in.edgeAttributeAdded(graphId, timeId, edgeId, attribute, value);
@@ -89,11 +91,11 @@ public class RMISink extends UnicastRemoteObject implements RMIAdapterOut, Sink 
 	}
 
 	public void edgeAttributeChanged(String graphId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
+		String edgeId, String attribute, Object oldValue, Object newValue) {
 		for (RMIAdapterIn in : inputs.values()) {
 			try {
 				in.edgeAttributeChanged(graphId, timeId, edgeId, attribute,
-						oldValue, newValue);
+					oldValue, newValue);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -101,7 +103,7 @@ public class RMISink extends UnicastRemoteObject implements RMIAdapterOut, Sink 
 	}
 
 	public void edgeAttributeRemoved(String graphId, long timeId,
-			String edgeId, String attribute) {
+		String edgeId, String attribute) {
 		for (RMIAdapterIn in : inputs.values()) {
 			try {
 				in.edgeAttributeRemoved(graphId, timeId, edgeId, attribute);
@@ -112,7 +114,7 @@ public class RMISink extends UnicastRemoteObject implements RMIAdapterOut, Sink 
 	}
 
 	public void graphAttributeAdded(String graphId, long timeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		for (RMIAdapterIn in : inputs.values()) {
 			try {
 				in.graphAttributeAdded(graphId, timeId, attribute, value);
@@ -123,11 +125,11 @@ public class RMISink extends UnicastRemoteObject implements RMIAdapterOut, Sink 
 	}
 
 	public void graphAttributeChanged(String graphId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
+		String attribute, Object oldValue, Object newValue) {
 		for (RMIAdapterIn in : inputs.values()) {
 			try {
 				in.graphAttributeChanged(graphId, timeId, attribute, oldValue,
-						newValue);
+					newValue);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -135,7 +137,7 @@ public class RMISink extends UnicastRemoteObject implements RMIAdapterOut, Sink 
 	}
 
 	public void graphAttributeRemoved(String graphId, long timeId,
-			String attribute) {
+		String attribute) {
 		for (RMIAdapterIn in : inputs.values()) {
 			try {
 				in.graphAttributeRemoved(graphId, timeId, attribute);
@@ -146,7 +148,7 @@ public class RMISink extends UnicastRemoteObject implements RMIAdapterOut, Sink 
 	}
 
 	public void nodeAttributeAdded(String graphId, long timeId, String nodeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		for (RMIAdapterIn in : inputs.values()) {
 			try {
 				in.nodeAttributeAdded(graphId, timeId, nodeId, attribute, value);
@@ -157,11 +159,11 @@ public class RMISink extends UnicastRemoteObject implements RMIAdapterOut, Sink 
 	}
 
 	public void nodeAttributeChanged(String graphId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
+		String nodeId, String attribute, Object oldValue, Object newValue) {
 		for (RMIAdapterIn in : inputs.values()) {
 			try {
 				in.nodeAttributeChanged(graphId, timeId, nodeId, attribute,
-						oldValue, newValue);
+					oldValue, newValue);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -169,7 +171,7 @@ public class RMISink extends UnicastRemoteObject implements RMIAdapterOut, Sink 
 	}
 
 	public void nodeAttributeRemoved(String graphId, long timeId,
-			String nodeId, String attribute) {
+		String nodeId, String attribute) {
 		for (RMIAdapterIn in : inputs.values()) {
 			try {
 				in.nodeAttributeRemoved(graphId, timeId, nodeId, attribute);
@@ -180,11 +182,11 @@ public class RMISink extends UnicastRemoteObject implements RMIAdapterOut, Sink 
 	}
 
 	public void edgeAdded(String graphId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
+		String fromNodeId, String toNodeId, boolean directed) {
 		for (RMIAdapterIn in : inputs.values()) {
 			try {
 				in.edgeAdded(graphId, timeId, edgeId, fromNodeId, toNodeId,
-						directed);
+					directed);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

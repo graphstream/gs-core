@@ -33,14 +33,14 @@ package org.graphstream.ui.geom;
 
 /**
  * 3D point.
- * 
+ *
  * A Point3 is a 3D location in an affine space described by three values along
  * the X, the Y and the Z axis. Note the difference with Vector3 wich is defined
  * as an array and ensures that the three coordinates X, Y and Z are consecutive
  * in memory. Here there are three separate attributes. Further, a point has no
  * vector arithmetic bound to it (to points cannot be added, this would have no
  * mathematical meaning).
- * 
+ *
  * @author Antoine Dutot
  * @since 19990829
  * @version 0.1
@@ -56,14 +56,12 @@ public class Point3 extends Point2 implements java.io.Serializable {
 	public double z;
 
 	// Attributes -- Shared
-
 	/**
 	 * Specific point at (0,0,0).
 	 */
 	public static final Point3 NULL_POINT3 = new Point3(0, 0, 0);
 
 	// Constructors
-
 	/**
 	 * New 3D point at(0,0,0).
 	 */
@@ -94,33 +92,44 @@ public class Point3 extends Point2 implements java.io.Serializable {
 	public Point3(Vector3 vec) {
 		copy(vec);
 	}
-	
+
 	public Point3(float data[]) {
 		this(0, data);
 	}
-	
+
 	public Point3(double data[]) {
 		this(0, data);
 	}
 
 	public Point3(int start, float data[]) {
-		if(data != null) {
-			if(data.length>start+0) x = data[start+0];
-			if(data.length>start+1) y = data[start+1];
-			if(data.length>start+2) z = data[start+2];
+		if (data != null) {
+			if (data.length > start + 0) {
+				x = data[start + 0];
+			}
+			if (data.length > start + 1) {
+				y = data[start + 1];
+			}
+			if (data.length > start + 2) {
+				z = data[start + 2];
+			}
 		}
 	}
-	
+
 	public Point3(int start, double data[]) {
-		if(data != null) {
-			if(data.length>start+0) x = data[start+0];
-			if(data.length>start+1) y = data[start+1];
-			if(data.length>start+2) z = data[start+2];
+		if (data != null) {
+			if (data.length > start + 0) {
+				x = data[start + 0];
+			}
+			if (data.length > start + 1) {
+				y = data[start + 1];
+			}
+			if (data.length > start + 2) {
+				z = data[start + 2];
+			}
 		}
 	}
 
 	// Predicates
-
 	/**
 	 * Are all components to zero?.
 	 */
@@ -139,16 +148,15 @@ public class Point3 extends Point2 implements java.io.Serializable {
 	// and y == other.y
 	// and z == other.z );
 	// }
-
 	/**
-	 * Create a new point linear interpolation of this and <code>other</code>.
-	 * The new point is located between this and <code>other</code> if
-	 * <code>factor</code> is between 0 and 1 (0 yields this point, 1 yields the
-	 * <code>other</code> point).
+	 * Create a new point linear interpolation of this and
+	 * <code>other</code>. The new point is located between this and
+	 * <code>other</code> if <code>factor</code> is between 0 and 1 (0
+	 * yields this point, 1 yields the <code>other</code> point).
 	 */
 	public Point3 interpolate(Point3 other, double factor) {
 		Point3 p = new Point3(x + ((other.x - x) * factor), y
-				+ ((other.y - y) * factor), z + ((other.z - z) * factor));
+			+ ((other.y - y) * factor), z + ((other.z - z) * factor));
 
 		return p;
 	}
@@ -174,7 +182,6 @@ public class Point3 extends Point2 implements java.io.Serializable {
 	}
 
 	// Commands
-
 	/**
 	 * Make this a copy of other.
 	 */
@@ -200,7 +207,6 @@ public class Point3 extends Point2 implements java.io.Serializable {
 	}
 
 	// Commands -- moving
-
 	/**
 	 * Move to absolute position (x,y,z).
 	 */
@@ -273,9 +279,8 @@ public class Point3 extends Point2 implements java.io.Serializable {
 
 	/**
 	 * Scale by a given scalar.
-	 * 
-	 * @param scalar
-	 *            The multiplier.
+	 *
+	 * @param scalar The multiplier.
 	 */
 	public void scale(double scalar) {
 		x *= scalar;
@@ -312,7 +317,6 @@ public class Point3 extends Point2 implements java.io.Serializable {
 	}
 
 	// Commands -- misc.
-
 	@Override
 	public String toString() {
 		StringBuffer buf;
@@ -329,41 +333,33 @@ public class Point3 extends Point2 implements java.io.Serializable {
 		return buf.toString();
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		if (!super.equals(o)) {
+			return false;
+		}
 
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass())
-        {
-            return false;
-        }
-        if (!super.equals(o))
-        {
-            return false;
-        }
+		Point3 point3 = (Point3) o;
 
-        Point3 point3 = (Point3) o;
+		if (Double.compare(point3.z, z) != 0) {
+			return false;
+		}
 
-        if (Double.compare(point3.z, z) != 0)
-        {
-            return false;
-        }
+		return true;
+	}
 
-        return true;
-    }
-
-
-    @Override
-    public int hashCode()
-    {
-        int result = super.hashCode();
-        long temp;
-        temp = Double.doubleToLongBits(z);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		int result = super.hashCode();
+		long temp;
+		temp = Double.doubleToLongBits(z);
+		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
 }

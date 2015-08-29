@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
 
 /**
  * Transform the input events into a GML graph.
- * 
+ *
  * <p>
  * THIS CLASS IS REALLY NOT APPROPRIATE FOR GENERAL USE. Indeed the GML format
  * is not dynamic and it is very difficult to export the correct attributes of
@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
  * node. The only way would be to store the graph in a buffer and output it at
  * once when the file is closed.
  * </p>
- * 
+ *
  * <p>
  * Therefore this class outputs attributes of nodes and edges only if their
  * addition directly follows the corresponding node or edge.
@@ -55,7 +55,9 @@ import java.util.regex.Pattern;
 public class FileSinkGML extends FileSinkBase {
 	// Attributes
 
-	/** Alias on the output OutputStream. */
+	/**
+	 * Alias on the output OutputStream.
+	 */
 	protected PrintWriter out;
 
 	protected String nodeToFinish = null;
@@ -63,13 +65,11 @@ public class FileSinkGML extends FileSinkBase {
 	protected String edgeToFinish = null;
 
 	// Construction
-
 	public FileSinkGML() {
 		// NOP
 	}
 
 	// File format events
-
 	@Override
 	protected void outputHeader() throws IOException {
 		out = (PrintWriter) output;
@@ -84,9 +84,8 @@ public class FileSinkGML extends FileSinkBase {
 	}
 
 	// Attribute events
-
 	public void graphAttributeAdded(String sourceId, long timeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		ensureToFinish();
 
 		String val = valueToString(value);
@@ -98,19 +97,19 @@ public class FileSinkGML extends FileSinkBase {
 	}
 
 	public void graphAttributeChanged(String sourceId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
+		String attribute, Object oldValue, Object newValue) {
 		ensureToFinish();
 		// GML is not a dynamic file format ?
 	}
 
 	public void graphAttributeRemoved(String sourceId, long timeId,
-			String attribute) {
+		String attribute) {
 		ensureToFinish();
 		// GML is not a dynamic file format ?
 	}
 
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		if (nodeToFinish != null && nodeToFinish.equals(nodeId)) {
 			String val = valueToString(value);
 			attribute = keyToString(attribute);
@@ -124,21 +123,23 @@ public class FileSinkGML extends FileSinkBase {
 	}
 
 	public void nodeAttributeChanged(String sourceId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
-		if (edgeToFinish != null)
+		String nodeId, String attribute, Object oldValue, Object newValue) {
+		if (edgeToFinish != null) {
 			ensureToFinish();
+		}
 		// GML is not a dynamic file format ?
 	}
 
 	public void nodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute) {
-		if (edgeToFinish != null)
+		String nodeId, String attribute) {
+		if (edgeToFinish != null) {
 			ensureToFinish();
+		}
 		// GML is not a dynamic file format ?
 	}
 
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		if (edgeToFinish != null && edgeToFinish.equals(edgeId)) {
 			String val = valueToString(value);
 			attribute = keyToString(attribute);
@@ -152,21 +153,22 @@ public class FileSinkGML extends FileSinkBase {
 	}
 
 	public void edgeAttributeChanged(String sourceId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
-		if (nodeToFinish != null)
+		String edgeId, String attribute, Object oldValue, Object newValue) {
+		if (nodeToFinish != null) {
 			ensureToFinish();
+		}
 		// GML is not a dynamic file format ?
 	}
 
 	public void edgeAttributeRemoved(String sourceId, long timeId,
-			String edgeId, String attribute) {
-		if (nodeToFinish != null)
+		String edgeId, String attribute) {
+		if (nodeToFinish != null) {
 			ensureToFinish();
+		}
 		// GML is not a dynamic file format ?
 	}
 
 	// Element events
-
 	public void nodeAdded(String sourceId, long timeId, String nodeId) {
 		ensureToFinish();
 		out.printf("\tnode [%n");
@@ -179,7 +181,7 @@ public class FileSinkGML extends FileSinkBase {
 	}
 
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
+		String fromNodeId, String toNodeId, boolean directed) {
 		ensureToFinish();
 		out.printf("\tedge [%n");
 		out.printf("\t\tid \"%s\"%n", edgeId);
@@ -201,26 +203,28 @@ public class FileSinkGML extends FileSinkBase {
 	}
 
 	// Commands
-
 	Pattern forbiddenKeyChars = Pattern.compile(".*[^a-zA-Z0-9-_.].*");
 
 	protected String keyToString(String key) {
-		if (forbiddenKeyChars.matcher(key).matches())
+		if (forbiddenKeyChars.matcher(key).matches()) {
 			return "\"" + key.replace("\"", "\\\"") + "\"";
+		}
 
 		return key;
 	}
 
 	protected String valueToString(Object value) {
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 
 		if (value instanceof Number) {
 			double val = ((Number) value).doubleValue();
-			if ((val - ((int) val)) == 0)
+			if ((val - ((int) val)) == 0) {
 				return String.format(Locale.US, "%d", (int) val);
-			else
+			} else {
 				return String.format(Locale.US, "%f", val);
+			}
 		}
 
 		return String.format("\"%s\"", value.toString().replaceAll("\n|\r|\"", " "));
@@ -228,7 +232,7 @@ public class FileSinkGML extends FileSinkBase {
 
 	protected void ensureToFinish() {
 		assert ((nodeToFinish != null && edgeToFinish == null)
-				|| (nodeToFinish == null && edgeToFinish != null) || (nodeToFinish == null && edgeToFinish == null));
+			|| (nodeToFinish == null && edgeToFinish != null) || (nodeToFinish == null && edgeToFinish == null));
 
 		if (nodeToFinish != null || edgeToFinish != null) {
 			out.printf("\t]%n");

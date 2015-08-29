@@ -112,9 +112,9 @@ public class ExampleWithViewer {
 				g.addSink(nsc);
 				// - generate some events on the client side
 				String style = "node{fill-mode:plain;fill-color:#567;size:6px;}";
-				g.addAttribute("stylesheet", style);
-				g.addAttribute("ui.antialias", true);
-				g.addAttribute("layout.stabilization-limit", 0);
+				g.setAttribute("stylesheet", style);
+				g.setAttribute("ui.antialias", true);
+				g.setAttribute("layout.stabilization-limit", 0);
 				for (int i = 0; i < 5000; i++) {
 					g.addNode(i + "");
 					if (i > 0) {

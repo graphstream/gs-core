@@ -33,7 +33,7 @@ package org.graphstream.stream;
 
 /**
  * Allows to filter the attribute event stream.
- * 
+ *
  * <p>
  * The filtering is based on attribute predicates. An attribute predicate is an
  * object that you provide and that only defines one method
@@ -41,13 +41,13 @@ package org.graphstream.stream;
  * return false, the attribute is discarded from the event stream, else it is
  * passed to the listeners of this filter.
  * </p>
- * 
+ *
  * <p>
  * You can setup a predicate from all attributes (graph, node and edge
  * attributes) and specific predicates for graph, node and edge attributes.
  * </p>
  */
-public class AttributePipe extends PipeBase {
+public class AttributeFilterPipe extends PipeBase {
 	protected AttributePredicate globalPredicate = new FalsePredicate();
 
 	protected AttributePredicate graphPredicate = new FalsePredicate();
@@ -59,202 +59,191 @@ public class AttributePipe extends PipeBase {
 	/**
 	 * Set an attribute filter for graph, node and edge attributes. If the
 	 * filter is null, attributes will not be filtered globally.
-	 * 
-	 * @param filter
-	 *            The filter to use, it can be null to disable global attribute
-	 *            filtering.
+	 *
+	 * @param filter The filter to use, it can be null to disable global
+	 *               attribute filtering.
 	 */
 	public void setGlobalAttributeFilter(AttributePredicate filter) {
-		if (filter == null)
+		if (filter == null) {
 			globalPredicate = new FalsePredicate();
-		else
+		} else {
 			globalPredicate = filter;
+		}
 	}
 
 	/**
 	 * Set an attribute filter for graph attributes only (node an edge
-	 * attributes are not filtered by this filter). If the filter is null, graph
-	 * attributes will not be filtered.
-	 * 
-	 * @param filter
-	 *            The filter to use, it can be null to disable graph attribute
-	 *            filtering.
+	 * attributes are not filtered by this filter). If the filter is null,
+	 * graph attributes will not be filtered.
+	 *
+	 * @param filter The filter to use, it can be null to disable graph
+	 *               attribute filtering.
 	 */
 	public void setGraphAttributeFilter(AttributePredicate filter) {
-		if (filter == null)
+		if (filter == null) {
 			graphPredicate = new FalsePredicate();
-		else
+		} else {
 			graphPredicate = filter;
+		}
 	}
 
 	/**
 	 * Set an attribute filter for node attributes only (graph an edge
-	 * attributes are not filtered by this filter). If the filter is null, node
-	 * attributes will not be filtered.
-	 * 
-	 * @param filter
-	 *            The filter to use, it can be null to disable node attribute
-	 *            filtering.
+	 * attributes are not filtered by this filter). If the filter is null,
+	 * node attributes will not be filtered.
+	 *
+	 * @param filter The filter to use, it can be null to disable node
+	 *               attribute filtering.
 	 */
 	public void setNodeAttributeFilter(AttributePredicate filter) {
-		if (filter == null)
+		if (filter == null) {
 			nodePredicate = new FalsePredicate();
-		else
+		} else {
 			nodePredicate = filter;
+		}
 	}
 
 	/**
 	 * Set an attribute filter for edge attributes only (graph an node
-	 * attributes are not filtered by this filter). If the filter is null, edge
-	 * attributes will not be filtered.
-	 * 
-	 * @param filter
-	 *            The filter to use, it can be null to disable edge attribute
-	 *            filtering.
+	 * attributes are not filtered by this filter). If the filter is null,
+	 * edge attributes will not be filtered.
+	 *
+	 * @param filter The filter to use, it can be null to disable edge
+	 *               attribute filtering.
 	 */
 	public void setEdgeAttributeFilter(AttributePredicate filter) {
-		if (filter == null)
+		if (filter == null) {
 			edgePredicate = new FalsePredicate();
-		else
+		} else {
 			edgePredicate = filter;
+		}
 	}
 
 	/**
-	 * The filter for all graph, node and edge attributes. This filter can be
-	 * null.
-	 * 
-	 * @return The global attribute filter or null if there is no global filter.
+	 * The filter for all graph, node and edge attributes.
+	 *
+	 * @return The global attribute filter
 	 */
 	public AttributePredicate getGlobalAttributeFilter() {
 		return globalPredicate;
 	}
 
 	/**
-	 * The filter for all graph attributes. This filter can be null.
-	 * 
-	 * @return The graph attribute filter or null if there is no graph filter.
+	 * The filter for all graph attributes.
+	 *
+	 * @return The graph attribute filter
 	 */
 	public AttributePredicate getGraphAttributeFilter() {
 		return graphPredicate;
 	}
 
 	/**
-	 * The filter for all node attributes. This filter can be null.
-	 * 
-	 * @return The node global attribute filter or null if there is no node
-	 *         filter.
+	 * The filter for all node attributes.
+	 *
+	 * @return The node global attribute filter filter.
 	 */
 	public AttributePredicate getNodeAttributeFilter() {
 		return nodePredicate;
 	}
 
 	/**
-	 * The filter for all edge attributes. This filter can be null.
-	 * 
-	 * @return The edge attribute filter or null of there is no edge filter.
+	 * The filter for all edge attributes.
+	 *
+	 * @return The edge attribute filter
 	 */
 	public AttributePredicate getEdgeAttributeFilter() {
 		return edgePredicate;
 	}
 
 	// GraphListener
-
 	@Override
 	public void edgeAttributeAdded(String graphId, long timeId, String edgeId,
-			String attribute, Object value) {
-		if (!edgePredicate.matches(attribute, value)) {
-			if (!globalPredicate.matches(attribute, value)) {
-				sendEdgeAttributeAdded(graphId, timeId, edgeId, attribute,
-						value);
-			}
+		String attribute, Object value) {
+		if (!edgePredicate.matches(attribute, value)
+			&& !globalPredicate.matches(attribute, value)) {
+			sendEdgeAttributeAdded(graphId, timeId, edgeId, attribute,
+				value);
 		}
 	}
 
 	@Override
 	public void edgeAttributeChanged(String graphId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
-		if (!edgePredicate.matches(attribute, newValue)) {
-			if (!globalPredicate.matches(attribute, newValue)) {
-				sendEdgeAttributeChanged(graphId, timeId, edgeId, attribute,
-						oldValue, newValue);
-			}
+		String edgeId, String attribute, Object oldValue, Object newValue) {
+		if (!edgePredicate.matches(attribute, newValue)
+			&& !globalPredicate.matches(attribute, newValue)) {
+			sendEdgeAttributeChanged(graphId, timeId, edgeId, attribute,
+				oldValue, newValue);
 		}
 	}
 
 	@Override
 	public void edgeAttributeRemoved(String graphId, long timeId,
-			String edgeId, String attribute) {
-		if (!edgePredicate.matches(attribute, null)) {
-			if (!globalPredicate.matches(attribute, null)) {
-				sendEdgeAttributeRemoved(graphId, timeId, edgeId, attribute);
-			}
+		String edgeId, String attribute) {
+		if (!edgePredicate.matches(attribute, null)
+			&& !globalPredicate.matches(attribute, null)) {
+			sendEdgeAttributeRemoved(graphId, timeId, edgeId, attribute);
 		}
 	}
 
 	@Override
 	public void graphAttributeAdded(String graphId, long timeId,
-			String attribute, Object value) {
-		if (!graphPredicate.matches(attribute, value)) {
-			if (!globalPredicate.matches(attribute, value)) {
-				sendGraphAttributeAdded(graphId, timeId, attribute, value);
-			}
+		String attribute, Object value) {
+		if (!graphPredicate.matches(attribute, value)
+			&& !globalPredicate.matches(attribute, value)) {
+			sendGraphAttributeAdded(graphId, timeId, attribute, value);
 		}
 	}
 
 	@Override
 	public void graphAttributeChanged(String graphId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
-		if (!graphPredicate.matches(attribute, newValue)) {
-			if (!globalPredicate.matches(attribute, newValue)) {
-				sendGraphAttributeChanged(graphId, timeId, attribute, oldValue,
-						newValue);
-			}
+		String attribute, Object oldValue, Object newValue) {
+		if (!graphPredicate.matches(attribute, newValue)
+			&& !globalPredicate.matches(attribute, newValue)) {
+			sendGraphAttributeChanged(graphId, timeId, attribute, oldValue,
+				newValue);
 		}
 	}
 
 	@Override
 	public void graphAttributeRemoved(String graphId, long timeId,
-			String attribute) {
-		if (!graphPredicate.matches(attribute, null)) {
-			if (!globalPredicate.matches(attribute, null)) {
-				sendGraphAttributeRemoved(graphId, timeId, attribute);
-			}
+		String attribute) {
+		if (!graphPredicate.matches(attribute, null)
+			&& !globalPredicate.matches(attribute, null)) {
+			sendGraphAttributeRemoved(graphId, timeId, attribute);
 		}
 	}
 
 	@Override
 	public void nodeAttributeAdded(String graphId, long timeId, String nodeId,
-			String attribute, Object value) {
-		if (!nodePredicate.matches(attribute, value)) {
-			if (!globalPredicate.matches(attribute, value)) {
-				sendNodeAttributeAdded(graphId, timeId, nodeId, attribute,
-						value);
-			}
+		String attribute, Object value) {
+		if (!nodePredicate.matches(attribute, value)
+			&& !globalPredicate.matches(attribute, value)) {
+			sendNodeAttributeAdded(graphId, timeId, nodeId, attribute,
+				value);
 		}
 	}
 
 	@Override
 	public void nodeAttributeChanged(String graphId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
-		if (!nodePredicate.matches(attribute, newValue)) {
-			if (!globalPredicate.matches(attribute, newValue)) {
-				sendNodeAttributeChanged(graphId, timeId, nodeId, attribute,
-						oldValue, newValue);
-			}
+		String nodeId, String attribute, Object oldValue, Object newValue) {
+		if (!nodePredicate.matches(attribute, newValue)
+			&& !globalPredicate.matches(attribute, newValue)) {
+			sendNodeAttributeChanged(graphId, timeId, nodeId, attribute,
+				oldValue, newValue);
 		}
 	}
 
 	@Override
 	public void nodeAttributeRemoved(String graphId, long timeId,
-			String nodeId, String attribute) {
-		if (!nodePredicate.matches(attribute, null)) {
-			if (!globalPredicate.matches(attribute, null)) {
-				sendNodeAttributeRemoved(graphId, timeId, nodeId, attribute);
-			}
+		String nodeId, String attribute) {
+		if (!nodePredicate.matches(attribute, null)
+			&& !globalPredicate.matches(attribute, null)) {
+			sendNodeAttributeRemoved(graphId, timeId, nodeId, attribute);
 		}
 	}
 
 	protected class FalsePredicate implements AttributePredicate {
+		@Override
 		public boolean matches(String attributeName, Object attributeValue) {
 			return false;
 		}

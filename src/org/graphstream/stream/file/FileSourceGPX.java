@@ -43,10 +43,10 @@ import javax.xml.stream.events.XMLEvent;
 /**
  * Source to read GPX (GPS eXchange Format) data an XML extension to exchange
  * gps coordinates, routes and tracks.
- * 
+ *
  * Read more about GPX at <a
  * href="https://en.wikipedia.org/wiki/GPS_eXchange_Format">Wikipedia</a>
- * 
+ *
  */
 public class FileSourceGPX extends FileSourceXML {
 
@@ -67,11 +67,11 @@ public class FileSourceGPX extends FileSourceXML {
 	public void setStrict(boolean on) {
 		strict = on;
 	}
-	
+
 	public boolean isStrict() {
 		return strict;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -113,11 +113,12 @@ public class FileSourceGPX extends FileSourceXML {
 
 		void deploy() {
 			sendNodeAdded(sourceId, name);
-			sendNodeAttributeAdded(sourceId, name, "xyz", new double[] { lon,
-					lat, ele });
+			sendNodeAttributeAdded(sourceId, name, "xyz", new double[]{lon,
+				lat, ele});
 
-			for (String key : attributes.keySet())
+			for (String key : attributes.keySet()) {
 				sendNodeAttributeAdded(sourceId, name, key, attributes.get(key));
+			}
 		}
 	}
 
@@ -134,16 +135,16 @@ public class FileSourceGPX extends FileSourceXML {
 		}
 
 		/**
-		 * Base for read points since points can be one of "wpt", "rtept",
-		 * "trkpt".
-		 * 
+		 * Base for read points since points can be one of "wpt",
+		 * "rtept", "trkpt".
+		 *
 		 * @param elementName
 		 * @return
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
 		private WayPoint waypoint(String elementName) throws IOException,
-				XMLStreamException {
+			XMLStreamException {
 			XMLEvent e;
 			WayPoint wp = new WayPoint();
 			EnumMap<WPTAttribute, String> attributes;
@@ -156,22 +157,24 @@ public class FileSourceGPX extends FileSourceXML {
 
 			if (!attributes.containsKey(WPTAttribute.LAT)) {
 				XMLStreamException ex = newParseError(e,
-						"attribute 'lat' is required");
+					"attribute 'lat' is required");
 
-				if (strict)
+				if (strict) {
 					throw ex;
-				else
+				} else {
 					ex.printStackTrace();
+				}
 			}
 
 			if (!attributes.containsKey(WPTAttribute.LON)) {
 				XMLStreamException ex = newParseError(e,
-						"attribute 'lon' is required");
+					"attribute 'lon' is required");
 
-				if (strict)
+				if (strict) {
 					throw ex;
-				else
+				} else {
 					ex.printStackTrace();
+				}
 			}
 
 			wp.lat = Double.parseDouble(attributes.get(WPTAttribute.LAT));
@@ -321,8 +324,9 @@ public class FileSourceGPX extends FileSourceXML {
 
 			checkValid(e, XMLEvent.END_ELEMENT, elementName);
 
-			if (wp.name == null)
+			if (wp.name == null) {
 				wp.name = String.format("wp#%08x", automaticPointId++);
+			}
 
 			return wp;
 		}
@@ -333,7 +337,7 @@ public class FileSourceGPX extends FileSourceXML {
 		 * attributes : GPXAttribute
 		 * structure  : METADATA? WPT* RTE* TRK* EXTENSIONS?
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -348,28 +352,30 @@ public class FileSourceGPX extends FileSourceXML {
 
 			if (!attributes.containsKey(GPXAttribute.VERSION)) {
 				XMLStreamException ex = newParseError(e,
-						"attribute 'version' is required");
+					"attribute 'version' is required");
 
-				if (strict)
+				if (strict) {
 					throw ex;
-				else
+				} else {
 					ex.printStackTrace();
+				}
 			} else {
 				sendGraphAttributeAdded(sourceId, "gpx.version", attributes
-						.get(GPXAttribute.VERSION));
+					.get(GPXAttribute.VERSION));
 			}
 
 			if (!attributes.containsKey(GPXAttribute.CREATOR)) {
 				XMLStreamException ex = newParseError(e,
-						"attribute 'creator' is required");
+					"attribute 'creator' is required");
 
-				if (strict)
+				if (strict) {
 					throw ex;
-				else
+				} else {
 					ex.printStackTrace();
+				}
 			} else {
 				sendGraphAttributeAdded(sourceId, "gpx.creator", attributes
-						.get(GPXAttribute.CREATOR));
+					.get(GPXAttribute.CREATOR));
 			}
 
 			e = getNextEvent();
@@ -415,10 +421,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : METADATA
-		 * attributes : 
+		 * attributes :
 		 * structure  : NAME? DESC? AUTHOR? COPYRIGHT? LINK* TIME? KEYWORDS? BOUNDS? EXTENSIONS?
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -447,7 +453,7 @@ public class FileSourceGPX extends FileSourceXML {
 			if (isEvent(e, XMLEvent.START_ELEMENT, "author")) {
 				pushback(e);
 				sendGraphAttributeAdded(sourceId, "gpx.metadata.author",
-						__author());
+					__author());
 
 				e = getNextEvent();
 			}
@@ -455,7 +461,7 @@ public class FileSourceGPX extends FileSourceXML {
 			if (isEvent(e, XMLEvent.START_ELEMENT, "copyright")) {
 				pushback(e);
 				sendGraphAttributeAdded(sourceId, "gpx.metadata.copyright",
-						__copyright());
+					__copyright());
 
 				e = getNextEvent();
 			}
@@ -469,9 +475,10 @@ public class FileSourceGPX extends FileSourceXML {
 				e = getNextEvent();
 			}
 
-			if (links.size() > 0)
+			if (links.size() > 0) {
 				sendGraphAttributeAdded(sourceId, "gpx.metadata.links", links
-						.toArray(new String[links.size()]));
+					.toArray(new String[links.size()]));
+			}
 
 			if (isEvent(e, XMLEvent.START_ELEMENT, "time")) {
 				pushback(e);
@@ -483,7 +490,7 @@ public class FileSourceGPX extends FileSourceXML {
 			if (isEvent(e, XMLEvent.START_ELEMENT, "keywords")) {
 				pushback(e);
 				sendGraphAttributeAdded(sourceId, "gpx.metadata.keywords",
-						__keywords());
+					__keywords());
 
 				e = getNextEvent();
 			}
@@ -511,7 +518,7 @@ public class FileSourceGPX extends FileSourceXML {
 		 * attributes : WPTAttribute
 		 * structure  : ELE? TIME? MAGVAR? GEOIDHEIGHT? NAME? CMT? DESC? SRC? LINK* SYM? TYPE? FIX? SAT? HDOP? VDOP? PDOP? AGEOFDGPSDATA? DGPSID? EXTENSIONS?
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -523,10 +530,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : RTE
-		 * attributes : 
+		 * attributes :
 		 * structure  : NAME? CMT? DESC? SRC? LINK* NUMBER? TYPE? EXTENSIONS? RTEPT*
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -617,8 +624,9 @@ public class FileSourceGPX extends FileSourceXML {
 
 			checkValid(e, XMLEvent.END_ELEMENT, "rte");
 
-			if (name == null)
+			if (name == null) {
 				name = String.format("route#%08x", automaticRouteId++);
+			}
 
 			sendGraphAttributeAdded(sourceId, "routes." + name, Boolean.TRUE);
 			sendGraphAttributeAdded(sourceId, "routes." + name + ".desc", desc);
@@ -627,7 +635,7 @@ public class FileSourceGPX extends FileSourceXML {
 			sendGraphAttributeAdded(sourceId, "routes." + name + ".type", type);
 			sendGraphAttributeAdded(sourceId, "routes." + name + ".time", time);
 			sendGraphAttributeAdded(sourceId, "routes." + name + ".number",
-					number);
+				number);
 
 			for (int i = 0; i < points.size(); i++) {
 				points.get(i).deploy();
@@ -635,7 +643,7 @@ public class FileSourceGPX extends FileSourceXML {
 				if (i > 0) {
 					String eid = String.format("seg#%08x", automaticEdgeId++);
 					sendEdgeAdded(sourceId, eid, points.get(i - 1).name, points
-							.get(i).name, true);
+						.get(i).name, true);
 					sendEdgeAttributeAdded(sourceId, eid, "route", name);
 				}
 			}
@@ -644,10 +652,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : TRK
-		 * attributes : 
+		 * attributes :
 		 * structure  : NAME? CMT? DESC? SRC? LINK* NUMBER? TYPE? EXTENSIONS? TRKSEG*
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -728,8 +736,9 @@ public class FileSourceGPX extends FileSourceXML {
 				e = getNextEvent();
 			}
 
-			if (name == null)
+			if (name == null) {
 				name = String.format("route#%08x", automaticRouteId++);
+			}
 
 			sendGraphAttributeAdded(sourceId, "tracks." + name, Boolean.TRUE);
 			sendGraphAttributeAdded(sourceId, "tracks." + name + ".desc", desc);
@@ -738,7 +747,7 @@ public class FileSourceGPX extends FileSourceXML {
 			sendGraphAttributeAdded(sourceId, "tracks." + name + ".type", type);
 			sendGraphAttributeAdded(sourceId, "tracks." + name + ".time", time);
 			sendGraphAttributeAdded(sourceId, "tracks." + name + ".number",
-					number);
+				number);
 
 			while (isEvent(e, XMLEvent.START_ELEMENT, "trkseg")) {
 				pushback(e);
@@ -749,9 +758,9 @@ public class FileSourceGPX extends FileSourceXML {
 
 					if (i > 0) {
 						String eid = String.format("seg#%08x",
-								automaticEdgeId++);
+							automaticEdgeId++);
 						sendEdgeAdded(sourceId, eid, wps.get(i - 1).name, wps
-								.get(i).name, true);
+							.get(i).name, true);
 						sendEdgeAttributeAdded(sourceId, eid, "route", name);
 					}
 				}
@@ -765,10 +774,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : EXTENSIONS
-		 * attributes : 
+		 * attributes :
 		 * structure  :
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -782,10 +791,11 @@ public class FileSourceGPX extends FileSourceXML {
 			e = getNextEvent();
 
 			while (!(isEvent(e, XMLEvent.END_ELEMENT, "extensions") && stack == 0)) {
-				if (isEvent(e, XMLEvent.END_ELEMENT, "extensions"))
+				if (isEvent(e, XMLEvent.END_ELEMENT, "extensions")) {
 					stack--;
-				else if (isEvent(e, XMLEvent.START_ELEMENT, "extensions"))
+				} else if (isEvent(e, XMLEvent.START_ELEMENT, "extensions")) {
 					stack++;
+				}
 
 				e = getNextEvent();
 			}
@@ -794,10 +804,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : NAME
-		 * attributes : 
+		 * attributes :
 		 * structure  : string
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -819,10 +829,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : DESC
-		 * attributes : 
+		 * attributes :
 		 * structure  : string
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -844,10 +854,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : AUTHOR
-		 * attributes : 
+		 * attributes :
 		 * structure  : NAME? EMAIL? LINK?
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -893,7 +903,7 @@ public class FileSourceGPX extends FileSourceXML {
 		 * attributes : COPYRIGHTAttribute
 		 * structure  : YEAR? LICENCE?
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -906,20 +916,22 @@ public class FileSourceGPX extends FileSourceXML {
 			checkValid(e, XMLEvent.START_ELEMENT, "copyright");
 
 			attributes = getAttributes(COPYRIGHTAttribute.class, e
-					.asStartElement());
+				.asStartElement());
 
 			if (!attributes.containsKey(COPYRIGHTAttribute.AUTHOR)) {
 				XMLStreamException ex = newParseError(e,
-						"attribute 'author' is required");
+					"attribute 'author' is required");
 
-				if (strict)
+				if (strict) {
 					throw ex;
-				else
+				} else {
 					ex.printStackTrace();
+				}
 
 				copyright = "unknown";
-			} else
+			} else {
 				copyright = attributes.get(COPYRIGHTAttribute.AUTHOR);
+			}
 
 			e = getNextEvent();
 
@@ -948,7 +960,7 @@ public class FileSourceGPX extends FileSourceXML {
 		 * attributes : LINKAttribute
 		 * structure  : TEXT? TYPE?
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -964,16 +976,18 @@ public class FileSourceGPX extends FileSourceXML {
 
 			if (!attributes.containsKey(LINKAttribute.HREF)) {
 				XMLStreamException ex = newParseError(e,
-						"attribute 'href' is required");
+					"attribute 'href' is required");
 
-				if (strict)
+				if (strict) {
 					throw ex;
-				else
+				} else {
 					ex.printStackTrace();
+				}
 
 				link = "unknown";
-			} else
+			} else {
 				link = attributes.get(LINKAttribute.HREF);
+			}
 
 			e = getNextEvent();
 
@@ -999,10 +1013,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : TIME
-		 * attributes : 
+		 * attributes :
 		 * structure  : string
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1024,10 +1038,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : KEYWORDS
-		 * attributes : 
+		 * attributes :
 		 * structure  : string
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1052,7 +1066,7 @@ public class FileSourceGPX extends FileSourceXML {
 		 * attributes : BOUNDSAttribute
 		 * structure  :
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1065,46 +1079,50 @@ public class FileSourceGPX extends FileSourceXML {
 			checkValid(e, XMLEvent.START_ELEMENT, "bounds");
 
 			attributes = getAttributes(BOUNDSAttribute.class, e
-					.asStartElement());
+				.asStartElement());
 
 			if (!attributes.containsKey(BOUNDSAttribute.MINLAT)) {
 				XMLStreamException ex = newParseError(e,
-						"attribute 'minlat' is required");
+					"attribute 'minlat' is required");
 
-				if (strict)
+				if (strict) {
 					throw ex;
-				else
+				} else {
 					ex.printStackTrace();
+				}
 			}
 
 			if (!attributes.containsKey(BOUNDSAttribute.MAXLAT)) {
 				XMLStreamException ex = newParseError(e,
-						"attribute 'maxlat' is required");
+					"attribute 'maxlat' is required");
 
-				if (strict)
+				if (strict) {
 					throw ex;
-				else
+				} else {
 					ex.printStackTrace();
+				}
 			}
 
 			if (!attributes.containsKey(BOUNDSAttribute.MINLON)) {
 				XMLStreamException ex = newParseError(e,
-						"attribute 'minlon' is required");
+					"attribute 'minlon' is required");
 
-				if (strict)
+				if (strict) {
 					throw ex;
-				else
+				} else {
 					ex.printStackTrace();
+				}
 			}
 
 			if (!attributes.containsKey(BOUNDSAttribute.MAXLON)) {
 				XMLStreamException ex = newParseError(e,
-						"attribute 'maxlon' is required");
+					"attribute 'maxlon' is required");
 
-				if (strict)
+				if (strict) {
 					throw ex;
-				else
+				} else {
 					ex.printStackTrace();
+				}
 			}
 
 			minlat = Double.parseDouble(attributes.get(BOUNDSAttribute.MINLAT));
@@ -1112,8 +1130,8 @@ public class FileSourceGPX extends FileSourceXML {
 			minlon = Double.parseDouble(attributes.get(BOUNDSAttribute.MINLON));
 			maxlon = Double.parseDouble(attributes.get(BOUNDSAttribute.MAXLON));
 
-			sendGraphAttributeAdded(sourceId, "gpx.bounds", new double[] {
-					minlat, minlon, maxlat, maxlon });
+			sendGraphAttributeAdded(sourceId, "gpx.bounds", new double[]{
+				minlat, minlon, maxlat, maxlon});
 
 			e = getNextEvent();
 			checkValid(e, XMLEvent.END_ELEMENT, "bounds");
@@ -1122,10 +1140,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : ELE
-		 * attributes : 
+		 * attributes :
 		 * structure  : double
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1147,10 +1165,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : MAGVAR
-		 * attributes : 
+		 * attributes :
 		 * structure  : double in [0,360]
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1172,10 +1190,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : GEOIDHEIGHT
-		 * attributes : 
+		 * attributes :
 		 * structure  : double
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1197,10 +1215,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : CMT
-		 * attributes : 
+		 * attributes :
 		 * structure  : string
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1222,10 +1240,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : SRC
-		 * attributes : 
+		 * attributes :
 		 * structure  : string
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1247,10 +1265,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : SYM
-		 * attributes : 
+		 * attributes :
 		 * structure  : string
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1272,10 +1290,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : TEXT
-		 * attributes : 
+		 * attributes :
 		 * structure  : string
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1297,10 +1315,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : TYPE
-		 * attributes : 
+		 * attributes :
 		 * structure  : string
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1322,10 +1340,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : FIX
-		 * attributes : 
+		 * attributes :
 		 * structure  : enum FixType
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1338,9 +1356,10 @@ public class FileSourceGPX extends FileSourceXML {
 
 			fix = __characters();
 
-			if (!fix.toLowerCase().matches("^(none|2d|3d|dgps|pps)$"))
+			if (!fix.toLowerCase().matches("^(none|2d|3d|dgps|pps)$")) {
 				throw newParseError(e,
-						"invalid fix type, expecting one of 'none', '2d', '3d', 'dgps', 'pps'");
+					"invalid fix type, expecting one of 'none', '2d', '3d', 'dgps', 'pps'");
+			}
 
 			e = getNextEvent();
 			checkValid(e, XMLEvent.END_ELEMENT, "fix");
@@ -1351,10 +1370,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : SAT
-		 * attributes : 
+		 * attributes :
 		 * structure  : positive integer
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1376,10 +1395,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : HDOP
-		 * attributes : 
+		 * attributes :
 		 * structure  : double
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1401,10 +1420,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : VDOP
-		 * attributes : 
+		 * attributes :
 		 * structure  : double
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1426,10 +1445,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : PDOP
-		 * attributes : 
+		 * attributes :
 		 * structure  : double
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1451,10 +1470,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : AGEOFDGPSDATA
-		 * attributes : 
+		 * attributes :
 		 * structure  : double
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1476,10 +1495,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : DGPSID
-		 * attributes : 
+		 * attributes :
 		 * structure  : integer in [0,1023]
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1501,10 +1520,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : NUMBER
-		 * attributes : 
+		 * attributes :
 		 * structure  : positive integer
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1526,10 +1545,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : RTEPT
-		 * attributes : 
+		 * attributes :
 		 * structure  : __wptType
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1540,10 +1559,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : TRKPT
-		 * attributes : 
+		 * attributes :
 		 * structure  : __wptType
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1554,15 +1573,15 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : TRKSEG
-		 * attributes : 
+		 * attributes :
 		 * structure  : TRKPT* EXTENSIONS?
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
 		private List<WayPoint> __trkseg() throws IOException,
-				XMLStreamException {
+			XMLStreamException {
 			LinkedList<WayPoint> points = new LinkedList<WayPoint>();
 			XMLEvent e;
 
@@ -1596,7 +1615,7 @@ public class FileSourceGPX extends FileSourceXML {
 		 * attributes : EMAILAttribute
 		 * structure  :
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1612,27 +1631,31 @@ public class FileSourceGPX extends FileSourceXML {
 
 			if (!attributes.containsKey(EMAILAttribute.ID)) {
 				XMLStreamException ex = newParseError(e,
-						"attribute 'version' is required");
+					"attribute 'version' is required");
 
-				if (strict)
+				if (strict) {
 					throw ex;
-				else
+				} else {
 					ex.printStackTrace();
-			} else
+				}
+			} else {
 				email += attributes.get(EMAILAttribute.ID);
+			}
 
 			email += "@";
 
 			if (!attributes.containsKey(EMAILAttribute.DOMAIN)) {
 				XMLStreamException ex = newParseError(e,
-						"attribute 'version' is required");
+					"attribute 'version' is required");
 
-				if (strict)
+				if (strict) {
 					throw ex;
-				else
+				} else {
 					ex.printStackTrace();
-			} else
+				}
+			} else {
 				email += attributes.get(EMAILAttribute.DOMAIN);
+			}
 
 			e = getNextEvent();
 			checkValid(e, XMLEvent.END_ELEMENT, "email");
@@ -1643,10 +1666,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : YEAR
-		 * attributes : 
+		 * attributes :
 		 * structure  : string
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
@@ -1668,10 +1691,10 @@ public class FileSourceGPX extends FileSourceXML {
 		/**
 		 * <pre>
 		 * name       : LICENSE
-		 * attributes : 
+		 * attributes :
 		 * structure  : string
 		 * </pre>
-		 * 
+		 *
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */

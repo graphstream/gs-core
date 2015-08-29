@@ -95,8 +95,9 @@ public class FileSinkGEXF2 extends PipeBase implements FileSink {
 			ctx.gexf.export(ctx.stream);
 			ctx.stream.close();
 
-			if (ctx.closeStreamAtEnd)
+			if (ctx.closeStreamAtEnd) {
 				ctx.output.close();
+			}
 		} catch (XMLStreamException e) {
 			throw new IOException(e);
 		}
@@ -144,9 +145,10 @@ public class FileSinkGEXF2 extends PipeBase implements FileSink {
 	 * @see org.graphstream.stream.file.FileSink#begin(java.lang.String)
 	 */
 	public void begin(String fileName) throws IOException {
-		if (currentContext != null)
+		if (currentContext != null) {
 			throw new IOException(
-					"cannot call begin() twice without calling end() before.");
+				"cannot call begin() twice without calling end() before.");
+		}
 
 		currentContext = createContext(fileName);
 		addSink(currentContext.gexf);
@@ -158,9 +160,10 @@ public class FileSinkGEXF2 extends PipeBase implements FileSink {
 	 * @see org.graphstream.stream.file.FileSink#begin(java.io.OutputStream)
 	 */
 	public void begin(OutputStream stream) throws IOException {
-		if (currentContext != null)
+		if (currentContext != null) {
 			throw new IOException(
-					"cannot call begin() twice without calling end() before.");
+				"cannot call begin() twice without calling end() before.");
+		}
 
 		currentContext = createContext(stream);
 		addSink(currentContext.gexf);
@@ -172,9 +175,10 @@ public class FileSinkGEXF2 extends PipeBase implements FileSink {
 	 * @see org.graphstream.stream.file.FileSink#begin(java.io.Writer)
 	 */
 	public void begin(Writer writer) throws IOException {
-		if (currentContext != null)
+		if (currentContext != null) {
 			throw new IOException(
-					"cannot call begin() twice without calling end() before.");
+				"cannot call begin() twice without calling end() before.");
+		}
 
 		currentContext = createContext(writer);
 		addSink(currentContext.gexf);
@@ -186,8 +190,9 @@ public class FileSinkGEXF2 extends PipeBase implements FileSink {
 	 * @see org.graphstream.stream.file.FileSink#flush()
 	 */
 	public void flush() throws IOException {
-		if (currentContext != null)
+		if (currentContext != null) {
 			currentContext.stream.flush();
+		}
 	}
 
 	/*
@@ -202,8 +207,9 @@ public class FileSinkGEXF2 extends PipeBase implements FileSink {
 			currentContext.gexf.export(currentContext.stream);
 			currentContext.stream.close();
 
-			if (currentContext.closeStreamAtEnd)
+			if (currentContext.closeStreamAtEnd) {
 				currentContext.output.close();
+			}
 		} catch (XMLStreamException e) {
 			throw new IOException(e);
 		}

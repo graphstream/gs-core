@@ -42,15 +42,15 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleSheet;
 
 /**
  * Transforms a graph into a SVG description.
- * 
+ *
  * <p>
  * Do not confuse this with the SVG export capabilities of the graph viewer. The
  * SVG export of the viewer provides the most exact copy of what you see on
  * screen. This class is made to export only nodes and edges without styling to
  * SVG.
  * </p>
- * 
- * 
+ *
+ *
  * <p>
  * Although there is no styling, each node and edge is put in a SVG group with
  * the identifier of the corresponding element in the graph. A minimal CSS style
@@ -78,13 +78,11 @@ public class FileSinkSVG extends FileSinkBase {
 	protected HashMap<String, Point3> nodePos = new HashMap<String, Point3>();
 
 	// Construction
-
 	public FileSinkSVG() {
 		// NOP.
 	}
 
 	// Command
-
 	@Override
 	public void end() throws IOException {
 		if (out != null) {
@@ -95,14 +93,13 @@ public class FileSinkSVG extends FileSinkBase {
 	}
 
 	// Command
-
 	@Override
 	protected void outputHeader() throws IOException {
 		out = (PrintWriter) output;
 
 		out.printf("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>%n");
 		out.printf("<svg" + " xmlns:svg=\"http://www.w3.org/2000/svg\""
-				+ " width=\"100%%\"" + " height=\"100%%\"" + ">%n");
+			+ " width=\"100%%\"" + " height=\"100%%\"" + ">%n");
 
 		// TODO
 		// outputStyle( styleSheet );
@@ -115,59 +112,59 @@ public class FileSinkSVG extends FileSinkBase {
 	}
 
 	public void edgeAttributeAdded(String graphId, long timeId, String edgeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		// NOP
 	}
 
 	public void edgeAttributeChanged(String graphId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
+		String edgeId, String attribute, Object oldValue, Object newValue) {
 		// NOP
 	}
 
 	public void edgeAttributeRemoved(String graphId, long timeId,
-			String edgeId, String attribute) {
+		String edgeId, String attribute) {
 		// NOP
 	}
 
 	public void graphAttributeAdded(String graphId, long timeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		// NOP
 	}
 
 	public void graphAttributeChanged(String graphId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
+		String attribute, Object oldValue, Object newValue) {
 		// NOP
 	}
 
 	public void graphAttributeRemoved(String graphId, long timeId,
-			String attribute) {
+		String attribute) {
 		// NOP
 	}
 
 	public void nodeAttributeAdded(String graphId, long timeId, String nodeId,
-			String attribute, Object value) {
+		String attribute, Object value) {
 		setNodePos(nodeId, attribute, value);
 	}
 
 	public void nodeAttributeChanged(String graphId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
+		String nodeId, String attribute, Object oldValue, Object newValue) {
 		setNodePos(nodeId, attribute, newValue);
 	}
 
 	public void nodeAttributeRemoved(String graphId, long timeId,
-			String nodeId, String attribute) {
+		String nodeId, String attribute) {
 		// NOP
 	}
 
 	public void edgeAdded(String graphId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
+		String fromNodeId, String toNodeId, boolean directed) {
 		Point3 p0 = nodePos.get(fromNodeId);
 		Point3 p1 = nodePos.get(toNodeId);
 
 		if (p0 != null && p1 != null) {
 			out.printf("  <g id=\"%s\">%n", edgeId);
 			out.printf("    <line x1=\"%f\" y1=\"%f\" x2=\"%f\" y2=\"%f\"/>%n",
-					p0.x, p0.y, p1.x, p1.y);
+				p0.x, p0.y, p1.x, p1.y);
 			out.printf("  </g>%n");
 		}
 	}
@@ -193,7 +190,6 @@ public class FileSinkSVG extends FileSinkBase {
 	}
 
 	// Utility
-
 	protected void setNodePos(String nodeId, String attribute, Object value) {
 		Point3 p = nodePos.get(nodeId);
 
@@ -203,17 +199,18 @@ public class FileSinkSVG extends FileSinkBase {
 		}
 
 		if (attribute.equals("x")) {
-			if (value instanceof Number)
+			if (value instanceof Number) {
 				p.x = ((Number) value).floatValue();
+			}
 		} else if (attribute.equals("y")) {
-			if (value instanceof Number)
+			if (value instanceof Number) {
 				p.y = ((Number) value).floatValue();
+			}
 		} else if (attribute.equals("z")) {
-			if (value instanceof Number)
+			if (value instanceof Number) {
 				p.z = ((Number) value).floatValue();
-		}
-
-		else if (attribute.equals("xy")) {
+			}
+		} else if (attribute.equals("xy")) {
 			if (value instanceof Object[]) {
 				Object xy[] = ((Object[]) value);
 
@@ -264,8 +261,9 @@ public class FileSinkSVG extends FileSinkBase {
 			}
 		}
 
-		if (style == null)
+		if (style == null) {
 			style = "circle { fill: grey; stroke: none; } line { stroke-width: 1; stroke: black; }";
+		}
 
 		out.printf("<defs><style type=\"text/css\"><![CDATA[%n");
 		out.printf("    %s%n", style);
@@ -281,7 +279,7 @@ public class FileSinkSVG extends FileSinkBase {
 
 			out.printf("  <g id=\"%s\">%n", key);
 			out.printf("    <circle cx=\"%f\" cy=\"%f\" r=\"4\"/>%n", pos.x,
-					pos.y);
+				pos.y);
 			out.printf("  </g>%n");
 		}
 	}

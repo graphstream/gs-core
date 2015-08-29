@@ -33,6 +33,7 @@ package org.graphstream.util;
 
 import org.graphstream.graph.Element;
 
+@FunctionalInterface
 public interface Filter<T extends Element> {
 	boolean isAvailable(T e);
 }

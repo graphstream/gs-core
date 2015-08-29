@@ -37,60 +37,108 @@ package org.graphstream.stream.file.tlp;
  */
 public interface TLPParserConstants {
 
-	/** End of File. */
+	/**
+	 * End of File.
+	 */
 	int EOF = 0;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int EOL = 7;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int DIGIT = 8;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int HEXDIGIT = 9;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int OBRACKET = 10;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int CBRACKET = 11;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int TLP = 12;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int GRAPH = 13;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int NODE = 14;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int NODES = 15;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int EDGE = 16;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int EDGES = 17;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int CLUSTER = 18;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int AUTHOR = 19;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int DATE = 20;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int COMMENTS = 21;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int PROPERTY = 22;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int DEF = 23;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int INTEGER = 24;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int REAL = 25;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int STRING = 26;
-	/** RegularExpression Id. */
+	/**
+	 * RegularExpression Id.
+	 */
 	int PTYPE = 27;
 
-	/** Lexical state. */
+	/**
+	 * Lexical state.
+	 */
 	int DEFAULT = 0;
 
-	/** Literal token values. */
-	String[] tokenImage = { "<EOF>", "\" \"", "\"\\r\"", "\"\\t\"", "\"\\n\"",
-			"<token of kind 5>", "<token of kind 6>", "<EOL>", "<DIGIT>",
-			"<HEXDIGIT>", "\"(\"", "\")\"", "\"tlp\"", "\"graph\"", "\"node\"",
-			"\"nodes\"", "\"edge\"", "\"edges\"", "\"cluster\"", "\"author\"",
-			"\"date\"", "\"comments\"", "\"property\"", "\"default\"",
-			"<INTEGER>", "<REAL>", "<STRING>", "<PTYPE>", };
+	/**
+	 * Literal token values.
+	 */
+	String[] tokenImage = {"<EOF>", "\" \"", "\"\\r\"", "\"\\t\"", "\"\\n\"",
+		"<token of kind 5>", "<token of kind 6>", "<EOL>", "<DIGIT>",
+		"<HEXDIGIT>", "\"(\"", "\")\"", "\"tlp\"", "\"graph\"", "\"node\"",
+		"\"nodes\"", "\"edge\"", "\"edges\"", "\"cluster\"", "\"author\"",
+		"\"date\"", "\"comments\"", "\"property\"", "\"default\"",
+		"<INTEGER>", "<REAL>", "<STRING>", "<PTYPE>",};
 
 }

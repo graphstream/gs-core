@@ -105,8 +105,8 @@ public class TestGraphSynchronisation {
 
 		// Test with attribute addition.
 
-		g1.getNode("A").addAttribute("foo", "bar");
-		g2.getEdge("AB").addAttribute("foo", "bar");
+		g1.getNode("A").setAttribute("foo", "bar");
+		g2.getEdge("AB").setAttribute("foo", "bar");
 
 		assertEquals(1, g1.getNode("A").getAttributeCount());
 		assertEquals(1, g2.getNode("A").getAttributeCount());
@@ -260,9 +260,9 @@ public class TestGraphSynchronisation {
 
 		// Now attributes.
 
-		g1.addAttribute("foo", "bar");
-		g2.getNode("A").addAttribute("foo", "bar");
-		g3.getEdge("AB").addAttribute("foo", "bar");
+		g1.setAttribute("foo", "bar");
+		g2.getNode("A").setAttribute("foo", "bar");
+		g3.getEdge("AB").setAttribute("foo", "bar");
 
 		assertEquals("bar", g1.getAttribute("foo"));
 		assertEquals("bar", g2.getAttribute("foo"));

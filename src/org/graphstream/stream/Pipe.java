@@ -33,12 +33,12 @@ package org.graphstream.stream;
 
 /**
  * Sink and source of graph events.
- * 
+ *
  * <p>
  * A filter is something that can receive graph events and produce graph events
  * as a result or transformation.
  * </p>
- * 
+ *
  * @see Source
  * @see Sink
  */

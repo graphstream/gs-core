@@ -65,14 +65,17 @@ public class GEXFAttribute implements GEXFElement {
 		stream.stream.writeAttribute("id", Integer.toString(id));
 		stream.stream.writeAttribute("type", type.qname);
 
-		if (title != null)
+		if (title != null) {
 			stream.stream.writeAttribute("title", title);
+		}
 
-		if (defaultValue != null)
+		if (defaultValue != null) {
 			stream.leafWithText("default", defaultValue);
+		}
 
-		if (options != null)
+		if (options != null) {
 			stream.leafWithText("options", options);
+		}
 
 		stream.endElement(); // ATTRIBUTE
 	}

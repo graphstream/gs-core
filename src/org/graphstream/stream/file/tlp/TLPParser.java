@@ -38,8 +38,8 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Stack;
+import org.graphstream.graph.Element.ElementType;
 
-import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.stream.file.FileSourceTLP;
 import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
 
@@ -47,7 +47,6 @@ import org.graphstream.util.parser.ParseException;
 import org.graphstream.util.parser.Parser;
 import org.graphstream.util.parser.SimpleCharStream;
 import org.graphstream.util.parser.Token;
-import org.graphstream.util.parser.TokenMgrError;
 
 /**
  * This class defines a TLP parser.
@@ -89,7 +88,8 @@ public class TLPParser implements Parser, TLPParserConstants {
 	private Stack<Cluster> stack;
 
 	/**
-	 * Create a new parser associated with a TLP source from an input stream.
+	 * Create a new parser associated with a TLP source from an input
+	 * stream.
 	 */
 	public TLPParser(FileSourceTLP tlp, InputStream stream) {
 		this(stream);
@@ -126,45 +126,50 @@ public class TLPParser implements Parser, TLPParserConstants {
 
 	private void addNode(String id) throws ParseException {
 		if (stack.size() > 1
-				&& (!root.nodes.contains(id) || !stack.get(stack.size() - 2).nodes
-						.contains(id)))
+			&& (!root.nodes.contains(id) || !stack.get(stack.size() - 2).nodes
+			.contains(id))) {
 			throw new ParseException("parent cluster do not contain the node");
+		}
 
-		if (stack.size() == 1)
+		if (stack.size() == 1) {
 			tlp.sendNodeAdded(sourceId, id);
+		}
 
 		stack.peek().nodes.add(id);
 	}
 
 	private void addEdge(String id, String source, String target)
-			throws ParseException {
+		throws ParseException {
 		if (stack.size() > 1
-				&& (!root.edges.contains(id) || !stack.get(stack.size() - 2).edges
-						.contains(id)))
+			&& (!root.edges.contains(id) || !stack.get(stack.size() - 2).edges
+			.contains(id))) {
 			throw new ParseException("parent cluster "
-					+ stack.get(stack.size() - 2).name
-					+ " do not contain the edge");
+				+ stack.get(stack.size() - 2).name
+				+ " do not contain the edge");
+		}
 
-		if (stack.size() == 1)
+		if (stack.size() == 1) {
 			tlp.sendEdgeAdded(sourceId, id, source, target, false);
+		}
 
 		stack.peek().edges.add(id);
 	}
 
 	private void includeEdge(String id) throws ParseException {
 		if (stack.size() > 1
-				&& (!root.edges.contains(id) || !stack.get(stack.size() - 2).edges
-						.contains(id)))
+			&& (!root.edges.contains(id) || !stack.get(stack.size() - 2).edges
+			.contains(id))) {
 			throw new ParseException("parent cluster "
-					+ stack.get(stack.size() - 2).name
-					+ " do not contain the edge");
+				+ stack.get(stack.size() - 2).name
+				+ " do not contain the edge");
+		}
 
 		stack.peek().edges.add(id);
 	}
 
 	private void graphAttribute(String key, Object value) {
 		tlp.sendAttributeChangedEvent(sourceId, sourceId, ElementType.GRAPH,
-				key, AttributeChangeEvent.ADD, null, value);
+			key, AttributeChangeEvent.ADD, null, value);
 	}
 
 	private void pushCluster(int i, String name) {
@@ -174,13 +179,14 @@ public class TLPParser implements Parser, TLPParserConstants {
 	}
 
 	private void popCluster() {
-		if (stack.size() > 1)
+		if (stack.size() > 1) {
 			stack.pop();
+		}
 	}
 
 	private void newProperty(Integer cluster, String name, PropertyType type,
-			String nodeDefault, String edgeDefault,
-			HashMap<String, String> nodes, HashMap<String, String> edges) {
+		String nodeDefault, String edgeDefault,
+		HashMap<String, String> nodes, HashMap<String, String> edges) {
 		Object nodeDefaultValue = convert(type, nodeDefault);
 		Object edgeDefaultValue = convert(type, edgeDefault);
 		Cluster c = clusters.get(cluster);
@@ -188,37 +194,39 @@ public class TLPParser implements Parser, TLPParserConstants {
 		for (String id : c.nodes) {
 			Object value = nodeDefaultValue;
 
-			if (nodes.containsKey(id))
+			if (nodes.containsKey(id)) {
 				value = convert(type, nodes.get(id));
+			}
 
 			tlp.sendAttributeChangedEvent(sourceId, id, ElementType.NODE, name,
-					AttributeChangeEvent.ADD, null, value);
+				AttributeChangeEvent.ADD, null, value);
 		}
 
 		for (String id : c.edges) {
 			Object value = edgeDefaultValue;
 
-			if (edges.containsKey(id))
+			if (edges.containsKey(id)) {
 				value = convert(type, edges.get(id));
+			}
 
 			tlp.sendAttributeChangedEvent(sourceId, id, ElementType.EDGE, name,
-					AttributeChangeEvent.ADD, null, value);
+				AttributeChangeEvent.ADD, null, value);
 		}
 	}
 
 	private Object convert(PropertyType type, String value) {
 		switch (type) {
-		case BOOL:
-			return Boolean.valueOf(value);
-		case INT:
-			return Integer.valueOf(value);
-		case DOUBLE:
-			return Double.valueOf(value);
-		case LAYOUT:
-		case COLOR:
-		case SIZE:
-		case STRING:
-			return value;
+			case BOOL:
+				return Boolean.valueOf(value);
+			case INT:
+				return Integer.valueOf(value);
+			case DOUBLE:
+				return Double.valueOf(value);
+			case LAYOUT:
+			case COLOR:
+			case SIZE:
+			case STRING:
+				return value;
 		}
 
 		return value;
@@ -226,14 +234,15 @@ public class TLPParser implements Parser, TLPParserConstants {
 
 	final public void all() throws ParseException {
 		tlp();
-		label_1: while (true) {
+		label_1:
+		while (true) {
 			switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-			case OBRACKET:
+				case OBRACKET:
 				;
-				break;
-			default:
-				jj_la1[0] = jj_gen;
-				break label_1;
+					break;
+				default:
+					jj_la1[0] = jj_gen;
+					break label_1;
 			}
 			statement();
 		}
@@ -244,17 +253,17 @@ public class TLPParser implements Parser, TLPParserConstants {
 	final public boolean next() throws ParseException {
 		boolean hasMore = false;
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-		case OBRACKET:
-			statement();
-			hasMore = true;
-			break;
-		case 0:
-			jj_consume_token(0);
-			break;
-		default:
-			jj_la1[1] = jj_gen;
-			jj_consume_token(-1);
-			throw new ParseException();
+			case OBRACKET:
+				statement();
+				hasMore = true;
+				break;
+			case 0:
+				jj_consume_token(0);
+				break;
+			default:
+				jj_la1[1] = jj_gen;
+				jj_consume_token(-1);
+				throw new ParseException();
 		}
 
 		return hasMore;
@@ -268,7 +277,8 @@ public class TLPParser implements Parser, TLPParserConstants {
 		jj_consume_token(OBRACKET);
 		jj_consume_token(TLP);
 		jj_consume_token(STRING);
-		label_2: while (true) {
+		label_2:
+		while (true) {
 			if (jj_2_1(2)) {
 				;
 			} else {
@@ -282,25 +292,25 @@ public class TLPParser implements Parser, TLPParserConstants {
 		String s;
 		jj_consume_token(OBRACKET);
 		switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-		case DATE:
-			jj_consume_token(DATE);
-			s = string();
-			graphAttribute("date", s);
-			break;
-		case AUTHOR:
-			jj_consume_token(AUTHOR);
-			s = string();
-			graphAttribute("author", s);
-			break;
-		case COMMENTS:
-			jj_consume_token(COMMENTS);
-			s = string();
-			graphAttribute("comments", s);
-			break;
-		default:
-			jj_la1[2] = jj_gen;
-			jj_consume_token(-1);
-			throw new ParseException();
+			case DATE:
+				jj_consume_token(DATE);
+				s = string();
+				graphAttribute("date", s);
+				break;
+			case AUTHOR:
+				jj_consume_token(AUTHOR);
+				s = string();
+				graphAttribute("author", s);
+				break;
+			case COMMENTS:
+				jj_consume_token(COMMENTS);
+				s = string();
+				graphAttribute("comments", s);
+				break;
+			default:
+				jj_la1[2] = jj_gen;
+				jj_consume_token(-1);
+				throw new ParseException();
 		}
 		jj_consume_token(CBRACKET);
 	}
@@ -324,14 +334,15 @@ public class TLPParser implements Parser, TLPParserConstants {
 		Token i;
 		jj_consume_token(OBRACKET);
 		jj_consume_token(NODES);
-		label_3: while (true) {
+		label_3:
+		while (true) {
 			switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-			case INTEGER:
+				case INTEGER:
 				;
-				break;
-			default:
-				jj_la1[3] = jj_gen;
-				break label_3;
+					break;
+				default:
+					jj_la1[3] = jj_gen;
+					break label_3;
 			}
 			i = jj_consume_token(INTEGER);
 			addNode(i.image);
@@ -354,14 +365,15 @@ public class TLPParser implements Parser, TLPParserConstants {
 		Token i;
 		jj_consume_token(OBRACKET);
 		jj_consume_token(EDGES);
-		label_4: while (true) {
+		label_4:
+		while (true) {
 			switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-			case INTEGER:
+				case INTEGER:
 				;
-				break;
-			default:
-				jj_la1[4] = jj_gen;
-				break label_4;
+					break;
+				default:
+					jj_la1[4] = jj_gen;
+					break label_4;
 			}
 			i = jj_consume_token(INTEGER);
 			includeEdge(i.image);
@@ -379,14 +391,15 @@ public class TLPParser implements Parser, TLPParserConstants {
 		pushCluster(Integer.valueOf(index.image), name);
 		nodes();
 		edges();
-		label_5: while (true) {
+		label_5:
+		while (true) {
 			switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-			case OBRACKET:
+				case OBRACKET:
 				;
-				break;
-			default:
-				jj_la1[5] = jj_gen;
-				break label_5;
+					break;
+				default:
+					jj_la1[5] = jj_gen;
+					break label_5;
 			}
 			cluster();
 		}
@@ -414,33 +427,34 @@ public class TLPParser implements Parser, TLPParserConstants {
 		nodeDefault = string();
 		edgeDefault = string();
 		jj_consume_token(CBRACKET);
-		label_6: while (true) {
+		label_6:
+		while (true) {
 			switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-			case OBRACKET:
+				case OBRACKET:
 				;
-				break;
-			default:
-				jj_la1[6] = jj_gen;
-				break label_6;
+					break;
+				default:
+					jj_la1[6] = jj_gen;
+					break label_6;
 			}
 			jj_consume_token(OBRACKET);
 			switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
-			case NODE:
-				jj_consume_token(NODE);
-				t = jj_consume_token(INTEGER);
-				value = string();
-				nodes.put(t.image, value);
-				break;
-			case EDGE:
-				jj_consume_token(EDGE);
-				t = jj_consume_token(INTEGER);
-				value = string();
-				edges.put(t.image, value);
-				break;
-			default:
-				jj_la1[7] = jj_gen;
-				jj_consume_token(-1);
-				throw new ParseException();
+				case NODE:
+					jj_consume_token(NODE);
+					t = jj_consume_token(INTEGER);
+					value = string();
+					nodes.put(t.image, value);
+					break;
+				case EDGE:
+					jj_consume_token(EDGE);
+					t = jj_consume_token(INTEGER);
+					value = string();
+					edges.put(t.image, value);
+					break;
+				default:
+					jj_la1[7] = jj_gen;
+					jj_consume_token(-1);
+					throw new ParseException();
 			}
 			jj_consume_token(CBRACKET);
 		}
@@ -530,107 +544,131 @@ public class TLPParser implements Parser, TLPParserConstants {
 	}
 
 	private boolean jj_3_1() {
-		if (jj_3R_7())
+		if (jj_3R_7()) {
 			return true;
+		}
 		return false;
 	}
 
 	private boolean jj_3_5() {
-		if (jj_3R_11())
+		if (jj_3R_11()) {
 			return true;
+		}
 		return false;
 	}
 
 	private boolean jj_3R_9() {
-		if (jj_scan_token(OBRACKET))
+		if (jj_scan_token(OBRACKET)) {
 			return true;
-		if (jj_scan_token(EDGE))
+		}
+		if (jj_scan_token(EDGE)) {
 			return true;
+		}
 		return false;
 	}
 
 	private boolean jj_3_4() {
-		if (jj_3R_10())
+		if (jj_3R_10()) {
 			return true;
+		}
 		return false;
 	}
 
 	private boolean jj_3_3() {
-		if (jj_3R_9())
+		if (jj_3R_9()) {
 			return true;
+		}
 		return false;
 	}
 
 	private boolean jj_3R_14() {
-		if (jj_scan_token(COMMENTS))
+		if (jj_scan_token(COMMENTS)) {
 			return true;
+		}
 		return false;
 	}
 
 	private boolean jj_3R_13() {
-		if (jj_scan_token(AUTHOR))
+		if (jj_scan_token(AUTHOR)) {
 			return true;
+		}
 		return false;
 	}
 
 	private boolean jj_3_2() {
-		if (jj_3R_8())
+		if (jj_3R_8()) {
 			return true;
+		}
 		return false;
 	}
 
 	private boolean jj_3R_12() {
-		if (jj_scan_token(DATE))
+		if (jj_scan_token(DATE)) {
 			return true;
+		}
 		return false;
 	}
 
 	private boolean jj_3R_11() {
-		if (jj_scan_token(OBRACKET))
+		if (jj_scan_token(OBRACKET)) {
 			return true;
-		if (jj_scan_token(PROPERTY))
+		}
+		if (jj_scan_token(PROPERTY)) {
 			return true;
+		}
 		return false;
 	}
 
 	private boolean jj_3R_10() {
-		if (jj_scan_token(OBRACKET))
+		if (jj_scan_token(OBRACKET)) {
 			return true;
-		if (jj_scan_token(CLUSTER))
+		}
+		if (jj_scan_token(CLUSTER)) {
 			return true;
+		}
 		return false;
 	}
 
 	private boolean jj_3R_7() {
-		if (jj_scan_token(OBRACKET))
+		if (jj_scan_token(OBRACKET)) {
 			return true;
+		}
 		Token xsp;
 		xsp = jj_scanpos;
 		if (jj_3R_12()) {
 			jj_scanpos = xsp;
 			if (jj_3R_13()) {
 				jj_scanpos = xsp;
-				if (jj_3R_14())
+				if (jj_3R_14()) {
 					return true;
+				}
 			}
 		}
 		return false;
 	}
 
 	private boolean jj_3R_8() {
-		if (jj_scan_token(OBRACKET))
+		if (jj_scan_token(OBRACKET)) {
 			return true;
-		if (jj_scan_token(NODES))
+		}
+		if (jj_scan_token(NODES)) {
 			return true;
+		}
 		return false;
 	}
 
-	/** Generated Token Manager. */
+	/**
+	 * Generated Token Manager.
+	 */
 	public TLPParserTokenManager token_source;
 	SimpleCharStream jj_input_stream;
-	/** Current token. */
+	/**
+	 * Current token.
+	 */
 	public Token token;
-	/** Next token. */
+	/**
+	 * Next token.
+	 */
 	public Token jj_nt;
 	private int jj_ntk;
 	private Token jj_scanpos, jj_lastpos;
@@ -638,25 +676,30 @@ public class TLPParser implements Parser, TLPParserConstants {
 	private int jj_gen;
 	final private int[] jj_la1 = new int[8];
 	static private int[] jj_la1_0;
+
 	static {
 		jj_la1_init_0();
 	}
 
 	private static void jj_la1_init_0() {
-		jj_la1_0 = new int[] { 0x400, 0x401, 0x380000, 0x1000000, 0x1000000,
-				0x400, 0x400, 0x14000, };
+		jj_la1_0 = new int[]{0x400, 0x401, 0x380000, 0x1000000, 0x1000000,
+			0x400, 0x400, 0x14000,};
 	}
 
 	final private JJCalls[] jj_2_rtns = new JJCalls[5];
 	private boolean jj_rescan = false;
 	private int jj_gc = 0;
 
-	/** Constructor with InputStream. */
+	/**
+	 * Constructor with InputStream.
+	 */
 	public TLPParser(java.io.InputStream stream) {
 		this(stream, null);
 	}
 
-	/** Constructor with InputStream and supplied encoding */
+	/**
+	 * Constructor with InputStream and supplied encoding
+	 */
 	public TLPParser(java.io.InputStream stream, String encoding) {
 		try {
 			jj_input_stream = new SimpleCharStream(stream, encoding, 1, 1);
@@ -667,18 +710,24 @@ public class TLPParser implements Parser, TLPParserConstants {
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 8; i++)
+		for (int i = 0; i < 8; i++) {
 			jj_la1[i] = -1;
-		for (int i = 0; i < jj_2_rtns.length; i++)
+		}
+		for (int i = 0; i < jj_2_rtns.length; i++) {
 			jj_2_rtns[i] = new JJCalls();
+		}
 	}
 
-	/** Reinitialise. */
+	/**
+	 * Reinitialise.
+	 */
 	public void ReInit(java.io.InputStream stream) {
 		ReInit(stream, null);
 	}
 
-	/** Reinitialise. */
+	/**
+	 * Reinitialise.
+	 */
 	public void ReInit(java.io.InputStream stream, String encoding) {
 		try {
 			jj_input_stream.ReInit(stream, encoding, 1, 1);
@@ -689,68 +738,87 @@ public class TLPParser implements Parser, TLPParserConstants {
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 8; i++)
+		for (int i = 0; i < 8; i++) {
 			jj_la1[i] = -1;
-		for (int i = 0; i < jj_2_rtns.length; i++)
+		}
+		for (int i = 0; i < jj_2_rtns.length; i++) {
 			jj_2_rtns[i] = new JJCalls();
+		}
 	}
 
-	/** Constructor. */
+	/**
+	 * Constructor.
+	 */
 	public TLPParser(java.io.Reader stream) {
 		jj_input_stream = new SimpleCharStream(stream, 1, 1);
 		token_source = new TLPParserTokenManager(jj_input_stream);
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 8; i++)
+		for (int i = 0; i < 8; i++) {
 			jj_la1[i] = -1;
-		for (int i = 0; i < jj_2_rtns.length; i++)
+		}
+		for (int i = 0; i < jj_2_rtns.length; i++) {
 			jj_2_rtns[i] = new JJCalls();
+		}
 	}
 
-	/** Reinitialise. */
+	/**
+	 * Reinitialise.
+	 */
 	public void ReInit(java.io.Reader stream) {
 		jj_input_stream.ReInit(stream, 1, 1);
 		token_source.ReInit(jj_input_stream);
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 8; i++)
+		for (int i = 0; i < 8; i++) {
 			jj_la1[i] = -1;
-		for (int i = 0; i < jj_2_rtns.length; i++)
+		}
+		for (int i = 0; i < jj_2_rtns.length; i++) {
 			jj_2_rtns[i] = new JJCalls();
+		}
 	}
 
-	/** Constructor with generated Token Manager. */
+	/**
+	 * Constructor with generated Token Manager.
+	 */
 	public TLPParser(TLPParserTokenManager tm) {
 		token_source = tm;
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 8; i++)
+		for (int i = 0; i < 8; i++) {
 			jj_la1[i] = -1;
-		for (int i = 0; i < jj_2_rtns.length; i++)
+		}
+		for (int i = 0; i < jj_2_rtns.length; i++) {
 			jj_2_rtns[i] = new JJCalls();
+		}
 	}
 
-	/** Reinitialise. */
+	/**
+	 * Reinitialise.
+	 */
 	public void ReInit(TLPParserTokenManager tm) {
 		token_source = tm;
 		token = new Token();
 		jj_ntk = -1;
 		jj_gen = 0;
-		for (int i = 0; i < 8; i++)
+		for (int i = 0; i < 8; i++) {
 			jj_la1[i] = -1;
-		for (int i = 0; i < jj_2_rtns.length; i++)
+		}
+		for (int i = 0; i < jj_2_rtns.length; i++) {
 			jj_2_rtns[i] = new JJCalls();
+		}
 	}
 
 	private Token jj_consume_token(int kind) throws ParseException {
 		Token oldToken;
-		if ((oldToken = token).next != null)
+		if ((oldToken = token).next != null) {
 			token = token.next;
-		else
+		} else {
 			token = token.next = token_source.getNextToken();
+		}
 		jj_ntk = -1;
 		if (token.kind == kind) {
 			jj_gen++;
@@ -759,8 +827,9 @@ public class TLPParser implements Parser, TLPParserConstants {
 				for (int i = 0; i < jj_2_rtns.length; i++) {
 					JJCalls c = jj_2_rtns[i];
 					while (c != null) {
-						if (c.gen < jj_gen)
+						if (c.gen < jj_gen) {
 							c.first = null;
+						}
 						c = c.next;
 					}
 				}
@@ -783,7 +852,7 @@ public class TLPParser implements Parser, TLPParserConstants {
 			jj_la--;
 			if (jj_scanpos.next == null) {
 				jj_lastpos = jj_scanpos = jj_scanpos.next = token_source
-						.getNextToken();
+					.getNextToken();
 			} else {
 				jj_lastpos = jj_scanpos = jj_scanpos.next;
 			}
@@ -797,44 +866,54 @@ public class TLPParser implements Parser, TLPParserConstants {
 				i++;
 				tok = tok.next;
 			}
-			if (tok != null)
+			if (tok != null) {
 				jj_add_error_token(kind, i);
+			}
 		}
-		if (jj_scanpos.kind != kind)
+		if (jj_scanpos.kind != kind) {
 			return true;
-		if (jj_la == 0 && jj_scanpos == jj_lastpos)
+		}
+		if (jj_la == 0 && jj_scanpos == jj_lastpos) {
 			throw jj_ls;
+		}
 		return false;
 	}
 
-	/** Get the next Token. */
+	/**
+	 * Get the next Token.
+	 */
 	final public Token getNextToken() {
-		if (token.next != null)
+		if (token.next != null) {
 			token = token.next;
-		else
+		} else {
 			token = token.next = token_source.getNextToken();
+		}
 		jj_ntk = -1;
 		jj_gen++;
 		return token;
 	}
 
-	/** Get the specific Token. */
+	/**
+	 * Get the specific Token.
+	 */
 	final public Token getToken(int index) {
 		Token t = token;
 		for (int i = 0; i < index; i++) {
-			if (t.next != null)
+			if (t.next != null) {
 				t = t.next;
-			else
+			} else {
 				t = t.next = token_source.getNextToken();
+			}
 		}
 		return t;
 	}
 
 	private int jj_ntk() {
-		if ((jj_nt = token.next) == null)
+		if ((jj_nt = token.next) == null) {
 			return (jj_ntk = (token.next = token_source.getNextToken()).kind);
-		else
+		} else {
 			return (jj_ntk = jj_nt.kind);
+		}
 	}
 
 	private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
@@ -844,8 +923,9 @@ public class TLPParser implements Parser, TLPParserConstants {
 	private int jj_endpos;
 
 	private void jj_add_error_token(int kind, int pos) {
-		if (pos >= 100)
+		if (pos >= 100) {
 			return;
+		}
 		if (pos == jj_endpos + 1) {
 			jj_lasttokens[jj_endpos++] = kind;
 		} else if (jj_endpos != 0) {
@@ -853,8 +933,9 @@ public class TLPParser implements Parser, TLPParserConstants {
 			for (int i = 0; i < jj_endpos; i++) {
 				jj_expentry[i] = jj_lasttokens[i];
 			}
-			jj_entries_loop: for (java.util.Iterator<?> it = jj_expentries
-					.iterator(); it.hasNext();) {
+			jj_entries_loop:
+			for (java.util.Iterator<?> it = jj_expentries
+				.iterator(); it.hasNext();) {
 				int[] oldentry = (int[]) (it.next());
 				if (oldentry.length == jj_expentry.length) {
 					for (int i = 0; i < jj_expentry.length; i++) {
@@ -866,12 +947,15 @@ public class TLPParser implements Parser, TLPParserConstants {
 					break jj_entries_loop;
 				}
 			}
-			if (pos != 0)
+			if (pos != 0) {
 				jj_lasttokens[(jj_endpos = pos) - 1] = kind;
+			}
 		}
 	}
 
-	/** Generate ParseException. */
+	/**
+	 * Generate ParseException.
+	 */
 	public ParseException generateParseException() {
 		jj_expentries.clear();
 		boolean[] la1tokens = new boolean[28];
@@ -905,11 +989,15 @@ public class TLPParser implements Parser, TLPParserConstants {
 		return new ParseException(token, exptokseq, tokenImage);
 	}
 
-	/** Enable tracing. */
+	/**
+	 * Enable tracing.
+	 */
 	final public void enable_tracing() {
 	}
 
-	/** Disable tracing. */
+	/**
+	 * Disable tracing.
+	 */
 	final public void disable_tracing() {
 	}
 
@@ -923,21 +1011,21 @@ public class TLPParser implements Parser, TLPParserConstants {
 						jj_la = p.arg;
 						jj_lastpos = jj_scanpos = p.first;
 						switch (i) {
-						case 0:
-							jj_3_1();
-							break;
-						case 1:
-							jj_3_2();
-							break;
-						case 2:
-							jj_3_3();
-							break;
-						case 3:
-							jj_3_4();
-							break;
-						case 4:
-							jj_3_5();
-							break;
+							case 0:
+								jj_3_1();
+								break;
+							case 1:
+								jj_3_2();
+								break;
+							case 2:
+								jj_3_3();
+								break;
+							case 3:
+								jj_3_4();
+								break;
+							case 4:
+								jj_3_5();
+								break;
 						}
 					}
 					p = p.next;
