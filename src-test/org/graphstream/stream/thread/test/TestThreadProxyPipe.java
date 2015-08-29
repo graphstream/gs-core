@@ -37,8 +37,8 @@ import java.io.StringWriter;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
-import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.graph.implementations.SimpleAdjacencyListGraph;
 import org.graphstream.stream.file.FileSinkDGS;
 import org.graphstream.stream.thread.ThreadProxyPipe;
 import org.junit.Assert;
@@ -154,7 +154,7 @@ public class TestThreadProxyPipe {
 	}
 
 	public void testOne() throws IOException {
-		Graph g = new AdjacencyListGraph("g");
+		Graph g = new SimpleAdjacencyListGraph("g");
 		ThreadProxyPipe tpp = ThreadProxyPipe.create(g);
 
 		FileSinkDGS dgs1 = new FileSinkDGS();

@@ -35,11 +35,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
 import org.graphstream.graph.Edge;
-import org.graphstream.graph.EdgeFactory;
+
 import org.graphstream.graph.Node;
-import org.graphstream.graph.NodeFactory;
 
 /**
  * <p>
@@ -53,15 +51,17 @@ import org.graphstream.graph.NodeFactory;
  * <code>complexity</code> tags on each method so as to figure out the impact on
  * the CPU.
  * </p>
+ * @param <N> the node type of this graph
+ * @param <E> the edge type of this graph
  */
-public class AdjacencyListGraph extends AbstractGraph {
+public abstract class AdjacencyListGraph<N extends AdjacencyListNode, E extends AbstractEdge> extends AbstractGraph<N, E> {
 
 	public static final double GROW_FACTOR = 1.1;
 	public static final int DEFAULT_NODE_CAPACITY = 128;
 	public static final int DEFAULT_EDGE_CAPACITY = 1024;
 
-	protected HashMap<String, AbstractNode> nodeMap;
-	protected HashMap<String, AbstractEdge> edgeMap;
+	protected HashMap<String, ? super N> nodeMap;
+	protected HashMap<String, ? super E> edgeMap;
 
 	protected AbstractNode[] nodeArray;
 	protected AbstractEdge[] edgeArray;
@@ -96,12 +96,6 @@ public class AdjacencyListGraph extends AbstractGraph {
 	public AdjacencyListGraph(String id, boolean strictChecking, boolean autoCreate,
 		int initialNodeCapacity, int initialEdgeCapacity) {
 		super(id, strictChecking, autoCreate);
-
-		NodeFactory<AdjacencyListNode> nf = (i, g) -> (new AdjacencyListNode(i, (AbstractGraph) g));
-		setNodeFactory(nf);
-
-		EdgeFactory<AbstractEdge> ef = (i, s, ds, di) -> (new AbstractEdge(i, (AbstractNode) s, (AbstractNode) ds, di));
-		setEdgeFactory(ef);
 
 		if (initialNodeCapacity < DEFAULT_NODE_CAPACITY) {
 			initialNodeCapacity = DEFAULT_NODE_CAPACITY;
@@ -145,7 +139,7 @@ public class AdjacencyListGraph extends AbstractGraph {
 
 	// *** Callbacks ***
 	@Override
-	protected void addEdgeCallback(AbstractEdge edge) {
+	protected void addEdgeCallback(E edge) {
 		edgeMap.put(edge.getId(), edge);
 		if (edgeCount == edgeArray.length) {
 			AbstractEdge[] tmp = new AbstractEdge[(int) (edgeArray.length * GROW_FACTOR) + 1];
@@ -158,7 +152,7 @@ public class AdjacencyListGraph extends AbstractGraph {
 	}
 
 	@Override
-	protected void addNodeCallback(AbstractNode node) {
+	protected void addNodeCallback(N node) {
 		nodeMap.put(node.getId(), node);
 		if (nodeCount == nodeArray.length) {
 			AbstractNode[] tmp = new AbstractNode[(int) (nodeArray.length * GROW_FACTOR) + 1];
@@ -171,7 +165,7 @@ public class AdjacencyListGraph extends AbstractGraph {
 	}
 
 	@Override
-	protected void removeEdgeCallback(AbstractEdge edge) {
+	protected void removeEdgeCallback(E edge) {
 		edgeMap.remove(edge.getId());
 		int i = edge.getIndex();
 		edgeArray[i] = edgeArray[--edgeCount];
@@ -180,7 +174,7 @@ public class AdjacencyListGraph extends AbstractGraph {
 	}
 
 	@Override
-	protected void removeNodeCallback(AbstractNode node) {
+	protected void removeNodeCallback(N node) {
 		nodeMap.remove(node.getId());
 		int i = node.getIndex();
 		nodeArray[i] = nodeArray[--nodeCount];
@@ -199,13 +193,13 @@ public class AdjacencyListGraph extends AbstractGraph {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Edge> T getEdge(String id) {
+	public <T extends E> T getEdge(String id) {
 		return (T) edgeMap.get(id);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Edge> T getEdge(int index) {
+	public <T extends E> T getEdge(int index) {
 		if (index < 0 || index >= edgeCount) {
 			throw new IndexOutOfBoundsException("Edge " + index
 				+ " does not exist");
@@ -220,13 +214,13 @@ public class AdjacencyListGraph extends AbstractGraph {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Node> T getNode(String id) {
+	public <T extends N> T getNode(String id) {
 		return (T) nodeMap.get(id);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Node> T getNode(int index) {
+	@SuppressWarnings("unchecked")
+	public <T extends N> T getNode(int index) {
 		if (index < 0 || index > nodeCount) {
 			throw new IndexOutOfBoundsException("Node " + index
 				+ " does not exist");
@@ -244,10 +238,12 @@ public class AdjacencyListGraph extends AbstractGraph {
 		int iNext = 0;
 		int iPrev = -1;
 
+		@Override
 		public boolean hasNext() {
 			return iNext < edgeCount;
 		}
 
+		@Override
 		@SuppressWarnings("unchecked")
 		public T next() {
 			if (iNext >= edgeCount) {
@@ -257,11 +253,13 @@ public class AdjacencyListGraph extends AbstractGraph {
 			return (T) edgeArray[iPrev];
 		}
 
+		@Override
+		@SuppressWarnings("unchecked")
 		public void remove() {
 			if (iPrev == -1) {
 				throw new IllegalStateException();
 			}
-			removeEdge(edgeArray[iPrev], true, true, true);
+			removeEdge((E) edgeArray[iPrev], true, true, true);
 			iNext = iPrev;
 			iPrev = -1;
 		}
@@ -271,11 +269,13 @@ public class AdjacencyListGraph extends AbstractGraph {
 		int iNext = 0;
 		int iPrev = -1;
 
+		@Override
 		public boolean hasNext() {
 			return iNext < nodeCount;
 		}
 
 		@SuppressWarnings("unchecked")
+		@Override
 		public T next() {
 			if (iNext >= nodeCount) {
 				throw new NoSuchElementException();
@@ -284,11 +284,13 @@ public class AdjacencyListGraph extends AbstractGraph {
 			return (T) nodeArray[iPrev];
 		}
 
+		@Override
+		@SuppressWarnings("unchecked")
 		public void remove() {
 			if (iPrev == -1) {
 				throw new IllegalStateException();
 			}
-			removeNode(nodeArray[iPrev], true);
+			removeNode((N) nodeArray[iPrev], true);
 			iNext = iPrev;
 			iPrev = -1;
 		}
@@ -303,14 +305,4 @@ public class AdjacencyListGraph extends AbstractGraph {
 	public <T extends Node> Iterator<T> getNodeIterator() {
 		return new NodeIterator<>();
 	}
-
-	/*
-	 * For performance tuning
-	 * 
-	 * @return the number of allocated but unused array elements public int
-	 * getUnusedArrayElements() { int count = 0; count += edgeArray.length -
-	 * edgeCount; count += nodeArray.length - nodeCount; for (ALNode n :
-	 * this.<ALNode> getEachNode()) count += n.edges.length - n.degree; return
-	 * count; }
-	 */
 }

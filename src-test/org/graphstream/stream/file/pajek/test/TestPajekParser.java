@@ -168,7 +168,7 @@ public class TestPajekParser {
 	public void test(TestEntry entry) throws IOException {
 		System.out.printf("> \"%s\"\n", entry.ressourceName);
 		
-		Graph graph = new MultiGraph("foo");
+		Graph<?,?> graph = new MultiGraph("foo");
 		FileSourcePajek in = new FileSourcePajek();
 
 		graph.setAttribute("ui.quality");

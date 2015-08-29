@@ -39,7 +39,7 @@ import java.util.HashSet;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
-import org.graphstream.graph.implementations.AdjacencyListGraph;
+import org.graphstream.graph.implementations.SimpleAdjacencyListGraph;
 import org.graphstream.stream.file.FileSourceDGS;
 import org.graphstream.util.FilteredEdgeIterator;
 import org.graphstream.util.FilteredNodeIterator;
@@ -55,7 +55,7 @@ public class TestFilteredIterators {
 	public void loadGraph() throws IOException {
 		FileSourceDGS dgs = new FileSourceDGS();
 
-		baseGraph = new AdjacencyListGraph("g");
+		baseGraph = new SimpleAdjacencyListGraph("g");
 
 		dgs.addSink(baseGraph);
 		dgs.readAll(getClass().getResource("data/TestFilteredIterators.dgs"));

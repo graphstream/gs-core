@@ -31,12 +31,12 @@
  */
 package org.graphstream.util.cumulative;
 
-import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.stream.Sink;
 
 import java.util.HashMap;
 import java.util.logging.Logger;
+import org.graphstream.graph.implementations.SimpleAdjacencyListGraph;
 
 public class GraphSpells implements Sink {
 	private static final Logger logger = Logger.getLogger(GraphSpells.class.getSimpleName());
@@ -57,12 +57,12 @@ public class GraphSpells implements Sink {
 		graph = new CumulativeSpells();
 		graphAttributes = new CumulativeAttributes(0);
 
-		nodes = new HashMap<String, CumulativeSpells>();
-		nodesAttributes = new HashMap<String, CumulativeAttributes>();
+		nodes = new HashMap<>();
+		nodesAttributes = new HashMap<>();
 
-		edges = new HashMap<String, CumulativeSpells>();
-		edgesAttributes = new HashMap<String, CumulativeAttributes>();
-		edgesData = new HashMap<String, EdgeData>();
+		edges = new HashMap<>();
+		edgesAttributes = new HashMap<>();
+		edgesData = new HashMap<>();
 
 		date = Double.NaN;
 	}
@@ -254,7 +254,7 @@ public class GraphSpells implements Sink {
 
 	public static void main(String... args) {
 		GraphSpells graphSpells = new GraphSpells();
-		Graph g = new AdjacencyListGraph("g");
+		AdjacencyListGraph g = new SimpleAdjacencyListGraph("g");
 
 		g.addSink(graphSpells);
 

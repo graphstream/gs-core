@@ -41,13 +41,13 @@ import java.util.List;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
-import org.graphstream.graph.implementations.AdjacencyListGraph;
+import org.graphstream.graph.implementations.SimpleAdjacencyListGraph;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.junit.Ignore;
 
 @Ignore
 public class BenchPerformance {
-	Graph g;
+	Graph<?, ?> g;
 	Runtime r;
 	List<String> nodeIds;
 	List<String> edgeIds;
@@ -446,7 +446,7 @@ public class BenchPerformance {
 		int gCount = 2;
 		Graph[] graphs = new Graph[gCount];
 		graphs[0] = new SingleGraph("Single");
-		graphs[2] = new AdjacencyListGraph("Adj");
+		graphs[2] = new SimpleAdjacencyListGraph("Adj");
 
 		BenchPerformance[] tests = new BenchPerformance[gCount];
 		for (int i = 0; i < gCount; i++) {

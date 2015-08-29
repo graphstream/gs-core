@@ -79,7 +79,7 @@ public class GraphReplay extends SourceBase {
 	 *
 	 * @param graph The graph to export.
 	 */
-	public void replay(Graph graph) {
+	public void replay(Graph<?, ?> graph) {
 		for (String key : graph.getAttributeKeySet()) {
 			sendGraphAttributeAdded(sourceId, key, graph.getAttribute(key));
 		}

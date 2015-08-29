@@ -31,12 +31,13 @@
  */
 package org.graphstream.graph.implementations;
 
+import org.graphstream.graph.EdgeFactory;
 import org.graphstream.graph.NodeFactory;
 
 /**
  * A graph implementation that supports multiple edges between two nodes.
  */
-public class MultiGraph extends AdjacencyListGraph {
+public class MultiGraph extends AdjacencyListGraph<MultiNode, AbstractEdge> {
 
 	/**
 	 * Creates an empty graph.
@@ -65,9 +66,12 @@ public class MultiGraph extends AdjacencyListGraph {
 		int initialNodeCapacity, int initialEdgeCapacity) {
 		super(id, strictChecking, autoCreate, initialNodeCapacity,
 			initialEdgeCapacity);
-		// All we need to do is to change the node factory
+		// All we need to do is to change the factories
 		NodeFactory<MultiNode> nf = (i, g) -> (new MultiNode(i, (AbstractGraph) g));
 		setNodeFactory(nf);
+
+		EdgeFactory<AbstractEdge> ef = (i, s, ds, di) -> (new AbstractEdge(i, (AbstractNode) s, (AbstractNode) ds, di));
+		setEdgeFactory(ef);
 	}
 
 	/**

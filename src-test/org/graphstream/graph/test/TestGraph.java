@@ -45,9 +45,9 @@ import org.graphstream.graph.Element;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.AbstractGraph;
-import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.graph.implementations.MultiNode;
+import org.graphstream.graph.implementations.SimpleAdjacencyListGraph;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.stream.Replayable;
 import org.junit.Assert;
@@ -58,16 +58,16 @@ public class TestGraph {
 	public void testBasic() {
 		testBasic(new SingleGraph("sg"));
 		testBasic(new MultiGraph("mg"));
-		testBasic(new AdjacencyListGraph("alg"));
-		testBasic(new AdjacencyListGraph("AL")); // XXX
+		testBasic(new SimpleAdjacencyListGraph("alg"));
+		testBasic(new SimpleAdjacencyListGraph("AL")); // XXX
 		testBasic(new SingleGraph("S")); // XXX
 		testBasic(new MultiGraph("M")); // XXX
 	}
 
 	@Test
 	public void testReplay() {
-		AbstractGraph g1 = new AdjacencyListGraph("g1");
-		Graph g2 = new AdjacencyListGraph("g2");
+		AbstractGraph g1 = new SimpleAdjacencyListGraph("g1");
+		Graph g2 = new SimpleAdjacencyListGraph("g2");
 
 		Node A1 = g1.addNode("A");
 		Node B1 = g1.addNode("B");
@@ -258,7 +258,7 @@ public class TestGraph {
 		testDirected(new SingleGraph("sg"));
 		testDirected(new MultiGraph("mg"));
 		// testDirected( new AdjacencyListGraph( "alg" ) );
-		testDirected(new AdjacencyListGraph("AL")); // XXX
+		testDirected(new SimpleAdjacencyListGraph("AL")); // XXX
 		testDirected(new SingleGraph("S")); // XXX
 		testDirected(new MultiGraph("M")); // XXX
 	}
@@ -418,12 +418,12 @@ public class TestGraph {
 		testIterables(new SingleGraph("sg"));
 		testIterables(new MultiGraph("mg"));
 		// testIterables( new AdjacencyListGraph( "alg" ) );
-		testIterables(new AdjacencyListGraph("AL")); // XXX
+		testIterables(new SimpleAdjacencyListGraph("AL")); // XXX
 		testIterables(new SingleGraph("S")); // XXX
 		testIterables(new MultiGraph("M")); // XXX
 	}
 
-	protected void testIterables(Graph graph) {
+	protected void testIterables(Graph<?, ?> graph) {
 		Node A = graph.addNode("A");
 		Node B = graph.addNode("B");
 		Node C = graph.addNode("C");
@@ -561,7 +561,7 @@ public class TestGraph {
 		testRemoval(new SingleGraph("sg"));
 		testRemoval(new MultiGraph("mg"));
 		// testRemoval( new AdjacencyListGraph( "alg" ) );
-		testRemoval(new AdjacencyListGraph("AL")); // XXX
+		testRemoval(new SimpleAdjacencyListGraph("AL")); // XXX
 		testRemoval(new SingleGraph("S")); // XXX
 		testRemoval(new MultiGraph("M")); // XXX
 	}
@@ -669,7 +669,7 @@ public class TestGraph {
 		testGraphListener(new SingleGraph("sg"));
 		testGraphListener(new MultiGraph("mg"));
 		// testGraphListener( new AdjacencyListGraph( "alg" ) );
-		testGraphListener(new AdjacencyListGraph("AL")); // XXX
+		testGraphListener(new SimpleAdjacencyListGraph("AL")); // XXX
 		testGraphListener(new SingleGraph("S")); // XXX
 		testGraphListener(new MultiGraph("M")); // XXX
 	}

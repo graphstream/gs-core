@@ -49,7 +49,7 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Element;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
-import org.graphstream.graph.implementations.AdjacencyListGraph;
+import org.graphstream.graph.implementations.SimpleAdjacencyListGraph;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.file.FileSourceDGS;
 import org.graphstream.util.VerboseSink;
@@ -63,7 +63,7 @@ public class TestDGSParser {
 	}
 
 	protected Graph getGraph(String resource) throws IOException {
-		Graph g = new AdjacencyListGraph("test");
+		Graph g = new SimpleAdjacencyListGraph("test");
 		FileSourceDGS in = new FileSourceDGS();
 
 		in.addSink(g);
@@ -120,7 +120,7 @@ public class TestDGSParser {
 
 	@Test
 	public void testAttributes() throws IOException {
-		Graph g = getGraph("data/attributes.dgs");
+		Graph<?,?> g = getGraph("data/attributes.dgs");
 
 		HashMap<String, Integer> map = new HashMap<String, Integer>();
 		map.put("a", 1);
@@ -228,7 +228,7 @@ public class TestDGSParser {
 		String base = "DGS004%neol 0 0%n%nan A%n";
 		String[] eols = { /* LF */ "\n", /* CR+LF */ "\r\n" };
 		FileSourceDGS source = new FileSourceDGS();
-		Graph g = new AdjacencyListGraph("eol");
+		Graph g = new SimpleAdjacencyListGraph("eol");
 
 		source.addSink(g);
 
@@ -252,7 +252,7 @@ public class TestDGSParser {
 	@Test
 	public void testAttributeRemoved() throws IOException {
 		FileSourceDGS source = new FileSourceDGS();
-		Graph g = new AdjacencyListGraph("eol");
+		Graph g = new SimpleAdjacencyListGraph("eol");
 
 		source.addSink(g);
 		g.addSink(new TestAttributeRemoved("A", g));

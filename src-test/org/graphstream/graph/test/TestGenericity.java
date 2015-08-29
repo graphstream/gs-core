@@ -42,10 +42,10 @@ import org.graphstream.graph.NodeFactory;
 import org.graphstream.graph.implementations.AbstractEdge;
 import org.graphstream.graph.implementations.AbstractGraph;
 import org.graphstream.graph.implementations.AbstractNode;
-import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.graph.implementations.AdjacencyListNode;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.graph.implementations.MultiNode;
+import org.graphstream.graph.implementations.SimpleAdjacencyListGraph;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.graph.implementations.SingleNode;
 import org.junit.Test;
@@ -146,7 +146,7 @@ public class TestGenericity {
 
 	@Test
 	public void checkAdjacencyListGraph() {
-		Graph g = new AdjacencyListGraph("g");
+		Graph g = new SimpleAdjacencyListGraph("g");
 
 		g.setNodeFactory(new MyALGNodeFactory());
 		g.setEdgeFactory(new MyALGEdgeFactory());
@@ -206,7 +206,7 @@ public class TestGenericity {
 
 	static class TestAddRemoveNode<A extends Node> {
 		@SuppressWarnings("unused")
-		TestAddRemoveNode(Graph g) {
+		TestAddRemoveNode(Graph<A, ?> g) {
 			A goodTypedNode;
 			BadTypedNode badTypedNode;
 			Node simpleNode;
@@ -219,7 +219,7 @@ public class TestGenericity {
 			}
 
 			try {
-				badTypedNode = g.addNode("test-add-remove-node-B");
+				badTypedNode = (BadTypedNode) g.addNode("test-add-remove-node-B");
 				System.err.println(badTypedNode.getClass());
 				fail();
 			} catch (ClassCastException e) {
@@ -232,11 +232,11 @@ public class TestGenericity {
 			// Get
 
 			try {
-				badTypedNode = g.getNode("test-add-remove-node-A");
+				badTypedNode = (BadTypedNode) g.getNode("test-add-remove-node-A");
 				fail();
-				badTypedNode = g.getNode("test-add-remove-node-B");
+				badTypedNode = (BadTypedNode) g.getNode("test-add-remove-node-B");
 				fail();
-				badTypedNode = g.getNode("test-add-remove-node-N");
+				badTypedNode = (BadTypedNode) g.getNode("test-add-remove-node-N");
 				fail();
 			} catch (ClassCastException e) {
 			}
@@ -263,7 +263,7 @@ public class TestGenericity {
 			}
 
 			try {
-				badTypedNode = g.removeNode("test-add-remove-node-N");
+				badTypedNode = (BadTypedNode) g.removeNode("test-add-remove-node-N");
 				fail();
 			} catch (ClassCastException e) {
 			}
@@ -305,7 +305,7 @@ public class TestGenericity {
 
 	static class TestAddRemoveEdge<A extends Edge> {
 		@SuppressWarnings("unused")
-		TestAddRemoveEdge(Graph g) {
+		TestAddRemoveEdge(Graph<?, A> g) {
 			g.clear();
 
 			g.addNode("0");
@@ -323,7 +323,7 @@ public class TestGenericity {
 			}
 
 			try {
-				BadTypedEdge bte = g.addEdge("e2", "2", "3");
+				BadTypedEdge bte = (BadTypedEdge) g.addEdge("e2", "2", "3");
 				fail();
 			} catch (ClassCastException e) {
 			}
@@ -353,11 +353,11 @@ public class TestGenericity {
 			try {
 				BadTypedEdge bte;
 
-				bte = g.getEdge("e0");
+				bte = (BadTypedEdge) g.getEdge("e0");
 				fail();
-				bte = g.getEdge("e1");
+				bte = (BadTypedEdge) g.getEdge("e1");
 				fail();
-				bte = g.getEdge("e2");
+				bte = (BadTypedEdge) g.getEdge("e2");
 				fail();
 			} catch (ClassCastException e) {
 			}
@@ -372,7 +372,7 @@ public class TestGenericity {
 			}
 
 			try {
-				BadTypedEdge bte = g.removeEdge("e2");
+				BadTypedEdge bte = (BadTypedEdge) g.removeEdge("e2");
 				fail();
 			} catch (ClassCastException e) {
 			}
@@ -597,7 +597,7 @@ public class TestGenericity {
 
 			try {
 				for (int i = 0; i < 10; i++) {
-					BadTypedEdge bte = g.getEdge(String.format("edge-%02d", i));
+					BadTypedEdge bte = (BadTypedEdge) g.getEdge(String.format("edge-%02d", i));
 					fail();
 				}
 			} catch (ClassCastException e) {

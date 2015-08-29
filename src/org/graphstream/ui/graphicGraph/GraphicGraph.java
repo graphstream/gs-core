@@ -131,8 +131,9 @@ import java.util.logging.Logger;
  * </p>
  *
  * TODO : this graph cannot handle modification inside event listener methods !!
+ * TODO : The N and E types of this graph should be GraphicNode and GraphicEdge
  */
-public class GraphicGraph extends AbstractElement implements Graph,
+public class GraphicGraph extends AbstractElement implements Graph<Node, Edge>,
 	StyleGroupListener {
 
 	/**

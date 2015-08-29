@@ -34,7 +34,7 @@ package org.graphstream.stream.file.test;
 import java.io.IOException;
 
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.implementations.AdjacencyListGraph;
+import org.graphstream.graph.implementations.SimpleAdjacencyListGraph;
 import org.graphstream.stream.file.FileSourceGEXF;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
@@ -45,7 +45,7 @@ import static org.junit.Assert.fail;
 public class TestFileSourceGEXF {
 
 	protected Graph readRessource(String url) {
-		Graph g = new AdjacencyListGraph(url);
+		Graph g = new SimpleAdjacencyListGraph(url);
 		FileSourceGEXF gexf = new FileSourceGEXF();
 
 		gexf.addSink(g);

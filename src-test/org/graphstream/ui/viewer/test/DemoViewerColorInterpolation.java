@@ -103,7 +103,7 @@ public class DemoViewerColorInterpolation implements ViewerListener {
 		System.exit(0);
 	}
 
-	protected void showSelection(Graph graph) {
+	protected void showSelection(Graph<?, ?> graph) {
 		boolean selection = false;
 		StringBuilder sb = new StringBuilder();
 

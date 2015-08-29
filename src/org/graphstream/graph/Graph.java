@@ -125,8 +125,10 @@ import org.graphstream.ui.view.Viewer;
  *
  * will always iterate on all the nodes of <code>g</code>.
  * </p>
+ * @param <N> the node type of this graph
+ * @param <E> the edge type of this graph
  */
-public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
+public interface Graph<N extends Node, E extends Edge> extends Element, Pipe, Iterable<N>, Structure {
 	// Access
 
 	/**
@@ -144,7 +146,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * @param id Identifier of the node to find.
 	 * @return The searched node or null if not found.
 	 */
-	<T extends Node> T getNode(String id);
+	<T extends N> T getNode(String id);
 
 	/**
 	 * Get an edge by its identifier. This method is implicitly generic and
@@ -161,7 +163,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * @param id Identifier of the edge to find.
 	 * @return The searched edge or null if not found.
 	 */
-	<T extends Edge> T getEdge(String id);
+	<T extends E> T getEdge(String id);
 
 	/**
 	 * The factory used to create node instances. The factory can be changed
@@ -170,7 +172,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * @see #setNodeFactory(NodeFactory)
 	 * @see #edgeFactory()
 	 */
-	NodeFactory<? extends Node> nodeFactory();
+	NodeFactory<? extends N> nodeFactory();
 
 	/**
 	 * The factory used to create edge instances. The factory can be changed
@@ -179,7 +181,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * @see #setEdgeFactory(EdgeFactory)
 	 * @see #nodeFactory()
 	 */
-	EdgeFactory<? extends Edge> edgeFactory();
+	EdgeFactory<? extends E> edgeFactory();
 
 	/**
 	 * Is strict checking enabled? If strict checking is enabled the graph
@@ -235,14 +237,14 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 *
 	 * @param nf the new NodeFactory
 	 */
-	void setNodeFactory(NodeFactory<? extends Node> nf);
+	void setNodeFactory(NodeFactory<? extends N> nf);
 
 	/**
 	 * Set the edge factory used to create edges.
 	 *
 	 * @param ef the new EdgeFactory
 	 */
-	void setEdgeFactory(EdgeFactory<? extends Edge> ef);
+	void setEdgeFactory(EdgeFactory<? extends E> ef);
 
 	/**
 	 * Enable or disable strict checking.
@@ -298,7 +300,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * @throws IdAlreadyInUseException If strict checking is enabled the
 	 *                                 identifier is already used.
 	 */
-	<T extends Node> T addNode(String id) throws IdAlreadyInUseException;
+	<T extends N> T addNode(String id) throws IdAlreadyInUseException;
 
 	/**
 	 * Remove a node using its identifier.
@@ -327,7 +329,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 *                                  identifier and strict checking is
 	 *                                  enabled.
 	 */
-	<T extends Node> T removeNode(String id) throws ElementNotFoundException;
+	<T extends N> T removeNode(String id) throws ElementNotFoundException;
 
 	/**
 	 * Adds an undirected edge between nodes.
@@ -397,7 +399,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * @throws EdgeRejectedException    If strict checking is enabled and
 	 *                                  the edge is not accepted.
 	 */
-	<T extends Edge> T addEdge(String id, String node1, String node2)
+	<T extends E> T addEdge(String id, String node1, String node2)
 		throws IdAlreadyInUseException, ElementNotFoundException,
 		EdgeRejectedException;
 
@@ -423,7 +425,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 *                                  the edge is not accepted.
 	 * @see #addEdge(String, String, String)
 	 */
-	<T extends Edge> T addEdge(String id, String from, String to,
+	<T extends E> T addEdge(String id, String from, String to,
 		boolean directed) throws IdAlreadyInUseException,
 		ElementNotFoundException;
 
@@ -462,7 +464,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 *                                  connected and strict checking is
 	 *                                  enabled.
 	 */
-	<T extends Edge> T removeEdge(String from, String to)
+	<T extends E> T removeEdge(String from, String to)
 		throws ElementNotFoundException;
 
 	/**
@@ -489,7 +491,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * @throws ElementNotFoundException If no edge matches the identifier
 	 *                                  and strict checking is enabled.
 	 */
-	<T extends Edge> T removeEdge(String id) throws ElementNotFoundException;
+	<T extends E> T removeEdge(String id) throws ElementNotFoundException;
 
 	/**
 	 * <p>
@@ -630,7 +632,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * @throws IndexOutOfBoundsException If the index is negative or greater
 	 *                                   than {@code getNodeCount() - 1}.
 	 */
-	<T extends Node> T getNode(int index) throws IndexOutOfBoundsException;
+	<T extends N> T getNode(int index) throws IndexOutOfBoundsException;
 
 	/**
 	 * Get an edge by its index. This method is implicitly generic and
@@ -650,7 +652,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 *                                   greater than
 	 *                                   {@code getNodeCount() - 1}.
 	 */
-	<T extends Edge> T getEdge(int index) throws IndexOutOfBoundsException;
+	<T extends E> T getEdge(int index) throws IndexOutOfBoundsException;
 
 	/**
 	 * Like {@link #addEdge(String, String, String)} but the nodes are
@@ -670,7 +672,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 *                                   the edge is not accepted.
 	 * @see #addEdge(String, String, String)
 	 */
-	<T extends Edge> T addEdge(String id, int index1, int index2)
+	<T extends E> T addEdge(String id, int index1, int index2)
 		throws IndexOutOfBoundsException, IdAlreadyInUseException,
 		EdgeRejectedException;
 
@@ -693,7 +695,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 *                                   the edge is not accepted.
 	 * @see #addEdge(String, String, String)
 	 */
-	<T extends Edge> T addEdge(String id, int fromIndex, int toIndex,
+	<T extends E> T addEdge(String id, int fromIndex, int toIndex,
 		boolean directed) throws IndexOutOfBoundsException,
 		IdAlreadyInUseException, EdgeRejectedException;
 
@@ -712,7 +714,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 *                                 edge is not accepted.
 	 * @see #addEdge(String, String, String)
 	 */
-	<T extends Edge> T addEdge(String id, Node node1, Node node2)
+	<T extends E> T addEdge(String id, N node1, N node2)
 		throws IdAlreadyInUseException, EdgeRejectedException;
 
 	/**
@@ -731,7 +733,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 *                                 edge is not accepted.
 	 * @see #addEdge(String, String, String)
 	 */
-	<T extends Edge> T addEdge(String id, Node from, Node to, boolean directed)
+	<T extends E> T addEdge(String id, N from, N to, boolean directed)
 		throws IdAlreadyInUseException, EdgeRejectedException;
 
 	/**
@@ -756,7 +758,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * @throws IndexOutOfBoundsException if the index is negative or greater
 	 *                                   than {@code getEdgeCount() - 1}
 	 */
-	<T extends Edge> T removeEdge(int index) throws IndexOutOfBoundsException;
+	<T extends E> T removeEdge(int index) throws IndexOutOfBoundsException;
 
 	/**
 	 * Removes an edge between two nodes. Like
@@ -774,7 +776,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 *                                   nodes.
 	 * @see #removeEdge(String, String)
 	 */
-	<T extends Edge> T removeEdge(int fromIndex, int toIndex)
+	<T extends E> T removeEdge(int fromIndex, int toIndex)
 		throws IndexOutOfBoundsException, ElementNotFoundException;
 
 	/**
@@ -790,7 +792,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 *                                  nodes.
 	 * @see #removeEdge(String, String)
 	 */
-	<T extends Edge> T removeEdge(Node node1, Node node2)
+	<T extends E> T removeEdge(N node1, N node2)
 		throws ElementNotFoundException;
 
 	/**
@@ -813,7 +815,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * @param edge The edge to be removed
 	 * @return The removed edge
 	 */
-	<T extends Edge> T removeEdge(Edge edge);
+	<T extends E> T removeEdge(E edge);
 
 	/**
 	 * Removes a node with a given index.
@@ -840,7 +842,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * @throws IndexOutOfBoundsException if the index is negative or greater
 	 *                                   than {@code getNodeCount() - 1}.
 	 */
-	<T extends Node> T removeNode(int index) throws IndexOutOfBoundsException;
+	<T extends N> T removeNode(int index) throws IndexOutOfBoundsException;
 
 	/**
 	 * Removes a node.
@@ -865,7 +867,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * @param node The node to be removed
 	 * @return The removed node
 	 */
-	<T extends Node> T removeNode(Node node);
+	<T extends N> T removeNode(N node);
 
 	/**
 	 * The default implementation returns {@link #getNodeIterator()}
@@ -873,7 +875,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
-	default Iterator<Node> iterator() {
+	default Iterator<N> iterator() {
 		return getNodeIterator();
 	}
 }

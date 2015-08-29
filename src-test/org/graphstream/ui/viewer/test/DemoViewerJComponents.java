@@ -187,7 +187,7 @@ public class DemoViewerJComponents {
 		}
 	}
 
-	protected void showSelection(Graph graph) {
+	protected void showSelection(Graph<?, ?> graph) {
 		boolean selection = false;
 		StringBuilder sb = new StringBuilder();
 

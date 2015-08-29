@@ -79,16 +79,18 @@ import java.util.Iterator;
  * of these callbacks is to update the data structures and to re-index elements
  * if necessary.
  * </p>
+ * @param <N> the node type of this graph
+ * @param <E> the edge type of this graph
  */
-public abstract class AbstractGraph extends AbstractElement implements Graph,
+public abstract class AbstractGraph<N extends AbstractNode, E extends AbstractEdge> extends AbstractElement implements Graph<N, E>,
 	Replayable {
 	// *** Fields ***
 
 	private boolean strictChecking;
 	private boolean autoCreate;
 	GraphListeners listeners;
-	private NodeFactory<? extends AbstractNode> nodeFactory;
-	private EdgeFactory<? extends AbstractEdge> edgeFactory;
+	private NodeFactory<? extends N> nodeFactory;
+	private EdgeFactory<? extends E> edgeFactory;
 
 	private double step = 0;
 
@@ -138,25 +140,23 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 
 	// Factories
 	@Override
-	public NodeFactory<? extends Node> nodeFactory() {
+	public NodeFactory<? extends N> nodeFactory() {
 		return nodeFactory;
 	}
 
 	@Override
-	public EdgeFactory<? extends Edge> edgeFactory() {
+	public EdgeFactory<? extends E> edgeFactory() {
 		return edgeFactory;
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public void setNodeFactory(NodeFactory<? extends Node> nf) {
-		nodeFactory = (NodeFactory<? extends AbstractNode>) nf;
+	public void setNodeFactory(NodeFactory<? extends N> nf) {
+		nodeFactory = nf;
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public void setEdgeFactory(EdgeFactory<? extends Edge> ef) {
-		edgeFactory = (EdgeFactory<? extends AbstractEdge>) ef;
+	public void setEdgeFactory(EdgeFactory<? extends E> ef) {
+		edgeFactory = ef;
 	}
 
 	// strict checking, autocreation, etc
@@ -214,8 +214,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Node> T addNode(String id) {
-		AbstractNode node = getNode(id);
+	public <T extends N> T addNode(String id) {
+		N node = getNode(id);
 
 		if (node != null) {
 			if (strictChecking) {
@@ -234,45 +234,45 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	}
 
 	@Override
-	public <T extends Edge> T addEdge(String id, String node1, String node2) {
+	public <T extends E> T addEdge(String id, String node1, String node2) {
 		return addEdge(id, node1, node2, false);
 	}
 
 	@Override
-	public <T extends Edge> T addEdge(String id, String from, String to,
+	public <T extends E> T addEdge(String id, String from, String to,
 		boolean directed) {
 		return addEdge(id, (AbstractNode) getNode(from), from,
 			(AbstractNode) getNode(to), to, directed);
 	}
 
 	@Override
-	public <T extends Edge> T addEdge(String id, int index1, int index2) {
+	public <T extends E> T addEdge(String id, int index1, int index2) {
 		return addEdge(id, index1, index2, false);
 	}
 
 	@Override
-	public <T extends Edge> T addEdge(String id, int fromIndex, int toIndex,
+	public <T extends E> T addEdge(String id, int fromIndex, int toIndex,
 		boolean directed) {
-		Node from = getNode(fromIndex);
-		Node to = getNode(toIndex);
+		N from = getNode(fromIndex);
+		N to = getNode(toIndex);
 		return addEdge(id, from, to, directed);
 	}
 
 	@Override
-	public <T extends Edge> T addEdge(String id, Node node1, Node node2) {
+	public <T extends E> T addEdge(String id, N node1, N node2) {
 		return addEdge(id, node1, node2, false);
 	}
 
 	@Override
-	public <T extends Edge> T addEdge(String id, Node from, Node to,
+	public <T extends E> T addEdge(String id, N from, N to,
 		boolean directed) {
 		return addEdge(id, (AbstractNode) from, from.getId(),
 			(AbstractNode) to, to.getId(), directed);
 	}
 
 	@Override
-	public <T extends Node> T removeNode(String id) {
-		AbstractNode node = getNode(id);
+	public <T extends N> T removeNode(String id) {
+		N node = getNode(id);
 
 		if (node == null) {
 			if (strictChecking) {
@@ -286,8 +286,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	}
 
 	@Override
-	public <T extends Node> T removeNode(int index) {
-		Node node = getNode(index);
+	public <T extends N> T removeNode(int index) {
+		N node = getNode(index);
 
 		if (node == null) {
 			if (strictChecking) {
@@ -302,18 +302,18 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Node> T removeNode(Node node) {
+	public <T extends N> T removeNode(N node) {
 		if (node == null) {
 			return null;
 		}
 
-		removeNode((AbstractNode) node, true);
+		removeNode(node, true);
 		return (T) node;
 	}
 
 	@Override
-	public <T extends Edge> T removeEdge(String id) {
-		Edge edge = getEdge(id);
+	public <T extends E> T removeEdge(String id) {
+		E edge = getEdge(id);
 
 		if (edge == null) {
 			if (strictChecking) {
@@ -327,8 +327,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	}
 
 	@Override
-	public <T extends Edge> T removeEdge(int index) {
-		Edge edge = getEdge(index);
+	public <T extends E> T removeEdge(int index) {
+		E edge = getEdge(index);
 
 		if (edge == null) {
 			if (strictChecking) {
@@ -343,19 +343,19 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> T removeEdge(Edge edge) {
+	public <T extends E> T removeEdge(E edge) {
 		if (edge == null) {
 			return null;
 		}
 
-		removeEdge((AbstractEdge) edge, true, true, true);
+		removeEdge(edge, true, true, true);
 		return (T) edge;
 	}
 
 	@Override
-	public <T extends Edge> T removeEdge(String from, String to) {
-		Node fromNode = getNode(from);
-		Node toNode = getNode(to);
+	public <T extends E> T removeEdge(String from, String to) {
+		N fromNode = getNode(from);
+		N toNode = getNode(to);
 
 		if (fromNode == null || toNode == null) {
 			if (strictChecking) {
@@ -370,9 +370,9 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	}
 
 	@Override
-	public <T extends Edge> T removeEdge(int fromIndex, int toIndex) {
-		Node fromNode = getNode(fromIndex);
-		Node toNode = getNode(toIndex);
+	public <T extends E> T removeEdge(int fromIndex, int toIndex) {
+		N fromNode = getNode(fromIndex);
+		N toNode = getNode(toIndex);
 
 		if (fromNode == null || toNode == null) {
 			if (strictChecking) {
@@ -387,8 +387,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	}
 
 	@Override
-	public <T extends Edge> T removeEdge(Node node1, Node node2) {
-		AbstractEdge edge = node1.getEdgeToward(node2);
+	public <T extends E> T removeEdge(N node1, N node2) {
+		E edge = node1.getEdgeToward(node2);
 
 		if (edge == null) {
 			if (strictChecking) {
@@ -616,7 +616,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 *
 	 * @param node the node to be added
 	 */
-	protected abstract void addNodeCallback(AbstractNode node);
+	protected abstract void addNodeCallback(N node);
 
 	/**
 	 * This method is automatically called when a new edge is created.
@@ -625,7 +625,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 *
 	 * @param edge the edge to be added
 	 */
-	protected abstract void addEdgeCallback(AbstractEdge edge);
+	protected abstract void addEdgeCallback(E edge);
 
 	/**
 	 * This method is automatically called when a node is removed.
@@ -634,7 +634,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 *
 	 * @param node the node to be removed
 	 */
-	protected abstract void removeNodeCallback(AbstractNode node);
+	protected abstract void removeNodeCallback(N node);
 
 	/**
 	 * This method is automatically called when an edge is removed.
@@ -643,7 +643,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 *
 	 * @param edge the edge to be removed
 	 */
-	protected abstract void removeEdgeCallback(AbstractEdge edge);
+	protected abstract void removeEdgeCallback(E edge);
 
 	/**
 	 * This method is automatically called when the graph is cleared.
@@ -660,7 +660,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	@SuppressWarnings("unchecked")
 	protected <T extends Edge> T addEdge(String edgeId, AbstractNode src,
 		String srcId, AbstractNode dst, String dstId, boolean directed) {
-		AbstractEdge edge = getEdge(edgeId);
+		E edge = getEdge(edgeId);
 		if (edge != null) {
 			if (strictChecking) {
 				throw new IdAlreadyInUseException("id \"" + edgeId
@@ -745,7 +745,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 			}
 		} else {
 			while (node.getDegree() > 0) {
-				Edge edge = node.getEdge(0);
+				E edge = node.getEdge(0);
 				removeEdge(edge);
 			}
 		}
@@ -763,7 +763,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * @param graphCallback if {@code false},
 	 *                      {@code removeNodeCallback(node)} is not called
 	 */
-	protected void removeNode(AbstractNode node, boolean graphCallback) {
+	protected void removeNode(N node, boolean graphCallback) {
 		if (node == null) {
 			return;
 		}
@@ -793,7 +793,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 *                       {@link AbstractNode#removeEdgeCallback(AbstractEdge)}
 	 *                       is not called for the target node of the edge
 	 */
-	protected void removeEdge(AbstractEdge edge, boolean graphCallback,
+	protected void removeEdge(E edge, boolean graphCallback,
 		boolean sourceCallback, boolean targetCallback) {
 		if (edge == null) {
 			return;

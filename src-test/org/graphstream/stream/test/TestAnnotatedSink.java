@@ -35,6 +35,7 @@ import org.graphstream.graph.Element.ElementType;
 import static org.junit.Assert.assertEquals;
 
 import org.graphstream.graph.implementations.AdjacencyListGraph;
+import org.graphstream.graph.implementations.SimpleAdjacencyListGraph;
 import org.graphstream.stream.AnnotatedSink;
 import org.junit.Test;
 
@@ -74,7 +75,7 @@ public class TestAnnotatedSink {
 	
 	@Test
 	public void check() {
-		AdjacencyListGraph g = new AdjacencyListGraph("test");
+		AdjacencyListGraph g = new SimpleAdjacencyListGraph("test");
 		g.addSink(new TestObject());
 		
 		g.setAttribute(GRAPH_BINDING_ATTR, GRAPH_BINDING_VALUE);

@@ -103,7 +103,7 @@ public class FileSinkDOT extends FileSinkBase {
 	}
 
 	@Override
-	protected void exportGraph(Graph graph) {
+	protected void exportGraph(Graph<?, ?> graph) {
 		String graphId = graph.getId();
 		long timeId = 0;
 

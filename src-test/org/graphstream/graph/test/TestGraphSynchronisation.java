@@ -37,8 +37,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.graph.implementations.SimpleAdjacencyListGraph;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.junit.Test;
 
@@ -57,9 +57,9 @@ public class TestGraphSynchronisation {
 
 		testGraphSyncBase(new MultiGraph("g1"), new MultiGraph("g2"));
 		testGraphSyncBase(new SingleGraph("g1"), new SingleGraph("g2"));
-		testGraphSyncBase(new AdjacencyListGraph("g1"), new AdjacencyListGraph(
+		testGraphSyncBase(new SimpleAdjacencyListGraph("g1"), new SimpleAdjacencyListGraph(
 				"g2"));
-		testGraphSyncBase(new MultiGraph("g1"), new AdjacencyListGraph("g2"));
+		testGraphSyncBase(new MultiGraph("g1"), new SimpleAdjacencyListGraph("g2"));
 		
 	}
 
@@ -179,10 +179,10 @@ public class TestGraphSynchronisation {
 				new MultiGraph("g3"));
 		testGraphSyncCycleSimple(new SingleGraph("g1"), new SingleGraph("g2"),
 				new SingleGraph("g3"));
-		testGraphSyncCycleSimple(new AdjacencyListGraph("g1"),
-				new AdjacencyListGraph("g2"), new AdjacencyListGraph("g3"));
+		testGraphSyncCycleSimple(new SimpleAdjacencyListGraph("g1"),
+				new SimpleAdjacencyListGraph("g2"), new SimpleAdjacencyListGraph("g3"));
 		testGraphSyncCycleSimple(new MultiGraph("g1"), new SingleGraph("g2"),
-				new AdjacencyListGraph("g3"));
+				new SimpleAdjacencyListGraph("g3"));
 	}
 
 	protected void testGraphSyncCycleSimple(Graph g1, Graph g2, Graph g3) {
@@ -206,10 +206,10 @@ public class TestGraphSynchronisation {
 				new MultiGraph("g3"));
 		testGraphSyncCycleProblem(new SingleGraph("g1"), new SingleGraph("g2"),
 				new SingleGraph("g3"));
-		testGraphSyncCycleProblem(new AdjacencyListGraph("g1"),
-				new AdjacencyListGraph("g2"), new AdjacencyListGraph("g3"));
+		testGraphSyncCycleProblem(new SimpleAdjacencyListGraph("g1"),
+				new SimpleAdjacencyListGraph("g2"), new SimpleAdjacencyListGraph("g3"));
 		testGraphSyncCycleProblem(new MultiGraph("g1"), new SingleGraph("g2"),
-				new AdjacencyListGraph("g3"));
+				new SimpleAdjacencyListGraph("g3"));
 	}
 
 	protected void testGraphSyncCycleProblem(Graph g1, Graph g2, Graph g3) {

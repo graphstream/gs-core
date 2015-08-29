@@ -31,12 +31,13 @@
  */
 package org.graphstream.graph.implementations;
 
+import org.graphstream.graph.EdgeFactory;
 import org.graphstream.graph.NodeFactory;
 
 /**
  * An implementation of graph that supports only one edge between two nodes.
  */
-public class SingleGraph extends AdjacencyListGraph {
+public class SingleGraph extends AdjacencyListGraph<SingleNode, AbstractEdge> {
 
 	/**
 	 * Creates an empty graph.
@@ -65,9 +66,12 @@ public class SingleGraph extends AdjacencyListGraph {
 		int initialNodeCapacity, int initialEdgeCapacity) {
 		super(id, strictChecking, autoCreate, initialNodeCapacity,
 			initialEdgeCapacity);
-		// All we need to do is to change the node factory
+		// All we need to do is to change the factories
 		NodeFactory<SingleNode> nf = (i, g) -> (new SingleNode(i, (AbstractGraph) g));
 		setNodeFactory(nf);
+
+		EdgeFactory<AbstractEdge> ef = (i, s, ds, di) -> (new AbstractEdge(i, (AbstractNode) s, (AbstractNode) ds, di));
+		setEdgeFactory(ef);
 	}
 
 	/**
