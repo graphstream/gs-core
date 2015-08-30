@@ -32,6 +32,7 @@
 package org.graphstream.util;
 
 import java.util.Iterator;
+import java.util.function.Predicate;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -39,14 +40,14 @@ import org.graphstream.graph.Node;
 public class FilteredNodeIterator<T extends Node> implements Iterator<T> {
 
 	protected Iterator<T> globalIterator;
-	protected Filter<Node> filter;
+	protected Predicate<Node> filter;
 	protected T next;
 
-	public FilteredNodeIterator(Graph g, Filter<Node> filter) {
+	public FilteredNodeIterator(Graph g, Predicate<Node> filter) {
 		this(g.<T>getNodeIterator(), filter);
 	}
 
-	public FilteredNodeIterator(Iterator<T> ite, Filter<Node> filter) {
+	public FilteredNodeIterator(Iterator<T> ite, Predicate<Node> filter) {
 		this.globalIterator = ite;
 		this.filter = filter;
 
@@ -59,7 +60,7 @@ public class FilteredNodeIterator<T extends Node> implements Iterator<T> {
 		while (globalIterator.hasNext() && next == null) {
 			next = globalIterator.next();
 
-			if (!filter.isAvailable(next)) {
+			if (!filter.test(next)) {
 				next = null;
 			}
 		}

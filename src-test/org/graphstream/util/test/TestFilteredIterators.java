@@ -43,7 +43,7 @@ import org.graphstream.graph.implementations.SimpleAdjacencyListGraph;
 import org.graphstream.stream.file.FileSourceDGS;
 import org.graphstream.util.FilteredEdgeIterator;
 import org.graphstream.util.FilteredNodeIterator;
-import org.graphstream.util.Filters;
+import org.graphstream.util.Predicates;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -64,10 +64,10 @@ public class TestFilteredIterators {
 
 	@Test
 	public void testFilteredNodeIterator() {
-		HashSet<Node> expected = new HashSet<Node>();
-		HashSet<Node> reached = new HashSet<Node>();
-		FilteredNodeIterator<Node> ite = new FilteredNodeIterator<Node>(
-				baseGraph.getNodeIterator(), Filters.<Node> byAttributeFilter(
+		HashSet<Node> expected = new HashSet<>();
+		HashSet<Node> reached = new HashSet<>();
+		FilteredNodeIterator<Node> ite = new FilteredNodeIterator<>(
+				baseGraph.getNodeIterator(), Predicates.<Node>byAttributePredicate(
 						"type", "A"));
 
 		expected.add(baseGraph.getNode("A0"));
@@ -82,10 +82,10 @@ public class TestFilteredIterators {
 
 	@Test
 	public void testFiltereEdgeIterator() {
-		HashSet<Edge> expected = new HashSet<Edge>();
-		HashSet<Edge> reached = new HashSet<Edge>();
-		FilteredEdgeIterator<Edge> ite = new FilteredEdgeIterator<Edge>(
-				baseGraph.getEdgeIterator(), Filters.<Edge> byAttributeFilter(
+		HashSet<Edge> expected = new HashSet<>();
+		HashSet<Edge> reached = new HashSet<>();
+		FilteredEdgeIterator<Edge> ite = new FilteredEdgeIterator<>(
+				baseGraph.getEdgeIterator(), Predicates.<Edge> byAttributePredicate(
 						"type", "A"));
 
 		expected.add(baseGraph.getEdge("A01"));

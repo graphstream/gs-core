@@ -35,134 +35,75 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 import java.util.HashSet;
 
 import org.graphstream.graph.Element;
 import org.graphstream.graph.implementations.AbstractElement;
-import org.graphstream.util.Filter;
-import org.graphstream.util.Filters;
+import org.graphstream.util.Predicates;
+
 import org.junit.Test;
 
-public class TestFilters {
+public class TestPredicates {
 	@Test
-	public void orFilter() {
-		ToggleFilter<Element> f1, f2;
-		Filter<Element> or;
+	public void xorPredicate() {
+		TogglePredicate f1, f2;
+		Predicate<Element> xor;
 
-		f1 = new ToggleFilter<Element>();
-		f2 = new ToggleFilter<Element>();
-		or = Filters.or(f1, f2);
+		f1 = new TogglePredicate();
+		f2 = new TogglePredicate();
+		xor = Predicates.xor(f1, f2);
 
 		f1.set(false);
 		f2.set(false);
 
-		assertFalse(or.isAvailable(null));
+		assertFalse(xor.test(null));
 
 		f1.set(true);
 		f2.set(false);
 
-		assertTrue(or.isAvailable(null));
+		assertTrue(xor.test(null));
 
 		f1.set(false);
 		f2.set(true);
 
-		assertTrue(or.isAvailable(null));
+		assertTrue(xor.test(null));
 
 		f1.set(true);
 		f2.set(true);
 
-		assertTrue(or.isAvailable(null));
+		assertFalse(xor.test(null));
 	}
 
 	@Test
-	public void andFilter() {
-		ToggleFilter<Element> f1, f2;
-		Filter<Element> and;
-
-		f1 = new ToggleFilter<Element>();
-		f2 = new ToggleFilter<Element>();
-		and = Filters.and(f1, f2);
-
-		f1.set(false);
-		f2.set(false);
-
-		assertFalse(and.isAvailable(null));
-
-		f1.set(true);
-		f2.set(false);
-
-		assertFalse(and.isAvailable(null));
-
-		f1.set(false);
-		f2.set(true);
-
-		assertFalse(and.isAvailable(null));
-
-		f1.set(true);
-		f2.set(true);
-
-		assertTrue(and.isAvailable(null));
+	public void falsePredicate() {
+		Predicate<Element> f = Predicates.falsePredicate();
+		assertFalse(f.test(null));
 	}
 
 	@Test
-	public void xorFilter() {
-		ToggleFilter<Element> f1, f2;
-		Filter<Element> xor;
-
-		f1 = new ToggleFilter<Element>();
-		f2 = new ToggleFilter<Element>();
-		xor = Filters.xor(f1, f2);
-
-		f1.set(false);
-		f2.set(false);
-
-		assertFalse(xor.isAvailable(null));
-
-		f1.set(true);
-		f2.set(false);
-
-		assertTrue(xor.isAvailable(null));
-
-		f1.set(false);
-		f2.set(true);
-
-		assertTrue(xor.isAvailable(null));
-
-		f1.set(true);
-		f2.set(true);
-
-		assertFalse(xor.isAvailable(null));
+	public void truePredicate() {
+		Predicate<Element> f = Predicates.truePredicate();
+		assertTrue(f.test(null));
 	}
 
 	@Test
-	public void falseFilter() {
-		Filter<Element> f = Filters.falseFilter();
-		assertFalse(f.isAvailable(null));
-	}
-
-	@Test
-	public void trueFilter() {
-		Filter<Element> f = Filters.trueFilter();
-		assertTrue(f.isAvailable(null));
-	}
-
-	@Test
-	public void byAttributeFilter() {
-		Filter<Element> f = Filters.byAttributeFilter("keyTest", "ok");
+	public void byAttributePredicate() {
+		Predicate<Element> f = Predicates.byAttributePredicate("keyTest", "ok");
 		TestElement e = new TestElement("e");
 
-		assertFalse(f.isAvailable(e));
+		assertFalse(f.test(e));
 
 		e.setAttribute("keyTest", "no");
-		assertFalse(f.isAvailable(e));
+		assertFalse(f.test(e));
 
 		e.setAttribute("keyTest", "ok");
-		assertTrue(f.isAvailable(e));
+		assertTrue(f.test(e));
 	}
 
 	@Test
-	public void byIdFilter() {
-		Filter<Element> f = Filters.byIdFilter("A.*");
+	public void byIdPredicate() {
+		Predicate<Element> f = Predicates.byIdPredicate("A.*");
 		Element a1, a2, b1, c2;
 
 		a1 = new TestElement("A1");
@@ -170,18 +111,18 @@ public class TestFilters {
 		b1 = new TestElement("B1");
 		c2 = new TestElement("C2");
 
-		assertTrue(f.isAvailable(a1));
-		assertFalse(f.isAvailable(a2));
-		assertFalse(f.isAvailable(b1));
-		assertFalse(f.isAvailable(c2));
+		assertTrue(f.test(a1));
+		assertFalse(f.test(a2));
+		assertFalse(f.test(b1));
+		assertFalse(f.test(c2));
 	}
 
 	@Test
-	public void isContainedFilter() {
-		Collection<Element> elements = new HashSet<Element>();
-		Collection<String> elementsId = new HashSet<String>();
-		Filter<Element> fObj = Filters.isContained(elements);
-		Filter<Element> fId = Filters.isIdContained(elementsId);
+	public void isContainedPredicate() {
+		Collection<Element> elements = new HashSet<>();
+		Collection<String> elementsId = new HashSet<>();
+		Predicate<Element> fObj = Predicates.isContained(elements);
+		Predicate<Element> fId = Predicates.isIdContained(elementsId);
 		Element a1, a2, a3;
 
 		a1 = new TestElement("a1");
@@ -192,16 +133,16 @@ public class TestFilters {
 		elements.add(a2);
 		elementsId.add("a3");
 
-		assertTrue(fObj.isAvailable(a1));
-		assertTrue(fObj.isAvailable(a2));
-		assertFalse(fObj.isAvailable(a3));
+		assertTrue(fObj.test(a1));
+		assertTrue(fObj.test(a2));
+		assertFalse(fObj.test(a3));
 
-		assertFalse(fId.isAvailable(a1));
-		assertFalse(fId.isAvailable(a2));
-		assertTrue(fId.isAvailable(a3));
+		assertFalse(fId.test(a1));
+		assertFalse(fId.test(a2));
+		assertTrue(fId.test(a3));
 	}
 
-	static class ToggleFilter<T extends Element> implements Filter<T> {
+	static class TogglePredicate implements Predicate<Element> {
 		boolean flag;
 
 		public void set(boolean on) {
@@ -209,7 +150,7 @@ public class TestFilters {
 		}
 
 		@Override
-		public boolean isAvailable(T e) {
+		public boolean test(Element e) {
 			return flag;
 		}
 	}

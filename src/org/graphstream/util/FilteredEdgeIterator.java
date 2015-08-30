@@ -32,6 +32,7 @@
 package org.graphstream.util;
 
 import java.util.Iterator;
+import java.util.function.Predicate;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Edge;
@@ -39,16 +40,16 @@ import org.graphstream.graph.Edge;
 public class FilteredEdgeIterator<T extends Edge> implements Iterator<T> {
 
 	protected Iterator<T> globalIterator;
-	protected Filter<Edge> filter;
+	protected Predicate<Edge> filter;
 	protected T next;
 
-	public FilteredEdgeIterator(Graph g, Filter<Edge> filter) {
+	public FilteredEdgeIterator(Graph g, Predicate<Edge> filter) {
 		this(g.<T>getEdgeIterator(), filter);
 	}
 
-	public FilteredEdgeIterator(Iterator<T> ite, Filter<Edge> filter) {
+	public FilteredEdgeIterator(Iterator<T> ite, Predicate<Edge> filter) {
 		this.globalIterator = ite;
-		this.filter = (Filter<Edge>) filter;
+		this.filter = filter;
 
 		findNext();
 	}
@@ -59,7 +60,7 @@ public class FilteredEdgeIterator<T extends Edge> implements Iterator<T> {
 		while (globalIterator.hasNext() && next == null) {
 			next = globalIterator.next();
 
-			if (!filter.isAvailable(next)) {
+			if (!filter.test(next)) {
 				next = null;
 			}
 		}
