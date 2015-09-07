@@ -52,6 +52,7 @@ public class FileSinkFactory {
 		ext2sink.put("dgsz", FileSinkDGS.class);
 		ext2sink.put("dgml", FileSinkDynamicGML.class);
 		ext2sink.put("gml", FileSinkGML.class);
+		ext2sink.put("graphml", FileSinkGraphML.class);
 		ext2sink.put("dot", FileSinkDOT.class);
 		ext2sink.put("svg", FileSinkSVG2.class);
 		ext2sink.put("pgf", FileSinkTikZ.class);
@@ -72,7 +73,7 @@ public class FileSinkFactory {
 	 * @return A file sink or null.
 	 */
 	public static FileSink sinkFor(String filename) {
-		if (filename.indexOf('.') > 0) {
+		if (filename.lastIndexOf('.') > 0) {
 			String ext = filename.substring(filename.lastIndexOf('.') + 1);
 			ext = ext.toLowerCase();
 
