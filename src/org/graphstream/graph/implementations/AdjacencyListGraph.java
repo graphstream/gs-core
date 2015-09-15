@@ -297,12 +297,12 @@ public abstract class AdjacencyListGraph<N extends AdjacencyListNode, E extends 
 	}
 
 	@Override
-	public <T extends Edge> Iterator<T> getEdgeIterator() {
+	public <T extends E> Iterator<T> getEdgeIterator() {
 		return new EdgeIterator<>();
 	}
 
 	@Override
-	public <T extends Node> Iterator<T> getNodeIterator() {
+	public <T extends N> Iterator<T> getNodeIterator() {
 		return new NodeIterator<>();
 	}
 }

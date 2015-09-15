@@ -184,7 +184,7 @@ public class FileSinkGEXF extends FileSinkBase {
 	}
 
 	@Override
-	protected void exportGraph(Graph g) {
+	protected void exportGraph(Graph<? extends Node, ? extends Edge> g) {
 		GEXFAttributeMap nodeAttributes = new GEXFAttributeMap("node", g);
 		GEXFAttributeMap edgeAttributes = new GEXFAttributeMap("edge", g);
 

@@ -110,10 +110,12 @@ public abstract class SourceBase implements Source {
 	}
 
 	// Access
+	@Override
 	public Iterable<AttributeSink> attributeSinks() {
 		return attrSinks;
 	}
 
+	@Override
 	public Iterable<ElementSink> elementSinks() {
 		return eltsSinks;
 	}

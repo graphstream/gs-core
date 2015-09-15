@@ -276,7 +276,7 @@ public class TestGenericity {
 
 	static class TestForEachNode<A extends Node> {
 		@SuppressWarnings("unused")
-		TestForEachNode(Graph g) {
+		TestForEachNode(Graph<A, Edge> g) {
 			g.clear();
 
 			for (int i = 0; i < 10; i++)
@@ -293,7 +293,8 @@ public class TestGenericity {
 			}
 
 			try {
-				for (BadTypedNode badTypedNode : g.<BadTypedNode> getEachNode()) {
+				for (Object badTypedNode : g.getEachNode()) {
+					BadTypedNode badNode = (BadTypedNode) badTypedNode;
 					fail();
 				}
 			} catch (ClassCastException e) {
@@ -385,7 +386,7 @@ public class TestGenericity {
 
 	static class TestForEachEdge<A extends Edge> {
 		@SuppressWarnings("unused")
-		TestForEachEdge(Graph g) {
+		TestForEachEdge(Graph<Node, A> g) {
 			g.clear();
 
 			for (int i = 0; i < 10; i++)
@@ -407,7 +408,8 @@ public class TestGenericity {
 			}
 
 			try {
-				for (BadTypedEdge bte : g.<BadTypedEdge> getEachEdge()) {
+				for (Object bte : g.getEachEdge()) {
+					BadTypedEdge bad = (BadTypedEdge) bte;
 					fail();
 				}
 			} catch (ClassCastException e) {

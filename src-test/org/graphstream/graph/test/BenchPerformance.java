@@ -47,7 +47,7 @@ import org.junit.Ignore;
 
 @Ignore
 public class BenchPerformance {
-	Graph<?, ?> g;
+	Graph<Node, Edge> g;
 	Runtime r;
 	List<String> nodeIds;
 	List<String> edgeIds;

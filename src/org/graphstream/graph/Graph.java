@@ -34,8 +34,6 @@ package org.graphstream.graph;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.graphstream.stream.AttributeSink;
-import org.graphstream.stream.ElementSink;
 import org.graphstream.stream.GraphParseException;
 import org.graphstream.stream.Pipe;
 import org.graphstream.stream.file.FileSink;
@@ -128,7 +126,7 @@ import org.graphstream.ui.view.Viewer;
  * @param <N> the node type of this graph
  * @param <E> the edge type of this graph
  */
-public interface Graph<N extends Node, E extends Edge> extends Element, Pipe, Iterable<N>, Structure {
+public interface Graph<N extends Node, E extends Edge> extends Element, Pipe, Iterable<N>, Structure<N, E> {
 	// Access
 
 	/**
@@ -513,24 +511,6 @@ public interface Graph<N extends Node, E extends Edge> extends Element, Pipe, It
 	void stepBegins(double time);
 
 	// Source
-	// XXX do we put the iterable attributeSinks and elementSinks in Source ?
-	/**
-	 * Returns an "iterable" of {@link AttributeSink} objects registered to
-	 * this graph.
-	 *
-	 * @return the set of {@link AttributeSink} under the form of an
-	 *         iterable object.
-	 */
-	Iterable<AttributeSink> attributeSinks();
-
-	/**
-	 * Returns an "iterable" of {@link ElementSink} objects registered to
-	 * this graph.
-	 *
-	 * @return the list of {@link ElementSink} under the form of an iterable
-	 *         object.
-	 */
-	Iterable<ElementSink> elementSinks();
 
 	// Utility shortcuts (should be mixins or traits, what are you doing Mr Java
 	// ?)

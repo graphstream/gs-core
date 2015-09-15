@@ -39,7 +39,7 @@ import java.util.Iterator;
  * Structures are generic objects which may contain nodes and edges.
  *
  */
-public interface Structure {
+public interface Structure<N extends Node, E extends Edge> {
 	/**
 	 * Number of nodes in this graph.
 	 *
@@ -69,7 +69,7 @@ public interface Structure {
 	 *
 	 * @return The iterator.
 	 */
-	<T extends Node> Iterator<T> getNodeIterator();
+	<T extends N> Iterator<T> getNodeIterator();
 
 	/**
 	 * Iterator on the set of edges, in an undefined order. This method is
@@ -86,7 +86,7 @@ public interface Structure {
 	 *
 	 * @return The iterator.
 	 */
-	<T extends Edge> Iterator<T> getEdgeIterator();
+	<T extends E> Iterator<T> getEdgeIterator();
 
 	/**
 	 * Set of nodes usable in a for-each instruction. This method is
@@ -112,7 +112,7 @@ public interface Structure {
 	 * @see #getNodeIterator()
 	 * @see #getEachNode()
 	 */
-	default <T extends Node> Iterable<? extends T> getEachNode() {
+	default <T extends N> Iterable<? extends T> getEachNode() {
 		return this::getNodeIterator;
 	}
 
@@ -140,7 +140,7 @@ public interface Structure {
 	 * @see #getEdgeIterator()
 	 * @see #getEdgeSet()
 	 */
-	default <T extends Edge> Iterable<? extends T> getEachEdge() {
+	default <T extends E> Iterable<? extends T> getEachEdge() {
 		return this::getEdgeIterator;
 	}
 
@@ -161,7 +161,7 @@ public interface Structure {
 	 * @see #getNodeIterator()
 	 * @see #getEachNode()
 	 */
-	default <T extends Node> Collection<T> getNodeSet() {
+	default <T extends N> Collection<T> getNodeSet() {
 		return new AbstractCollection<T>() {
 			@Override
 			public Iterator<T> iterator() {
@@ -192,7 +192,7 @@ public interface Structure {
 	 * @see #getEdgeIterator()
 	 * @see #getEachEdge()
 	 */
-	default <T extends Edge> Collection<T> getEdgeSet() {
+	default <T extends E> Collection<T> getEdgeSet() {
 		return new AbstractCollection<T>() {
 			@Override
 			public Iterator<T> iterator() {

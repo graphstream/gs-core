@@ -77,6 +77,15 @@ public interface Source {
 	void removeAttributeSink(AttributeSink sink);
 
 	/**
+	 * Returns an "iterable" of {@link AttributeSink} objects registered to
+	 * this graph.
+	 *
+	 * @return the set of {@link AttributeSink} under the form of an
+	 *         iterable object.
+	 */
+	Iterable<AttributeSink> attributeSinks();
+
+	/**
 	 * Add a sink for elements events only. Elements events include,
 	 * addition and removal of nodes and edges, as well as step events.
 	 *
@@ -91,6 +100,15 @@ public interface Source {
 	 *             silently.
 	 */
 	void removeElementSink(ElementSink sink);
+
+	/**
+	 * Returns an "iterable" of {@link ElementSink} objects registered to
+	 * this graph.
+	 *
+	 * @return the list of {@link ElementSink} under the form of an iterable
+	 *         object.
+	 */
+	Iterable<ElementSink> elementSinks();
 
 	/**
 	 * Remove all listener element sinks.

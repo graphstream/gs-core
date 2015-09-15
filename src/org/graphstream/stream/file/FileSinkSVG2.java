@@ -207,7 +207,7 @@ public class FileSinkSVG2 implements FileSink {
 			viewBox = new ViewBox(0, 0, 1000, 1000);
 		}
 
-		public void init(XMLWriter out, Graph g) throws IOException,
+		public void init(XMLWriter out, Graph<? extends Node, ? extends Edge> g) throws IOException,
 			XMLStreamException {
 
 			if (g.hasAttribute("ui.stylesheet")) {
@@ -554,7 +554,7 @@ public class FileSinkSVG2 implements FileSink {
 			this.y2 = y2;
 		}
 
-		void compute(Graph g, StyleGroup style) {
+		void compute(Graph<? extends Node, ? extends Edge> g, StyleGroup style) {
 			x3 = y3 = Double.MAX_VALUE;
 			x4 = y4 = Double.MIN_VALUE;
 

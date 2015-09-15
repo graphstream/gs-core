@@ -65,7 +65,7 @@ import java.util.logging.Logger;
  * grow it and the {@link #popEdge()} or {@link #popNode()}.
  *
  */
-public class Path implements Structure {
+public class Path implements Structure<Node, Edge> {
 
 	/**
 	 * class level logger

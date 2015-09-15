@@ -57,7 +57,7 @@ public class FileSinkGraphML extends FileSinkBase {
 	}
 
 	@Override
-	protected void exportGraph(Graph g) {
+	protected void exportGraph(Graph<? extends Node, ? extends Edge> g) {
 		try {
 			int attribute = 0;
 			HashMap<String, String> nodeAttributes = new HashMap<String, String>();

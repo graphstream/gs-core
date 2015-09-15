@@ -219,4 +219,14 @@ public class RMISource extends UnicastRemoteObject implements RMIAdapterIn,
 	public void clearSinks() {
 		attributesListeners.clear();
 	}
+
+	@Override
+	public Iterable<AttributeSink> attributeSinks() {
+		return attributesListeners;
+	}
+
+	@Override
+	public Iterable<ElementSink> elementSinks() {
+		return elementsListeners;
+	}
 }

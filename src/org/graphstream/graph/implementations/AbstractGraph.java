@@ -201,8 +201,8 @@ public abstract class AbstractGraph<N extends AbstractNode, E extends AbstractEd
 	@Override
 	public void clear() {
 		listeners.sendGraphCleared();
-
-		Iterator<AbstractNode> it = getNodeIterator();
+		
+		Iterator<N> it = getNodeIterator();
 
 		while (it.hasNext()) {
 			it.next().clearCallback();

@@ -116,7 +116,7 @@ public abstract class FileSinkBase implements FileSink {
 	 *
 	 * @param graph The graph to export.
 	 */
-	protected void exportGraph(Graph<?, ?> graph) {
+	protected void exportGraph(Graph<? extends Node, ? extends Edge> graph) {
 		String graphId = graph.getId();
 		long timeId = 0;
 
