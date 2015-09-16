@@ -31,12 +31,10 @@
  */
 package org.graphstream.util.cumulative;
 
-import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.stream.Sink;
 
 import java.util.HashMap;
 import java.util.logging.Logger;
-import org.graphstream.graph.implementations.SimpleAdjacencyListGraph;
 
 public class GraphSpells implements Sink {
 	private static final Logger logger = Logger.getLogger(GraphSpells.class.getSimpleName());
@@ -113,6 +111,7 @@ public class GraphSpells implements Sink {
 		return edgesData.get(edgeId);
 	}
 
+	@Override
 	public void stepBegins(String sourceId, long timeId, double step) {
 		this.date = step;
 
@@ -130,6 +129,7 @@ public class GraphSpells implements Sink {
 		}
 	}
 
+	@Override
 	public void nodeAdded(String sourceId, long timeId, String nodeId) {
 		if (!nodes.containsKey(nodeId)) {
 			nodes.put(nodeId, new CumulativeSpells());
@@ -139,6 +139,7 @@ public class GraphSpells implements Sink {
 		nodes.get(nodeId).startSpell(date);
 	}
 
+	@Override
 	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 		if (nodes.containsKey(nodeId)) {
 			nodes.get(nodeId).closeSpell();
@@ -146,6 +147,7 @@ public class GraphSpells implements Sink {
 		}
 	}
 
+	@Override
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
 		String fromNodeId, String toNodeId, boolean directed) {
 		if (!edges.containsKey(edgeId)) {
@@ -171,6 +173,7 @@ public class GraphSpells implements Sink {
 		}
 	}
 
+	@Override
 	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 		if (edges.containsKey(edgeId)) {
 			edges.get(edgeId).closeSpell();
@@ -178,6 +181,7 @@ public class GraphSpells implements Sink {
 		}
 	}
 
+	@Override
 	public void graphCleared(String sourceId, long timeId) {
 		for (String id : nodes.keySet()) {
 			nodes.get(id).closeSpell();
@@ -190,51 +194,61 @@ public class GraphSpells implements Sink {
 		}
 	}
 
+	@Override
 	public void graphAttributeAdded(String sourceId, long timeId,
 		String attribute, Object value) {
 		graphAttributes.set(attribute, value);
 	}
 
+	@Override
 	public void graphAttributeChanged(String sourceId, long timeId,
 		String attribute, Object oldValue, Object newValue) {
 		graphAttributes.set(attribute, newValue);
 	}
 
+	@Override
 	public void graphAttributeRemoved(String sourceId, long timeId,
 		String attribute) {
 		graphAttributes.remove(attribute);
 	}
 
+	@Override
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
 		String attribute, Object value) {
 		nodesAttributes.get(nodeId).set(attribute, value);
 	}
 
+	@Override
 	public void nodeAttributeChanged(String sourceId, long timeId,
 		String nodeId, String attribute, Object oldValue, Object newValue) {
 		nodesAttributes.get(nodeId).set(attribute, newValue);
 	}
 
+	@Override
 	public void nodeAttributeRemoved(String sourceId, long timeId,
 		String nodeId, String attribute) {
 		nodesAttributes.get(nodeId).remove(attribute);
 	}
 
+	@Override
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
 		String attribute, Object value) {
 		edgesAttributes.get(edgeId).set(attribute, value);
 	}
 
+	@Override
 	public void edgeAttributeChanged(String sourceId, long timeId,
 		String edgeId, String attribute, Object oldValue, Object newValue) {
 		edgesAttributes.get(edgeId).set(attribute, newValue);
 	}
 
+	@Override
 	public void edgeAttributeRemoved(String sourceId, long timeId,
 		String edgeId, String attribute) {
 		edgesAttributes.get(edgeId).remove(attribute);
 	}
 
+	@Override
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
 
@@ -250,31 +264,5 @@ public class GraphSpells implements Sink {
 		}
 
 		return buffer.toString();
-	}
-
-	public static void main(String... args) {
-		GraphSpells graphSpells = new GraphSpells();
-		AdjacencyListGraph g = new SimpleAdjacencyListGraph("g");
-
-		g.addSink(graphSpells);
-
-		g.addNode("A");
-		g.addNode("B");
-		g.addNode("C");
-		g.stepBegins(1);
-		g.getNode("A").setAttribute("test1", 100);
-		g.addEdge("AB", "A", "B");
-		g.addEdge("AC", "A", "C");
-		g.stepBegins(2);
-		g.addEdge("CB", "C", "B");
-		g.removeNode("A");
-		g.stepBegins(3);
-		g.addNode("A");
-		g.addEdge("AB", "A", "B");
-		g.stepBegins(4);
-		g.removeNode("C");
-		g.stepBegins(5);
-
-		System.out.println(graphSpells);
 	}
 }
