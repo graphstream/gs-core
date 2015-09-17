@@ -430,8 +430,7 @@ public abstract class AbstractElement implements Element {
 		if (attributes != null) {
 			return attributes.keySet().iterator();
 		}
-
-		return null;
+		return Collections.emptyListIterator();
 	}
 
 	@Override
