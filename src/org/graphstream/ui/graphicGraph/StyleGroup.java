@@ -33,6 +33,7 @@ package org.graphstream.ui.graphicGraph;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -355,7 +356,7 @@ public class StyleGroup extends Style implements Iterable<Element> {
 	 * @return The subset of elements modified by one or more events.
 	 */
 	public Iterable<ElementEvents> elementsEvents() {
-		return eventsFor.values();
+		return eventsFor == null ? Collections.emptySet() : eventsFor.values();
 	}
 
 	/**
@@ -472,6 +473,9 @@ public class StyleGroup extends Style implements Iterable<Element> {
 	 * @param event The event.
 	 */
 	protected void popEventFor(Element element, String event) {
+		if (eventsFor == null) {
+			return;
+		}
 		if (elements.containsKey(element.getId())) {
 			ElementEvents evs = eventsFor.get(element);
 
@@ -499,6 +503,9 @@ public class StyleGroup extends Style implements Iterable<Element> {
 	 * @param element The element to push events for.
 	 */
 	public void activateEventsFor(Element element) {
+		if (eventsFor == null) {
+			return;
+		}
 		ElementEvents evs = eventsFor.get(element);
 
 		if (evs != null && curEvents == null) {
@@ -584,6 +591,9 @@ public class StyleGroup extends Style implements Iterable<Element> {
 	 * @return The removed renderer or null if not found.
 	 */
 	public SwingElementRenderer removeRenderer(String id) {
+		if (renderers == null) {
+			return null;
+		}
 		return renderers.remove(id);
 	}
 
