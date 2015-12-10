@@ -89,9 +89,8 @@ public class FileSinkGraphML extends FileSinkBase {
 
 						nodeAttributes.put(k, id);
 
-						print(
-								"\t<key id=\"%s\" for=\"node\" attr.name=\"%s\" attr.type=\"%s\"/>\n",
-								id, k, type);
+						print("\t<key id=\"%s\" for=\"node\" attr.name=\"%s\" attr.type=\"%s\"/>\n",
+								id, escapeXmlString(k), type);
 					}
 				}
 			}
@@ -121,20 +120,19 @@ public class FileSinkGraphML extends FileSinkBase {
 							type = "string";
 
 						edgeAttributes.put(k, id);
-						print(
-								"\t<key id=\"%s\" for=\"edge\" attr.name=\"%s\" attr.type=\"%s\"/>\n",
-								id, k, type);
+						print("\t<key id=\"%s\" for=\"edge\" attr.name=\"%s\" attr.type=\"%s\"/>\n",
+								id, escapeXmlString(k), type);
 					}
 				}
 			}
 
-			print("\t<graph id=\"%s\" edgedefault=\"undirected\">\n", g.getId());
+			print("\t<graph id=\"%s\" edgedefault=\"undirected\">\n", escapeXmlString(g.getId()));
 
 			for (Node n : g.getEachNode()) {
 				print("\t\t<node id=\"%s\">\n", n.getId());
 				for (String k : n.getAttributeKeySet()) {
 					print("\t\t\t<data key=\"%s\">%s</data>\n", nodeAttributes
-							.get(k), n.getAttribute(k).toString());
+							.get(k), escapeXmlString(n.getAttribute(k).toString()));
 				}
 				print("\t\t</node>\n");
 			}
@@ -145,7 +143,7 @@ public class FileSinkGraphML extends FileSinkBase {
 								.getId(), e.isDirected());
 				for (String k : e.getAttributeKeySet()) {
 					print("\t\t\t<data key=\"%s\">%s</data>\n", edgeAttributes
-							.get(k), e.getAttribute(k).toString());
+							.get(k), escapeXmlString(e.getAttribute(k).toString()));
 				}
 				print("\t\t</edge>\n");
 			}
@@ -224,5 +222,17 @@ public class FileSinkGraphML extends FileSinkBase {
 	public void stepBegins(String sourceId, long timeId, double step) {
 		throw new UnsupportedOperationException();
 	}
-
+	
+	private static String escapeXmlString(String string) {
+	    /*
+	     * Thankfully, the unescaping part is done by the xml parser
+	     * used in FileSourceGraphML
+	     */
+	    return string
+	            .replace("&", "&amp;")
+	            .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&apos;");
+	}
 }
