@@ -786,7 +786,7 @@ public class FileSourceGraphML extends SourceBase implements FileSource,
 		if (name == null)
 			name = id;
 
-		System.out.printf("add key \"%s\"\n", id);
+//		System.out.printf("add key \"%s\"\n", id);
 
 		Key k = new Key();
 		k.name = name;
