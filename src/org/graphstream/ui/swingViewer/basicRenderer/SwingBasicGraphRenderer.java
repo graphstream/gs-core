@@ -40,12 +40,12 @@ import org.graphstream.ui.graphicGraph.StyleGroupSet;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.FillMode;
 import org.graphstream.ui.graphicGraph.stylesheet.Value;
-import org.graphstream.ui.swingViewer.GraphRendererBase;
-import org.graphstream.ui.swingViewer.LayerRenderer;
+import org.graphstream.ui.swingViewer.SwingGraphRendererBase;
 import org.graphstream.ui.swingViewer.util.DefaultCamera;
 import org.graphstream.ui.swingViewer.util.GraphMetrics;
 import org.graphstream.ui.swingViewer.util.Graphics2DOutput;
 import org.graphstream.ui.view.Camera;
+import org.graphstream.ui.view.LayerRenderer;
 
 import javax.imageio.ImageIO;
 import java.awt.BasicStroke;
@@ -80,9 +80,9 @@ import java.util.logging.Logger;
  * 
  * TODO - Les sprites. - Les bordures.
  */
-public class SwingBasicGraphRenderer extends GraphRendererBase {
+public class SwingBasicGraphRenderer extends SwingGraphRendererBase {
 
-    private static final Logger logger = Logger.getLogger(SwingBasicGraphRenderer.class.getName());
+	private static final Logger logger = Logger.getLogger(SwingBasicGraphRenderer.class.getName());
 
 	// Attribute
 
@@ -97,9 +97,9 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 
 	protected SpriteRenderer spriteRenderer = new SpriteRenderer();
 
-	protected LayerRenderer backRenderer = null;
+	protected LayerRenderer<Graphics2D> backRenderer = null;
 
-	protected LayerRenderer foreRenderer = null;
+	protected LayerRenderer<Graphics2D> foreRenderer = null;
 
 	protected PrintStream fpsLog = null;
 
@@ -114,12 +114,23 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 	public SwingBasicGraphRenderer() {
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.ui.view.GraphRendererBase#open(org.graphstream.ui.
+	 * graphicGraph.GraphicGraph, java.lang.Object)
+	 */
 	@Override
 	public void open(GraphicGraph graph, Container renderingSurface) {
 		super.open(graph, renderingSurface);
 		camera = new DefaultCamera(graph);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.ui.view.GraphRendererBase#close()
+	 */
 	@Override
 	public void close() {
 		if (fpsLog != null) {
@@ -138,8 +149,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 		return camera;
 	}
 
-	public Collection<GraphicElement> allNodesOrSpritesIn(double x1, double y1,
-			double x2, double y2) {
+	public Collection<GraphicElement> allNodesOrSpritesIn(double x1, double y1, double x2, double y2) {
 		return camera.allNodesOrSpritesIn(graph, x1, y1, x2, y2);
 	}
 
@@ -156,8 +166,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 		if (graph != null && g != null && camera != null) {
 			beginFrame();
 
-			if (camera.getGraphViewport() == null
-					&& camera.getMetrics().diagonal == 0
+			if (camera.getGraphViewport() == null && camera.getMetrics().diagonal == 0
 					&& (graph.getNodeCount() == 0 && graph.getSpriteCount() == 0)) {
 				displayNothingToDo(g, width, height);
 			} else {
@@ -198,8 +207,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 	}
 
 	public void moveElementAtPx(GraphicElement element, double x, double y) {
-		Point3 p = camera.transformPxToGu(camera.getMetrics().viewport[0] + x,
-				camera.getMetrics().viewport[1] + y);
+		Point3 p = camera.transformPxToGu(camera.getMetrics().viewport[0] + x, camera.getMetrics().viewport[1] + y);
 		element.move(p.x, p.y, element.getZ());
 	}
 
@@ -214,15 +222,13 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 		camera.pushView(graph, g);
 		renderGraphElements(g);
 
-		if (style.getStrokeMode() != StyleConstants.StrokeMode.NONE
-				&& style.getStrokeWidth().value != 0) {
+		if (style.getStrokeMode() != StyleConstants.StrokeMode.NONE && style.getStrokeWidth().value != 0) {
 			GraphMetrics metrics = camera.getMetrics();
 			Rectangle2D rect = new Rectangle2D.Double();
 			double px1 = metrics.px1;
 			Value stroke = style.getShadowWidth();
 
-			rect.setFrame(metrics.lo.x, metrics.lo.y + px1,
-					metrics.size.data[0] - px1, metrics.size.data[1] - px1);
+			rect.setFrame(metrics.lo.x, metrics.lo.y + px1, metrics.size.data[0] - px1, metrics.size.data[1] - px1);
 			g.setStroke(new BasicStroke((float) metrics.lengthToGu(stroke)));
 			g.setColor(graph.getStyle().getStrokeColor(0));
 			g.draw(rect);
@@ -234,37 +240,24 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 
 	protected void setupGraphics(Graphics2D g) {
 		if (graph.hasAttribute("ui.antialias")) {
-			g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
-					RenderingHints.VALUE_STROKE_PURE);
-			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-					RenderingHints.VALUE_ANTIALIAS_ON);
+			g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		} else {
-			g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
-					RenderingHints.VALUE_STROKE_DEFAULT);
-			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-					RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-					RenderingHints.VALUE_ANTIALIAS_OFF);
+			g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
+			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		}
 
 		if (graph.hasAttribute("ui.quality")) {
-			g.setRenderingHint(RenderingHints.KEY_RENDERING,
-					RenderingHints.VALUE_RENDER_SPEED);
-			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-					RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-			g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,
-					RenderingHints.VALUE_COLOR_RENDER_SPEED);
-			g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
-					RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+			g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+			g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
+			g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
 		} else {
-			g.setRenderingHint(RenderingHints.KEY_RENDERING,
-					RenderingHints.VALUE_RENDER_QUALITY);
-			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-					RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-			g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,
-					RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+			g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+			g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
 			g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
 					RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
 		}
@@ -281,8 +274,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 
 		if (group.getFillMode() != FillMode.NONE) {
 			g.setColor(group.getFillColor(0));
-			g.fillRect(0, 0, (int) camera.getMetrics().viewport[2],
-					(int) camera.getMetrics().viewport[3]);
+			g.fillRect(0, 0, (int) camera.getMetrics().viewport[2], (int) camera.getMetrics().viewport[3]);
 		}
 	}
 
@@ -338,8 +330,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 	}
 
 	protected void renderSelection(Graphics2D g) {
-		if (selection != null && selection.x1 != selection.x2
-				&& selection.y1 != selection.y2) {
+		if (selection != null && selection.x1 != selection.x2 && selection.y1 != selection.y2) {
 			double x1 = selection.x1;
 			double y1 = selection.y1;
 			double x2 = selection.x2;
@@ -386,13 +377,11 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 			renderLayer(g, foreRenderer);
 	}
 
-	protected void renderLayer(Graphics2D g, LayerRenderer renderer) {
+	protected void renderLayer(Graphics2D g, LayerRenderer<Graphics2D> renderer) {
 		GraphMetrics metrics = camera.getMetrics();
 
-		renderer.render(g, graph, metrics.ratioPx2Gu,
-				(int) metrics.viewport[2], (int) metrics.viewport[3],
-				metrics.loVisible.x, metrics.loVisible.y, metrics.hiVisible.x,
-				metrics.hiVisible.y);
+		renderer.render(g, graph, metrics.ratioPx2Gu, (int) metrics.viewport[2], (int) metrics.viewport[3],
+				metrics.loVisible.x, metrics.loVisible.y, metrics.hiVisible.x, metrics.hiVisible.y);
 	}
 
 	// Utility | Debug
@@ -418,22 +407,18 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 		g.setColor(Color.BLUE);
 		Ellipse2D ellipse = new Ellipse2D.Double();
 		double px1 = metrics.px1;
-		ellipse.setFrame(camera.getViewCenter().x - 3 * px1,
-				camera.getViewCenter().y - 3 * px1, px1 * 6, px1 * 6);
+		ellipse.setFrame(camera.getViewCenter().x - 3 * px1, camera.getViewCenter().y - 3 * px1, px1 * 6, px1 * 6);
 		g.fill(ellipse);
-		ellipse.setFrame(metrics.lo.x - 3 * px1, metrics.lo.y - 3 * px1,
-				px1 * 6, px1 * 6);
+		ellipse.setFrame(metrics.lo.x - 3 * px1, metrics.lo.y - 3 * px1, px1 * 6, px1 * 6);
 		g.fill(ellipse);
-		ellipse.setFrame(metrics.hi.x - 3 * px1, metrics.hi.y - 3 * px1,
-				px1 * 6, px1 * 6);
+		ellipse.setFrame(metrics.hi.x - 3 * px1, metrics.hi.y - 3 * px1, px1 * 6, px1 * 6);
 		g.fill(ellipse);
 	}
 
 	public void screenshot(String filename, int width, int height) {
 		if (graph != null) {
 			if (filename.endsWith("png") || filename.endsWith("PNG")) {
-				BufferedImage img = new BufferedImage(width, height,
-						BufferedImage.TYPE_INT_ARGB);
+				BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 				renderGraph(img.createGraphics());
 
 				File file = new File(filename);
@@ -443,8 +428,7 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 					e.printStackTrace();
 				}
 			} else if (filename.endsWith("bmp") || filename.endsWith("BMP")) {
-				BufferedImage img = new BufferedImage(width, height,
-						BufferedImage.TYPE_INT_RGB);
+				BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 				renderGraph(img.createGraphics());
 
 				File file = new File(filename);
@@ -453,10 +437,9 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if (filename.endsWith("jpg") || filename.endsWith("JPG")
-					|| filename.endsWith("jpeg") || filename.endsWith("JPEG")) {
-				BufferedImage img = new BufferedImage(width, height,
-						BufferedImage.TYPE_INT_RGB);
+			} else if (filename.endsWith("jpg") || filename.endsWith("JPG") || filename.endsWith("jpeg")
+					|| filename.endsWith("JPEG")) {
+				BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 				renderGraph(img.createGraphics());
 
 				File file = new File(filename);
@@ -473,32 +456,30 @@ public class SwingBasicGraphRenderer extends GraphRendererBase {
 					if (o instanceof Graphics2DOutput) {
 						Graphics2DOutput out = (Graphics2DOutput) o;
 						Graphics2D g2 = out.getGraphics();
-						render(g2, (int) camera.getMetrics().viewport[0],
-								(int) camera.getMetrics().viewport[1],
-								(int) camera.getMetrics().viewport[2],
-								(int) camera.getMetrics().viewport[3]);
+						render(g2, (int) camera.getMetrics().viewport[0], (int) camera.getMetrics().viewport[1],
+								(int) camera.getMetrics().viewport[2], (int) camera.getMetrics().viewport[3]);
 						out.outputTo(filename);
 					} else {
-                        logger.warning(String.format("Plugin %s is not an instance of Graphics2DOutput (%s).", plugin, o.getClass().getName()));
+						logger.warning(String.format("Plugin %s is not an instance of Graphics2DOutput (%s).", plugin,
+								o.getClass().getName()));
 					}
 				} catch (Exception e) {
-                    logger.log(Level.WARNING, "Unexpected error during screen shot.", e);
+					logger.log(Level.WARNING, "Unexpected error during screen shot.", e);
 				}
 			}
 		}
 	}
 
-	public void setBackLayerRenderer(LayerRenderer renderer) {
+	public void setBackLayerRenderer(LayerRenderer<Graphics2D> renderer) {
 		backRenderer = renderer;
 	}
 
-	public void setForeLayoutRenderer(LayerRenderer renderer) {
+	public void setForeLayoutRenderer(LayerRenderer<Graphics2D> renderer) {
 		foreRenderer = renderer;
 	}
 
 	// Style Group Listener
 
-	public void elementStyleChanged(Element element, StyleGroup oldStyle,
-			StyleGroup style) {
+	public void elementStyleChanged(Element element, StyleGroup oldStyle, StyleGroup style) {
 	}
 }

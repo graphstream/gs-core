@@ -35,6 +35,8 @@ import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.Camera;
+import org.graphstream.ui.view.GraphRenderer;
+import org.graphstream.ui.view.LayerRenderer;
 import org.graphstream.ui.view.util.DefaultMouseManager;
 import org.graphstream.ui.view.util.DefaultShortcutManager;
 import org.graphstream.ui.view.util.MouseManager;
@@ -102,9 +104,8 @@ import java.util.Collection;
  * graph attribute is the identifier of the view.
  * </p>
  */
-public class DefaultView extends ViewPanel implements WindowListener, ComponentListener
-{
-	private static final long serialVersionUID = - 4489484861592064398L;
+public class DefaultView extends ViewPanel implements WindowListener, ComponentListener {
+	private static final long serialVersionUID = -4489484861592064398L;
 
 	/**
 	 * Parent viewer.
@@ -134,11 +135,11 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 	/**
 	 * The graph renderer.
 	 */
-	protected GraphRenderer renderer;
+	protected SwingGraphRenderer renderer;
 
 	// Construction
 
-	public DefaultView(Viewer viewer, String identifier, GraphRenderer renderer) {
+	public DefaultView(Viewer viewer, String identifier, SwingGraphRenderer renderer) {
 		super(identifier);
 
 		this.viewer = viewer;
@@ -156,16 +157,14 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 
 	// Command
 
-
 	public Camera getCamera() {
 		return renderer.getCamera();
 	}
 
-
 	public void display(GraphicGraph graph, boolean graphChanged) {
 		repaint();
 	}
-	
+
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -194,11 +193,11 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 	public void close(GraphicGraph graph) {
 		renderer.close();
 		graph.addAttribute("ui.viewClosed", getId());
-	
+
 		removeKeyListener(shortcuts);
 		shortcuts.release();
 		mouseClicks.release();
-		
+
 		openInAFrame(false);
 	}
 
@@ -285,12 +284,8 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 		case EXIT:
 			System.exit(0);
 		default:
-			throw new RuntimeException(
-					String
-							.format(
-									"The %s view is not up to date, do not know %s CloseFramePolicy.",
-									getClass().getName(), viewer
-											.getCloseFramePolicy()));
+			throw new RuntimeException(String.format("The %s view is not up to date, do not know %s CloseFramePolicy.",
+					getClass().getName(), viewer.getCloseFramePolicy()));
 		}
 	}
 
@@ -311,23 +306,21 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 		repaint();
 	}
 
- 	public void componentMoved(ComponentEvent e) {
+	public void componentMoved(ComponentEvent e) {
 		repaint();
- 	}
+	}
 
- 	public void componentResized(ComponentEvent e) {
+	public void componentResized(ComponentEvent e) {
 		repaint();
- 	}
+	}
 
- 	public void componentShown(ComponentEvent e) {
- 		repaint();
- 	}
-
+	public void componentShown(ComponentEvent e) {
+		repaint();
+	}
 
 	// Methods deferred to the renderer
 
-	public Collection<GraphicElement> allNodesOrSpritesIn(double x1, double y1,
-			double x2, double y2) {
+	public Collection<GraphicElement> allNodesOrSpritesIn(double x1, double y1, double x2, double y2) {
 		return renderer.allNodesOrSpritesIn(x1, y1, x2, y2);
 	}
 
@@ -347,44 +340,44 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 	}
 
 	public void freezeElement(GraphicElement element, boolean frozen) {
-		if(frozen) {
+		if (frozen) {
 			element.addAttribute("layout.frozen");
 		} else {
 			element.removeAttribute("layout.frozen");
 		}
 	}
 
-	public void setBackLayerRenderer(LayerRenderer renderer) {
+	public void setBackLayerRenderer(LayerRenderer<Graphics2D> renderer) {
 		this.renderer.setBackLayerRenderer(renderer);
 		repaint();
 	}
 
-	public void setForeLayoutRenderer(LayerRenderer renderer) {
+	public void setForeLayoutRenderer(LayerRenderer<Graphics2D> renderer) {
 		this.renderer.setForeLayoutRenderer(renderer);
 		repaint();
 	}
 
 	public void setMouseManager(MouseManager manager) {
-		if(mouseClicks != null)
+		if (mouseClicks != null)
 			mouseClicks.release();
-		
-		if(manager == null)
+
+		if (manager == null)
 			manager = new DefaultMouseManager();
 
 		manager.init(graph, this);
-		
+
 		mouseClicks = manager;
 	}
 
 	public void setShortcutManager(ShortcutManager manager) {
-		if(shortcuts != null)
+		if (shortcuts != null)
 			shortcuts.release();
-		
-		if(manager == null)
+
+		if (manager == null)
 			manager = new DefaultShortcutManager();
-		
+
 		manager.init(graph, this);
-		
+
 		shortcuts = manager;
 	}
 }

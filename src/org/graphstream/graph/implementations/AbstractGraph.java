@@ -51,7 +51,7 @@ import org.graphstream.stream.file.FileSource;
 import org.graphstream.stream.file.FileSourceFactory;
 import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.layout.Layouts;
-import org.graphstream.ui.swingViewer.GraphRenderer;
+import org.graphstream.ui.view.GraphRenderer;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.util.GraphListeners;
 

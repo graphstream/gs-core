@@ -29,14 +29,11 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.ui.swingViewer;
+package org.graphstream.ui.view;
 
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
-import org.graphstream.ui.view.Camera;
 
-import java.awt.Container;
-import java.awt.Graphics2D;
 import java.util.Collection;
 
 /**
@@ -55,21 +52,23 @@ import java.util.Collection;
  * The viewer mechanisms uses graph renderers.
  * </p>
  */
-public interface GraphRenderer {
+public interface GraphRenderer<S, G> {
 	// Initialisation
 
-	void open(GraphicGraph graph, Container drawingSurface);
+	void open(GraphicGraph graph, S drawingSurface);
 
 	void close();
 
 	// Access
+
+	View createDefaultView(Viewer viewer, String id);
 
 	/**
 	 * Get a camera object to provide control commands on the view.
 	 * 
 	 * @return a Camera instance
 	 */
-	public abstract Camera getCamera();
+	Camera getCamera();
 
 	/**
 	 * Search for the first node or sprite (in that order) that contains the
@@ -82,7 +81,7 @@ public interface GraphRenderer {
 	 * @return The first node or sprite at the given coordinates or null if
 	 *         nothing found.
 	 */
-	public abstract GraphicElement findNodeOrSpriteAt(double x, double y);
+	GraphicElement findNodeOrSpriteAt(double x, double y);
 
 	/**
 	 * Search for all the nodes and sprites contained inside the rectangle
@@ -98,15 +97,14 @@ public interface GraphRenderer {
 	 *            The rectangle highest point ordinate.
 	 * @return The set of sprites and nodes in the given rectangle.
 	 */
-	public abstract Collection<GraphicElement> allNodesOrSpritesIn(double x1,
-			double y1, double x2, double y2);
+	Collection<GraphicElement> allNodesOrSpritesIn(double x1, double y1, double x2, double y2);
 
 	// Command
 
 	/**
 	 * Redisplay or update the graph.
 	 */
-	public abstract void render(Graphics2D g, int x, int y, int width, int height);
+	void render(G g, int x, int y, int width, int height);
 
 	/**
 	 * Called by the mouse manager to specify where a node and sprite selection
@@ -117,7 +115,7 @@ public interface GraphRenderer {
 	 * @param y1
 	 *            The selection start ordinate.
 	 */
-	public abstract void beginSelectionAt(double x1, double y1);
+	void beginSelectionAt(double x1, double y1);
 
 	/**
 	 * The selection already started grows toward position (x, y).
@@ -127,7 +125,7 @@ public interface GraphRenderer {
 	 * @param y
 	 *            The new end selection ordinate.
 	 */
-	public abstract void selectionGrowsAt(double x, double y);
+	void selectionGrowsAt(double x, double y);
 
 	/**
 	 * Called by the mouse manager to specify where a node and spite selection
@@ -138,7 +136,7 @@ public interface GraphRenderer {
 	 * @param y2
 	 *            The selection stop ordinate.
 	 */
-	public abstract void endSelectionAt(double x2, double y2);
+	void endSelectionAt(double x2, double y2);
 
 	/**
 	 * Force an element to move at the given location in pixels.
@@ -150,10 +148,9 @@ public interface GraphRenderer {
 	 * @param y
 	 *            The requested position ordinate in pixels.
 	 */
-	public abstract void moveElementAtPx(GraphicElement element, double x,
-			double y);
-	
-	public abstract void screenshot(String filename, int width, int height);
+	void moveElementAtPx(GraphicElement element, double x, double y);
+
+	void screenshot(String filename, int width, int height);
 
 	/**
 	 * Set a layer renderer that will be called each time the graph needs to be
@@ -163,7 +160,7 @@ public interface GraphRenderer {
 	 * @param renderer
 	 *            The renderer (or null to remove it).
 	 */
-	public abstract void setBackLayerRenderer(LayerRenderer renderer);
+	void setBackLayerRenderer(LayerRenderer<G> renderer);
 
 	/**
 	 * Set a layer renderer that will be called each time the graph needs to be
@@ -173,5 +170,5 @@ public interface GraphRenderer {
 	 * @param renderer
 	 *            The renderer (or null to remove it).
 	 */
-	public abstract void setForeLayoutRenderer(LayerRenderer renderer);
+	void setForeLayoutRenderer(LayerRenderer<G> renderer);
 }

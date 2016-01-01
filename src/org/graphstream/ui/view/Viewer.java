@@ -43,7 +43,6 @@ import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.layout.LayoutRunner;
 import org.graphstream.ui.layout.Layouts;
 import org.graphstream.ui.swingViewer.DefaultView;
-import org.graphstream.ui.swingViewer.GraphRenderer;
 import org.graphstream.ui.swingViewer.ViewPanel;
 import org.graphstream.ui.swingViewer.basicRenderer.SwingBasicGraphRenderer;
 
@@ -104,10 +103,10 @@ import java.util.logging.Logger;
  */
 public class Viewer implements ActionListener {
 
-    /**
-     * class level logger
-     */
-    private static final Logger logger = Logger.getLogger(Viewer.class.getName());
+	/**
+	 * class level logger
+	 */
+	private static final Logger logger = Logger.getLogger(Viewer.class.getName());
 
 	// Attributes
 
@@ -130,7 +129,7 @@ public class Viewer implements ActionListener {
 	 * thread, or on a distant machine.
 	 */
 	public enum ThreadingModel {
-        GRAPH_IN_GUI_THREAD, GRAPH_IN_ANOTHER_THREAD, GRAPH_ON_NETWORK
+		GRAPH_IN_GUI_THREAD, GRAPH_IN_ANOTHER_THREAD, GRAPH_ON_NETWORK
 	};
 
 	// Attribute
@@ -220,11 +219,10 @@ public class Viewer implements ActionListener {
 	 * New viewer on an existing graph. The viewer always run in the Swing
 	 * thread, therefore, you must specify how it will take graph events from
 	 * the graph you give. If the graph you give will be accessed only from the
-	 * Swing thread use ThreadingModel.GRAPH_IN_GUI_THREAD. If the graph you
-	 * use is accessed in another thread use
-	 * ThreadingModel.GRAPH_IN_ANOTHER_THREAD. This last scheme is more powerful
-	 * since it allows to run algorithms on the graph in parallel with the
-	 * viewer.
+	 * Swing thread use ThreadingModel.GRAPH_IN_GUI_THREAD. If the graph you use
+	 * is accessed in another thread use ThreadingModel.GRAPH_IN_ANOTHER_THREAD.
+	 * This last scheme is more powerful since it allows to run algorithms on
+	 * the graph in parallel with the viewer.
 	 * 
 	 * @param graph
 	 *            The graph to render.
@@ -240,7 +238,7 @@ public class Viewer implements ActionListener {
 			break;
 		case GRAPH_IN_ANOTHER_THREAD:
 			graphInAnotherThread = true;
-			
+
 			ThreadProxyPipe tpp = new ThreadProxyPipe();
 			tpp.init(graph, true);
 
@@ -327,14 +325,14 @@ public class Viewer implements ActionListener {
 	 * the class path, not of the correct type, etc.) or if the property is not
 	 * present a SwingBasicGraphRenderer is returned.
 	 */
-	public static GraphRenderer newGraphRenderer() {
+	public static GraphRenderer<?, ?> newGraphRenderer() {
 		String rendererClassName;
 
 		try {
 			rendererClassName = System.getProperty("gs.ui.renderer");
 
 			if (rendererClassName != null) {
-                logger.warning("\"gs.ui.renderer\" is deprecated, use \"org.graphstream.ui.renderer\" instead.");
+				logger.warning("\"gs.ui.renderer\" is deprecated, use \"org.graphstream.ui.renderer\" instead.");
 			} else {
 				rendererClassName = System.getProperty("org.graphstream.ui.renderer");
 			}
@@ -350,12 +348,12 @@ public class Viewer implements ActionListener {
 			Object object = c.newInstance();
 
 			if (object instanceof GraphRenderer) {
-				return (GraphRenderer) object;
+				return (GraphRenderer<?, ?>) object;
 			} else {
 				logger.warning(String.format("Class '%s' is not a 'GraphRenderer'.", object));
 			}
 		} catch (Exception e) {
-            logger.log(Level.WARNING, "Cannot create graph renderer.", e);
+			logger.log(Level.WARNING, "Cannot create graph renderer.", e);
 		}
 
 		return new SwingBasicGraphRenderer();
@@ -390,8 +388,7 @@ public class Viewer implements ActionListener {
 
 		enableXYZfeedback(true);
 
-		return new ViewerPipe(String.format("viewer_%d",
-				(int) (Math.random() * 10000)), tpp);
+		return new ViewerPipe(String.format("viewer_%d", (int) (Math.random() * 10000)), tpp);
 	}
 
 	/**
@@ -436,10 +433,11 @@ public class Viewer implements ActionListener {
 	 *            It true, the view is placed in a frame, else the view is only
 	 *            created and you must embed it yourself in your application.
 	 */
-	public ViewPanel addDefaultView(boolean openInAFrame) {
+	public View addDefaultView(boolean openInAFrame) {
 		synchronized (views) {
-            DefaultView view = new DefaultView(this, DEFAULT_VIEW_ID,
-					newGraphRenderer());
+			GraphRenderer<?, ?> renderer = newGraphRenderer();
+			View view = renderer.createDefaultView(this, DEFAULT_VIEW_ID);
+
 			addView(view);
 
 			if (openInAFrame)
@@ -479,7 +477,7 @@ public class Viewer implements ActionListener {
 	 *            The renderer to use.
 	 * @return The created view.
 	 */
-	public ViewPanel addView(String id, GraphRenderer renderer) {
+	public View addView(String id, GraphRenderer<?, ?> renderer) {
 		return addView(id, renderer, true);
 	}
 
@@ -496,9 +494,9 @@ public class Viewer implements ActionListener {
 	 *            a JPanel that can be inserted in a GUI.
 	 * @return The created view.
 	 */
-	public ViewPanel addView(String id, GraphRenderer renderer, boolean openInAFrame) {
+	public View addView(String id, GraphRenderer<?, ?> renderer, boolean openInAFrame) {
 		synchronized (views) {
-            DefaultView view = new DefaultView(this, id, renderer);
+			View view = renderer.createDefaultView(this, id);
 			addView(view);
 
 			if (openInAFrame)
@@ -552,7 +550,8 @@ public class Viewer implements ActionListener {
 
 			graph.resetGraphChangedFlag();
 
-			// System.err.printf("display pump=%f  layoutPump=%f  metrics=%f  display=%f (size delta=%d  size1=%d size2=%d)%n",
+			// System.err.printf("display pump=%f layoutPump=%f metrics=%f
+			// display=%f (size delta=%d size1=%d size2=%d)%n",
 			// (t2-t1)/1000.0, (t3-t2)/1000.0, (t4-t3)/1000.0, (t5-t4)/1000.0,
 			// (gsize2-gsize1), gsize1, gsize2);
 		}
@@ -570,13 +569,13 @@ public class Viewer implements ActionListener {
 
 		synchronized (views) {
 			Point3 lo = graph.getMinPos();
-            Point3 hi = graph.getMaxPos();
+			Point3 hi = graph.getMaxPos();
 			for (final View view : views.values()) {
-                Camera camera = view.getCamera();
-                if (camera != null) {
-                    camera.setBounds(lo.x, lo.y, lo.z, hi.x, hi.y, hi.z);
-                }
-            }
+				Camera camera = view.getCamera();
+				if (camera != null) {
+					camera.setBounds(lo.x, lo.y, lo.z, hi.x, hi.y, hi.z);
+				}
+			}
 		}
 	}
 
@@ -635,8 +634,7 @@ public class Viewer implements ActionListener {
 			if (optLayout == null) {
 				// optLayout = new LayoutRunner(graph, layoutAlgorithm, true,
 				// true);
-				optLayout = new LayoutRunner(graph, layoutAlgorithm, true,
-						false);
+				optLayout = new LayoutRunner(graph, layoutAlgorithm, true, false);
 				graph.replay();
 				layoutPipeIn = optLayout.newLayoutPipe();
 				layoutPipeIn.addAttributeSink(graph);
@@ -683,8 +681,8 @@ public class Viewer implements ActionListener {
 		// Replay all edges and their attributes.
 
 		for (Edge edge : graph.getEachEdge()) {
-			Edge e = this.graph.addEdge(edge.getId(), edge.getSourceNode()
-					.getId(), edge.getTargetNode().getId(), edge.isDirected());
+			Edge e = this.graph.addEdge(edge.getId(), edge.getSourceNode().getId(), edge.getTargetNode().getId(),
+					edge.isDirected());
 
 			if (edge.getAttributeKeySet() != null) {
 				for (String key : edge.getAttributeKeySet()) {

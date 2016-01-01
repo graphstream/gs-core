@@ -29,17 +29,12 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.ui.swingViewer;
+package org.graphstream.ui.view;
 
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.StyleGroupListener;
-import org.graphstream.ui.view.Selection;
 
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Graphics2D;
-
-public abstract class GraphRendererBase implements GraphRenderer,
+public abstract class GraphRendererBase<S, G> implements GraphRenderer<S, G>,
 		StyleGroupListener {
 	// Attribute
 
@@ -56,11 +51,11 @@ public abstract class GraphRendererBase implements GraphRenderer,
 	/**
 	 * The surface we are rendering on (used only
 	 */
-	protected Container renderingSurface;
+	protected S renderingSurface;
 
 	// Initialisation
 
-	public void open(GraphicGraph graph, Container renderingSurface) {
+	public void open(GraphicGraph graph, S renderingSurface) {
 		if (this.graph != null)
 			throw new RuntimeException(
 					"renderer already open, cannot open twice");
@@ -80,7 +75,7 @@ public abstract class GraphRendererBase implements GraphRenderer,
 
 	// Access
 
-	public Container getRenderingSurface() {
+	public S getRenderingSurface() {
 		return renderingSurface;
 	}
 
@@ -103,26 +98,5 @@ public abstract class GraphRendererBase implements GraphRenderer,
 
 	public void endSelectionAt(double x2, double y2) {
 		selection = null;
-	}
-
-	// Utilities
-
-	protected void displayNothingToDo(Graphics2D g, int w, int h) {
-		String msg1 = "Graph width/height/depth is zero !!";
-		String msg2 = "Place components using the 'xyz' attribute.";
-
-		g.setColor(Color.RED);
-		g.drawLine(0, 0, w, h);
-		g.drawLine(0, h, w, 0);
-
-		double msg1length = g.getFontMetrics().stringWidth(msg1);
-		double msg2length = g.getFontMetrics().stringWidth(msg2);
-
-		double x = w / 2;
-		double y = h / 2;
-
-		g.setColor(Color.BLACK);
-		g.drawString(msg1, (float)(x - msg1length / 2), (float)(y - 20));
-		g.drawString(msg2, (float)(x - msg2length / 2), (float)(y + 20));
 	}
 }
