@@ -33,6 +33,7 @@ package org.graphstream.ui.viewer.test;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.ui.swingViewer.ViewPanel;
 import org.graphstream.ui.view.Viewer;
 
 import javax.swing.JFrame;
@@ -90,7 +91,7 @@ class InitializeApplication extends JFrame implements Runnable {
    
   		// On ins�re la vue principale du viewer dans la JFrame.
   		
-		add(viewer.addDefaultView( false ), BorderLayout.CENTER );
+		add((ViewPanel) viewer.addDefaultView( false ), BorderLayout.CENTER );
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setSize(800, 600);
 		setVisible(true);

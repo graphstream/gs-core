@@ -31,51 +31,40 @@
  */
 package org.graphstream.ui.swingViewer;
 
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Graphics2D;
+
+import org.graphstream.ui.view.GraphRendererBase;
 import org.graphstream.ui.view.View;
+import org.graphstream.ui.view.Viewer;
 
-import javax.swing.JPanel;
+public abstract class SwingGraphRendererBase extends GraphRendererBase<Container, Graphics2D>
+		implements SwingGraphRenderer {
 
-/**
- * A view on a graphic graph.
- * 
- * Basically a view is a Swing panel where a
- * {@link org.graphstream.ui.view.GraphRenderer} renders the graphic graph. If
- * you are in the Swing thread, you can change the view on the graphic graph
- * using methods to translate, zoom and rotate the view.
- */
-public abstract class ViewPanel extends JPanel implements View {
-	private static final long serialVersionUID = 4372240131578395549L;
+	// Utilities
 
-	/**
-	 * The view identifier.
-	 */
-	private final String id;
-
-	/**
-	 * New view.
-	 *
-	 * @param identifier
-	 *            The view unique identifier.
-	 */
-	public ViewPanel(final String identifier) {
-		if (null == identifier || identifier.isEmpty()) {
-			throw new IllegalArgumentException("View id cannot be null/empty.");
-		}
-		id = identifier;
+	public View createDefaultView(Viewer viewer, String viewId) {
+		return new DefaultView(viewer, viewId, this);
 	}
 
-	public String getId() {
-		return id;
+	protected void displayNothingToDo(Graphics2D g, int w, int h) {
+		String msg1 = "Graph width/height/depth is zero !!";
+		String msg2 = "Place components using the 'xyz' attribute.";
+
+		g.setColor(Color.RED);
+		g.drawLine(0, 0, w, h);
+		g.drawLine(0, h, w, 0);
+
+		double msg1length = g.getFontMetrics().stringWidth(msg1);
+		double msg2length = g.getFontMetrics().stringWidth(msg2);
+
+		double x = w / 2;
+		double y = h / 2;
+
+		g.setColor(Color.BLACK);
+		g.drawString(msg1, (float) (x - msg1length / 2), (float) (y - 20));
+		g.drawString(msg2, (float) (x - msg2length / 2), (float) (y + 20));
 	}
 
-	/**
-	 * Set the size of the view frame, if any. If this view has been open in a
-	 * frame, this changes the size of the frame containing it.
-	 *
-	 * @param width
-	 *            The new width.
-	 * @param height
-	 *            The new height.
-	 */
-	public abstract void resizeFrame(int width, int height);
 }

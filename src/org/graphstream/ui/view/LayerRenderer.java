@@ -29,53 +29,45 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.ui.swingViewer;
+package org.graphstream.ui.view;
 
-import org.graphstream.ui.view.View;
-
-import javax.swing.JPanel;
+import org.graphstream.ui.graphicGraph.GraphicGraph;
 
 /**
- * A view on a graphic graph.
+ * A specific rendering class that can be plugged in any view and is called to
+ * draw under or above the graph.
  * 
- * Basically a view is a Swing panel where a
- * {@link org.graphstream.ui.view.GraphRenderer} renders the graphic graph. If
- * you are in the Swing thread, you can change the view on the graphic graph
- * using methods to translate, zoom and rotate the view.
+ * @see org.graphstream.ui.view.View#setForeLayoutRenderer(LayerRenderer)
+ * @see org.graphstream.ui.view.View#setBackLayerRenderer(LayerRenderer)
  */
-public abstract class ViewPanel extends JPanel implements View {
-	private static final long serialVersionUID = 4372240131578395549L;
-
+public interface LayerRenderer<G> {
 	/**
-	 * The view identifier.
+	 * Render something under or above the graph.
+	 * 
+	 * @param graphics
+	 *            The graphics module used to draw (Graphics2D for example, when
+	 *            using Swing).
+	 * @param graph
+	 *            The graphic representation of the graph.
+	 * @param px2Gu
+	 *            The ratio to pass from pixels to graph units.
+	 * @param widthPx
+	 *            The width in pixels of the view port.
+	 * @param heightPx
+	 *            The height in pixels of the view port.
+	 * @param minXGu
+	 *            The minimum visible point abscissa of the graph in graph
+	 *            units.
+	 * @param minYGu
+	 *            The minimum visible point ordinate of the graph in graph
+	 *            units.
+	 * @param maxXGu
+	 *            The maximum visible point abscissa of the graph in graph
+	 *            units.
+	 * @param maxYGu
+	 *            The maximum visible point ordinate of the graph in graph
+	 *            units.
 	 */
-	private final String id;
-
-	/**
-	 * New view.
-	 *
-	 * @param identifier
-	 *            The view unique identifier.
-	 */
-	public ViewPanel(final String identifier) {
-		if (null == identifier || identifier.isEmpty()) {
-			throw new IllegalArgumentException("View id cannot be null/empty.");
-		}
-		id = identifier;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	/**
-	 * Set the size of the view frame, if any. If this view has been open in a
-	 * frame, this changes the size of the frame containing it.
-	 *
-	 * @param width
-	 *            The new width.
-	 * @param height
-	 *            The new height.
-	 */
-	public abstract void resizeFrame(int width, int height);
+	void render(G graphics, GraphicGraph graph, double px2Gu, int widthPx, int heightPx, double minXGu, double minYGu,
+			double maxXGu, double maxYGu);
 }
