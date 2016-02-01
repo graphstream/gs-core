@@ -33,7 +33,6 @@ package org.graphstream.ui.view;
 
 import org.graphstream.stream.ProxyPipe;
 import org.graphstream.stream.SourceBase;
-import org.graphstream.ui.view.ViewerListener;
 
 import java.util.HashSet;
 
