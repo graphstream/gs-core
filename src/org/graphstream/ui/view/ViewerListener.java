@@ -40,4 +40,8 @@ public interface ViewerListener {
 	void buttonPushed(String id);
 
 	void buttonReleased(String id);
+
+	void mouseOver(String id);
+
+	void mouseLeft(String id);
 }

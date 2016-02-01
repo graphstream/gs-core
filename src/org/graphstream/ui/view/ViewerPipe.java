@@ -227,6 +227,11 @@ public class ViewerPipe extends SourceBase implements ProxyPipe {
 			for (ViewerListener listener : viewerListeners)
 				listener.buttonPushed(nodeId);
 		}
+
+		if (attribute.equals("ui.mouseOver")) {
+			for (ViewerListener listener : viewerListeners)
+				listener.mouseOver(nodeId);
+		}
 	}
 
 	/*
@@ -257,6 +262,11 @@ public class ViewerPipe extends SourceBase implements ProxyPipe {
 		if (attribute.equals("ui.clicked")) {
 			for (ViewerListener listener : viewerListeners)
 				listener.buttonReleased(nodeId);
+		}
+
+		if (attribute.equals("ui.mouseOver")) {
+			for(ViewerListener listener: viewerListeners)
+				listener.mouseLeft(nodeId);
 		}
 	}
 
