@@ -45,7 +45,7 @@ import org.graphstream.graph.Node;
 
 public class SingleNode extends AdjacencyListNode {
 	protected static class TwoEdges {
-		AbstractEdge in, out;
+		protected AbstractEdge in, out;
 	}
 	
 	protected HashMap<AbstractNode, TwoEdges> neighborMap;
@@ -64,8 +64,13 @@ public class SingleNode extends AdjacencyListNode {
 	@Override
 	protected <T extends Edge> T locateEdge(Node opposite, char type) {
 		TwoEdges ee = neighborMap.get(opposite);
+
 		if (ee == null)
 			return null;
+
+		if (type == IO_EDGE)
+			return (T)(ee.in == null ? ee.out : ee.in);
+
 		return (T)(type == I_EDGE ? ee.in : ee.out);
 	}
 
