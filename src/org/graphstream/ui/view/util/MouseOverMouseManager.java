@@ -50,6 +50,21 @@ public class MouseOverMouseManager extends DefaultMouseManager {
 
     private HoverTimerTask latestHoverTimerTask;
 
+    private final long delay;
+
+    /**
+     * @param delay The mouse needs to stay on an element for at least this amount of milliseconds, until the element
+     *              gets the attribute "ui.mouseOver" assigned. A value smaller or equal to zero indicates, that
+     *              the attribute is assigned without delay.
+     */
+    public MouseOverMouseManager(final long delay) {
+        this.delay = delay;
+    }
+
+    public MouseOverMouseManager() {
+        this(1000);
+    }
+
     protected void mouseOverElement(GraphicElement element) {
         element.addAttribute("ui.mouseOver");
     }
@@ -70,13 +85,17 @@ public class MouseOverMouseManager extends DefaultMouseManager {
                 }
             }
             if (!stayedOnElement && currentElement != null) {
-                hoveredElement = currentElement;
-                hoveredElementLastChanged = event.getWhen();
-                if (latestHoverTimerTask != null) {
-                    latestHoverTimerTask.cancel();
+                if (delay <= 0) {
+                    mouseOverElement(currentElement);
+                } else {
+                    hoveredElement = currentElement;
+                    hoveredElementLastChanged = event.getWhen();
+                    if (latestHoverTimerTask != null) {
+                        latestHoverTimerTask.cancel();
+                    }
+                    latestHoverTimerTask = new HoverTimerTask(hoveredElementLastChanged, hoveredElement);
+                    hoverTimer.schedule(latestHoverTimerTask, delay);
                 }
-                latestHoverTimerTask = new HoverTimerTask(hoveredElementLastChanged, hoveredElement);
-                hoverTimer.schedule(latestHoverTimerTask, 1000);
             }
 
         } catch(InterruptedException iex) {
