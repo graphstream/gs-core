@@ -38,9 +38,6 @@ import org.graphstream.ui.graphicGraph.GraphicSprite;
 import org.graphstream.ui.view.View;
 
 import java.awt.event.MouseEvent;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class DefaultMouseManager implements MouseManager
 {
@@ -121,25 +118,9 @@ public class DefaultMouseManager implements MouseManager
 		}
 	}
 
-	protected void mouseOverElement(GraphicElement element) {
-		element.addAttribute("ui.mouseOver");
-	}
-
-	protected void mouseLeftElement(GraphicElement element) {
-		element.removeAttribute("ui.mouseOver");
-	}
-
 	// Mouse Listener
 
 	protected GraphicElement curElement;
-
-	protected GraphicElement hoveredElement;
-
-	protected long hoveredElementLastChanged;
-
-	protected ReentrantLock hoverLock = new ReentrantLock();
-
-	protected Timer hoverTimer = new Timer(true);
 
 	protected float x1, y1;
 
@@ -202,54 +183,6 @@ public class DefaultMouseManager implements MouseManager
 	}
 
 	public void mouseMoved(MouseEvent event) {
-		try {
-			hoverLock.lockInterruptibly();
-			boolean stayedOnElement = false;
-			GraphicElement currentElement = view.findNodeOrSpriteAt(event.getX(), event.getY());
-			if (hoveredElement != null) {
-				stayedOnElement = currentElement.equals(hoveredElement);
-				if (!stayedOnElement && hoveredElement.hasAttribute("ui.mouseOver")) {
-					mouseLeftElement(hoveredElement);
-				}
-			}
-			if (!stayedOnElement && currentElement != null) {
-				hoveredElement = currentElement;
-				hoveredElementLastChanged = event.getWhen();
-				hoverTimer.schedule(new HoverTimerTask(hoveredElementLastChanged, hoveredElement), 1000);
-			}
-
-		} catch(InterruptedException iex) {
-			return;
-		} finally {
-			hoverLock.unlock();
-		}
-
-	}
-
-	private final class HoverTimerTask extends TimerTask {
-
-		private final long lastChanged;
-
-		private final GraphicElement element;
-
-		public HoverTimerTask(long lastChanged, GraphicElement element) {
-			this.lastChanged = lastChanged;
-			this.element = element;
-		}
-
-		@Override
-		public void run() {
-			try {
-				hoverLock.lock();
-				if (hoveredElementLastChanged == lastChanged) {
-					mouseOverElement(element);
-				}
-			} catch(Exception ex) {
-				ex.printStackTrace();
-			}
-			finally {
-				hoverLock.unlock();
-			}
-		}
+		// NOP
 	}
 }
