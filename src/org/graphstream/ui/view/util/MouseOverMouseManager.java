@@ -40,13 +40,15 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class MouseOverMouseManager extends DefaultMouseManager {
 
-    protected GraphicElement hoveredElement;
+    private GraphicElement hoveredElement;
 
-    protected long hoveredElementLastChanged;
+    private long hoveredElementLastChanged;
 
-    protected ReentrantLock hoverLock = new ReentrantLock();
+    private ReentrantLock hoverLock = new ReentrantLock();
 
-    protected Timer hoverTimer = new Timer(true);
+    private Timer hoverTimer = new Timer(true);
+
+    private HoverTimerTask latestHoverTimerTask;
 
     protected void mouseOverElement(GraphicElement element) {
         element.addAttribute("ui.mouseOver");
@@ -70,7 +72,11 @@ public class MouseOverMouseManager extends DefaultMouseManager {
             if (!stayedOnElement && currentElement != null) {
                 hoveredElement = currentElement;
                 hoveredElementLastChanged = event.getWhen();
-                hoverTimer.schedule(new HoverTimerTask(hoveredElementLastChanged, hoveredElement), 1000);
+                if (latestHoverTimerTask != null) {
+                    latestHoverTimerTask.cancel();
+                }
+                latestHoverTimerTask = new HoverTimerTask(hoveredElementLastChanged, hoveredElement);
+                hoverTimer.schedule(latestHoverTimerTask, 1000);
             }
 
         } catch(InterruptedException iex) {
