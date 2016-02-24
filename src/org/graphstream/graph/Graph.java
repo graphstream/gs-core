@@ -420,14 +420,14 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * 
 	 * @param id
 	 *            Unique and arbitrary string identifying the edge.
-	 * @param node1
+	 * @param from
 	 *            The first node identifier.
-	 * @param node2
+	 * @param to
 	 *            The second node identifier.
 	 * @param directed
 	 *            Is the edge directed?
 	 * @return The newly created edge, an existing edge or {@code null} (see the
-	 *         detailed description above)
+	 *         detailed description in {@link #addEdge(String, String, String)})
 	 * @throws IdAlreadyInUseException
 	 *             If an edge with the same id already exists and strict
 	 *             checking is enabled.
@@ -440,7 +440,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 */
 	<T extends Edge> T addEdge(String id, String from, String to,
 			boolean directed) throws IdAlreadyInUseException,
-			ElementNotFoundException;
+			ElementNotFoundException, EdgeRejectedException;
 
 	/**
 	 * Remove an edge given the identifiers of its two endpoints.
