@@ -33,7 +33,6 @@ package org.graphstream.ui.view;
 
 import org.graphstream.stream.ProxyPipe;
 import org.graphstream.stream.SourceBase;
-import org.graphstream.ui.view.ViewerListener;
 
 import java.util.HashSet;
 
@@ -227,6 +226,11 @@ public class ViewerPipe extends SourceBase implements ProxyPipe {
 			for (ViewerListener listener : viewerListeners)
 				listener.buttonPushed(nodeId);
 		}
+
+		if (attribute.equals("ui.mouseOver")) {
+			for (ViewerListener listener : viewerListeners)
+				listener.mouseOver(nodeId);
+		}
 	}
 
 	/*
@@ -257,6 +261,11 @@ public class ViewerPipe extends SourceBase implements ProxyPipe {
 		if (attribute.equals("ui.clicked")) {
 			for (ViewerListener listener : viewerListeners)
 				listener.buttonReleased(nodeId);
+		}
+
+		if (attribute.equals("ui.mouseOver")) {
+			for(ViewerListener listener: viewerListeners)
+				listener.mouseLeft(nodeId);
 		}
 	}
 

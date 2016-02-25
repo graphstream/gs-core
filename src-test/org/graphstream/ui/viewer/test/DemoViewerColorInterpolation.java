@@ -136,6 +136,12 @@ public class DemoViewerColorInterpolation implements ViewerListener {
 	public void buttonReleased(String id) {
 	}
 
+	public void mouseOver(String id) {
+	}
+
+	public void mouseLeft(String id) {
+	}
+
 	public void viewClosed(String viewName) {
 		loop = false;
 	}

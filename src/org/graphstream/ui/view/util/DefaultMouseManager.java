@@ -182,6 +182,7 @@ public class DefaultMouseManager implements MouseManager
 		// NOP
 	}
 
-	public void mouseMoved(MouseEvent e) {
+	public void mouseMoved(MouseEvent event) {
+		// NOP
 	}
 }
