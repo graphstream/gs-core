@@ -40,6 +40,7 @@ import java.net.URL;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Stack;
+import java.util.logging.Logger;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLEventReader;
@@ -54,472 +55,467 @@ import org.graphstream.stream.SourceBase;
 
 /**
  * Base for XML-based file format. It uses an xml events stream (
- * {@link javax.xml.streams}). One who want to define a new xml-based fiel
+ * {@link javax.xml.stream}). One who want to define a new xml-based fiel
  * source has to define actions after the document start and before the document
  * end. The {@link #nextEvents()}, called between start and end, has to be
  * defined too.
- * 
+ *
  * @author Guilhelm Savin
- * 
  */
 public abstract class FileSourceXML extends SourceBase implements FileSource,
-		XMLStreamConstants {
+        XMLStreamConstants {
+    private static final Logger LOGGER = Logger.getLogger(FileSourceXML.class.getName());
 
-	/**
-	 * XML events stream. Should not be used directly but with
-	 * {@link #getNextEvent()}.
-	 */
-	protected XMLEventReader reader;
-	/*
-	 * Used to allow 'pushback' of events.
-	 */
-	private Stack<XMLEvent> events;
+    /**
+     * XML events stream. Should not be used directly but with
+     * {@link #getNextEvent()}.
+     */
+    protected XMLEventReader reader;
+    /*
+     * Used to allow 'pushback' of events.
+     */
+    private Stack<XMLEvent> events;
 
-	protected FileSourceXML() {
-		events = new Stack<XMLEvent>();
-	}
+    protected boolean strictMode = true;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#readAll(java.lang.String)
-	 */
-	public void readAll(String fileName) throws IOException {
-		readAll(new FileReader(fileName));
-	}
+    protected FileSourceXML() {
+        events = new Stack<>();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#readAll(java.net.URL)
-	 */
-	public void readAll(URL url) throws IOException {
-		readAll(url.openStream());
-	}
+    /**
+     * If strict mode is enabled, will produce errors while encountering unexpected attributes or elements. This is enabled by default.
+     *
+     * @return true if strict mode is enabled
+     */
+    public boolean isStrictMode() {
+        return strictMode;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#readAll(java.io.InputStream)
-	 */
-	public void readAll(InputStream stream) throws IOException {
-		readAll(new InputStreamReader(stream));
-	}
+    public void setStrictMode(boolean strictMode) {
+        this.strictMode = strictMode;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#readAll(java.io.Reader)
-	 */
-	public void readAll(Reader reader) throws IOException {
-		begin(reader);
-		while (nextEvents())
-			;
-		end();
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.graphstream.stream.file.FileSource#readAll(java.lang.String)
+     */
+    public void readAll(String fileName) throws IOException {
+        readAll(new FileReader(fileName));
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#begin(java.lang.String)
-	 */
-	public void begin(String fileName) throws IOException {
-		begin(new FileReader(fileName));
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.graphstream.stream.file.FileSource#readAll(java.net.URL)
+     */
+    public void readAll(URL url) throws IOException {
+        readAll(url.openStream());
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#begin(java.net.URL)
-	 */
-	public void begin(URL url) throws IOException {
-		begin(url.openStream());
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.graphstream.stream.file.FileSource#readAll(java.io.InputStream)
+     */
+    public void readAll(InputStream stream) throws IOException {
+        readAll(new InputStreamReader(stream));
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#begin(java.io.InputStream)
-	 */
-	public void begin(InputStream stream) throws IOException {
-		begin(new InputStreamReader(stream));
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.graphstream.stream.file.FileSource#readAll(java.io.Reader)
+     */
+    public void readAll(Reader reader) throws IOException {
+        begin(reader);
+        while (nextEvents())
+            ;
+        end();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#begin(java.io.Reader)
-	 */
-	public void begin(Reader reader) throws IOException {
-		openStream(reader);
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.graphstream.stream.file.FileSource#begin(java.lang.String)
+     */
+    public void begin(String fileName) throws IOException {
+        begin(new FileReader(fileName));
+    }
 
-	/**
-	 * Called after the event
-	 * {@link javax.xml.stream.events.XMLEvent.START_DOCUMENT} has been
-	 * received.
-	 * 
-	 * @throws IOException
-	 * @throws XMLStreamException
-	 */
-	protected abstract void afterStartDocument() throws IOException,
-			XMLStreamException;
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.graphstream.stream.file.FileSource#begin(java.net.URL)
+     */
+    public void begin(URL url) throws IOException {
+        begin(url.openStream());
+    }
 
-	/**
-	 * Called before trying to receive the events
-	 * {@link javax.xml.stream.event.END_DOCUMENT}.
-	 * 
-	 * @throws IOException
-	 * @throws XMLStreamException
-	 */
-	protected abstract void beforeEndDocument() throws IOException,
-			XMLStreamException;
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.graphstream.stream.file.FileSource#begin(java.io.InputStream)
+     */
+    public void begin(InputStream stream) throws IOException {
+        begin(new InputStreamReader(stream));
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#nextEvents()
-	 */
-	public abstract boolean nextEvents() throws IOException;
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.graphstream.stream.file.FileSource#begin(java.io.Reader)
+     */
+    public void begin(Reader reader) throws IOException {
+        openStream(reader);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#nextStep()
-	 */
-	public boolean nextStep() throws IOException {
-		return nextEvents();
-	}
+    /**
+     * Called after the event
+     * {@link javax.xml.stream.events.XMLEvent#START_DOCUMENT} has been
+     * received.
+     *
+     * @throws IOException
+     * @throws XMLStreamException
+     */
+    protected abstract void afterStartDocument() throws IOException,
+            XMLStreamException;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.stream.file.FileSource#end()
-	 */
-	public void end() throws IOException {
-		closeStream();
-	}
+    /**
+     * Called before trying to receive the events
+     * {@link javax.xml.stream.events.XMLEvent#END_DOCUMENT}.
+     *
+     * @throws IOException
+     * @throws XMLStreamException
+     */
+    protected abstract void beforeEndDocument() throws IOException,
+            XMLStreamException;
 
-	/**
-	 * Get a new event from the stream. This method has to be used to allow the
-	 * {@link #pushback(XMLEvent)} method to work.
-	 * 
-	 * @return the next event in the stream
-	 * @throws IOException
-	 * @throws XMLStreamException
-	 */
-	protected XMLEvent getNextEvent() throws IOException, XMLStreamException {
-		skipWhiteSpaces();
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.graphstream.stream.file.FileSource#nextEvents()
+     */
+    public abstract boolean nextEvents() throws IOException;
 
-		if (events.size() > 0)
-			return events.pop();
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.graphstream.stream.file.FileSource#nextStep()
+     */
+    public boolean nextStep() throws IOException {
+        return nextEvents();
+    }
 
-		return reader.nextEvent();
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.graphstream.stream.file.FileSource#end()
+     */
+    public void end() throws IOException {
+        closeStream();
+    }
 
-	/**
-	 * Pushback an event in the stream.
-	 * 
-	 * @param e
-	 *            the event
-	 */
-	protected void pushback(XMLEvent e) {
-		events.push(e);
-	}
+    /**
+     * Get a new event from the stream. This method has to be used to allow the
+     * {@link #pushback(XMLEvent)} method to work.
+     *
+     * @return the next event in the stream
+     * @throws IOException
+     * @throws XMLStreamException
+     */
+    protected XMLEvent getNextEvent() throws IOException, XMLStreamException {
+        skipWhiteSpaces();
 
-	/**
-	 * Generate a new parse exception.
-	 * 
-	 * @param e
-	 *            event producing an error
-	 * @param msg
-	 *            message to put in the exception
-	 * @param args
-	 *            arguments of the message
-	 * @return a new parse exception
-	 */
-	protected XMLStreamException newParseError(XMLEvent e, String msg,
-			Object... args) {
-		return new XMLStreamException(String.format(msg, args), e.getLocation());
-	}
+        if (events.size() > 0)
+            return events.pop();
 
-	/**
-	 * Check is an event has an expected type and name.
-	 * 
-	 * @param e
-	 *            event to check
-	 * @param type
-	 *            expected type
-	 * @param name
-	 *            expected name
-	 * @return true is type and name are valid
-	 */
-	protected boolean isEvent(XMLEvent e, int type, String name) {
-		boolean valid = e.getEventType() == type;
+        return reader.nextEvent();
+    }
 
-		if (valid) {
-			switch (type) {
-			case START_ELEMENT:
-				valid = e.asStartElement().getName().getLocalPart()
-						.equals(name);
-				break;
-			case END_ELEMENT:
-				valid = e.asEndElement().getName().getLocalPart().equals(name);
-				break;
-			case ATTRIBUTE:
-				valid = ((Attribute) e).getName().getLocalPart().equals(name);
-				break;
-			case CHARACTERS:
-			case NAMESPACE:
-			case PROCESSING_INSTRUCTION:
-			case COMMENT:
-			case START_DOCUMENT:
-			case END_DOCUMENT:
-			case DTD:
-			}
-		}
+    /**
+     * Pushback an event in the stream.
+     *
+     * @param e the event
+     */
+    protected void pushback(XMLEvent e) {
+        events.push(e);
+    }
 
-		return valid;
-	}
+    /**
+     * Generate a new parse exception.
+     *
+     * @param e        event producing an error
+     * @param critical if true, will always produce an exception, else if strict mode is disable, will only produce a warning
+     * @param msg      message to put in the exception
+     * @param args     arguments of the message
+     */
+    protected void newParseError(XMLEvent e, boolean critical, String msg,
+                                 Object... args) throws XMLStreamException {
+        if (!critical && !strictMode) {
+            LOGGER.warning(String.format(msg, args));
+        } else {
+            throw new XMLStreamException(String.format(msg, args), e.getLocation());
+        }
+    }
 
-	/**
-	 * Check is the event has valid type and name. If not, a new exception is
-	 * thrown.
-	 * 
-	 * @param e
-	 *            event to check
-	 * @param type
-	 *            expected type
-	 * @param name
-	 *            expected name
-	 * @throws XMLStreamException
-	 *             if event has invalid type or name
-	 */
-	protected void checkValid(XMLEvent e, int type, String name)
-			throws XMLStreamException {
-		boolean valid = isEvent(e, type, name);
+    /**
+     * Check is an event has an expected type and name.
+     *
+     * @param e    event to check
+     * @param type expected type
+     * @param name expected name
+     * @return true is type and name are valid
+     */
+    protected boolean isEvent(XMLEvent e, int type, String name) {
+        boolean valid = e.getEventType() == type;
 
-		if (!valid)
-			throw newParseError(e, "expecting %s, got %s", gotWhat(type, name),
-					gotWhat(e));
-	}
+        if (valid) {
+            switch (type) {
+                case START_ELEMENT:
+                    valid = e.asStartElement().getName().getLocalPart()
+                            .equals(name);
+                    break;
+                case END_ELEMENT:
+                    valid = e.asEndElement().getName().getLocalPart().equals(name);
+                    break;
+                case ATTRIBUTE:
+                    valid = ((Attribute) e).getName().getLocalPart().equals(name);
+                    break;
+                case CHARACTERS:
+                case NAMESPACE:
+                case PROCESSING_INSTRUCTION:
+                case COMMENT:
+                case START_DOCUMENT:
+                case END_DOCUMENT:
+                case DTD:
+            }
+        }
 
-	private String gotWhat(XMLEvent e) {
-		String v = null;
+        return valid;
+    }
 
-		switch (e.getEventType()) {
-		case START_ELEMENT:
-			v = e.asStartElement().getName().getLocalPart();
-			break;
-		case END_ELEMENT:
-			v = e.asEndElement().getName().getLocalPart();
-			break;
-		case ATTRIBUTE:
-			v = ((Attribute) e).getName().getLocalPart();
-			break;
-		}
+    /**
+     * Check is the event has valid type and name. If not, a new exception is
+     * thrown.
+     *
+     * @param e    event to check
+     * @param type expected type
+     * @param name expected name
+     * @throws XMLStreamException if event has invalid type or name
+     */
+    protected void checkValid(XMLEvent e, int type, String name)
+            throws XMLStreamException {
+        boolean valid = isEvent(e, type, name);
 
-		return gotWhat(e.getEventType(), v);
-	}
+        if (!valid)
+            newParseError(e, true, "expecting %s, got %s", gotWhat(type, name), gotWhat(e));
+    }
 
-	private String gotWhat(int type, String v) {
-		switch (type) {
-		case START_ELEMENT:
-			return String.format("'<%s>'", v);
-		case END_ELEMENT:
-			return String.format("'</%s>'", v);
-		case ATTRIBUTE:
-			return String.format("attribute '%s'", v);
-		case NAMESPACE:
-			return "namespace";
-		case PROCESSING_INSTRUCTION:
-			return "processing instruction";
-		case COMMENT:
-			return "comment";
-		case START_DOCUMENT:
-			return "document start";
-		case END_DOCUMENT:
-			return "document end";
-		case DTD:
-			return "dtd";
-		case CHARACTERS:
-			return "characters";
-		default:
-			return "UNKNOWN";
-		}
-	}
+    private String gotWhat(XMLEvent e) {
+        String v = null;
 
-	private void skipWhiteSpaces() throws IOException, XMLStreamException {
-		XMLEvent e;
+        switch (e.getEventType()) {
+            case START_ELEMENT:
+                v = e.asStartElement().getName().getLocalPart();
+                break;
+            case END_ELEMENT:
+                v = e.asEndElement().getName().getLocalPart();
+                break;
+            case ATTRIBUTE:
+                v = ((Attribute) e).getName().getLocalPart();
+                break;
+        }
 
-		do {
-			if (events.size() > 0)
-				e = events.pop();
-			else
-				e = reader.nextEvent();
-		} while (isEvent(e, XMLEvent.CHARACTERS, null)
-				&& e.asCharacters().getData().matches("^\\s*$"));
+        return gotWhat(e.getEventType(), v);
+    }
 
-		pushback(e);
-	}
+    private String gotWhat(int type, String v) {
+        switch (type) {
+            case START_ELEMENT:
+                return String.format("'<%s>'", v);
+            case END_ELEMENT:
+                return String.format("'</%s>'", v);
+            case ATTRIBUTE:
+                return String.format("attribute '%s'", v);
+            case NAMESPACE:
+                return "namespace";
+            case PROCESSING_INSTRUCTION:
+                return "processing instruction";
+            case COMMENT:
+                return "comment";
+            case START_DOCUMENT:
+                return "document start";
+            case END_DOCUMENT:
+                return "document end";
+            case DTD:
+                return "dtd";
+            case CHARACTERS:
+                return "characters";
+            default:
+                return "UNKNOWN";
+        }
+    }
 
-	/**
-	 * Open a new xml events stream.
-	 * 
-	 * @param stream
-	 * @throws IOException
-	 */
-	protected void openStream(Reader stream) throws IOException {
-		if (reader != null)
-			closeStream();
+    private void skipWhiteSpaces() throws IOException, XMLStreamException {
+        XMLEvent e;
 
-		try {
-			XMLEvent e;
+        do {
+            if (events.size() > 0)
+                e = events.pop();
+            else
+                e = reader.nextEvent();
+        } while (isEvent(e, XMLEvent.CHARACTERS, null)
+                && e.asCharacters().getData().matches("^\\s*$"));
 
-			reader = XMLInputFactory.newInstance().createXMLEventReader(stream);
+        pushback(e);
+    }
 
-			e = getNextEvent();
-			checkValid(e, XMLEvent.START_DOCUMENT, null);
+    /**
+     * Open a new xml events stream.
+     *
+     * @param stream
+     * @throws IOException
+     */
+    protected void openStream(Reader stream) throws IOException {
+        if (reader != null)
+            closeStream();
 
-			afterStartDocument();
-		} catch (XMLStreamException e) {
-			throw new IOException(e);
-		} catch (FactoryConfigurationError e) {
-			throw new IOException(e);
-		}
-	}
+        try {
+            XMLEvent e;
 
-	/**
-	 * Close the current opened stream.
-	 * 
-	 * @throws IOException
-	 */
-	protected void closeStream() throws IOException {
-		try {
-			beforeEndDocument();
-			reader.close();
-		} catch (XMLStreamException e) {
-			throw new IOException(e);
-		} finally {
-			reader = null;
-		}
-	}
+            reader = XMLInputFactory.newInstance().createXMLEventReader(stream);
 
-	/**
-	 * Convert an attribute to a valid constant name.
-	 * 
-	 * @see #toConstantName(String)
-	 * @param a
-	 * @return
-	 */
-	protected String toConstantName(Attribute a) {
-		return toConstantName(a.getName().getLocalPart());
-	}
+            e = getNextEvent();
+            checkValid(e, XMLEvent.START_DOCUMENT, null);
 
-	/**
-	 * Convert a string to a valid constant name. String is put to upper case
-	 * and all non-word characters are replaced by '_'.
-	 * 
-	 * @param value
-	 * @return
-	 */
-	protected String toConstantName(String value) {
-		return value.toUpperCase().replaceAll("\\W", "_");
-	}
+            afterStartDocument();
+        } catch (XMLStreamException e) {
+            throw new IOException(e);
+        } catch (FactoryConfigurationError e) {
+            throw new IOException(e);
+        }
+    }
 
-	/**
-	 * Base for parsers, providing some usefull features.
-	 * 
-	 */
-	protected class Parser {
-		/**
-		 * Read a sequence of characters and return these characters as a
-		 * string. Characters are read until a non-character event is reached.
-		 * 
-		 * @return a sequence of characters
-		 * @throws IOException
-		 * @throws XMLStreamException
-		 */
-		protected String __characters() throws IOException, XMLStreamException {
-			XMLEvent e;
-			StringBuilder buffer = new StringBuilder();
+    /**
+     * Close the current opened stream.
+     *
+     * @throws IOException
+     */
+    protected void closeStream() throws IOException {
+        try {
+            beforeEndDocument();
+            reader.close();
+        } catch (XMLStreamException e) {
+            throw new IOException(e);
+        } finally {
+            reader = null;
+        }
+    }
 
-			e = getNextEvent();
+    /**
+     * Convert an attribute to a valid constant name.
+     *
+     * @param a
+     * @return
+     * @see #toConstantName(String)
+     */
+    protected String toConstantName(Attribute a) {
+        return toConstantName(a.getName().getLocalPart());
+    }
 
-			while (e.getEventType() == XMLEvent.CHARACTERS) {
-				buffer.append(e.asCharacters());
-				e = getNextEvent();
-			}
+    /**
+     * Convert a string to a valid constant name. String is put to upper case
+     * and all non-word characters are replaced by '_'.
+     *
+     * @param value
+     * @return
+     */
+    protected String toConstantName(String value) {
+        return value.toUpperCase().replaceAll("\\W", "_");
+    }
 
-			pushback(e);
+    /**
+     * Base for parsers, providing some usefull features.
+     */
+    protected class Parser {
+        /**
+         * Read a sequence of characters and return these characters as a
+         * string. Characters are read until a non-character event is reached.
+         *
+         * @return a sequence of characters
+         * @throws IOException
+         * @throws XMLStreamException
+         */
+        protected String __characters() throws IOException, XMLStreamException {
+            XMLEvent e;
+            StringBuilder buffer = new StringBuilder();
 
-			return buffer.toString();
-		}
+            e = getNextEvent();
 
-		/**
-		 * Get attributes of a start element in a map. Attributes should be
-		 * described in an enumeration such that
-		 * {@link FileSourceXML#toConstantName(Attribute)} correspond to names
-		 * of enumeration constants.
-		 * 
-		 * @param <T>
-		 *            type of the enumeration describing attributes
-		 * @param cls
-		 *            class of the enumeration T
-		 * @param e
-		 *            start event from which attributes have to be extracted
-		 * @return a mapping between enum constants and attribute values.
-		 */
-		protected <T extends Enum<T>> EnumMap<T, String> getAttributes(
-				Class<T> cls, StartElement e) {
-			EnumMap<T, String> values = new EnumMap<T, String>(cls);
+            while (e.getEventType() == XMLEvent.CHARACTERS) {
+                buffer.append(e.asCharacters());
+                e = getNextEvent();
+            }
 
-			@SuppressWarnings("unchecked")
-			Iterator<? extends Attribute> attributes = e.asStartElement()
-					.getAttributes();
+            pushback(e);
 
-			while (attributes.hasNext()) {
-				Attribute a = attributes.next();
+            return buffer.toString();
+        }
 
-				for (int i = 0; i < cls.getEnumConstants().length; i++) {
-					if (cls.getEnumConstants()[i].name().equals(
-							toConstantName(a))) {
-						values.put(cls.getEnumConstants()[i], a.getValue());
-						break;
-					}
-				}
-			}
+        /**
+         * Get attributes of a start element in a map. Attributes should be
+         * described in an enumeration such that
+         * {@link FileSourceXML#toConstantName(Attribute)} correspond to names
+         * of enumeration constants.
+         *
+         * @param <T> type of the enumeration describing attributes
+         * @param cls class of the enumeration T
+         * @param e   start event from which attributes have to be extracted
+         * @return a mapping between enum constants and attribute values.
+         */
+        protected <T extends Enum<T>> EnumMap<T, String> getAttributes(
+                Class<T> cls, StartElement e) {
+            EnumMap<T, String> values = new EnumMap<T, String>(cls);
 
-			return values;
-		}
+            @SuppressWarnings("unchecked")
+            Iterator<? extends Attribute> attributes = e.asStartElement()
+                    .getAttributes();
 
-		/**
-		 * Check if all required attributes are present.
-		 * 
-		 * @param <T>
-		 *            type of the enumeration describing attributes
-		 * @param e
-		 *            the event
-		 * @param attributes
-		 *            extracted attributes
-		 * @param required
-		 *            array of required attributes
-		 * @throws XMLStreamException
-		 *             if at least one required attribute is not found
-		 */
-		protected <T extends Enum<T>> void checkRequiredAttributes(XMLEvent e,
-				EnumMap<T, String> attributes, T... required)
-				throws XMLStreamException {
-			if (required != null) {
-				for (int i = 0; i < required.length; i++) {
-					if (!attributes.containsKey(required[i]))
-						throw newParseError(e,
-								"'%s' attribute is required for <%s> element",
-								required[i].name().toLowerCase(), e
-										.asStartElement().getName()
-										.getLocalPart());
-				}
-			}
-		}
-	}
+            while (attributes.hasNext()) {
+                Attribute a = attributes.next();
+
+                for (int i = 0; i < cls.getEnumConstants().length; i++) {
+                    if (cls.getEnumConstants()[i].name().equals(
+                            toConstantName(a))) {
+                        values.put(cls.getEnumConstants()[i], a.getValue());
+                        break;
+                    }
+                }
+            }
+
+            return values;
+        }
+
+        /**
+         * Check if all required attributes are present.
+         *
+         * @param <T>        type of the enumeration describing attributes
+         * @param e          the event
+         * @param attributes extracted attributes
+         * @param required   array of required attributes
+         * @throws XMLStreamException if at least one required attribute is not found
+         */
+        protected <T extends Enum<T>> void checkRequiredAttributes(XMLEvent e,
+                                                                   EnumMap<T, String> attributes, T... required)
+                throws XMLStreamException {
+            if (required != null) {
+                for (int i = 0; i < required.length; i++) {
+                    if (!attributes.containsKey(required[i]))
+                        newParseError(e, true, "'%s' attribute is required for <%s> element",
+                                required[i].name().toLowerCase(), e.asStartElement().getName().getLocalPart());
+                }
+            }
+        }
+    }
 }
