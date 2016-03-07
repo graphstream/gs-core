@@ -706,7 +706,6 @@ public class FileSourceGraphML extends FileSourceXML {
          */
         private Data __data() throws IOException, XMLStreamException {
             XMLEvent e;
-            StringBuilder buffer = new StringBuilder();
 
             e = getNextEvent();
             checkValid(e, XMLEvent.START_ELEMENT, "data");
@@ -714,7 +713,7 @@ public class FileSourceGraphML extends FileSourceXML {
             @SuppressWarnings("unchecked")
             Iterator<? extends Attribute> attributes = e.asStartElement()
                     .getAttributes();
-            String key = null, id = null;
+            String key = null, id = null, value;
 
             while (attributes.hasNext()) {
                 Attribute a = attributes.next();
@@ -739,13 +738,9 @@ public class FileSourceGraphML extends FileSourceXML {
             if (key == null)
                 newParseError(e, true, "'<data>' element must have a 'key' attribute");
 
+            value = __characters();
+
             e = getNextEvent();
-
-            while (e.getEventType() == XMLEvent.CHARACTERS) {
-                buffer.append(e.asCharacters());
-                e = getNextEvent();
-            }
-
             checkValid(e, XMLEvent.END_ELEMENT, "data");
 
             if (!keys.containsKey(key))
@@ -755,7 +750,7 @@ public class FileSourceGraphML extends FileSourceXML {
 
             d.key = keys.get(key);
             d.id = id;
-            d.value = buffer.toString();
+            d.value = value;
 
             return d;
         }
@@ -1037,11 +1032,12 @@ public class FileSourceGraphML extends FileSourceXML {
                 }
             }
 
-            if (id == null)
-                newParseError(e, true, "edge must have an id");
-
             if (source == null || target == null)
                 newParseError(e, true, "edge must have a source and a target");
+
+            if (id == null) {
+                id = String.format("%s--%s", source, target);
+            }
 
             sendEdgeAdded(sourceId, id, source, target, directed);
 
