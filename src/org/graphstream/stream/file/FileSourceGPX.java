@@ -55,21 +55,8 @@ public class FileSourceGPX extends FileSourceXML {
 	 */
 	protected GPXParser parser;
 
-	/**
-	 * Flag to set strict mode.
-	 */
-	protected boolean strict;
 
 	public FileSourceGPX() {
-		strict = false;
-	}
-
-	public void setStrict(boolean on) {
-		strict = on;
-	}
-	
-	public boolean isStrict() {
-		return strict;
 	}
 	
 	/*
@@ -155,23 +142,11 @@ public class FileSourceGPX extends FileSourceXML {
 			attributes = getAttributes(WPTAttribute.class, e.asStartElement());
 
 			if (!attributes.containsKey(WPTAttribute.LAT)) {
-				XMLStreamException ex = newParseError(e,
-						"attribute 'lat' is required");
-
-				if (strict)
-					throw ex;
-				else
-					ex.printStackTrace();
+				newParseError(e, false, "attribute 'lat' is required");
 			}
 
 			if (!attributes.containsKey(WPTAttribute.LON)) {
-				XMLStreamException ex = newParseError(e,
-						"attribute 'lon' is required");
-
-				if (strict)
-					throw ex;
-				else
-					ex.printStackTrace();
+				newParseError(e, false, "attribute 'lon' is required");
 			}
 
 			wp.lat = Double.parseDouble(attributes.get(WPTAttribute.LAT));
@@ -347,26 +322,14 @@ public class FileSourceGPX extends FileSourceXML {
 			attributes = getAttributes(GPXAttribute.class, e.asStartElement());
 
 			if (!attributes.containsKey(GPXAttribute.VERSION)) {
-				XMLStreamException ex = newParseError(e,
-						"attribute 'version' is required");
-
-				if (strict)
-					throw ex;
-				else
-					ex.printStackTrace();
+				newParseError(e, false, "attribute 'version' is required");
 			} else {
 				sendGraphAttributeAdded(sourceId, "gpx.version", attributes
 						.get(GPXAttribute.VERSION));
 			}
 
 			if (!attributes.containsKey(GPXAttribute.CREATOR)) {
-				XMLStreamException ex = newParseError(e,
-						"attribute 'creator' is required");
-
-				if (strict)
-					throw ex;
-				else
-					ex.printStackTrace();
+				newParseError(e, false, "attribute 'creator' is required");
 			} else {
 				sendGraphAttributeAdded(sourceId, "gpx.creator", attributes
 						.get(GPXAttribute.CREATOR));
@@ -909,14 +872,7 @@ public class FileSourceGPX extends FileSourceXML {
 					.asStartElement());
 
 			if (!attributes.containsKey(COPYRIGHTAttribute.AUTHOR)) {
-				XMLStreamException ex = newParseError(e,
-						"attribute 'author' is required");
-
-				if (strict)
-					throw ex;
-				else
-					ex.printStackTrace();
-
+				newParseError(e, false, "attribute 'author' is required");
 				copyright = "unknown";
 			} else
 				copyright = attributes.get(COPYRIGHTAttribute.AUTHOR);
@@ -963,14 +919,7 @@ public class FileSourceGPX extends FileSourceXML {
 			attributes = getAttributes(LINKAttribute.class, e.asStartElement());
 
 			if (!attributes.containsKey(LINKAttribute.HREF)) {
-				XMLStreamException ex = newParseError(e,
-						"attribute 'href' is required");
-
-				if (strict)
-					throw ex;
-				else
-					ex.printStackTrace();
-
+				newParseError(e, false, "attribute 'href' is required");
 				link = "unknown";
 			} else
 				link = attributes.get(LINKAttribute.HREF);
@@ -1068,43 +1017,19 @@ public class FileSourceGPX extends FileSourceXML {
 					.asStartElement());
 
 			if (!attributes.containsKey(BOUNDSAttribute.MINLAT)) {
-				XMLStreamException ex = newParseError(e,
-						"attribute 'minlat' is required");
-
-				if (strict)
-					throw ex;
-				else
-					ex.printStackTrace();
+				newParseError(e, false, "attribute 'minlat' is required");
 			}
 
 			if (!attributes.containsKey(BOUNDSAttribute.MAXLAT)) {
-				XMLStreamException ex = newParseError(e,
-						"attribute 'maxlat' is required");
-
-				if (strict)
-					throw ex;
-				else
-					ex.printStackTrace();
+				newParseError(e, false, "attribute 'maxlat' is required");
 			}
 
 			if (!attributes.containsKey(BOUNDSAttribute.MINLON)) {
-				XMLStreamException ex = newParseError(e,
-						"attribute 'minlon' is required");
-
-				if (strict)
-					throw ex;
-				else
-					ex.printStackTrace();
+				newParseError(e, false, "attribute 'minlon' is required");
 			}
 
 			if (!attributes.containsKey(BOUNDSAttribute.MAXLON)) {
-				XMLStreamException ex = newParseError(e,
-						"attribute 'maxlon' is required");
-
-				if (strict)
-					throw ex;
-				else
-					ex.printStackTrace();
+				newParseError(e, false, "attribute 'maxlon' is required");
 			}
 
 			minlat = Double.parseDouble(attributes.get(BOUNDSAttribute.MINLAT));
@@ -1339,8 +1264,7 @@ public class FileSourceGPX extends FileSourceXML {
 			fix = __characters();
 
 			if (!fix.toLowerCase().matches("^(none|2d|3d|dgps|pps)$"))
-				throw newParseError(e,
-						"invalid fix type, expecting one of 'none', '2d', '3d', 'dgps', 'pps'");
+				newParseError(e, true, "invalid fix type, expecting one of 'none', '2d', '3d', 'dgps', 'pps'");
 
 			e = getNextEvent();
 			checkValid(e, XMLEvent.END_ELEMENT, "fix");
@@ -1611,26 +1535,14 @@ public class FileSourceGPX extends FileSourceXML {
 			attributes = getAttributes(EMAILAttribute.class, e.asStartElement());
 
 			if (!attributes.containsKey(EMAILAttribute.ID)) {
-				XMLStreamException ex = newParseError(e,
-						"attribute 'version' is required");
-
-				if (strict)
-					throw ex;
-				else
-					ex.printStackTrace();
+				newParseError(e, false, "attribute 'version' is required");
 			} else
 				email += attributes.get(EMAILAttribute.ID);
 
 			email += "@";
 
 			if (!attributes.containsKey(EMAILAttribute.DOMAIN)) {
-				XMLStreamException ex = newParseError(e,
-						"attribute 'version' is required");
-
-				if (strict)
-					throw ex;
-				else
-					ex.printStackTrace();
+				newParseError(e, false, "attribute 'version' is required");
 			} else
 				email += attributes.get(EMAILAttribute.DOMAIN);
 

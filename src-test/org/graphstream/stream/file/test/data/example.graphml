@@ -1,0 +1,22 @@
+<graphml>
+    <key id="ordering"/>
+    <key id="label"/>
+
+    <graph edgedefault="directed">
+        <data key="label">This is a label</data>
+
+        <node id="1">
+            <data key="ordering">1 2</data>
+        </node>
+        <node id="2">
+            <data key="ordering">2 3</data>
+        </node>
+        <node id="3">
+            <data key="ordering">3 1</data>
+        </node>
+
+        <edge source="1" target="2"/>
+        <edge source="2" target="3"/>
+        <edge source="3" target="1"/>
+    </graph>
+</graphml>
