@@ -253,34 +253,36 @@ public class FileSourceGraphML extends FileSourceXML {
 
     protected class GraphMLParser extends Parser implements GraphMLConstants {
         protected HashMap<String, Key> keys;
-        protected LinkedList<Data> datas;
         protected Stack<String> graphId;
         protected int graphCounter;
 
         public GraphMLParser() {
             keys = new HashMap<String, Key>();
-            datas = new LinkedList<Data>();
             graphId = new Stack<String>();
             graphCounter = 0;
         }
 
         private Object getValue(Data data) {
-            switch (data.key.type) {
+            return getValue(data.key, data.value);
+        }
+
+        private Object getValue(Key key, String value) {
+            switch (key.type) {
                 case BOOLEAN:
-                    return Boolean.parseBoolean(data.value);
+                    return Boolean.parseBoolean(value);
                 case INT:
-                    return Integer.parseInt(data.value);
+                    return Integer.parseInt(value);
                 case LONG:
-                    return Long.parseLong(data.value);
+                    return Long.parseLong(value);
                 case FLOAT:
-                    return Float.parseFloat(data.value);
+                    return Float.parseFloat(value);
                 case DOUBLE:
-                    return Double.parseDouble(data.value);
+                    return Double.parseDouble(value);
                 case STRING:
-                    return data.value;
+                    return value;
             }
 
-            return data.value;
+            return value;
         }
 
         private Object getDefaultValue(Key key) {
@@ -849,7 +851,8 @@ public class FileSourceGraphML extends FileSourceXML {
                     pushback(e);
 
                     if (isEvent(e, XMLEvent.START_ELEMENT, "data")) {
-                        datas.add(__data());
+                        Data data = __data();
+                        sendGraphAttributeAdded(sourceId, data.key.name, getValue(data));
                     } else if (isEvent(e, XMLEvent.START_ELEMENT, "node")) {
                         __node();
                     } else if (isEvent(e, XMLEvent.START_ELEMENT, "edge")) {
@@ -889,6 +892,7 @@ public class FileSourceGraphML extends FileSourceXML {
 
             String id = null;
             HashSet<Key> sentAttributes = new HashSet<Key>();
+            HashSet<Attribute> unexpectedAttributes = new HashSet<>();
 
             while (attributes.hasNext()) {
                 Attribute a = attributes.next();
@@ -903,7 +907,9 @@ public class FileSourceGraphML extends FileSourceXML {
                             break;
                     }
                 } catch (IllegalArgumentException ex) {
-                    newParseError(e, false, "invalid node attribute '%s'", a.getName().getLocalPart());
+                    if (strictMode)
+                        newParseError(e, false, "invalid node attribute '%s'", a.getName().getLocalPart());
+                    unexpectedAttributes.add(a);
                 }
             }
 
@@ -911,6 +917,19 @@ public class FileSourceGraphML extends FileSourceXML {
                 newParseError(e, true, "node requires an id");
 
             sendNodeAdded(sourceId, id);
+
+            if (!strictMode && unexpectedAttributes.size() > 0) {
+                for (Attribute a : unexpectedAttributes) {
+                    String name = a.getName().getLocalPart();
+                    Key key = keys.get(name);
+                    Object value = key == null ? a.getValue() : getValue(key, a.getValue());
+
+                    sendNodeAttributeAdded(sourceId, id, name, value);
+
+                    if (key != null)
+                        sentAttributes.add(key);
+                }
+            }
 
             e = getNextEvent();
 
@@ -998,6 +1017,7 @@ public class FileSourceGraphML extends FileSourceXML {
                     .getAttributes();
 
             HashSet<Key> sentAttributes = new HashSet<Key>();
+            HashSet<Attribute> unexpectedAttributes = new HashSet<>();
             String id = null;
             boolean directed = edgedefault;
             String source = null;
@@ -1028,7 +1048,9 @@ public class FileSourceGraphML extends FileSourceXML {
                             newParseError(e, false, "sourceport and targetport not implemented");
                     }
                 } catch (IllegalArgumentException ex) {
-                    newParseError(e, false, "invalid graph attribute '%s'", a.getName().getLocalPart());
+                    if (strictMode)
+                        newParseError(e, false, "invalid graph attribute '%s'", a.getName().getLocalPart());
+                    unexpectedAttributes.add(a);
                 }
             }
 
@@ -1040,6 +1062,19 @@ public class FileSourceGraphML extends FileSourceXML {
             }
 
             sendEdgeAdded(sourceId, id, source, target, directed);
+
+            if (!strictMode && unexpectedAttributes.size() > 0) {
+                for (Attribute a : unexpectedAttributes) {
+                    String name = a.getName().getLocalPart();
+                    Key key = keys.get(name);
+                    Object value = key == null ? a.getValue() : getValue(key, a.getValue());
+
+                    sendEdgeAttributeAdded(sourceId, id, name, value);
+
+                    if (key != null)
+                        sentAttributes.add(key);
+                }
+            }
 
             e = getNextEvent();
 
