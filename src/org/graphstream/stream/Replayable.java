@@ -35,7 +35,7 @@ package org.graphstream.stream;
  * Defines sources that can be replayed. This is usefull when you are connecting
  * a sink to a source but you need to get informations about the current state
  * of the dynamic graph.
- * 
+ * <p>
  * <pre>
  * Replayable source = ... ;
  * Replayable.Controller replay = source.getReplayController();
@@ -53,7 +53,7 @@ package org.graphstream.stream;
 public interface Replayable {
 	/**
 	 * Get a controller to replay the graph.
-	 * 
+	 *
 	 * @return a new replay controller
 	 */
 	Controller getReplayController();
@@ -74,10 +74,34 @@ public interface Replayable {
 		/**
 		 * Same as {@link #replay(Sink)} but you can set the id of the source
 		 * sent in events.
-		 * 
-		 * @param sourceId
-		 *            id of the event source
+		 *
+		 * @param sourceId id of the event source
 		 */
 		void replay(String sourceId);
+	}
+
+	/**
+	 * Util method to replay a replayable source into a sink.
+	 *
+	 * @param source a source implementing the Replayable interface
+	 * @param sink   sink which will receive the events produced by the replay
+	 */
+	public static void replay(Replayable source, Sink sink) {
+		Controller controller = source.getReplayController();
+
+		controller.addSink(sink);
+		controller.replay();
+		controller.removeSink(sink);
+	}
+
+	/**
+	 * Same as {@link #replay(Replayable, Sink)} but the first parameter is just a {@link org.graphstream.stream.Source} and it will be replayed only if the Replayable interface is implemented.
+	 *
+	 * @param source a source
+	 * @param sink   sink which will receive the events produced by the replay
+	 */
+	public static void tryReplay(Source source, Sink sink) {
+		if (source instanceof Replayable)
+			replay((Replayable) source, sink);
 	}
 }
