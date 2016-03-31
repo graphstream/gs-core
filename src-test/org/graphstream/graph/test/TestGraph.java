@@ -373,8 +373,8 @@ public class TestGraph {
 	@Test
 	public void testMulti() {
 		MultiGraph graph = new MultiGraph("g");
-		MultiNode A = graph.addNode("A");
-		MultiNode B = graph.addNode("B");
+		MultiNode A = (MultiNode) graph.addNode("A");
+		MultiNode B = (MultiNode) graph.addNode("B");
 
 		graph.addEdge("AB1", "A", "B");
 		graph.addEdge("AB2", "A", "B");
@@ -441,8 +441,7 @@ public class TestGraph {
 		assertTrue(nodes.contains(C));
 		nodes.clear();
 
-		for (Node node : graph.getEachNode())
-			nodes.add(node);
+		graph.nodes().forEach(node -> nodes.add(node));
 
 		assertEquals(3, nodes.size());
 		assertTrue(nodes.contains(A));
@@ -450,8 +449,7 @@ public class TestGraph {
 		assertTrue(nodes.contains(C));
 		nodes.clear();
 
-		for (Edge edge : graph.getEachEdge())
-			edges.add(edge);
+		graph.edges().forEach(edge -> edges.add(edge));
 
 		assertEquals(3, edges.size());
 		assertTrue(edges.contains(AB));
@@ -469,24 +467,21 @@ public class TestGraph {
 		assertTrue(edges.contains(CA));
 		edges.clear();
 
-		for (Edge edge : A.getEdgeSet())
-			edges.add(edge);
+		A.edges().forEach(edge -> edges.add(edge));
 
 		assertEquals(2, edges.size());
 		assertTrue(edges.contains(AB));
 		assertTrue(edges.contains(CA));
 		edges.clear();
 
-		for (Edge edge : B.getEdgeSet())
-			edges.add(edge);
+		B.edges().forEach(edge -> edges.add(edge));
 
 		assertEquals(2, edges.size());
 		assertTrue(edges.contains(AB));
 		assertTrue(edges.contains(BC));
 		edges.clear();
 
-		for (Edge edge : C.getEdgeSet())
-			edges.add(edge);
+		C.edges().forEach(edge -> edges.add(edge));
 
 		assertEquals(2, edges.size());
 		assertTrue(edges.contains(BC));
@@ -506,45 +501,39 @@ public class TestGraph {
 		// v \
 		// B--->C
 
-		for (Edge edge : A.getEnteringEdgeSet())
-			edges.add(edge);
+		A.enteringEdges().forEach(edge -> edges.add(edge));
 
 		assertEquals(1, edges.size());
 		assertTrue(edges.contains(CA));
 		edges.clear();
 
-		for (Edge edge : B.getEnteringEdgeSet())
-			edges.add(edge);
+		B.enteringEdges().forEach(edge -> edges.add(edge));
 
 		assertEquals(1, edges.size());
 		assertTrue(edges.contains(AB));
 		edges.clear();
 
-		for (Edge edge : C.getEnteringEdgeSet())
-			edges.add(edge);
+		C.enteringEdges().forEach(edge -> edges.add(edge));
 
 		assertEquals(2, edges.size());
 		assertTrue(edges.contains(BC));
 		assertTrue(edges.contains(CA));
 		edges.clear();
 
-		for (Edge edge : A.getLeavingEdgeSet())
-			edges.add(edge);
+		A.leavingEdges().forEach(edge -> edges.add(edge));
 
 		assertEquals(2, edges.size());
 		assertTrue(edges.contains(AB));
 		assertTrue(edges.contains(CA));
 		edges.clear();
 
-		for (Edge edge : B.getLeavingEdgeSet())
-			edges.add(edge);
+		B.leavingEdges().forEach(edge -> edges.add(edge));
 
 		assertEquals(1, edges.size());
 		assertTrue(edges.contains(BC));
 		edges.clear();
 
-		for (Edge edge : C.getLeavingEdgeSet())
-			edges.add(edge);
+		C.leavingEdges().forEach(edge -> edges.add(edge));
 
 		assertEquals(1, edges.size());
 		assertTrue(edges.contains(CA));

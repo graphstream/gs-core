@@ -41,24 +41,18 @@ import org.graphstream.graph.Node;
 import org.graphstream.graph.NodeFactory;
 import org.graphstream.stream.AttributeSink;
 import org.graphstream.stream.ElementSink;
-import org.graphstream.stream.GraphParseException;
 import org.graphstream.stream.Replayable;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.SourceBase;
-import org.graphstream.stream.file.FileSink;
-import org.graphstream.stream.file.FileSinkFactory;
-import org.graphstream.stream.file.FileSource;
-import org.graphstream.stream.file.FileSourceFactory;
 import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.layout.Layouts;
 import org.graphstream.ui.view.GraphRenderer;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.util.GraphListeners;
 
-import java.io.IOException;
-import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -144,114 +138,35 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 
 	// *** Inherited from graph ***
 
-	// some helpers
-
-	// get node / edge by its id/index
-
-	public abstract <T extends Node> T getNode(String id);
-
-	public abstract <T extends Node> T getNode(int index);
-
-	public abstract <T extends Edge> T getEdge(String id);
-
-	public abstract <T extends Edge> T getEdge(int index);
-
-	// node and edge count, iterators and views
-
-	public abstract int getNodeCount();
-
-	public abstract int getEdgeCount();
-
-	public abstract <T extends Node> Iterator<T> getNodeIterator();
-
-	public abstract <T extends Edge> Iterator<T> getEdgeIterator();
-
 	/**
-	 * This implementation uses {@link #getNodeIterator()}
-	 * 
-	 * @see org.graphstream.graph.Graph#getEachNode()
-	 */
-	public <T extends Node> Iterable<? extends T> getEachNode() {
-		return new Iterable<T>() {
-			public Iterator<T> iterator() {
-				return getNodeIterator();
-			}
-		};
-	}
-
-	/**
-	 * This implementation uses {@link #getEdgeIterator()}
-	 * 
-	 * @see org.graphstream.graph.Graph#getEachEdge()
-	 */
-	public <T extends Edge> Iterable<? extends T> getEachEdge() {
-		return new Iterable<T>() {
-			public Iterator<T> iterator() {
-				return getEdgeIterator();
-			}
-		};
-	}
-
-	/**
-	 * This implementation uses {@link #getNodeIterator()} and
-	 * {@link #getNodeCount()}
-	 * 
-	 * @see org.graphstream.graph.Graph#getNodeSet()
-	 */
-	public <T extends Node> Collection<T> getNodeSet() {
-		return new AbstractCollection<T>() {
-			public Iterator<T> iterator() {
-				return getNodeIterator();
-			}
-
-			public int size() {
-				return getNodeCount();
-			}
-		};
-	}
-
-	/**
-	 * This implementation uses {@link #getEdgeIterator()} and
-	 * {@link #getEdgeCount()}
-	 * 
-	 * @see org.graphstream.graph.Graph#getNodeSet()
-	 */
-	public <T extends Edge> Collection<T> getEdgeSet() {
-		return new AbstractCollection<T>() {
-			public Iterator<T> iterator() {
-				return getEdgeIterator();
-			}
-
-			public int size() {
-				return getEdgeCount();
-			}
-		};
-	}
-
-	/**
-	 * This implementation returns {@link #getNodeIterator()}
+	 * This implementation returns an iterator over nodes.
 	 * 
 	 * @see java.lang.Iterable#iterator()
 	 */
+	@Override
 	public Iterator<Node> iterator() {
-		return getNodeIterator();
+		return nodes().iterator();
 	}
 
 	// Factories
 
+	@Override
 	public NodeFactory<? extends Node> nodeFactory() {
 		return nodeFactory;
 	}
 
+	@Override
 	public EdgeFactory<? extends Edge> edgeFactory() {
 		return edgeFactory;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public void setNodeFactory(NodeFactory<? extends Node> nf) {
 		nodeFactory = (NodeFactory<? extends AbstractNode>) nf;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public void setEdgeFactory(EdgeFactory<? extends Edge> ef) {
 		edgeFactory = (EdgeFactory<? extends AbstractEdge>) ef;
@@ -259,30 +174,37 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 
 	// strict checking, autocreation, etc
 
+	@Override
 	public boolean isStrict() {
 		return strictChecking;
 	}
 
+	@Override
 	public boolean isAutoCreationEnabled() {
 		return autoCreate;
 	}
 
+	@Override
 	public double getStep() {
 		return step;
 	}
 
+	@Override
 	public void setNullAttributesAreErrors(boolean on) {
 		nullAttributesAreErrors = on;
 	}
 
+	@Override
 	public void setStrict(boolean on) {
 		strictChecking = on;
 	}
 
+	@Override
 	public void setAutoCreate(boolean on) {
 		autoCreate = on;
 	}
 
+	@Override
 	public void stepBegins(double time) {
 		listeners.sendStepBegins(time);
 		this.step = time;
@@ -295,13 +217,11 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * 
 	 * @see org.graphstream.graph.Graph#clear()
 	 */
+	@Override
 	public void clear() {
 		listeners.sendGraphCleared();
 
-		Iterator<AbstractNode> it = getNodeIterator();
-
-		while (it.hasNext())
-			it.next().clearCallback();
+		nodes().forEach(n -> ((AbstractNode) n).clearCallback());
 
 		clearCallback();
 		clearAttributesWithNoEvent();
@@ -312,15 +232,16 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * 
 	 * @see org.graphstream.graph.Graph#addNode(java.lang.String)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Node> T addNode(String id) {
-		AbstractNode node = getNode(id);
+	public Node addNode(String id) {
+		AbstractNode node = (AbstractNode) getNode(id);
 
 		if (node != null) {
 			if (strictChecking)
 				throw new IdAlreadyInUseException("id \"" + id
 						+ "\" already in use. Cannot create a node.");
-			return (T) node;
+			return node;
 		}
 
 		node = nodeFactory.newInstance(id, this);
@@ -328,59 +249,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 
 		listeners.sendNodeAdded(id);
 
-		return (T) node;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#addEdge(java.lang.String,
-	 * java.lang.String, java.lang.String)
-	 */
-	public <T extends Edge> T addEdge(String id, String node1, String node2) {
-		return addEdge(id, node1, node2, false);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#addEdge(java.lang.String,
-	 * java.lang.String, java.lang.String, boolean)
-	 */
-	public <T extends Edge> T addEdge(String id, String from, String to,
-			boolean directed) {
-		return addEdge(id, (AbstractNode) getNode(from), from,
-				(AbstractNode) getNode(to), to, directed);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#addEdge(java.lang.String, int, int)
-	 */
-	public <T extends Edge> T addEdge(String id, int index1, int index2) {
-		return addEdge(id, index1, index2, false);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#addEdge(java.lang.String, int, int,
-	 * boolean)
-	 */
-	public <T extends Edge> T addEdge(String id, int fromIndex, int toIndex,
-			boolean directed) {
-		return addEdge(id, getNode(fromIndex), getNode(toIndex), directed);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#addEdge(java.lang.String,
-	 * org.graphstream.graph.Node, org.graphstream.graph.Node)
-	 */
-	public <T extends Edge> T addEdge(String id, Node node1, Node node2) {
-		return addEdge(id, node1, node2, false);
+		return node;
 	}
 
 	/*
@@ -389,46 +258,9 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * @see org.graphstream.graph.Graph#addEdge(java.lang.String,
 	 * org.graphstream.graph.Node, org.graphstream.graph.Node, boolean)
 	 */
-	public <T extends Edge> T addEdge(String id, Node from, Node to,
-			boolean directed) {
-		return addEdge(id, (AbstractNode) from, from.getId(),
-				(AbstractNode) to, to.getId(), directed);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#removeNode(java.lang.String)
-	 */
-	public <T extends Node> T removeNode(String id) {
-		AbstractNode node = getNode(id);
-
-		if (node == null) {
-			if (strictChecking)
-				throw new ElementNotFoundException("Node \"" + id
-						+ "\" not found. Cannot remove it.");
-			return null;
-		}
-
-		return removeNode(node);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#removeNode(int)
-	 */
-	public <T extends Node> T removeNode(int index) {
-		Node node = getNode(index);
-
-		if (node == null) {
-			if (strictChecking)
-				throw new ElementNotFoundException("Node #" + index
-						+ " not found. Cannot remove it.");
-			return null;
-		}
-
-		return removeNode(node);
+	@Override
+	public Edge addEdge(String id, Node from, Node to, boolean directed) {
+		return addEdge(id, (AbstractNode) from, from.getId(), (AbstractNode) to, to.getId(), directed);
 	}
 
 	/*
@@ -436,49 +268,13 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * 
 	 * @see org.graphstream.graph.Graph#removeNode(org.graphstream.graph.Node)
 	 */
-	@SuppressWarnings("unchecked")
-	public <T extends Node> T removeNode(Node node) {
+	@Override
+	public Node removeNode(Node node) {
 		if (node == null)
 			return null;
 
 		removeNode((AbstractNode) node, true);
-		return (T) node;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#removeEdge(java.lang.String)
-	 */
-	public <T extends Edge> T removeEdge(String id) {
-		Edge edge = getEdge(id);
-
-		if (edge == null) {
-			if (strictChecking)
-				throw new ElementNotFoundException("Edge \"" + id
-						+ "\" not found. Cannot remove it.");
-			return null;
-		}
-
-		return removeEdge(edge);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#removeEdge(int)
-	 */
-	public <T extends Edge> T removeEdge(int index) {
-		Edge edge = getEdge(index);
-
-		if (edge == null) {
-			if (strictChecking)
-				throw new ElementNotFoundException("Edge #" + index
-						+ " not found. Cannot remove it.");
-			return null;
-		}
-
-		return removeEdge(edge);
+		return node;
 	}
 
 	/*
@@ -486,54 +282,13 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * 
 	 * @see org.graphstream.graph.Graph#removeEdge(org.graphstream.graph.Edge)
 	 */
-	@SuppressWarnings("unchecked")
-	public <T extends Edge> T removeEdge(Edge edge) {
+	@Override
+	public Edge removeEdge(Edge edge) {
 		if (edge == null)
 			return null;
 
 		removeEdge((AbstractEdge) edge, true, true, true);
-		return (T) edge;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#removeEdge(java.lang.String,
-	 * java.lang.String)
-	 */
-	public <T extends Edge> T removeEdge(String from, String to) {
-		Node fromNode = getNode(from);
-		Node toNode = getNode(to);
-
-		if (fromNode == null || toNode == null) {
-			if (strictChecking)
-				throw new ElementNotFoundException(
-						"Cannot remove the edge. The node \"%s\" does not exist",
-						fromNode == null ? from : to);
-			return null;
-		}
-
-		return removeEdge(fromNode, toNode);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Graph#removeEdge(int, int)
-	 */
-	public <T extends Edge> T removeEdge(int fromIndex, int toIndex) {
-		Node fromNode = getNode(fromIndex);
-		Node toNode = getNode(toIndex);
-
-		if (fromNode == null || toNode == null) {
-			if (strictChecking)
-				throw new ElementNotFoundException(
-						"Cannot remove the edge. The node #%d does not exist",
-						fromNode == null ? fromIndex : toIndex);
-			return null;
-		}
-
-		return removeEdge(fromNode, toNode);
+		return edge;
 	}
 
 	/*
@@ -542,8 +297,9 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * @see org.graphstream.graph.Graph#removeEdge(org.graphstream.graph.Node,
 	 * org.graphstream.graph.Node)
 	 */
-	public <T extends Edge> T removeEdge(Node node1, Node node2) {
-		AbstractEdge edge = node1.getEdgeToward(node2);
+	@Override
+	public Edge removeEdge(Node node1, Node node2) {
+		Edge edge = node1.getEdgeToward(node2);
 
 		if (edge == null) {
 			if (strictChecking)
@@ -563,6 +319,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * 
 	 * @see org.graphstream.graph.Graph#attributeSinks()
 	 */
+	@Override
 	public Iterable<AttributeSink> attributeSinks() {
 		return listeners.attributeSinks();
 	}
@@ -572,6 +329,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * 
 	 * @see org.graphstream.graph.Graph#elementSinks()
 	 */
+	@Override
 	public Iterable<ElementSink> elementSinks() {
 		return listeners.elementSinks();
 	}
@@ -583,6 +341,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * org.graphstream.stream.Source#addAttributeSink(org.graphstream.stream
 	 * .AttributeSink)
 	 */
+	@Override
 	public void addAttributeSink(AttributeSink sink) {
 		listeners.addAttributeSink(sink);
 	}
@@ -593,6 +352,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * @see org.graphstream.stream.Source#addElementSink(org.graphstream.stream.
 	 * ElementSink)
 	 */
+	@Override
 	public void addElementSink(ElementSink sink) {
 		listeners.addElementSink(sink);
 	}
@@ -602,6 +362,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * 
 	 * @see org.graphstream.stream.Source#addSink(org.graphstream.stream.Sink)
 	 */
+	@Override
 	public void addSink(Sink sink) {
 		listeners.addSink(sink);
 	}
@@ -611,6 +372,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * 
 	 * @see org.graphstream.stream.Source#clearAttributeSinks()
 	 */
+	@Override
 	public void clearAttributeSinks() {
 		listeners.clearAttributeSinks();
 	}
@@ -620,6 +382,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * 
 	 * @see org.graphstream.stream.Source#clearElementSinks()
 	 */
+	@Override
 	public void clearElementSinks() {
 		listeners.clearElementSinks();
 	}
@@ -629,6 +392,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * 
 	 * @see org.graphstream.stream.Source#clearSinks()
 	 */
+	@Override
 	public void clearSinks() {
 		listeners.clearSinks();
 	}
@@ -640,6 +404,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * org.graphstream.stream.Source#removeAttributeSink(org.graphstream.stream
 	 * .AttributeSink)
 	 */
+	@Override
 	public void removeAttributeSink(AttributeSink sink) {
 		listeners.removeAttributeSink(sink);
 	}
@@ -651,6 +416,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * org.graphstream.stream.Source#removeElementSink(org.graphstream.stream
 	 * .ElementSink)
 	 */
+	@Override
 	public void removeElementSink(ElementSink sink) {
 		listeners.removeElementSink(sink);
 	}
@@ -661,92 +427,103 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * @see
 	 * org.graphstream.stream.Source#removeSink(org.graphstream.stream.Sink)
 	 */
+	@Override
 	public void removeSink(Sink sink) {
 		listeners.removeSink(sink);
 	}
 
+	@Override
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
 			String attribute, Object value) {
 		listeners
 				.edgeAttributeAdded(sourceId, timeId, edgeId, attribute, value);
 	}
 
+	@Override
 	public void edgeAttributeChanged(String sourceId, long timeId,
 			String edgeId, String attribute, Object oldValue, Object newValue) {
 		listeners.edgeAttributeChanged(sourceId, timeId, edgeId, attribute,
 				oldValue, newValue);
 	}
 
+	@Override
 	public void edgeAttributeRemoved(String sourceId, long timeId,
 			String edgeId, String attribute) {
 		listeners.edgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
 	}
 
+	@Override
 	public void graphAttributeAdded(String sourceId, long timeId,
 			String attribute, Object value) {
 		listeners.graphAttributeAdded(sourceId, timeId, attribute, value);
 	}
 
+	@Override
 	public void graphAttributeChanged(String sourceId, long timeId,
 			String attribute, Object oldValue, Object newValue) {
 		listeners.graphAttributeChanged(sourceId, timeId, attribute, oldValue,
 				newValue);
 	}
 
+	@Override
 	public void graphAttributeRemoved(String sourceId, long timeId,
 			String attribute) {
 		listeners.graphAttributeRemoved(sourceId, timeId, attribute);
 	}
 
+	@Override
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
 			String attribute, Object value) {
 		listeners
 				.nodeAttributeAdded(sourceId, timeId, nodeId, attribute, value);
 	}
 
+	@Override
 	public void nodeAttributeChanged(String sourceId, long timeId,
 			String nodeId, String attribute, Object oldValue, Object newValue) {
 		listeners.nodeAttributeChanged(sourceId, timeId, nodeId, attribute,
 				oldValue, newValue);
 	}
 
+	@Override
 	public void nodeAttributeRemoved(String sourceId, long timeId,
 			String nodeId, String attribute) {
 		listeners.nodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
 	}
 
+	@Override
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
 			String fromNodeId, String toNodeId, boolean directed) {
 		listeners.edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId,
 				directed);
 	}
 
+	@Override
 	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 		listeners.edgeRemoved(sourceId, timeId, edgeId);
 	}
 
+	@Override
 	public void graphCleared(String sourceId, long timeId) {
 		listeners.graphCleared(sourceId, timeId);
 	}
 
+	@Override
 	public void nodeAdded(String sourceId, long timeId, String nodeId) {
 		listeners.nodeAdded(sourceId, timeId, nodeId);
 	}
 
+	@Override
 	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 		listeners.nodeRemoved(sourceId, timeId, nodeId);
 	}
 
+	@Override
 	public void stepBegins(String sourceId, long timeId, double step) {
 		listeners.stepBegins(sourceId, timeId, step);
 	}
 
-	// display, read, write
-
-	public Viewer display() {
-		return display(true);
-	}
-
+	@Override
 	public Viewer display(boolean autoLayout) {
 		Viewer viewer = new Viewer(this,
 				Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
@@ -759,41 +536,12 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		return viewer;
 	}
 
-	public void read(FileSource input, String filename) throws IOException,
-			GraphParseException {
-		input.readAll(filename);
-	}
-
-	public void read(String filename) throws IOException, GraphParseException,
-			ElementNotFoundException {
-		FileSource input = FileSourceFactory.sourceFor(filename);
-		if (input != null) {
-			input.addSink(this);
-			read(input, filename);
-			input.removeSink(this);
-		} else {
-			throw new IOException("No source reader for " + filename);
-		}
-	}
-
-	public void write(FileSink output, String filename) throws IOException {
-		output.writeAll(this, filename);
-	}
-
-	public void write(String filename) throws IOException {
-		FileSink output = FileSinkFactory.sinkFor(filename);
-		if (output != null) {
-			write(output, filename);
-		} else {
-			throw new IOException("No sink writer for " + filename);
-		}
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.graphstream.stream.Replayable#getReplayController()
 	 */
+	@Override
 	public Replayable.Controller getReplayController() {
 		return new GraphReplayController();
 	}
@@ -852,10 +600,10 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	// When the caller knows the references it's stupid to call getNode(id)
 	// here. If the node does not exist the reference will be null.
 	// And if autoCreate is on, we need also the id. Sad but true!
-	@SuppressWarnings("unchecked")
-	protected <T extends Edge> T addEdge(String edgeId, AbstractNode src,
+	protected Edge addEdge(String edgeId, AbstractNode src,
 			String srcId, AbstractNode dst, String dstId, boolean directed) {
-		AbstractEdge edge = getEdge(edgeId);
+		AbstractEdge edge = (AbstractEdge) getEdge(edgeId);
+
 		if (edge != null) {
 			if (strictChecking)
 				throw new IdAlreadyInUseException("id \"" + edgeId
@@ -863,7 +611,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 			if ((edge.getSourceNode() == src && edge.getTargetNode() == dst)
 					|| (!directed && edge.getTargetNode() == src && edge
 							.getSourceNode() == dst))
-				return (T) edge;
+				return edge;
 			return null;
 		}
 
@@ -876,10 +624,11 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 								src == null ? srcId : dstId));
 			if (!autoCreate)
 				return null;
+
 			if (src == null)
-				src = addNode(srcId);
+				src = (AbstractNode) addNode(srcId);
 			if (dst == null)
-				dst = addNode(dstId);
+				dst = (AbstractNode) addNode(dstId);
 		}
 		// at this point edgeId is not in use and both src and dst are not null
 		edge = edgeFactory.newInstance(edgeId, src, dst, directed);
@@ -906,32 +655,13 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 
 		listeners.sendEdgeAdded(edgeId, srcId, dstId, directed);
 
-		return (T) edge;
+		return edge;
 	}
 
 	// helper for removeNode_
 	private void removeAllEdges(AbstractNode node) {
-		// first check if the EdgeIterator of node supports remove
-		// if this is the case, we will use it, generally it will be much more
-		// efficient
-		Iterator<AbstractEdge> edgeIt = node.getEdgeIterator();
-		boolean supportsRemove = true;
-		if (!edgeIt.hasNext())
-			return;
-		try {
-			edgeIt.next();
-			edgeIt.remove();
-		} catch (UnsupportedOperationException e) {
-			supportsRemove = false;
-		}
-		if (supportsRemove)
-			while (edgeIt.hasNext()) {
-				edgeIt.next();
-				edgeIt.remove();
-			}
-		else
-			while (node.getDegree() > 0)
-				removeEdge(node.getEdge(0));
+		Collection<Edge> toRemove = node.edges().collect(Collectors.toList());
+		toRemove.forEach(this::removeEdge);
 	}
 
 	// *** Methods for iterators ***
@@ -1010,6 +740,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		 * 
 		 * @see org.graphstream.stream.Replayable.Controller#replay()
 		 */
+		@Override
 		public void replay() {
 			String sourceId = String.format("%s-replay-%x", id, replayId++);
 			replay(sourceId);
@@ -1021,6 +752,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		 * @see
 		 * org.graphstream.stream.Replayable.Controller#replay(java.lang.String)
 		 */
+		@Override
 		public void replay(String sourceId) {
 			for (String key : getAttributeKeySet())
 				sendGraphAttributeAdded(sourceId, key, getAttribute(key));

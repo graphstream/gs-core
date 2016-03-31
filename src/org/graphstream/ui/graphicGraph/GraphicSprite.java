@@ -77,9 +77,7 @@ public class GraphicSprite extends GraphicElement {
 		// Get the position of a random node.
 
 		if (graph.getNodeCount() > 0) {
-			Iterator<? extends Node> nodes = graph.getNodeIterator();
-
-			GraphicNode node = (GraphicNode) nodes.next();
+			GraphicNode node = (GraphicNode) graph.nodes().findFirst().get();
 
 			position.setValue(0, node.x);
 			position.setValue(1, node.y);

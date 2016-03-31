@@ -51,18 +51,15 @@ import org.graphstream.ui.view.Viewer;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Graphs {
 
-    private static final Logger logger = Logger.getLogger(Graphs.class.getSimpleName());
+	private static final Logger logger = Logger.getLogger(Graphs.class.getSimpleName());
 
 	public static Graph unmutableGraph(Graph g) {
 		return null;
@@ -73,9 +70,8 @@ public class Graphs {
 	 * several threads. You lose genericity in methods returning edge or node
 	 * because each element (graph, nodes and edges) is wrapped into a
 	 * synchronized wrapper which breaks original elements class.
-	 * 
-	 * @param g
-	 *            the graph to synchronize
+	 *
+	 * @param g the graph to synchronize
 	 * @return a synchronized wrapper for g
 	 */
 	public static Graph synchronizedGraph(Graph g) {
@@ -87,9 +83,8 @@ public class Graphs {
 	 * the result. The method will try to create a graph of the same class that
 	 * the first graph to merge (it needs to have a constructor with a String).
 	 * Else, a MultiGraph is used.
-	 * 
-	 * @param graphs
-	 *            graphs to merge
+	 *
+	 * @param graphs graphs to merge
 	 * @return merge result
 	 */
 	public static Graph merge(Graph... graphs) {
@@ -107,7 +102,7 @@ public class Graphs {
 			Class<? extends Graph> cls = graphs[0].getClass();
 			result = cls.getConstructor(String.class).newInstance(id);
 		} catch (Exception e) {
-            logger.warning(String.format("Cannot create a graph of %s.", graphs[0].getClass().getName()));
+			logger.warning(String.format("Cannot create a graph of %s.", graphs[0].getClass().getName()));
 			result = new MultiGraph(id);
 		}
 
@@ -119,11 +114,9 @@ public class Graphs {
 	/**
 	 * Merge several graphs in one. The first parameter is the graph in which
 	 * the other graphs will be merged.
-	 * 
-	 * @param result
-	 *            destination graph.
-	 * @param graphs
-	 *            all graphs that will be merged in result.
+	 *
+	 * @param result destination graph.
+	 * @param graphs all graphs that will be merged in result.
 	 */
 	public static void mergeIn(Graph result, Graph... graphs) {
 		boolean strict = result.isStrict();
@@ -143,9 +136,8 @@ public class Graphs {
 
 	/**
 	 * Clone a given graph with same node/edge structure and same attributes.
-	 * 
-	 * @param g
-	 *            the graph to clone
+	 *
+	 * @param g the graph to clone
 	 * @return a copy of g
 	 */
 	public static Graph clone(Graph g) {
@@ -155,7 +147,7 @@ public class Graphs {
 			Class<? extends Graph> cls = g.getClass();
 			copy = cls.getConstructor(String.class).newInstance(g.getId());
 		} catch (Exception e) {
-            logger.warning(String.format("Cannot create a graph of %s.", g.getClass().getName()));
+			logger.warning(String.format("Cannot create a graph of %s.", g.getClass().getName()));
 			copy = new AdjacencyListGraph(g.getId());
 		}
 
@@ -181,7 +173,6 @@ public class Graphs {
 	}
 
 	/**
-	 * 
 	 * @param source
 	 * @param target
 	 */
@@ -194,7 +185,7 @@ public class Graphs {
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	private static Object checkedArrayOrCollectionCopy(Object o) {
 		if (o == null)
 			return null;
@@ -220,9 +211,7 @@ public class Graphs {
 				t.addAll((Collection) o);
 
 				return t;
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -242,34 +231,54 @@ public class Graphs {
 
 		public void addAttribute(String attribute, Object... values) {
 			attributeLock.lock();
-			wrappedElement.addAttribute(attribute, values);
-			attributeLock.unlock();
+
+			try {
+				wrappedElement.addAttribute(attribute, values);
+			} finally {
+				attributeLock.unlock();
+			}
 		}
 
 		public void addAttributes(Map<String, Object> attributes) {
 			attributeLock.lock();
-			wrappedElement.addAttributes(attributes);
-			attributeLock.unlock();
+
+			try {
+				wrappedElement.addAttributes(attributes);
+			} finally {
+				attributeLock.unlock();
+			}
 		}
 
 		public void changeAttribute(String attribute, Object... values) {
 			attributeLock.lock();
-			wrappedElement.changeAttribute(attribute, values);
-			attributeLock.unlock();
+
+			try {
+				wrappedElement.changeAttribute(attribute, values);
+			} finally {
+				attributeLock.unlock();
+			}
 		}
 
 		public void clearAttributes() {
 			attributeLock.lock();
-			wrappedElement.clearAttributes();
-			attributeLock.unlock();
+
+			try {
+				wrappedElement.clearAttributes();
+			} finally {
+				attributeLock.unlock();
+			}
 		}
 
 		public Object[] getArray(String key) {
 			Object[] o;
 
 			attributeLock.lock();
-			o = wrappedElement.getArray(key);
-			attributeLock.unlock();
+
+			try {
+				o = wrappedElement.getArray(key);
+			} finally {
+				attributeLock.unlock();
+			}
 
 			return o;
 		}
@@ -278,8 +287,12 @@ public class Graphs {
 			T o;
 
 			attributeLock.lock();
-			o = wrappedElement.getAttribute(key);
-			attributeLock.unlock();
+
+			try {
+				o = wrappedElement.getAttribute(key);
+			} finally {
+				attributeLock.unlock();
+			}
 
 			return o;
 		}
@@ -288,8 +301,12 @@ public class Graphs {
 			T o;
 
 			attributeLock.lock();
-			o = wrappedElement.getAttribute(key, clazz);
-			attributeLock.unlock();
+
+			try {
+				o = wrappedElement.getAttribute(key, clazz);
+			} finally {
+				attributeLock.unlock();
+			}
 
 			return o;
 		}
@@ -298,8 +315,12 @@ public class Graphs {
 			int c;
 
 			attributeLock.lock();
-			c = wrappedElement.getAttributeCount();
-			attributeLock.unlock();
+
+			try {
+				c = wrappedElement.getAttributeCount();
+			} finally {
+				attributeLock.unlock();
+			}
 
 			return c;
 		}
@@ -314,17 +335,21 @@ public class Graphs {
 
 			attributeLock.lock();
 
-			o = new ArrayList<String>(wrappedElement.getAttributeCount());
-			it = wrappedElement.getAttributeKeyIterator();
+			try {
 
-			while (it.hasNext())
-				o.add(it.next());
+				o = new ArrayList<String>(wrappedElement.getAttributeCount());
+				it = wrappedElement.getAttributeKeyIterator();
 
-			attributeLock.unlock();
+				while (it.hasNext())
+					o.add(it.next());
+
+			} finally {
+				attributeLock.unlock();
+			}
 
 			return o;
 		}
-		
+
 		public Iterable<String> getEachAttributeKey() {
 			return getAttributeKeySet();
 		}
@@ -333,8 +358,12 @@ public class Graphs {
 			T o;
 
 			attributeLock.lock();
-			o = wrappedElement.getFirstAttributeOf(keys);
-			attributeLock.unlock();
+
+			try {
+				o = wrappedElement.getFirstAttributeOf(keys);
+			} finally {
+				attributeLock.unlock();
+			}
 
 			return o;
 		}
@@ -343,8 +372,12 @@ public class Graphs {
 			T o;
 
 			attributeLock.lock();
-			o = wrappedElement.getFirstAttributeOf(clazz, keys);
-			attributeLock.unlock();
+
+			try {
+				o = wrappedElement.getFirstAttributeOf(clazz, keys);
+			} finally {
+				attributeLock.unlock();
+			}
 
 			return o;
 		}
@@ -353,8 +386,12 @@ public class Graphs {
 			HashMap<?, ?> o;
 
 			attributeLock.lock();
-			o = wrappedElement.getHash(key);
-			attributeLock.unlock();
+
+			try {
+				o = wrappedElement.getHash(key);
+			} finally {
+				attributeLock.unlock();
+			}
 
 			return o;
 		}
@@ -371,8 +408,12 @@ public class Graphs {
 			CharSequence o;
 
 			attributeLock.lock();
-			o = wrappedElement.getLabel(key);
-			attributeLock.unlock();
+
+			try {
+				o = wrappedElement.getLabel(key);
+			} finally {
+				attributeLock.unlock();
+			}
 
 			return o;
 		}
@@ -381,8 +422,12 @@ public class Graphs {
 			double o;
 
 			attributeLock.lock();
-			o = wrappedElement.getNumber(key);
-			attributeLock.unlock();
+
+			try {
+				o = wrappedElement.getNumber(key);
+			} finally {
+				attributeLock.unlock();
+			}
 
 			return o;
 		}
@@ -391,8 +436,12 @@ public class Graphs {
 			ArrayList<? extends Number> o;
 
 			attributeLock.lock();
-			o = wrappedElement.getVector(key);
-			attributeLock.unlock();
+
+			try {
+				o = wrappedElement.getVector(key);
+			} finally {
+				attributeLock.unlock();
+			}
 
 			return o;
 		}
@@ -401,8 +450,12 @@ public class Graphs {
 			boolean b;
 
 			attributeLock.lock();
-			b = wrappedElement.hasArray(key);
-			attributeLock.unlock();
+
+			try {
+				b = wrappedElement.hasArray(key);
+			} finally {
+				attributeLock.unlock();
+			}
 
 			return b;
 		}
@@ -411,8 +464,12 @@ public class Graphs {
 			boolean b;
 
 			attributeLock.lock();
-			b = wrappedElement.hasAttribute(key);
-			attributeLock.unlock();
+
+			try {
+				b = wrappedElement.hasAttribute(key);
+			} finally {
+				attributeLock.unlock();
+			}
 
 			return b;
 		}
@@ -421,8 +478,12 @@ public class Graphs {
 			boolean b;
 
 			attributeLock.lock();
-			b = wrappedElement.hasAttribute(key, clazz);
-			attributeLock.unlock();
+
+			try {
+				b = wrappedElement.hasAttribute(key, clazz);
+			} finally {
+				attributeLock.unlock();
+			}
 
 			return b;
 		}
@@ -431,8 +492,12 @@ public class Graphs {
 			boolean b;
 
 			attributeLock.lock();
-			b = wrappedElement.hasHash(key);
-			attributeLock.unlock();
+
+			try {
+				b = wrappedElement.hasHash(key);
+			} finally {
+				attributeLock.unlock();
+			}
 
 			return b;
 		}
@@ -441,8 +506,12 @@ public class Graphs {
 			boolean b;
 
 			attributeLock.lock();
-			b = wrappedElement.hasLabel(key);
-			attributeLock.unlock();
+
+			try {
+				b = wrappedElement.hasLabel(key);
+			} finally {
+				attributeLock.unlock();
+			}
 
 			return b;
 		}
@@ -451,8 +520,12 @@ public class Graphs {
 			boolean b;
 
 			attributeLock.lock();
-			b = wrappedElement.hasNumber(key);
-			attributeLock.unlock();
+
+			try {
+				b = wrappedElement.hasNumber(key);
+			} finally {
+				attributeLock.unlock();
+			}
 
 			return b;
 		}
@@ -461,139 +534,188 @@ public class Graphs {
 			boolean b;
 
 			attributeLock.lock();
-			b = wrappedElement.hasVector(key);
-			attributeLock.unlock();
+
+			try {
+				b = wrappedElement.hasVector(key);
+			} finally {
+				attributeLock.unlock();
+			}
 
 			return b;
 		}
 
 		public void removeAttribute(String attribute) {
 			attributeLock.lock();
-			wrappedElement.removeAttribute(attribute);
-			attributeLock.unlock();
+
+			try {
+				wrappedElement.removeAttribute(attribute);
+			} finally {
+				attributeLock.unlock();
+			}
 		}
 
 		public void setAttribute(String attribute, Object... values) {
 			attributeLock.lock();
-			wrappedElement.setAttribute(attribute, values);
-			attributeLock.unlock();
-		}		
+
+			try {
+				wrappedElement.setAttribute(attribute, values);
+			} finally {
+				attributeLock.unlock();
+			}
+		}
 	}
 
-	static class SynchronizedGraph extends SynchronizedElement<Graph> implements
-			Graph {
+	static class SynchronizedGraph extends SynchronizedElement<Graph> implements Graph {
 
 		final ReentrantLock elementLock;
-		final HashMap<String, Node> synchronizedNodes;
-		final HashMap<String, Edge> synchronizedEdges;
+		final Map<String, Node> synchronizedNodes;
+		final Map<String, Edge> synchronizedEdges;
 
 		SynchronizedGraph(Graph g) {
 			super(g);
 
 			elementLock = new ReentrantLock();
-			synchronizedNodes = new HashMap<String, Node>();
-			synchronizedEdges = new HashMap<String, Edge>();
 
-			for (Node n : g.getEachNode())
-				synchronizedNodes.put(n.getId(), new SynchronizedNode(this, n));
-
-			for (Edge e : g.getEachEdge())
-				synchronizedEdges.put(e.getId(), new SynchronizedEdge(this, e));
+			synchronizedNodes = g.nodes().collect(Collectors.toMap(Node::getId, n -> new SynchronizedNode(this, n)));
+			synchronizedEdges = g.edges().collect(Collectors.toMap(Edge::getId, e -> new SynchronizedEdge(this, e)));
 		}
 
-		@SuppressWarnings("unchecked")
-		public <T extends Edge> T addEdge(String id, String node1, String node2)
+		@Override
+		public Stream<Node> nodes() {
+			Collection<Node> nodes;
+
+			elementLock.lock();
+
+			try {
+				nodes = new Vector<>(synchronizedNodes.values());
+			} finally {
+				elementLock.unlock();
+			}
+
+			return nodes.stream();
+		}
+
+		@Override
+		public Stream<Edge> edges() {
+			Collection<Edge> edges;
+
+			elementLock.lock();
+
+			try {
+				edges = new Vector<>(synchronizedEdges.values());
+			} finally {
+				elementLock.unlock();
+			}
+
+			return edges.stream();
+		}
+
+		@Override
+		public Edge addEdge(String id, String node1, String node2)
 				throws IdAlreadyInUseException, ElementNotFoundException,
 				EdgeRejectedException {
-			T e;
+			Edge e;
 			Edge se;
 
 			elementLock.lock();
 
-			e = wrappedElement.addEdge(id, node1, node2);
-			se = new SynchronizedEdge(this, e);
-			synchronizedEdges.put(id, se);
+			try {
+				e = wrappedElement.addEdge(id, node1, node2);
+				se = new SynchronizedEdge(this, e);
+				synchronizedEdges.put(id, se);
+			} finally {
+				elementLock.unlock();
+			}
 
-			elementLock.unlock();
-
-			return (T) se;
+			return se;
 		}
 
-		@SuppressWarnings("unchecked")
-		public <T extends Edge> T addEdge(String id, String from, String to,
-				boolean directed) throws IdAlreadyInUseException,
+		@Override
+		public Edge addEdge(String id, String from, String to,
+							boolean directed) throws IdAlreadyInUseException,
 				ElementNotFoundException {
-			T e;
+			Edge e;
 			Edge se;
 
 			elementLock.lock();
 
-			e = wrappedElement.addEdge(id, from, to, directed);
-			se = new SynchronizedEdge(this, e);
-			synchronizedEdges.put(id, se);
+			try {
+				e = wrappedElement.addEdge(id, from, to, directed);
+				se = new SynchronizedEdge(this, e);
+				synchronizedEdges.put(id, se);
+			} finally {
+				elementLock.unlock();
+			}
 
-			elementLock.unlock();
-
-			return (T) se;
+			return se;
 		}
 
-		@SuppressWarnings("unchecked")
-		public <T extends Edge> T addEdge(String id, int index1, int index2) {
-			T e;
+		@Override
+		public Edge addEdge(String id, int index1, int index2) {
+			Edge e;
 			Edge se;
 
 			elementLock.lock();
 
-			e = wrappedElement.addEdge(id, index1, index2);
-			se = new SynchronizedEdge(this, e);
-			synchronizedEdges.put(id, se);
+			try {
+				e = wrappedElement.addEdge(id, index1, index2);
+				se = new SynchronizedEdge(this, e);
+				synchronizedEdges.put(id, se);
+			} finally {
+				elementLock.unlock();
+			}
 
-			elementLock.unlock();
-
-			return (T) se;
+			return se;
 		}
 
-		@SuppressWarnings("unchecked")
-		public <T extends Edge> T addEdge(String id, int fromIndex,
-				int toIndex, boolean directed) {
-			T e;
+		@Override
+		public Edge addEdge(String id, int fromIndex,
+							int toIndex, boolean directed) {
+			Edge e;
 			Edge se;
 
 			elementLock.lock();
 
-			e = wrappedElement.addEdge(id, fromIndex, toIndex, directed);
-			se = new SynchronizedEdge(this, e);
-			synchronizedEdges.put(id, se);
+			try {
+				e = wrappedElement.addEdge(id, fromIndex, toIndex, directed);
+				se = new SynchronizedEdge(this, e);
+				synchronizedEdges.put(id, se);
+			} finally {
+				elementLock.unlock();
+			}
 
-			elementLock.unlock();
-
-			return (T) se;
+			return se;
 		}
 
 		@SuppressWarnings("unchecked")
-		public <T extends Edge> T addEdge(String id, Node node1, Node node2) {
-			T e;
+		@Override
+		public Edge addEdge(String id, Node node1, Node node2) {
+			Edge e;
 			Edge se;
 			final Node unsyncNode1, unsyncNode2;
+
 
 			unsyncNode1 = ((SynchronizedElement<Node>) node1).wrappedElement;
 			unsyncNode2 = ((SynchronizedElement<Node>) node2).wrappedElement;
 
 			elementLock.lock();
 
-			e = wrappedElement.addEdge(id, unsyncNode1, unsyncNode2);
-			se = new SynchronizedEdge(this, e);
-			synchronizedEdges.put(id, se);
+			try {
+				e = wrappedElement.addEdge(id, unsyncNode1, unsyncNode2);
+				se = new SynchronizedEdge(this, e);
+				synchronizedEdges.put(id, se);
+			} finally {
+				elementLock.unlock();
+			}
 
-			elementLock.unlock();
-
-			return (T) se;
+			return se;
 		}
 
 		@SuppressWarnings("unchecked")
-		public <T extends Edge> T addEdge(String id, Node from, Node to,
-				boolean directed) {
-			T e;
+		@Override
+		public Edge addEdge(String id, Node from, Node to,
+							boolean directed) {
+			Edge e;
 			Edge se;
 			final Node unsyncFrom, unsyncTo;
 
@@ -602,285 +724,318 @@ public class Graphs {
 
 			elementLock.lock();
 
-			e = wrappedElement.addEdge(id, unsyncFrom, unsyncTo, directed);
-			se = new SynchronizedEdge(this, e);
-			synchronizedEdges.put(id, se);
+			try {
+				e = wrappedElement.addEdge(id, unsyncFrom, unsyncTo, directed);
+				se = new SynchronizedEdge(this, e);
+				synchronizedEdges.put(id, se);
+			} finally {
+				elementLock.unlock();
+			}
 
-			elementLock.unlock();
-
-			return (T) se;
+			return se;
 		}
 
-		@SuppressWarnings("unchecked")
-		public <T extends Node> T addNode(String id)
+		@Override
+		public Node addNode(String id)
 				throws IdAlreadyInUseException {
-			T n;
+			Node n;
 			Node sn;
 
 			elementLock.lock();
 
-			n = wrappedElement.addNode(id);
-			sn = new SynchronizedNode(this, n);
-			synchronizedNodes.put(id, sn);
+			try {
+				n = wrappedElement.addNode(id);
+				sn = new SynchronizedNode(this, n);
+				synchronizedNodes.put(id, sn);
+			} finally {
+				elementLock.unlock();
+			}
 
-			elementLock.unlock();
-
-			return (T) sn;
+			return sn;
 		}
 
+		@Override
 		public Iterable<AttributeSink> attributeSinks() {
 			LinkedList<AttributeSink> sinks = new LinkedList<AttributeSink>();
 
 			elementLock.lock();
 
-			for (AttributeSink as : wrappedElement.attributeSinks())
-				sinks.add(as);
-
-			elementLock.unlock();
+			try {
+				for (AttributeSink as : wrappedElement.attributeSinks())
+					sinks.add(as);
+			} finally {
+				elementLock.unlock();
+			}
 
 			return sinks;
 		}
 
+		@Override
 		public void clear() {
 			elementLock.lock();
-			wrappedElement.clear();
-			elementLock.unlock();
+
+			try {
+				wrappedElement.clear();
+			} finally {
+				elementLock.unlock();
+			}
 		}
 
+		@Override
 		public Viewer display() {
 			return wrappedElement.display();
 		}
 
+		@Override
 		public Viewer display(boolean autoLayout) {
 			return wrappedElement.display(autoLayout);
 		}
 
+		@Override
 		public EdgeFactory<? extends Edge> edgeFactory() {
 			return wrappedElement.edgeFactory();
 		}
 
+		@Override
 		public Iterable<ElementSink> elementSinks() {
 			LinkedList<ElementSink> sinks = new LinkedList<ElementSink>();
 
 			elementLock.lock();
 
-			for (ElementSink es : wrappedElement.elementSinks())
-				sinks.add(es);
-
-			elementLock.unlock();
+			try {
+				for (ElementSink es : wrappedElement.elementSinks())
+					sinks.add(es);
+			} finally {
+				elementLock.unlock();
+			}
 
 			return sinks;
 		}
 
-		public Iterable<Edge> getEachEdge() {
-			LinkedList<Edge> edges;
+		@Override
+		public Edge getEdge(String id) {
+			Edge e;
 
 			elementLock.lock();
-			edges = new LinkedList<Edge>(synchronizedEdges.values());
-			elementLock.unlock();
 
-			return edges;
-		}
-
-		public Iterable<Node> getEachNode() {
-			LinkedList<Node> nodes;
-
-			elementLock.lock();
-			nodes = new LinkedList<Node>(synchronizedNodes.values());
-			elementLock.unlock();
-
-			return nodes;
-		}
-
-		@SuppressWarnings("unchecked")
-		public <T extends Edge> T getEdge(String id) {
-			T e;
-
-			elementLock.lock();
-			e = (T) synchronizedEdges.get(id);
-			elementLock.unlock();
+			try {
+				e = synchronizedEdges.get(id);
+			} finally {
+				elementLock.unlock();
+			}
 
 			return e;
 		}
 
-		public <T extends Edge> T getEdge(int index)
+		@Override
+		public Edge getEdge(int index)
 				throws IndexOutOfBoundsException {
 			Edge e;
 
 			elementLock.lock();
-			e = wrappedElement.getEdge(index);
-			elementLock.unlock();
 
-			return e == null ? null : this.<T> getEdge(e.getId());
+			try {
+				e = wrappedElement.getEdge(index);
+			} finally {
+				elementLock.unlock();
+			}
+
+			return e == null ? null : getEdge(e.getId());
 		}
 
+		@Override
 		public int getEdgeCount() {
 			int c;
 
 			elementLock.lock();
-			c = synchronizedEdges.size();
-			elementLock.unlock();
+
+			try {
+				c = synchronizedEdges.size();
+			} finally {
+				elementLock.unlock();
+			}
 
 			return c;
 		}
 
-		public Iterator<Edge> getEdgeIterator() {
-			return getEdgeSet().iterator();
-		}
-
-		public Collection<Edge> getEdgeSet() {
-			LinkedList<Edge> l;
+		@Override
+		public Node getNode(String id) {
+			Node n;
 
 			elementLock.lock();
-			l = new LinkedList<Edge>(synchronizedEdges.values());
-			elementLock.unlock();
 
-			return l;
-		}
-
-		@SuppressWarnings("unchecked")
-		public <T extends Node> T getNode(String id) {
-			T n;
-
-			elementLock.lock();
-			n = (T) synchronizedNodes.get(id);
-			elementLock.unlock();
+			try {
+				n = synchronizedNodes.get(id);
+			} finally {
+				elementLock.unlock();
+			}
 
 			return n;
 		}
 
-		public <T extends Node> T getNode(int index)
+		@Override
+		public Node getNode(int index)
 				throws IndexOutOfBoundsException {
 			Node n;
 
 			elementLock.lock();
-			n = wrappedElement.getNode(index);
-			elementLock.unlock();
 
-			return n == null ? null : this.<T> getNode(n.getId());
+			try {
+				n = wrappedElement.getNode(index);
+			} finally {
+				elementLock.unlock();
+			}
+
+			return n == null ? null : getNode(n.getId());
 		}
 
+		@Override
 		public int getNodeCount() {
 			int c;
 
 			elementLock.lock();
-			c = synchronizedNodes.size();
-			elementLock.unlock();
+
+			try {
+				c = synchronizedNodes.size();
+			} finally {
+				elementLock.unlock();
+			}
 
 			return c;
 		}
 
-		public Iterator<Node> getNodeIterator() {
-			return getNodeSet().iterator();
-		}
-
-		public Collection<Node> getNodeSet() {
-			LinkedList<Node> l;
-
-			elementLock.lock();
-			l = new LinkedList<Node>(synchronizedNodes.values());
-			elementLock.unlock();
-
-			return l;
-		}
-
+		@Override
 		public double getStep() {
 			double s;
 
 			elementLock.lock();
-			s = wrappedElement.getStep();
-			elementLock.unlock();
+
+			try {
+				s = wrappedElement.getStep();
+			} finally {
+				elementLock.unlock();
+			}
 
 			return s;
 		}
 
+		@Override
 		public boolean isAutoCreationEnabled() {
 			return wrappedElement.isAutoCreationEnabled();
 		}
 
+		@Override
 		public boolean isStrict() {
 			return wrappedElement.isStrict();
 		}
 
+		@Override
 		public NodeFactory<? extends Node> nodeFactory() {
 			return wrappedElement.nodeFactory();
 		}
 
+		@Override
 		public boolean nullAttributesAreErrors() {
 			return wrappedElement.nullAttributesAreErrors();
 		}
 
+		@Override
 		public void read(String filename) throws IOException,
 				GraphParseException, ElementNotFoundException {
 			elementLock.lock();
-			wrappedElement.read(filename);
-			elementLock.unlock();
+
+			try {
+				wrappedElement.read(filename);
+			} finally {
+				elementLock.unlock();
+			}
 		}
 
+		@Override
 		public void read(FileSource input, String filename) throws IOException,
 				GraphParseException {
 			elementLock.lock();
-			wrappedElement.read(input, filename);
-			elementLock.unlock();
+
+			try {
+				wrappedElement.read(input, filename);
+			} finally {
+				elementLock.unlock();
+			}
 		}
 
-		@SuppressWarnings("unchecked")
-		public <T extends Edge> T removeEdge(String from, String to)
+		@Override
+		public Edge removeEdge(String from, String to)
 				throws ElementNotFoundException {
-			T e;
+			Edge e;
 			Edge se;
 
 			elementLock.lock();
-			e = wrappedElement.removeEdge(from, to);
-			se = synchronizedEdges.remove(e.getId());
-			elementLock.unlock();
 
-			return (T) se;
+			try {
+				e = wrappedElement.removeEdge(from, to);
+				se = synchronizedEdges.remove(e.getId());
+			} finally {
+				elementLock.unlock();
+			}
+
+			return se;
 		}
 
-		@SuppressWarnings("unchecked")
-		public <T extends Edge> T removeEdge(String id)
+		@Override
+		public Edge removeEdge(String id)
 				throws ElementNotFoundException {
-			T e;
+			Edge e;
 			Edge se;
 
 			elementLock.lock();
-			e = wrappedElement.removeEdge(id);
-			se = synchronizedEdges.remove(e.getId());
-			elementLock.unlock();
 
-			return (T) se;
+			try {
+				e = wrappedElement.removeEdge(id);
+				se = synchronizedEdges.remove(e.getId());
+			} finally {
+				elementLock.unlock();
+			}
+
+			return se;
 		}
 
-		@SuppressWarnings("unchecked")
-		public <T extends Edge> T removeEdge(int index) {
-			T e;
+		@Override
+		public Edge removeEdge(int index) {
+			Edge e;
 			Edge se;
 
 			elementLock.lock();
-			e = wrappedElement.removeEdge(index);
-			se = synchronizedEdges.remove(e.getId());
-			elementLock.unlock();
 
-			return (T) se;
+			try {
+				e = wrappedElement.removeEdge(index);
+				se = synchronizedEdges.remove(e.getId());
+			} finally {
+				elementLock.unlock();
+			}
+
+			return se;
 		}
 
-		@SuppressWarnings("unchecked")
-		public <T extends Edge> T removeEdge(int fromIndex, int toIndex) {
-			T e;
+		@Override
+		public Edge removeEdge(int fromIndex, int toIndex) {
+			Edge e;
 			Edge se;
 
 			elementLock.lock();
-			e = wrappedElement.removeEdge(fromIndex, toIndex);
-			se = synchronizedEdges.remove(e.getId());
-			elementLock.unlock();
 
-			return (T) se;
+			try {
+				e = wrappedElement.removeEdge(fromIndex, toIndex);
+				se = synchronizedEdges.remove(e.getId());
+			} finally {
+				elementLock.unlock();
+			}
+
+			return se;
 		}
 
-		@SuppressWarnings("unchecked")
-		public <T extends Edge> T removeEdge(Node node1, Node node2) {
-			T e;
+		@Override
+		public Edge removeEdge(Node node1, Node node2) {
+			Edge e;
 			Edge se;
 
 			if (node1 instanceof SynchronizedNode)
@@ -890,262 +1045,382 @@ public class Graphs {
 				node2 = ((SynchronizedNode) node1).wrappedElement;
 
 			elementLock.lock();
-			e = wrappedElement.removeEdge(node1, node2);
-			se = synchronizedEdges.remove(e.getId());
-			elementLock.unlock();
 
-			return (T) se;
+			try {
+				e = wrappedElement.removeEdge(node1, node2);
+				se = synchronizedEdges.remove(e.getId());
+			} finally {
+				elementLock.unlock();
+			}
+
+			return se;
 		}
 
-		@SuppressWarnings("unchecked")
-		public <T extends Edge> T removeEdge(Edge edge) {
-			T e;
+		@Override
+		public Edge removeEdge(Edge edge) {
+			Edge e;
 			Edge se;
 
 			if (edge instanceof SynchronizedEdge)
 				edge = ((SynchronizedEdge) edge).wrappedElement;
 
 			elementLock.lock();
-			e = wrappedElement.removeEdge(edge);
-			se = synchronizedEdges.remove(e.getId());
-			elementLock.unlock();
 
-			return (T) se;
+			try {
+				e = wrappedElement.removeEdge(edge);
+				se = synchronizedEdges.remove(e.getId());
+			} finally {
+				elementLock.unlock();
+			}
+
+			return se;
 		}
 
-		@SuppressWarnings("unchecked")
-		public <T extends Node> T removeNode(String id)
+		@Override
+		public Node removeNode(String id)
 				throws ElementNotFoundException {
-			T n;
+			Node n;
 			Node sn;
 
 			elementLock.lock();
-			n = wrappedElement.removeNode(id);
-			sn = synchronizedNodes.remove(n.getId());
-			elementLock.unlock();
 
-			return (T) sn;
+			try {
+				n = wrappedElement.removeNode(id);
+				sn = synchronizedNodes.remove(n.getId());
+			} finally {
+				elementLock.unlock();
+			}
+
+			return sn;
 		}
 
-		@SuppressWarnings("unchecked")
-		public <T extends Node> T removeNode(int index) {
-			T n;
+		@Override
+		public Node removeNode(int index) {
+			Node n;
 			Node sn;
 
 			elementLock.lock();
-			n = wrappedElement.removeNode(index);
-			sn = synchronizedNodes.remove(n.getId());
-			elementLock.unlock();
 
-			return (T) sn;
+			try {
+				n = wrappedElement.removeNode(index);
+				sn = synchronizedNodes.remove(n.getId());
+			} finally {
+				elementLock.unlock();
+			}
+
+			return sn;
 		}
 
-		@SuppressWarnings("unchecked")
-		public <T extends Node> T removeNode(Node node) {
-			T n;
+		@Override
+		public Node removeNode(Node node) {
+			Node n;
 			Node sn;
 
 			if (node instanceof SynchronizedNode)
 				node = ((SynchronizedNode) node).wrappedElement;
 
 			elementLock.lock();
-			n = wrappedElement.removeNode(node);
-			sn = synchronizedNodes.remove(n.getId());
-			elementLock.unlock();
 
-			return (T) sn;
+			try {
+				n = wrappedElement.removeNode(node);
+				sn = synchronizedNodes.remove(n.getId());
+			} finally {
+				elementLock.unlock();
+			}
+
+			return sn;
 		}
 
+		@Override
 		public void setAutoCreate(boolean on) {
 			elementLock.lock();
-			wrappedElement.setAutoCreate(on);
-			elementLock.unlock();
+
+			try {
+				wrappedElement.setAutoCreate(on);
+			} finally {
+				elementLock.unlock();
+			}
 		}
 
+		@Override
 		public void setEdgeFactory(EdgeFactory<? extends Edge> ef) {
 			elementLock.lock();
-			wrappedElement.setEdgeFactory(ef);
-			elementLock.unlock();
+
+			try {
+				wrappedElement.setEdgeFactory(ef);
+			} finally {
+				elementLock.unlock();
+			}
 		}
 
+		@Override
 		public void setNodeFactory(NodeFactory<? extends Node> nf) {
 			elementLock.lock();
-			wrappedElement.setNodeFactory(nf);
-			elementLock.unlock();
+
+			try {
+				wrappedElement.setNodeFactory(nf);
+			} finally {
+				elementLock.unlock();
+			}
 		}
 
+		@Override
 		public void setNullAttributesAreErrors(boolean on) {
 			elementLock.lock();
-			wrappedElement.setNullAttributesAreErrors(on);
-			elementLock.unlock();
+
+			try {
+				wrappedElement.setNullAttributesAreErrors(on);
+			} finally {
+				elementLock.unlock();
+			}
 		}
 
+		@Override
 		public void setStrict(boolean on) {
 			elementLock.lock();
-			wrappedElement.setStrict(on);
-			elementLock.unlock();
+
+			try {
+				wrappedElement.setStrict(on);
+			} finally {
+				elementLock.unlock();
+			}
 		}
 
+		@Override
 		public void stepBegins(double time) {
 			elementLock.lock();
-			wrappedElement.stepBegins(time);
-			elementLock.unlock();
+
+			try {
+				wrappedElement.stepBegins(time);
+			} finally {
+				elementLock.unlock();
+			}
 		}
 
+		@Override
 		public void write(String filename) throws IOException {
 			elementLock.lock();
-			wrappedElement.write(filename);
-			elementLock.unlock();
+
+			try {
+				wrappedElement.write(filename);
+			} finally {
+				elementLock.unlock();
+			}
 		}
 
+		@Override
 		public void write(FileSink output, String filename) throws IOException {
 			elementLock.lock();
-			wrappedElement.write(output, filename);
-			elementLock.unlock();
+
+			try {
+				wrappedElement.write(output, filename);
+			} finally {
+				elementLock.unlock();
+			}
 		}
 
+		@Override
 		public void addAttributeSink(AttributeSink sink) {
 			elementLock.lock();
-			wrappedElement.addAttributeSink(sink);
-			elementLock.unlock();
+
+			try {
+				wrappedElement.addAttributeSink(sink);
+			} finally {
+				elementLock.unlock();
+			}
 		}
 
+		@Override
 		public void addElementSink(ElementSink sink) {
 			elementLock.lock();
-			wrappedElement.addElementSink(sink);
-			elementLock.unlock();
+
+			try {
+				wrappedElement.addElementSink(sink);
+			} finally {
+				elementLock.unlock();
+			}
 		}
 
+		@Override
 		public void addSink(Sink sink) {
 			elementLock.lock();
-			wrappedElement.addSink(sink);
-			elementLock.unlock();
+
+			try {
+				wrappedElement.addSink(sink);
+			} finally {
+				elementLock.unlock();
+			}
 		}
 
+		@Override
 		public void clearAttributeSinks() {
 			elementLock.lock();
-			wrappedElement.clearAttributeSinks();
-			elementLock.unlock();
+
+			try {
+				wrappedElement.clearAttributeSinks();
+			} finally {
+				elementLock.unlock();
+			}
 		}
 
+		@Override
 		public void clearElementSinks() {
 			elementLock.lock();
-			wrappedElement.clearElementSinks();
-			elementLock.unlock();
+
+			try {
+				wrappedElement.clearElementSinks();
+			} finally {
+				elementLock.unlock();
+			}
 		}
 
+		@Override
 		public void clearSinks() {
 			elementLock.lock();
-			wrappedElement.clearSinks();
-			elementLock.unlock();
+
+			try {
+				wrappedElement.clearSinks();
+			} finally {
+				elementLock.unlock();
+			}
 		}
 
+		@Override
 		public void removeAttributeSink(AttributeSink sink) {
 			elementLock.lock();
-			wrappedElement.removeAttributeSink(sink);
-			elementLock.unlock();
+
+			try {
+				wrappedElement.removeAttributeSink(sink);
+			} finally {
+				elementLock.unlock();
+			}
 		}
 
+		@Override
 		public void removeElementSink(ElementSink sink) {
 			elementLock.lock();
-			wrappedElement.removeElementSink(sink);
-			elementLock.unlock();
+
+			try {
+				wrappedElement.removeElementSink(sink);
+			} finally {
+				elementLock.unlock();
+			}
 		}
 
+		@Override
 		public void removeSink(Sink sink) {
 			elementLock.lock();
-			wrappedElement.removeSink(sink);
-			elementLock.unlock();
+
+			try {
+				wrappedElement.removeSink(sink);
+			} finally {
+				elementLock.unlock();
+			}
 		}
 
+		@Override
 		public void edgeAttributeAdded(String sourceId, long timeId,
-				String edgeId, String attribute, Object value) {
+									   String edgeId, String attribute, Object value) {
 			wrappedElement.edgeAttributeAdded(sourceId, timeId, edgeId,
 					attribute, value);
 		}
 
+		@Override
 		public void edgeAttributeChanged(String sourceId, long timeId,
-				String edgeId, String attribute, Object oldValue,
-				Object newValue) {
+										 String edgeId, String attribute, Object oldValue,
+										 Object newValue) {
 			wrappedElement.edgeAttributeChanged(sourceId, timeId, edgeId,
 					attribute, oldValue, newValue);
 		}
 
+		@Override
 		public void edgeAttributeRemoved(String sourceId, long timeId,
-				String edgeId, String attribute) {
+										 String edgeId, String attribute) {
 			wrappedElement.edgeAttributeRemoved(sourceId, timeId, edgeId,
 					attribute);
 		}
 
+		@Override
 		public void graphAttributeAdded(String sourceId, long timeId,
-				String attribute, Object value) {
+										String attribute, Object value) {
 			wrappedElement.graphAttributeAdded(sourceId, timeId, attribute,
 					value);
 		}
 
+		@Override
 		public void graphAttributeChanged(String sourceId, long timeId,
-				String attribute, Object oldValue, Object newValue) {
+										  String attribute, Object oldValue, Object newValue) {
 			wrappedElement.graphAttributeChanged(sourceId, timeId, attribute,
 					oldValue, newValue);
 		}
 
+		@Override
 		public void graphAttributeRemoved(String sourceId, long timeId,
-				String attribute) {
+										  String attribute) {
 			wrappedElement.graphAttributeRemoved(sourceId, timeId, attribute);
 		}
 
+		@Override
 		public void nodeAttributeAdded(String sourceId, long timeId,
-				String nodeId, String attribute, Object value) {
+									   String nodeId, String attribute, Object value) {
 			wrappedElement.nodeAttributeAdded(sourceId, timeId, nodeId,
 					attribute, value);
 		}
 
+		@Override
 		public void nodeAttributeChanged(String sourceId, long timeId,
-				String nodeId, String attribute, Object oldValue,
-				Object newValue) {
+										 String nodeId, String attribute, Object oldValue,
+										 Object newValue) {
 			wrappedElement.nodeAttributeChanged(sourceId, timeId, nodeId,
 					attribute, oldValue, newValue);
 		}
 
+		@Override
 		public void nodeAttributeRemoved(String sourceId, long timeId,
-				String nodeId, String attribute) {
+										 String nodeId, String attribute) {
 			wrappedElement.nodeAttributeRemoved(sourceId, timeId, nodeId,
 					attribute);
 		}
 
+		@Override
 		public void edgeAdded(String sourceId, long timeId, String edgeId,
-				String fromNodeId, String toNodeId, boolean directed) {
+							  String fromNodeId, String toNodeId, boolean directed) {
 			wrappedElement.edgeAdded(sourceId, timeId, edgeId, fromNodeId,
 					toNodeId, directed);
 		}
 
+		@Override
 		public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 			wrappedElement.edgeRemoved(sourceId, timeId, edgeId);
 		}
 
+		@Override
 		public void graphCleared(String sourceId, long timeId) {
 			wrappedElement.graphCleared(sourceId, timeId);
 		}
 
+		@Override
 		public void nodeAdded(String sourceId, long timeId, String nodeId) {
 			wrappedElement.nodeAdded(sourceId, timeId, nodeId);
 		}
 
+		@Override
 		public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 			wrappedElement.nodeRemoved(sourceId, timeId, nodeId);
 		}
 
+		@Override
 		public void stepBegins(String sourceId, long timeId, double step) {
 			wrappedElement.stepBegins(sourceId, timeId, step);
 		}
 
+		@Override
 		public Iterator<Node> iterator() {
-			return getEachNode().iterator();
+			return nodes().iterator();
 		}
 	}
 
-	static class SynchronizedNode extends SynchronizedElement<Node> implements
-			Node {
+	static class SynchronizedNode extends SynchronizedElement<Node> implements Node {
 
 		private final SynchronizedGraph sg;
 		private final ReentrantLock elementLock;
@@ -1157,10 +1432,83 @@ public class Graphs {
 			this.elementLock = new ReentrantLock();
 		}
 
+		@Override
+		public Stream<Node> neighborNodes() {
+			List<Node> nodes;
+
+			elementLock.lock();
+			sg.elementLock.lock();
+
+			try {
+				nodes = wrappedElement.neighborNodes().map(n -> sg.getNode(n.getIndex())).collect(Collectors.toList());
+			} finally {
+				sg.elementLock.unlock();
+				elementLock.unlock();
+			}
+
+			return nodes.stream();
+		}
+
+		@Override
+		public Stream<Edge> edges() {
+			List<Edge> edges;
+
+			elementLock.lock();
+			sg.elementLock.lock();
+
+			try {
+
+				edges = wrappedElement.edges().map(e -> sg.getEdge(e.getIndex())).collect(Collectors.toList());
+			} finally {
+				sg.elementLock.unlock();
+				elementLock.unlock();
+			}
+
+			return edges.stream();
+		}
+
+		@Override
+		public Stream<Edge> leavingEdges() {
+			List<Edge> edges;
+
+			elementLock.lock();
+			sg.elementLock.lock();
+
+			try {
+
+				edges = wrappedElement.leavingEdges().map(e -> sg.getEdge(e.getIndex())).collect(Collectors.toList());
+			} finally {
+				sg.elementLock.unlock();
+				elementLock.unlock();
+			}
+
+			return edges.stream();
+		}
+
+		@Override
+		public Stream<Edge> enteringEdges() {
+			List<Edge> edges;
+
+			elementLock.lock();
+			sg.elementLock.lock();
+
+			try {
+
+				edges = wrappedElement.enteringEdges().map(e -> sg.getEdge(e.getIndex())).collect(Collectors.toList());
+			} finally {
+				sg.elementLock.unlock();
+				elementLock.unlock();
+			}
+
+			return edges.stream();
+		}
+
+		@Override
 		public Iterator<Node> getBreadthFirstIterator() {
 			return getBreadthFirstIterator(false);
 		}
 
+		@Override
 		public Iterator<Node> getBreadthFirstIterator(boolean directed) {
 			LinkedList<Node> l = new LinkedList<Node>();
 			Iterator<Node> it;
@@ -1168,31 +1516,41 @@ public class Graphs {
 			elementLock.lock();
 			sg.elementLock.lock();
 
-			it = wrappedElement.getBreadthFirstIterator(directed);
+			try {
 
-			while (it.hasNext())
-				l.add(sg.getNode(it.next().getIndex()));
+				it = wrappedElement.getBreadthFirstIterator(directed);
 
-			sg.elementLock.unlock();
-			elementLock.unlock();
+				while (it.hasNext())
+					l.add(sg.getNode(it.next().getIndex()));
+			} finally {
+				sg.elementLock.unlock();
+				elementLock.unlock();
+			}
 
 			return l.iterator();
 		}
 
+		@Override
 		public int getDegree() {
 			int d;
 
 			elementLock.lock();
-			d = wrappedElement.getDegree();
-			elementLock.unlock();
+
+			try {
+				d = wrappedElement.getDegree();
+			} finally {
+				elementLock.unlock();
+			}
 
 			return d;
 		}
 
+		@Override
 		public Iterator<Node> getDepthFirstIterator() {
 			return getDepthFirstIterator(false);
 		}
 
+		@Override
 		public Iterator<Node> getDepthFirstIterator(boolean directed) {
 			LinkedList<Node> l = new LinkedList<Node>();
 			Iterator<Node> it;
@@ -1200,356 +1558,241 @@ public class Graphs {
 			elementLock.lock();
 			sg.elementLock.lock();
 
-			it = wrappedElement.getDepthFirstIterator();
+			try {
+				it = wrappedElement.getDepthFirstIterator();
 
-			while (it.hasNext())
-				l.add(sg.getNode(it.next().getIndex()));
-
-			sg.elementLock.unlock();
-			elementLock.unlock();
+				while (it.hasNext())
+					l.add(sg.getNode(it.next().getIndex()));
+			} finally {
+				sg.elementLock.unlock();
+				elementLock.unlock();
+			}
 
 			return l.iterator();
 		}
 
-		public Iterable<Edge> getEachEdge() {
-			return getEdgeSet();
-		}
-
-		public Iterable<Edge> getEachEnteringEdge() {
-			return getEnteringEdgeSet();
-		}
-
-		public Iterable<Edge> getEachLeavingEdge() {
-			return getLeavingEdgeSet();
-		}
-
-		public <T extends Edge> T getEdge(int i) {
-			T e;
+		@Override
+		public Edge getEdge(int i) {
+			Edge e;
 
 			elementLock.lock();
-			e = sg.getEdge(wrappedElement.getEdge(i).getIndex());
-			elementLock.unlock();
+
+			try {
+				e = sg.getEdge(wrappedElement.getEdge(i).getIndex());
+			} finally {
+				elementLock.unlock();
+			}
 
 			return e;
 		}
 
-		public <T extends Edge> T getEnteringEdge(int i) {
-			T e;
+		@Override
+		public Edge getEnteringEdge(int i) {
+			Edge e;
 
 			elementLock.lock();
-			e = sg.getEdge(wrappedElement.getEnteringEdge(i).getIndex());
-			elementLock.unlock();
+
+			try {
+				e = sg.getEdge(wrappedElement.getEnteringEdge(i).getIndex());
+			} finally {
+				elementLock.unlock();
+			}
 
 			return e;
 		}
 
-		public <T extends Edge> T getLeavingEdge(int i) {
-			T e;
+		@Override
+		public Edge getLeavingEdge(int i) {
+			Edge e;
 
 			elementLock.lock();
-			e = sg.getEdge(wrappedElement.getLeavingEdge(i).getIndex());
-			elementLock.unlock();
+
+			try {
+				e = sg.getEdge(wrappedElement.getLeavingEdge(i).getIndex());
+			} finally {
+				elementLock.unlock();
+			}
 
 			return e;
 		}
 
-		public <T extends Edge> T getEdgeBetween(String id) {
-			T e;
+		@Override
+		public Edge getEdgeBetween(String id) {
+			Edge e;
 
 			elementLock.lock();
-			e = sg.getEdge(wrappedElement.getEdgeBetween(id).getIndex());
-			elementLock.unlock();
+
+			try {
+				e = sg.getEdge(wrappedElement.getEdgeBetween(id).getIndex());
+			} finally {
+				elementLock.unlock();
+			}
 
 			return e;
 		}
 
-		public <T extends Edge> T getEdgeBetween(Node n) {
-			T e;
+		@Override
+		public Edge getEdgeBetween(Node n) {
+			Edge e;
 
 			elementLock.lock();
-			e = sg.getEdge(wrappedElement.getEdgeBetween(n).getIndex());
-			elementLock.unlock();
+
+			try {
+				e = sg.getEdge(wrappedElement.getEdgeBetween(n).getIndex());
+			} finally {
+				elementLock.unlock();
+			}
 
 			return e;
 		}
 
-		public <T extends Edge> T getEdgeBetween(int index) {
-			T e;
+		@Override
+		public Edge getEdgeBetween(int index) {
+			Edge e;
 
 			elementLock.lock();
-			e = sg.getEdge(wrappedElement.getEdgeBetween(index).getIndex());
-			elementLock.unlock();
+
+			try {
+				e = sg.getEdge(wrappedElement.getEdgeBetween(index).getIndex());
+			} finally {
+				elementLock.unlock();
+			}
 
 			return e;
 		}
 
-		public <T extends Edge> T getEdgeFrom(String id) {
-			T e;
+		@Override
+		public Edge getEdgeFrom(String id) {
+			Edge e;
 
 			elementLock.lock();
-			e = sg.getEdge(wrappedElement.getEdgeFrom(id).getIndex());
-			elementLock.unlock();
+
+			try {
+				e = sg.getEdge(wrappedElement.getEdgeFrom(id).getIndex());
+			} finally {
+				elementLock.unlock();
+			}
 
 			return e;
 		}
 
-		public <T extends Edge> T getEdgeFrom(Node n) {
-			T e;
+		@Override
+		public Edge getEdgeFrom(Node n) {
+			Edge e;
 
 			elementLock.lock();
-			e = sg.getEdge(wrappedElement.getEdgeFrom(n).getIndex());
-			elementLock.unlock();
+
+			try {
+				e = sg.getEdge(wrappedElement.getEdgeFrom(n).getIndex());
+			} finally {
+				elementLock.unlock();
+			}
 
 			return e;
 		}
 
-		public <T extends Edge> T getEdgeFrom(int index) {
-			T e;
+		@Override
+		public Edge getEdgeFrom(int index) {
+			Edge e;
 
 			elementLock.lock();
-			e = sg.getEdge(wrappedElement.getEdgeFrom(index).getIndex());
-			elementLock.unlock();
+
+			try {
+				e = sg.getEdge(wrappedElement.getEdgeFrom(index).getIndex());
+			} finally {
+				elementLock.unlock();
+			}
 
 			return e;
 		}
 
-		public Iterator<Edge> getEdgeIterator() {
-			return getEdgeSet().iterator();
-		}
-
-		public Collection<Edge> getEdgeSet() {
-			ArrayList<Edge> l;
-			Iterator<Edge> it;
+		@Override
+		public Edge getEdgeToward(String id) {
+			Edge e;
 
 			elementLock.lock();
 
-			l = new ArrayList<Edge>(wrappedElement.getDegree());
-			it = wrappedElement.getEachEdge().iterator();
-
-			while (it.hasNext())
-				l.add(sg.getEdge(it.next().getIndex()));
-
-			elementLock.unlock();
-
-			return l;
-		}
-
-		public <T extends Edge> T getEdgeToward(String id) {
-			T e;
-
-			elementLock.lock();
-			e = sg.getEdge(wrappedElement.getEdgeToward(id).getIndex());
-			elementLock.unlock();
+			try {
+				e = sg.getEdge(wrappedElement.getEdgeToward(id).getIndex());
+			} finally {
+				elementLock.unlock();
+			}
 
 			return e;
 		}
 
-		public <T extends Edge> T getEdgeToward(Node n) {
-			T e;
+		@Override
+		public Edge getEdgeToward(Node n) {
+			Edge e;
 
 			elementLock.lock();
-			e = sg.getEdge(wrappedElement.getEdgeToward(n).getIndex());
-			elementLock.unlock();
+
+			try {
+				e = sg.getEdge(wrappedElement.getEdgeToward(n).getIndex());
+			} finally {
+				elementLock.unlock();
+			}
 
 			return e;
 		}
 
-		public <T extends Edge> T getEdgeToward(int index) {
-			T e;
+		@Override
+		public Edge getEdgeToward(int index) {
+			Edge e;
 
 			elementLock.lock();
-			e = sg.getEdge(wrappedElement.getEdgeToward(index).getIndex());
-			elementLock.unlock();
+
+			try {
+				e = sg.getEdge(wrappedElement.getEdgeToward(index).getIndex());
+			} finally {
+				elementLock.unlock();
+			}
 
 			return e;
 		}
 
-		public Iterator<Edge> getEnteringEdgeIterator() {
-			return getEnteringEdgeSet().iterator();
-		}
-
-		public Collection<Edge> getEnteringEdgeSet() {
-			ArrayList<Edge> l;
-			Iterator<Edge> it;
-
-			elementLock.lock();
-			sg.elementLock.lock();
-
-			l = new ArrayList<Edge>(wrappedElement.getInDegree());
-			it = wrappedElement.getEachEnteringEdge().iterator();
-
-			while (it.hasNext())
-				l.add(sg.getEdge(it.next().getIndex()));
-
-			sg.elementLock.unlock();
-			elementLock.unlock();
-
-			return l;
-		}
-
+		@Override
 		public Graph getGraph() {
 			return sg;
 		}
 
+		@Override
 		public int getInDegree() {
 			int d;
 
 			elementLock.lock();
-			d = wrappedElement.getInDegree();
-			elementLock.unlock();
+
+			try {
+				d = wrappedElement.getInDegree();
+			} finally {
+				elementLock.unlock();
+			}
 
 			return d;
 		}
 
-		public Iterator<Edge> getLeavingEdgeIterator() {
-			return getLeavingEdgeSet().iterator();
-		}
-
-		public Collection<Edge> getLeavingEdgeSet() {
-			ArrayList<Edge> l;
-			Iterator<Edge> it;
-
-			elementLock.lock();
-			sg.elementLock.lock();
-
-			l = new ArrayList<Edge>(wrappedElement.getOutDegree());
-			it = wrappedElement.<Edge> getEachLeavingEdge().iterator();
-
-			while (it.hasNext())
-				l.add(sg.getEdge(it.next().getIndex()));
-
-			sg.elementLock.unlock();
-			elementLock.unlock();
-
-			return l;
-		}
-
-		public Iterator<Node> getNeighborNodeIterator() {
-			ArrayList<Node> l;
-			Iterator<Node> it;
-
-			elementLock.lock();
-			sg.elementLock.lock();
-
-			l = new ArrayList<Node>(wrappedElement.getDegree());
-			it = wrappedElement.getNeighborNodeIterator();
-
-			while (it.hasNext())
-				l.add(sg.getNode(it.next().getIndex()));
-
-			sg.elementLock.unlock();
-			elementLock.unlock();
-
-			return l.iterator();
-		}
-
+		@Override
 		public int getOutDegree() {
 			int d;
 
 			elementLock.lock();
-			d = wrappedElement.getOutDegree();
-			elementLock.unlock();
+
+			try {
+				d = wrappedElement.getOutDegree();
+			} finally {
+				elementLock.unlock();
+			}
 
 			return d;
 		}
 
-		public boolean hasEdgeBetween(String id) {
-			boolean b;
-
-			elementLock.lock();
-			b = wrappedElement.hasEdgeBetween(id);
-			elementLock.unlock();
-
-			return b;
-		}
-
-		public boolean hasEdgeBetween(Node node) {
-			boolean b;
-
-			elementLock.lock();
-			b = wrappedElement.hasEdgeBetween(node);
-			elementLock.unlock();
-
-			return b;
-		}
-
-		public boolean hasEdgeBetween(int index) {
-			boolean b;
-
-			elementLock.lock();
-			b = wrappedElement.hasEdgeBetween(index);
-			elementLock.unlock();
-
-			return b;
-		}
-
-		public boolean hasEdgeFrom(String id) {
-			boolean b;
-
-			elementLock.lock();
-			b = wrappedElement.hasEdgeFrom(id);
-			elementLock.unlock();
-
-			return b;
-		}
-
-		public boolean hasEdgeFrom(Node node) {
-			boolean b;
-
-			elementLock.lock();
-			b = wrappedElement.hasEdgeFrom(node);
-			elementLock.unlock();
-
-			return b;
-		}
-
-		public boolean hasEdgeFrom(int index) {
-			boolean b;
-
-			elementLock.lock();
-			b = wrappedElement.hasEdgeFrom(index);
-			elementLock.unlock();
-
-			return b;
-		}
-
-		public boolean hasEdgeToward(String id) {
-			boolean b;
-
-			elementLock.lock();
-			b = wrappedElement.hasEdgeToward(id);
-			elementLock.unlock();
-
-			return b;
-		}
-
-		public boolean hasEdgeToward(Node node) {
-			boolean b;
-
-			elementLock.lock();
-			b = wrappedElement.hasEdgeToward(node);
-			elementLock.unlock();
-
-			return b;
-		}
-
-		public boolean hasEdgeToward(int index) {
-			boolean b;
-
-			elementLock.lock();
-			b = wrappedElement.hasEdgeToward(index);
-			elementLock.unlock();
-
-			return b;
-		}
-
+		@Override
 		public Iterator<Edge> iterator() {
-			return getEdgeSet().iterator();
+			return edges().iterator();
 		}
 	}
 
-	static class SynchronizedEdge extends SynchronizedElement<Edge> implements
-			Edge {
+	static class SynchronizedEdge extends SynchronizedElement<Edge> implements Edge {
 
 		final SynchronizedGraph sg;
 
@@ -1558,63 +1801,90 @@ public class Graphs {
 			this.sg = sg;
 		}
 
-		public <T extends Node> T getNode0() {
-			T n;
+		@Override
+		public Node getNode0() {
+			Node n;
 
 			sg.elementLock.lock();
-			n = sg.getNode(wrappedElement.getNode0().getIndex());
-			sg.elementLock.unlock();
+
+			try {
+				n = sg.getNode(wrappedElement.getNode0().getIndex());
+			} finally {
+				sg.elementLock.unlock();
+			}
 
 			return n;
 		}
 
-		public <T extends Node> T getNode1() {
-			T n;
+		@Override
+		public Node getNode1() {
+			Node n;
 
 			sg.elementLock.lock();
-			n = sg.getNode(wrappedElement.getNode1().getIndex());
-			sg.elementLock.unlock();
+
+			try {
+				n = sg.getNode(wrappedElement.getNode1().getIndex());
+			} finally {
+				sg.elementLock.unlock();
+			}
 
 			return n;
 		}
 
-		public <T extends Node> T getOpposite(Node node) {
-			T n;
+		@Override
+		public Node getOpposite(Node node) {
+			Node n;
 
 			if (node instanceof SynchronizedNode)
 				node = ((SynchronizedNode) node).wrappedElement;
 
 			sg.elementLock.lock();
-			n = sg.getNode(wrappedElement.getOpposite(node).getIndex());
-			sg.elementLock.unlock();
+
+			try {
+				n = sg.getNode(wrappedElement.getOpposite(node).getIndex());
+			} finally {
+				sg.elementLock.unlock();
+			}
 
 			return n;
 		}
 
-		public <T extends Node> T getSourceNode() {
-			T n;
+		@Override
+		public Node getSourceNode() {
+			Node n;
 
 			sg.elementLock.lock();
-			n = sg.getNode(wrappedElement.getSourceNode().getIndex());
-			sg.elementLock.unlock();
+
+			try {
+				n = sg.getNode(wrappedElement.getSourceNode().getIndex());
+			} finally {
+				sg.elementLock.unlock();
+			}
 
 			return n;
 		}
 
-		public <T extends Node> T getTargetNode() {
-			T n;
+		@Override
+		public Node getTargetNode() {
+			Node n;
 
 			sg.elementLock.lock();
-			n = sg.getNode(wrappedElement.getTargetNode().getIndex());
-			sg.elementLock.unlock();
+
+			try {
+				n = sg.getNode(wrappedElement.getTargetNode().getIndex());
+			} finally {
+				sg.elementLock.unlock();
+			}
 
 			return n;
 		}
 
+		@Override
 		public boolean isDirected() {
 			return wrappedElement.isDirected();
 		}
 
+		@Override
 		public boolean isLoop() {
 			return wrappedElement.isLoop();
 		}

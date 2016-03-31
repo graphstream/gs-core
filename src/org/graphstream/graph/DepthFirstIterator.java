@@ -34,7 +34,7 @@ package org.graphstream.graph;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class DepthFirstIterator<T extends Node> implements Iterator<T> {
+public class DepthFirstIterator implements Iterator<Node> {
 	boolean directed;
 	Graph graph;
 
@@ -67,8 +67,8 @@ public class DepthFirstIterator<T extends Node> implements Iterator<T> {
 				int j = neighbor.getIndex();
 				if (iterator[j] == null) {
 					parent[j] = next;
-					iterator[j] = directed ? neighbor.getLeavingEdgeIterator()
-							: neighbor.getEnteringEdgeIterator();
+					iterator[j] = directed ? neighbor.leavingEdges().iterator()
+							: neighbor.enteringEdges().iterator();
 					depth[j] = depth[i] + 1;
 					if (depth[j] > maxDepth)
 						maxDepth = depth[j];
@@ -88,15 +88,14 @@ public class DepthFirstIterator<T extends Node> implements Iterator<T> {
 		return next != null;
 	}
 
-	@SuppressWarnings("unchecked")
-	public T next() {
+	public Node next() {
 		if (next == null)
 			throw new NoSuchElementException();
-		iterator[next.getIndex()] = directed ? next.getLeavingEdgeIterator()
-				: next.getEnteringEdgeIterator();
+		iterator[next.getIndex()] = directed ? next.leavingEdges().iterator()
+				: next.enteringEdges().iterator();
 		Node previous = next;
 		gotoNext();
-		return (T) previous;
+		return previous;
 	}
 
 	public void remove() {

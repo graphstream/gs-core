@@ -513,7 +513,7 @@ public class FileSinkTikZ extends FileSinkBase {
 		checkAndOutputStyle();
 		checkXYandSize();
 
-		for (Node n : buffer.getEachNode()) {
+		buffer.nodes().forEach(n -> {
 			double x, y;
 
 			x = getNodeX(n);
@@ -529,7 +529,7 @@ public class FileSinkTikZ extends FileSinkBase {
 
 			out.printf(l, "\t\\node[inner sep=0pt] (%s) at (%f,%f) {};%n",
 					formatId(n.getId()), x, y);
-		}
+		});
 
 		StyleGroupSet sgs = buffer.getStyleGroups();
 
@@ -579,7 +579,7 @@ public class FileSinkTikZ extends FileSinkBase {
 		xmin = ymin = Double.MAX_VALUE;
 		xmax = ymax = Double.MIN_VALUE;
 
-		for (Node n : buffer.getEachNode()) {
+		buffer.nodes().forEach(n -> {
 			double x, y;
 
 			x = getNodeX(n);
@@ -599,12 +599,12 @@ public class FileSinkTikZ extends FileSinkBase {
 				minSize = Math.min(minSize, n.getNumber("ui.size"));
 				maxSize = Math.max(maxSize, n.getNumber("ui.size"));
 			}
-		}
+		});
 
 		if (minSize == maxSize)
 			maxSize += 1;
 
-		for (Edge e : buffer.getEachEdge()) {
+		buffer.edges().forEach(e -> {
 			points.setElement(e);
 
 			if (points.check()) {
@@ -618,7 +618,7 @@ public class FileSinkTikZ extends FileSinkBase {
 					ymax = Math.max(ymax, y);
 				}
 			}
-		}
+		});
 	}
 
 	private void checkAndOutputStyle() {

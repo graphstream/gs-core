@@ -308,6 +308,6 @@ public abstract class TestFileSourceBase {
 		assertEquals("foo", B.getAttribute("bb"));
 		assertEquals("bar", B.getAttribute("cc"));
 
-		assertEquals(1.234, C.getAttribute("aaa"));
+		assertEquals(1.234, C.getNumber("aaa"), 0);
 	}
 }

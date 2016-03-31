@@ -118,7 +118,7 @@ public class FileSinkDOT extends FileSinkBase {
 			out.printf("\t\"%s\" %s;%n", nodeId, outputAttributes(node));
 		}
 
-		for (Edge edge : graph.getEachEdge()) {
+		graph.edges().forEach(edge -> {
 			String fromNodeId = edge.getNode0().getId();
 			String toNodeId = edge.getNode1().getId();
 			String attr = outputAttributes(edge);
@@ -132,7 +132,7 @@ public class FileSinkDOT extends FileSinkBase {
 				out.printf("\t\"%s\" -- \"%s\"", fromNodeId, toNodeId);
 
 			out.printf(" %s;%n", attr);
-		}
+		});
 	}
 
 	@Override

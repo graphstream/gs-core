@@ -38,6 +38,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Element;
 import org.graphstream.graph.Graph;
@@ -139,7 +142,7 @@ public class StyleGroupSet implements StyleSheetListener {
 	/**
 	 * Set of listeners.
 	 */
-	protected ArrayList<StyleGroupListener> listeners = new ArrayList<StyleGroupListener>();
+	protected ArrayList<StyleGroupListener> listeners = new ArrayList<>();
 
 	// Construction
 
@@ -389,13 +392,22 @@ public class StyleGroupSet implements StyleSheetListener {
 		return new ElementIterator<Graph>(byGraphIdGroups);
 	}
 
-	/**
-	 * Iterable set of nodes.
-	 * 
-	 * @return The set of all nodes.
-	 */
-	public Iterable<? extends Node> nodes() {
-		return nodeSet;
+	public Stream<Node> nodes() {
+		return byNodeIdGroups.entrySet().stream().map(entry -> {
+			return (Node) groups.get(entry.getValue()).getElement(entry.getKey());
+		});
+	}
+
+	public Stream<Edge> edges() {
+		return byEdgeIdGroups.entrySet().stream().map(entry -> {
+			return (Edge) groups.get(entry.getValue()).getElement(entry.getKey());
+		});
+	}
+
+	public Stream<GraphicSprite> sprites() {
+		return bySpriteIdGroups.entrySet().stream().map(entry -> {
+			return (GraphicSprite) groups.get(entry.getValue()).getElement(entry.getKey());
+		});
 	}
 
 	/**
@@ -417,30 +429,12 @@ public class StyleGroupSet implements StyleSheetListener {
 	}
 
 	/**
-	 * Iterable set of edges.
-	 * 
-	 * @return The set of all edges.
-	 */
-	public Iterable<? extends Edge> edges() {
-		return edgeSet;
-	}
-
-	/**
 	 * Iterator on the set of sprite.
 	 * 
 	 * @return An iterator on all sprite elements contained in style groups.
 	 */
 	public Iterator<? extends GraphicSprite> getSpriteIterator() {
 		return new ElementIterator<GraphicSprite>(bySpriteIdGroups);
-	}
-
-	/**
-	 * Iterable set of sprites.
-	 * 
-	 * @return The set of all sprites.
-	 */
-	public Iterable<? extends GraphicSprite> sprites() {
-		return spriteSet;
 	}
 
 	/**
@@ -907,22 +901,14 @@ public class StyleGroupSet implements StyleSheetListener {
 		for (Element element : graphs())
 			elements.add(element);
 
-		for (Element element : nodes())
-			elements.add(element);
-
-		for (Element element : edges())
-			elements.add(element);
-
-		for (Element element : sprites())
-			elements.add(element);
+		nodes().forEach(elements::add);
+		edges().forEach(elements::add);
+		sprites().forEach(elements::add);
 
 		clear();
 
-		for (Element element : elements)
-			removeElement(element);
-
-		for (Element element : elements)
-			addElement(element);
+		elements.forEach(this::removeElement);
+		elements.forEach(this::addElement);
 	}
 
 	/**
@@ -1060,7 +1046,7 @@ public class StyleGroupSet implements StyleSheetListener {
 	 */
 	protected void checkForNewStyle(Rule newRule,
 			Map<String, String> elt2grp) {
-		Collection<Element> elementsToCheck = new ArrayList<Element>();
+		/*Collection<Element> elementsToCheck = new ArrayList<Element>();
 
 		for (String eltId : elt2grp.keySet())
 			elementsToCheck.add(getElement(eltId, elt2grp));
@@ -1069,7 +1055,9 @@ public class StyleGroupSet implements StyleSheetListener {
 			checkElementStyleGroup(element);
 			// removeElement( element );
 			// addElement( element );
-		}
+		}*/
+
+		elt2grp.keySet().stream().map(eltId -> getElement(eltId, elt2grp)).forEach(this::checkElementStyleGroup);
 	}
 
 	// Utility

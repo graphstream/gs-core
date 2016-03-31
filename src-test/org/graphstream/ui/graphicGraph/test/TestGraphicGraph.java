@@ -310,10 +310,7 @@ public class TestGraphicGraph {
 		spriteIds.add("S1");
 		spriteIds.add("S2");
 
-		for (GraphicSprite sprite : outGraph.spriteSet()) {
-			if (spriteIds.contains(sprite.getId()))
-				spriteIds.remove(sprite.getId());
-		}
+		outGraph.sprites().filter(sprite -> spriteIds.contains(sprite.getId())).forEach(sprite -> spriteIds.remove(sprite.getId()));
 
 		assertTrue(spriteIds.isEmpty());
 

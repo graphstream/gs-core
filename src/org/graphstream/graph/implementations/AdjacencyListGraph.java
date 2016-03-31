@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.stream.Stream;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeFactory;
@@ -208,19 +209,27 @@ public class AdjacencyListGraph extends AbstractGraph {
 		nodeCount = edgeCount = 0;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Edge> T getEdge(String id) {
-		return (T) edgeMap.get(id);
+	public Stream<Node> nodes() {
+		return Arrays.stream(nodeArray, 0, nodeCount);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Edge> T getEdge(int index) {
+	public Stream<Edge> edges() {
+		return Arrays.stream(edgeArray, 0, edgeCount);
+	}
+
+	@Override
+	public Edge getEdge(String id) {
+		return edgeMap.get(id);
+	}
+
+	@Override
+	public Edge getEdge(int index) {
 		if (index < 0 || index >= edgeCount)
 			throw new IndexOutOfBoundsException("Edge " + index
 					+ " does not exist");
-		return (T) edgeArray[index];
+		return edgeArray[index];
 	}
 
 	@Override
@@ -228,19 +237,17 @@ public class AdjacencyListGraph extends AbstractGraph {
 		return edgeCount;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Node> T getNode(String id) {
-		return (T) nodeMap.get(id);
+	public Node getNode(String id) {
+		return nodeMap.get(id);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Node> T getNode(int index) {
+	public Node getNode(int index) {
 		if (index < 0 || index > nodeCount)
 			throw new IndexOutOfBoundsException("Node " + index
 					+ " does not exist");
-		return (T) nodeArray[index];
+		return nodeArray[index];
 	}
 
 	@Override
@@ -298,16 +305,6 @@ public class AdjacencyListGraph extends AbstractGraph {
 			iNext = iPrev;
 			iPrev = -1;
 		}
-	}
-
-	@Override
-	public <T extends Edge> Iterator<T> getEdgeIterator() {
-		return new EdgeIterator<T>();
-	}
-
-	@Override
-	public <T extends Node> Iterator<T> getNodeIterator() {
-		return new NodeIterator<T>();
 	}
 
 	/*

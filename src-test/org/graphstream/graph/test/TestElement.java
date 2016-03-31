@@ -138,7 +138,7 @@ public class TestElement {
 		assertFalse(A.hasArray("pi"));
 		assertFalse(A.hasHash("pi"));
 		assertNotNull(A.getAttribute("pi"));
-		assertEquals(3.1415, A.getAttribute("pi"));
+		assertEquals(3.1415, A.getNumber("pi"), 0);
 		assertEquals(new Double(3.1415), A.getAttribute("pi"));
 
 		A.setAttribute("pi", "3.1415");

@@ -116,13 +116,4 @@ public class SingleNode extends AdjacencyListNode {
 		neighborMap.clear();
 		super.clearCallback();
 	}
-
-	// *** Others ***
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T extends Node> Iterator<T> getNeighborNodeIterator() {
-		return (Iterator<T>) Collections.unmodifiableSet(neighborMap.keySet())
-				.iterator();
-	}
 }
