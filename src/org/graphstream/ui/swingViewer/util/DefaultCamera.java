@@ -51,11 +51,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -365,19 +361,15 @@ public class DefaultCamera implements Camera {
 	 *         nothing found.
 	 */
 	public GraphicElement findNodeOrSpriteAt(GraphicGraph graph, double x, double y) {
-		for (Node n : graph) {
-			GraphicNode node = (GraphicNode) n;
-
-			if (nodeContains(node, x, y))
-				return node;
+		try {
+			return (GraphicElement) graph.nodes().filter(node -> {
+				return nodeContains((GraphicElement) node, x, y);
+			}).findFirst().get();
+		} catch(NoSuchElementException e) {
+			return graph.sprites().filter(sprite -> {
+				return spriteContains(sprite, x, y);
+			}).findFirst().orElse(null);
 		}
-
-		for (GraphicSprite sprite : graph.spriteSet()) {
-			if (spriteContains(sprite, x, y))
-				return sprite;
-		}
-
-		return null;
 	}
 
 	/**
@@ -405,10 +397,10 @@ public class DefaultCamera implements Camera {
 				elts.add((GraphicNode) node);
 		}
 
-		for (GraphicSprite sprite : graph.spriteSet()) {
+		graph.sprites().forEach(sprite -> {
 			if (isSpriteIn(sprite, x1, y1, x2, y2))
 				elts.add(sprite);
-		}
+		});
 
 		return Collections.unmodifiableList(elts);
 	}

@@ -33,8 +33,9 @@ package org.graphstream.graph;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.stream.Stream;
 
-public class BreadthFirstIterator<T extends Node> implements Iterator<T> {
+public class BreadthFirstIterator implements Iterator<Node> {
 	protected boolean directed;
 	protected Graph graph;
 	protected Node[] queue;
@@ -64,23 +65,24 @@ public class BreadthFirstIterator<T extends Node> implements Iterator<T> {
 		return qHead < qTail;
 	}
 
-	@SuppressWarnings("unchecked")
-	public T next() {
+	public Node next() {
 		if (qHead >= qTail)
 			throw new NoSuchElementException();
 		Node current = queue[qHead++];
 		int level = depth[current.getIndex()] + 1;
-		Iterable<Edge> edges = directed ? current.getEachLeavingEdge()
-				: current.getEachEdge();
-		for (Edge e : edges) {
+		Stream<Edge> edges = directed ? current.leavingEdges() : current.edges();
+
+		edges.forEach(e -> {
 			Node node = e.getOpposite(current);
 			int j = node.getIndex();
+
 			if (depth[j] == -1) {
 				queue[qTail++] = node;
 				depth[j] = level;
 			}
-		}
-		return (T)current;
+		});
+
+		return current;
 	}
 
 	public void remove() {

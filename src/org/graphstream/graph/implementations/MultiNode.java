@@ -107,13 +107,6 @@ public class MultiNode extends AdjacencyListNode {
 	// *** Others ***
 
 	@SuppressWarnings("unchecked")
-	@Override
-	public <T extends Node> Iterator<T> getNeighborNodeIterator() {
-		return (Iterator<T>) Collections.unmodifiableSet(neighborMap.keySet())
-				.iterator();
-	}
-
-	@SuppressWarnings("unchecked")
 	public <T extends Edge> Collection<T> getEdgeSetBetween(Node node) {
 		List<AbstractEdge> l = neighborMap.get(node);
 		if (l == null)

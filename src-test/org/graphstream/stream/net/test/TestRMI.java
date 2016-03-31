@@ -130,9 +130,9 @@ public class TestRMI {
 		assertTrue(AC.isDirected());
 		assertTrue(!BC.isDirected());
 		
-		assertEquals(A.getAttribute("int"), 1);
+		assertEquals(A.getAttribute("int"), Integer.valueOf(1));
 		assertEquals(B.getAttribute("string"), "test");
-		assertEquals(C.getAttribute("double"), 2.0);
+		assertEquals(C.getNumber("double"), 2.0, 0);
 
 		try {
 			double[][] points = AB.getAttribute("points");

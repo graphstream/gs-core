@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.function.Consumer;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
@@ -241,7 +242,6 @@ public class FileSinkSVG2 implements FileSink {
 
 		public void init(XMLWriter out, Graph g) throws IOException,
 				XMLStreamException {
-
 			if (g.hasAttribute("ui.stylesheet")) {
 				stylesheet.load(((String) g.getAttribute("ui.stylesheet")));
 			}
@@ -263,26 +263,44 @@ public class FileSinkSVG2 implements FileSink {
 			out.attribute("id", g.getId());
 			out.attribute("version", "1.1");
 
-			for (Edge e : g.getEachEdge()) {
-				groups.addElement(e);
+			try {
+				g.edges().forEach(e -> {
+					groups.addElement(e);
 
-				if (e.hasAttribute("ui.style"))
-					stylesheet.parseStyleFromString(
-							new Selector(Type.EDGE, e.getId(), null),
-							(String) e.getAttribute("ui.style"));
+					if (e.hasAttribute("ui.style")) {
+						try {
+							stylesheet.parseStyleFromString(
+									new Selector(Type.EDGE, e.getId(), null),
+									(String) e.getAttribute("ui.style"));
+						} catch (IOException ex) {
+							throw new RuntimeException(ex);
+						}
+					}
 
-				groups.checkElementStyleGroup(e);
-			}
+					groups.checkElementStyleGroup(e);
+				});
 
-			for (Node n : g.getEachNode()) {
-				groups.addElement(n);
+				g.nodes().forEach(n -> {
+					groups.addElement(n);
 
-				if (n.hasAttribute("ui.style"))
-					stylesheet.parseStyleFromString(
-							new Selector(Type.NODE, n.getId(), null),
-							(String) n.getAttribute("ui.style"));
+					if (n.hasAttribute("ui.style")) {
+						try {
+							stylesheet.parseStyleFromString(
+									new Selector(Type.NODE, n.getId(), null),
+									(String) n.getAttribute("ui.style"));
+						} catch (IOException ex) {
+							throw new RuntimeException(ex);
+						}
+					}
 
-				groups.checkElementStyleGroup(n);
+					groups.checkElementStyleGroup(n);
+				});
+			} catch (RuntimeException e) {
+				if (e.getCause() instanceof IOException)
+					throw (IOException) e.getCause();
+
+				if (e.getCause() instanceof XMLStreamException)
+					throw (IOException) e.getCause();
 			}
 
 			for (StyleGroup group : groups.groups())
@@ -361,7 +379,7 @@ public class FileSinkSVG2 implements FileSink {
 		}
 
 		public void writeElementText(XMLWriter out, String text, Element e,
-				StyleGroup style) throws XMLStreamException {
+									 StyleGroup style) throws XMLStreamException {
 			if (style == null
 					|| style.getTextVisibilityMode() != StyleConstants.TextVisibilityMode.HIDDEN) {
 				double x, y;
@@ -392,47 +410,47 @@ public class FileSinkSVG2 implements FileSink {
 						out.attribute("fill", toHexColor(style.getTextColor(0)));
 
 					switch (style.getTextAlignment()) {
-					case CENTER:
-						out.attribute("text-anchor", "middle");
-						out.attribute("alignment-baseline", "central");
-						break;
-					case LEFT:
-						out.attribute("text-anchor", "start");
-						break;
-					case RIGHT:
-						out.attribute("text-anchor", "end");
-						break;
-					default:
-						break;
+						case CENTER:
+							out.attribute("text-anchor", "middle");
+							out.attribute("alignment-baseline", "central");
+							break;
+						case LEFT:
+							out.attribute("text-anchor", "start");
+							break;
+						case RIGHT:
+							out.attribute("text-anchor", "end");
+							break;
+						default:
+							break;
 					}
 
 					switch (style.getTextSize().units) {
-					case PX:
-					case GU:
-						out.attribute("font-size", d(style.getTextSize().value));
-						break;
-					case PERCENTS:
-						out.attribute("font-size", d(style.getTextSize().value)
-								+ "%");
-						break;
+						case PX:
+						case GU:
+							out.attribute("font-size", d(style.getTextSize().value));
+							break;
+						case PERCENTS:
+							out.attribute("font-size", d(style.getTextSize().value)
+									+ "%");
+							break;
 					}
 
 					if (style.getTextFont() != null)
 						out.attribute("font-family", style.getTextFont());
 
 					switch (style.getTextStyle()) {
-					case NORMAL:
-						break;
-					case ITALIC:
-						out.attribute("font-style", "italic");
-						break;
-					case BOLD:
-						out.attribute("font-weight", "bold");
-						break;
-					case BOLD_ITALIC:
-						out.attribute("font-weight", "bold");
-						out.attribute("font-style", "italic");
-						break;
+						case NORMAL:
+							break;
+						case ITALIC:
+							out.attribute("font-style", "italic");
+							break;
+						case BOLD:
+							out.attribute("font-weight", "bold");
+							break;
+						case BOLD_ITALIC:
+							out.attribute("font-weight", "bold");
+							out.attribute("font-style", "italic");
+							break;
 					}
 				}
 
@@ -457,57 +475,57 @@ public class FileSinkSVG2 implements FileSink {
 					sy = getValue(size.get(0), size.units, false);
 
 				switch (style.group.getShape()) {
-				case ROUNDED_BOX:
-					double rx,
-					ry;
+					case ROUNDED_BOX:
+						double rx,
+								ry;
 
-					rx = Math.min(5, sx / 2);
-					ry = Math.min(5, sy / 2);
+						rx = Math.min(5, sx / 2);
+						ry = Math.min(5, sy / 2);
 
-					concat(buffer, " m ", d(-sx / 2 + rx), " ", d(-sy / 2));
-					concat(buffer, " h ", d(sx - 2 * rx));
-					concat(buffer, " a ", d(rx), ",", d(ry), " 0 0 1 ", d(rx),
-							",", d(ry));
-					concat(buffer, " v ", d(sy - 2 * ry));
-					concat(buffer, " a ", d(rx), ",", d(ry), " 0 0 1 -", d(rx),
-							",", d(ry));
-					concat(buffer, " h ", d(-sx + 2 * rx));
-					concat(buffer, " a ", d(rx), ",", d(ry), " 0 0 1 -", d(rx),
-							",-", d(ry));
-					concat(buffer, " v ", d(-sy + 2 * ry));
-					concat(buffer, " a ", d(rx), ",", d(ry), " 0 0 1 ", d(rx),
-							"-", d(ry));
-					concat(buffer, " z");
-					break;
-				case BOX:
-					concat(buffer, " m ", d(-sx / 2), " ", d(-sy / 2));
-					concat(buffer, " h ", d(sx));
-					concat(buffer, " v ", d(sy));
-					concat(buffer, " h ", d(-sx));
-					concat(buffer, " z");
-					break;
-				case DIAMOND:
-					concat(buffer, " m ", d(-sx / 2), " 0");
-					concat(buffer, " l ", d(sx / 2), " ", d(-sy / 2));
-					concat(buffer, " l ", d(sx / 2), " ", d(sy / 2));
-					concat(buffer, " l ", d(-sx / 2), " ", d(sy / 2));
-					concat(buffer, " z");
-					break;
-				case TRIANGLE:
-					concat(buffer, " m ", d(0), " ", d(-sy / 2));
-					concat(buffer, " l ", d(sx / 2), " ", d(sy));
-					concat(buffer, " h ", d(-sx));
-					concat(buffer, " z");
-					break;
-				default:
-				case CIRCLE:
-					concat(buffer, " m ", d(-sx / 2), " 0");
-					concat(buffer, " a ", d(sx / 2), ",", d(sy / 2), " 0 1 0 ",
-							d(sx), ",0");
-					concat(buffer, " ", d(sx / 2), ",", d(sy / 2), " 0 1 0 -",
-							d(sx), ",0");
-					concat(buffer, " z");
-					break;
+						concat(buffer, " m ", d(-sx / 2 + rx), " ", d(-sy / 2));
+						concat(buffer, " h ", d(sx - 2 * rx));
+						concat(buffer, " a ", d(rx), ",", d(ry), " 0 0 1 ", d(rx),
+								",", d(ry));
+						concat(buffer, " v ", d(sy - 2 * ry));
+						concat(buffer, " a ", d(rx), ",", d(ry), " 0 0 1 -", d(rx),
+								",", d(ry));
+						concat(buffer, " h ", d(-sx + 2 * rx));
+						concat(buffer, " a ", d(rx), ",", d(ry), " 0 0 1 -", d(rx),
+								",-", d(ry));
+						concat(buffer, " v ", d(-sy + 2 * ry));
+						concat(buffer, " a ", d(rx), ",", d(ry), " 0 0 1 ", d(rx),
+								"-", d(ry));
+						concat(buffer, " z");
+						break;
+					case BOX:
+						concat(buffer, " m ", d(-sx / 2), " ", d(-sy / 2));
+						concat(buffer, " h ", d(sx));
+						concat(buffer, " v ", d(sy));
+						concat(buffer, " h ", d(-sx));
+						concat(buffer, " z");
+						break;
+					case DIAMOND:
+						concat(buffer, " m ", d(-sx / 2), " 0");
+						concat(buffer, " l ", d(sx / 2), " ", d(-sy / 2));
+						concat(buffer, " l ", d(sx / 2), " ", d(sy / 2));
+						concat(buffer, " l ", d(-sx / 2), " ", d(sy / 2));
+						concat(buffer, " z");
+						break;
+					case TRIANGLE:
+						concat(buffer, " m ", d(0), " ", d(-sy / 2));
+						concat(buffer, " l ", d(sx / 2), " ", d(sy));
+						concat(buffer, " h ", d(-sx));
+						concat(buffer, " z");
+						break;
+					default:
+					case CIRCLE:
+						concat(buffer, " m ", d(-sx / 2), " 0");
+						concat(buffer, " a ", d(sx / 2), ",", d(sy / 2), " 0 1 0 ",
+								d(sx), ",0");
+						concat(buffer, " ", d(sx / 2), ",", d(sy / 2), " 0 1 0 -",
+								d(sx), ",0");
+						concat(buffer, " z");
+						break;
 				}
 			} else if (e instanceof Graph) {
 				concat(buffer, " M ", d(viewBox.x1), " ", d(viewBox.y1));
@@ -541,19 +559,19 @@ public class FileSinkSVG2 implements FileSink {
 		}
 
 		public double getValue(double d, StyleConstants.Units units,
-				boolean horizontal) {
+							   boolean horizontal) {
 			switch (units) {
-			case PX:
-				// TODO
-				return d;
-			case GU:
-				// TODO
-				return d;
-			case PERCENTS:
-				if (horizontal)
-					return (viewBox.x2 - viewBox.x1) * d / 100.0;
-				else
-					return (viewBox.y2 - viewBox.y1) * d / 100.0;
+				case PX:
+					// TODO
+					return d;
+				case GU:
+					// TODO
+					return d;
+				case PERCENTS:
+					if (horizontal)
+						return (viewBox.x2 - viewBox.x1) * d / 100.0;
+					else
+						return (viewBox.y2 - viewBox.y1) * d / 100.0;
 			}
 
 			return d;
@@ -564,7 +582,7 @@ public class FileSinkSVG2 implements FileSink {
 		double x1, y1, x2, y2;
 		double x3, y3, x4, y4;
 
-		double[] padding = { 0, 0 };
+		double[] padding = {0, 0};
 
 		ViewBox(double x1, double y1, double x2, double y2) {
 			this.x1 = x1;
@@ -577,13 +595,13 @@ public class FileSinkSVG2 implements FileSink {
 			x3 = y3 = Double.MAX_VALUE;
 			x4 = y4 = Double.MIN_VALUE;
 
-			for (Node n : g.getEachNode()) {
+			g.nodes().forEach(n-> {
 				x3 = Math.min(x3, getX(n));
 				y3 = Math.min(y3, getY(n));
 
 				x4 = Math.max(x4, getX(n));
 				y4 = Math.max(y4, getY(n));
-			}
+			});
 
 			Values v = style.getPadding();
 
@@ -628,18 +646,18 @@ public class FileSinkSVG2 implements FileSink {
 			this.dynfill = false;
 
 			switch (group.getType()) {
-			case EDGE:
-				buildEdgeStyle();
-				break;
-			case NODE:
-				buildNodeStyle();
-				break;
-			case GRAPH:
-				buildGraphStyle();
-				break;
-			case SPRITE:
-			default:
-				break;
+				case EDGE:
+					buildEdgeStyle();
+					break;
+				case NODE:
+					buildNodeStyle();
+					break;
+				case GRAPH:
+					buildGraphStyle();
+					break;
+				case SPRITE:
+				default:
+					break;
 			}
 		}
 
@@ -647,30 +665,30 @@ public class FileSinkSVG2 implements FileSink {
 			StringBuilder styleSB = new StringBuilder();
 
 			switch (group.getFillMode()) {
-			case GRADIENT_RADIAL:
-			case GRADIENT_HORIZONTAL:
-			case GRADIENT_VERTICAL:
-			case GRADIENT_DIAGONAL1:
-			case GRADIENT_DIAGONAL2:
-				concat(styleSB, "fill:url(#%gradient-id%);");
-				this.gradient = true;
-				break;
-			case PLAIN:
-				concat(styleSB, "fill:", toHexColor(group.getFillColor(0)), ";");
-				concat(styleSB, "fill-opacity:", d(group.getFillColor(0)
-						.getAlpha() / 255.0), ";");
-				break;
-			case DYN_PLAIN:
-				dynfill = true;
-				concat(styleSB, "fill:%fill-color%;");
-				concat(styleSB, "fill-opacity:%fill-opacity%;");
-				break;
-			case IMAGE_TILED:
-			case IMAGE_SCALED:
-			case IMAGE_SCALED_RATIO_MAX:
-			case IMAGE_SCALED_RATIO_MIN:
-			case NONE:
-				break;
+				case GRADIENT_RADIAL:
+				case GRADIENT_HORIZONTAL:
+				case GRADIENT_VERTICAL:
+				case GRADIENT_DIAGONAL1:
+				case GRADIENT_DIAGONAL2:
+					concat(styleSB, "fill:url(#%gradient-id%);");
+					this.gradient = true;
+					break;
+				case PLAIN:
+					concat(styleSB, "fill:", toHexColor(group.getFillColor(0)), ";");
+					concat(styleSB, "fill-opacity:", d(group.getFillColor(0)
+							.getAlpha() / 255.0), ";");
+					break;
+				case DYN_PLAIN:
+					dynfill = true;
+					concat(styleSB, "fill:%fill-color%;");
+					concat(styleSB, "fill-opacity:%fill-opacity%;");
+					break;
+				case IMAGE_TILED:
+				case IMAGE_SCALED:
+				case IMAGE_SCALED_RATIO_MAX:
+				case IMAGE_SCALED_RATIO_MIN:
+				case NONE:
+					break;
 			}
 
 			concat(styleSB, "fill-rule:nonzero;");
@@ -693,25 +711,25 @@ public class FileSinkSVG2 implements FileSink {
 			StringBuilder styleSB = new StringBuilder();
 
 			switch (group.getFillMode()) {
-			case GRADIENT_RADIAL:
-			case GRADIENT_HORIZONTAL:
-			case GRADIENT_VERTICAL:
-			case GRADIENT_DIAGONAL1:
-			case GRADIENT_DIAGONAL2:
-				concat(styleSB, "stroke:url(#%gradient-id%);");
-				this.gradient = true;
-				break;
-			case PLAIN:
-			case DYN_PLAIN:
-				concat(styleSB, "stroke:", toHexColor(group.getFillColor(0)),
-						";");
-				break;
-			case IMAGE_TILED:
-			case IMAGE_SCALED:
-			case IMAGE_SCALED_RATIO_MAX:
-			case IMAGE_SCALED_RATIO_MIN:
-			case NONE:
-				break;
+				case GRADIENT_RADIAL:
+				case GRADIENT_HORIZONTAL:
+				case GRADIENT_VERTICAL:
+				case GRADIENT_DIAGONAL1:
+				case GRADIENT_DIAGONAL2:
+					concat(styleSB, "stroke:url(#%gradient-id%);");
+					this.gradient = true;
+					break;
+				case PLAIN:
+				case DYN_PLAIN:
+					concat(styleSB, "stroke:", toHexColor(group.getFillColor(0)),
+							";");
+					break;
+				case IMAGE_TILED:
+				case IMAGE_SCALED:
+				case IMAGE_SCALED_RATIO_MAX:
+				case IMAGE_SCALED_RATIO_MIN:
+				case NONE:
+					break;
 			}
 
 			concat(styleSB, "stroke-width:", getSize(group.getSize(), 0), ";");
@@ -726,35 +744,35 @@ public class FileSinkSVG2 implements FileSink {
 				String x1 = null, x2 = null, y1 = null, y2 = null;
 
 				switch (group.getFillMode()) {
-				case GRADIENT_RADIAL:
-					type = "radialGradient";
-					break;
-				case GRADIENT_HORIZONTAL:
-					x1 = "0%";
-					y1 = "50%";
-					x2 = "100%";
-					y2 = "50%";
-					break;
-				case GRADIENT_VERTICAL:
-					x1 = "50%";
-					y1 = "0%";
-					x2 = "50%";
-					y2 = "100%";
-					break;
-				case GRADIENT_DIAGONAL1:
-					x1 = "0%";
-					y1 = "0%";
-					x2 = "100%";
-					y2 = "100%";
-					break;
-				case GRADIENT_DIAGONAL2:
-					x1 = "100%";
-					y1 = "100%";
-					x2 = "0%";
-					y2 = "0%";
-					break;
-				default:
-					break;
+					case GRADIENT_RADIAL:
+						type = "radialGradient";
+						break;
+					case GRADIENT_HORIZONTAL:
+						x1 = "0%";
+						y1 = "50%";
+						x2 = "100%";
+						y2 = "50%";
+						break;
+					case GRADIENT_VERTICAL:
+						x1 = "50%";
+						y1 = "0%";
+						x2 = "50%";
+						y2 = "100%";
+						break;
+					case GRADIENT_DIAGONAL1:
+						x1 = "0%";
+						y1 = "0%";
+						x2 = "100%";
+						y2 = "100%";
+						break;
+					case GRADIENT_DIAGONAL2:
+						x1 = "100%";
+						y1 = "100%";
+						x2 = "0%";
+						y2 = "0%";
+						break;
+					default:
+						break;
 				}
 
 				out.open(type);
@@ -893,7 +911,7 @@ public class FileSinkSVG2 implements FileSink {
 	 * long, java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
-			String attribute, Object value) {
+								   String attribute, Object value) {
 	}
 
 	/*
@@ -905,7 +923,7 @@ public class FileSinkSVG2 implements FileSink {
 	 * java.lang.Object)
 	 */
 	public void edgeAttributeChanged(String sourceId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
+									 String edgeId, String attribute, Object oldValue, Object newValue) {
 	}
 
 	/*
@@ -916,7 +934,7 @@ public class FileSinkSVG2 implements FileSink {
 	 * , long, java.lang.String, java.lang.String)
 	 */
 	public void edgeAttributeRemoved(String sourceId, long timeId,
-			String edgeId, String attribute) {
+									 String edgeId, String attribute) {
 	}
 
 	/*
@@ -927,7 +945,7 @@ public class FileSinkSVG2 implements FileSink {
 	 * , long, java.lang.String, java.lang.Object)
 	 */
 	public void graphAttributeAdded(String sourceId, long timeId,
-			String attribute, Object value) {
+									String attribute, Object value) {
 	}
 
 	/*
@@ -938,7 +956,7 @@ public class FileSinkSVG2 implements FileSink {
 	 * String, long, java.lang.String, java.lang.Object, java.lang.Object)
 	 */
 	public void graphAttributeChanged(String sourceId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
+									  String attribute, Object oldValue, Object newValue) {
 	}
 
 	/*
@@ -949,7 +967,7 @@ public class FileSinkSVG2 implements FileSink {
 	 * String, long, java.lang.String)
 	 */
 	public void graphAttributeRemoved(String sourceId, long timeId,
-			String attribute) {
+									  String attribute) {
 	}
 
 	/*
@@ -960,7 +978,7 @@ public class FileSinkSVG2 implements FileSink {
 	 * long, java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-			String attribute, Object value) {
+								   String attribute, Object value) {
 	}
 
 	/*
@@ -972,7 +990,7 @@ public class FileSinkSVG2 implements FileSink {
 	 * java.lang.Object)
 	 */
 	public void nodeAttributeChanged(String sourceId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
+									 String nodeId, String attribute, Object oldValue, Object newValue) {
 	}
 
 	/*
@@ -983,7 +1001,7 @@ public class FileSinkSVG2 implements FileSink {
 	 * , long, java.lang.String, java.lang.String)
 	 */
 	public void nodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute) {
+									 String nodeId, String attribute) {
 	}
 
 	/*
@@ -993,7 +1011,7 @@ public class FileSinkSVG2 implements FileSink {
 	 * java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
+						  String fromNodeId, String toNodeId, boolean directed) {
 	}
 
 	/*

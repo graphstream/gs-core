@@ -36,6 +36,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 /**
  * Path description.
@@ -395,6 +396,7 @@ public class Path implements Structure {
 	 * 
 	 * @return The size of the path.
 	 */
+	@Override
 	public int getNodeCount() {
 		return nodePath.size();
 	}
@@ -404,55 +406,36 @@ public class Path implements Structure {
 	 * 
 	 * @see org.graphstream.graph.Structure#getEdgeCount()
 	 */
+	@Override
 	public int getEdgeCount() {
 		return edgePath.size();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Structure#getNodeIterator()
+	 *
+	 * @see org.graphstream.graph.Structure#nodes()
 	 */
-	@SuppressWarnings("unchecked")
-	public <T extends Node> Iterator<T> getNodeIterator() {
-		return (Iterator<T>) nodePath.iterator();
+	@Override
+	public Stream<Node> nodes() {
+		return nodePath.stream();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Structure#getEdgeIterator()
+	 *
+	 * @see org.graphstream.graph.Structure#edges()
 	 */
-	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterator<T> getEdgeIterator() {
-		return (Iterator<T>) edgePath.iterator();
+	@Override
+	public Stream<Edge> edges() {
+		return edgePath.stream();
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Structure#getEachNode()
-	 */
-	@SuppressWarnings("unchecked")
-	public <T extends Node> Iterable<? extends T> getEachNode() {
-		return (Iterable<? extends T>) nodePath;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Structure#getEachEdge()
-	 */
-	@SuppressWarnings("unchecked")
-	public <T extends Edge> Iterable<? extends T> getEachEdge() {
-		return (Iterable<? extends T>) edgePath;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.graphstream.graph.Structure#getNodeSet()
-	 */
+		 * (non-Javadoc)
+		 *
+		 * @see org.graphstream.graph.Structure#getNodeSet()
+		 */
 	@SuppressWarnings("unchecked")
 	public <T extends Node> Collection<T> getNodeSet() {
 		return (Collection<T>) nodePath;

@@ -165,7 +165,6 @@ public class Timeline implements Source, Replayable, Iterable<Graph> {
 	}
 
 	/**
-	 * 
 	 * @param source
 	 */
 	public void begin(Source source) {
@@ -175,7 +174,6 @@ public class Timeline implements Source, Replayable, Iterable<Graph> {
 	}
 
 	/**
-	 * 
 	 * @param source
 	 */
 	public void begin(Graph source) {
@@ -190,7 +188,7 @@ public class Timeline implements Source, Replayable, Iterable<Graph> {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void end() {
 		if (currentDiff != null) {
@@ -415,13 +413,16 @@ public class Timeline implements Source, Replayable, Iterable<Graph> {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("id=\"").append(g.getId()).append("\" node={");
 
-		for (Node n : g)
-			buffer.append("\"").append(n.getId()).append("\", ");
+		g.nodes().forEach(n -> buffer.append("\"").append(n.getId()).append("\", "));
+
 		buffer.append("}, edges={");
-		for (Edge e : g.getEachEdge())
+
+		g.edges().forEach(e -> {
 			buffer.append("\"").append(e.getId()).append("\":\"")
 					.append(e.getSourceNode().getId()).append("\"--\"")
 					.append(e.getTargetNode().getId()).append("\", ");
+		});
+
 		buffer.append("}");
 
 		return buffer.toString();

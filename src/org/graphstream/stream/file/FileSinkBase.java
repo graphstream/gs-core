@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
@@ -115,32 +116,32 @@ public abstract class FileSinkBase implements FileSink {
 	 *            The graph to export.
 	 */
 	protected void exportGraph(Graph graph) {
-		String graphId = graph.getId();
-		long timeId = 0;
+		final String graphId = graph.getId();
+		final AtomicLong timeId = new AtomicLong(0);
 
 		for (String key : graph.getAttributeKeySet())
-			graphAttributeAdded(graphId, timeId++, key, graph.getAttribute(key));
+			graphAttributeAdded(graphId, timeId.getAndIncrement(), key, graph.getAttribute(key));
 
-		for (Node node : graph) {
+		graph.nodes().forEach(node -> {
 			String nodeId = node.getId();
-			nodeAdded(graphId, timeId++, nodeId);
+			nodeAdded(graphId, timeId.getAndIncrement(), nodeId);
 
 			if (node.getAttributeCount() > 0)
 				for (String key : node.getAttributeKeySet())
-					nodeAttributeAdded(graphId, timeId++, nodeId, key,
+					nodeAttributeAdded(graphId, timeId.getAndIncrement(), nodeId, key,
 							node.getAttribute(key));
-		}
+		});
 
-		for (Edge edge : graph.getEachEdge()) {
+		graph.edges().forEach(edge -> {
 			String edgeId = edge.getId();
-			edgeAdded(graphId, timeId++, edgeId, edge.getNode0().getId(), edge
+			edgeAdded(graphId, timeId.getAndIncrement(), edgeId, edge.getNode0().getId(), edge
 					.getNode1().getId(), edge.isDirected());
 
 			if (edge.getAttributeCount() > 0)
 				for (String key : edge.getAttributeKeySet())
-					edgeAttributeAdded(graphId, timeId++, edgeId, key,
+					edgeAttributeAdded(graphId, timeId.getAndIncrement(), edgeId, key,
 							edge.getAttribute(key));
-		}
+		});
 	}
 
 	/*

@@ -39,8 +39,7 @@ import org.graphstream.ui.view.View;
 
 import java.awt.event.MouseEvent;
 
-public class DefaultMouseManager implements MouseManager
-{
+public class DefaultMouseManager implements MouseManager {
 	// Attribute
 
 	/**
@@ -61,7 +60,7 @@ public class DefaultMouseManager implements MouseManager
 		view.addMouseListener(this);
 		view.addMouseMotionListener(this);
 	}
-	
+
 	public void release() {
 		view.removeMouseListener(this);
 		view.removeMouseMotionListener(this);
@@ -75,20 +74,13 @@ public class DefaultMouseManager implements MouseManager
 		// Unselect all.
 
 		if (!event.isShiftDown()) {
-			for (Node node : graph) {
-				if (node.hasAttribute("ui.selected"))
-					node.removeAttribute("ui.selected");
-			}
-
-			for (GraphicSprite sprite : graph.spriteSet()) {
-				if (sprite.hasAttribute("ui.selected"))
-					sprite.removeAttribute("ui.selected");
-			}
+			graph.nodes().filter(n -> n.hasAttribute("ui.selected")).forEach(n -> n.removeAttribute("ui.selected"));
+			graph.sprites().filter(s -> s.hasAttribute("ui.selected")).forEach(s -> s.removeAttribute("ui.selected"));
 		}
 	}
 
 	protected void mouseButtonRelease(MouseEvent event,
-			Iterable<GraphicElement> elementsInArea) {
+									  Iterable<GraphicElement> elementsInArea) {
 		for (GraphicElement element : elementsInArea) {
 			if (!element.hasAttribute("ui.selected"))
 				element.addAttribute("ui.selected");
@@ -96,7 +88,7 @@ public class DefaultMouseManager implements MouseManager
 	}
 
 	protected void mouseButtonPressOnElement(GraphicElement element,
-			MouseEvent event) {
+											 MouseEvent event) {
 		view.freezeElement(element, true);
 		if (event.getButton() == 3) {
 			element.addAttribute("ui.selected");
@@ -110,7 +102,7 @@ public class DefaultMouseManager implements MouseManager
 	}
 
 	protected void mouseButtonReleaseOffElement(GraphicElement element,
-			MouseEvent event) {
+												MouseEvent event) {
 		view.freezeElement(element, false);
 		if (event.getButton() != 3) {
 			element.removeAttribute("ui.clicked");

@@ -33,6 +33,7 @@ package org.graphstream.graph;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.stream.Stream;
 
 /**
  * An Interface that advises general purpose methods for handling nodes as
@@ -78,35 +79,6 @@ public interface Node extends Element, Iterable<Edge> {
 	int getInDegree();
 
 	/**
-	 * True if an edge leaves this node toward node 'id'.
-	 * 
-	 * @param id
-	 *            Identifier of the target node.
-	 * @return True if a directed edge goes from this node to 'id' or if an
-	 *         undirected edge exists.
-	 */
-	boolean hasEdgeToward(String id);
-
-	/**
-	 * True if an edge enters this node from node 'id'.
-	 * 
-	 * @param id
-	 *            Identifier of the source node.
-	 * @return True if a directed edge goes from this node to 'id' or if an
-	 *         undirected edge exists.
-	 */
-	boolean hasEdgeFrom(String id);
-
-	/**
-	 * True if an edge exists between this node and node 'id'.
-	 * 
-	 * @param id
-	 *            Identifier of another node.
-	 * @return True if a edge exists between this node and node 'id'.
-	 */
-	boolean hasEdgeBetween(String id);
-
-	/**
 	 * Retrieve an edge that leaves this node toward 'id'.
 	 * <p>
 	 * This method selects only edges leaving this node an pointing at node 'id'
@@ -130,7 +102,7 @@ public interface Node extends Element, Iterable<Edge> {
 	 * @return Directed edge going from this node to 'id', or undirected edge if
 	 *         it exists, else null.
 	 */
-	<T extends Edge> T getEdgeToward(String id);
+	Edge getEdgeToward(String id);
 
 	/**
 	 * Retrieve an edge that leaves node 'id' toward this node.
@@ -156,7 +128,7 @@ public interface Node extends Element, Iterable<Edge> {
 	 * @return Directed edge going from node 'id' to this node, or undirected
 	 *         edge if it exists, else null.
 	 */
-	<T extends Edge> T getEdgeFrom(String id);
+	Edge getEdgeFrom(String id);
 
 	/**
 	 * Retrieve an edge between this node and the node 'id', if it exits.
@@ -182,88 +154,20 @@ public interface Node extends Element, Iterable<Edge> {
 	 *            Identifier of the opposite node.
 	 * @return Edge between node 'id' and this node if it exists, else null.
 	 */
-	<T extends Edge> T getEdgeBetween(String id);
+	Edge getEdgeBetween(String id);
 
 	/**
-	 * Iterator on the set of connected edges.
-	 * <p>
-	 * This iterator iterates on all edges leaving and entering (this includes
-	 * any non-directed edge present, and a non-directed edge is only iterated
-	 * once).
-	 * </p>
-	 * <p>
-	 * This method is implicitly generic and return an Iterator over something
-	 * which extends Edge. The return type is the one of the left part of the
-	 * assignment. For example, in the following call :
-	 * 
-	 * <pre>
-	 * Iterator&lt;ExtendedEdge&gt; ite = node.getEdgeIterator();
-	 * </pre>
-	 * 
-	 * the method will return an Iterator&lt;ExtendedEdge&gt;. If no left part
-	 * exists, method will just return an Iterator&lt;Edge&gt;.
-	 * </p>
-	 * 
-	 * @return The iterator, edges are iterated in arbitrary order.
-	 */
-	<T extends Edge> Iterator<T> getEdgeIterator();
-
-	/**
-	 * Iterator only on leaving edges.
-	 * <p>
-	 * This iterator iterates only on directed edges going from this node to
-	 * others (non-directed edges are included in the iteration).
-	 * </p>
-	 * <p>
-	 * This method is implicitly generic and return an Iterator over something
-	 * which extends Edge. The return type is the one of the left part of the
-	 * assignment. For example, in the following call :
-	 * 
-	 * <pre>
-	 * Iterator&lt;ExtendedEdge&gt; ite = node.getEnteringEdgeIterator();
-	 * </pre>
-	 * 
-	 * the method will return an Iterator&lt;ExtendedEdge&gt;. If no left part
-	 * exists, method will just return an Iterator&lt;Edge&gt;.
-	 * </p>
-	 * 
-	 * @return The iterator, edges are iterated in arbitrary order.
-	 */
-	<T extends Edge> Iterator<T> getEnteringEdgeIterator();
-
-	/**
-	 * Iterator only on entering edges.
-	 * <p>
-	 * This iterator iterates only on directed edges going from other nodes
-	 * toward this node (non-directed edges are included in the iteration).
-	 * </p>
-	 * <p>
-	 * This method is implicitly generic and return an Iterator over something
-	 * which extends Edge. The return type is the one of the left part of the
-	 * assignment. For example, in the following call :
-	 * 
-	 * <pre>
-	 * Iterator&lt;ExtendedEdge&gt; ite = node.getLeavingEdgeIterator();
-	 * </pre>
-	 * 
-	 * the method will return an Iterator&lt;ExtendedEdge&gt;. If no left part
-	 * exists, method will just return an Iterator&lt;Edge&gt;.
-	 * </p>
-	 * 
-	 * @return The iterator, edges are iterated in arbitrary order.
-	 */
-	<T extends Edge> Iterator<T> getLeavingEdgeIterator();
-
-	/**
-	 * Iterator on the set of neighbor nodes connected to this node via one or
+	 * Stream over neighbor nodes connected to this node via one or
 	 * more edges. This iterator iterates across any leaving, entering and non
 	 * directed edges (nodes are neighbors even if they only have a directed
 	 * edge from them toward this node). If there are multiple edges connecting
 	 * the same node, it might be iterated several times.
 	 * 
-	 * @return The iterator, neighbors are iterated in arbitrary order.
+	 * @return The stream, neighbors are streamed in arbitrary order.
 	 */
-	<T extends Node> Iterator<T> getNeighborNodeIterator();
+	default Stream<Node> neighborNodes() {
+		return edges().map(edge -> { return edge.getOpposite(Node.this); });
+	}
 
 	/**
 	 * I-th edge. Edges are stored in no given order.
@@ -291,7 +195,7 @@ public interface Node extends Element, Iterable<Edge> {
 	 *             if <code>i</code> is negative or greater than or equal to the
 	 *             degree
 	 */
-	<T extends Edge> T getEdge(int i);
+	Edge getEdge(int i);
 
 	/**
 	 * I-th entering edge. Edges are stored in no given order.
@@ -319,7 +223,7 @@ public interface Node extends Element, Iterable<Edge> {
 	 *             if <code>i</code> is negative or greater than or equal to the
 	 *             in-degree
 	 */
-	<T extends Edge> T getEnteringEdge(int i);
+	Edge getEnteringEdge(int i);
 
 	/**
 	 * I-th leaving edge. Edges are stored in no given order.
@@ -347,7 +251,7 @@ public interface Node extends Element, Iterable<Edge> {
 	 *             if <code>i</code> is negative or greater than or equal to the
 	 *             out-degree
 	 */
-	<T extends Edge> T getLeavingEdge(int i);
+	Edge getLeavingEdge(int i);
 
 	/**
 	 * Iterator for breadth first exploration of the graph, starting at this
@@ -372,7 +276,7 @@ public interface Node extends Element, Iterable<Edge> {
 	 * @return An iterator able to explore the graph in a breadth first way
 	 *         starting at this node.
 	 */
-	<T extends Node> Iterator<T> getBreadthFirstIterator();
+	 Iterator<Node> getBreadthFirstIterator();
 
 	/**
 	 * Iterator for breadth first exploration of the graph, starting at this
@@ -399,7 +303,7 @@ public interface Node extends Element, Iterable<Edge> {
 	 * @return An iterator able to explore the graph in a breadth first way
 	 *         starting at this node.
 	 */
-	<T extends Node> Iterator<T> getBreadthFirstIterator(boolean directed);
+	Iterator<Node> getBreadthFirstIterator(boolean directed);
 
 	/**
 	 * Iterator for depth first exploration of the graph, starting at this node.
@@ -425,7 +329,7 @@ public interface Node extends Element, Iterable<Edge> {
 	 * @complexity of the depth first iterator O(n+m) with n the number of nodes
 	 *             and m the number of edges.
 	 */
-	<T extends Node> Iterator<T> getDepthFirstIterator();
+	Iterator<Node> getDepthFirstIterator();
 
 	/**
 	 * Iterator for depth first exploration of the graph, starting at this node.
@@ -451,129 +355,40 @@ public interface Node extends Element, Iterable<Edge> {
 	 * @return An iterator able to explore the graph in a depth first way
 	 *         starting at this node.
 	 */
-	<T extends Node> Iterator<T> getDepthFirstIterator(boolean directed);
+	Iterator<Node> getDepthFirstIterator(boolean directed);
 
 	/**
-	 * Set of all entering and leaving edges.
+	 * Stream over all entering and leaving edges.
 	 * 
-	 * <p>
-	 * This method is implicitly generic and return an Iterable over something
-	 * which extends Edge. The return type is the one of the left part of the
-	 * assignment. For example, in the following call :
-	 * 
-	 * <pre>
-	 * Iterable&lt;ExtendedEdge&gt; ite = node.getEdgeSet();
-	 * </pre>
-	 * 
-	 * the method will return an Iterable&lt;ExtendedEdge&gt;. If no left part
-	 * exists, method will just return an Iterable&lt;Edge&gt;.
-	 * </p>
-	 * 
-	 * @return A collection containing all directed and undirected edges,
+	 * @return A stream over all directed and undirected edges,
 	 *         leaving or entering.
 	 */
-	<T extends Edge> Iterable<T> getEachEdge();
+	Stream<Edge> edges();
 
 	/**
-	 * Set of all leaving edges.
-	 * <p>
-	 * This method is implicitly generic and return an Iterable over something
-	 * which extends Edge. The return type is the one of the left part of the
-	 * assignment. For example, in the following call :
+	 * Stream over all leaving edges.
 	 * 
-	 * <pre>
-	 * Iterable&lt;ExtendedEdge&gt; ite = node.getLeavingEdgeSet();
-	 * </pre>
-	 * 
-	 * the method will return an Iterable&lt;ExtendedEdge&gt;. If no left part
-	 * exists, method will just return an Iterable&lt;Edge&gt;.
-	 * </p>
-	 * 
-	 * @return A collection of only edges that leave this node plus all
+	 * @return A stream over only edges that leave this node plus all
 	 *         undirected edges.
 	 */
-	<T extends Edge> Iterable<T> getEachLeavingEdge();
+	default Stream<Edge> leavingEdges() {
+		return edges().filter(e -> ( e.getSourceNode() == this ));
+	}
 
 	/**
-	 * Set of all entering edges.
-	 * <p>
-	 * This method is implicitly generic and return an Iterable over something
-	 * which extends Edge. The return type is the one of the left part of the
-	 * assignment. For example, in the following call :
-	 * 
-	 * <pre>
-	 * Iterable&lt;ExtendedEdge&gt; ite = node.getEnteringEdgeSet();
-	 * </pre>
-	 * 
-	 * the method will return an Iterable&lt;ExtendedEdge&gt;. If no left part
-	 * exists, method will just return an Iterable&lt;Edge&gt;.
-	 * </p>
-	 * 
-	 * @return A collection of only edges that enter this node plus all
+	 * Stream over all entering edges.
+	 *
+	 * @return A stream over only edges that enter this node plus all
 	 *         undirected edges.
 	 */
-	<T extends Edge> Iterable<T> getEachEnteringEdge();
+	default Stream<Edge> enteringEdges() {
+		return edges().filter(e -> ( e.getTargetNode() == this ));
+	}
 
-	/**
-	 * Set of all entering and leaving edges.
-	 * 
-	 * <p>
-	 * This method is implicitly generic and return an Iterable over something
-	 * which extends Edge. The return type is the one of the left part of the
-	 * assignment. For example, in the following call :
-	 * 
-	 * <pre>
-	 * Iterable&lt;ExtendedEdge&gt; ite = node.getEdgeSet();
-	 * </pre>
-	 * 
-	 * the method will return an Iterable&lt;ExtendedEdge&gt;. If no left part
-	 * exists, method will just return an Iterable&lt;Edge&gt;.
-	 * </p>
-	 * 
-	 * @return A collection containing all directed and undirected edges,
-	 *         leaving or entering.
-	 */
-	<T extends Edge> Collection<T> getEdgeSet();
-
-	/**
-	 * Set of all leaving edges.
-	 * <p>
-	 * This method is implicitly generic and return an Iterable over something
-	 * which extends Edge. The return type is the one of the left part of the
-	 * assignment. For example, in the following call :
-	 * 
-	 * <pre>
-	 * Iterable&lt;ExtendedEdge&gt; ite = node.getLeavingEdgeSet();
-	 * </pre>
-	 * 
-	 * the method will return an Iterable&lt;ExtendedEdge&gt;. If no left part
-	 * exists, method will just return an Iterable&lt;Edge&gt;.
-	 * </p>
-	 * 
-	 * @return A collection of only edges that leave this node plus all
-	 *         undirected edges.
-	 */
-	<T extends Edge> Collection<T> getLeavingEdgeSet();
-
-	/**
-	 * Set of all entering edges.
-	 * <p>
-	 * This method is implicitly generic and return an Iterable over something
-	 * which extends Edge. The return type is the one of the left part of the
-	 * assignment. For example, in the following call :
-	 * 
-	 * <pre>
-	 * Iterable&lt;ExtendedEdge&gt; ite = node.getEnteringEdgeSet();
-	 * </pre>
-	 * 
-	 * the method will return an Iterable&lt;ExtendedEdge&gt;. If no left part
-	 * exists, method will just return an Iterable&lt;Edge&gt;.
-	 * </p>
-	 * 
-	 * @return A collection of only edges that enter this node plus all
-	 *         undirected edges.
-	 */
-	<T extends Edge> Collection<T> getEnteringEdgeSet();
+	@Override
+	default Iterator<Edge> iterator() {
+		return edges().iterator();
+	}
 
 	/**
 	 * Override the Object.toString() method.
@@ -583,6 +398,18 @@ public interface Node extends Element, Iterable<Edge> {
 	// New methods
 
 	/**
+	 * True if an edge leaves this node toward node 'id'.
+	 *
+	 * @param id
+	 *            Identifier of the target node.
+	 * @return True if a directed edge goes from this node to 'id' or if an
+	 *         undirected edge exists.
+	 */
+	default boolean hasEdgeToward(String id) {
+		return getEdgeToward(id) != null;
+	}
+
+	/**
 	 * True if an edge leaves this node toward a given node.
 	 * 
 	 * @param node
@@ -590,7 +417,9 @@ public interface Node extends Element, Iterable<Edge> {
 	 * @return True if a directed edge goes from this node to the other node or
 	 *         if an undirected edge exists.
 	 */
-	boolean hasEdgeToward(Node node);
+	default boolean hasEdgeToward(Node node) {
+		return getEdgeToward(node) != null;
+	}
 
 	/**
 	 * True if an edge leaves this node toward a node with given index.
@@ -603,7 +432,21 @@ public interface Node extends Element, Iterable<Edge> {
 	 *             if the index is negative or greater than {@code
 	 *             getNodeCount() - 1}.
 	 */
-	boolean hasEdgeToward(int index) throws IndexOutOfBoundsException;
+	default boolean hasEdgeToward(int index) throws IndexOutOfBoundsException {
+		return getEdgeToward(index) != null;
+	}
+
+	/**
+	 * True if an edge enters this node from node 'id'.
+	 *
+	 * @param id
+	 *            Identifier of the source node.
+	 * @return True if a directed edge goes from this node to 'id' or if an
+	 *         undirected edge exists.
+	 */
+	default boolean hasEdgeFrom(String id) {
+		return getEdgeFrom(id) != null;
+	}
 
 	/**
 	 * True if an edge enters this node from a given node.
@@ -613,7 +456,9 @@ public interface Node extends Element, Iterable<Edge> {
 	 * @return True if a directed edge goes from the other node to this node or
 	 *         if an undirected edge exists.
 	 */
-	boolean hasEdgeFrom(Node node);
+	default boolean hasEdgeFrom(Node node) {
+		return getEdgeFrom(node) != null;
+	}
 
 	/**
 	 * True if an edge enters this node from a node with given index.
@@ -626,7 +471,20 @@ public interface Node extends Element, Iterable<Edge> {
 	 *             if the index is negative or greater than {@code
 	 *             getNodeCount() - 1}.
 	 */
-	boolean hasEdgeFrom(int index) throws IndexOutOfBoundsException;
+	default boolean hasEdgeFrom(int index) throws IndexOutOfBoundsException {
+		return getEdgeFrom(index) != null;
+	}
+
+	/**
+	 * True if an edge exists between this node and node 'id'.
+	 *
+	 * @param id
+	 *            Identifier of another node.
+	 * @return True if a edge exists between this node and node 'id'.
+	 */
+	default boolean hasEdgeBetween(String id) {
+		return getEdgeBetween(id) != null;
+	}
 
 	/**
 	 * True if an edge exists between this node and another node.
@@ -635,7 +493,9 @@ public interface Node extends Element, Iterable<Edge> {
 	 *            Another node.
 	 * @return True if an edge exists between this node and the other node.
 	 */
-	boolean hasEdgeBetween(Node node);
+	default boolean hasEdgeBetween(Node node) {
+		return getEdgeBetween(node) != null;
+	}
 
 	/**
 	 * True if an edge exists between this node and a node with given index.
@@ -647,7 +507,9 @@ public interface Node extends Element, Iterable<Edge> {
 	 *             if the index is negative or greater than {@code
 	 *             getNodeCount() - 1}.
 	 */
-	boolean hasEdgeBetween(int index) throws IndexOutOfBoundsException;
+	default boolean hasEdgeBetween(int index) throws IndexOutOfBoundsException {
+		return getEdgeBetween(index) != null;
+	}
 
 	/**
 	 * Retrieves an edge that leaves this node toward another node.
@@ -673,7 +535,7 @@ public interface Node extends Element, Iterable<Edge> {
 	 * @return Directed edge going from this node to the parameter node, or
 	 *         undirected edge if it exists, else null.
 	 */
-	<T extends Edge> T getEdgeToward(Node node);
+	Edge getEdgeToward(Node node);
 
 	/**
 	 * Retrieves an edge that leaves this node toward the node with given index.
@@ -702,7 +564,7 @@ public interface Node extends Element, Iterable<Edge> {
 	 *             if the index is negative or greater than {@code
 	 *             getNodeCount() - 1}.
 	 */
-	<T extends Edge> T getEdgeToward(int index)
+	Edge getEdgeToward(int index)
 			throws IndexOutOfBoundsException;
 
 	/**
@@ -729,7 +591,7 @@ public interface Node extends Element, Iterable<Edge> {
 	 * @return Directed edge going from the parameter node to this node, or
 	 *         undirected edge if it exists, else null.
 	 */
-	<T extends Edge> T getEdgeFrom(Node node);
+	Edge getEdgeFrom(Node node);
 
 	/**
 	 * Retrieves an edge that leaves node with given index toward this node.
@@ -758,7 +620,7 @@ public interface Node extends Element, Iterable<Edge> {
 	 *             if the index is negative or greater than {@code
 	 *             getNodeCount() - 1}.
 	 */
-	<T extends Edge> T getEdgeFrom(int index) throws IndexOutOfBoundsException;
+	Edge getEdgeFrom(int index) throws IndexOutOfBoundsException;
 
 	/**
 	 * Retrieves an edge between this node and and another node if one exists.
@@ -785,7 +647,7 @@ public interface Node extends Element, Iterable<Edge> {
 	 * @return Edge between this node and the parameter node if it exists, else
 	 *         null.
 	 */
-	<T extends Edge> T getEdgeBetween(Node node);
+	Edge getEdgeBetween(Node node);
 
 	/**
 	 * Retrieves an edge between this node and the node with index i if one
@@ -816,7 +678,7 @@ public interface Node extends Element, Iterable<Edge> {
 	 *             if the index is negative or greater than {@code
 	 *             getNodeCount() - 1}.
 	 */
-	<T extends Edge> T getEdgeBetween(int index)
+	Edge getEdgeBetween(int index)
 			throws IndexOutOfBoundsException;
 
 }

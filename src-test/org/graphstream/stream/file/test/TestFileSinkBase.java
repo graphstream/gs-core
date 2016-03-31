@@ -429,9 +429,9 @@ public abstract class TestFileSinkBase {
 		assertTrue(B.hasAttribute("b"));
 		assertTrue(C.hasAttribute("c"));
 
-		assertEquals(1, inGraph.getAttribute("a"));
+		assertEquals(Integer.valueOf(1), inGraph.getAttribute("a"));
 		assertEquals("foo", inGraph.getAttribute("b"));
-		assertEquals(1, A.getAttribute("a"));
+		assertEquals(Integer.valueOf(1), A.getAttribute("a"));
 		assertEquals("foo", B.getAttribute("b"));
 		assertEquals("bar", C.getAttribute("c"));
 	}
