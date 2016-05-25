@@ -105,7 +105,8 @@ public class SpringBoxNodeParticle extends NodeParticle {
 						len = box.k; // XXX NEW To prevent infinite
 									// repulsion.
 				
-					double factor = ((box.K2 / (len * len)) * node.weight);
+					double factor = len != 0 ? ((box.K2 / (len * len)) * node.weight)
+						: 0.00001;
 
 					energies.accumulateEnergy(factor); // TODO check this
 					delta.scalarMult(-factor);
@@ -147,8 +148,8 @@ public class SpringBoxNodeParticle extends NodeParticle {
 							if (len < box.k)
 								len = box.k; // XXX NEW To prevent infinite
 												// repulsion.
-							double factor = ((box.K2 / (len * len)) * node.weight);
-
+							double factor = len != 0 ? ((box.K2 / (len * len)) * node
+									.weight) : 0.00001;
 							energies.accumulateEnergy(factor); // TODO check
 																// this
 							repE += factor;
@@ -187,8 +188,8 @@ public class SpringBoxNodeParticle extends NodeParticle {
 							if (len < box.k)
 								len = box.k; // XXX NEW To prevent infinite
 												// repulsion.
-							double factor = ((box.K2 / (len * len)) * node.weight);
-
+							double factor = len != 0 ? ((box.K2 / (len * len)) * (bary.weight))
+									: 0.00001f;
 							energies.accumulateEnergy(factor);
 							delta.scalarMult(-factor);
 							repE += factor;
