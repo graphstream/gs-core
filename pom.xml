@@ -220,9 +220,6 @@
 				<configuration>
 					<source>1.7</source>
 					<target>1.7</target>
-					<excludes>
-						<exclude>org/graphstream/stream/file/FileSinkSWF.java</exclude>
-					</excludes>
 				</configuration>
 				<version>3.3</version>
 			</plugin>
