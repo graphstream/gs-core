@@ -176,6 +176,14 @@ public class GraphicSprite extends GraphicElement {
 
 	@Override
 	public void move(double x, double y, double z) {
+
+		if (isAttachedToNode()){
+			GraphicNode n = getNodeAttachment();
+			x -= n.x;
+			y -= n.y;
+			z -= n.z;
+		}
+
 		setPosition(x, y, z, Style.Units.GU);
 	}
 
