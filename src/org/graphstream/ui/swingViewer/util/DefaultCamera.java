@@ -1001,11 +1001,9 @@ public class DefaultCamera implements Camera {
 			pos = new Point2D.Double();
 
 		GraphicNode node = sprite.getNodeAttachment();
-		double radius = metrics.lengthToGu(sprite.getX(), sprite.getUnits());
-		double z = (double) (sprite.getZ() * (Math.PI / 180f));
 
-		pos.x = node.x + ((double) Math.cos(z) * radius);
-		pos.y = node.y + ((double) Math.sin(z) * radius);
+		pos.x = node.x + sprite.getX();
+		pos.y = node.y + sprite.getY();
 
 		if (units == Units.PX)
 			Tx.transform(pos, pos);
