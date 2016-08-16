@@ -135,11 +135,11 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 	/**
 	 * The graph renderer.
 	 */
-	protected SwingGraphRenderer renderer;
+	protected GraphRenderer renderer;
 
 	// Construction
 
-	public DefaultView(Viewer viewer, String identifier, SwingGraphRenderer renderer) {
+	public DefaultView(Viewer viewer, String identifier, GraphRenderer renderer) {
 		super(identifier);
 
 		this.viewer = viewer;
