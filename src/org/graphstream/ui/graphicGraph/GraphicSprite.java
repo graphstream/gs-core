@@ -182,9 +182,19 @@ public class GraphicSprite extends GraphicElement {
 			x -= n.x;
 			y -= n.y;
 			z -= n.z;
-		}
+			setPosition(x, y, z, Style.Units.GU);
 
-		setPosition(x, y, z, Style.Units.GU);
+		} else if (isAttachedToEdge()){
+			GraphicEdge e = getEdgeAttachment();
+			double len = e.to.x - e.from.x;
+			double diff = x - e.from.x;
+			x = diff/len;
+			setPosition(x);
+
+		} else {
+			setPosition(x, y, z, Style.Units.GU);
+			
+		}
 	}
 
 	/**
