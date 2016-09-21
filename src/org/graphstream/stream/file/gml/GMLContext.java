@@ -353,26 +353,26 @@ public class GMLContext {
 
 		if (kv != null) {
 			StringBuffer style = new StringBuffer();
-			String w = null, h = null, d = null;
+			Object w = null, h = null, d = null;
 			graphics = new Graphics();
 
 			if (kv.get("x") != null) {
-				graphics.setX(asDouble((String) kv.get("x")));
+				graphics.setX(asDouble(kv.get("x")));
 			}
 			if (kv.get("y") != null) {
-				graphics.setY(asDouble((String) kv.get("y")));
+				graphics.setY(asDouble(kv.get("y")));
 			}
 			if (kv.get("z") != null) {
-				graphics.setZ(asDouble((String) kv.get("z")));
+				graphics.setZ(asDouble(kv.get("z")));
 			}
 			if (kv.get("w") != null) {
-				w = (String) kv.get("w");
+				w = kv.get("w");
 			}
 			if (kv.get("h") != null) {
-				h = (String) kv.get("h");
+				h = kv.get("h");
 			}
 			if (kv.get("d") != null) {
-				d = (String) kv.get("d");
+				d = kv.get("d");
 			}
 			if (w != null || h != null || d != null) {
 				int ww = w != null ? (int) asDouble(w) : 0;
@@ -398,17 +398,16 @@ public class GMLContext {
 
 		if (kv != null) {
 			StringBuffer style = new StringBuffer();
-			String w = null;
+			Object w = null;
 			graphics = new Graphics();
 
 			if (kv.get("width") != null) {
-				w = (String) kv.get("width");
+				w = kv.get("width");
 			} else if (kv.get("w") != null) {
-				w = (String) kv.get("w");
+				w = kv.get("w");
 			}
 			if (w != null) {
-				double ww = w != null ? asDouble(w) : 0.0;
-				style.append(String.format("size: %fpx;", ww));
+				style.append(String.format("size: %fpx;", asDouble(w)));
 			}
 			if (kv.get("type") != null) {
 				style.append(String.format("shape: %s; ",
@@ -453,10 +452,16 @@ public class GMLContext {
 		}
 	}
 
-	protected double asDouble(String value) {
-		try {
-			return Double.parseDouble(value);
-		} catch (NumberFormatException e) {
+	protected double asDouble(Object value) {
+		if (value instanceof Number) {
+			return ((Number) value).doubleValue();
+		} else if (value instanceof String) {
+			try {
+				return Double.parseDouble((String) value);
+			} catch (NumberFormatException e) {
+				return 0.0;
+			}
+		} else {
 			return 0.0;
 		}
 	}
