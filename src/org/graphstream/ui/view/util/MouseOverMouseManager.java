@@ -80,7 +80,6 @@ public class MouseOverMouseManager extends DefaultMouseManager {
             boolean stayedOnElement = false;
             GraphicElement currentElement = view.findNodeOrSpriteAt(event.getX(), event.getY());
             if (hoveredElement != null) {
-            	System.out.println("An alement is already hovered");
                 stayedOnElement = currentElement == null ? false : currentElement.equals(hoveredElement);
                 if (!stayedOnElement && hoveredElement.hasAttribute("ui.mouseOver")) {
                     mouseLeftElement(hoveredElement);
@@ -93,10 +92,8 @@ public class MouseOverMouseManager extends DefaultMouseManager {
                     hoveredElement = currentElement;
                     hoveredElementLastChanged = event.getWhen();
                     if (latestHoverTimerTask != null) {
-                    	System.out.println("Cancelling timer");
                         latestHoverTimerTask.cancel();
                     }
-                    System.out.println("Starting timer");
                     latestHoverTimerTask = new HoverTimerTask(hoveredElementLastChanged, hoveredElement);
                     hoverTimer.schedule(latestHoverTimerTask, delay);
                 }
@@ -126,7 +123,6 @@ public class MouseOverMouseManager extends DefaultMouseManager {
             try {
                 hoverLock.lock();
                 if (hoveredElementLastChanged == lastChanged) {
-                	System.out.println("Setting element as hovered");
                     mouseOverElement(element);
                 }
             } catch (Exception ex) {
