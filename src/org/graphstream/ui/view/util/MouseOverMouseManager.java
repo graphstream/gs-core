@@ -70,6 +70,7 @@ public class MouseOverMouseManager extends DefaultMouseManager {
     }
 
     protected void mouseLeftElement(GraphicElement element) {
+    	this.hoveredElement = null;
         element.removeAttribute("ui.mouseOver");
     }
 
@@ -79,7 +80,7 @@ public class MouseOverMouseManager extends DefaultMouseManager {
             boolean stayedOnElement = false;
             GraphicElement currentElement = view.findNodeOrSpriteAt(event.getX(), event.getY());
             if (hoveredElement != null) {
-                stayedOnElement = currentElement.equals(hoveredElement);
+                stayedOnElement = currentElement == null ? false : currentElement.equals(hoveredElement);
                 if (!stayedOnElement && hoveredElement.hasAttribute("ui.mouseOver")) {
                     mouseLeftElement(hoveredElement);
                 }
