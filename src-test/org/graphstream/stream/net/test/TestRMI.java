@@ -135,7 +135,7 @@ public class TestRMI {
 		assertEquals(C.getNumber("double"), 2.0, 0);
 
 		try {
-			double[][] points = AB.getAttribute("points");
+			double[][] points = (double[][]) AB.getAttribute("points");
 
 			assertEquals(points.length, 2);
 			assertEquals(points[0].length, 2);

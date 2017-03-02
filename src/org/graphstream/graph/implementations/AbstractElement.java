@@ -157,10 +157,9 @@ public abstract class AbstractElement implements Element {
 	 *             element.
 	 */
 	// public Object getAttribute( String key )
-	@SuppressWarnings("all")
-	public <T> T getAttribute(String key) {
+	public Object getAttribute(String key) {
 		if (attributes != null) {
-			T value = (T) attributes.get(key);
+			Object value = attributes.get(key);
 
 			if (value != null)
 				return value;
@@ -178,7 +177,7 @@ public abstract class AbstractElement implements Element {
 	 */
 	// public Object getFirstAttributeOf( String ... keys )
 	@SuppressWarnings("all")
-	public <T> T getFirstAttributeOf(String... keys) {
+	public Object getFirstAttributeOf(String... keys) {
 		Object o = null;
 
 		if (attributes != null) {
@@ -186,14 +185,14 @@ public abstract class AbstractElement implements Element {
 				o = attributes.get(key);
 
 				if (o != null)
-					return (T) o;
+					return o;
 			}
 		}
 
 		if (o == null && nullAttributesAreErrors())
 			throw new NullAttributeException();
 
-		return (T) o;
+		return o;
 	}
 
 	/**

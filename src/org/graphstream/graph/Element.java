@@ -87,8 +87,7 @@ public interface Element {
 	 * @return The object bound to the given key or null if no object match this
 	 *         attribute name.
 	 */
-	// Object getAttribute( String key );
-	<T> T getAttribute(String key);
+	Object getAttribute(String key);
 
 	/**
 	 * Like {@link #getAttribute(String)}, but returns the first existing
@@ -99,8 +98,7 @@ public interface Element {
 	 *            Several strings naming attributes.
 	 * @return The first attribute that exists.
 	 */
-	// Object getFirstAttributeOf( String... keys );
-	<T> T getFirstAttributeOf(String... keys);
+	Object getFirstAttributeOf(String... keys);
 
 	/**
 	 * Get the attribute object bound to the given key if it is an instance of

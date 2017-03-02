@@ -191,7 +191,7 @@ public interface Node extends Element, Iterable<Edge> {
 	 * @param i
 	 *            Index of the edge.
 	 * @return The i-th edge.
-	 * @throws IndexOutOfBoundException
+	 * @throws IndexOutOfBoundsException
 	 *             if <code>i</code> is negative or greater than or equal to the
 	 *             degree
 	 */
@@ -219,7 +219,7 @@ public interface Node extends Element, Iterable<Edge> {
 	 * @param i
 	 *            Index of the edge.
 	 * @return The i-th entering edge.
-	 * @throws IndexOutOfBoundException
+	 * @throws IndexOutOfBoundsException
 	 *             if <code>i</code> is negative or greater than or equal to the
 	 *             in-degree
 	 */
