@@ -80,14 +80,12 @@ public abstract class OneAttributeElement implements Element {
 		return id;
 	}
 
-	@SuppressWarnings("all")
-	public <T> T getAttribute(String key) {
-		return (T) attribute;
+	public Object getAttribute(String key) {
+		return attribute;
 	}
 
-	@SuppressWarnings("all")
-	public <T> T getFirstAttributeOf(String... keys) {
-		return (T) attribute;
+	public Object getFirstAttributeOf(String... keys) {
+		return attribute;
 	}
 
 	@SuppressWarnings("all")

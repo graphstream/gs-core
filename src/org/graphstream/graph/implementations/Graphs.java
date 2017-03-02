@@ -283,8 +283,8 @@ public class Graphs {
 			return o;
 		}
 
-		public <T> T getAttribute(String key) {
-			T o;
+		public Object getAttribute(String key) {
+			Object o;
 
 			attributeLock.lock();
 
@@ -354,8 +354,8 @@ public class Graphs {
 			return getAttributeKeySet();
 		}
 
-		public <T> T getFirstAttributeOf(String... keys) {
-			T o;
+		public Object getFirstAttributeOf(String... keys) {
+			Object o;
 
 			attributeLock.lock();
 

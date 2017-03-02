@@ -372,7 +372,7 @@ public class Sprite implements Element {
 		return manager.graph.getLabel(String.format("%s.%s", completeId, key));
 	}
 
-	public <T> T getAttribute(String key) {
+	public Object getAttribute(String key) {
 		return manager.graph.getAttribute(String.format("%s.%s", completeId,
 				key));
 	}
@@ -413,7 +413,7 @@ public class Sprite implements Element {
 		throw new RuntimeException("not implemented");
 	}
 
-	public <T> T getFirstAttributeOf(String... keys) {
+	public Object getFirstAttributeOf(String... keys) {
 		String completeKeys[] = new String[keys.length];
 		int i = 0;
 

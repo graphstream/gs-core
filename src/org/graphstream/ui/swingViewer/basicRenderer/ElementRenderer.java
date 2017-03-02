@@ -292,10 +292,10 @@ public abstract class ElementRenderer {
 							(float) alpha);
 				}
 			} else if (element.hasAttribute("ui.color", Color.class)) {
-				color = element.getAttribute("ui.color");
+				color = element.getAttribute("ui.color", Color.class);
 			}
 		} else if (element.hasAttribute("ui.color", Color.class)) {
-			color = element.getAttribute("ui.color");
+			color = element.getAttribute("ui.color", Color.class);
 		}
 
 		return color;

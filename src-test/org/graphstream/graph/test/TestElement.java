@@ -305,7 +305,7 @@ public class TestElement {
 		A.addAttribute("I", "i");
 		A.addAttribute("Z", "z");
 
-		String s = A.getFirstAttributeOf("A", "B", "C", "I", "Z");
+		String s = A.getFirstAttributeOf(String.class,"A", "B", "C", "I", "Z");
 
 		assertNotNull(s);
 		assertEquals("c", s);
