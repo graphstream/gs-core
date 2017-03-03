@@ -536,20 +536,21 @@ public class Viewer implements ActionListener {
 			if (layoutPipeIn != null)
 				layoutPipeIn.pump();
 			// long t3=System.currentTimeMillis();
+			// Prevent the timer from using a empty graph to display
+			if(graph != null){
+				boolean changed = graph.graphChangedFlag();
 
-			boolean changed = graph.graphChangedFlag();
+				if (changed) {
+					computeGraphMetrics();
+					// long t4=System.currentTimeMillis();
 
-			if (changed) {
-				computeGraphMetrics();
-				// long t4=System.currentTimeMillis();
+					for (View view : views.values())
+						view.display(graph, changed);
+				}
+				// long t5=System.currentTimeMillis();
 
-				for (View view : views.values())
-					view.display(graph, changed);
+				graph.resetGraphChangedFlag();
 			}
-			// long t5=System.currentTimeMillis();
-
-			graph.resetGraphChangedFlag();
-
 			// System.err.printf("display pump=%f layoutPump=%f metrics=%f
 			// display=%f (size delta=%d size1=%d size2=%d)%n",
 			// (t2-t1)/1000.0, (t3-t2)/1000.0, (t4-t3)/1000.0, (t5-t4)/1000.0,
