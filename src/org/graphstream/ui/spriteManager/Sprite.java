@@ -36,6 +36,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.graphstream.graph.Element;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
@@ -43,7 +46,7 @@ import org.graphstream.ui.graphicGraph.stylesheet.Values;
 
 /**
  * A gentle little sprite.
- * 
+ * <p>
  * <p>
  * Sprite objects allow to add data representations in a graphic display of a
  * graph. A sprite is a graphical representation that can double anywhere in the
@@ -52,19 +55,19 @@ import org.graphstream.ui.graphicGraph.stylesheet.Values;
  * perpendicular to it with one or two coordinates. When attached to a node, a
  * sprite "orbits" around the node at any given radius and angle around it.
  * </p>
- * 
+ * <p>
  * <p>
  * Sprites can have many shapes. Most of the CSS nodes shapes are available for
  * sprites, but more are possible. Some shapes follow the form of the element
  * (node or edge) they are attached to.
  * </p>
- * 
+ * <p>
  * <p>
  * Sprites can be moved and animated easily along edges, around nodes, or
  * anywhere on the graph surface. Their shape can change. Some sprites allows to
  * draw pie charts or statistics, or images.
  * </p>
- * 
+ * <p>
  * <p>
  * Sprites are not part of a graph so to speak. Furthermore they make sense only
  * when a graph is displayed with a viewer that supports sprites. Therefore they
@@ -72,7 +75,7 @@ import org.graphstream.ui.graphicGraph.stylesheet.Values;
  * and is in charge of handling the whole set of sprites, creating them,
  * enumerating them, and destroying them.
  * </p>
- * 
+ * <p>
  * <p>
  * Implementation note: sprites do not exist ! In fact the sprite class only
  * handles a set of attributes that are stored in the graph (the one associated
@@ -84,7 +87,7 @@ import org.graphstream.ui.graphicGraph.stylesheet.Values;
  * like DGS, the whole sprite history is remembered: when it moved, when it
  * changed, etc.
  * </p>
- * 
+ * <p>
  * <p>
  * Second implementation node : often you will need to extend the sprite class.
  * This is easily possible, but you must remember that you cannot create sprites
@@ -95,7 +98,7 @@ import org.graphstream.ui.graphicGraph.stylesheet.Values;
  * {@link #init(String, SpriteManager, Values)} method of the sprite will be
  * called. Override this method to initialise your sprite.
  * </p>
- * 
+ *
  * @see SpriteManager
  * @see SpriteFactory
  */
@@ -129,13 +132,15 @@ public class Sprite implements Element {
 
 	// Construction
 
-	/** For the use with {@link #init(String, SpriteManager, Values)}. */
+	/**
+	 * For the use with {@link #init(String, SpriteManager, Values)}.
+	 */
 	protected Sprite() {
 	}
 
 	/**
 	 * New sprite with a given identifier.
-	 * 
+	 * <p>
 	 * You cannot build sprites yourself, they are created by the sprite
 	 * manager.
 	 */
@@ -145,7 +150,7 @@ public class Sprite implements Element {
 
 	/**
 	 * New sprite with a given identifier.
-	 * 
+	 * <p>
 	 * You cannot build sprites yourself, they are created by the sprite
 	 * manager.
 	 */
@@ -155,7 +160,7 @@ public class Sprite implements Element {
 
 	/**
 	 * New sprite with a given identifier.
-	 * 
+	 * <p>
 	 * You cannot build sprites yourself, they are created by the sprite
 	 * managern. This method is used by the manager when creating instances of
 	 * sprites that inherit this class. If you derive the sprite class you can
@@ -199,10 +204,10 @@ public class Sprite implements Element {
 
 		ArrayList<String> keys = new ArrayList<String>();
 
-		for (String key : manager.graph.getAttributeKeySet()) {
+		manager.graph.attributeKeys().forEach(key -> {
 			if (key.startsWith(start))
 				keys.add(key);
-		}
+		});
 
 		for (String key : keys)
 			manager.graph.removeAttribute(key);
@@ -213,7 +218,7 @@ public class Sprite implements Element {
 	/**
 	 * The element the sprite is attached to or null if the sprite is not
 	 * attached.
-	 * 
+	 *
 	 * @return An element the sprite is attached to or null.
 	 */
 	public Element getAttachment() {
@@ -222,7 +227,7 @@ public class Sprite implements Element {
 
 	/**
 	 * True if attached to an edge or node.
-	 * 
+	 *
 	 * @return False if not attached.
 	 */
 	public boolean attached() {
@@ -231,7 +236,7 @@ public class Sprite implements Element {
 
 	/**
 	 * X position.
-	 * 
+	 *
 	 * @return The position in abscissa.
 	 */
 	public double getX() {
@@ -243,7 +248,7 @@ public class Sprite implements Element {
 
 	/**
 	 * Y position.
-	 * 
+	 *
 	 * @return The position in ordinate.
 	 */
 	public double getY() {
@@ -255,7 +260,7 @@ public class Sprite implements Element {
 
 	/**
 	 * Z position.
-	 * 
+	 *
 	 * @return The position in depth.
 	 */
 	public double getZ() {
@@ -275,9 +280,8 @@ public class Sprite implements Element {
 	 * Attach the sprite to a node with the given identifier. If needed the
 	 * sprite is first detached. If the given node identifier does not exist,
 	 * the sprite stays in detached state.
-	 * 
-	 * @param id
-	 *            Identifier of the node to attach to.
+	 *
+	 * @param id Identifier of the node to attach to.
 	 */
 	public void attachToNode(String id) {
 		if (attachment != null)
@@ -293,9 +297,8 @@ public class Sprite implements Element {
 	 * Attach the sprite to an edge with the given identifier. If needed the
 	 * sprite is first detached. If the given edge identifier does not exist,
 	 * the sprite stays in detached state.
-	 * 
-	 * @param id
-	 *            Identifier of the edge to attach to.
+	 *
+	 * @param id Identifier of the edge to attach to.
 	 */
 	public void attachToEdge(String id) {
 		if (attachment != null)
@@ -387,25 +390,12 @@ public class Sprite implements Element {
 	 */
 	public int getAttributeCount() {
 		String start = String.format("%s.", completeId);
-		int count = 0;
 
-		for (String key : manager.graph.getAttributeKeySet()) {
-			if (key.startsWith(start))
-				count++;
-		}
-
-		return count;
+		return (int) manager.graph.attributeKeys().filter(key -> key.startsWith(start)).count();
 	}
 
-	public Iterator<String> getAttributeKeyIterator() {
-		throw new RuntimeException("not implemented");
-	}
-	
-	public Iterable<String> getEachAttributeKey() {
-		return getAttributeKeySet();
-	}
-
-	public Collection<String> getAttributeKeySet() {
+	@Override
+	public Stream<String> attributeKeys() {
 		throw new RuntimeException("not implemented");
 	}
 
@@ -508,22 +498,18 @@ public class Sprite implements Element {
 
 	public void clearAttributes() {
 		String start = String.format("%s.", completeId);
-		ArrayList<String> keys = new ArrayList<String>();
 
-		for (String key : manager.graph.getAttributeKeySet()) {
-			if (key.startsWith(start))
-				keys.add(key);
-		}
-
-		for (String key : keys)
-			manager.graph.removeAttribute(key);
+		manager.graph.attributeKeys()
+				.filter(key -> key.startsWith(start))
+				.collect(Collectors.toList())
+				.forEach(key -> manager.graph.removeAttribute(key));
 	}
 
 	public void removeAttribute(String attribute) {
 		manager.graph.removeAttribute(String.format("%s.%s", completeId,
 				attribute));
 	}
-	
+
 	// XXX -> UGLY FIX
 	// Sprites do not have unique index but is this useful?
 	public int getIndex() {

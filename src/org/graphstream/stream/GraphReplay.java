@@ -80,17 +80,16 @@ public class GraphReplay extends SourceBase implements Source {
 	 * @param graph The graph to export.
 	 */
 	public void replay(Graph graph) {
-		for (String key : graph.getAttributeKeySet())
-			sendGraphAttributeAdded(sourceId, key, graph.getAttribute(key));
+		graph.attributeKeys().forEach(key ->
+			sendGraphAttributeAdded(sourceId, key, graph.getAttribute(key)));
 
 		graph.nodes().forEach(node -> {
 			String nodeId = node.getId();
 			sendNodeAdded(sourceId, nodeId);
 
 			if (node.getAttributeCount() > 0)
-				for (String key : node.getAttributeKeySet())
-					sendNodeAttributeAdded(sourceId, nodeId, key,
-							node.getAttribute(key));
+				node.attributeKeys().forEach(key ->
+					sendNodeAttributeAdded(sourceId, nodeId, key, node.getAttribute(key)));
 		});
 
 		graph.edges().forEach(edge -> {
@@ -99,9 +98,8 @@ public class GraphReplay extends SourceBase implements Source {
 					.getNode1().getId(), edge.isDirected());
 
 			if (edge.getAttributeCount() > 0)
-				for (String key : edge.getAttributeKeySet())
-					sendEdgeAttributeAdded(sourceId, edgeId, key,
-							edge.getAttribute(key));
+				edge.attributeKeys().forEach(key ->
+					sendEdgeAttributeAdded(sourceId, edgeId, key, edge.getAttribute(key)));
 		});
 	}
 }

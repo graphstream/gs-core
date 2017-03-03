@@ -114,13 +114,12 @@ public class TestGraph {
 	}
 
 	protected void checkAttribute(Element e1, Element e2) {
-		for (String key : e1.getAttributeKeySet()) {
+		e1.attributeKeys().forEach(key -> {
 			assertTrue(e2.hasAttribute(key));
 			assertEquals(e1.getAttribute(key), e2.getAttribute(key));
-		}
+		});
 
-		for (String key : e2.getAttributeKeySet())
-			assertTrue(e1.hasAttribute(key));
+		e2.attributeKeys().forEach(key -> assertTrue(e1.hasAttribute(key)));
 	}
 
 	protected void testBasic(Graph graph) {

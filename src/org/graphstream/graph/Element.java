@@ -32,10 +32,9 @@
 package org.graphstream.graph;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * An element is a part of a graph (node, edge, the graph itself).
@@ -138,7 +137,9 @@ public interface Element {
 	 *            The label to search.
 	 * @return The label string value or null if not found.
 	 */
-	CharSequence getLabel(String key);
+	default CharSequence getLabel(String key) {
+		return getAttribute(key, CharSequence.class);
+	}
 
 	/**
 	 * Get the number bound to key. Numbers are special attributes whose value
@@ -266,26 +267,12 @@ public interface Element {
 	boolean hasHash(String key);
 
 	/**
-	 * Iterator on all attributes keys.
-	 * 
-	 * @return An iterator on the key set of attributes.
+	 * Stream over the attribute keys of the element.
+	 * If no attribute exist, method will return empty stream.
+	 *
+	 * @return a String stream corresponding to the keys of the attributes.
 	 */
-	Iterator<String> getAttributeKeyIterator();
-
-	/**
-	 * An iterable view on the set of attribute keys usable within a for-each
-	 * loop.
-	 * 
-	 * @return an iterable view on attribute keys.
-	 */
-	Iterable<String> getEachAttributeKey();
-
-	/**
-	 * An unmodifiable view on the set of attribute keys.
-	 * 
-	 * @return an unmodifiable collection containing the attribute keys.
-	 */
-	Collection<String> getAttributeKeySet();
+	Stream<String> attributeKeys();
 
 	/**
 	 * Remove all registered attributes. This includes numbers, labels and

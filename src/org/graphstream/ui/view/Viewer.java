@@ -662,34 +662,29 @@ public class Viewer implements ActionListener {
 	protected void replayGraph(Graph graph) {
 		// Replay all graph attributes.
 
-		if (graph.getAttributeKeySet() != null)
-			for (String key : graph.getAttributeKeySet()) {
-				this.graph.addAttribute(key, graph.getAttribute(key));
-			}
+		graph.attributeKeys().forEach(key -> {
+			graph.addAttribute(key, graph.getAttribute(key));
+		});
 
 		// Replay all nodes and their attributes.
 
 		graph.nodes().forEach(node -> {
 			Node n = this.graph.addNode(node.getId());
 
-			if (node.getAttributeKeySet() != null) {
-				for (String key : node.getAttributeKeySet()) {
-					n.addAttribute(key, node.getAttribute(key));
-				}
-			}
+			node.attributeKeys().forEach(key -> {
+				n.addAttribute(key, node.getAttribute(key));
+			});
 		});
 
 		// Replay all edges and their attributes.
 
 		graph.edges().forEach(edge -> {
-			Edge e = this.graph.addEdge(edge.getId(), edge.getSourceNode().getId(), edge.getTargetNode().getId(),
+			Edge e = graph.addEdge(edge.getId(), edge.getSourceNode().getId(), edge.getTargetNode().getId(),
 					edge.isDirected());
 
-			if (edge.getAttributeKeySet() != null) {
-				for (String key : edge.getAttributeKeySet()) {
-					e.addAttribute(key, edge.getAttribute(key));
-				}
-			}
+			edge.attributeKeys().forEach(key -> {
+				e.addAttribute(key, edge.getAttribute(key));
+			});
 		});
 	}
 }

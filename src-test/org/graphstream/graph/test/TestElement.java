@@ -35,7 +35,8 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.graphstream.graph.CompoundAttribute;
 import org.graphstream.graph.Graph;
@@ -139,7 +140,7 @@ public class TestElement {
 		assertFalse(A.hasHash("pi"));
 		assertNotNull(A.getAttribute("pi"));
 		assertEquals(3.1415, A.getNumber("pi"), 0);
-		assertEquals(new Double(3.1415), A.getAttribute("pi"));
+		assertEquals(3.1415, A.getAttribute("pi"));
 
 		A.setAttribute("pi", "3.1415");
 		
@@ -147,7 +148,7 @@ public class TestElement {
 		
 		// Vector of numbers.
 
-		ArrayList<Number> numbers = new ArrayList<Number>();
+		ArrayList<Number> numbers = new ArrayList<>();
 
 		numbers.add(3);
 		numbers.add(1.4);
@@ -169,7 +170,7 @@ public class TestElement {
 
 		// Hashes 1.
 
-		HashMap<String, String> map = new HashMap<String, String>();
+		HashMap<String, String> map = new HashMap<>();
 
 		map.put("A", "a");
 		map.put("B", "b");
@@ -339,10 +340,7 @@ public class TestElement {
 
 		assertEquals(3, A.getAttributeCount());
 
-		HashSet<String> keys = new HashSet<String>();
-
-		for (String key : A.getAttributeKeySet())
-			keys.add(key);
+		Set<String> keys = A.attributeKeys().collect(Collectors.toSet());
 
 		assertEquals(3, keys.size());
 		assertTrue(keys.contains("A"));

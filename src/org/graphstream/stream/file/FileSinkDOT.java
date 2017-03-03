@@ -33,6 +33,8 @@ package org.graphstream.stream.file;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Element;
@@ -108,10 +110,10 @@ public class FileSinkDOT extends FileSinkBase {
 	@Override
 	protected void exportGraph(Graph graph) {
 		String graphId = graph.getId();
-		long timeId = 0;
+		AtomicLong timeId = new AtomicLong(0);
 
-		for (String key : graph.getAttributeKeySet())
-			graphAttributeAdded(graphId, timeId++, key, graph.getAttribute(key));
+		graph.attributeKeys().forEach(key ->
+			graphAttributeAdded(graphId, timeId.getAndIncrement(), key, graph.getAttribute(key)));
 
 		for (Node node : graph) {
 			String nodeId = node.getId();
@@ -265,20 +267,20 @@ public class FileSinkDOT extends FileSinkBase {
 			return "";
 
 		StringBuilder buffer = new StringBuilder("[");
-		boolean first = true;
+		AtomicBoolean first = new AtomicBoolean(true);
 
-		for (String key : e.getEachAttributeKey()) {
+		e.attributeKeys().forEach(key -> {
 			boolean quote = true;
 			Object value = e.getAttribute(key);
 
 			if (value instanceof Number)
 				quote = false;
 
-			buffer.append(String.format("%s\"%s\"=%s%s%s", first ? "" : ",",
+			buffer.append(String.format("%s\"%s\"=%s%s%s", first.get() ? "" : ",",
 					key, quote ? "\"" : "", value, quote ? "\"" : ""));
 
-			first = false;
-		}
+			first.set(false);
+		});
 
 		return buffer.append(']').toString();
 	}
