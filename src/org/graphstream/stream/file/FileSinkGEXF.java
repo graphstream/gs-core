@@ -208,8 +208,15 @@ public class FileSinkGEXF extends FileSinkBase {
 
 					if (n.getAttributeCount() > 0) {
 						startElement(stream, "attvalues");
-						for (String key : n.getAttributeKeySet())
-							nodeAttributes.push(stream, n, key);
+
+						n.attributeKeys().forEach(key -> {
+							try {
+								nodeAttributes.push(stream, n, key);
+							} catch (XMLStreamException e) {
+								onException.accept(e);
+							}
+						});
+
 						endElement(stream, false);
 					}
 
@@ -231,8 +238,15 @@ public class FileSinkGEXF extends FileSinkBase {
 
 					if (e.getAttributeCount() > 0) {
 						startElement(stream, "attvalues");
-						for (String key : e.getAttributeKeySet())
-							edgeAttributes.push(stream, e, key);
+
+						e.attributeKeys().forEach(key -> {
+							try {
+								edgeAttributes.push(stream, e, key);
+							} catch (XMLStreamException e1) {
+								onException.accept(e1);
+							}
+						});
+
 						endElement(stream, false);
 					}
 
@@ -468,10 +482,10 @@ public class FileSinkGEXF extends FileSinkBase {
 				stream = g.edges();
 
 			stream.forEach(e -> {
-				for (String key : e.getAttributeKeySet()) {
+				e.attributeKeys().forEach(key -> {
 					Object value = e.getAttribute(key);
 					check(key, value);
-				}
+				});
 			});
 		}
 

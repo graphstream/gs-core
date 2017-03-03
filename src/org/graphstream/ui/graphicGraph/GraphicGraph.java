@@ -1412,22 +1412,19 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	public void replay() {
 		// Replay all graph attributes.
 
-		if (getAttributeKeySet() != null)
-			for (String key : getAttributeKeySet()) {
-				listeners.sendGraphAttributeAdded(id, key, getAttribute(key));
-			}
+		attributeKeys().forEach(key -> {
+			listeners.sendGraphAttributeAdded(id, key, getAttribute(key));
+		});
 
 		// Replay all nodes and their attributes.
 
 		nodes().forEach(node -> {
 			listeners.sendNodeAdded(id, node.getId());
 
-			if (node.getAttributeKeySet() != null) {
-				for (String key : node.getAttributeKeySet()) {
-					listeners.sendNodeAttributeAdded(id, node.getId(), key,
-							node.getAttribute(key));
-				}
-			}
+			node.attributeKeys().forEach(key -> {
+				listeners.sendNodeAttributeAdded(id, node.getId(), key,
+						node.getAttribute(key));
+			});
 		});
 
 		// Replay all edges and their attributes.
@@ -1436,12 +1433,10 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 			listeners.sendEdgeAdded(id, edge.getId(), edge.getSourceNode()
 					.getId(), edge.getTargetNode().getId(), edge.isDirected());
 
-			if (edge.getAttributeKeySet() != null) {
-				for (String key : edge.getAttributeKeySet()) {
-					listeners.sendEdgeAttributeAdded(id, edge.getId(), key,
-							edge.getAttribute(key));
-				}
-			}
+			edge.attributeKeys().forEach(key -> {
+				listeners.sendEdgeAttributeAdded(id, edge.getId(), key,
+						edge.getAttribute(key));
+			});
 		});
 	}
 }

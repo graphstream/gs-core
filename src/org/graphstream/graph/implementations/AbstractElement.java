@@ -36,11 +36,10 @@ import org.graphstream.graph.Element;
 import org.graphstream.graph.NullAttributeException;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * A base implementation of an element.
@@ -55,13 +54,11 @@ import java.util.Map;
  * @since 20040910
  */
 public abstract class AbstractElement implements Element {
-	public static enum AttributeChangeEvent {
+	public enum AttributeChangeEvent {
 		ADD, CHANGE, REMOVE
-	};
+	}
 
 	// Attribute
-
-	// protected static Set<String> emptySet = new HashSet<String>();
 
 	/**
 	 * Tag of this element.
@@ -156,7 +153,7 @@ public abstract class AbstractElement implements Element {
 	 * @complexity O(log(n)) with n being the number of attributes of this
 	 *             element.
 	 */
-	// public Object getAttribute( String key )
+	@Override
 	public Object getAttribute(String key) {
 		if (attributes != null) {
 			Object value = attributes.get(key);
@@ -175,8 +172,7 @@ public abstract class AbstractElement implements Element {
 	 * @complexity O(log(n*m)) with n being the number of attributes of this
 	 *             element and m the number of keys given.
 	 */
-	// public Object getFirstAttributeOf( String ... keys )
-	@SuppressWarnings("all")
+	@Override
 	public Object getFirstAttributeOf(String... keys) {
 		Object o = null;
 
@@ -199,14 +195,13 @@ public abstract class AbstractElement implements Element {
 	 * @complexity O(log(n)) with n being the number of attributes of this
 	 *             element.
 	 */
-	// public Object getAttribute( String key, Class<?> clazz )
-	@SuppressWarnings("all")
+	@Override
 	public <T> T getAttribute(String key, Class<T> clazz) {
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
 			if (o != null && clazz.isInstance(o))
-				return (T) o;
+				return clazz.cast(o);
 		}
 
 		if (nullAttributesAreErrors())
@@ -219,8 +214,7 @@ public abstract class AbstractElement implements Element {
 	 * @complexity O(log(n*m)) with n being the number of attributes of this
 	 *             element and m the number of keys given.
 	 */
-	// public Object getFirstAttributeOf( Class<?> clazz, String ... keys )
-	@SuppressWarnings("all")
+	@Override
 	public <T> T getFirstAttributeOf(Class<T> clazz, String... keys) {
 		Object o = null;
 
@@ -231,7 +225,7 @@ public abstract class AbstractElement implements Element {
 			o = attributes.get(key);
 
 			if (o != null && clazz.isInstance(o))
-				return (T) o;
+				return clazz.cast(o);
 		}
 
 		if (nullAttributesAreErrors())
@@ -244,24 +238,7 @@ public abstract class AbstractElement implements Element {
 	 * @complexity O(log(n)) with n being the number of attributes of this
 	 *             element.
 	 */
-	public String getLabel(String key) {
-		if (attributes != null) {
-			Object o = attributes.get(key);
-
-			if (o != null && o instanceof CharSequence)
-				return o.toString();
-		}
-
-		if (nullAttributesAreErrors())
-			throw new NullAttributeException(key);
-
-		return null;
-	}
-
-	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this
-	 *             element.
-	 */
+	@Override
 	public double getNumber(String key) {
 		if (attributes != null) {
 			Object o = attributes.get(key);
@@ -278,7 +255,7 @@ public abstract class AbstractElement implements Element {
 				} else if (o instanceof CharSequence) {
 					try {
 						return Double
-								.parseDouble(((CharSequence) o).toString());
+								.parseDouble(o.toString());
 					} catch (NumberFormatException e) {
 					}
 				}
@@ -355,10 +332,8 @@ public abstract class AbstractElement implements Element {
 	 *             element.
 	 */
 	public boolean hasAttribute(String key) {
-		if (attributes != null)
-			return attributes.containsKey(key);
+		return attributes != null && attributes.containsKey(key);
 
-		return false;
 	}
 
 	/**
@@ -452,37 +427,13 @@ public abstract class AbstractElement implements Element {
 		return false;
 	}
 
-	public Iterator<String> getAttributeKeyIterator() {
-		if (attributes != null)
-			return attributes.keySet().iterator();
+	@Override
+	public Stream<String> attributeKeys() {
+		if (attributes == null)
+			return Stream.empty();
 
-		return null;
+		return attributes.keySet().stream();
 	}
-
-	public Iterable<String> getEachAttributeKey() {
-		return getAttributeKeySet();
-	}
-
-	public Collection<String> getAttributeKeySet() {
-		if (attributes != null)
-			return (Collection<String>) Collections
-					.unmodifiableCollection(attributes.keySet());
-
-		return Collections.emptySet();
-	}
-
-	// public Map<String,Object> getAttributeMap()
-	// {
-	// if( attributes != null )
-	// {
-	// if( constMap == null )
-	// constMap = new ConstMap<String,Object>( attributes );
-	//
-	// return constMap;
-	// }
-	//
-	// return null;
-	// }
 
 	/**
 	 * Override the Object method
@@ -522,7 +473,7 @@ public abstract class AbstractElement implements Element {
 	 */
 	public void addAttribute(String attribute, Object... values) {
 		if (attributes == null)
-			attributes = new HashMap<String, Object>(1);
+			attributes = new HashMap<>(1);
 
 		Object oldValue;
 		Object value;
@@ -565,7 +516,7 @@ public abstract class AbstractElement implements Element {
 	 */
 	public void addAttributes(Map<String, Object> attributes) {
 		if (this.attributes == null)
-			this.attributes = new HashMap<String, Object>(attributes.size());
+			this.attributes = new HashMap<>(attributes.size());
 
 		Iterator<String> i = attributes.keySet().iterator();
 		Iterator<Object> j = attributes.values().iterator();
@@ -584,7 +535,7 @@ public abstract class AbstractElement implements Element {
 			// 'attributesBeingRemoved' is created only if this is required.
 			//
 			if (attributesBeingRemoved == null)
-				attributesBeingRemoved = new ArrayList<String>();
+				attributesBeingRemoved = new ArrayList<>();
 
 			//
 			// Avoid recursive calls when synchronizing graphs.

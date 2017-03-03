@@ -177,12 +177,12 @@ public class Graphs {
 	 * @param target
 	 */
 	public static void copyAttributes(Element source, Element target) {
-		for (String key : source.getAttributeKeySet()) {
+		source.attributeKeys().forEach(key -> {
 			Object value = source.getAttribute(key);
 			value = checkedArrayOrCollectionCopy(value);
 
 			target.setAttribute(key, value);
-		}
+		});
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
@@ -325,33 +325,22 @@ public class Graphs {
 			return c;
 		}
 
-		public Iterator<String> getAttributeKeyIterator() {
-			return getAttributeKeySet().iterator();
-		}
-
-		public Collection<String> getAttributeKeySet() {
-			ArrayList<String> o;
-			Iterator<String> it;
+		@Override
+		public Stream<String> attributeKeys() {
+			Stream<String> s = null;
 
 			attributeLock.lock();
 
 			try {
+				s = wrappedElement.attributeKeys();
 
-				o = new ArrayList<String>(wrappedElement.getAttributeCount());
-				it = wrappedElement.getAttributeKeyIterator();
-
-				while (it.hasNext())
-					o.add(it.next());
-
+				if (!s.spliterator().hasCharacteristics(Spliterator.CONCURRENT))
+					s = s.collect(Collectors.toList()).stream();
 			} finally {
 				attributeLock.unlock();
 			}
 
-			return o;
-		}
-
-		public Iterable<String> getEachAttributeKey() {
-			return getAttributeKeySet();
+			return s;
 		}
 
 		public Object getFirstAttributeOf(String... keys) {

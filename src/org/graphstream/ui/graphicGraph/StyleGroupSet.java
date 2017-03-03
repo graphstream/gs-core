@@ -1046,18 +1046,10 @@ public class StyleGroupSet implements StyleSheetListener {
 	 */
 	protected void checkForNewStyle(Rule newRule,
 			Map<String, String> elt2grp) {
-		/*Collection<Element> elementsToCheck = new ArrayList<Element>();
-
-		for (String eltId : elt2grp.keySet())
-			elementsToCheck.add(getElement(eltId, elt2grp));
-
-		for (Element element : elementsToCheck) {
-			checkElementStyleGroup(element);
-			// removeElement( element );
-			// addElement( element );
-		}*/
-
-		elt2grp.keySet().stream().map(eltId -> getElement(eltId, elt2grp)).forEach(this::checkElementStyleGroup);
+		elt2grp.keySet().stream()
+				.map(eltId -> getElement(eltId, elt2grp))
+				.collect(Collectors.toList())
+				.forEach(this::checkElementStyleGroup);
 	}
 
 	// Utility

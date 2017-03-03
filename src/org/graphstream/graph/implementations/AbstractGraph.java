@@ -63,7 +63,7 @@ import java.util.stream.Collectors;
  * manages strict checking and auto-creation policies, as well as other services
  * as displaying, reading and writing.
  * </p>
- * 
+ * <p>
  * <p>
  * Subclasses have to maintain data structures allowing to efficiently access
  * graph elements by their id or index and iterating on them. They also have to
@@ -81,9 +81,9 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		Replayable {
 	// *** Fields ***
 
+	GraphListeners listeners;
 	private boolean strictChecking;
 	private boolean autoCreate;
-	GraphListeners listeners;
 	private NodeFactory<? extends AbstractNode> nodeFactory;
 	private EdgeFactory<? extends AbstractEdge> edgeFactory;
 
@@ -97,9 +97,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 
 	/**
 	 * The same as {@code AbstractGraph(id, true, false)}
-	 * 
-	 * @param id
-	 *            Identifier of the graph
+	 *
+	 * @param id Identifier of the graph
 	 * @see #AbstractGraph(String, boolean, boolean)
 	 */
 	public AbstractGraph(String id) {
@@ -109,7 +108,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	/**
 	 * Creates a new graph. Subclasses must create their node and edge factories
 	 * and initialize their data structures in their constructors.
-	 * 
+	 *
 	 * @param id
 	 * @param strictChecking
 	 * @param autoCreate
@@ -126,7 +125,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 
 	@Override
 	protected void attributeChanged(AttributeChangeEvent event,
-			String attribute, Object oldValue, Object newValue) {
+									String attribute, Object oldValue, Object newValue) {
 		listeners.sendAttributeChangedEvent(id, SourceBase.ElementType.GRAPH,
 				attribute, event, oldValue, newValue);
 	}
@@ -140,7 +139,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 
 	/**
 	 * This implementation returns an iterator over nodes.
-	 * 
+	 *
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
@@ -180,6 +179,11 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	}
 
 	@Override
+	public void setStrict(boolean on) {
+		strictChecking = on;
+	}
+
+	@Override
 	public boolean isAutoCreationEnabled() {
 		return autoCreate;
 	}
@@ -192,11 +196,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	@Override
 	public void setNullAttributesAreErrors(boolean on) {
 		nullAttributesAreErrors = on;
-	}
-
-	@Override
-	public void setStrict(boolean on) {
-		strictChecking = on;
 	}
 
 	@Override
@@ -434,66 +433,66 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 
 	@Override
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
-			String attribute, Object value) {
+								   String attribute, Object value) {
 		listeners
 				.edgeAttributeAdded(sourceId, timeId, edgeId, attribute, value);
 	}
 
 	@Override
 	public void edgeAttributeChanged(String sourceId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
+									 String edgeId, String attribute, Object oldValue, Object newValue) {
 		listeners.edgeAttributeChanged(sourceId, timeId, edgeId, attribute,
 				oldValue, newValue);
 	}
 
 	@Override
 	public void edgeAttributeRemoved(String sourceId, long timeId,
-			String edgeId, String attribute) {
+									 String edgeId, String attribute) {
 		listeners.edgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
 	}
 
 	@Override
 	public void graphAttributeAdded(String sourceId, long timeId,
-			String attribute, Object value) {
+									String attribute, Object value) {
 		listeners.graphAttributeAdded(sourceId, timeId, attribute, value);
 	}
 
 	@Override
 	public void graphAttributeChanged(String sourceId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
+									  String attribute, Object oldValue, Object newValue) {
 		listeners.graphAttributeChanged(sourceId, timeId, attribute, oldValue,
 				newValue);
 	}
 
 	@Override
 	public void graphAttributeRemoved(String sourceId, long timeId,
-			String attribute) {
+									  String attribute) {
 		listeners.graphAttributeRemoved(sourceId, timeId, attribute);
 	}
 
 	@Override
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-			String attribute, Object value) {
+								   String attribute, Object value) {
 		listeners
 				.nodeAttributeAdded(sourceId, timeId, nodeId, attribute, value);
 	}
 
 	@Override
 	public void nodeAttributeChanged(String sourceId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
+									 String nodeId, String attribute, Object oldValue, Object newValue) {
 		listeners.nodeAttributeChanged(sourceId, timeId, nodeId, attribute,
 				oldValue, newValue);
 	}
 
 	@Override
 	public void nodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute) {
+									 String nodeId, String attribute) {
 		listeners.nodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
 	}
 
 	@Override
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
+						  String fromNodeId, String toNodeId, boolean directed) {
 		listeners.edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId,
 				directed);
 	}
@@ -552,9 +551,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * This method is automatically called when a new node is created.
 	 * Subclasses must add the new node to their data structure and to set its
 	 * index correctly.
-	 * 
-	 * @param node
-	 *            the node to be added
+	 *
+	 * @param node the node to be added
 	 */
 	protected abstract void addNodeCallback(AbstractNode node);
 
@@ -562,9 +560,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * This method is automatically called when a new edge is created.
 	 * Subclasses must add the new edge to their data structure and to set its
 	 * index correctly.
-	 * 
-	 * @param edge
-	 *            the edge to be added
+	 *
+	 * @param edge the edge to be added
 	 */
 	protected abstract void addEdgeCallback(AbstractEdge edge);
 
@@ -572,9 +569,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * This method is automatically called when a node is removed. Subclasses
 	 * must remove the node from their data structures and to re-index other
 	 * node(s) so that node indices remain coherent.
-	 * 
-	 * @param node
-	 *            the node to be removed
+	 *
+	 * @param node the node to be removed
 	 */
 	protected abstract void removeNodeCallback(AbstractNode node);
 
@@ -582,9 +578,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * This method is automatically called when an edge is removed. Subclasses
 	 * must remove the edge from their data structures and re-index other
 	 * edge(s) so that edge indices remain coherent.
-	 * 
-	 * @param edge
-	 *            the edge to be removed
+	 *
+	 * @param edge the edge to be removed
 	 */
 	protected abstract void removeEdgeCallback(AbstractEdge edge);
 
@@ -601,7 +596,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	// here. If the node does not exist the reference will be null.
 	// And if autoCreate is on, we need also the id. Sad but true!
 	protected Edge addEdge(String edgeId, AbstractNode src,
-			String srcId, AbstractNode dst, String dstId, boolean directed) {
+						   String srcId, AbstractNode dst, String dstId, boolean directed) {
 		AbstractEdge edge = (AbstractEdge) getEdge(edgeId);
 
 		if (edge != null) {
@@ -610,7 +605,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 						+ "\" already in use. Cannot create an edge.");
 			if ((edge.getSourceNode() == src && edge.getTargetNode() == dst)
 					|| (!directed && edge.getTargetNode() == src && edge
-							.getSourceNode() == dst))
+					.getSourceNode() == dst))
 				return edge;
 			return null;
 		}
@@ -671,12 +666,10 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * if {@link #removeNodeCallback(AbstractNode)} is called or not. It is
 	 * useful for iterators supporting {@link java.util.Iterator#remove()} who
 	 * want to update the data structures by their owns.
-	 * 
-	 * @param node
-	 *            the node to be removed
-	 * @param graphCallback
-	 *            if {@code false}, {@code removeNodeCallback(node)} is not
-	 *            called
+	 *
+	 * @param node          the node to be removed
+	 * @param graphCallback if {@code false}, {@code removeNodeCallback(node)} is not
+	 *                      called
 	 */
 	protected void removeNode(AbstractNode node, boolean graphCallback) {
 		if (node == null)
@@ -694,23 +687,19 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * if different callbacks are called or not. It is useful for iterators
 	 * supporting {@link java.util.Iterator#remove()} who want to update the
 	 * data structures by their owns.
-	 * 
-	 * @param edge
-	 *            the edge to be removed
-	 * @param graphCallback
-	 *            if {@code false}, {@link #removeEdgeCallback(AbstractEdge)} of
-	 *            the graph is not called
-	 * @param sourceCallback
-	 *            if {@code false},
-	 *            {@link AbstractNode#removeEdgeCallback(AbstractEdge)} is not
-	 *            called for the source node of the edge
-	 * @param targetCallback
-	 *            if {@code false},
-	 *            {@link AbstractNode#removeEdgeCallback(AbstractEdge)} is not
-	 *            called for the target node of the edge
+	 *
+	 * @param edge           the edge to be removed
+	 * @param graphCallback  if {@code false}, {@link #removeEdgeCallback(AbstractEdge)} of
+	 *                       the graph is not called
+	 * @param sourceCallback if {@code false},
+	 *                       {@link AbstractNode#removeEdgeCallback(AbstractEdge)} is not
+	 *                       called for the source node of the edge
+	 * @param targetCallback if {@code false},
+	 *                       {@link AbstractNode#removeEdgeCallback(AbstractEdge)} is not
+	 *                       called for the target node of the edge
 	 */
 	protected void removeEdge(AbstractEdge edge, boolean graphCallback,
-			boolean sourceCallback, boolean targetCallback) {
+							  boolean sourceCallback, boolean targetCallback) {
 		if (edge == null)
 			return;
 
@@ -754,8 +743,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		 */
 		@Override
 		public void replay(String sourceId) {
-			for (String key : getAttributeKeySet())
-				sendGraphAttributeAdded(sourceId, key, getAttribute(key));
+			attributeKeys().forEach(key -> sendGraphAttributeAdded(sourceId, key, getAttribute(key)));
 
 			for (int i = 0; i < getNodeCount(); i++) {
 				Node node = getNode(i);
@@ -763,10 +751,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 
 				sendNodeAdded(sourceId, nodeId);
 
-				if (node.getAttributeCount() > 0)
-					for (String key : node.getAttributeKeySet())
-						sendNodeAttributeAdded(sourceId, nodeId, key,
-								node.getAttribute(key));
+				node.attributeKeys().forEach(key -> sendNodeAttributeAdded(sourceId, nodeId, key,
+						node.getAttribute(key)));
 			}
 
 			for (int i = 0; i < getEdgeCount(); i++) {
@@ -776,10 +762,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 				sendEdgeAdded(sourceId, edgeId, edge.getNode0().getId(), edge
 						.getNode1().getId(), edge.isDirected());
 
-				if (edge.getAttributeCount() > 0)
-					for (String key : edge.getAttributeKeySet())
-						sendEdgeAttributeAdded(sourceId, edgeId, key,
-								edge.getAttribute(key));
+				edge.attributeKeys().forEach(key -> sendEdgeAttributeAdded(sourceId, edgeId, key,
+						edge.getAttribute(key)));
 			}
 		}
 	}

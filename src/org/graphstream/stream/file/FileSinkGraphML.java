@@ -68,13 +68,13 @@ public class FileSinkGraphML extends FileSinkBase {
 		HashMap<String, String> edgeAttributes = new HashMap<>();
 
 		g.nodes().forEach(n -> {
-			for (String k : n.getAttributeKeySet()) {
+			n.attributeKeys().forEach(k -> {
 				if (!nodeAttributes.containsKey(k)) {
 					Object value = n.getAttribute(k);
 					String type;
 
 					if (value == null)
-						continue;
+						return;
 
 					String id = String.format("attr%04X", attribute.getAndIncrement());
 
@@ -100,17 +100,17 @@ public class FileSinkGraphML extends FileSinkBase {
 						onException.accept(ex);
 					}
 				}
-			}
+			});
 		});
 
 		g.edges().forEach(n -> {
-			for (String k : n.getAttributeKeySet()) {
+			n.attributeKeys().forEach(k -> {
 				if (!edgeAttributes.containsKey(k)) {
 					Object value = n.getAttribute(k);
 					String type;
 
 					if (value == null)
-						continue;
+						return;
 
 					String id = String.format("attr%04X", attribute.getAndIncrement());
 
@@ -135,7 +135,7 @@ public class FileSinkGraphML extends FileSinkBase {
 						onException.accept(ex);
 					}
 				}
-			}
+			});
 		});
 
 		try {
@@ -147,10 +147,16 @@ public class FileSinkGraphML extends FileSinkBase {
 		g.nodes().forEach(n -> {
 			try {
 				print("\t\t<node id=\"%s\">\n", n.getId());
-				for (String k : n.getAttributeKeySet()) {
-					print("\t\t\t<data key=\"%s\">%s</data>\n", nodeAttributes
-							.get(k), escapeXmlString(n.getAttribute(k).toString()));
-				}
+
+				n.attributeKeys().forEach(k -> {
+					try {
+						print("\t\t\t<data key=\"%s\">%s</data>\n", nodeAttributes
+								.get(k), escapeXmlString(n.getAttribute(k).toString()));
+					} catch (IOException e) {
+						onException.accept(e);
+					}
+				});
+
 				print("\t\t</node>\n");
 			} catch (Exception ex) {
 				onException.accept(ex);
@@ -162,9 +168,14 @@ public class FileSinkGraphML extends FileSinkBase {
 				print("\t\t<edge id=\"%s\" source=\"%s\" target=\"%s\" directed=\"%s\">\n",
 						e.getId(), e.getSourceNode().getId(), e.getTargetNode().getId(), e.isDirected());
 
-				for (String k : e.getAttributeKeySet()) {
-					print("\t\t\t<data key=\"%s\">%s</data>\n", edgeAttributes.get(k), escapeXmlString(e.getAttribute(k).toString()));
-				}
+				e.attributeKeys().forEach(k -> {
+					try {
+						print("\t\t\t<data key=\"%s\">%s</data>\n", edgeAttributes.get(k), escapeXmlString(e.getAttribute(k).toString()));
+					} catch (IOException e1) {
+						onException.accept(e1);
+					}
+				});
+
 				print("\t\t</edge>\n");
 			} catch (Exception ex) {
 				onException.accept(ex);

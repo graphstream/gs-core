@@ -120,9 +120,10 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 
 	protected void lookForExistingSprites() throws InvalidSpriteIDException {
 		if (graph.getAttributeCount() > 0) {
-			for (String attr : graph.getAttributeKeySet()) {
-				if (attr.startsWith("ui.sprite.")) {
-					String id = attr.substring(10);
+			graph.attributeKeys()
+				.filter(key -> key.startsWith("ui.sprite."))
+				.forEach(key -> {
+					String id = key.substring(10);
 
 					if (id.indexOf('.') < 0) {
 						addSprite(id);
@@ -135,10 +136,9 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 						if (s == null)
 							s = addSprite(id);
 
-						s.addAttribute(sattr, graph.getAttribute(attr));
+						s.addAttribute(sattr, graph.getAttribute(key));
 					}
-				}
-			}
+				});
 		}
 	}
 

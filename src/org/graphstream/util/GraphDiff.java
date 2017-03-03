@@ -195,15 +195,13 @@ public class GraphDiff {
 		if (e1 == null && e2 == null)
 			return;
 		else if (e1 == null) {
-			for (String key : e2.getAttributeKeySet())
-				events.add(new AttributeAdded(type, e2.getId(), key, e2
-						.getAttribute(key)));
+			e2.attributeKeys().forEach(key ->
+				events.add(new AttributeAdded(type, e2.getId(), key, e2.getAttribute(key))));
 		} else if (e2 == null) {
-			for (String key : e1.getAttributeKeySet())
-				events.add(new AttributeRemoved(type, e1.getId(), key, e1
-						.getAttribute(key)));
+			e1.attributeKeys().forEach(key ->
+				events.add(new AttributeRemoved(type, e1.getId(), key, e1.getAttribute(key))));
 		} else {
-			for (String key : e2.getAttributeKeySet()) {
+			e2.attributeKeys().forEach(key -> {
 				if (e1.hasAttribute(key)) {
 					Object o1 = e1.getAttribute(key);
 					Object o2 = e2.getAttribute(key);
@@ -214,13 +212,13 @@ public class GraphDiff {
 				} else
 					events.add(new AttributeAdded(type, e1.getId(), key, e2
 							.getAttribute(key)));
-			}
+			});
 
-			for (String key : e1.getAttributeKeySet()) {
+			e1.attributeKeys().forEach(key -> {
 				if (!e2.hasAttribute(key))
 					events.add(new AttributeRemoved(type, e1.getId(), key, e1
 							.getAttribute(key)));
-			}
+			});
 		}
 	}
 
@@ -999,8 +997,7 @@ public class GraphDiff {
 		public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 			Node n = g.getNode(nodeId);
 
-			for (String key : n.getAttributeKeySet())
-				nodeAttributeRemoved(sourceId, timeId, nodeId, key);
+			n.attributeKeys().forEach(key -> nodeAttributeRemoved(sourceId, timeId, nodeId, key));
 
 			Event e;
 			e = new NodeRemoved(nodeId);
@@ -1029,8 +1026,8 @@ public class GraphDiff {
 		public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 			Edge edge = g.getEdge(edgeId);
 
-			for (String key : edge.getAttributeKeySet())
-				edgeAttributeRemoved(sourceId, timeId, edgeId, key);
+			edge.attributeKeys().forEach(key ->
+				edgeAttributeRemoved(sourceId, timeId, edgeId, key));
 
 			Event e;
 			e = new EdgeRemoved(edgeId, edge.getSourceNode().getId(), edge
