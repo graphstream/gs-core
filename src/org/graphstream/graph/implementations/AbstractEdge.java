@@ -107,16 +107,6 @@ public class AbstractEdge extends AbstractElement implements Edge {
 				attribute, event, oldValue, newValue);
 	}
 
-	/**
-	 * This implementation calls the corresponding method of the parent graph
-	 * 
-	 * @see org.graphstream.graph.implementations.AbstractElement#nullAttributesAreErrors()
-	 */
-	@Override
-	protected boolean nullAttributesAreErrors() {
-		return graph.nullAttributesAreErrors();
-	}
-
 	@Override
 	public String toString() {
 		return String.format("%s[%s-%s%s]", getId(), source, directed ? ">"

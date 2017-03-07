@@ -96,16 +96,6 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 				newValue);
 	}
 
-	@Override
-	/**
-	 * This implementation calls the corresponding method of the parent graph
-	 * 
-	 * @see org.graphstream.graph.implementations.AbstractElement#nullAttributesAreErrors()
-	 */
-	protected boolean nullAttributesAreErrors() {
-		return graph.nullAttributesAreErrors();
-	}
-
 	// *** Inherited from Node ***
 
 	/**

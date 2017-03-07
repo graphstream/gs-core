@@ -130,11 +130,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 				attribute, event, oldValue, newValue);
 	}
 
-	@Override
-	public boolean nullAttributesAreErrors() {
-		return nullAttributesAreErrors;
-	}
-
 	// *** Inherited from graph ***
 
 	/**

@@ -46,7 +46,7 @@ import org.graphstream.graph.implementations.MultiGraph;
 import org.junit.Test;
 
 public class TestElement {
-	@Test(expected=NullAttributeException.class)
+	@Test
 	public void testElementSimpleAttributes() {
 		Graph graph = new MultiGraph("g1");
 
@@ -93,13 +93,6 @@ public class TestElement {
 		assertEquals(0, A.getAttributeCount());
 		assertFalse(A.hasAttribute("foo"));
 		assertNull(A.getAttribute("foo"));
-		
-		// Test null attributes checking.
-		
-		assertFalse(graph.nullAttributesAreErrors());
-		graph.setNullAttributesAreErrors(true);
-		assertTrue(graph.nullAttributesAreErrors());
-		A.getAttribute("foo");	// NullAttributeException thrown here.
 	}
 
 	@Test
@@ -217,50 +210,6 @@ public class TestElement {
 		A.clearAttributes();
 
 		assertEquals(0, A.getAttributeCount());
-	}
-	
-	@Test(expected=NullAttributeException.class)
-	public void testElementValueAttributeNull1() {
-		Graph graph = new MultiGraph("g");
-		graph.setNullAttributesAreErrors(true);
-		graph.getAttribute("nonExisting");
-	}
-	
-	@Test(expected=NullAttributeException.class)
-	public void testElementValueAttributeNull2() {
-		Graph graph = new MultiGraph("g");
-		graph.setNullAttributesAreErrors(true);
-		graph.getFirstAttributeOf("nonExisting", "nonExisting2", "nonExisting3");
-	}
-	
-	@Test(expected=NullAttributeException.class)
-	public void testElementValueAttributeNull3() {
-		Graph graph = new MultiGraph("g");
-		graph.setNullAttributesAreErrors(true);
-		graph.getNumber("foo");
-	}
-	
-	@Test(expected=NullAttributeException.class)
-	public void testElementValueAttributeNull4() {
-		Graph graph = new MultiGraph("g");
-		graph.setNullAttributesAreErrors(true);
-		graph.setAttribute("foo","ah ah ah");
-		graph.getNumber("foo");
-	}
-	
-	@Test(expected=NullAttributeException.class)
-	public void testElementValueAttributeNull5() {
-		Graph graph = new MultiGraph("g");
-		graph.setNullAttributesAreErrors(true);
-		graph.getLabel("foo");
-	}
-	
-	@Test(expected=NullAttributeException.class)
-	public void testElementValueAttributeNull6() {
-		Graph graph = new MultiGraph("g");
-		graph.setNullAttributesAreErrors(true);
-		graph.setAttribute("foo",5);
-		graph.getLabel("foo");
 	}
 
 	@Test
