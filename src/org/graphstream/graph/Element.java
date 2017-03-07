@@ -296,28 +296,6 @@ public interface Element {
 	 * @param values
 	 *            The attribute value or set of values.
 	 */
-	void addAttribute(String attribute, Object... values);
-
-	/**
-	 * Like {@link #addAttribute(String, Object...)} but for consistency.
-	 * 
-	 * @param attribute
-	 *            The attribute name.
-	 * @param values
-	 *            The attribute value or array of values.
-	 * @see #addAttribute(String, Object...)
-	 */
-	void changeAttribute(String attribute, Object... values);
-
-	/**
-	 * Like {@link #addAttribute(String, Object...)} but for consistency.
-	 * 
-	 * @param attribute
-	 *            The attribute name.
-	 * @param values
-	 *            The attribute value or array of values.
-	 * @see #addAttribute(String, Object...)
-	 */
 	void setAttribute(String attribute, Object... values);
 
 	/**
@@ -329,7 +307,7 @@ public interface Element {
 	 * @param attributes
 	 *            A set of (key,value) pairs.
 	 */
-	void addAttributes(Map<String, Object> attributes);
+	void setAttributes(Map<String, Object> attributes);
 
 	/**
 	 * Remove an attribute. Non-existent attributes errors are ignored silently.

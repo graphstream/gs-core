@@ -223,11 +223,11 @@ public abstract class TestFileSinkBase {
 				outGraph.addEdge("BC", "B", "C");
 				outGraph.addEdge("CA", "C", "A");
 				outGraph.stepBegins(2);
-				outGraph.addAttribute("a", 1);
-				outGraph.addAttribute("b", "foo");
-				outGraph.getNode("A").addAttribute("a", 1);
-				outGraph.getNode("B").addAttribute("b", "foo");
-				outGraph.getNode("C").addAttribute("c", "bar");
+				outGraph.setAttribute("a", 1);
+				outGraph.setAttribute("b", "foo");
+				outGraph.getNode("A").setAttribute("a", 1);
+				outGraph.getNode("B").setAttribute("b", "foo");
+				outGraph.getNode("C").setAttribute("c", "bar");
 				outGraph.stepBegins(3);
 				outGraph.removeNode("A");
 				outGraph.stepBegins(4);
@@ -287,11 +287,11 @@ public abstract class TestFileSinkBase {
 		outGraph.addEdge("AB", "A", "B", true);
 		outGraph.addEdge("BC", "B", "C", false);
 		outGraph.addEdge("CA", "A", "C", true);
-		outGraph.addAttribute("a", 1);
-		outGraph.addAttribute("b", "foo");
-		outGraph.getNode("A").addAttribute("a", 1);
-		outGraph.getNode("B").addAttribute("b", "foo");
-		outGraph.getNode("C").addAttribute("c", "bar");
+		outGraph.setAttribute("a", 1);
+		outGraph.setAttribute("b", "foo");
+		outGraph.getNode("A").setAttribute("a", 1);
+		outGraph.getNode("B").setAttribute("b", "foo");
+		outGraph.getNode("C").setAttribute("c", "bar");
 	}
 
 	protected void testUndirectedTriangle() {

@@ -87,17 +87,17 @@ public class TestRMI {
 		Edge AC = g1.addEdge("AC", "A", "C", true);
 		Edge BC = g1.addEdge("BC", "B", "C", false);
 
-		A.addAttribute("int", 1);
-		B.addAttribute("string", "test");
-		C.addAttribute("double", 2.0);
+		A.setAttribute("int", 1);
+		B.setAttribute("string", "test");
+		C.setAttribute("double", 2.0);
 
-		AB.addAttribute("points",
+		AB.setAttribute("points",
 				(Object) (new double[][] { { 1, 1 }, { 2, 2 } }));
 		LinkedList<Integer> list = new LinkedList<Integer>();
 		list.add(1);
 		list.add(2);
-		AC.addAttribute("list", list);
-		BC.addAttribute("boolean", true);
+		AC.setAttribute("list", list);
+		BC.setAttribute("boolean", true);
 
 		// -----
 

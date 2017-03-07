@@ -169,11 +169,11 @@ public class Sprite implements Element {
 
 		if (!manager.graph.hasAttribute(completeId)) {
 			if (position != null) {
-				manager.graph.addAttribute(completeId, position);
+				manager.graph.setAttribute(completeId, position);
 				this.position = position;
 			} else {
 				this.position = new Values(Style.Units.GU, 0f, 0f, 0f);
-				manager.graph.addAttribute(completeId, this.position);
+				manager.graph.setAttribute(completeId, this.position);
 			}
 		} else {
 			if (position != null) {
@@ -285,7 +285,7 @@ public class Sprite implements Element {
 		attachment = manager.graph.getNode(id);
 
 		if (attachment != null)
-			attachment.addAttribute(completeId);
+			attachment.setAttribute(completeId);
 	}
 
 	/**
@@ -302,7 +302,7 @@ public class Sprite implements Element {
 		attachment = manager.graph.getEdge(id);
 
 		if (attachment != null)
-			attachment.addAttribute(completeId);
+			attachment.setAttribute(completeId);
 	}
 
 	/**
@@ -470,25 +470,15 @@ public class Sprite implements Element {
 
 	// Commands (Element)
 
-	public void addAttribute(String attribute, Object... values) {
-		manager.graph.addAttribute(
-				String.format("%s.%s", completeId, attribute), values);
-	}
-
-	public void addAttributes(Map<String, Object> attributes) {
-		for (String key : attributes.keySet())
-			manager.graph.addAttribute(String.format("%s.%s", completeId, key),
-					attributes.get(key));
-	}
-
 	public void setAttribute(String attribute, Object... values) {
 		manager.graph.setAttribute(
 				String.format("%s.%s", completeId, attribute), values);
 	}
 
-	public void changeAttribute(String attribute, Object... values) {
-		manager.graph.changeAttribute(
-				String.format("%s.%s", completeId, attribute), values);
+	public void setAttributes(Map<String, Object> attributes) {
+		for (String key : attributes.keySet())
+			manager.graph.setAttribute(String.format("%s.%s", completeId, key),
+					attributes.get(key));
 	}
 
 	public void clearAttributes() {

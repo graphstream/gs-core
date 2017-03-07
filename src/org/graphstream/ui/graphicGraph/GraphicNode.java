@@ -38,8 +38,6 @@ import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.stylesheet.Selector;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -78,7 +76,7 @@ public class GraphicNode extends GraphicElement implements Node {
 		super(id, graph);
 
 		if (attributes != null)
-			addAttributes(attributes);
+			setAttributes(attributes);
 	}
 
 	@Override

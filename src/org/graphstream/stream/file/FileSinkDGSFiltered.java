@@ -75,19 +75,19 @@ import org.graphstream.graph.CompoundAttribute;
  * 
  * // Make some modifications on the graph and generate events
  * graph.stepBegins(0); // this event will be saved
- * graph.addAttribute("attr2", 2); // this event will not be saved
+ * graph.setAttribute("attr2", 2); // this event will not be saved
  * Node a = graph.addNode("A"); // this event will be saved
- * a.addAttribute("attr3", 3); // this event will be saved
+ * a.setAttribute("attr3", 3); // this event will be saved
  * 
  * // and now, no more need to save modification on nodes attributes
  * fileSink.setNoFilterNodeAttributeChanged(false);
  * 
  * Node b = graph.addNode("B"); // this event will be saved
- * b.addAttribute("attr4", 4); // this event will not be saved
+ * b.setAttribute("attr4", 4); // this event will not be saved
  * 
  * Edge ab = graph.addEdge("AB", a, b); // this event will be saved
- * ab.addAttribute("attr1", 1); // this event will not be saved
- * ab.addAttribute("attr5", 5); // this event will be saved
+ * ab.setAttribute("attr1", 1); // this event will not be saved
+ * ab.setAttribute("attr5", 5); // this event will be saved
  * 
  * fileSink.end();
  * </pre>

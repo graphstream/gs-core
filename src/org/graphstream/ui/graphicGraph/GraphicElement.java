@@ -309,10 +309,10 @@ public abstract class GraphicElement extends AbstractElement {
 	}
 
 	@Override
-	public void addAttribute(String attribute, Object... values) {
+	public void setAttribute(String attribute, Object... values) {
 		Matcher matcher = acceptedAttribute.matcher(attribute);
 
 		if (matcher.matches())
-			super.addAttribute(attribute, values);
+			super.setAttribute(attribute, values);
 	}
 }

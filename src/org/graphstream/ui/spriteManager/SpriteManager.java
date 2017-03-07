@@ -136,7 +136,7 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 						if (s == null)
 							s = addSprite(id);
 
-						s.addAttribute(sattr, graph.getAttribute(key));
+						s.setAttribute(sattr, graph.getAttribute(key));
 					}
 				});
 		}

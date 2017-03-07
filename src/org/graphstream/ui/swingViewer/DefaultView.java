@@ -192,7 +192,7 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 
 	public void close(GraphicGraph graph) {
 		renderer.close();
-		graph.addAttribute("ui.viewClosed", getId());
+		graph.setAttribute("ui.viewClosed", getId());
 
 		removeKeyListener(shortcuts);
 		shortcuts.release();
@@ -271,7 +271,7 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 	}
 
 	public void windowClosing(WindowEvent e) {
-		graph.addAttribute("ui.viewClosed", getId());
+		graph.setAttribute("ui.viewClosed", getId());
 
 		switch (viewer.getCloseFramePolicy()) {
 		case CLOSE_VIEWER:
@@ -341,7 +341,7 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 
 	public void freezeElement(GraphicElement element, boolean frozen) {
 		if (frozen) {
-			element.addAttribute("layout.frozen");
+			element.setAttribute("layout.frozen");
 		} else {
 			element.removeAttribute("layout.frozen");
 		}

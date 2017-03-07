@@ -229,31 +229,21 @@ public class Graphs {
 			this.attributeLock = new ReentrantLock();
 		}
 
-		public void addAttribute(String attribute, Object... values) {
+		public void setAttribute(String attribute, Object... values) {
 			attributeLock.lock();
 
 			try {
-				wrappedElement.addAttribute(attribute, values);
+				wrappedElement.setAttribute(attribute, values);
 			} finally {
 				attributeLock.unlock();
 			}
 		}
 
-		public void addAttributes(Map<String, Object> attributes) {
+		public void setAttributes(Map<String, Object> attributes) {
 			attributeLock.lock();
 
 			try {
-				wrappedElement.addAttributes(attributes);
-			} finally {
-				attributeLock.unlock();
-			}
-		}
-
-		public void changeAttribute(String attribute, Object... values) {
-			attributeLock.lock();
-
-			try {
-				wrappedElement.changeAttribute(attribute, values);
+				wrappedElement.setAttributes(attributes);
 			} finally {
 				attributeLock.unlock();
 			}
@@ -538,16 +528,6 @@ public class Graphs {
 
 			try {
 				wrappedElement.removeAttribute(attribute);
-			} finally {
-				attributeLock.unlock();
-			}
-		}
-
-		public void setAttribute(String attribute, Object... values) {
-			attributeLock.lock();
-
-			try {
-				wrappedElement.setAttribute(attribute, values);
 			} finally {
 				attributeLock.unlock();
 			}

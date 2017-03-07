@@ -500,7 +500,7 @@ public class FileSinkTikZ extends FileSinkBase {
 		checkLayout();
 
 		if (css != null)
-			buffer.addAttribute("ui.stylesheet", css);
+			buffer.setAttribute("ui.stylesheet", css);
 
 		points = new PointsWrapper();
 

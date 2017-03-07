@@ -31,14 +31,11 @@
  */
 package org.graphstream.ui.graphicGraph;
 
-import org.graphstream.graph.Node;
 import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.ui.graphicGraph.stylesheet.Selector;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.graphicGraph.stylesheet.Values;
-
-import java.util.Iterator;
 
 /**
  * A small gentle sprite.
@@ -87,7 +84,7 @@ public class GraphicSprite extends GraphicElement {
 		String myPrefix = String.format("ui.sprite.%s", id);
 
 		if (mygraph.getAttribute(myPrefix) == null)
-			mygraph.addAttribute(myPrefix, position);
+			mygraph.setAttribute(myPrefix, position);
 	}
 
 	// Access
@@ -208,7 +205,7 @@ public class GraphicSprite extends GraphicElement {
 		String prefix = String.format("ui.sprite.%s", getId());
 
 		if (this.node.getAttribute(prefix) == null)
-			this.node.addAttribute(prefix);
+			this.node.setAttribute(prefix);
 
 		mygraph.graphChanged = true;
 	}
@@ -226,7 +223,7 @@ public class GraphicSprite extends GraphicElement {
 		String prefix = String.format("ui.sprite.%s", getId());
 
 		if (this.edge.getAttribute(prefix) == null)
-			this.edge.addAttribute(prefix);
+			this.edge.setAttribute(prefix);
 
 		mygraph.graphChanged = true;
 	}

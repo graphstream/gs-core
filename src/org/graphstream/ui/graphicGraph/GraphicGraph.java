@@ -57,7 +57,6 @@ import org.graphstream.ui.view.Viewer;
 import org.graphstream.util.GraphListeners;
 
 import java.io.IOException;
-import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -436,9 +435,9 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 			node.x = x;
 			node.y = y;
 			node.z = z;
-			node.addAttribute("x", x);
-			node.addAttribute("y", y);
-			node.addAttribute("z", z);
+			node.setAttribute("x", x);
+			node.setAttribute("y", y);
+			node.setAttribute("z", z);
 
 			graphChanged = true;
 		}
@@ -1166,7 +1165,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 					sprite = styleGroups.getSprite(spriteId);
 				}
 
-				sprite.addAttribute(attr, value);
+				sprite.setAttribute(attr, value);
 			} else if (event == AttributeChangeEvent.CHANGE) {
 				GraphicSprite sprite = styleGroups.getSprite(spriteId);
 
@@ -1176,7 +1175,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 					sprite = styleGroups.getSprite(spriteId);
 				}
 
-				sprite.changeAttribute(attr, value);
+				sprite.setAttribute(attr, value);
 			} else if (event == AttributeChangeEvent.REMOVE) {
 				GraphicSprite sprite = styleGroups.getSprite(spriteId);
 
@@ -1222,7 +1221,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	public GraphicSprite addSprite(String id) {
 		String prefix = String.format("ui.sprite.%s", id);
 		logger.info(String.format("Added sprite %s.", id));
-		addAttribute(prefix, 0, 0, 0);
+		setAttribute(prefix, 0, 0, 0);
 		GraphicSprite s = styleGroups.getSprite(id);
 		assert (s != null);
 		return s;

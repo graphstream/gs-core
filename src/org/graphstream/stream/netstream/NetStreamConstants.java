@@ -183,9 +183,9 @@ package org.graphstream.stream.netstream;
  * 		g.addSink(nsc);
  * 		// - generate some events on the client side
  * 		String style = &quot;node{fill-mode:plain;fill-color:#567;size:6px;}&quot;;
- * 		g.addAttribute(&quot;stylesheet&quot;, style);
- * 		g.addAttribute(&quot;ui.antialias&quot;, true);
- * 		g.addAttribute(&quot;layout.stabilization-limit&quot;, 0);
+ * 		g.setAttribute(&quot;stylesheet&quot;, style);
+ * 		g.setAttribute(&quot;ui.antialias&quot;, true);
+ * 		g.setAttribute(&quot;layout.stabilization-limit&quot;, 0);
  * 		for (int i = 0; i &lt; 500; i++) {
  * 			g.addNode(i + &quot;&quot;);
  * 			if (i &gt; 0) {

@@ -135,7 +135,7 @@ public class GraphListeners extends SourceBase implements Pipe {
 				passYourWay = true;
 
 				try {
-					edge.addAttribute(attribute, value);
+					edge.setAttribute(attribute, value);
 				} finally {
 					passYourWay = false;
 				}
@@ -163,7 +163,7 @@ public class GraphListeners extends SourceBase implements Pipe {
 					oldValue = edge.getAttribute(attribute);
 
 				try {
-					edge.changeAttribute(attribute, newValue);
+					edge.setAttribute(attribute, newValue);
 				} finally {
 					passYourWay = false;
 				}
@@ -207,7 +207,7 @@ public class GraphListeners extends SourceBase implements Pipe {
 			passYourWay = true;
 
 			try {
-				g.addAttribute(attribute, value);
+				g.setAttribute(attribute, value);
 			} finally {
 				passYourWay = false;
 			}
@@ -231,7 +231,7 @@ public class GraphListeners extends SourceBase implements Pipe {
 				oldValue = g.getAttribute(attribute);
 
 			try {
-				g.changeAttribute(attribute, newValue);
+				g.setAttribute(attribute, newValue);
 			} finally {
 				passYourWay = false;
 			}
@@ -272,7 +272,7 @@ public class GraphListeners extends SourceBase implements Pipe {
 				passYourWay = true;
 
 				try {
-					node.addAttribute(attribute, value);
+					node.setAttribute(attribute, value);
 				} finally {
 					passYourWay = false;
 				}
@@ -300,7 +300,7 @@ public class GraphListeners extends SourceBase implements Pipe {
 					oldValue = node.getAttribute(attribute);
 
 				try {
-					node.changeAttribute(attribute, newValue);
+					node.setAttribute(attribute, newValue);
 				} finally {
 					passYourWay = false;
 				}
