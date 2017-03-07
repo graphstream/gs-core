@@ -48,8 +48,8 @@ import org.junit.Test;
 
 public class TestFileSinkGraphML extends TestFileSinkBase {
     @Override
-    protected String aTemporaryGraphFileName() {
-        return "foo.graphml";
+    protected String graphFileExtension() {
+        return ".graphml";
     }
 
     @Before
@@ -64,10 +64,9 @@ public class TestFileSinkGraphML extends TestFileSinkBase {
         createXmlContent();
         
         try  {
-            output.writeAll(outGraph, new FileOutputStream(aTemporaryGraphFileName()));
+            output.writeAll(outGraph, new FileOutputStream(theFile.getAbsolutePath()));
             input.addSink(inGraph);
-            input.readAll(aTemporaryGraphFileName());
-            removeFile(aTemporaryGraphFileName());
+            input.readAll(theFile.getAbsolutePath());
         } catch (IOException e) {
             e.printStackTrace();
             assertTrue("Should not happen !", false);

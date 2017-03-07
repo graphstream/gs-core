@@ -37,8 +37,8 @@ import org.junit.Before;
 
 public class TestFileSinkDGS extends TestFileSinkBase {
 	@Override
-	protected String aTemporaryGraphFileName() {
-		return "foo.dgs";
+	protected String graphFileExtension() {
+		return ".dgs";
 	}
 
 	@Before
