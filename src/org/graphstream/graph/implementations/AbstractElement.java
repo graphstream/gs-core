@@ -301,13 +301,13 @@ public abstract class AbstractElement implements Element {
 	 * element.
 	 */
 	@Override
-	public HashMap<?, ?> getHash(String key) {
+	public Map<?, ?> getMap(String key) {
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
 			if (o != null) {
-				if (o instanceof HashMap<?, ?>)
-					return ((HashMap<?, ?>) o);
+				if (o instanceof Map<?, ?>)
+					return ((Map<?, ?>) o);
 				if (o instanceof CompoundAttribute)
 					return ((CompoundAttribute) o).toHashMap();
 			}
@@ -424,12 +424,12 @@ public abstract class AbstractElement implements Element {
 	 * element.
 	 */
 	@Override
-	public boolean hasHash(String key) {
+	public boolean hasMap(String key) {
 		if (attributes != null) {
 			Object o = attributes.get(key);
 
 			if (o != null
-					&& (o instanceof HashMap<?, ?> || o instanceof CompoundAttribute))
+					&& (o instanceof Map<?, ?> || o instanceof CompoundAttribute))
 				return true;
 		}
 

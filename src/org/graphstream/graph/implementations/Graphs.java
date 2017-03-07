@@ -361,13 +361,13 @@ public class Graphs {
 			return o;
 		}
 
-		public HashMap<?, ?> getHash(String key) {
-			HashMap<?, ?> o;
+		public Map<?, ?> getMap(String key) {
+			Map<?, ?> o;
 
 			attributeLock.lock();
 
 			try {
-				o = wrappedElement.getHash(key);
+				o = wrappedElement.getMap(key);
 			} finally {
 				attributeLock.unlock();
 			}
@@ -467,13 +467,13 @@ public class Graphs {
 			return b;
 		}
 
-		public boolean hasHash(String key) {
+		public boolean hasMap(String key) {
 			boolean b;
 
 			attributeLock.lock();
 
 			try {
-				b = wrappedElement.hasHash(key);
+				b = wrappedElement.hasMap(key);
 			} finally {
 				attributeLock.unlock();
 			}

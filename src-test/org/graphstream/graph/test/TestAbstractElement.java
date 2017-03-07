@@ -173,7 +173,7 @@ public class TestAbstractElement {
 
 		e.setAttribute("map", map);
 
-		assertTrue(e.hasHash("map"));
+		assertTrue(e.hasMap("map"));
 		assertEquals(map, e.getAttribute("map"));
 	}
 
@@ -286,9 +286,9 @@ public class TestAbstractElement {
 		e.setAttribute("map", new HashMap<String, Object>());
 		e.setAttribute("attr", new Object());
 
-		assertTrue(e.hasHash("map"));
-		assertFalse(e.hasHash("attr1"));
-		assertFalse(e.hasHash("attr2"));
+		assertTrue(e.hasMap("map"));
+		assertFalse(e.hasMap("attr1"));
+		assertFalse(e.hasMap("attr2"));
 	}
 
 	@Test
