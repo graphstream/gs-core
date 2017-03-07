@@ -125,33 +125,33 @@ public class AbstractEdge extends AbstractElement implements Edge {
 
 	// *** Inherited from Edge ***
 
-	@SuppressWarnings("unchecked")
-	public <T extends Node> T getNode0() {
-		return (T) source;
+	@Override
+	public Node getNode0() {
+		return source;
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T extends Node> T getNode1() {
-		return (T) target;
+	@Override
+	public Node getNode1() {
+		return target;
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T extends Node> T getOpposite(Node node) {
+	@Override
+	public Node getOpposite(Node node) {
 		if (node == source)
-			return (T) target;
+			return target;
 		if (node == target)
-			return (T) source;
+			return source;
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T extends Node> T getSourceNode() {
-		return (T) source;
+	@Override
+	public Node getSourceNode() {
+		return source;
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T extends Node> T getTargetNode() {
-		return (T) target;
+	@Override
+	public Node getTargetNode() {
+		return target;
 	}
 
 	public boolean isDirected() {

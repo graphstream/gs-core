@@ -721,8 +721,8 @@ public class DefaultCamera implements Camera {
 	 * @return True if visible.
 	 */
 	protected boolean isEdgeVisible(GraphicEdge edge) {
-		GraphicNode node0 = edge.getNode0();
-		GraphicNode node1 = edge.getNode1();
+		GraphicNode node0 = (GraphicNode) edge.getNode0();
+		GraphicNode node1 = (GraphicNode) edge.getNode1();
 
 		if (edge.hidden)
 			return false;

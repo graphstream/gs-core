@@ -34,51 +34,39 @@ package org.graphstream.graph;
 /**
  * A general purpose class that provides methods for the management of edges in
  * a graph.
- * 
+ * <p>
  * <h3>Important</h3> Implementing classes may indicate the complexity of their
  * implementation of the methods with the <code>complexity</code> tag.
- * 
+ *
  * @since July 12 2007
  */
 public interface Edge extends Element {
 	/**
 	 * Is the edge directed ?.
-	 * 
+	 *
 	 * @return True if the edge is directed.
 	 */
 	boolean isDirected();
 
 	/**
 	 * Does the source and target of this edge identify the same node ?.
-	 * 
+	 *
 	 * @return True if this edge is a loop.
 	 */
 	boolean isLoop();
-	
+
 	/**
 	 * First node of the edge.
 	 * <p>
 	 * This is equivalent to the {@link #getSourceNode()} method, but may be
 	 * clearer in the source code if the graph you are using is not directed.
 	 * </p>
-	 * <p>
-	 * This method is implicitly generic and return something which extends
-	 * Node. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
-	 * 
-	 * <pre>
-	 * ExtendedNode n = edge.getNode0();
-	 * </pre>
-	 * 
-	 * the method will return an ExtendedNode. If no left part exists, method
-	 * will just return a Node.
-	 * </p>
-	 * 
+	 *
+	 * @return The first node of the edge.
 	 * @see #getNode1()
 	 * @see #getSourceNode()
-	 * @return The first node of the edge.
 	 */
-	<T extends Node> T getNode0();
+	Node getNode0();
 
 	/**
 	 * Second node of the edge.
@@ -86,24 +74,12 @@ public interface Edge extends Element {
 	 * This is equivalent to the {@link #getTargetNode()} method, but may be
 	 * clearer in the source code if the graph you are using is not directed.
 	 * </p>
-	 * <p>
-	 * This method is implicitly generic and return something which extends
-	 * Node. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
-	 * 
-	 * <pre>
-	 * ExtendedNode n = edge.getNode1();
-	 * </pre>
-	 * 
-	 * the method will return an ExtendedNode. If no left part exists, method
-	 * will just return a Node.
-	 * </p>
-	 * 
+	 *
+	 * @return The second node of the edge.
 	 * @see #getNode0()
 	 * @see #getTargetNode()
-	 * @return The second node of the edge.
 	 */
-	<T extends Node> T getNode1();
+	Node getNode1();
 
 	/**
 	 * Start node.
@@ -113,24 +89,12 @@ public interface Edge extends Element {
 	 * to the {@link #getNode0()} method but may be clearer in the source code
 	 * if the graph you are using is directed.
 	 * </p>
-	 * <p>
-	 * This method is implicitly generic and return something which extends
-	 * Node. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
-	 * 
-	 * <pre>
-	 * ExtendedNode n = edge.getSourceNode();
-	 * </pre>
-	 * 
-	 * the method will return an ExtendedNode. If no left part exists, method
-	 * will just return a Node.
-	 * </p>
-	 * 
+	 *
+	 * @return The origin node of the edge.
 	 * @see #getNode0()
 	 * @see #getTargetNode()
-	 * @return The origin node of the edge.
 	 */
-	<T extends Node> T getSourceNode();
+	Node getSourceNode();
 
 	/**
 	 * End node.
@@ -140,24 +104,12 @@ public interface Edge extends Element {
 	 * to the {@link #getNode1()} method but may be clearer in the source code
 	 * if the graph you are using is directed.
 	 * </p>
-	 * <p>
-	 * This method is implicitly generic and return something which extends
-	 * Node. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
-	 * 
-	 * <pre>
-	 * ExtendedNode n = edge.getTargetNode();
-	 * </pre>
-	 * 
-	 * the method will return an ExtendedNode. If no left part exists, method
-	 * will just return a Node.
-	 * </p>
-	 * 
+	 *
+	 * @return The destination node of the edge.
 	 * @see #getNode1()
 	 * @see #getSourceNode()
-	 * @return The destination node of the edge.
 	 */
-	<T extends Node> T getTargetNode();
+	Node getTargetNode();
 
 	/**
 	 * When knowing one node and one edge of this node, this method return the
@@ -165,22 +117,9 @@ public interface Edge extends Element {
 	 * <p>
 	 * Return null if the given node is not at any end of the edge.
 	 * </p>
-	 * <p>
-	 * This method is implicitly generic and return something which extends
-	 * Node. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
-	 * 
-	 * <pre>
-	 * ExtendedNode n = edge.getOppositeNode((ExtendedNode) m);
-	 * </pre>
-	 * 
-	 * the method will return an ExtendedNode. If no left part exists, method
-	 * will just return a Node.
-	 * </p>
-	 * 
-	 * @param node
-	 *            The node we search the opposite of.
+	 *
+	 * @param node The node we search the opposite of.
 	 * @return the opposite node of the given node.
 	 */
-	<T extends Node> T getOpposite(Node node);
+	Node getOpposite(Node node);
 }
