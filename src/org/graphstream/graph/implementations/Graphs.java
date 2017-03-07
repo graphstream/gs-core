@@ -904,11 +904,6 @@ public class Graphs {
 		}
 
 		@Override
-		public boolean nullAttributesAreErrors() {
-			return wrappedElement.nullAttributesAreErrors();
-		}
-
-		@Override
 		public void read(String filename) throws IOException,
 				GraphParseException, ElementNotFoundException {
 			elementLock.lock();

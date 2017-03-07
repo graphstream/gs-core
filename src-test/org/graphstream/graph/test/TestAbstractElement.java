@@ -63,11 +63,15 @@ public class TestAbstractElement {
 
 		e.setAttribute("A", o);
 		e.setAttribute("C", "TEST");
+		e.setAttribute("D");
+		e.setAttribute("E", (Object) null);
 
 		assertSame(o, e.getAttribute("A"));
 		assertNull(e.getAttribute("B"));
 		assertNull(e.getAttribute("A", String.class));
 		assertEquals("TEST", e.getAttribute("C", String.class));
+		assertEquals(true, e.getAttribute("D"));
+		assertNull(e.getAttribute("E"));
 	}
 
 	@Test
@@ -162,7 +166,7 @@ public class TestAbstractElement {
 	}
 
 	@Test
-	public void testGetHash() {
+	public void testGetMap() {
 		AbstractElement e = new LocalAbstractElement("test");
 		Map<String, Integer> map = new HashMap<>();
 
@@ -280,7 +284,7 @@ public class TestAbstractElement {
 	}
 
 	@Test
-	public void testHasHash() {
+	public void testHasMap() {
 		AbstractElement e = new LocalAbstractElement("test");
 
 		e.setAttribute("map", new HashMap<String, Object>());
@@ -396,25 +400,13 @@ public class TestAbstractElement {
 	}
 
 	protected static class LocalAbstractElement extends AbstractElement {
-		final boolean nullAttributesAreError;
-
-		LocalAbstractElement(String id) {
-			this(id, false);
-		}
-
 		LocalAbstractElement(int index) {
 			this(Integer.toString(index));
 			setIndex(index);
 		}
 
-		LocalAbstractElement(String id, boolean nullAttributesAreError) {
+		LocalAbstractElement(String id) {
 			super(id);
-			this.nullAttributesAreError = nullAttributesAreError;
-		}
-
-		@Override
-		protected boolean nullAttributesAreErrors() {
-			return false;
 		}
 
 		@Override

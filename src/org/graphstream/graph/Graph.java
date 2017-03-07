@@ -205,16 +205,6 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	boolean isAutoCreationEnabled();
 
 	/**
-	 * If true, when accessing an attribute that does not exist (or is not of
-	 * the expected type), a {@link NullAttributeException} is thrown. Else null
-	 * is returned.
-	 *
-	 * @return True if exceptions must be thrown when accessing a null
-	 * attribute.
-	 */
-	boolean nullAttributesAreErrors();
-
-	/**
 	 * The current step.
 	 *
 	 * @return The step.

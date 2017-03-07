@@ -119,11 +119,6 @@ public abstract class GraphicElement extends AbstractElement {
 		return mygraph;
 	}
 
-	@Override
-	protected boolean nullAttributesAreErrors() {
-		return mygraph.nullAttributesAreErrors();
-	}
-
 	/**
 	 * Type of selector for the graphic element (Node, Edge, Sprite ?).
 	 */

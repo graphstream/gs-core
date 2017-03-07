@@ -898,11 +898,6 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	}
 
 	@Override
-	public boolean nullAttributesAreErrors() {
-		return nullAttrError;
-	}
-
-	@Override
 	public void setNullAttributesAreErrors(boolean on) {
 		nullAttrError = on;
 	}
