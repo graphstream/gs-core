@@ -421,8 +421,8 @@ public class Graphs {
 			return o;
 		}
 
-		public ArrayList<? extends Number> getVector(String key) {
-			ArrayList<? extends Number> o;
+		public List<? extends Number> getVector(String key) {
+			List<? extends Number> o;
 
 			attributeLock.lock();
 

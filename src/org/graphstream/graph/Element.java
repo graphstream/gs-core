@@ -31,8 +31,8 @@
  */
 package org.graphstream.graph;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -155,13 +155,15 @@ public interface Element {
 	/**
 	 * Get the vector of number bound to key. Vectors of numbers are special
 	 * attributes whose value is a sequence of numbers. If an attribute with the
-	 * same name exists but is not a vector of number, null is returned.
+	 * same name exists but is not a vector of number, null is returned. A vector
+	 * of number is a non-empty {@link java.util.List} of {@link java.lang.Number}
+	 * objects.
 	 * 
 	 * @param key
 	 *            The name of the number to search.
 	 * @return The vector of numbers or null if not found.
 	 */
-	ArrayList<? extends Number> getVector(String key);
+	List<? extends Number> getVector(String key);
 
 	/**
 	 * Get the array of objects bound to key. Arrays of objects are special
@@ -244,8 +246,8 @@ public interface Element {
 	boolean hasVector(String key);
 
 	/**
-	 * Does this element store an array value for the given key? A vector is an
-	 * attribute whose value is an array of objects.
+	 * Does this element store an array value for the given key? Only object arrays
+	 * (instance of Object[]) are considered as array here.
 	 * 
 	 * @param key
 	 *            The name of the array.

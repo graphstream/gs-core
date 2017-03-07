@@ -31,12 +31,7 @@
  */
 package org.graphstream.ui.spriteManager;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -439,7 +434,7 @@ public class Sprite implements Element {
 		return manager.graph.getNumber(String.format("%s.%s", completeId, key));
 	}
 
-	public ArrayList<? extends Number> getVector(String key) {
+	public List<? extends Number> getVector(String key) {
 		return manager.graph.getVector(String.format("%s.%s", completeId, key));
 	}
 
