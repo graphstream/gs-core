@@ -31,7 +31,6 @@
  */
 package org.graphstream.graph;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -177,19 +176,19 @@ public interface Element {
 	Object[] getArray(String key);
 
 	/**
-	 * Get the hash bound to key. Hashes are special attributes whose value is a
+	 * Get the map bound to key. Maps are special attributes whose value is a
 	 * set of pairs (name,object). Instances of object implementing the
-	 * {@link CompoundAttribute} interface are considered like hashes since they
-	 * can be transformed to a hash. If an attribute with the same name exists
-	 * but is not a hash, null is returned. We cannot enforce the type of the
+	 * {@link CompoundAttribute} interface are considered like maps since they
+	 * can be transformed to a map. If an attribute with the same name exists
+	 * but is not a map, null is returned. We cannot enforce the type of the
 	 * key. It is considered a string and you should use "Object.toString()" to
 	 * get it.
 	 * 
 	 * @param key
-	 *            The name of the hash to search.
-	 * @return The hash or null if not found.
+	 *            The name of the map to search.
+	 * @return The map or null if not found.
 	 */
-	HashMap<?, ?> getHash(String key);
+	Map<?, ?> getMap(String key);
 
 	/**
 	 * Does this element store a value for the given attribute key?
@@ -257,8 +256,8 @@ public interface Element {
 	boolean hasArray(String key);
 
 	/**
-	 * Does this element store a hash value for the given key? A hash is a set
-	 * of pairs (key,value) or objects that implement the
+	 * Does this element store a map value for the given key? A map is a set
+	 * of pairs (key,value) ({@link java.util.Map}) or objects that implement the
 	 * {@link org.graphstream.graph.CompoundAttribute} class.
 	 * 
 	 * @param key
@@ -266,7 +265,7 @@ public interface Element {
 	 * @return True if a value is present for this attribute and can contain a
 	 *         hash.
 	 */
-	boolean hasHash(String key);
+	boolean hasMap(String key);
 
 	/**
 	 * Stream over the attribute keys of the element.

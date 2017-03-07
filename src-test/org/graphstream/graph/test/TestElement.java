@@ -66,7 +66,7 @@ public class TestElement {
 		assertFalse(A.hasNumber("foo"));
 		assertFalse(A.hasVector("foo"));
 		assertFalse(A.hasArray("foo"));
-		assertFalse(A.hasHash("foo"));
+		assertFalse(A.hasMap("foo"));
 		assertNotNull(A.getAttribute("foo"));
 		assertEquals(true, A.getAttribute("foo"));
 		assertEquals(Boolean.TRUE, A.getAttribute("foo"));
@@ -82,7 +82,7 @@ public class TestElement {
 		assertFalse(A.hasNumber("foo"));
 		assertFalse(A.hasVector("foo"));
 		assertFalse(A.hasArray("foo"));
-		assertFalse(A.hasHash("foo"));
+		assertFalse(A.hasMap("foo"));
 		assertNotNull(A.getAttribute("foo"));
 		assertEquals(false, A.getAttribute("foo"));
 		assertEquals(Boolean.FALSE, A.getAttribute("foo"));
@@ -122,7 +122,7 @@ public class TestElement {
 		assertFalse(A.hasNumber("foo"));
 		assertFalse(A.hasVector("foo"));
 		assertFalse(A.hasArray("foo"));
-		assertFalse(A.hasHash("foo"));
+		assertFalse(A.hasMap("foo"));
 		assertNotNull(A.getAttribute("foo"));
 		assertEquals("bar", A.getAttribute("foo"));
 
@@ -137,7 +137,7 @@ public class TestElement {
 		assertTrue(A.hasNumber("pi"));
 		assertFalse(A.hasVector("pi"));
 		assertFalse(A.hasArray("pi"));
-		assertFalse(A.hasHash("pi"));
+		assertFalse(A.hasMap("pi"));
 		assertNotNull(A.getAttribute("pi"));
 		assertEquals(3.1415, A.getNumber("pi"), 0);
 		assertEquals(3.1415, A.getAttribute("pi"));
@@ -163,7 +163,7 @@ public class TestElement {
 		assertFalse(A.hasNumber("v"));
 		assertTrue(A.hasVector("v"));
 		assertFalse(A.hasArray("v"));
-		assertFalse(A.hasHash("v"));
+		assertFalse(A.hasMap("v"));
 		assertNotNull(A.getAttribute("v"));
 		assertEquals(numbers, A.getAttribute("v"));
 		assertEquals(numbers, A.getVector("v"));
@@ -185,10 +185,10 @@ public class TestElement {
 		assertFalse(A.hasNumber("map"));
 		assertFalse(A.hasVector("map"));
 		assertFalse(A.hasArray("map"));
-		assertTrue(A.hasHash("map"));
+		assertTrue(A.hasMap("map"));
 		assertNotNull(A.getAttribute("map"));
 		assertEquals(map, A.getAttribute("map"));
-		assertEquals(map, A.getHash("map"));
+		assertEquals(map, A.getMap("map"));
 
 		// Hashes 2.
 
@@ -207,10 +207,10 @@ public class TestElement {
 		assertFalse(A.hasNumber("ca"));
 		assertFalse(A.hasVector("ca"));
 		assertFalse(A.hasArray("ca"));
-		assertTrue(A.hasHash("ca"));
+		assertTrue(A.hasMap("ca"));
 		assertNotNull(A.getAttribute("ca"));
 		assertEquals(attr, A.getAttribute("ca"));
-		assertEquals(attr, A.getHash("ca"));
+		assertEquals(attr, A.getMap("ca"));
 
 		// Clear
 
@@ -285,7 +285,7 @@ public class TestElement {
 		assertFalse(A.hasNumber("array"));
 		assertFalse(A.hasVector("array"));
 		assertTrue(A.hasArray("array"));
-		assertFalse(A.hasHash("array"));
+		assertFalse(A.hasMap("array"));
 		assertArrayEquals(expected, (Object[]) A.getAttribute("array"));
 		assertArrayEquals(expected, A.getArray("array"));
 		assertNotNull(A.getAttribute("array"));

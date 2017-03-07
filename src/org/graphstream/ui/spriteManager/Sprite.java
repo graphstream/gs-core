@@ -426,8 +426,8 @@ public class Sprite implements Element {
 		return manager.graph.getArray(String.format("%s.%s", completeId, key));
 	}
 
-	public HashMap<?, ?> getHash(String key) {
-		return manager.graph.getHash(String.format("%s.%s", completeId, key));
+	public Map<?, ?> getMap(String key) {
+		return manager.graph.getMap(String.format("%s.%s", completeId, key));
 	}
 
 	public double getNumber(String key) {
@@ -452,8 +452,8 @@ public class Sprite implements Element {
 				String.format("%s.%s", completeId, key), clazz);
 	}
 
-	public boolean hasHash(String key) {
-		return manager.graph.hasHash(String.format("%s.%s", completeId, key));
+	public boolean hasMap(String key) {
+		return manager.graph.hasMap(String.format("%s.%s", completeId, key));
 	}
 
 	public boolean hasLabel(String key) {
