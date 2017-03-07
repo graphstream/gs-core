@@ -44,8 +44,8 @@ public class TestFileSinkDOT extends TestFileSinkBase {
 		formatHandlesEdgesIDs = false;
 	}
 
-	protected String aTemporaryGraphFileName() {
-		return "foo.dot";
+	protected String graphFileExtension() {
+		return ".dot";
 	}
 
 	@Override
