@@ -66,7 +66,7 @@ public class MouseOverMouseManager extends DefaultMouseManager {
     }
 
     protected void mouseOverElement(GraphicElement element) {
-        element.addAttribute("ui.mouseOver");
+        element.setAttribute("ui.mouseOver");
     }
 
     protected void mouseLeftElement(GraphicElement element) {

@@ -51,7 +51,6 @@ import org.graphstream.graph.Graph;
 import org.graphstream.stream.GraphReplay;
 import org.graphstream.stream.ProxyPipe;
 import org.graphstream.stream.Sink;
-import org.graphstream.stream.file.FileSourceDGS;
 import org.graphstream.stream.thread.ThreadProxyPipe;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
@@ -334,16 +333,16 @@ public class FileSinkImages implements FileSink {
 			break;
 		case MEDIUM:
 			if (!gg.hasAttribute("ui.quality"))
-				gg.addAttribute("ui.quality");
+				gg.setAttribute("ui.quality");
 			if (gg.hasAttribute("ui.antialias"))
 				gg.removeAttribute("ui.antialias");
 
 			break;
 		case HIGH:
 			if (!gg.hasAttribute("ui.quality"))
-				gg.addAttribute("ui.quality");
+				gg.setAttribute("ui.quality");
 			if (!gg.hasAttribute("ui.antialias"))
-				gg.addAttribute("ui.antialias");
+				gg.setAttribute("ui.antialias");
 
 			break;
 		}
@@ -357,7 +356,7 @@ public class FileSinkImages implements FileSink {
 	 */
 	public void setStyleSheet(String styleSheet) {
 		this.styleSheet = styleSheet;
-		gg.addAttribute("ui.stylesheet", styleSheet);
+		gg.setAttribute("ui.stylesheet", styleSheet);
 	}
 
 	/**

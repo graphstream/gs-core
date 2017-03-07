@@ -76,13 +76,13 @@ public class TestGraph {
 		Edge BC1 = g1.addEdge("BC", "B", "C");
 		Edge CA1 = g1.addEdge("CA", "C", "A");
 
-		A1.addAttribute("string", "an example");
-		B1.addAttribute("double", 42.0);
-		C1.addAttribute("array", new int[] { 1, 2, 3 });
+		A1.setAttribute("string", "an example");
+		B1.setAttribute("double", 42.0);
+		C1.setAttribute("array", new int[] { 1, 2, 3 });
 
-		AB1.addAttribute("string", "an example");
-		BC1.addAttribute("double", 42.0);
-		CA1.addAttribute("array", new int[] { 1, 2, 3 });
+		AB1.setAttribute("string", "an example");
+		BC1.setAttribute("double", 42.0);
+		CA1.setAttribute("array", new int[] { 1, 2, 3 });
 
 		Replayable.Controller controller = g1.getReplayController();
 		controller.addSink(g2);
@@ -676,8 +676,8 @@ public class TestGraph {
 		Edge BC = input.addEdge("BC", "B", "C");
 		input.addEdge("CA", "C", "A");
 
-		A.addAttribute("foo", "bar");
-		BC.addAttribute("foo", "bar");
+		A.setAttribute("foo", "bar");
+		BC.setAttribute("foo", "bar");
 
 		assertEquals(3, input.getNodeCount());
 		assertEquals(3, output.getNodeCount());
@@ -711,7 +711,7 @@ public class TestGraph {
 
 		// Now check that attribute change works.
 
-		BC.changeAttribute("foo", "truc");
+		BC.setAttribute("foo", "truc");
 
 		assertEquals("truc", BC.getAttribute("foo"));
 		assertEquals("truc", output.getEdge("BC").getAttribute("foo"));

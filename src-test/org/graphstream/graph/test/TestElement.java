@@ -57,7 +57,7 @@ public class TestElement {
 
 		// Simple attributes.
 
-		A.addAttribute("foo");
+		A.setAttribute("foo");
 
 		assertEquals(1, A.getAttributeCount());
 		assertTrue(A.hasAttribute("foo"));
@@ -73,7 +73,7 @@ public class TestElement {
 
 		// Change.
 
-		A.changeAttribute("foo", false);
+		A.setAttribute("foo", false);
 
 		assertEquals(1, A.getAttributeCount());
 		assertTrue(A.hasAttribute("foo"));
@@ -113,7 +113,7 @@ public class TestElement {
 
 		// Label attributes.
 
-		A.addAttribute("foo", "bar");
+		A.setAttribute("foo", "bar");
 
 		assertEquals(1, A.getAttributeCount());
 		assertTrue(A.hasAttribute("foo"));
@@ -128,7 +128,7 @@ public class TestElement {
 
 		// Number attributes.
 
-		A.addAttribute("pi", 3.1415);
+		A.setAttribute("pi", 3.1415);
 
 		assertEquals(2, A.getAttributeCount());
 		assertTrue(A.hasAttribute("pi"));
@@ -154,7 +154,7 @@ public class TestElement {
 		numbers.add(1.4);
 		numbers.add(1.5f);
 
-		A.addAttribute("v", numbers);
+		A.setAttribute("v", numbers);
 
 		assertEquals(3, A.getAttributeCount());
 		assertTrue(A.hasAttribute("v"));
@@ -176,7 +176,7 @@ public class TestElement {
 		map.put("B", "b");
 		map.put("C", "c");
 
-		A.addAttribute("map", map);
+		A.setAttribute("map", map);
 
 		assertEquals(4, A.getAttributeCount());
 		assertTrue(A.hasAttribute("map"));
@@ -198,7 +198,7 @@ public class TestElement {
 		attr.put("B", "b");
 		attr.put("C", "c");
 
-		A.addAttribute("ca", attr);
+		A.setAttribute("ca", attr);
 
 		assertEquals(5, A.getAttributeCount());
 		assertTrue(A.hasAttribute("ca"));
@@ -244,7 +244,7 @@ public class TestElement {
 	public void testElementValueAttributeNull4() {
 		Graph graph = new MultiGraph("g");
 		graph.setNullAttributesAreErrors(true);
-		graph.addAttribute("foo","ah ah ah");
+		graph.setAttribute("foo","ah ah ah");
 		graph.getNumber("foo");
 	}
 	
@@ -259,7 +259,7 @@ public class TestElement {
 	public void testElementValueAttributeNull6() {
 		Graph graph = new MultiGraph("g");
 		graph.setNullAttributesAreErrors(true);
-		graph.addAttribute("foo",5);
+		graph.setAttribute("foo",5);
 		graph.getLabel("foo");
 	}
 
@@ -274,7 +274,7 @@ public class TestElement {
 
 		// Arrays
 
-		A.addAttribute("array", 0, 1.1, 1.3f, "foo");
+		A.setAttribute("array", 0, 1.1, 1.3f, "foo");
 
 		Object expected[] = { 0, 1.1, 1.3f, "foo" };
 
@@ -302,9 +302,9 @@ public class TestElement {
 
 		// First attribute of.
 
-		A.addAttribute("C", "c");
-		A.addAttribute("I", "i");
-		A.addAttribute("Z", "z");
+		A.setAttribute("C", "c");
+		A.setAttribute("I", "i");
+		A.setAttribute("Z", "z");
 
 		String s = A.getFirstAttributeOf(String.class,"A", "B", "C", "I", "Z");
 
@@ -313,8 +313,8 @@ public class TestElement {
 
 		// First attribute of 2.
 
-		A.addAttribute("J", 1);
-		A.addAttribute("X", 2);
+		A.setAttribute("J", 1);
+		A.setAttribute("X", 2);
 
 		Number n = A.getFirstAttributeOf(Number.class, "A", "B", "C", "I", "J",
 				"X", "Z");
@@ -334,9 +334,9 @@ public class TestElement {
 
 		// First attribute of.
 
-		A.addAttribute("A", "a");
-		A.addAttribute("B", "b");
-		A.addAttribute("C", "c");
+		A.setAttribute("A", "a");
+		A.setAttribute("B", "b");
+		A.setAttribute("C", "c");
 
 		assertEquals(3, A.getAttributeCount());
 
@@ -352,8 +352,8 @@ public class TestElement {
 	public void testNullAttributes() {
 		Graph graph = new MultiGraph("g1");
 
-		graph.addAttribute("foo");
-		graph.addAttribute("bar", (Object) null); // Yes an attribute with a
+		graph.setAttribute("foo");
+		graph.setAttribute("bar", (Object) null); // Yes an attribute with a
 													// null value, You can !
 
 		assertTrue(graph.hasAttribute("foo"));

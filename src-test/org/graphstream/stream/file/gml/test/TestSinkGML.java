@@ -61,15 +61,15 @@ public class TestSinkGML {
 		graph.addSink(out2);
 		
 		graph.addNode("A");
-		graph.getNode("A").addAttribute("s", "foo bar");
+		graph.getNode("A").setAttribute("s", "foo bar");
 		graph.addNode("B");
 		graph.stepBegins(1);
 		graph.addEdge("AB", "A", "B", true);
-		graph.getEdge("AB").addAttribute("n", 1);
+		graph.getEdge("AB").setAttribute("n", 1);
 		graph.stepBegins(2);
-		graph.addAttribute("b", true);
-		graph.getNode("B").addAttribute("c", 'X');
-		graph.getNode("B").addAttribute("d", 'Y');
+		graph.setAttribute("b", true);
+		graph.getNode("B").setAttribute("c", 'X');
+		graph.getNode("B").setAttribute("d", 'Y');
 		graph.stepBegins(3);
 		graph.getNode("B").removeAttribute("c");
 		graph.removeAttribute("b");

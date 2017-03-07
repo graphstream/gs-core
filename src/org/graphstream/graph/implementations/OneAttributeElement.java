@@ -181,7 +181,7 @@ public abstract class OneAttributeElement implements Element {
 		addAttribute(attribute, value);
 	}
 
-	public void addAttributes(Map<String, Object> attributes) {
+	public void setAttributes(Map<String, Object> attributes) {
 		if (attributes.size() >= 1)
 			addAttribute("", attributes.get((attributes.keySet().toArray()[0])));
 	}

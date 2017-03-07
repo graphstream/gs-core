@@ -117,7 +117,7 @@ public class GraphicEdge extends GraphicElement implements Edge {
 			this.attributes = new HashMap<String, Object>();
 
 		if (attributes != null)
-			addAttributes(attributes);
+			setAttributes(attributes);
 	}
 
 	@Override

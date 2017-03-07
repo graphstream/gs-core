@@ -67,8 +67,8 @@ import java.util.HashMap;
  * 
  * 			g.addSink(obj);
  * 			
- * 			g.addAttribute("myobject.set.a1", "MyObject A1");
- * 			g.addAttribute("myobject.set.a2", 100.0);
+ * 			g.setAttribute("myobject.set.a1", "MyObject A1");
+ * 			g.setAttribute("myobject.set.a2", 100.0);
  * 		}
  * }
  * </pre>

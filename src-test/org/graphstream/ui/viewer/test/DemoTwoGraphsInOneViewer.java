@@ -52,8 +52,8 @@ public class DemoTwoGraphsInOneViewer {
 		Viewer viewer1 = new Viewer(new ThreadProxyPipe(graph1));
 		Viewer viewer2 = new Viewer(new ThreadProxyPipe(graph2));
 
-		graph1.addAttribute("ui.stylesheet", styleSheet1);
-		graph2.addAttribute("ui.stylesheet", styleSheet2);
+		graph1.setAttribute("ui.stylesheet", styleSheet1);
+		graph2.setAttribute("ui.stylesheet", styleSheet2);
 		//View view1 =
 		viewer1.addDefaultView(true);
 		viewer2.addDefaultView(true);

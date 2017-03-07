@@ -1064,13 +1064,13 @@ public class GraphDiff {
 		Graph g2 = new AdjacencyListGraph("g2");
 
 		Node a1 = g1.addNode("A");
-		a1.addAttribute("attr1", "test");
-		a1.addAttribute("attr2", 10.0);
-		a1.addAttribute("attr3", 12);
+		a1.setAttribute("attr1", "test");
+		a1.setAttribute("attr2", 10.0);
+		a1.setAttribute("attr3", 12);
 
 		Node a2 = g2.addNode("A");
-		a2.addAttribute("attr1", "test1");
-		a2.addAttribute("attr2", 10.0);
+		a2.setAttribute("attr1", "test1");
+		a2.setAttribute("attr2", 10.0);
 		g2.addNode("B");
 		g2.addNode("C");
 

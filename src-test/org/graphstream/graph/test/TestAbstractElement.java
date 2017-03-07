@@ -61,8 +61,8 @@ public class TestAbstractElement {
 		AbstractElement e = new LocalAbstractElement("test");
 		Object o = new Object();
 
-		e.addAttribute("A", o);
-		e.addAttribute("C", "TEST");
+		e.setAttribute("A", o);
+		e.setAttribute("C", "TEST");
 
 		assertSame(o, e.getAttribute("A"));
 		assertNull(e.getAttribute("B"));
@@ -74,9 +74,9 @@ public class TestAbstractElement {
 	public void testGetFirstAttributeOf() {
 		AbstractElement e = new LocalAbstractElement("test");
 
-		e.addAttribute("A", "A");
-		e.addAttribute("C", "C");
-		e.addAttribute("D", 13.37);
+		e.setAttribute("A", "A");
+		e.setAttribute("C", "C");
+		e.setAttribute("D", 13.37);
 
 		assertEquals("C", e.getFirstAttributeOf("B", "C", "A"));
 		assertEquals(13.37, e.getFirstAttributeOf(Number.class, "B", "C", "D", "A"));
@@ -86,8 +86,8 @@ public class TestAbstractElement {
 	public void testGetLabel() {
 		AbstractElement e = new LocalAbstractElement("test");
 
-		e.addAttribute("A", "A");
-		e.addAttribute("B", 13.37);
+		e.setAttribute("A", "A");
+		e.setAttribute("B", 13.37);
 
 		assertEquals("A", e.getLabel("A"));
 		assertNull(e.getLabel("B"));
@@ -98,8 +98,8 @@ public class TestAbstractElement {
 	public void testGetNumber() {
 		AbstractElement e = new LocalAbstractElement("test");
 
-		e.addAttribute("A", "A");
-		e.addAttribute("B", 13.37);
+		e.setAttribute("A", "A");
+		e.setAttribute("B", 13.37);
 
 		assertEquals(13.37, e.getNumber("B"), 0);
 		assertTrue(Double.isNaN(e.getNumber("A")));
@@ -122,12 +122,12 @@ public class TestAbstractElement {
 			vec4.add(new Object());
 		}
 
-		e.addAttribute("vec1", vec1);
-		e.addAttribute("vec2", vec2);
-		e.addAttribute("vec3", vec3);
-		e.addAttribute("vec4", vec4);
-		e.addAttribute("vec5", vec5);
-		e.addAttribute("vec6", new Object());
+		e.setAttribute("vec1", vec1);
+		e.setAttribute("vec2", vec2);
+		e.setAttribute("vec3", vec3);
+		e.setAttribute("vec4", vec4);
+		e.setAttribute("vec5", vec5);
+		e.setAttribute("vec6", new Object());
 
 		assertNotNull(e.getVector("vec1"));
 		assertNotNull(e.getVector("vec2"));
@@ -146,10 +146,10 @@ public class TestAbstractElement {
 	public void testGetArray() {
 		AbstractElement e = new LocalAbstractElement("test");
 
-		e.addAttribute("array1", 1, 2, 3);
-		e.addAttribute("array2", (Object) new Integer[]{1, 2, 3});
-		e.addAttribute("array3", (Object) new Integer[]{});
-		e.addAttribute("attr1", new Object());
+		e.setAttribute("array1", 1, 2, 3);
+		e.setAttribute("array2", (Object) new Integer[]{1, 2, 3});
+		e.setAttribute("array3", (Object) new Integer[]{});
+		e.setAttribute("attr1", new Object());
 
 		assertNotNull(e.getArray("array1"));
 		assertNotNull(e.getArray("array2"));
@@ -171,7 +171,7 @@ public class TestAbstractElement {
 		map.put("S", 3);
 		map.put("T", 4);
 
-		e.addAttribute("map", map);
+		e.setAttribute("map", map);
 
 		assertTrue(e.hasHash("map"));
 		assertEquals(map, e.getAttribute("map"));
@@ -181,14 +181,14 @@ public class TestAbstractElement {
 	public void testHasAttribute() {
 		AbstractElement e = new LocalAbstractElement("test");
 
-		e.addAttribute("A", new Object());
-		e.addAttribute("B", new Object());
+		e.setAttribute("A", new Object());
+		e.setAttribute("B", new Object());
 
 		assertTrue(e.hasAttribute("A"));
 		assertTrue(e.hasAttribute("B"));
 		assertFalse(e.hasAttribute("C"));
 
-		e.addAttribute("C", e);
+		e.setAttribute("C", e);
 
 		assertTrue(e.hasAttribute("C"));
 		assertTrue(e.hasAttribute("C", LocalAbstractElement.class));
@@ -199,8 +199,8 @@ public class TestAbstractElement {
 	public void testHasLabel() {
 		AbstractElement e = new LocalAbstractElement("test");
 
-		e.addAttribute("A", new Object());
-		e.addAttribute("B", "LABEL");
+		e.setAttribute("A", new Object());
+		e.setAttribute("B", "LABEL");
 
 		assertTrue(e.hasLabel("B"));
 		assertFalse(e.hasLabel("A"));
@@ -211,13 +211,13 @@ public class TestAbstractElement {
 	public void testHasNumber() {
 		AbstractElement e = new LocalAbstractElement("test");
 
-		e.addAttribute("A", new Object());
-		e.addAttribute("B", 13.37);
-		e.addAttribute("C", Double.valueOf(13.37));
-		e.addAttribute("D", 1337);
-		e.addAttribute("E", Integer.valueOf(1337));
-		e.addAttribute("G", "13.37");
-		e.addAttribute("H", "AD3.37");
+		e.setAttribute("A", new Object());
+		e.setAttribute("B", 13.37);
+		e.setAttribute("C", Double.valueOf(13.37));
+		e.setAttribute("D", 1337);
+		e.setAttribute("E", Integer.valueOf(1337));
+		e.setAttribute("G", "13.37");
+		e.setAttribute("H", "AD3.37");
 
 		assertFalse(e.hasNumber("A"));
 		assertTrue(e.hasNumber("B"));
@@ -245,12 +245,12 @@ public class TestAbstractElement {
 			vec4.add(new Object());
 		}
 
-		e.addAttribute("vec1", vec1);
-		e.addAttribute("vec2", vec2);
-		e.addAttribute("vec3", vec3);
-		e.addAttribute("vec4", vec4);
-		e.addAttribute("vec5", vec5);
-		e.addAttribute("vec6", new Object());
+		e.setAttribute("vec1", vec1);
+		e.setAttribute("vec2", vec2);
+		e.setAttribute("vec3", vec3);
+		e.setAttribute("vec4", vec4);
+		e.setAttribute("vec5", vec5);
+		e.setAttribute("vec6", new Object());
 
 		assertTrue(e.hasVector("vec1"));
 		assertTrue(e.hasVector("vec2"));
@@ -265,11 +265,11 @@ public class TestAbstractElement {
 	public void testHasArray() {
 		AbstractElement e = new LocalAbstractElement("test");
 
-		e.addAttribute("array1", 1, 2, 3);
-		e.addAttribute("array2", (Object) new Integer[]{1, 2, 3});
-		e.addAttribute("array3", (Object) new Integer[]{});
-		e.addAttribute("array4", (Object) new int[]{1, 2, 3});
-		e.addAttribute("attr1", new Object());
+		e.setAttribute("array1", 1, 2, 3);
+		e.setAttribute("array2", (Object) new Integer[]{1, 2, 3});
+		e.setAttribute("array3", (Object) new Integer[]{});
+		e.setAttribute("array4", (Object) new int[]{1, 2, 3});
+		e.setAttribute("attr1", new Object());
 
 		assertTrue(e.hasArray("array1"));
 		assertTrue(e.hasArray("array2"));
@@ -283,8 +283,8 @@ public class TestAbstractElement {
 	public void testHasHash() {
 		AbstractElement e = new LocalAbstractElement("test");
 
-		e.addAttribute("map", new HashMap<String, Object>());
-		e.addAttribute("attr", new Object());
+		e.setAttribute("map", new HashMap<String, Object>());
+		e.setAttribute("attr", new Object());
 
 		assertTrue(e.hasHash("map"));
 		assertFalse(e.hasHash("attr1"));
@@ -299,7 +299,7 @@ public class TestAbstractElement {
 
 		for (int j = 0; j < count; j++) {
 			String key = String.format("attribute%d", j);
-			e.addAttribute(key, new Object());
+			e.setAttribute(key, new Object());
 			keys.add(key);
 		}
 
@@ -316,7 +316,7 @@ public class TestAbstractElement {
 		final int count = 10 + (int) (Math.random() * 90);
 
 		for (int j = 0; j < count; j++) {
-			e.addAttribute(String.format("attribute%d", j), new Object());
+			e.setAttribute(String.format("attribute%d", j), new Object());
 		}
 
 		assertEquals(count, e.getAttributeCount());
@@ -328,7 +328,7 @@ public class TestAbstractElement {
 		final int count = 10 + (int) (Math.random() * 90);
 
 		for (int j = 0; j < count; j++) {
-			e.addAttribute(String.format("attribute%d", j), new Object());
+			e.setAttribute(String.format("attribute%d", j), new Object());
 		}
 
 		e.clearAttributes();
@@ -340,23 +340,23 @@ public class TestAbstractElement {
 		LocalAbstractElement e = new LocalAbstractElement("test");
 		Object o = new Object();
 
-		e.addAttribute("A", o);
+		e.setAttribute("A", o);
 
 		assertEquals(1, e.getTheMap().size());
 		assertTrue(e.getTheMap().containsKey("A"));
 		assertSame(o, e.getTheMap().get("A"));
 
-		e.addAttribute("B");
+		e.setAttribute("B");
 
 		assertTrue(e.hasAttribute("B"));
 		assertEquals(true, e.getAttribute("B"));
 
-		e.addAttribute("C", (Object) null);
+		e.setAttribute("C", (Object) null);
 
 		assertTrue(e.hasAttribute("C"));
 		assertNull(e.getAttribute("C"));
 
-		e.addAttribute("D", "T", "E", "S", "T");
+		e.setAttribute("D", "T", "E", "S", "T");
 
 		assertTrue(e.hasAttribute("D"));
 		assertTrue(e.hasArray("D"));
@@ -371,7 +371,7 @@ public class TestAbstractElement {
 			attributes.put(String.format("attr%d", i), new Object());
 
 		AbstractElement e = new LocalAbstractElement("test");
-		e.addAttributes(attributes);
+		e.setAttributes(attributes);
 
 		e.attributeKeys().forEach(key -> {
 			assertNotNull(attributes.get(key));
@@ -388,7 +388,7 @@ public class TestAbstractElement {
 		LocalAbstractElement e = new LocalAbstractElement("test");
 		Object o = new Object();
 
-		e.addAttribute("A", o);
+		e.setAttribute("A", o);
 		assertTrue(e.getTheMap() != null && e.getTheMap().containsKey("A"));
 
 		e.removeAttribute("A");

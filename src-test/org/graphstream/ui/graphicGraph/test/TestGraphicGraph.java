@@ -155,7 +155,7 @@ public class TestGraphicGraph {
 
 		// Load a style sheet by URL.
 
-		outGraph.addAttribute("stylesheet", styleSheet1);
+		outGraph.setAttribute("stylesheet", styleSheet1);
 
 		assertNotNull(outGraph.getStyle());
 		assertNotNull(((GraphicNode) outGraph.getNode("A")).getStyle());
@@ -169,7 +169,7 @@ public class TestGraphicGraph {
 
 		// Cascade a style sheet by string.
 
-		outGraph.addAttribute("stylesheet", "node#A { fill-color: green; }");
+		outGraph.setAttribute("stylesheet", "node#A { fill-color: green; }");
 
 		assertNotNull(outGraph.getStyle());
 		assertNotNull(((GraphicNode) outGraph.getNode("A")).getStyle());
@@ -183,7 +183,7 @@ public class TestGraphicGraph {
 
 		// Cascade individual styles on elements.
 
-		outGraph.getNode("A").addAttribute("ui.style", "fill-color: blue;");
+		outGraph.getNode("A").setAttribute("ui.style", "fill-color: blue;");
 
 		assertNotNull(((GraphicNode) outGraph.getNode("A")).getStyle());
 		testStyle(((GraphicNode) outGraph.getNode("A")).getStyle(), Color.BLUE);
@@ -329,9 +329,9 @@ public class TestGraphicGraph {
 		// "ui." are transfered. So we also check that a "foo" attribute does
 		// not pass.
 
-		s1.addAttribute("ui.foo", "bar");
-		s1.addAttribute("ui.foo1", 1, 2, 3);
-		s1.addAttribute("foo", "bar");
+		s1.setAttribute("ui.foo", "bar");
+		s1.setAttribute("ui.foo1", 1, 2, 3);
+		s1.setAttribute("foo", "bar");
 
 		GraphicSprite gs1 = outGraph.getSprite("S1");
 
@@ -378,8 +378,8 @@ public class TestGraphicGraph {
 		s2 = sman.addSprite("S2");
 		Sprite s3 = sman.addSprite("S3");
 
-		s2.addAttribute("ui.foo", "bar");
-		s3.addAttribute("ui.foo", "bar");
+		s2.setAttribute("ui.foo", "bar");
+		s3.setAttribute("ui.foo", "bar");
 
 		assertEquals(3, sman.getSpriteCount());
 		assertEquals(3, outGraph.getSpriteCount());
@@ -484,12 +484,12 @@ public class TestGraphicGraph {
 		// only these
 		// will pass toward the graphic graph.
 
-		inGraph.addAttribute("ui.foo", "bar");
-		outGraph.addAttribute("ui.bar", "foo");
-		inGraph.getNode("A").addAttribute("ui.foo", "bar");
-		outGraph.getNode("A").addAttribute("ui.bar", "foo");
-		inGraph.getEdge("AB").addAttribute("ui.foo", "bar");
-		outGraph.getEdge("AB").addAttribute("ui.bar", "foo");
+		inGraph.setAttribute("ui.foo", "bar");
+		outGraph.setAttribute("ui.bar", "foo");
+		inGraph.getNode("A").setAttribute("ui.foo", "bar");
+		outGraph.getNode("A").setAttribute("ui.bar", "foo");
+		inGraph.getEdge("AB").setAttribute("ui.foo", "bar");
+		outGraph.getEdge("AB").setAttribute("ui.bar", "foo");
 
 		assertEquals("bar", outGraph.getAttribute("ui.foo"));
 		assertEquals("foo", inGraph.getAttribute("ui.bar"));
@@ -507,8 +507,8 @@ public class TestGraphicGraph {
 
 		assertNotNull(gs1);
 
-		s1.addAttribute("ui.foo", "bar");
-		gs1.addAttribute("ui.bar", "foo");
+		s1.setAttribute("ui.foo", "bar");
+		gs1.setAttribute("ui.bar", "foo");
 
 		assertEquals("bar", gs1.getAttribute("ui.foo"));
 		assertEquals("foo", s1.getAttribute("ui.bar"));
@@ -527,8 +527,8 @@ public class TestGraphicGraph {
 
 		assertNotNull(s2);
 
-		gs2.addAttribute("ui.foo", "bar");
-		s2.addAttribute("ui.bar", "foo");
+		gs2.setAttribute("ui.foo", "bar");
+		s2.setAttribute("ui.bar", "foo");
 
 		assertEquals("bar", s2.getAttribute("ui.foo"));
 		assertEquals("foo", gs2.getAttribute("ui.bar"));

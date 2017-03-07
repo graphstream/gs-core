@@ -663,7 +663,7 @@ public class Viewer implements ActionListener {
 		// Replay all graph attributes.
 
 		graph.attributeKeys().forEach(key -> {
-			graph.addAttribute(key, graph.getAttribute(key));
+			graph.setAttribute(key, graph.getAttribute(key));
 		});
 
 		// Replay all nodes and their attributes.
@@ -672,7 +672,7 @@ public class Viewer implements ActionListener {
 			Node n = this.graph.addNode(node.getId());
 
 			node.attributeKeys().forEach(key -> {
-				n.addAttribute(key, node.getAttribute(key));
+				n.setAttribute(key, node.getAttribute(key));
 			});
 		});
 
@@ -683,7 +683,7 @@ public class Viewer implements ActionListener {
 					edge.isDirected());
 
 			edge.attributeKeys().forEach(key -> {
-				e.addAttribute(key, edge.getAttribute(key));
+				e.setAttribute(key, edge.getAttribute(key));
 			});
 		});
 	}

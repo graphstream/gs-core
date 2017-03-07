@@ -31,10 +31,8 @@
  */
 package org.graphstream.ui.view.util;
 
-import org.graphstream.graph.Node;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
-import org.graphstream.ui.graphicGraph.GraphicSprite;
 import org.graphstream.ui.view.View;
 
 import java.awt.event.MouseEvent;
@@ -83,7 +81,7 @@ public class DefaultMouseManager implements MouseManager {
 									  Iterable<GraphicElement> elementsInArea) {
 		for (GraphicElement element : elementsInArea) {
 			if (!element.hasAttribute("ui.selected"))
-				element.addAttribute("ui.selected");
+				element.setAttribute("ui.selected");
 		}
 	}
 
@@ -91,9 +89,9 @@ public class DefaultMouseManager implements MouseManager {
 											 MouseEvent event) {
 		view.freezeElement(element, true);
 		if (event.getButton() == 3) {
-			element.addAttribute("ui.selected");
+			element.setAttribute("ui.selected");
 		} else {
-			element.addAttribute("ui.clicked");
+			element.setAttribute("ui.clicked");
 		}
 	}
 

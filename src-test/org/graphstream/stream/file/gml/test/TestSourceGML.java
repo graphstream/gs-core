@@ -54,8 +54,8 @@ public class TestSourceGML {
 			Graph graph = new MultiGraph("Dynamic !");
 			FileSourceGML source = new FileSourceGML();
 			
-			graph.addAttribute("ui.quality");
-			graph.addAttribute("ui.antialias");
+			graph.setAttribute("ui.quality");
+			graph.setAttribute("ui.antialias");
 			graph.display();
 			source.addSink(graph);
 			source.begin(TestSourceGML.class.getResourceAsStream("dynamic.gml"));
@@ -82,9 +82,9 @@ public class TestSourceGML {
 			Graph graph = new MultiGraph("foo");
 			FileSourceGML source = new FileSourceGML();
 
-			graph.addAttribute("ui.quality");
-			graph.addAttribute("ui.antialias");
-			graph.addAttribute("ui.stylesheet", "node { text-size:8; text-color: #0008; text-alignment: at-right; } edge { text-size:8; text-color: #0008; }");
+			graph.setAttribute("ui.quality");
+			graph.setAttribute("ui.antialias");
+			graph.setAttribute("ui.stylesheet", "node { text-size:8; text-color: #0008; text-alignment: at-right; } edge { text-size:8; text-color: #0008; }");
 			graph.display(false);
 			source.addSink(graph);
 			source.begin(TestSourceGML.class.getResourceAsStream("example2.sif.gml"));
@@ -100,9 +100,9 @@ public class TestSourceGML {
 			Graph graph = new MultiGraph("foo");
 			FileSourceGML source = new FileSourceGML();
 
-			graph.addAttribute("ui.quality");
-			graph.addAttribute("ui.antialias");
-			//graph.addAttribute("ui.stylesheet", "node { text-size:8; text-color: #0008; text-alignment: at-right; } edge { text-size:8; text-color: #0008; }");
+			graph.setAttribute("ui.quality");
+			graph.setAttribute("ui.antialias");
+			//graph.setAttribute("ui.stylesheet", "node { text-size:8; text-color: #0008; text-alignment: at-right; } edge { text-size:8; text-color: #0008; }");
 			graph.display();
 			source.addSink(graph);
 			source.begin(TestSourceGML.class.getResourceAsStream("SmallTest.gml"));

@@ -75,8 +75,8 @@ public class TestThreadProxyPipe {
 		source.addEdge("BC", "B", "C");
 		source.addEdge("CA", "C", "A");
 
-		source.getNode("A").addAttribute("A1", "foo");
-		source.getNode("A").addAttribute("A2", "foo");
+		source.getNode("A").setAttribute("A1", "foo");
+		source.getNode("A").setAttribute("A2", "foo");
 
 		ThreadProxyPipe proxy = new ThreadProxyPipe();
 		proxy.addSink(target);
@@ -113,11 +113,11 @@ public class TestThreadProxyPipe {
 		source.addEdge("XA", "X", "A");
 		source.removeEdge("AB");
 		source.removeNode("B");
-		source.getNode("X").addAttribute("X1", "foo");
+		source.getNode("X").setAttribute("X1", "foo");
 		source.getNode("X").setAttribute("X1", "bar");
 		source.getNode("A").removeAttribute("A1");
 
-		source.addAttribute("STOP!");
+		source.setAttribute("STOP!");
 
 		// End of the test, wait for the other thread to terminate
 

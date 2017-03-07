@@ -77,9 +77,9 @@ public class TestAnnotatedSink {
 		AdjacencyListGraph g = new AdjacencyListGraph("test");
 		g.addSink(new TestObject());
 		
-		g.addAttribute(GRAPH_BINDING_ATTR, GRAPH_BINDING_VALUE);
-		g.addNode(NODE_ID).addAttribute(NODE_BINDING_ATTR, NODE_BINDING_VALUE);
+		g.setAttribute(GRAPH_BINDING_ATTR, GRAPH_BINDING_VALUE);
+		g.addNode(NODE_ID).setAttribute(NODE_BINDING_ATTR, NODE_BINDING_VALUE);
 		g.addNode("otherNode");
-		g.addEdge(EDGE_ID, NODE_ID, "otherNode").addAttribute(EDGE_BINDING_ATTR, EDGE_BINDING_VALUE);
+		g.addEdge(EDGE_ID, NODE_ID, "otherNode").setAttribute(EDGE_BINDING_ATTR, EDGE_BINDING_VALUE);
 	}
 }

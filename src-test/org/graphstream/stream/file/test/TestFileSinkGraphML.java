@@ -81,9 +81,9 @@ public class TestFileSinkGraphML extends TestFileSinkBase {
         Node y = outGraph.addNode("Y");
         Edge xy = outGraph.addEdge("XY", "X", "Y", true);
         
-        x.addAttribute("<this>", "<should>");
-        y.addAttribute("<break>", "<xml>");
-        xy.addAttribute("&lt; also &gt;", "&lt; there is already escaped stuff &gt;");
+        x.setAttribute("<this>", "<should>");
+        y.setAttribute("<break>", "<xml>");
+        xy.setAttribute("&lt; also &gt;", "&lt; there is already escaped stuff &gt;");
     }
     
     protected void assertXmlContent() {
