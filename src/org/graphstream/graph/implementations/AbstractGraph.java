@@ -703,8 +703,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		if (edge == null)
 			return;
 
-		AbstractNode src = edge.getSourceNode();
-		AbstractNode dst = edge.getTargetNode();
+		AbstractNode src = (AbstractNode) edge.getSourceNode();
+		AbstractNode dst = (AbstractNode) edge.getTargetNode();
 
 		listeners.sendEdgeRemoved(edge.getId());
 

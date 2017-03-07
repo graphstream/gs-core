@@ -76,7 +76,7 @@ public class MultiNode extends AdjacencyListNode {
 
 	@Override
 	protected void removeEdge(int i) {
-		AbstractNode opposite = edges[i].getOpposite(this);
+		AbstractNode opposite = (AbstractNode) edges[i].getOpposite(this);
 		List<AbstractEdge> l = neighborMap.get(opposite);
 		l.remove(edges[i]);
 		if (l.isEmpty())
@@ -88,7 +88,7 @@ public class MultiNode extends AdjacencyListNode {
 
 	@Override
 	protected boolean addEdgeCallback(AbstractEdge edge) {
-		AbstractNode opposite = edge.getOpposite(this);
+		AbstractNode opposite = (AbstractNode) edge.getOpposite(this);
 		List<AbstractEdge> l = neighborMap.get(opposite);
 		if (l == null) {
 			l = new LinkedList<AbstractEdge>();

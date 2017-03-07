@@ -76,7 +76,7 @@ public class SingleNode extends AdjacencyListNode {
 
 	@Override
 	protected void removeEdge(int i) {
-		AbstractNode opposite = edges[i].getOpposite(this);
+		AbstractNode opposite = (AbstractNode) edges[i].getOpposite(this);
 		TwoEdges ee = neighborMap.get(opposite);
 		char type = edgeType(edges[i]);
 		if (type != O_EDGE)
@@ -92,7 +92,7 @@ public class SingleNode extends AdjacencyListNode {
 
 	@Override
 	protected boolean addEdgeCallback(AbstractEdge edge) {
-		AbstractNode opposite = edge.getOpposite(this);
+		AbstractNode opposite = (AbstractNode) edge.getOpposite(this);
 		TwoEdges ee = neighborMap.get(opposite);
 		if (ee == null)
 			ee = new TwoEdges();
