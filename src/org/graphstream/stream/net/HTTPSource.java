@@ -36,8 +36,6 @@ import static spark.Spark.path;
 import static spark.Spark.port;
 import static spark.Spark.post;
 
-import java.io.IOException;
-
 import org.apache.commons.lang3.math.NumberUtils;
 import org.graphstream.stream.SourceBase;
 
