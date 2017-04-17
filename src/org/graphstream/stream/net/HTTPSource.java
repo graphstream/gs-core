@@ -127,7 +127,6 @@ public class HTTPSource extends SourceBase {
 	 */
 	private Route addNode = (req,resp)->{
 		this.sendNodeAdded(sourceId,req.params(":id"));
-		resp.body("<html><body><h1>Knoten hinzugefügt</h1></body></html>");
 		resp.status(200);
 		resp.type("text");
 		return resp;
@@ -147,6 +146,7 @@ public class HTTPSource extends SourceBase {
 	private Route addEdge = (req,resp)->{
 		this.sendEdgeAdded(sourceId, req.params(":id"),req.params(":from"),req.params(":to"),Boolean.getBoolean(req.params("directed")));
 		resp.status(200);
+		resp.type("text");
 		return resp;
 	};
 	/**
@@ -155,6 +155,7 @@ public class HTTPSource extends SourceBase {
 	private Route deleteEdge = (req,resp)->{
 		this.sendEdgeRemoved(sourceId, req.params(":id"));
 		resp.status(200);
+		resp.type("text");
 		return resp;
 	};
 	/**
@@ -164,6 +165,7 @@ public class HTTPSource extends SourceBase {
 		if(NumberUtils.isCreatable(req.params(":step"))){
 			this.sendStepBegins(sourceId, Double.parseDouble(req.params(":step")));
 			resp.status(200);
+			resp.type("text");
 			return resp;
 		}
 		resp.status(400);
