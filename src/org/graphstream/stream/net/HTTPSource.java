@@ -31,239 +31,149 @@
  */
 package org.graphstream.stream.net;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.InetSocketAddress;
-import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.LinkedList;
+import static spark.Spark.delete;
+import static spark.Spark.path;
+import static spark.Spark.port;
+import static spark.Spark.post;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.graphstream.stream.SourceBase;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
+import spark.Route;
 
 /**
  * This source allows to control a graph from a web browser. Control is done
  * calling the following url :
- * <code>http://host/graphId/edit?q=ACTION&...</code>. ACTION is one of the
- * following action :
+ * <code>http://host/graphId</code>
+ * this is a rest api so you have to provide information for all parameters e.g. 
+ * <code>:id</code>
  * <ul>
- * <li>an : add node</li>
- * <li>cn : change node</li>
- * <li>dn : delete node</li>
- * <li>ae : add edge</li>
- * <li>ce : change edge</li>
- * <li>de : delete edge</li>
- * <li>cg : change graph</li>
- * <li>st : step begins</li>
- * <li>clear : clear the whole graph</li>
+ * <li>
+ * <code>/node</code> with the following http requests
+ * <ul >
+ * <li><code>/:id</code> post: add a Node</li>
+ * <li><code>/:id</code> delete: delete a Node</li>
+ * </ul>
+ * </li>
+ * <li>
+ * <code>/edge</code> with the following http requests
+ * <ul>
+ * <li><code>/:id/:from/:to/:directed</code> post: add Edge</li>
+ * <li><code>/:id</code> delete: add Edge</li>
+ * </ul>
+ * <li><code>/step/:step</code> post: take given steps</li>
+ *
  * </ul>
  * 
- * Each of these actions needs some argument.
- * <dl>
- * <dt>an</dt>
- * <dd>
- * <ul>
- * <li>id</li>
- * </ul>
- * </dd>
- * <dt>cn</dt>
- * <dd>
- * <ul>
- * <li>id</li>
- * <li>key</li>
- * <li>value</li>
- * </ul>
- * </dd>
- * <dt>dn</dt>
- * <dd>
- * <ul>
- * <li>id</li>
- * </ul>
- * </dd>
- * <dt>ae</dt>
- * <dd>
- * <ul>
- * <li>id</li>
- * <li>from</li>
- * <li>to</li>
- * <li>[directed]</li>
- * </ul>
- * </dd>
- * <dt>ce</dt>
- * <dd>
- * <ul>
- * <li>id</li>
- * <li>key</li>
- * <li>value</li>
- * </ul>
- * </dd>
- * <dt>de</dt>
- * <dd>
- * <ul>
- * <li>id</li>
- * </ul>
- * </dd>
- * <dt>cg</dt>
- * <dd>
- * <ul>
- * <li>key</li>
- * <li>value</li>
- * </ul>
- * </dd>
- * <dt>st</dt>
- * <dd>
- * <ul>
- * <li>step</li>
- * </ul>
- * </dd>
- * </dl>
  */
 public class HTTPSource extends SourceBase {
 
 	/**
 	 * Http server.
 	 */
-	protected final HttpServer server;
+	
+	final String graphId;
+	
 
 	/**
 	 * Create a new http source. The source will be available on
 	 * 'http://localhost/graphId' where graphId is passed as parameter of this
-	 * constructor.
+	 * constructor. Also this starts the server already 
 	 * 
 	 * @param graphId
 	 *            id of the graph
 	 * @param port
 	 *            port on which server will be bound
-	 * @throws IOException
-	 *             if server creation failed.
 	 */
-	public HTTPSource(String graphId, int port) throws IOException {
-		super(String.format("http://%s", graphId));
-
-		server = HttpServer.create(new InetSocketAddress(port), 4);
-		server.createContext(String.format("/%s/edit", graphId),
-				new EditHandler());
-
+	public HTTPSource(final String graphId,final int port)  {
+		super(graphId);
+		port(port);
+		this.graphId=graphId;
+		this.setupRoutes();
 	}
 
-	/**
-	 * Start the http server.
-	 */
-	public void start() {
-		server.start();
-	}
-
+	
 	/**
 	 * Stop the http server.
 	 */
 	public void stop() {
-		server.stop(0);
+		spark.Spark.stop();
 	}
-
-	private class EditHandler implements HttpHandler {
-
-		public void handle(HttpExchange ex) throws IOException {
-			HashMap<String, Object> get = GET(ex);
-			Action a;
-
-			try {
-				a = Action.valueOf(get.get("q").toString().toUpperCase());
-			} catch (Exception e) {
-				error(ex, "invalid action");
-				return;
-			}
-
-			switch (a) {
-			case AN:
-				HTTPSource.this.sendNodeAdded(sourceId, get.get("id")
-						.toString());
-				break;
-			case CN:
-				break;
-			case DN:
-				HTTPSource.this.sendNodeRemoved(sourceId, get.get("id")
-						.toString());
-				break;
-			case AE:
-				HTTPSource.this.sendEdgeAdded(sourceId, get.get("id")
-						.toString(), get.get("from").toString(), get.get("to")
-						.toString(), get.containsKey("directed"));
-				break;
-			case CE:
-				break;
-			case DE:
-				HTTPSource.this.sendEdgeRemoved(sourceId, get.get("id")
-						.toString());
-				break;
-			case CG:
-				break;
-			case ST:
-				HTTPSource.this.sendStepBegins(sourceId, Double.valueOf(get
-						.get("step").toString()));
-				break;
-			}
-
-			ex.sendResponseHeaders(200, 0);
-			ex.getResponseBody().close();
+	/**
+	 * setup rest paths and the actions
+	 */
+	private void setupRoutes(){
+		
+		
+		path("/"+this.graphId,()->{
+			path("/node",()->{
+				post("/:id",addNode);
+				delete("/:id", deleteNode);
+			});
+			path("/edge", ()->{
+				post("/:id/:from/:to/:directed",addEdge);
+				delete("/:id", deleteEdge);
+			});
+			path("/step", ()->{
+				post("/:step",takeStep);
+			});
+		});
+		
+		
+		
+	}
+	/**
+	 * Add Node
+	 */
+	private Route addNode = (req,resp)->{
+		this.sendNodeAdded(sourceId,req.params(":id"));
+		resp.status(200);
+		resp.type("text");
+		return resp;
+	};
+	/**
+	 * Delete Node
+	 */
+	private Route deleteNode = (req,resp)->{
+		this.sendNodeRemoved(sourceId, req.params(":id"));
+		resp.status(200);
+		resp.type("text");
+		return resp;
+	};
+	/**
+	 * Add Edge
+	 */
+	private Route addEdge = (req,resp)->{
+		this.sendEdgeAdded(sourceId, req.params(":id"),req.params(":from"),req.params(":to"),Boolean.getBoolean(req.params("directed")));
+		resp.status(200);
+		resp.type("text");
+		return resp;
+	};
+	/**
+	 * Delete Edge
+	 */
+	private Route deleteEdge = (req,resp)->{
+		this.sendEdgeRemoved(sourceId, req.params(":id"));
+		resp.status(200);
+		resp.type("text");
+		return resp;
+	};
+	/**
+	 * Take given steps
+	 */
+	private Route takeStep = (req,resp)->{
+		if(NumberUtils.isCreatable(req.params(":step"))){
+			this.sendStepBegins(sourceId, Double.parseDouble(req.params(":step")));
+			resp.status(200);
+			resp.type("text");
+			return resp;
 		}
-	}
-
-	protected static void error(HttpExchange ex, String message)
-			throws IOException {
-		byte[] data = message.getBytes();
-
-		ex.sendResponseHeaders(400, data.length);
-		ex.getResponseBody().write(data);
-		ex.getResponseBody().close();
-	}
-
-	@SuppressWarnings("unchecked")
-	protected static HashMap<String, Object> GET(HttpExchange ex) {
-		HashMap<String, Object> get = new HashMap<String, Object>();
-		String[] args = ex.getRequestURI().getRawQuery().split("[&]");
-
-		for (String arg : args) {
-			String[] kv = arg.split("[=]");
-			String k, v;
-
-			k = null;
-			v = null;
-
-			try {
-				if (kv.length > 0)
-					k = URLDecoder.decode(kv[0], System
-							.getProperty("file.encoding"));
-
-				if (kv.length > 1)
-					v = URLDecoder.decode(kv[1], System
-							.getProperty("file.encoding"));
-
-				if (get.containsKey(k)) {
-					Object o = get.get(k);
-
-					if (o instanceof LinkedList<?>)
-						((LinkedList<Object>) o).add(v);
-					else {
-						LinkedList<Object> l = new LinkedList<Object>();
-						l.add(o);
-						l.add(v);
-						get.put(k, l);
-					}
-				} else {
-					get.put(k, v);
-				}
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return get;
-	}
-
-	static enum Action {
-		AN, CN, DN, AE, CE, DE, CG, ST, CLEAR
-	}
+		resp.status(400);
+		return resp;
+		
+	};
+	
+	
+	
+	
 }
