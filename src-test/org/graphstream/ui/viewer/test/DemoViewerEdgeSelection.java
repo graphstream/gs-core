@@ -31,45 +31,50 @@
  */
 package org.graphstream.ui.viewer.test;
 
+import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.ViewerListener;
 import org.graphstream.ui.view.ViewerPipe;
+import org.graphstream.ui.view.util.DefaultMouseManager;
+import org.graphstream.ui.view.util.InteractiveElement;
+
+import java.util.EnumSet;
 
 /**
  * Test the viewer.
  */
-public class DemoViewerColorInterpolation implements ViewerListener {
+public class DemoViewerEdgeSelection implements ViewerListener {
 	public static void main(String args[]) {
 		// System.setProperty( "gs.ui.renderer",
 		// "org.graphstream.ui.j2dviewer.J2DGraphRenderer" );
-
-		new DemoViewerColorInterpolation();
+		new DemoViewerEdgeSelection();
 	}
 
 	protected boolean loop = true;
 
-	public DemoViewerColorInterpolation() {
+	public DemoViewerEdgeSelection() {
 		Graph graph = new MultiGraph("main graph");
-		ViewerPipe pipe = graph.display(false).newViewerPipe();
+		Viewer view = graph.display(true);
+		view.getDefaultView().setMouseManager(new DefaultMouseManager(EnumSet.of(InteractiveElement.EDGE, InteractiveElement.NODE, InteractiveElement.SPRITE)));
+		ViewerPipe pipe = view.newViewerPipe();
 
 		// graph.addAttribute( "ui.quality" );
 		graph.addAttribute("ui.antialias");
 
 		pipe.addViewerListener(this);
 
-		Node A = graph.addNode("A");
-		Node B = graph.addNode("B");
-		Node C = graph.addNode("C");
+		for (String nodeId : new String[]{"A", "B", "C"}) {
+			Node node = graph.addNode(nodeId);
+			node.setAttribute("ui.label", nodeId);
 
-		graph.addEdge("AB", "A", "B", true);
+		}
+
+		Edge ab = graph.addEdge("AB", "A", "B", true);
 		graph.addEdge("BC", "B", "C", true);
 		graph.addEdge("CA", "C", "A", true);
-
-		A.addAttribute("xyz", 0, 1, 0);
-		B.addAttribute("xyz", 1, 0, 0);
-		C.addAttribute("xyz", -1, 0, 0);
 
 		graph.addAttribute("ui.stylesheet", styleSheet);
 
@@ -95,7 +100,6 @@ public class DemoViewerColorInterpolation implements ViewerListener {
 				dir = -dir;
 			}
 
-			A.setAttribute("ui.color", color);
 			showSelection(graph);
 		}
 
