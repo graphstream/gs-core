@@ -128,8 +128,6 @@ public class DemoViewerColorInterpolation implements ViewerListener {
 	protected static String styleSheet = "graph         { padding: 20px; stroke-width: 0px; }"
 			+ "node:selected { fill-color: red;  fill-mode: plain; }"
 			+ "node:clicked  { fill-color: blue; fill-mode: plain; }"
-			+ "edge:selected { fill-color: purple; fill-mode: plain; }"
-			+ "edge:clicked  { fill-color: orange; fill-mode: plain; }"
 			+ "node#A        { fill-color: green, yellow, purple; fill-mode: dyn-plain; }";
 
 	public void buttonPushed(String id) {
