@@ -31,8 +31,6 @@
  */
 package org.graphstream.graph;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -218,8 +216,6 @@ public interface Element {
 		if (o != null) {
 			if (o instanceof Map<?, ?>)
 				return ((Map<?, ?>) o);
-			if (o instanceof CompoundAttribute)
-				return ((CompoundAttribute) o).toHashMap();
 		}
 
 		return null;
@@ -327,7 +323,7 @@ public interface Element {
 	 */
 	default boolean hasMap(String key) {
 		Object o = getAttribute(key);
-		return o != null && (o instanceof Map<?, ?> || o instanceof CompoundAttribute);
+		return o != null && (o instanceof Map<?, ?>);
 	}
 
 	/**

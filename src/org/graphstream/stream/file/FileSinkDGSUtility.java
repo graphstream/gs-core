@@ -36,8 +36,6 @@ import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Locale;
 
-import org.graphstream.graph.CompoundAttribute;
-
 public class FileSinkDGSUtility {
 	protected static String formatStringForQuoting(String str) {
 		return str.replaceAll("(^|[^\\\\])\"", "$1\\\\\"");
@@ -114,14 +112,8 @@ public class FileSinkDGSUtility {
 			}
 
 			return sb.toString();
-		} else if (value instanceof HashMap<?, ?>
-				|| value instanceof CompoundAttribute) {
-			HashMap<?, ?> hash;
-
-			if (value instanceof CompoundAttribute)
-				hash = ((CompoundAttribute) value).toHashMap();
-			else
-				hash = (HashMap<?, ?>) value;
+		} else if (value instanceof HashMap<?, ?>) {
+			HashMap<?, ?> hash = (HashMap<?, ?>) value;
 
 			return hashToString(hash);
 		} else if (value instanceof Color) {
