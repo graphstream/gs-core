@@ -34,7 +34,7 @@ package org.graphstream.ui.layout.springbox;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.SourceBase;
 import org.graphstream.stream.sync.SinkTime;
-import org.graphstream.ui.geom.Point3;
+import org.graphstream.util.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphPosLengthUtils;
 import org.graphstream.ui.layout.Layout;
 import org.miv.pherd.ParticleBox;
@@ -311,13 +311,13 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 
 	public Point3 getLowPoint() {
 		org.miv.pherd.geom.Point3 p = nodes.getNTree().getLowestPoint();
-		lo.set(p.x, p.y, p.z);
+		lo = new Point3(p.x, p.y, p.z);
 		return lo;
 	}
 
 	public Point3 getHiPoint() {
 		org.miv.pherd.geom.Point3 p = nodes.getNTree().getHighestPoint();
-		hi.set(p.x, p.y, p.z);
+		hi = new Point3(p.x, p.y, p.z);
 		return hi;
 	}
 
@@ -499,7 +499,7 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 
 		getLowPoint();
 		getHiPoint();
-		center.set(lo.x+(hi.x-lo.x)/2, lo.y+(hi.y-lo.y)/2, lo.z+(hi.z-lo.z)/2);
+		center = new Point3(lo.x+(hi.x-lo.x)/2, lo.y+(hi.y-lo.y)/2, lo.z+(hi.z-lo.z)/2);
 		//center.set(0, 0, 0);
 		energies.storeEnergy();
 		printStats();

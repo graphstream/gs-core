@@ -29,7 +29,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.ui.geom;
+package org.graphstream.util.geom;
 
 /**
  * 3D point.
@@ -53,7 +53,7 @@ public class Point3 extends Point2 implements java.io.Serializable {
 	/**
 	 * Z axis value.
 	 */
-	public double z;
+	public final double z;
 
 	// Attributes -- Shared
 
@@ -68,55 +68,32 @@ public class Point3 extends Point2 implements java.io.Serializable {
 	 * New 3D point at(0,0,0).
 	 */
 	public Point3() {
+		super();
+		this.z = 0;
 	}
 
 	/**
 	 * New 3D point at (x,y,0).
 	 */
 	public Point3(double x, double y) {
-		set(x, y, 0);
+		super(x, y);
+		this.z = 0;
 	}
 
 	/**
 	 * New 3D point at(x,y,z).
 	 */
 	public Point3(double x, double y, double z) {
-		set(x, y, z);
+		super(x, y);
+		this.z = z;
 	}
 
 	/**
 	 * New copy of other.
 	 */
 	public Point3(Point3 other) {
-		copy(other);
-	}
-
-	public Point3(Vector3 vec) {
-		copy(vec);
-	}
-	
-	public Point3(float data[]) {
-		this(0, data);
-	}
-	
-	public Point3(double data[]) {
-		this(0, data);
-	}
-
-	public Point3(int start, float data[]) {
-		if(data != null) {
-			if(data.length>start+0) x = data[start+0];
-			if(data.length>start+1) y = data[start+1];
-			if(data.length>start+2) z = data[start+2];
-		}
-	}
-	
-	public Point3(int start, double data[]) {
-		if(data != null) {
-			if(data.length>start+0) x = data[start+0];
-			if(data.length>start+1) y = data[start+1];
-			if(data.length>start+2) z = data[start+2];
-		}
+		super(other);
+		this.z = other.z;
 	}
 
 	// Predicates
@@ -128,17 +105,6 @@ public class Point3 extends Point2 implements java.io.Serializable {
 	public boolean isZero() {
 		return (x == 0 && y == 0 && z == 0);
 	}
-
-	// /**
-	// * Is other equal to this ?
-	// */
-	// public boolean
-	// equals( const Point3 < double > & other ) const
-	// {
-	// return( x == other.x
-	// and y == other.y
-	// and z == other.z );
-	// }
 
 	/**
 	 * Create a new point linear interpolation of this and <code>other</code>.
@@ -173,141 +139,114 @@ public class Point3 extends Point2 implements java.io.Serializable {
 		return Math.abs(Math.sqrt((xx * xx) + (yy * yy) + (zz * zz)));
 	}
 
-	// Commands
-
-	/**
-	 * Make this a copy of other.
-	 */
-	public void copy(Point3 other) {
-		x = other.x;
-		y = other.y;
-		z = other.z;
-	}
-
-	public void copy(Vector3 vec) {
-		x = vec.data[0];
-		y = vec.data[1];
-		z = vec.data[2];
-	}
-
-	/**
-	 * Like #moveTo().
-	 */
-	public void set(double x, double y, double z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-	}
-
 	// Commands -- moving
 
-	/**
-	 * Move to absolute position (x,y,z).
-	 */
-	public void moveTo(double x, double y, double z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
+	@Override
+	public Point3 add(double dl) {
+		return new Point3(x + dl, y + dl, z + dl);
+	}
+
+	@Override
+	public Point3 addX(double dx) {
+		return new Point3(x + dx, y, z);
+	}
+
+	@Override
+	public Point3 addY(double dy) {
+		return new Point3(x, y + dy, z);
+	}
+
+	public Point3 addZ(double dz) {
+		return new Point3(x, y, z + dz);
+	}
+
+	@Override
+	public Point3 add(Point2 p) {
+		return new Point3(x + p.x, y + p.y, z);
+	}
+
+	@Override
+	public Point3 add(double dx, double dy) {
+		return new Point3(x + dx, y + dy, z);
 	}
 
 	/**
 	 * Move of given vector(dx,dy,dz).
 	 */
-	public void move(double dx, double dy, double dz) {
-		this.x += dx;
-		this.y += dy;
-		this.z += dz;
-	}
-
-	/**
-	 * Move of given point <code>p</code>.
-	 */
-	public void move(Point3 p) {
-		this.x += p.x;
-		this.y += p.y;
-		this.z += p.z;
-	}
-
-	/**
-	 * Move of given vector d.
-	 */
-	public void move(Vector3 d) {
-		this.x += d.data[0];
-		this.y += d.data[1];
-		this.z += d.data[2];
-	}
-
-	/**
-	 * Move in depth of dz.
-	 */
-	public void moveZ(double dz) {
-		z += dz;
+	public Point3 add(double dx, double dy, double dz) {
+		return new Point3(x + dx, y + dy, z + dz);
 	}
 
 	/**
 	 * Scale of factor (sx,sy,sz).
 	 */
-	public void scale(double sx, double sy, double sz) {
-		x *= sx;
-		y *= sy;
-		z *= sz;
+	public Point3 mul(double sx, double sy, double sz) {
+		return new Point3(x * sx, y * sy, z * sz);
 	}
 
 	/**
 	 * Scale by factor s.
 	 */
-	public void scale(Point3 s) {
-		x *= s.x;
-		y *= s.y;
-		z *= s.z;
-	}
-
-	/**
-	 * Scale by factor s.
-	 */
-	public void scale(Vector3 s) {
-		x *= s.data[0];
-		y *= s.data[1];
-		z *= s.data[2];
+	public Point3 mul(Point3 s) {
+		return new Point3(x * s.x, y * s.y, z * s.z);
 	}
 
 	/**
 	 * Scale by a given scalar.
 	 * 
-	 * @param scalar
-	 *            The multiplier.
+	 * @param scalar The multiplier.
 	 */
-	public void scale(double scalar) {
-		x *= scalar;
-		y *= scalar;
-		z *= scalar;
+	public Point3 mul(double scalar) {
+		return new Point3(x * scalar, y * scalar, z * scalar);
+	}
+
+	public double dot(double ox, double oy, double oz) {
+		return ((x * ox) + (y * oy) + (z * oz));
 	}
 
 	/**
-	 * Change only depth at absolute coordinate z.
+	 * Dot product of this and other.
 	 */
-	public void setZ(double z) {
-		this.z = z;
+	public double dot(Point3 other) {
+		return ((x * other.x) + (y * other.y) + (z * other.z));
 	}
 
 	/**
-	 * Exchange the values of this and other.
+	 * Cartesian length.
 	 */
-	public void swap(Point3 other) {
-		double t;
+	@Override
+	public double length() {
+		return Math.sqrt((x * x) + (y * y) + (z * z));
+	}
 
-		if (other != this) {
-			t = this.x;
-			this.x = other.x;
-			other.x = t;
+	/**
+	 * Set this to the cross product of this and other.
+	 */
+	public Point3 cross(Point3 other) {
+		double newx;
+		double newy;
+		double newz;
 
-			t = this.y;
-			this.y = other.y;
-			other.y = t;
+		newx = (y * other.z) - (z * other.y);
+		newy = (z * other.x) - (x * other.z);
+		newz = (x * other.y) - (y * other.x);
 
-			t = this.z;
-			this.z = other.z;
-			other.z = t;
+		return new Point3(newx, newy, newz);
+	}
+
+	/**
+	 * Transform this into an unit vector.
+	 * 
+	 * @return the normalized Point3
+	 */
+	@Override
+	public Point3 normalize() {
+		double len = length();
+
+		if (len != 0) {
+			return new Point3(x/len, y/len, z/len);
+		} else {
+			return this;
 		}
 	}
 
@@ -331,35 +270,21 @@ public class Point3 extends Point2 implements java.io.Serializable {
 
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (!super.equals(o))
-        {
-            return false;
-        }
+		Point3 point3 = (Point3) o;
 
-        Point3 point3 = (Point3) o;
-
-        if (Double.compare(point3.z, z) != 0)
-        {
-            return false;
-        }
-
-        return true;
+		return super.equals(o) && Double.compare(point3.z, z) == 0; 
     }
 
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result = super.hashCode();
         long temp;
         temp = Double.doubleToLongBits(z);

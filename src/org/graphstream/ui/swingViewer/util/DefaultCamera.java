@@ -32,9 +32,8 @@
 package org.graphstream.ui.swingViewer.util;
 
 import org.graphstream.graph.Node;
-import org.graphstream.ui.geom.Point2;
-import org.graphstream.ui.geom.Point3;
-import org.graphstream.ui.geom.Vector2;
+import org.graphstream.util.geom.Point2;
+import org.graphstream.util.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicEdge;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
@@ -179,7 +178,7 @@ public class DefaultCamera implements Camera {
 	 */
 	public void setViewCenter(double x, double y, double z) {
 		setAutoFitView(false);
-		center.set(x, y, z);
+		center = new Point3(x, y, z);
 		graph.graphChanged = true;
 	}
 
@@ -511,21 +510,21 @@ public class DefaultCamera implements Camera {
 		double padXpx = getPaddingXpx() * 2;
 		double padYpx = getPaddingYpx() * 2;
 
-		sx = (metrics.viewport[2] - padXpx) / (metrics.size.data[0] + padXgu); // Ratio
+		sx = (metrics.viewport[2] - padXpx) / (metrics.size.x + padXgu); // Ratio
 		// along
 		// X
-		sy = (metrics.viewport[3] - padYpx) / (metrics.size.data[1] + padYgu); // Ratio
+		sy = (metrics.viewport[3] - padYpx) / (metrics.size.y + padYgu); // Ratio
 		// along
 		// Y
-		tx = metrics.lo.x + (metrics.size.data[0] / 2); // Centre of graph in X
-		ty = metrics.lo.y + (metrics.size.data[1] / 2); // Centre of graph in Y
+		tx = metrics.lo.x + (metrics.size.x / 2); // Centre of graph in X
+		ty = metrics.lo.y + (metrics.size.y / 2); // Centre of graph in Y
 
 		if (sx <= 0) {
-			sx = (metrics.viewport[2] - Math.min(metrics.viewport[2] - 1, padXpx)) / (metrics.size.data[0] + padXgu);
+			sx = (metrics.viewport[2] - Math.min(metrics.viewport[2] - 1, padXpx)) / (metrics.size.x + padXgu);
 		}
 
 		if (sy <= 0) {
-			sy = (metrics.viewport[3] - Math.min(metrics.viewport[3] - 1, padYpx)) / (metrics.size.data[1] + padYgu);
+			sy = (metrics.viewport[3] - Math.min(metrics.viewport[3] - 1, padYpx)) / (metrics.size.y + padYgu);
 		}
 
 		if (sx > sy) // The least ratio.
@@ -549,10 +548,10 @@ public class DefaultCamera implements Camera {
 
 		zoom = 1;
 
-		center.set(tx, ty, 0);
+		center = new Point3(tx, ty, 0);
 		metrics.setRatioPx2Gu(sx);
-		metrics.loVisible.copy(metrics.lo);
-		metrics.hiVisible.copy(metrics.hi);
+		metrics.loVisible = new Point3(metrics.lo);
+		metrics.hiVisible = new Point3(metrics.hi);
 	}
 
 	/**
@@ -570,8 +569,8 @@ public class DefaultCamera implements Camera {
 		double padYgu = getPaddingYgu() * 2;
 		double padXpx = getPaddingXpx() * 2;
 		double padYpx = getPaddingYpx() * 2;
-		double gw = gviewport != null ? gviewport[2] - gviewport[0] : metrics.size.data[0];
-		double gh = gviewport != null ? gviewport[3] - gviewport[1] : metrics.size.data[1];
+		double gw = gviewport != null ? gviewport[2] - gviewport[0] : metrics.size.x;
+		double gh = gviewport != null ? gviewport[3] - gviewport[1] : metrics.size.y;
 
 		sx = (metrics.viewport[2] - padXpx) / ((gw + padXgu) * zoom);
 		sy = (metrics.viewport[3] - padYpx) / ((gh + padYgu) * zoom);
@@ -602,8 +601,8 @@ public class DefaultCamera implements Camera {
 		double w2 = (metrics.viewport[2] / sx) / 2;
 		double h2 = (metrics.viewport[3] / sx) / 2;
 
-		metrics.loVisible.set(center.x - w2, center.y - h2);
-		metrics.hiVisible.set(center.x + w2, center.y + h2);
+		metrics.loVisible = new Point3(center.x - w2, center.y - h2);
+		metrics.hiVisible = new Point3(center.x + w2, center.y + h2);
 	}
 
 	/**
@@ -620,7 +619,7 @@ public class DefaultCamera implements Camera {
 			// middle of the graph, and the zoom is at one.
 
 			zoom = 1;
-			center.set(metrics.lo.x + (metrics.size.data[0] / 2), metrics.lo.y + (metrics.size.data[1] / 2), 0);
+			center = new Point3(metrics.lo.x + (metrics.size.x / 2), metrics.lo.y + (metrics.size.y / 2), 0);
 		}
 
 		autoFit = on;
@@ -1027,14 +1026,13 @@ public class DefaultCamera implements Camera {
 			Point2 p1 = new Point2(ctrl[0], ctrl[1]);
 			Point2 p2 = new Point2(ctrl[1], ctrl[2]);
 			Point2 p3 = new Point2(edge.to.getX(), edge.to.getY());
-			Vector2 perp = CubicCurve.perpendicular(p0, p1, p2, p3, sprite.getX());
+			Point2 perp = CubicCurve.perpendicular(p0, p1, p2, p3, sprite.getX());
 			double y = metrics.lengthToGu(sprite.getY(), sprite.getUnits());
 
-			perp.normalize();
-			perp.scalarMult(y);
+			perp = perp.normalize().mul(y);
 
-			pos.x = CubicCurve.eval(p0.x, p1.x, p2.x, p3.x, sprite.getX()) - perp.data[0];
-			pos.y = CubicCurve.eval(p0.y, p1.y, p2.y, p3.y, sprite.getX()) - perp.data[1];
+			pos.x = CubicCurve.eval(p0.x, p1.x, p2.x, p3.x, sprite.getX()) - perp.x;
+			pos.y = CubicCurve.eval(p0.y, p1.y, p2.y, p3.y, sprite.getX()) - perp.y;
 		} else {
 			double x = ((GraphicNode) edge.getSourceNode()).x;
 			double y = ((GraphicNode) edge.getSourceNode()).y;

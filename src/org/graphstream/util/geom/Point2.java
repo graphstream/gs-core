@@ -29,7 +29,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.ui.geom;
+package org.graphstream.util.geom;
 
 /**
  * 2D point.
@@ -51,12 +51,12 @@ public class Point2 implements java.io.Serializable {
 	/**
 	 * X axis value.
 	 */
-	public double x;
+	public final double x;
 
 	/**
 	 * Y axis value.
 	 */
-	public double y;
+	public final double y;
 
 	// Attributes -- Shared
 
@@ -71,27 +71,24 @@ public class Point2 implements java.io.Serializable {
 	 * New 2D point at (0,0).
 	 */
 	public Point2() {
+		this.x = 0;
+		this.y = 0;
 	}
 
 	/**
 	 * New 2D point at (x,y).
 	 */
 	public Point2(double x, double y) {
-		set(x, y);
+		this.x = x;
+		this.y = y;
 	}
 
 	/**
 	 * New copy of other.
 	 */
 	public Point2(Point2 other) {
-		copy(other);
-	}
-
-	/**
-	 * New 2D point at (x,y).
-	 */
-	public void make(double x, double y) {
-		set(x, y);
+		this.x = other.x;
+		this.y = other.y;
 	}
 
 	// Accessors
@@ -136,108 +133,93 @@ public class Point2 implements java.io.Serializable {
 		return Math.abs(Math.sqrt((xx * xx) + (yy * yy)));
 	}
 
-	// Commands
-
-	/**
-	 * Make this a copy of other.
-	 */
-	public void copy(Point2 other) {
-		x = other.x;
-		y = other.y;
-	}
-
-	/**
-	 * Like #moveTo().
-	 */
-	public void set(double x, double y) {
-		this.x = x;
-		this.y = y;
-	}
-
 	// Commands -- moving
 
 	/**
-	 * Move to absolute position (x,y).
+	 * Move of given vector (dl,dl).
 	 */
-	public void moveTo(double x, double y) {
-		this.x = x;
-		this.y = y;
+	public Point2 add(double dl) {
+		return new Point2(x + dl, y + dl);
 	}
 
 	/**
 	 * Move of given vector (dx,dy).
 	 */
-	public void move(double dx, double dy) {
-		this.x += dx;
-		this.y += dy;
+	public Point2 add(double dx, double dy) {
+		return new Point2(x + dx, y + dy);
 	}
 
 	/**
 	 * Move of given point <code>p</code>.
 	 */
-	public void move(Point2 p) {
-		this.x += p.x;
-		this.y += p.y;
+	public Point2 add(Point2 p) {
+		return new Point2(x + p.x, y + p.y);
 	}
 
 	/**
 	 * Move horizontally of dx.
 	 */
-	public void moveX(double dx) {
-		x += dx;
+	public Point2 addX(double dx) {
+		return new Point2(x + dx, y);
 	}
 
 	/**
 	 * Move vertically of dy.
 	 */
-	public void moveY(double dy) {
-		y += dy;
+	public Point2 addY(double dy) {
+		return new Point2(x, y + dy);
+	}
+	/**
+	 * Scale of factor (sx,sy).
+	 */
+	public Point2 mul(double scalar) {
+		return new Point2(x * scalar, y * scalar);
 	}
 
 	/**
 	 * Scale of factor (sx,sy).
 	 */
-	public void scale(double sx, double sy) {
-		x *= sx;
-		y *= sy;
+	public Point2 mul(double sx, double sy) {
+		return new Point2(x * sx, y * sy);
 	}
 
 	/**
 	 * Scale by factor s.
 	 */
-	public void scale(Point2 s) {
-		x *= s.x;
-		y *= s.y;
+	public Point2 mul(Point2 s) {
+		return new Point2(x * s.x, y * s.y);
+	}
+
+	public double dot(double ox, double oy) {
+		return ((x * ox) + (y * oy));
 	}
 
 	/**
-	 * Change only abscissa at absolute coordinate x.
+	 * Dot product of this and other.
 	 */
-	public void setX(double x) {
-		this.x = x;
+	public double dot(Point2 other) {
+		return ((x * other.x) + (y * other.y));
 	}
 
 	/**
-	 * Change only ordinate at absolute coordinate y.
+	 * Cartesian length.
 	 */
-	public void setY(double y) {
-		this.y = y;
+	public double length() {
+		return Math.sqrt((x * x) + (y * y));
 	}
 
 	/**
-	 * Exchange the values of this and other.
+	 * Transform this into an unit vector.
+	 * 
+	 * @return the new vector
 	 */
-	public void swap(Point2 other) {
-		double t;
+	public Point2 normalize() {
+		double len = length();
 
-		if (other != this) {
-			t = this.x;
-			this.x = other.x;
-			other.x = t;
-
-			t = this.y;
-			this.y = other.y;
-			other.y = t;
+		if (len != 0) {
+			return new Point3(x/len, y/len);
+		} else {
+			return this;
 		}
 	}
 
@@ -259,35 +241,22 @@ public class Point2 implements java.io.Serializable {
 
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
         Point2 point2 = (Point2) o;
 
-        if (Double.compare(point2.x, x) != 0)
-        {
-            return false;
-        }
-        if (Double.compare(point2.y, y) != 0)
-        {
-            return false;
-        }
-
-        return true;
+		return Double.compare(point2.x, x) == 0 && Double.compare(point2.y, y) == 0;
     }
 
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result;
         long temp;
         temp = Double.doubleToLongBits(x);

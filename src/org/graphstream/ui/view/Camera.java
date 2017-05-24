@@ -31,7 +31,7 @@
  */
 package org.graphstream.ui.view;
 
-import org.graphstream.ui.geom.Point3;
+import org.graphstream.util.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.swingViewer.util.GraphMetrics;
 

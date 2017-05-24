@@ -31,8 +31,7 @@
  */
 package org.graphstream.ui.swingViewer.util;
 
-import org.graphstream.ui.geom.Point3;
-import org.graphstream.ui.geom.Vector3;
+import org.graphstream.util.geom.Point3;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.graphicGraph.stylesheet.Value;
 import org.graphstream.ui.graphicGraph.stylesheet.Values;
@@ -86,7 +85,7 @@ public class GraphMetrics {
 	/**
 	 * Graph dimension.
 	 */
-	public Vector3 size = new Vector3();
+	public Point3 size = new Point3();
 
 	/**
 	 * The graph diagonal.
@@ -122,9 +121,9 @@ public class GraphMetrics {
 	 * respectively.
 	 */
 	protected void setDefaults() {
-		lo.set(-1, -1, -1);
-		hi.set(1, 1, 1);
-		size.set(2, 2, 2);
+		lo = new Point3(-1, -1, -1);
+		hi = new Point3(1, 1, 1);
+		size = new Point3(2, 2, 2);
 
 		diagonal = 1;
 		ratioPx2Gu = 1;
@@ -147,7 +146,7 @@ public class GraphMetrics {
 	 * 
 	 * @return The size.
 	 */
-	public Vector3 getSize() {
+	public Point3 getSize() {
 		return size;
 	}
 
@@ -363,17 +362,10 @@ public class GraphMetrics {
 	 */
 	public void setBounds(double minx, double miny, double minz, double maxx,
 			double maxy, double maxz) {
-		lo.x = minx;
-		lo.y = miny;
-		lo.z = minz;
-		hi.x = maxx;
-		hi.y = maxy;
-		hi.z = maxz;
+		lo = new Point3(minx, miny, minz);
+		hi = new Point3(maxx, maxy, maxz);
 
-		size.data[0] = hi.x - lo.x;
-		size.data[1] = hi.y - lo.y;
-		size.data[2] = hi.z - lo.z;
-		diagonal = Math.sqrt(size.data[0] * size.data[0] + size.data[1]
-				* size.data[1] + size.data[2] * size.data[2]);
+		size = new Point3(hi.x - lo.x, hi.y - lo.y, hi.z - lo.z);
+		diagonal = size.length();
 	}
 }

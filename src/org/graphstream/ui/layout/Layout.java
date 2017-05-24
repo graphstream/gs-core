@@ -32,7 +32,7 @@
 package org.graphstream.ui.layout;
 
 import org.graphstream.stream.Pipe;
-import org.graphstream.ui.geom.Point3;
+import org.graphstream.util.geom.Point3;
 
 /**
  * Layout algorithm interface.

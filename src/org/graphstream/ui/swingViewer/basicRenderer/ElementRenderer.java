@@ -32,7 +32,7 @@
 package org.graphstream.ui.swingViewer.basicRenderer;
 
 import org.graphstream.graph.Element;
-import org.graphstream.ui.geom.Point3;
+import org.graphstream.util.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicSprite;
 import org.graphstream.ui.graphicGraph.StyleGroup;
@@ -223,14 +223,12 @@ public abstract class ElementRenderer {
 			if (pos != null && s.getUnits() == Units.PX) {
 				double w = camera.getMetrics().lengthToPx(group.getSize(),
 						0);
-				p = camera.transformGuToPx(pos.x, pos.y, 0);
-				p.x += w/2;
+				p = camera.transformGuToPx(pos.x, pos.y, 0).add(w/2, 0, 0);
 			} else if (s != null && s.getUnits() == Units.PERCENTS) {
 				double w = camera.getMetrics().lengthToPx(group.getSize(),
 						0);
 				p = camera.transformGuToPx(camera.getMetrics().viewport[2] * pos.x,
-					camera.getMetrics().viewport[3] *  pos.y, 0);
-				p.x += (w/2);
+					camera.getMetrics().viewport[3] *  pos.y, 0).add(w/2, 0, 0);
 			} else {
 				double w = camera.getMetrics().lengthToGu(group.getSize(),
 						0);

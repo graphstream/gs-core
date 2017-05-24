@@ -52,7 +52,7 @@ import org.graphstream.stream.GraphReplay;
 import org.graphstream.stream.ProxyPipe;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.thread.ThreadProxyPipe;
-import org.graphstream.ui.geom.Point3;
+import org.graphstream.util.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.layout.LayoutRunner;
