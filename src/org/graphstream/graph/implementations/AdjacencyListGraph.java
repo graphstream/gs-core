@@ -220,6 +220,11 @@ public class AdjacencyListGraph extends AbstractGraph {
 	}
 
 	@Override
+	public Iterator<Node> iterator() {
+		return new NodeIterator<>();
+	}
+
+	@Override
 	public Edge getEdge(String id) {
 		return edgeMap.get(id);
 	}
@@ -261,11 +266,13 @@ public class AdjacencyListGraph extends AbstractGraph {
 		int iNext = 0;
 		int iPrev = -1;
 
+		@Override
 		public boolean hasNext() {
 			return iNext < edgeCount;
 		}
 
 		@SuppressWarnings("unchecked")
+		@Override
 		public T next() {
 			if (iNext >= edgeCount)
 				throw new NoSuchElementException();
@@ -273,12 +280,13 @@ public class AdjacencyListGraph extends AbstractGraph {
 			return (T) edgeArray[iPrev];
 		}
 
+		@Override
 		public void remove() {
 			if (iPrev == -1)
 				throw new IllegalStateException();
 			removeEdge(edgeArray[iPrev], true, true, true);
 			iNext = iPrev;
-			iPrev = -1;
+			iPrev -= 1;
 		}
 	}
 
@@ -286,11 +294,13 @@ public class AdjacencyListGraph extends AbstractGraph {
 		int iNext = 0;
 		int iPrev = -1;
 
+		@Override
 		public boolean hasNext() {
 			return iNext < nodeCount;
 		}
 
 		@SuppressWarnings("unchecked")
+		@Override
 		public T next() {
 			if (iNext >= nodeCount)
 				throw new NoSuchElementException();
@@ -298,12 +308,13 @@ public class AdjacencyListGraph extends AbstractGraph {
 			return (T) nodeArray[iPrev];
 		}
 
+		@Override
 		public void remove() {
 			if (iPrev == -1)
 				throw new IllegalStateException();
 			removeNode(nodeArray[iPrev], true);
 			iNext = iPrev;
-			iPrev = -1;
+			iPrev -= 1;
 		}
 	}
 

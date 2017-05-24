@@ -32,6 +32,7 @@
 package org.graphstream.graph;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 import org.graphstream.stream.AttributeSink;
 import org.graphstream.stream.ElementSink;
@@ -935,4 +936,14 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * @return The removed node
 	 */
 	Node removeNode(Node node);
+
+	/**
+	 * This iterator fulfills the optional <code>remove()</code> method from Iterator.
+	 * Use this instead of <code>edges()</code> when removing edges during iteration is required.
+	 *
+	 * @return an iterator of the edges
+	 */
+	@Override
+	public Iterator<Node> iterator();
+
 }

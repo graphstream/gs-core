@@ -243,6 +243,11 @@ public class AdjacencyListNode extends AbstractNode {
 		return Arrays.stream(edges, ioStart, degree);
 	}
 
+	@Override
+	public Iterator<Edge> iterator() {
+		return new EdgeIterator<>(IO_EDGE);
+	}
+
 	protected class EdgeIterator<T extends Edge> implements Iterator<T> {
 		protected int iPrev, iNext, iEnd;
 
@@ -256,11 +261,13 @@ public class AdjacencyListNode extends AbstractNode {
 				iNext = ioStart;
 		}
 
+		@Override
 		public boolean hasNext() {
 			return iNext < iEnd;
 		}
 
 		@SuppressWarnings("unchecked")
+		@Override
 		public T next() {
 			if (iNext >= iEnd)
 				throw new NoSuchElementException();
@@ -268,6 +275,7 @@ public class AdjacencyListNode extends AbstractNode {
 			return (T) edges[iPrev];
 		}
 
+	@Override
 		public void remove() {
 			if (iPrev == -1)
 				throw new IllegalStateException();
@@ -277,7 +285,7 @@ public class AdjacencyListNode extends AbstractNode {
 					e.target != AdjacencyListNode.this);
 			removeEdge(iPrev);
 			iNext = iPrev;
-			iPrev = -1;
+			iPrev -= 1;
 			iEnd--;
 		}
 	}

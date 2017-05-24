@@ -51,7 +51,6 @@ import org.graphstream.ui.view.Viewer;
 import org.graphstream.util.GraphListeners;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.stream.Collectors;
 
 /**
@@ -128,18 +127,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 									String attribute, Object oldValue, Object newValue) {
 		listeners.sendAttributeChangedEvent(id, SourceBase.ElementType.GRAPH,
 				attribute, event, oldValue, newValue);
-	}
-
-	// *** Inherited from graph ***
-
-	/**
-	 * This implementation returns an iterator over nodes.
-	 *
-	 * @see java.lang.Iterable#iterator()
-	 */
-	@Override
-	public Iterator<Node> iterator() {
-		return nodes().iterator();
 	}
 
 	// Factories

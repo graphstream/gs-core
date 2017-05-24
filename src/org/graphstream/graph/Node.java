@@ -31,7 +31,6 @@
  */
 package org.graphstream.graph;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
@@ -385,10 +384,14 @@ public interface Node extends Element, Iterable<Edge> {
 		return edges().filter(e -> ( e.getTargetNode() == this ));
 	}
 
+	/**
+	 * This iterator fulfills the optional <code>remove()</code> method from Iterator.
+	 * Use this instead of <code>nodes()</code> when removing nodes during iteration is required.
+	 *
+	 * @return an iterator of the nodes
+	 */
 	@Override
-	default Iterator<Edge> iterator() {
-		return edges().iterator();
-	}
+	public Iterator<Edge> iterator();
 
 	/**
 	 * Override the Object.toString() method.
