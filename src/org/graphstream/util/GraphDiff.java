@@ -79,14 +79,19 @@ public class GraphDiff {
 				&& (g1.getNodeCount() > 0 || g1.getEdgeCount() > 0)) {
 			events.add(new GraphCleared(g1));
 		} else {
-			for (int idx = 0; idx < g2.getNodeCount(); idx++) {
-				Node n2 = g2.getNode(idx);
-				Node n1 = g1.getNode(n2.getId());
+			attributeDiff(ElementType.GRAPH, g1, g2);
+ 
+			for (int idx = 0; idx < g1.getEdgeCount(); idx++) {
+				Edge e1 = g1.getEdge(idx);
+				Edge e2 = g2.getEdge(e1.getId());
 
-				if (n1 == null)
-					events.add(new NodeAdded(n2.getId()));
-
-				attributeDiff(ElementType.NODE, n1, n2);
+				if (e2 == null) {
+					attributeDiff(ElementType.EDGE, e1, e2);
+					events.add(new EdgeRemoved(e1.getId(),
+							e1.getSourceNode().getId(),
+							e1.getTargetNode().getId(),
+							e1.isDirected()));
+				}
 			}
 
 			for (int idx = 0; idx < g1.getNodeCount(); idx++) {
@@ -97,6 +102,16 @@ public class GraphDiff {
 					attributeDiff(ElementType.NODE, n1, n2);
 					events.add(new NodeRemoved(n1.getId()));
 				}
+			}
+
+			for (int idx = 0; idx < g2.getNodeCount(); idx++) {
+				Node n2 = g2.getNode(idx);
+				Node n1 = g1.getNode(n2.getId());
+
+				if (n1 == null)
+					events.add(new NodeAdded(n2.getId()));
+
+				attributeDiff(ElementType.NODE, n1, n2);
 			}
 
 			for (int idx = 0; idx < g2.getEdgeCount(); idx++) {
@@ -110,20 +125,6 @@ public class GraphDiff {
 
 				attributeDiff(ElementType.EDGE, e1, e2);
 			}
-
-			for (int idx = 0; idx < g1.getEdgeCount(); idx++) {
-				Edge e1 = g1.getEdge(idx);
-				Edge e2 = g2.getEdge(e1.getId());
-
-				if (e2 == null) {
-					attributeDiff(ElementType.EDGE, e1, e2);
-					events.add(new EdgeRemoved(e1.getId(), e1.getSourceNode()
-							.getId(), e1.getTargetNode().getId(), e1
-							.isDirected()));
-				}
-			}
-
-			attributeDiff(ElementType.GRAPH, g1, g2);
 		}
 	}
 
