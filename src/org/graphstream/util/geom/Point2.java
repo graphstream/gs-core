@@ -44,9 +44,12 @@ package org.graphstream.util.geom;
  * @version 0.1
  */
 public class Point2 implements java.io.Serializable {
-	// Attributes
-
 	private static final long serialVersionUID = 965985679540486895L;
+
+	/**
+	 * Specific point at (0,0).
+	 */
+	public static final Point2 NULL_POINT2 = new Point2(0, 0);
 
 	/**
 	 * X axis value.
@@ -58,14 +61,6 @@ public class Point2 implements java.io.Serializable {
 	 */
 	public final double y;
 
-	// Attributes -- Shared
-
-	/**
-	 * Specific point at (0,0).
-	 */
-	public static final Point2 NULL_POINT2 = new Point2(0, 0);
-
-	// Constructors
 
 	/**
 	 * New 2D point at (0,0).
@@ -77,6 +72,8 @@ public class Point2 implements java.io.Serializable {
 
 	/**
 	 * New 2D point at (x,y).
+	 * @param x the x value
+	 * @param y the y value
 	 */
 	public Point2(double x, double y) {
 		this.x = x;
@@ -85,145 +82,185 @@ public class Point2 implements java.io.Serializable {
 
 	/**
 	 * New copy of other.
+	 * @param other the other Point2, to copy
 	 */
 	public Point2(Point2 other) {
 		this.x = other.x;
 		this.y = other.y;
 	}
 
-	// Accessors
-
 	/**
-	 * Are all components to zero?.
+	 * @return true if all components are equal to zero
 	 */
 	public boolean isZero() {
 		return (x == 0 && y == 0);
 	}
-
-	// /**
-	// * Is other equal to this ?
-	// */
-	// public boolean
-	// equals( const Point2 < double > & other ) const
-	// {
-	// return( x == other.x
-	// and y == other.y
-	// and z == other.z );
-	// }
 
 	/**
 	 * Create a new point linear interpolation of this and <code>other</code>.
 	 * The new point is located between this and <code>other</code> if
 	 * <code>factor</code> is between 0 and 1 (0 yields this point, 1 yields the
 	 * <code>other</code> point).
+	 *
+	 * @param other the other Point2 to interpolate to
+	 * @param factor the factor by which to interpolate
+	 * @return a new Point2 representing the interpolation between this point and other
 	 */
 	public Point2 interpolate(Point2 other, double factor) {
-		Point2 p = new Point2(x + ((other.x - x) * factor), y
-				+ ((other.y - y) * factor));
-
-		return p;
+		return new Point2(
+				x + ((other.x - x) * factor),
+				y + ((other.y - y) * factor));
 	}
 
 	/**
-	 * Distance between this and <code>other</code>.
+	 * Cartesion distance between this and <code>other</code>.
+	 *
+	 * @param other the point to get the distance to
+	 * @return the cartesian distance between this and other
 	 */
 	public double distance(Point2 other) {
 		double xx = other.x - x;
 		double yy = other.y - y;
-		return Math.abs(Math.sqrt((xx * xx) + (yy * yy)));
+		return Math.sqrt((xx * xx) + (yy * yy));
 	}
 
-	// Commands -- moving
+	/**
+	 * Cartesion distance between this and the point (x,y).
+	 *
+\	 * @return the cartesian distance between this and other
+	 * @param x the other x value
+	 * @param y the other y value
+	 * @return the cartesion distance between this and another (x,y)
+	 */
+	public double distance(double x, double y) {
+		double xx = x - this.x;
+		double yy = y - this.y;
+		return Math.sqrt((xx * xx) + (yy * yy));
+	}
 
 	/**
-	 * Move of given vector (dl,dl).
+	 * Create a new point that represents this point added to <code>dl</code> in each component.
+	 *
+	 * @param dl the value to add to each component in this point
+	 * @return a new point representing the current point summed in each component with dl
 	 */
 	public Point2 add(double dl) {
 		return new Point2(x + dl, y + dl);
 	}
 
 	/**
-	 * Move of given vector (dx,dy).
-	 */
-	public Point2 add(double dx, double dy) {
-		return new Point2(x + dx, y + dy);
-	}
-
-	/**
-	 * Move of given point <code>p</code>.
-	 */
-	public Point2 add(Point2 p) {
-		return new Point2(x + p.x, y + p.y);
-	}
-
-	/**
-	 * Move horizontally of dx.
+	 * Create a new point that represents this point added to <code>dx</code> in the x component.
+	 *
+	 * @param dx the value to add to the x component of this point
+	 * @return a new point representing the current point summed in the x component with dx
 	 */
 	public Point2 addX(double dx) {
 		return new Point2(x + dx, y);
 	}
 
 	/**
-	 * Move vertically of dy.
+	 * Create a new point that represents this point added to <code>dy</code> in the y component.
+	 *
+	 * @param dy the value to add to the y component of this point
+	 * @return a new point representing the current point summed in the y component with dy
 	 */
 	public Point2 addY(double dy) {
 		return new Point2(x, y + dy);
 	}
+
 	/**
-	 * Scale of factor (sx,sy).
+	 * Create a new point that represents this point added to (dx,dy). This is equivalent to
+	 * <code>this.addX(dx).addY(dy)</code>.
+	 *
+	 * @param dx the value to add to the x component of this point
+	 * @param dy the value to add to the y component of this point
+	 * @return a new point representing the sum of this point and (dx,dy)
+	 */
+	public Point2 add(double dx, double dy) {
+		return new Point2(x + dx, y + dy);
+	}
+
+	/**
+	 * Create a new point that represents this point added to another point, p.
+	 *
+	 * @param p the other point to add to the current point
+	 * @return a new point representing the sum of this point and p
+	 */
+	public Point2 add(Point2 p) {
+		return new Point2(x + p.x, y + p.y);
+	}
+
+	/**
+	 * Multiply each component of this point by a scalar.
+	 * 
+	 * @param scalar The scalar to multiply each component by
+	 * @return a new point representing the current point with each component scaled
 	 */
 	public Point2 mul(double scalar) {
 		return new Point2(x * scalar, y * scalar);
 	}
 
 	/**
-	 * Scale of factor (sx,sy).
+	 * Multiply each component of this point by scaling factors sx, sy.
+	 *
+	 * @param sx the scalar to multiply the current x component by
+	 * @param sy the scalar to multiply the current y component by
+	 * @return a new point representing the current point with each component scaled
 	 */
 	public Point2 mul(double sx, double sy) {
 		return new Point2(x * sx, y * sy);
 	}
 
 	/**
-	 * Scale by factor s.
+	 * Multiply each component of this point by the components in point s.
+	 *
+	 * @param s the point to multiply by
+	 * @return a new point representing the current point with each component multiplied by the respective point in s
 	 */
 	public Point2 mul(Point2 s) {
 		return new Point2(x * s.x, y * s.y);
 	}
 
+	/**
+	 * Returns the dot product of the current vector with the components (ox,oy).
+	 *
+	 * @param ox the x component of the point to return the dot product of
+	 * @param oy the y component of the point to return the dot product of
+	 * @return the dot product of this point and (ox,oy)
+	 */
 	public double dot(double ox, double oy) {
 		return ((x * ox) + (y * oy));
 	}
 
 	/**
-	 * Dot product of this and other.
+	 * Returns the dot product of the current vector with the point other.
+	 *
+	 * @param other the point to return the dot product of
+	 * @return the dot product of this point and (ox,oy,oz)
 	 */
 	public double dot(Point2 other) {
 		return ((x * other.x) + (y * other.y));
 	}
 
 	/**
-	 * Cartesian length.
+	 * @return the cartesion length of this point
 	 */
 	public double length() {
 		return Math.sqrt((x * x) + (y * y));
 	}
 
 	/**
-	 * Transform this into an unit vector.
-	 * 
-	 * @return the new vector
+	 * @return a new point normalized to be a unit vector of the current point
 	 */
 	public Point2 normalize() {
 		double len = length();
 
 		if (len != 0) {
-			return new Point3(x/len, y/len);
+			return new Point2(x/len, y/len);
 		} else {
 			return this;
 		}
 	}
-
-	// Commands -- misc.
 
 	@Override
 	public String toString() {
@@ -239,7 +276,6 @@ public class Point2 implements java.io.Serializable {
 		return buf.toString();
 	}
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -248,12 +284,10 @@ public class Point2 implements java.io.Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         Point2 point2 = (Point2) o;
 
 		return Double.compare(point2.x, x) == 0 && Double.compare(point2.y, y) == 0;
     }
-
 
     @Override
     public int hashCode() {
