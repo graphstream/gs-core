@@ -295,6 +295,11 @@
 						<goals>
 							<goal>check</goal>
 						</goals>
+						<configuration>
+							<rules>
+								<!-- TODO : Add rules to force code quality (e.g. % of coverage) -->
+							</rules>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
