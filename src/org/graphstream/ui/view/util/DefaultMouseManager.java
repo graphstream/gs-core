@@ -31,11 +31,16 @@
  */
 package org.graphstream.ui.view.util;
 
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Node;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
+import org.graphstream.ui.graphicGraph.GraphicNode;
+import org.graphstream.ui.graphicGraph.GraphicSprite;
 import org.graphstream.ui.view.View;
 
 import java.awt.event.MouseEvent;
+import java.util.EnumSet;
 
 public class DefaultMouseManager implements MouseManager {
 	// Attribute
@@ -50,13 +55,28 @@ public class DefaultMouseManager implements MouseManager {
 	 */
 	protected GraphicGraph graph;
 
+	final private EnumSet<InteractiveElement> types;
+
 	// Construction
+
+	public DefaultMouseManager() {
+		this(EnumSet.of(InteractiveElement.NODE,InteractiveElement.SPRITE));
+	}
+
+	public DefaultMouseManager(EnumSet<InteractiveElement> types) {
+		this.types = types;
+	}
 
 	public void init(GraphicGraph graph, View view) {
 		this.view = view;
 		this.graph = graph;
 		view.addMouseListener(this);
 		view.addMouseMotionListener(this);
+	}
+
+	@Override
+	public EnumSet<InteractiveElement> getManagedTypes() {
+		return types;
 	}
 
 	public void release() {
@@ -74,6 +94,7 @@ public class DefaultMouseManager implements MouseManager {
 		if (!event.isShiftDown()) {
 			graph.nodes().filter(n -> n.hasAttribute("ui.selected")).forEach(n -> n.removeAttribute("ui.selected"));
 			graph.sprites().filter(s -> s.hasAttribute("ui.selected")).forEach(s -> s.removeAttribute("ui.selected"));
+            graph.edges().filter(e -> e.hasAttribute("ui.selected")).forEach(e -> e.removeAttribute("ui.selected"));
 		}
 	}
 
@@ -119,7 +140,7 @@ public class DefaultMouseManager implements MouseManager {
 	}
 
 	public void mousePressed(MouseEvent event) {
-		curElement = view.findNodeOrSpriteAt(event.getX(), event.getY());
+		curElement = view.findGraphicElementAt(types,event.getX(), event.getY());
 
 		if (curElement != null) {
 			mouseButtonPressOnElement(curElement, event);
@@ -159,7 +180,7 @@ public class DefaultMouseManager implements MouseManager {
 				y2 = t;
 			}
 
-			mouseButtonRelease(event, view.allNodesOrSpritesIn(x1, y1, x2, y2));
+			mouseButtonRelease(event, view.allGraphicElementsIn(types,x1, y1, x2, y2));
 			view.endSelectionAt(x2, y2);
 		}
 	}

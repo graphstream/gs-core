@@ -33,7 +33,12 @@ package org.graphstream.ui.view;
 
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicElement;
+import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.swingViewer.util.GraphMetrics;
+import org.graphstream.ui.view.util.InteractiveElement;
+
+import java.util.Collection;
+import java.util.EnumSet;
 
 public interface Camera {
 	/**
@@ -195,4 +200,8 @@ public interface Camera {
 	 * @return True if the element is visible and therefore must be rendered.
 	 */
 	boolean isVisible(GraphicElement element);
+
+    GraphicElement findGraphicElementAt(GraphicGraph graph, EnumSet<InteractiveElement> types, double x, double y);
+
+	Collection<GraphicElement> allGraphicElementsIn(GraphicGraph graph, EnumSet<InteractiveElement> types, double x1, double y1, double x2, double y2);
 }

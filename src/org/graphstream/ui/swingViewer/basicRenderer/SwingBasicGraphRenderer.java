@@ -46,6 +46,7 @@ import org.graphstream.ui.swingViewer.util.GraphMetrics;
 import org.graphstream.ui.swingViewer.util.Graphics2DOutput;
 import org.graphstream.ui.view.Camera;
 import org.graphstream.ui.view.LayerRenderer;
+import org.graphstream.ui.view.util.InteractiveElement;
 
 import javax.imageio.ImageIO;
 import java.awt.BasicStroke;
@@ -61,6 +62,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -149,12 +151,14 @@ public class SwingBasicGraphRenderer extends SwingGraphRendererBase {
 		return camera;
 	}
 
-	public Collection<GraphicElement> allNodesOrSpritesIn(double x1, double y1, double x2, double y2) {
-		return camera.allNodesOrSpritesIn(graph, x1, y1, x2, y2);
+	@Override
+	public Collection<GraphicElement> allGraphicElementsIn(EnumSet<InteractiveElement> types, double x1, double y1, double x2, double y2) {
+		return camera.allGraphicElementsIn(graph,types,x1, y1, x2, y2);
 	}
 
-	public GraphicElement findNodeOrSpriteAt(double x, double y) {
-		return camera.findNodeOrSpriteAt(graph, x, y);
+	@Override
+	public GraphicElement findGraphicElementAt(EnumSet<InteractiveElement> types, double x, double y) {
+		return camera.findGraphicElementAt(graph, types, x, y);
 	}
 
 	// Command
@@ -265,7 +269,7 @@ public class SwingBasicGraphRenderer extends SwingGraphRendererBase {
 
 	/**
 	 * Render the background of the graph.
-	 * 
+	 *
 	 * @param g
 	 *            The Swing graphics.
 	 */
@@ -280,7 +284,7 @@ public class SwingBasicGraphRenderer extends SwingGraphRendererBase {
 
 	/**
 	 * Render the element of the graph.
-	 * 
+	 *
 	 * @param g
 	 *            The Swing graphics.
 	 */
@@ -302,7 +306,7 @@ public class SwingBasicGraphRenderer extends SwingGraphRendererBase {
 
 	/**
 	 * Render a style group.
-	 * 
+	 *
 	 * @param g
 	 *            The Swing graphics.
 	 * @param group

@@ -58,6 +58,7 @@ public class MouseOverMouseManager extends DefaultMouseManager {
      *              the attribute is assigned without delay.
      */
     public MouseOverMouseManager(final long delay) {
+        super();
         this.delay = delay;
     }
 
@@ -78,7 +79,7 @@ public class MouseOverMouseManager extends DefaultMouseManager {
         try {
             hoverLock.lockInterruptibly();
             boolean stayedOnElement = false;
-            GraphicElement currentElement = view.findNodeOrSpriteAt(event.getX(), event.getY());
+            GraphicElement currentElement = view.findGraphicElementAt(getManagedTypes(),event.getX(), event.getY());
             if (hoveredElement != null) {
                 stayedOnElement = currentElement == null ? false : currentElement.equals(hoveredElement);
                 if (!stayedOnElement && hoveredElement.hasAttribute("ui.mouseOver")) {
