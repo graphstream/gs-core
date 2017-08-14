@@ -31,6 +31,20 @@
  */
 package org.graphstream.ui.swingViewer.util;
 
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.ui.geom.Point2;
@@ -48,14 +62,6 @@ import org.graphstream.ui.graphicGraph.stylesheet.Values;
 import org.graphstream.ui.view.Camera;
 import org.graphstream.ui.view.util.CubicCurve;
 import org.graphstream.ui.view.util.InteractiveElement;
-
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.Point2D;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Define how the graph is viewed.
@@ -365,28 +371,32 @@ public class DefaultCamera implements Camera {
 	@Override
 	public GraphicElement findGraphicElementAt(GraphicGraph graph, EnumSet<InteractiveElement> types, double x, double y) {
 		if (types.contains(InteractiveElement.NODE)) {
-			for (Node n : graph) {
-				GraphicNode node = (GraphicNode) n;
-
-				if (nodeContains(node, x, y))
-					return node;
+			Optional<Node> node = graph
+				.nodes()
+				.filter(n ->nodeContains((GraphicElement) n, x, y))
+				.findFirst();
+			if(node.isPresent()) {
+				return (GraphicElement) node.get();
 			}
 		}
-
 		if (types.contains(InteractiveElement.EDGE)) {
-			for (Edge edge : graph.getEdgeSet()) {
-			    if (edge instanceof  GraphicEdge && edgeContains((GraphicEdge)edge, x,y))
-					return (GraphicEdge)edge;
-			}
-        }
-
-		if (types.contains(InteractiveElement.SPRITE)) {
-			for (GraphicSprite sprite : graph.spriteSet()) {
-				if (spriteContains(sprite, x, y))
-					return sprite;
+			Optional<Edge> edge = graph
+				.edges()
+				.filter(e ->edgeContains((GraphicElement) e, x, y))
+				.findFirst();
+			if(edge.isPresent()) {
+				return (GraphicElement) edge.get();
 			}
 		}
-
+		if (types.contains(InteractiveElement.SPRITE)) {
+			Optional<GraphicSprite> sprite = graph
+				.sprites()
+				.filter(s ->spriteContains(s, x, y))
+				.findFirst();
+			if(sprite.isPresent()) {
+				return (GraphicElement) sprite.get();
+			}
+		}
 		return null;
 	}
 
@@ -394,28 +404,28 @@ public class DefaultCamera implements Camera {
 	public Collection<GraphicElement> allGraphicElementsIn(GraphicGraph graph, EnumSet<InteractiveElement> types, double x1, double y1, double x2, double y2) {
 		List<GraphicElement> elts = new ArrayList<GraphicElement>();
 
+		Stream nodeStream = null;
+		Stream edgeStream = null;
+		Stream spriteStream = null;
+
 		if (types.contains(InteractiveElement.NODE)) {
-			for (Node node : graph) {
-				if (isNodeIn((GraphicNode) node, x1, y1, x2, y2))
-					elts.add((GraphicNode) node);
-			}
+
+			nodeStream = graph.nodes()
+					.filter(n -> isNodeIn((GraphicNode) n, x1, y1, x2, y2));
 		}
 
 		if (types.contains(InteractiveElement.EDGE)) {
-			for (Edge edge : graph.getEdgeSet()) {
-				if (isEdgeIn((GraphicEdge) edge, x1, y1, x2, y2))
-					elts.add((GraphicEdge) edge);
-			}
+			edgeStream = graph.edges()
+					.filter(e -> isEdgeIn((GraphicEdge) e, x1, y1, x2, y2));
 		}
 
 		if (types.contains(InteractiveElement.SPRITE)) {
-			for (GraphicSprite sprite : graph.spriteSet()) {
-				if (isSpriteIn(sprite, x1, y1, x2, y2))
-					elts.add(sprite);
-			}
+			spriteStream = graph.sprites()
+					.filter(e -> isSpriteIn((GraphicSprite) e, x1, y1, x2, y2));
 		}
 
-		return Collections.unmodifiableList(elts);
+		Stream<GraphicElement> s = Stream.concat(nodeStream, Stream.concat(edgeStream, spriteStream));
+		return s.collect(Collectors.toList());
 	}
 
 	/**

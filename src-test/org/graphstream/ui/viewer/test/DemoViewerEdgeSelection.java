@@ -61,8 +61,8 @@ public class DemoViewerEdgeSelection implements ViewerListener {
 		view.getDefaultView().setMouseManager(new DefaultMouseManager(EnumSet.of(InteractiveElement.EDGE, InteractiveElement.NODE, InteractiveElement.SPRITE)));
 		ViewerPipe pipe = view.newViewerPipe();
 
-		// graph.addAttribute( "ui.quality" );
-		graph.addAttribute("ui.antialias");
+		// graph.setAttribute( "ui.quality" );
+		graph.setAttribute("ui.antialias");
 
 		pipe.addViewerListener(this);
 
@@ -76,7 +76,7 @@ public class DemoViewerEdgeSelection implements ViewerListener {
 		graph.addEdge("BC", "B", "C", true);
 		graph.addEdge("CA", "C", "A", true);
 
-		graph.addAttribute("ui.stylesheet", styleSheet);
+		graph.setAttribute("ui.stylesheet", styleSheet);
 
 		float color = 0;
 		float dir = 0.01f;
