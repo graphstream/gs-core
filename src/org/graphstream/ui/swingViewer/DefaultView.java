@@ -37,10 +37,7 @@ import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.Camera;
 import org.graphstream.ui.view.GraphRenderer;
 import org.graphstream.ui.view.LayerRenderer;
-import org.graphstream.ui.view.util.DefaultMouseManager;
-import org.graphstream.ui.view.util.DefaultShortcutManager;
-import org.graphstream.ui.view.util.MouseManager;
-import org.graphstream.ui.view.util.ShortcutManager;
+import org.graphstream.ui.view.util.*;
 
 import javax.swing.JFrame;
 import java.awt.BorderLayout;
@@ -51,6 +48,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.Collection;
+import java.util.EnumSet;
 
 /**
  * Base for constructing views.
@@ -320,13 +318,16 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 
 	// Methods deferred to the renderer
 
-	public Collection<GraphicElement> allNodesOrSpritesIn(double x1, double y1, double x2, double y2) {
-		return renderer.allNodesOrSpritesIn(x1, y1, x2, y2);
+	@Override
+	public Collection<GraphicElement> allGraphicElementsIn(EnumSet<InteractiveElement> types, double x1, double y1, double x2, double y2) {
+		return renderer.allGraphicElementsIn(types, x1, y1, x2, y2);
 	}
 
-	public GraphicElement findNodeOrSpriteAt(double x, double y) {
-		return renderer.findNodeOrSpriteAt(x, y);
+	@Override
+	public GraphicElement findGraphicElementAt(EnumSet<InteractiveElement> types, double x, double y) {
+		return renderer.findGraphicElementAt(types,x, y);
 	}
+
 
 	public void moveElementAtPx(GraphicElement element, double x, double y) {
 		// The feedback on the node positions is often off since not needed

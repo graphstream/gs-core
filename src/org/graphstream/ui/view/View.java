@@ -33,6 +33,7 @@ package org.graphstream.ui.view;
 
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
+import org.graphstream.ui.view.util.InteractiveElement;
 import org.graphstream.ui.view.util.MouseManager;
 import org.graphstream.ui.view.util.ShortcutManager;
 
@@ -40,6 +41,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.Collection;
+import java.util.EnumSet;
 
 /**
  * A view on a graphic graph.
@@ -60,22 +62,26 @@ public interface View {
 	Camera getCamera();
 
 	/**
-	 * Search for the first node or sprite (in that order) that contains the
+	 * Search for the first GraphicElement among the specified types (precedence: node, edge, sprite) that contains the
 	 * point at coordinates (x, y).
 	 *
+     * @param types
+	 * 			  The types to check
 	 * @param x
 	 *            The point abscissa.
 	 * @param y
 	 *            The point ordinate.
-	 * @return The first node or sprite at the given coordinates or null if
+	 * @return The first GraphicElement among the specified types at the given coordinates or null if
 	 *         nothing found.
 	 */
-	GraphicElement findNodeOrSpriteAt(double x, double y);
+	GraphicElement findGraphicElementAt(EnumSet<InteractiveElement> types, double x, double y);
 
 	/**
-	 * Search for all the nodes and sprites contained inside the rectangle
+	 * Search for all the graphic elements contained inside the rectangle
 	 * (x1,y1)-(x2,y2).
 	 *
+	 * @param types
+	 * 			  The set of types to check
 	 * @param x1
 	 *            The rectangle lowest point abscissa.
 	 * @param y1
@@ -84,9 +90,9 @@ public interface View {
 	 *            The rectangle highest point abscissa.
 	 * @param y2
 	 *            The rectangle highest point ordinate.
-	 * @return The set of sprites and nodes in the given rectangle.
+	 * @return The set of sprites, nodes, and edges in the given rectangle.
 	 */
-	Collection<GraphicElement> allNodesOrSpritesIn(double x1, double y1, double x2, double y2);
+	Collection<GraphicElement> allGraphicElementsIn(EnumSet<InteractiveElement> types, double x1, double y1, double x2, double y2);
 
 	/**
 	 * Redisplay or update the view contents. Called by the Viewer.
@@ -247,4 +253,6 @@ public interface View {
 	 *            the listener
 	 */
 	void removeMouseMotionListener(MouseMotionListener l);
+
+
 }
