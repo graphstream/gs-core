@@ -1,6 +1,9 @@
 GraphStream
 ===========
 
+.. image:: https://travis-ci.org/graphstream/gs-core.svg?branch=2.x
+    :target: https://travis-ci.org/graphstream/gs-core
+
 .. image:: http://graphstream-project.org/media/img/gs-110.png
 
 Welcome to GraphStream, and thank you for your download, we hope you will find it
