@@ -413,17 +413,26 @@ public class DefaultCamera implements Camera {
 			nodeStream = graph.nodes()
 					.filter(n -> isNodeIn((GraphicNode) n, x1, y1, x2, y2));
 		}
-
+		else {
+			nodeStream = Stream.empty();
+		}
+		
 		if (types.contains(InteractiveElement.EDGE)) {
 			edgeStream = graph.edges()
 					.filter(e -> isEdgeIn((GraphicEdge) e, x1, y1, x2, y2));
 		}
-
+		else {
+			edgeStream = Stream.empty();
+		}
+		
 		if (types.contains(InteractiveElement.SPRITE)) {
 			spriteStream = graph.sprites()
 					.filter(e -> isSpriteIn((GraphicSprite) e, x1, y1, x2, y2));
 		}
-
+		else {
+			spriteStream = Stream.empty();
+		}
+		
 		Stream<GraphicElement> s = Stream.concat(nodeStream, Stream.concat(edgeStream, spriteStream));
 		return s.collect(Collectors.toList());
 	}
