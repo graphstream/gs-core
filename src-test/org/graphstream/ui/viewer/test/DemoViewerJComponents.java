@@ -41,7 +41,7 @@ import org.graphstream.stream.thread.ThreadProxyPipe;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
-import org.graphstream.ui.view.Viewer;
+import org.graphstream.ui.swingViewer.SwingViewer;
 
 public class DemoViewerJComponents {
 	public static void main(String args[]) {
@@ -52,7 +52,7 @@ public class DemoViewerJComponents {
 	public DemoViewerJComponents() {
 		Graph graph = new MultiGraph("main graph");
 		ThreadProxyPipe toSwing = new ThreadProxyPipe(graph);
-		Viewer viewer = new Viewer(toSwing);
+		SwingViewer viewer = new SwingViewer(toSwing);
 		ProxyPipe fromSwing = viewer.newThreadProxyOnGraphicGraph();
 		SpriteManager sman = new SpriteManager(graph);
 

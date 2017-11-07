@@ -37,6 +37,10 @@ import org.graphstream.ui.view.util.InteractiveElement;
 import org.graphstream.ui.view.util.MouseManager;
 import org.graphstream.ui.view.util.ShortcutManager;
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
+
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -52,7 +56,7 @@ public interface View {
 	 *
 	 * @return a view id
 	 */
-	String getId();
+	String getIdView();
 
 	/**
 	 * Get a camera object to provide control commands on the view.
@@ -253,6 +257,8 @@ public interface View {
 	 *            the listener
 	 */
 	void removeMouseMotionListener(MouseMotionListener l);
+	
+	<T extends Event> void addEventFilter(EventType<T> eventType, EventHandler<? super T> eventFilter) ;
 
 
 }

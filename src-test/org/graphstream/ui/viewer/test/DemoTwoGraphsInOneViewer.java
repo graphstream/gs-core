@@ -37,7 +37,7 @@ import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
 import org.graphstream.stream.file.FileSourceDGS;
 import org.graphstream.stream.thread.*;
-import org.graphstream.ui.view.Viewer;
+import org.graphstream.ui.swingViewer.SwingViewer;
 
 public class DemoTwoGraphsInOneViewer {
 	public static final String GRAPH = "data/dorogovtsev_mendes6000.dgs";
@@ -49,8 +49,8 @@ public class DemoTwoGraphsInOneViewer {
 	public DemoTwoGraphsInOneViewer() {
 		Graph graph1 = new MultiGraph("g1");
 		Graph graph2 = new MultiGraph("g2");
-		Viewer viewer1 = new Viewer(new ThreadProxyPipe(graph1));
-		Viewer viewer2 = new Viewer(new ThreadProxyPipe(graph2));
+		SwingViewer viewer1 = new SwingViewer(new ThreadProxyPipe(graph1));
+		SwingViewer viewer2 = new SwingViewer(new ThreadProxyPipe(graph2));
 
 		graph1.setAttribute("ui.stylesheet", styleSheet1);
 		graph2.setAttribute("ui.stylesheet", styleSheet2);
@@ -66,6 +66,8 @@ public class DemoTwoGraphsInOneViewer {
 
 		dgs.addSink(graph1);
 		try {
+			System.out.println(getClass());
+
 			dgs.begin(getClass().getResourceAsStream(GRAPH));
 			for (int i = 0; i < 100 && dgs.nextEvents(); i++)
 				;

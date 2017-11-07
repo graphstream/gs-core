@@ -33,8 +33,8 @@ package org.graphstream.ui.viewer.test;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.ui.swingViewer.SwingViewer;
 import org.graphstream.ui.swingViewer.ViewPanel;
-import org.graphstream.ui.view.Viewer;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -53,7 +53,7 @@ public class DemoAllInSwing {
 		// On demande au viewer de consid�rer que le graphe ne sera lu et modifi� que
 		// dans le thread Swing.
 		
-		Viewer viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
+		SwingViewer viewer = new SwingViewer(graph, SwingViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
 
 		// � Partir de l�, le viewer consid�re que le graphe est dans son propre thread,
 		// c'est-�-dire le thread Swing. Il est donc dangereux d'y toucher dans la thread
@@ -67,9 +67,9 @@ public class DemoAllInSwing {
 class InitializeApplication extends JFrame implements Runnable {
 	private static final long serialVersionUID = - 804177406404724792L;
 	protected Graph graph;
-	protected Viewer viewer;
+	protected SwingViewer viewer;
 	
-	public InitializeApplication(Viewer viewer, Graph graph) {
+	public InitializeApplication(SwingViewer viewer, Graph graph) {
 		this.viewer = viewer;
 		this.graph = graph;
 	}

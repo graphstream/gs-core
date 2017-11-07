@@ -29,24 +29,8 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.ui.view;
+package org.graphstream.ui.swingViewer;
 
-import org.graphstream.graph.Edge;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
-import org.graphstream.stream.ProxyPipe;
-import org.graphstream.stream.Source;
-import org.graphstream.stream.thread.ThreadProxyPipe;
-import org.graphstream.ui.geom.Point3;
-import org.graphstream.ui.graphicGraph.GraphicGraph;
-import org.graphstream.ui.layout.Layout;
-import org.graphstream.ui.layout.LayoutRunner;
-import org.graphstream.ui.layout.Layouts;
-import org.graphstream.ui.swingViewer.DefaultView;
-import org.graphstream.ui.swingViewer.ViewPanel;
-import org.graphstream.ui.swingViewer.basicRenderer.SwingBasicGraphRenderer;
-
-import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.security.AccessControlException;
@@ -54,6 +38,27 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.swing.Timer;
+
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+import org.graphstream.stream.ProxyPipe;
+import org.graphstream.stream.Source;
+import org.graphstream.stream.thread.ThreadProxyPipe;
+import org.graphstream.ui.fxViewer.FxViewPanel;
+import org.graphstream.ui.geom.Point3;
+import org.graphstream.ui.graphicGraph.GraphicGraph;
+import org.graphstream.ui.layout.Layout;
+import org.graphstream.ui.layout.LayoutRunner;
+import org.graphstream.ui.layout.Layouts;
+import org.graphstream.ui.swingViewer.basicRenderer.SwingBasicGraphRenderer;
+import org.graphstream.ui.view.Camera;
+import org.graphstream.ui.view.GraphRenderer;
+import org.graphstream.ui.view.View;
+import org.graphstream.ui.view.Viewer;
+import org.graphstream.ui.view.ViewerPipe;
 
 /**
  * Set of views on a graphic graph.
@@ -101,12 +106,12 @@ import java.util.logging.Logger;
  * the events that occured on the source before it is connected to it.
  * </p>
  */
-public class Viewer implements ActionListener {
+public class SwingViewer implements Viewer, ActionListener{
 
 	/**
 	 * class level logger
 	 */
-	private static final Logger logger = Logger.getLogger(Viewer.class.getName());
+	private static final Logger logger = Logger.getLogger(SwingViewer.class.getName());
 
 	// Attributes
 
@@ -115,12 +120,6 @@ public class Viewer implements ActionListener {
 	 */
 	public static String DEFAULT_VIEW_ID = "defaultView";
 
-	/**
-	 * What to do when a view frame is closed.
-	 */
-	public static enum CloseFramePolicy {
-		CLOSE_VIEWER, HIDE_ONLY, EXIT
-	};
 
 	/**
 	 * How does the viewer synchronise its internal graphic graph with the graph
@@ -159,7 +158,7 @@ public class Viewer implements ActionListener {
 	/**
 	 * Timer in the Swing thread.
 	 */
-	protected Timer timer;
+	protected Timer timer ;
 
 	/**
 	 * Delay in milliseconds between frames.
@@ -198,7 +197,7 @@ public class Viewer implements ActionListener {
 	 * @param source
 	 *            The source of graph events.
 	 */
-	public Viewer(ProxyPipe source) {
+	public SwingViewer(ProxyPipe source) {
 		graphInAnotherThread = true;
 		init(new GraphicGraph(newGGId()), source, (Source) null);
 	}
@@ -210,7 +209,7 @@ public class Viewer implements ActionListener {
 	 * @param graph
 	 *            THe graph to draw.
 	 */
-	public Viewer(GraphicGraph graph) {
+	public SwingViewer(GraphicGraph graph) {
 		graphInAnotherThread = false;
 		init(graph, (ProxyPipe) null, (Source) null);
 	}
@@ -229,7 +228,7 @@ public class Viewer implements ActionListener {
 	 * @param threadingModel
 	 *            The threading model.
 	 */
-	public Viewer(Graph graph, ThreadingModel threadingModel) {
+	public SwingViewer(Graph graph, ThreadingModel threadingModel) {
 		switch (threadingModel) {
 		case GRAPH_IN_GUI_THREAD:
 			graphInAnotherThread = false;
@@ -255,7 +254,7 @@ public class Viewer implements ActionListener {
 	 * 
 	 * @return The new identifier.
 	 */
-	protected String newGGId() {
+	public String newGGId() {
 		return String.format("GraphicGraph_%d", (int) (Math.random() * 10000));
 	}
 
@@ -270,12 +269,13 @@ public class Viewer implements ActionListener {
 	 * @param source
 	 *            The source of events from this thread (null if ppipe != null).
 	 */
-	protected void init(GraphicGraph graph, ProxyPipe ppipe, Source source) {
+	public void init(GraphicGraph graph, ProxyPipe ppipe, Source source) {
 		this.graph = graph;
 		this.pumpPipe = ppipe;
 		this.sourceInSameThread = source;
-		this.timer = new Timer(delay, this);
 
+		this.timer = new Timer(delay, this);
+		
 		assert ((ppipe != null && source == null) || (ppipe == null && source != null));
 
 		if (pumpPipe != null)
@@ -285,7 +285,7 @@ public class Viewer implements ActionListener {
 				replayGraph((Graph) source);
 			sourceInSameThread.addSink(graph);
 		}
-
+		
 		timer.setCoalesce(true);
 		timer.setRepeats(true);
 		timer.start();
@@ -301,7 +301,6 @@ public class Viewer implements ActionListener {
 			for (View view : views.values())
 				view.close(graph);
 
-			timer.stop();
 			timer.removeActionListener(this);
 
 			if (pumpPipe != null)
@@ -358,7 +357,7 @@ public class Viewer implements ActionListener {
 
 		return new SwingBasicGraphRenderer();
 	}
-
+	
 	/**
 	 * What to do when a frame is closed.
 	 */
@@ -421,6 +420,10 @@ public class Viewer implements ActionListener {
 	public ViewPanel getDefaultView() {
 		return (DefaultView) getView(DEFAULT_VIEW_ID);
 	}
+	
+	public FxViewPanel getFxDefaultView() {
+		return (FxViewPanel) getView(DEFAULT_VIEW_ID);
+	}
 
 	// Command
 
@@ -437,9 +440,9 @@ public class Viewer implements ActionListener {
 		synchronized (views) {
 			GraphRenderer<?, ?> renderer = newGraphRenderer();
 			View view = renderer.createDefaultView(this, DEFAULT_VIEW_ID);
-
+			
 			addView(view);
-
+			
 			if (openInAFrame)
 				view.openInAFrame(true);
 
@@ -457,7 +460,7 @@ public class Viewer implements ActionListener {
 	 */
 	public View addView(View view) {
 		synchronized (views) {
-			View old = views.put(view.getId(), view);
+			View old = views.put(view.getIdView(), view);
 
 			if (old != null && old != view)
 				old.close(graph);
@@ -524,7 +527,9 @@ public class Viewer implements ActionListener {
 	 * triggers a repaint. Never call this method, it is called by a Swing Timer
 	 * automatically.
 	 */
-	public void actionPerformed(ActionEvent e) {
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		// TODO Auto-generated method stub
 		synchronized (views) {
 			// long t1=System.currentTimeMillis();
 			// long gsize1=graph.getNodeCount();
@@ -555,8 +560,9 @@ public class Viewer implements ActionListener {
 			// display=%f (size delta=%d size1=%d size2=%d)%n",
 			// (t2-t1)/1000.0, (t3-t2)/1000.0, (t4-t3)/1000.0, (t5-t4)/1000.0,
 			// (gsize2-gsize1), gsize1, gsize2);
-		}
 	}
+	}
+	
 
 	/**
 	 * Compute the overall bounds of the graphic graph according to the nodes
@@ -565,7 +571,7 @@ public class Viewer implements ActionListener {
 	 * circumstances be computed according to the graph bounds. The bounds are
 	 * stored in the graph metrics.
 	 */
-	protected void computeGraphMetrics() {
+	public void computeGraphMetrics() {
 		graph.computeBounds();
 
 		synchronized (views) {
@@ -659,7 +665,7 @@ public class Viewer implements ActionListener {
 	}
 
 	/** Dirty replay of the graph. */
-	protected void replayGraph(Graph graph) {
+	public void replayGraph(Graph graph) {
 		// Replay all graph attributes.
 
 		graph.attributeKeys().forEach(key -> {
@@ -687,4 +693,5 @@ public class Viewer implements ActionListener {
 			});
 		});
 	}
+
 }

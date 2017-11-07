@@ -64,7 +64,7 @@ public abstract class ViewPanel extends JPanel implements View {
 		id = identifier;
 	}
 
-	public String getId() {
+	public String getIdView() {
 		return id;
 	}
 

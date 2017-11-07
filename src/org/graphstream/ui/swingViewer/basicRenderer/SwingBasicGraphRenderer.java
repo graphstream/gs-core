@@ -275,7 +275,6 @@ public class SwingBasicGraphRenderer extends SwingGraphRendererBase {
 	 */
 	protected void renderGraphBackground(Graphics2D g) {
 		StyleGroup group = graph.getStyle();
-
 		if (group.getFillMode() != FillMode.NONE) {
 			g.setColor(group.getFillColor(0));
 			g.fillRect(0, 0, (int) camera.getMetrics().viewport[2], (int) camera.getMetrics().viewport[3]);

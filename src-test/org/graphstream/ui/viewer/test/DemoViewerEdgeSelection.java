@@ -35,10 +35,10 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.ui.view.Viewer;
+import org.graphstream.ui.swingViewer.SwingViewer;
+import org.graphstream.ui.swingViewer.util.DefaultMouseManager;
 import org.graphstream.ui.view.ViewerListener;
 import org.graphstream.ui.view.ViewerPipe;
-import org.graphstream.ui.view.util.DefaultMouseManager;
 import org.graphstream.ui.view.util.InteractiveElement;
 
 import java.util.EnumSet;
@@ -57,7 +57,7 @@ public class DemoViewerEdgeSelection implements ViewerListener {
 
 	public DemoViewerEdgeSelection() {
 		Graph graph = new MultiGraph("main graph");
-		Viewer view = graph.display(true);
+		SwingViewer view = (SwingViewer) graph.display(true);
 		view.getDefaultView().setMouseManager(new DefaultMouseManager(EnumSet.of(InteractiveElement.EDGE, InteractiveElement.NODE, InteractiveElement.SPRITE)));
 		ViewerPipe pipe = view.newViewerPipe();
 
@@ -69,7 +69,6 @@ public class DemoViewerEdgeSelection implements ViewerListener {
 		for (String nodeId : new String[]{"A", "B", "C"}) {
 			Node node = graph.addNode(nodeId);
 			node.setAttribute("ui.label", nodeId);
-
 		}
 
 		Edge ab = graph.addEdge("AB", "A", "B", true);
@@ -124,7 +123,6 @@ public class DemoViewerEdgeSelection implements ViewerListener {
 		}
 
 		sb.append(" ]");
-
 		if (selection)
 			System.err.printf("selection = %s%n", sb.toString());
 	}

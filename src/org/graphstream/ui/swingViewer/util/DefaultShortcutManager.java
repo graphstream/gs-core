@@ -29,16 +29,18 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.ui.view.util;
+package org.graphstream.ui.swingViewer.util;
+
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.view.Camera;
 import org.graphstream.ui.view.View;
+import org.graphstream.ui.view.util.ShortcutManager;
 
-import java.awt.event.KeyEvent;
-
-public class DefaultShortcutManager implements ShortcutManager
+public class DefaultShortcutManager implements ShortcutManager, KeyListener
 {
 	// Attributes
 

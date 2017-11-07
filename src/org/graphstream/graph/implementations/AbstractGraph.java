@@ -31,6 +31,10 @@
  */
 package org.graphstream.graph.implementations;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.stream.Collectors;
+
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeFactory;
 import org.graphstream.graph.EdgeRejectedException;
@@ -44,15 +48,16 @@ import org.graphstream.stream.ElementSink;
 import org.graphstream.stream.Replayable;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.SourceBase;
+import org.graphstream.ui.fxViewer.FxViewPanel;
+import org.graphstream.ui.fxViewer.FxViewer;
+import org.graphstream.ui.fxViewer.util.DefaultApplication;
 import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.layout.Layouts;
+import org.graphstream.ui.swingViewer.SwingViewer;
 import org.graphstream.ui.view.GraphRenderer;
-import org.graphstream.ui.view.Viewer;
 import org.graphstream.util.GraphListeners;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.stream.Collectors;
+import javafx.application.Application;
 
 /**
  * <p>
@@ -518,16 +523,32 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	}
 
 	@Override
-	public Viewer display(boolean autoLayout) {
-		Viewer viewer = new Viewer(this,
-				Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
-		GraphRenderer renderer = Viewer.newGraphRenderer();
-		viewer.addView(Viewer.DEFAULT_VIEW_ID, renderer);
+	public SwingViewer display(boolean autoLayout) {
+		SwingViewer viewer = new SwingViewer(this,
+				SwingViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+		GraphRenderer renderer = SwingViewer.newGraphRenderer();
+		viewer.addView(SwingViewer.DEFAULT_VIEW_ID, renderer);
 		if (autoLayout) {
 			Layout layout = Layouts.newLayoutAlgorithm();
 			viewer.enableAutoLayout(layout);
 		}
 		return viewer;
+	}
+	
+	@Override
+	public FxViewPanel displayFx(boolean autoLayout) {
+		FxViewer viewer = new FxViewer(this,
+				FxViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+		
+		GraphRenderer renderer = FxViewer.newGraphRenderer();
+		viewer.addView(FxViewer.DEFAULT_VIEW_ID, renderer);
+		
+		if(autoLayout) {
+			Layout layout = Layouts.newLayoutAlgorithm() ;
+			viewer.enableAutoLayout(layout);
+		}
+				
+		return viewer.getDefaultView();
 	}
 
 	/*

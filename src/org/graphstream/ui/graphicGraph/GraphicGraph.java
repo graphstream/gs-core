@@ -31,6 +31,19 @@
  */
 package org.graphstream.ui.graphicGraph;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
+
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeFactory;
 import org.graphstream.graph.Element;
@@ -46,6 +59,7 @@ import org.graphstream.stream.Sink;
 import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSource;
+import org.graphstream.ui.fxViewer.FxViewPanel;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
@@ -56,18 +70,7 @@ import org.graphstream.ui.graphicGraph.stylesheet.Values;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.util.GraphListeners;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Stream;
+import javafx.scene.canvas.GraphicsContext;
 
 /**
  * Graph representation used in display classes.
@@ -840,6 +843,17 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 				"GraphicGraph is used by display() and cannot recursively define display()");
 	}
 
+	@Override
+	public FxViewPanel displayFx() {
+		throw new RuntimeException(
+				"GraphicGraph is used by display() and cannot recursively define display()");
+	}
+	
+	@Override
+	public FxViewPanel displayFx(boolean autoLayout) {
+		throw new RuntimeException(
+				"GraphicGraph is used by display() and cannot recursively define display()");
+	}
 	/*
 	 * (non-Javadoc)
 	 * 

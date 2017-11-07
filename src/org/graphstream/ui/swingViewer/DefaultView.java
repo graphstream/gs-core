@@ -33,11 +33,17 @@ package org.graphstream.ui.swingViewer;
 
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
+import org.graphstream.ui.swingViewer.util.DefaultMouseManager;
+import org.graphstream.ui.swingViewer.util.DefaultShortcutManager;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.Camera;
 import org.graphstream.ui.view.GraphRenderer;
 import org.graphstream.ui.view.LayerRenderer;
 import org.graphstream.ui.view.util.*;
+
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 
 import javax.swing.JFrame;
 import java.awt.BorderLayout;
@@ -136,7 +142,6 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 	protected GraphRenderer renderer;
 
 	// Construction
-
 	public DefaultView(Viewer viewer, String identifier, GraphRenderer renderer) {
 		super(identifier);
 
@@ -173,7 +178,7 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 
 	protected void checkTitle() {
 		if (frame != null) {
-			String titleAttr = String.format("ui.%s.title", getId());
+			String titleAttr = String.format("ui.%s.title", getIdView());
 			String title = (String) graph.getLabel(titleAttr);
 
 			if (title == null) {
@@ -190,9 +195,9 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 
 	public void close(GraphicGraph graph) {
 		renderer.close();
-		graph.setAttribute("ui.viewClosed", getId());
+		graph.setAttribute("ui.viewClosed", getIdView());
 
-		removeKeyListener(shortcuts);
+		shortcuts.release();
 		shortcuts.release();
 		mouseClicks.release();
 
@@ -216,7 +221,7 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 				frame.setVisible(true);
 				frame.addWindowListener(this);
 				frame.addComponentListener(this);
-				frame.addKeyListener(shortcuts);
+				frame.addKeyListener((DefaultShortcutManager)shortcuts);
 			} else {
 				frame.setVisible(true);
 			}
@@ -224,7 +229,7 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 			if (frame != null) {
 				frame.removeComponentListener(this);
 				frame.removeWindowListener(this);
-				frame.removeKeyListener(shortcuts);
+				frame.removeKeyListener((DefaultShortcutManager)shortcuts);
 				frame.remove(this);
 				frame.setVisible(false);
 				frame.dispose();
@@ -269,11 +274,11 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 	}
 
 	public void windowClosing(WindowEvent e) {
-		graph.setAttribute("ui.viewClosed", getId());
+		graph.setAttribute("ui.viewClosed", getIdView());
 
 		switch (viewer.getCloseFramePolicy()) {
 		case CLOSE_VIEWER:
-			viewer.removeView(getId());
+			viewer.removeView(getIdView());
 			break;
 		case HIDE_ONLY:
 			if (frame != null)
@@ -380,5 +385,11 @@ public class DefaultView extends ViewPanel implements WindowListener, ComponentL
 		manager.init(graph, this);
 
 		shortcuts = manager;
+	}
+
+	@Override
+	public <T extends Event> void addEventFilter(EventType<T> eventType, EventHandler<? super T> eventFilter) {
+		// TODO Auto-generated method stub
+		
 	}
 }

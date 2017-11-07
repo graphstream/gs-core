@@ -44,7 +44,7 @@ import org.graphstream.stream.thread.ThreadProxyPipe;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphPosLengthUtils;
 import org.graphstream.ui.layout.springbox.implementations.LinLog;
-import org.graphstream.ui.view.Viewer;
+import org.graphstream.ui.swingViewer.SwingViewer;
 
 /**
  * This test creates a layout (instead of using the default layout of
@@ -74,7 +74,7 @@ public class DemoLayoutAndViewer {
 	public DemoLayoutAndViewer() {
 		boolean loop = true;
 		Graph graph = new MultiGraph("test");
-		Viewer viewer = new Viewer(new ThreadProxyPipe(graph));
+		SwingViewer viewer = new SwingViewer(new ThreadProxyPipe(graph));
 		ProxyPipe fromViewer = viewer.newThreadProxyOnGraphicGraph();
 		LinLog layout = new LinLog(false);
 		
