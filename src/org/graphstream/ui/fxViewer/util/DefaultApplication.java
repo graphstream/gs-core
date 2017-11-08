@@ -1,7 +1,7 @@
 package org.graphstream.ui.fxViewer.util;
 
 import org.graphstream.graph.Graph;
-import org.graphstream.ui.fxViewer.FxViewPanel;
+import org.graphstream.ui.fxViewer.FxViewer;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -15,19 +15,17 @@ import javafx.stage.WindowEvent;
 public class DefaultApplication extends Application {
 	public static Graph graph ;
 	public static Stage stage ;
-	public static FxViewPanel view ;
+	public static FxViewer view ;
 	public static boolean isInstance = false;
 	public static boolean antiAliasing = false ;
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		
-		view = graph.displayFx();
-		
+		graph = view.getGraphicGraph() ;
 		stage = primaryStage ;
 
-        Scene scene = new Scene(view, 800, 600, true, SceneAntialiasing.DISABLED);
-        
+        Scene scene = new Scene(view.getDefaultView(), 800, 600, true, SceneAntialiasing.DISABLED);
         primaryStage.setScene(scene);
         
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -44,7 +42,7 @@ public class DefaultApplication extends Application {
 	
 	
 	public static void checkTitle() {
-		String titleAttr = String.format("ui.%s.title", view.getIdView());
+		String titleAttr = String.format("ui.%s.title", view.getDefaultView().getIdView());
 		String title = (String) graph.getLabel(titleAttr);
 
 		if (title == null) {
@@ -67,12 +65,12 @@ public class DefaultApplication extends Application {
 			System.out.println("setAlias "+antialias);
 			antiAliasing = antialias ;
 			
-			view.getScene().setRoot(new Region());
+			view.getDefaultView().getScene().setRoot(new Region());
 			Scene newScene ;
 			if (antiAliasing)
-				newScene = new Scene(view, 800, 600, true, SceneAntialiasing.BALANCED);
+				newScene = new Scene(view.getDefaultView(), 800, 600, true, SceneAntialiasing.BALANCED);
 			else
-				newScene = new Scene(view, 800, 600, true, SceneAntialiasing.DISABLED);
+				newScene = new Scene(view.getDefaultView(), 800, 600, true, SceneAntialiasing.DISABLED);
 			
 			stage.setScene(newScene);
 		}

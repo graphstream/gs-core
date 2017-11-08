@@ -59,7 +59,7 @@ import org.graphstream.stream.Sink;
 import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSource;
-import org.graphstream.ui.fxViewer.FxViewPanel;
+import org.graphstream.ui.fxViewer.FxViewer;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
@@ -69,8 +69,6 @@ import org.graphstream.ui.graphicGraph.stylesheet.Value;
 import org.graphstream.ui.graphicGraph.stylesheet.Values;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.util.GraphListeners;
-
-import javafx.scene.canvas.GraphicsContext;
 
 /**
  * Graph representation used in display classes.
@@ -844,13 +842,13 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	}
 
 	@Override
-	public FxViewPanel displayFx() {
+	public FxViewer displayFx() {
 		throw new RuntimeException(
 				"GraphicGraph is used by display() and cannot recursively define display()");
 	}
 	
 	@Override
-	public FxViewPanel displayFx(boolean autoLayout) {
+	public FxViewer displayFx(boolean autoLayout) {
 		throw new RuntimeException(
 				"GraphicGraph is used by display() and cannot recursively define display()");
 	}

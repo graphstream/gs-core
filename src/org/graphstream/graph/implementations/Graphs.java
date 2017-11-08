@@ -61,10 +61,8 @@ import org.graphstream.stream.GraphReplay;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSource;
-import org.graphstream.ui.fxViewer.FxViewPanel;
+import org.graphstream.ui.fxViewer.FxViewer;
 import org.graphstream.ui.view.Viewer;
-
-import javafx.scene.canvas.GraphicsContext;
 
 public class Graphs {
 
@@ -770,12 +768,12 @@ public class Graphs {
 		}
 		
 		@Override
-		public FxViewPanel displayFx() {
+		public FxViewer displayFx() {
 			return wrappedElement.displayFx();
 		}
 		
 		@Override
-		public FxViewPanel displayFx(boolean autoLayout) {
+		public FxViewer displayFx(boolean autoLayout) {
 			return wrappedElement.displayFx(autoLayout);
 		}
 

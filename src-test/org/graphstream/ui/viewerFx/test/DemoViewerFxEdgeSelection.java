@@ -60,7 +60,7 @@ public class DemoViewerFxEdgeSelection extends Application implements ViewerList
 	public static void main(String args[]) {
 		
 		Graph graph = new MultiGraph("main graph");
-		viewPanel = (FxViewPanel) graph.displayFx(true);
+		viewPanel = (FxViewPanel) graph.displayFx(true).getDefaultView();
 		FxViewer view = (FxViewer) viewPanel.getViewer();
 		
 		view.getDefaultView().setMouseManager(new FxMouseManager(EnumSet.of(InteractiveElement.EDGE, InteractiveElement.NODE, InteractiveElement.SPRITE)));

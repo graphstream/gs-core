@@ -41,10 +41,8 @@ import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSinkFactory;
 import org.graphstream.stream.file.FileSource;
 import org.graphstream.stream.file.FileSourceFactory;
-import org.graphstream.ui.fxViewer.FxViewPanel;
+import org.graphstream.ui.fxViewer.FxViewer;
 import org.graphstream.ui.view.Viewer;
-
-import javafx.scene.canvas.GraphicsContext;
 
 
 
@@ -539,7 +537,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * @see org.graphstream.ui.fxViewer.FxViewPanel
 	 * @see #display(boolean)
 	 */
-	default FxViewPanel displayFx() {
+	default FxViewer displayFx() {
 		return displayFx(true);
 	}
 	
@@ -555,7 +553,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * @see org.graphstream.ui.fxViewer.FxViewPanel
 	 * @see #display()
 	 */
-	FxViewPanel displayFx(boolean autoLayout);
+	FxViewer displayFx(boolean autoLayout);
 
 	/**
 	 * Utility method that creates a new graph viewer, and register the graph in

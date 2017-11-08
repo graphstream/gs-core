@@ -382,7 +382,6 @@ public class FxDefaultCamera implements Camera {
 				.nodes()
 				.filter(n ->nodeContains((GraphicElement) n, x, y))
 				.findFirst();
-			System.out.println(node);
 			if(node.isPresent()) {
 				return (GraphicElement) node.get();
 			}

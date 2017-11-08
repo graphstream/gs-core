@@ -536,7 +536,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	}
 	
 	@Override
-	public FxViewPanel displayFx(boolean autoLayout) {
+	public FxViewer displayFx(boolean autoLayout) {
+		
 		FxViewer viewer = new FxViewer(this,
 				FxViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
 		
@@ -547,10 +548,13 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 			Layout layout = Layouts.newLayoutAlgorithm() ;
 			viewer.enableAutoLayout(layout);
 		}
-				
-		return viewer.getDefaultView();
+		
+		DefaultApplication.view = viewer;
+	    new Thread(() -> Application.launch(DefaultApplication.class)).start();
+		
+		return viewer;
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
