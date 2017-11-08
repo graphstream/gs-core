@@ -33,7 +33,6 @@ package org.graphstream.ui.viewerFx.test;
 
 import java.util.EnumSet;
 
-import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
@@ -43,24 +42,19 @@ import org.graphstream.ui.fxViewer.util.FxMouseManager;
 import org.graphstream.ui.view.ViewerListener;
 import org.graphstream.ui.view.ViewerPipe;
 import org.graphstream.ui.view.util.InteractiveElement;
-
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.event.EventHandler;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
+import org.graphstream.util.Launcher;
 /**
  * Test the viewer.
  */
-public class DemoViewerFxEdgeSelection extends Application implements ViewerListener {
+public class DemoViewerFxEdgeSelection implements ViewerListener {
 	protected static boolean loop = true;
 	public static FxViewPanel viewPanel;
 	
 	public static void main(String args[]) {
-		
+		System.setProperty("UI", "org.graphstream.ui.fxViewer.util.FxDisplay");
+
 		Graph graph = new MultiGraph("main graph");
-		viewPanel = (FxViewPanel) graph.displayFx(true).getDefaultView();
+		viewPanel = (FxViewPanel) Launcher.display(graph, true).getDefaultView();
 		FxViewer view = (FxViewer) viewPanel.getViewer();
 		
 		view.getDefaultView().setMouseManager(new FxMouseManager(EnumSet.of(InteractiveElement.EDGE, InteractiveElement.NODE, InteractiveElement.SPRITE)));
@@ -77,7 +71,7 @@ public class DemoViewerFxEdgeSelection extends Application implements ViewerList
 
 		}
 
-		Edge ab = graph.addEdge("AB", "A", "B", true);
+		graph.addEdge("AB", "A", "B", true);
 		graph.addEdge("BC", "B", "C", true);
 		graph.addEdge("CA", "C", "A", true);
 
@@ -85,8 +79,6 @@ public class DemoViewerFxEdgeSelection extends Application implements ViewerList
 
 		float color = 0;
 		float dir = 0.01f;
-		
-		Application.launch(DemoViewerFxEdgeSelection.class, args);
 		
 		while (loop) {
 			try {
@@ -109,21 +101,6 @@ public class DemoViewerFxEdgeSelection extends Application implements ViewerList
 
 			showSelection(graph);
 		}
-	}
-
-
-	@Override
-	public void start(Stage primaryStage) throws Exception {
-		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent t) {
-                Platform.exit();
-                System.exit(0);
-            }
-        });
-		
-		primaryStage.setScene(new Scene(viewPanel));
-		primaryStage.show();
 	}
 
 	protected static void showSelection(Graph graph) {

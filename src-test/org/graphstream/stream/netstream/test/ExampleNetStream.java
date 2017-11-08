@@ -35,6 +35,7 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.stream.binary.ByteProxy;
 import org.graphstream.stream.netstream.NetStreamUtils;
+import org.graphstream.util.Launcher;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -44,6 +45,7 @@ import java.net.InetAddress;
  */
 public class ExampleNetStream {
     public static void main(String... args) throws IOException {
+    	System.setProperty("UI", "org.graphstream.ui.swingViewer.util.SwingDisplay");
         //
         // Create a byte proxy server that will use NetStream as encoder/decoder protocol.
         // Start it to listen to connection.
@@ -67,8 +69,7 @@ public class ExampleNetStream {
         Graph graphClient = new DefaultGraph("client");
         client.addSink(graphClient);
 
-        graphClient.display();
-
+        Launcher.display(graphClient);
         //
         // Add some elements in the server graph. It should appear in the client graph.
         //

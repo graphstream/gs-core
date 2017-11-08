@@ -259,7 +259,7 @@ public abstract class ElementRenderer {
 		if (n > 1) {
 			if (element.hasNumber("ui.color") && n > 1) {
 				double value = element.getNumber("ui.color");
-
+				System.out.println(value);
 				if (value < 0)
 					value = 0;
 				else if (value > 1)
@@ -276,9 +276,10 @@ public abstract class ElementRenderer {
 
 					div = (value - (div * col)) / div;
 					// div = value / div - col;
-
+					
 					Color color0 = group.getFillColor(col);
 					Color color1 = group.getFillColor(col + 1);
+
 					double red = ((color0.getRed() * (1 - div)) + (color1
 							.getRed() * div)) / 255f;
 					double green = ((color0.getGreen() * (1 - div)) + (color1
@@ -290,6 +291,8 @@ public abstract class ElementRenderer {
 
 					color = new Color((float) red, (float) green, (float) blue,
 							(float) alpha);
+					
+					System.out.println("color0 : "+color0.getRed());
 				}
 			} else if (element.hasAttribute("ui.color", Color.class)) {
 				color = element.getAttribute("ui.color", Color.class);

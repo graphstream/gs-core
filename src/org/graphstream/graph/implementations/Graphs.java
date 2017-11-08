@@ -61,8 +61,6 @@ import org.graphstream.stream.GraphReplay;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSource;
-import org.graphstream.ui.fxViewer.FxViewer;
-import org.graphstream.ui.view.Viewer;
 
 public class Graphs {
 
@@ -755,26 +753,6 @@ public class Graphs {
 			} finally {
 				elementLock.unlock();
 			}
-		}
-
-		@Override
-		public Viewer display() {
-			return wrappedElement.display();
-		}
-
-		@Override
-		public Viewer display(boolean autoLayout) {
-			return wrappedElement.display(autoLayout);
-		}
-		
-		@Override
-		public FxViewer displayFx() {
-			return wrappedElement.displayFx();
-		}
-		
-		@Override
-		public FxViewer displayFx(boolean autoLayout) {
-			return wrappedElement.displayFx(autoLayout);
 		}
 
 		@Override

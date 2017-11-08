@@ -41,8 +41,6 @@ import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSinkFactory;
 import org.graphstream.stream.file.FileSource;
 import org.graphstream.stream.file.FileSourceFactory;
-import org.graphstream.ui.fxViewer.FxViewer;
-import org.graphstream.ui.view.Viewer;
 
 
 
@@ -509,65 +507,6 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	default void write(FileSink output, String filename) throws IOException {
 		output.writeAll(this, filename);
 	}
-
-	/**
-	 * Utility method that creates a new graph viewer, and register the graph in
-	 * it. Notice that this method is a quick way to see a graph, and only this.
-	 * It can be used to prototype a program, but may be limited. This method
-	 * automatically launch a graph layout algorithm in its own thread to
-	 * compute best node positions.
-	 *
-	 * @return a graph viewer that allows to command the viewer (it often run in
-	 * another thread).
-	 * @see org.graphstream.ui.view.Viewer
-	 * @see #display(boolean)
-	 */
-	default Viewer display() {
-		return display(true);
-	}
-	
-	/**
-	 * Utility method that creates a new graph viewer in javafx, and register the graph in
-	 * it. Notice that this method is a quick way to see a graph, and only this.
-	 * It can be used to prototype a program, but may be limited. This method
-	 * automatically launch a graph layout algorithm in its own thread to
-	 * compute best node positions.
-	 *
-	 * @return a FxViewPanel.
-	 * @see org.graphstream.ui.fxViewer.FxViewPanel
-	 * @see #display(boolean)
-	 */
-	default FxViewer displayFx() {
-		return displayFx(true);
-	}
-	
-	
-	/**
-	 * Utility method that creates a new graph viewer, and register the graph in
-	 * it. Notice that this method is a quick way to see a graph, and only this.
-	 * It can be used to prototype a program, but is very limited.
-	 *
-	 * @param autoLayout If true a layout algorithm is launched in its own thread to
-	 *                   compute best node positions.
-	 * @return a FxViewPanel.
-	 * @see org.graphstream.ui.fxViewer.FxViewPanel
-	 * @see #display()
-	 */
-	FxViewer displayFx(boolean autoLayout);
-
-	/**
-	 * Utility method that creates a new graph viewer, and register the graph in
-	 * it. Notice that this method is a quick way to see a graph, and only this.
-	 * It can be used to prototype a program, but is very limited.
-	 *
-	 * @param autoLayout If true a layout algorithm is launched in its own thread to
-	 *                   compute best node positions.
-	 * @return a graph viewer that allows to command the viewer (it often run in
-	 * another thread).
-	 * @see org.graphstream.ui.view.Viewer
-	 * @see #display()
-	 */
-	Viewer display(boolean autoLayout);
 
 	// New methods
 

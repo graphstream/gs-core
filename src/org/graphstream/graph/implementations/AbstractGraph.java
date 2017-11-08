@@ -31,6 +31,7 @@
  */
 package org.graphstream.graph.implementations;
 
+import java.awt.DisplayMode;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.Collectors;
@@ -520,39 +521,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	@Override
 	public void stepBegins(String sourceId, long timeId, double step) {
 		listeners.stepBegins(sourceId, timeId, step);
-	}
-
-	@Override
-	public SwingViewer display(boolean autoLayout) {
-		SwingViewer viewer = new SwingViewer(this,
-				SwingViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
-		GraphRenderer renderer = SwingViewer.newGraphRenderer();
-		viewer.addView(SwingViewer.DEFAULT_VIEW_ID, renderer);
-		if (autoLayout) {
-			Layout layout = Layouts.newLayoutAlgorithm();
-			viewer.enableAutoLayout(layout);
-		}
-		return viewer;
-	}
-	
-	@Override
-	public FxViewer displayFx(boolean autoLayout) {
-		
-		FxViewer viewer = new FxViewer(this,
-				FxViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
-		
-		GraphRenderer renderer = FxViewer.newGraphRenderer();
-		viewer.addView(FxViewer.DEFAULT_VIEW_ID, renderer);
-		
-		if(autoLayout) {
-			Layout layout = Layouts.newLayoutAlgorithm() ;
-			viewer.enableAutoLayout(layout);
-		}
-		
-		DefaultApplication.view = viewer;
-	    new Thread(() -> Application.launch(DefaultApplication.class)).start();
-		
-		return viewer;
 	}
 	
 	/*

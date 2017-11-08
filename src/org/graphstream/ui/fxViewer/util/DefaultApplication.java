@@ -62,7 +62,6 @@ public class DefaultApplication extends Application {
 
 	public static void setAliasing(boolean antialias) {
 		if ( antialias != antiAliasing ) {
-			System.out.println("setAlias "+antialias);
 			antiAliasing = antialias ;
 			
 			view.getDefaultView().getScene().setRoot(new Region());

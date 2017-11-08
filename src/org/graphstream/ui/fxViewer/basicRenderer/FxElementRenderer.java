@@ -294,17 +294,16 @@ public abstract class FxElementRenderer {
 
 					Color color0 = getFillColor(group, col);
 					Color color1 = getFillColor(group, col + 1);
-					double red = ((color0.getRed() * (1 - div)) + (color1
-							.getRed() * div)) / 255f;
-					double green = ((color0.getGreen() * (1 - div)) + (color1
-							.getGreen() * div)) / 255f;
-					double blue = ((color0.getBlue() * (1 - div)) + (color1
-							.getBlue() * div)) / 255f;
-					double alpha = ((color0.getOpacity() * (1 - div)) + (color1
-							.getOpacity() * div)) / 255f;
-
-					color = new Color((float) red, (float) green, (float) blue,
-							(float) alpha);
+					double red = (((color0.getRed()*255) * (1 - div)) + ((color1
+							.getRed()*255) * div)) / 255f;
+					double green = (((color0.getGreen()*255) * (1 - div)) + ((color1
+							.getGreen()*255) * div)) / 255f;
+					double blue = (((color0.getBlue()*255) * (1 - div)) + ((color1
+							.getBlue()*255) * div)) / 255f;
+					double alpha = (((color0.getOpacity()*255) * (1 - div)) + ((color1
+							.getOpacity()*255) * div)) / 255f;
+					
+					color = Color.color(red, green, blue, alpha);
 				}
 			} else if (element.hasAttribute("ui.color", Color.class)) {
 				color = element.getAttribute("ui.color", Color.class);

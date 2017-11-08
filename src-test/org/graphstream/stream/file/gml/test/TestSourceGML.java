@@ -34,12 +34,14 @@ package org.graphstream.stream.file.gml.test;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.stream.file.FileSourceGML;
+import org.graphstream.util.Launcher;
 import org.junit.Ignore;
 
 @Ignore
 public class TestSourceGML {
 	public static void main(String args[]) {
 		//System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
+		System.setProperty("UI", "org.graphstream.ui.swingViewer.util.SwingDisplay");
 		new TestSourceGML();
 	}
 	
@@ -56,7 +58,7 @@ public class TestSourceGML {
 			
 			graph.setAttribute("ui.quality");
 			graph.setAttribute("ui.antialias");
-			graph.display();
+			Launcher.display(graph);
 			source.addSink(graph);
 			source.begin(TestSourceGML.class.getResourceAsStream("dynamic.gml"));
 			int step = 0;
@@ -85,7 +87,7 @@ public class TestSourceGML {
 			graph.setAttribute("ui.quality");
 			graph.setAttribute("ui.antialias");
 			graph.setAttribute("ui.stylesheet", "node { text-size:8; text-color: #0008; text-alignment: at-right; } edge { text-size:8; text-color: #0008; }");
-			graph.display(false);
+			Launcher.display(graph, false);
 			source.addSink(graph);
 			source.begin(TestSourceGML.class.getResourceAsStream("example2.sif.gml"));
 			while(source.nextEvents()) {}
@@ -103,7 +105,7 @@ public class TestSourceGML {
 			graph.setAttribute("ui.quality");
 			graph.setAttribute("ui.antialias");
 			//graph.setAttribute("ui.stylesheet", "node { text-size:8; text-color: #0008; text-alignment: at-right; } edge { text-size:8; text-color: #0008; }");
-			graph.display();
+			Launcher.display(graph);
 			source.addSink(graph);
 			source.begin(TestSourceGML.class.getResourceAsStream("SmallTest.gml"));
 			while(source.nextEvents()) {}

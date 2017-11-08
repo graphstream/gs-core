@@ -40,6 +40,7 @@ import org.graphstream.ui.swingViewer.util.DefaultMouseManager;
 import org.graphstream.ui.view.ViewerListener;
 import org.graphstream.ui.view.ViewerPipe;
 import org.graphstream.ui.view.util.InteractiveElement;
+import org.graphstream.util.Launcher;
 
 import java.util.EnumSet;
 
@@ -50,6 +51,7 @@ public class DemoViewerEdgeSelection implements ViewerListener {
 	public static void main(String args[]) {
 		// System.setProperty( "gs.ui.renderer",
 		// "org.graphstream.ui.j2dviewer.J2DGraphRenderer" );
+		System.setProperty("UI", "org.graphstream.ui.swingViewer.util.SwingDisplay");
 		new DemoViewerEdgeSelection();
 	}
 
@@ -57,7 +59,7 @@ public class DemoViewerEdgeSelection implements ViewerListener {
 
 	public DemoViewerEdgeSelection() {
 		Graph graph = new MultiGraph("main graph");
-		SwingViewer view = (SwingViewer) graph.display(true);
+		SwingViewer view = (SwingViewer) Launcher.display(graph, true);
 		view.getDefaultView().setMouseManager(new DefaultMouseManager(EnumSet.of(InteractiveElement.EDGE, InteractiveElement.NODE, InteractiveElement.SPRITE)));
 		ViewerPipe pipe = view.newViewerPipe();
 
