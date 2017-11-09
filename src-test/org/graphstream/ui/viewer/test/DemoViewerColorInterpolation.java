@@ -36,7 +36,6 @@ import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.ui.view.ViewerListener;
 import org.graphstream.ui.view.ViewerPipe;
-import org.graphstream.util.Launcher;
 
 /**
  * Test the viewer.
@@ -53,7 +52,7 @@ public class DemoViewerColorInterpolation implements ViewerListener {
 
 	public DemoViewerColorInterpolation() {
 		Graph graph = new MultiGraph("main graph");
-		ViewerPipe pipe = Launcher.display(graph, false).newViewerPipe();
+		ViewerPipe pipe = graph.display(false).newViewerPipe();
 		
 		// graph.setAttribute( "ui.quality" );
 		graph.setAttribute("ui.antialias");

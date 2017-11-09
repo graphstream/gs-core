@@ -66,6 +66,7 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleSheet;
 import org.graphstream.ui.graphicGraph.stylesheet.Value;
 import org.graphstream.ui.graphicGraph.stylesheet.Values;
+import org.graphstream.ui.view.Viewer;
 import org.graphstream.util.GraphListeners;
 
 /**
@@ -826,7 +827,17 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 
 		return node;
 	}
+	
+	public Viewer display() {
+		throw new RuntimeException(
+				"GraphicGraph is used by display() and cannot recursively define display()");
+	}
 
+	public Viewer display(boolean autoLayout) {
+		throw new RuntimeException(
+				"GraphicGraph is used by display() and cannot recursively define display()");
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

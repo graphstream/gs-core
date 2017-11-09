@@ -31,6 +31,8 @@
  */
 package org.graphstream.ui.viewer.test;
 
+import java.util.EnumSet;
+
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -40,9 +42,6 @@ import org.graphstream.ui.swingViewer.util.DefaultMouseManager;
 import org.graphstream.ui.view.ViewerListener;
 import org.graphstream.ui.view.ViewerPipe;
 import org.graphstream.ui.view.util.InteractiveElement;
-import org.graphstream.util.Launcher;
-
-import java.util.EnumSet;
 
 /**
  * Test the viewer.
@@ -59,7 +58,7 @@ public class DemoViewerEdgeSelection implements ViewerListener {
 
 	public DemoViewerEdgeSelection() {
 		Graph graph = new MultiGraph("main graph");
-		SwingViewer view = (SwingViewer) Launcher.display(graph, true);
+		SwingViewer view = (SwingViewer) graph.display(true);
 		view.getDefaultView().setMouseManager(new DefaultMouseManager(EnumSet.of(InteractiveElement.EDGE, InteractiveElement.NODE, InteractiveElement.SPRITE)));
 		ViewerPipe pipe = view.newViewerPipe();
 

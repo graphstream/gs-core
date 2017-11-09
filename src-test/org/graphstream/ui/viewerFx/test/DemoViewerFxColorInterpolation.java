@@ -36,7 +36,6 @@ import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.ui.view.ViewerListener;
 import org.graphstream.ui.view.ViewerPipe;
-import org.graphstream.util.Launcher;
 
 /**
  * Test the viewer.
@@ -46,7 +45,7 @@ public class DemoViewerFxColorInterpolation implements ViewerListener {
 		// System.setProperty( "gs.ui.renderer",
 		// "org.graphstream.ui.j2dviewer.J2DGraphRenderer" );
 		System.setProperty("UI", "org.graphstream.ui.fxViewer.util.FxDisplay");
-
+		
 		new DemoViewerFxColorInterpolation();
 	}
 
@@ -54,7 +53,7 @@ public class DemoViewerFxColorInterpolation implements ViewerListener {
 
 	public DemoViewerFxColorInterpolation() {
 		Graph graph = new MultiGraph("main graph");
-		ViewerPipe pipe = Launcher.display(graph, false).newViewerPipe();
+		ViewerPipe pipe = graph.display(false).newViewerPipe();
 
 		// graph.setAttribute( "ui.quality" );
 		graph.setAttribute("ui.antialias");

@@ -34,7 +34,6 @@ package org.graphstream.stream.file.gml.test;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.stream.file.FileSourceGML;
-import org.graphstream.util.Launcher;
 import org.junit.Ignore;
 
 @Ignore
@@ -58,7 +57,7 @@ public class TestSourceGML {
 			
 			graph.setAttribute("ui.quality");
 			graph.setAttribute("ui.antialias");
-			Launcher.display(graph);
+			graph.display();
 			source.addSink(graph);
 			source.begin(TestSourceGML.class.getResourceAsStream("dynamic.gml"));
 			int step = 0;
@@ -87,7 +86,7 @@ public class TestSourceGML {
 			graph.setAttribute("ui.quality");
 			graph.setAttribute("ui.antialias");
 			graph.setAttribute("ui.stylesheet", "node { text-size:8; text-color: #0008; text-alignment: at-right; } edge { text-size:8; text-color: #0008; }");
-			Launcher.display(graph, false);
+			graph.display(false);
 			source.addSink(graph);
 			source.begin(TestSourceGML.class.getResourceAsStream("example2.sif.gml"));
 			while(source.nextEvents()) {}
@@ -105,7 +104,7 @@ public class TestSourceGML {
 			graph.setAttribute("ui.quality");
 			graph.setAttribute("ui.antialias");
 			//graph.setAttribute("ui.stylesheet", "node { text-size:8; text-color: #0008; text-alignment: at-right; } edge { text-size:8; text-color: #0008; }");
-			Launcher.display(graph);
+			graph.display();
 			source.addSink(graph);
 			source.begin(TestSourceGML.class.getResourceAsStream("SmallTest.gml"));
 			while(source.nextEvents()) {}

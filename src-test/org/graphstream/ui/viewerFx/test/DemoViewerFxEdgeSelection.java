@@ -42,7 +42,6 @@ import org.graphstream.ui.fxViewer.util.FxMouseManager;
 import org.graphstream.ui.view.ViewerListener;
 import org.graphstream.ui.view.ViewerPipe;
 import org.graphstream.ui.view.util.InteractiveElement;
-import org.graphstream.util.Launcher;
 /**
  * Test the viewer.
  */
@@ -54,7 +53,7 @@ public class DemoViewerFxEdgeSelection implements ViewerListener {
 		System.setProperty("UI", "org.graphstream.ui.fxViewer.util.FxDisplay");
 
 		Graph graph = new MultiGraph("main graph");
-		viewPanel = (FxViewPanel) Launcher.display(graph, true).getDefaultView();
+		viewPanel = (FxViewPanel) graph.display(true).getDefaultView();
 		FxViewer view = (FxViewer) viewPanel.getViewer();
 		
 		view.getDefaultView().setMouseManager(new FxMouseManager(EnumSet.of(InteractiveElement.EDGE, InteractiveElement.NODE, InteractiveElement.SPRITE)));

@@ -31,7 +31,6 @@
  */
 package org.graphstream.graph.implementations;
 
-import java.awt.DisplayMode;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.Collectors;
@@ -49,16 +48,9 @@ import org.graphstream.stream.ElementSink;
 import org.graphstream.stream.Replayable;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.SourceBase;
-import org.graphstream.ui.fxViewer.FxViewPanel;
-import org.graphstream.ui.fxViewer.FxViewer;
-import org.graphstream.ui.fxViewer.util.DefaultApplication;
-import org.graphstream.ui.layout.Layout;
-import org.graphstream.ui.layout.Layouts;
-import org.graphstream.ui.swingViewer.SwingViewer;
-import org.graphstream.ui.view.GraphRenderer;
+import org.graphstream.ui.view.Viewer;
+import org.graphstream.util.Display;
 import org.graphstream.util.GraphListeners;
-
-import javafx.application.Application;
 
 /**
  * <p>
@@ -210,8 +202,34 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		this.step = time;
 	}
 
-	// adding and removing elements
+	// display, read, write
 
+	public Viewer display() {
+		return display(true);
+	}
+	
+	public Viewer display(boolean autoLayout) {
+		String launcherClassName = System.getProperty("UI");
+		
+		if (launcherClassName == null) {
+			throw new RuntimeException("No UI package detected ! Please use System.setProperty() for the selected package.");
+		}
+		else {
+			try {
+				Class<?> c = Class.forName(launcherClassName);
+				Object object = c.newInstance();
+				
+				if (object instanceof Display) {
+					return ((Display)object).display(this, autoLayout);
+				} else {
+					throw new RuntimeException("Cannot launch viewer ! Please verify the name in System.setProperty()");
+				}
+			}
+			catch (Exception e) { 
+				throw new RuntimeException("Cannot launch viewer ! Please verify your package.");
+			}
+		}
+	}
 	/*
 	 * (non-Javadoc)
 	 * 

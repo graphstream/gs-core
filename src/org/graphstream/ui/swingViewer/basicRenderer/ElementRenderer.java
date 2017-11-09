@@ -31,6 +31,12 @@
  */
 package org.graphstream.ui.swingViewer.basicRenderer;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+
 import org.graphstream.graph.Element;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicElement;
@@ -42,12 +48,6 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
 import org.graphstream.ui.swingViewer.util.DefaultCamera;
 import org.graphstream.ui.swingViewer.util.FontCache;
 import org.graphstream.ui.view.Camera;
-
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 
 public abstract class ElementRenderer {
 	// Attribute
@@ -259,7 +259,7 @@ public abstract class ElementRenderer {
 		if (n > 1) {
 			if (element.hasNumber("ui.color") && n > 1) {
 				double value = element.getNumber("ui.color");
-				System.out.println(value);
+
 				if (value < 0)
 					value = 0;
 				else if (value > 1)
@@ -291,8 +291,6 @@ public abstract class ElementRenderer {
 
 					color = new Color((float) red, (float) green, (float) blue,
 							(float) alpha);
-					
-					System.out.println("color0 : "+color0.getRed());
 				}
 			} else if (element.hasAttribute("ui.color", Color.class)) {
 				color = element.getAttribute("ui.color", Color.class);

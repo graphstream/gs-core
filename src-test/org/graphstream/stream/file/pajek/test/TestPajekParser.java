@@ -39,7 +39,6 @@ import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.stream.file.FileSourcePajek;
 import org.graphstream.ui.swingViewer.SwingViewer;
 import org.graphstream.ui.view.Viewer;
-import org.graphstream.util.Launcher;
 import org.junit.Ignore;
 
 @Ignore
@@ -191,7 +190,8 @@ public class TestPajekParser {
 							entry.veryLarge ? 6 : 16, entry.veryLarge ? ""
 									: "stroke-mode: plain; stroke-color: #333;"));
 		
-		SwingViewer v = (SwingViewer) Launcher.display(graph, entry.autoLayout);
+		
+		SwingViewer v = (SwingViewer) graph.display(entry.autoLayout);
 		v.setCloseFramePolicy(Viewer.CloseFramePolicy.CLOSE_VIEWER);
 		
 		in.addSink(graph);

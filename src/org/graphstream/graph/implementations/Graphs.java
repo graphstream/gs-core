@@ -61,6 +61,7 @@ import org.graphstream.stream.GraphReplay;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSource;
+import org.graphstream.ui.view.Viewer;
 
 public class Graphs {
 
@@ -887,6 +888,14 @@ public class Graphs {
 		public boolean isAutoCreationEnabled() {
 			return wrappedElement.isAutoCreationEnabled();
 		}
+		
+		public Viewer display() {
+			return wrappedElement.display();
+		}
+
+		public Viewer display(boolean autoLayout) {
+			return wrappedElement.display(autoLayout);
+}
 
 		@Override
 		public boolean isStrict() {

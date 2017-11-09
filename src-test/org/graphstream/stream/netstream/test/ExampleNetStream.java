@@ -31,14 +31,13 @@
  */
 package org.graphstream.stream.netstream.test;
 
+import java.io.IOException;
+import java.net.InetAddress;
+
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.stream.binary.ByteProxy;
 import org.graphstream.stream.netstream.NetStreamUtils;
-import org.graphstream.util.Launcher;
-
-import java.io.IOException;
-import java.net.InetAddress;
 
 /**
  * @since 01/02/16.
@@ -68,8 +67,8 @@ public class ExampleNetStream {
 
         Graph graphClient = new DefaultGraph("client");
         client.addSink(graphClient);
-
-        Launcher.display(graphClient);
+        
+        graphClient.display();
         //
         // Add some elements in the server graph. It should appear in the client graph.
         //
