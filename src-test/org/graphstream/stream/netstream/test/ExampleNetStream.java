@@ -44,7 +44,7 @@ import org.graphstream.stream.netstream.NetStreamUtils;
  */
 public class ExampleNetStream {
     public static void main(String... args) throws IOException {
-    	System.setProperty("UI", "org.graphstream.ui.swingViewer.util.SwingDisplay");
+    	System.setProperty("org.graphstream.ui", "org.graphstream.ui.swingViewer.util.SwingDisplay");
         //
         // Create a byte proxy server that will use NetStream as encoder/decoder protocol.
         // Start it to listen to connection.

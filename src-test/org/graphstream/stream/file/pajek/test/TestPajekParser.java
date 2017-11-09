@@ -159,7 +159,7 @@ public class TestPajekParser {
 			new TestEntry("WRITE.NET", false, false, false) };
 
 	public static void main(String args[]) throws IOException {
-		System.setProperty("UI", "org.graphstream.ui.swingViewer.util.SwingDisplay");
+		System.setProperty("org.graphstream.ui", "org.graphstream.ui.swingViewer.util.SwingDisplay");
 		TestPajekParser test = new TestPajekParser();
 
 		for (int i = 0; i < entries.length; i++)

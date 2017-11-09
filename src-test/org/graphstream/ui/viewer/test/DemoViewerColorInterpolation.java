@@ -44,7 +44,7 @@ public class DemoViewerColorInterpolation implements ViewerListener {
 	public static void main(String args[]) {
 		// System.setProperty( "gs.ui.renderer",
 		// "org.graphstream.ui.j2dviewer.J2DGraphRenderer" );
-		System.setProperty("UI", "org.graphstream.ui.swingViewer.util.SwingDisplay");
+		System.setProperty("org.graphstream.ui", "org.graphstream.ui.swingViewer.util.SwingDisplay");
 		new DemoViewerColorInterpolation();
 	}
 

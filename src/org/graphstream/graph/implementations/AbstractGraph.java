@@ -209,7 +209,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	}
 	
 	public Viewer display(boolean autoLayout) {
-		String launcherClassName = System.getProperty("UI");
+		String launcherClassName = System.getProperty("org.graphstream.ui");
 		
 		if (launcherClassName == null) {
 			throw new RuntimeException("No UI package detected ! Please use System.setProperty() for the selected package.");
