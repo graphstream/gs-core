@@ -8,17 +8,9 @@ import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.util.InteractiveElement;
 import org.graphstream.ui.view.util.MouseManager;
 
-import javafx.application.*;
-import javafx.event.*;
-import javafx.scene.*;
-import javafx.stage.*;
-import javafx.scene.canvas.*;
-import javafx.scene.paint.*;
-import javafx.scene.text.*;
-import javafx.scene.shape.* ;
-import javafx.scene.transform.*;
-import javafx.scene.canvas.*;
-import javafx.scene.input.*;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 
 public class FxMouseManager implements MouseManager
 {	

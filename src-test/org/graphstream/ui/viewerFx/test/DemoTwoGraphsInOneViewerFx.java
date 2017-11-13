@@ -33,25 +33,19 @@ package org.graphstream.ui.viewerFx.test;
 
 import java.io.IOException;
 
-import org.graphstream.graph.*;
-import org.graphstream.graph.implementations.*;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.stream.file.FileSourceDGS;
-import org.graphstream.stream.thread.*;
+import org.graphstream.stream.thread.ThreadProxyPipe;
 import org.graphstream.ui.fxViewer.FxViewPanel;
 import org.graphstream.ui.fxViewer.FxViewer;
-import org.graphstream.ui.swingViewer.SwingViewer;
-import javafx.application.*;
-import javafx.event.*;
-import javafx.scene.*;
-import javafx.stage.*;
-import javafx.scene.canvas.*;
-import javafx.scene.paint.*;
-import javafx.scene.text.*;
-import javafx.scene.shape.* ;
-import javafx.scene.transform.*;
-import javafx.scene.canvas.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.* ;
+
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class DemoTwoGraphsInOneViewerFx extends Application {
 	public static final String GRAPH = "data/dorogovtsev_mendes6000.dgs";

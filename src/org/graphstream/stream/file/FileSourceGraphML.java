@@ -31,12 +31,7 @@
  */
 package org.graphstream.stream.file;
 
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -44,16 +39,10 @@ import java.util.LinkedList;
 import java.util.Stack;
 import java.util.logging.Logger;
 
-import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.Location;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.XMLEvent;
-
-import org.graphstream.stream.SourceBase;
 
 /**
  * GraphML is a comprehensive and easy-to-use file format for graphs. It

@@ -31,14 +31,9 @@
  */
 package org.graphstream.stream.file;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Array;
-import java.util.HashMap;
 import java.util.Locale;
-
-import org.graphstream.graph.CompoundAttribute;
 
 /**
  * File output for the DGS (Dynamic Graph Stream) file format.

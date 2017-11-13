@@ -45,8 +45,6 @@ import javax.imageio.ImageIO;
 
 import org.graphstream.graph.Element;
 import org.graphstream.ui.fxViewer.FxGraphRendererBase;
-import org.graphstream.ui.fxViewer.FxViewPanel;
-import org.graphstream.ui.fxViewer.util.DefaultApplication;
 import org.graphstream.ui.fxViewer.util.FxDefaultCamera;
 import org.graphstream.ui.fxViewer.util.FxGraphics2DOutput;
 import org.graphstream.ui.geom.Point3;
@@ -66,11 +64,11 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Region ;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.layout.Region ;
 
 
 /**

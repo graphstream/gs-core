@@ -31,12 +31,12 @@
  */
 package org.graphstream.graph.implementations;
 
-import org.graphstream.graph.CompoundAttribute;
-import org.graphstream.graph.Element;
-import org.graphstream.graph.NullAttributeException;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
+
+import org.graphstream.graph.Element;
 
 /**
  * A base implementation of an element.

@@ -31,9 +31,7 @@
  */
 package org.graphstream.stream;
 
-import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
 
 /**
  * A simple source of graph events that takes an existing graph and creates a

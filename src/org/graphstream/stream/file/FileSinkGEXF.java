@@ -31,15 +31,6 @@
  */
 package org.graphstream.stream.file;
 
-import org.graphstream.graph.Edge;
-import org.graphstream.graph.Element;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
-import org.graphstream.util.cumulative.CumulativeAttributes;
-import org.graphstream.util.cumulative.CumulativeSpells;
-import org.graphstream.util.cumulative.CumulativeSpells.Spell;
-import org.graphstream.util.cumulative.GraphSpells;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
@@ -60,6 +51,13 @@ import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+
+import org.graphstream.graph.Element;
+import org.graphstream.graph.Graph;
+import org.graphstream.util.cumulative.CumulativeAttributes;
+import org.graphstream.util.cumulative.CumulativeSpells;
+import org.graphstream.util.cumulative.CumulativeSpells.Spell;
+import org.graphstream.util.cumulative.GraphSpells;
 
 public class FileSinkGEXF extends FileSinkBase {
 	public static enum TimeFormat {

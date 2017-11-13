@@ -55,7 +55,7 @@ public class DefaultApplication extends Application {
 		if (title != null)
 			stage.setTitle(title);
 		else
-			stage.setTitle("GraphStream");
+			stage.setTitle("GraphStream Fx");
 		
 	}
 	

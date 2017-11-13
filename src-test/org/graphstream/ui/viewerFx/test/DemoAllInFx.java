@@ -35,22 +35,10 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.ui.fxViewer.FxViewPanel;
 import org.graphstream.ui.fxViewer.FxViewer;
-import org.graphstream.ui.fxViewer.util.DefaultApplication;
-import org.graphstream.ui.swingViewer.SwingViewer;
-import org.graphstream.ui.swingViewer.ViewPanel;
 
-import javafx.application.*;
-import javafx.event.*;
-import javafx.scene.*;
-import javafx.stage.*;
-import javafx.scene.canvas.*;
-import javafx.scene.paint.*;
-import javafx.scene.text.*;
-import javafx.scene.shape.* ;
-import javafx.scene.transform.*;
-import javafx.scene.canvas.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.* ;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 public class DemoAllInFx extends Application {
 	protected static String styleSheet =

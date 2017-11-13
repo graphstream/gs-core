@@ -251,7 +251,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * @see org.graphstream.graph.Graph#addNode(java.lang.String)
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public Node addNode(String id) {
 		AbstractNode node = (AbstractNode) getNode(id);
 

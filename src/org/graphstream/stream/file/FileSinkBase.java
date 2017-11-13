@@ -37,9 +37,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
 
 /**
  * Base implementation for graph output to files.

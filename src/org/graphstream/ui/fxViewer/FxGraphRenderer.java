@@ -33,7 +33,6 @@ package org.graphstream.ui.fxViewer;
 
 import org.graphstream.ui.view.GraphRenderer;
 
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Region ;
 

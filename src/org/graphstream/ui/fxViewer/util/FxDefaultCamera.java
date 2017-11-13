@@ -32,17 +32,7 @@
 package org.graphstream.ui.fxViewer.util;
 
 
-import javafx.application.*;
-import javafx.event.*;
-import javafx.scene.*;
-import javafx.stage.*;
-import javafx.scene.canvas.*;
-import javafx.scene.paint.*;
-import javafx.scene.text.*;
-import javafx.scene.shape.* ;
-import javafx.scene.transform.*;
-import javafx.geometry.Point2D ;
-
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -53,6 +43,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.ui.geom.Point2;
@@ -71,6 +62,11 @@ import org.graphstream.ui.swingViewer.util.GraphMetrics;
 import org.graphstream.ui.view.Camera;
 import org.graphstream.ui.view.util.CubicCurve;
 import org.graphstream.ui.view.util.InteractiveElement;
+
+import javafx.geometry.Point2D ;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.transform.Affine;
+import javafx.scene.transform.NonInvertibleTransformException;
 
 /**
  * Define how the graph is viewed.
