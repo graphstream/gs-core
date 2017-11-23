@@ -753,14 +753,6 @@ public class Style extends StyleConstants {
 
 		}
 
-		if (alternates != null && alternates.size() > 0) {
-			builder.append(String.format(" /"));
-			for (Rule rule : alternates.values()) {
-				builder.append(' ');
-				builder.append(rule.selector.toString());
-			}
-		}
-
 		builder.append(String.format("%n"));
 
 		Iterator<String> i = values.keySet().iterator();
@@ -787,6 +779,13 @@ public class Style extends StyleConstants {
 			} else {
 				builder.append(String.format("%s%s%s%s: %s%n", prefix, sprefix,
 						sprefix, key, o != null ? o.toString() : "<null>"));
+			}
+		}
+
+		if (alternates != null && alternates.size() > 0) {
+			for (Rule rule : alternates.values()) {
+				// We use "level-1" to ensure that these styles line up with those above
+				builder.append(rule.toString(level - 1));
 			}
 		}
 
