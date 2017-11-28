@@ -31,10 +31,8 @@
  */
 package org.graphstream.ui.fxViewer;
 
-import java.security.AccessControlException;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.graphstream.graph.Edge;
@@ -319,37 +317,6 @@ public class FxViewer implements Viewer {
 
 	// Access
 	public static GraphRenderer<?, ?> newGraphRenderer() {
-		String rendererClassName;
-
-		try {
-			rendererClassName = System.getProperty("gs.ui.renderer");
-
-			if (rendererClassName != null) {
-				logger.warning("\"gs.ui.renderer\" is deprecated, use \"org.graphstream.ui.renderer\" instead.");
-			} else {
-				rendererClassName = System.getProperty("org.graphstream.ui.renderer");
-			}
-		} catch (AccessControlException e) {
-			rendererClassName = null;
-		}
-
-		if (rendererClassName == null) {
-			return new FxBasicGraphRenderer();
-		}
-
-		try {
-			Class<?> c = Class.forName(rendererClassName);
-			Object object = c.newInstance();
-
-			if (object instanceof GraphRenderer) {
-				return (GraphRenderer<?, ?>) object;
-			} else {
-				logger.warning(String.format("Class '%s' is not a 'GraphRenderer'.", object));
-			}
-		} catch (Exception e) {
-			logger.log(Level.WARNING, "Cannot create graph renderer.", e);
-		}
-		
 		return new FxBasicGraphRenderer();
 	}
 

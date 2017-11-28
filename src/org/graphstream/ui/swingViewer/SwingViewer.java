@@ -33,10 +33,8 @@ package org.graphstream.ui.swingViewer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.security.AccessControlException;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.Timer;
@@ -319,42 +317,12 @@ public class SwingViewer implements Viewer, ActionListener{
 
 	/**
 	 * Create a new instance of the default graph renderer. The default graph
-	 * renderer class is given by the "org.graphstream.ui.renderer" system
+	 * renderer class is given by the "org.graphstream.ui" system
 	 * property. If the class indicated by this property is not usable (not in
 	 * the class path, not of the correct type, etc.) or if the property is not
 	 * present a SwingBasicGraphRenderer is returned.
 	 */
 	public static GraphRenderer<?, ?> newGraphRenderer() {
-		String rendererClassName;
-
-		try {
-			rendererClassName = System.getProperty("gs.ui.renderer");
-
-			if (rendererClassName != null) {
-				logger.warning("\"gs.ui.renderer\" is deprecated, use \"org.graphstream.ui.renderer\" instead.");
-			} else {
-				rendererClassName = System.getProperty("org.graphstream.ui.renderer");
-			}
-		} catch (AccessControlException e) {
-			rendererClassName = null;
-		}
-
-		if (rendererClassName == null)
-			return new SwingBasicGraphRenderer();
-
-		try {
-			Class<?> c = Class.forName(rendererClassName);
-			Object object = c.newInstance();
-
-			if (object instanceof GraphRenderer) {
-				return (GraphRenderer<?, ?>) object;
-			} else {
-				logger.warning(String.format("Class '%s' is not a 'GraphRenderer'.", object));
-			}
-		} catch (Exception e) {
-			logger.log(Level.WARNING, "Cannot create graph renderer.", e);
-		}
-
 		return new SwingBasicGraphRenderer();
 	}
 	
@@ -439,6 +407,29 @@ public class SwingViewer implements Viewer, ActionListener{
 	public View addDefaultView(boolean openInAFrame) {
 		synchronized (views) {
 			GraphRenderer<?, ?> renderer = newGraphRenderer();
+			View view = renderer.createDefaultView(this, DEFAULT_VIEW_ID);
+			
+			addView(view);
+			
+			if (openInAFrame)
+				view.openInAFrame(true);
+
+			return view;
+		}
+	}
+	
+	/**
+	 * Build the default graph view and insert it. The view identifier is
+	 * {@link #DEFAULT_VIEW_ID}. You can request the view to be open in its own
+	 * frame.
+	 * 
+	 * @param renderer
+	 * @param openInAFrame
+	 *            It true, the view is placed in a frame, else the view is only
+	 *            created and you must embed it yourself in your application.
+	 */
+	public View addDefaultView(boolean openInAFrame, GraphRenderer<?, ?> renderer) {
+		synchronized (views) {
 			View view = renderer.createDefaultView(this, DEFAULT_VIEW_ID);
 			
 			addView(view);
