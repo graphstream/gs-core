@@ -6,11 +6,10 @@ import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.layout.Layouts;
 import org.graphstream.ui.view.GraphRenderer;
 import org.graphstream.ui.view.Viewer;
-import org.graphstream.util.Display;
 
 import javafx.application.Application;
 
-public class FxDisplay implements Display {
+public class Display implements org.graphstream.util.Display {
 
 	@Override
 	public Viewer display(Graph graph, boolean autoLayout) {
