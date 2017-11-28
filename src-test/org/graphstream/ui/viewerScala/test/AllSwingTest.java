@@ -6,7 +6,7 @@ import javax.swing.JFrame;
 
 import org.graphstream.algorithm.generator.DorogovtsevMendesGenerator;
 import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.ui.scalaViewer.ScalaGraphRenderer;
+import org.graphstream.ui.swing.SwingFullGraphRenderer;
 import org.graphstream.ui.swingViewer.DefaultView;
 import org.graphstream.ui.swingViewer.SwingViewer;
 
@@ -29,7 +29,7 @@ public class AllSwingTest extends JFrame {
 		g.setAttribute("ui.stylesheet", styleSheet);
 		
 		v.enableAutoLayout();
-		add((DefaultView)v.addDefaultView(false, new ScalaGraphRenderer()), BorderLayout.CENTER);
+		add((DefaultView)v.addDefaultView(false, new SwingFullGraphRenderer()), BorderLayout.CENTER);
 		
 		gen.addSink(g);
 		gen.begin();

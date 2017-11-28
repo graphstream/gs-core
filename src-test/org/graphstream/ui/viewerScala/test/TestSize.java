@@ -4,9 +4,9 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
-import org.graphstream.ui.scalaViewer.ScalaGraphRenderer;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
+import org.graphstream.ui.swing.SwingFullGraphRenderer;
 import org.graphstream.ui.swingViewer.SwingViewer;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.ViewerListener;
@@ -23,7 +23,7 @@ public class TestSize implements ViewerListener {
 		
 		Viewer viewer = new SwingViewer( graph, SwingViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD );
 		ViewerPipe pipeIn = viewer.newViewerPipe();
-		viewer.addView( "view1", new ScalaGraphRenderer() );
+		viewer.addView( "view1", new SwingFullGraphRenderer() );
 	
 		pipeIn.addAttributeSink( graph );
 		pipeIn.addViewerListener( this );

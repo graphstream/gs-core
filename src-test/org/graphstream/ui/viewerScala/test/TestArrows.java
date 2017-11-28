@@ -3,7 +3,7 @@ package org.graphstream.ui.viewerScala.test;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.ui.scalaViewer.ScalaGraphRenderer;
+import org.graphstream.ui.swing.SwingFullGraphRenderer;
 import org.graphstream.ui.swingViewer.SwingViewer;
 import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
@@ -28,7 +28,7 @@ class BTest implements ViewerListener {
 		Viewer viewer = new SwingViewer( graph, SwingViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD );
 		ViewerPipe pipeIn = viewer.newViewerPipe();
 
-		View view   = viewer.addView("view1", new ScalaGraphRenderer() );
+		View view   = viewer.addView("view1", new SwingFullGraphRenderer() );
 
 		pipeIn.addAttributeSink( graph );
 		pipeIn.addViewerListener( this );

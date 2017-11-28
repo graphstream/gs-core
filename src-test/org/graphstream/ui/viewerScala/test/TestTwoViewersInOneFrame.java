@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 import org.graphstream.algorithm.generator.DorogovtsevMendesGenerator;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.stream.thread.ThreadProxyPipe;
-import org.graphstream.ui.scalaViewer.ScalaGraphRenderer;
+import org.graphstream.ui.swing.SwingFullGraphRenderer;
 import org.graphstream.ui.swingViewer.DefaultView;
 import org.graphstream.ui.swingViewer.SwingViewer;
 import org.graphstream.ui.view.Viewer;
@@ -31,8 +31,8 @@ public class TestTwoViewersInOneFrame extends JFrame {
 		graph1.setAttribute("ui.stylesheet", styleSheet1);
 		graph2.setAttribute("ui.stylesheet", styleSheet2);
 
-		DefaultView view1 = new DefaultView(viewer1, "view1", new ScalaGraphRenderer());
-		DefaultView view2 = new DefaultView(viewer2, "view2", new ScalaGraphRenderer());
+		DefaultView view1 = new DefaultView(viewer1, "view1", new SwingFullGraphRenderer());
+		DefaultView view2 = new DefaultView(viewer2, "view2", new SwingFullGraphRenderer());
 		viewer1.addView(view1);
 		viewer2.addView(view2);
 		viewer1.enableAutoLayout();
