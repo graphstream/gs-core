@@ -31,21 +31,14 @@
  */
 package org.graphstream.ui.view;
 
+import java.util.Collection;
+import java.util.EnumSet;
+
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.view.util.InteractiveElement;
 import org.graphstream.ui.view.util.MouseManager;
 import org.graphstream.ui.view.util.ShortcutManager;
-
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
-
-import java.awt.event.KeyListener;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.util.Collection;
-import java.util.EnumSet;
 
 /**
  * A view on a graphic graph.
@@ -209,56 +202,20 @@ public interface View {
 	 * Request ui focus.
 	 */
 	void requestFocus();
-
-	/**
-	 * Add key ui listener.
-	 *
-	 * @param l
-	 *            the listener
-	 */
-	void addKeyListener(KeyListener l);
-
-	/**
-	 * Remove key ui listener.
-	 *
-	 * @param l
-	 *            the listener
-	 */
-	void removeKeyListener(KeyListener l);
-
-	/**
-	 * Add mouse ui listener.
-	 *
-	 * @param l
-	 *            the listener
-	 */
-	void addMouseListener(MouseListener l);
-
-	/**
-	 * Remove mouse ui listener.
-	 *
-	 * @param l
-	 *            the listener
-	 */
-	void removeMouseListener(MouseListener l);
-
-	/**
-	 * Add mouse motion ui listener.
-	 *
-	 * @param l
-	 *            the listener
-	 */
-	void addMouseMotionListener(MouseMotionListener l);
-
-	/**
-	 * Remove mouse motion ui listener.
-	 *
-	 * @param l
-	 *            the listener
-	 */
-	void removeMouseMotionListener(MouseMotionListener l);
 	
-	<T extends Event> void addEventFilter(EventType<T> eventType, EventHandler<? super T> eventFilter) ;
-
-
+	/**
+	 * Generic method for add a new Listener.
+	 *
+	 * @param T Describe the listener
+	 * @param U Listener
+	 */
+	<T, U> void addListener(T descriptor, U listener);
+	
+	/**
+	 * Generic method for remove a Listener.
+	 *
+	 * @param T Describe the listener
+	 * @param U Listener
+	 */
+	<T, U> void removeListener(T descriptor, U listener);
 }
