@@ -31,14 +31,14 @@
  */
 package org.graphstream.ui.view;
 
+import java.util.Collection;
+import java.util.EnumSet;
+
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
-import org.graphstream.ui.swingViewer.util.GraphMetrics;
+import org.graphstream.ui.view.util.GraphMetrics;
 import org.graphstream.ui.view.util.InteractiveElement;
-
-import java.util.Collection;
-import java.util.EnumSet;
 
 public interface Camera {
 	/**
