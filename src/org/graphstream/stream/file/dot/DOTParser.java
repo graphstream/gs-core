@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+import org.graphstream.graph.IdAlreadyInUseException;
 import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.stream.file.FileSourceDOT;
 import org.graphstream.graph.implementations.AbstractElement.AttributeChangeEvent;
@@ -199,9 +200,17 @@ public class DOTParser implements Parser, DOTParserConstants {
 		}
 
 		for (int i = 0; i < count; i++) {
-			dot.sendEdgeAdded(sourceId, ids[i], edges.get(i * 2), edges
-					.get((i + 1) * 2), directed[i]);
-
+			boolean addedEdge = false;
+			String IDtoTry = ids[i];
+			while (!addedEdge) {
+				try {
+					dot.sendEdgeAdded(sourceId, ids[i], edges.get(i * 2), edges
+							.get((i + 1) * 2), directed[i]);
+					addedEdge = true;
+				} catch (IdAlreadyInUseException e) {
+					IDtoTry += "'";
+				}
+			}
 			if (attr == null) {
 				for (String key : globalEdgesAttributes.keySet())
 					dot.sendAttributeChangedEvent(sourceId, ids[i],
