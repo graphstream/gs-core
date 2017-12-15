@@ -31,6 +31,18 @@
  */
 package org.graphstream.ui.graphicGraph;
 
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.EdgeFactory;
+import org.graphstream.graph.Element;
+import org.graphstream.graph.ElementNotFoundException;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.IdAlreadyInUseException;
+import org.graphstream.graph.Node;
+import org.graphstream.graph.NodeFactory;
+import org.graphstream.graph.implementations.AbstractElement;
+import org.graphstream.stream.AttributeSink;
+import org.graphstream.stream.ElementSink;
+import org.graphstream.stream.Sink;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,18 +56,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-import org.graphstream.graph.Edge;
-import org.graphstream.graph.EdgeFactory;
-import org.graphstream.graph.Element;
-import org.graphstream.graph.ElementNotFoundException;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.IdAlreadyInUseException;
-import org.graphstream.graph.Node;
-import org.graphstream.graph.NodeFactory;
-import org.graphstream.graph.implementations.AbstractElement;
-import org.graphstream.stream.AttributeSink;
-import org.graphstream.stream.ElementSink;
-import org.graphstream.stream.Sink;
 import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSource;

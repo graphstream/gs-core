@@ -31,7 +31,11 @@
  */
 package org.graphstream.graph.implementations;
 
+import java.util.AbstractCollection;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.graphstream.graph.BreadthFirstIterator;
 import org.graphstream.graph.DepthFirstIterator;

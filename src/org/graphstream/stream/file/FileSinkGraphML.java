@@ -31,12 +31,15 @@
  */
 package org.graphstream.stream.file;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
+import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
 
 public class FileSinkGraphML extends FileSinkBase {
 

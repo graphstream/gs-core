@@ -34,7 +34,9 @@ package org.graphstream.stream;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.graph.implementations.Graphs;
 import org.graphstream.util.GraphDiff;

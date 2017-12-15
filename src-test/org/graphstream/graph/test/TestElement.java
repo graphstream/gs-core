@@ -31,12 +31,7 @@
  */
 package org.graphstream.graph.test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +40,7 @@ import java.util.stream.Collectors;
 
 import org.graphstream.graph.CompoundAttribute;
 import org.graphstream.graph.Graph;
+import org.graphstream.graph.NullAttributeException;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.junit.Test;
