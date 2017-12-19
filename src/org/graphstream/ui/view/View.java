@@ -200,8 +200,10 @@ public interface View {
 
 	/**
 	 * Request ui focus.
+	 * @return optional object used to confirm the request
 	 */
-	void requestFocus();
+	Object requireFocus();
+
 	
 	/**
 	 * Generic method for add a new Listener.
