@@ -14,6 +14,7 @@ import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.layout.LayoutRunner;
 import org.graphstream.ui.layout.Layouts;
+import org.graphstream.ui.view.camera.Camera;
 
 /**
  * Set of views on a graphic graph.
