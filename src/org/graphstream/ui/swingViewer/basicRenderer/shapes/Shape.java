@@ -29,31 +29,38 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.ui.graphicGraph.stylesheet;
+package org.graphstream.ui.swingViewer.basicRenderer.shapes;
 
-import java.awt.Color;
-import java.util.ArrayList;
+import java.awt.Graphics2D;
 
-/**
- * Ordered set of colours.
- */
-public class Colors extends ArrayList<Color> {
-	private static final long serialVersionUID = - 7218092114483593610L;
+import org.graphstream.ui.swingViewer.util.GraphMetrics;
 
+public abstract class Shape {
 	/**
-	 * New empty colour set.
-	 */
-	public Colors() {
-	}
-
-	/**
-	 * New copy of the other colour set.
+	 * Same as calling {@link #renderStroke(Graphics2D,GraphMetrics)} and
+	 * {@link #renderFill(Graphics2D,GraphMetrics)} at once.
 	 * 
-	 * @param others
-	 *            The other colour set to copy.
+	 * @param g
+	 *            The Swing graphics.
 	 */
-	public Colors(Colors others) {
-		for (Color color : others)
-			add(color);
+	public void render(Graphics2D g, GraphMetrics metrics) {
+		renderStroke(g, metrics);
+		renderFill(g, metrics);
 	}
+
+	/**
+	 * Render the stroke of the shape.
+	 * 
+	 * @param g
+	 *            The Swing graphics.
+	 */
+	public abstract void renderStroke(Graphics2D g, GraphMetrics metrics);
+
+	/**
+	 * Render the filled part of the shape.
+	 * 
+	 * @param g
+	 *            The Swing graphics.
+	 */
+	public abstract void renderFill(Graphics2D g, GraphMetrics metrics);
 }
