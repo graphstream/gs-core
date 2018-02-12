@@ -31,9 +31,7 @@
  */
 package org.graphstream.graph.implementations;
 
-import org.graphstream.graph.CompoundAttribute;
 import org.graphstream.graph.Element;
-import org.graphstream.graph.NullAttributeException;
 
 import java.util.*;
 import java.util.stream.Stream;
