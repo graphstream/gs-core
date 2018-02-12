@@ -73,7 +73,7 @@ public class ViewerPipe extends SourceBase implements ProxyPipe {
 	/**
 	 * A shell around a pipe coming from a viewer in another thread.
 	 */
-	protected ViewerPipe(String id, ProxyPipe pipeIn) {
+	public ViewerPipe(String id, ProxyPipe pipeIn) {
 		this.id = id;
 		this.pipeIn = pipeIn;
 		pipeIn.addSink(this);

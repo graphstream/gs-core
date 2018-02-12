@@ -31,7 +31,6 @@
  */
 package org.graphstream.ui.graphicGraph.stylesheet;
 
-import java.awt.Color;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;

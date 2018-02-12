@@ -44,6 +44,8 @@ import org.graphstream.stream.file.FileSourceFactory;
 import org.graphstream.ui.view.Viewer;
 
 
+
+
 /**
  * An Interface that advises general purpose methods for handling graphs.
  * <p>
@@ -506,34 +508,33 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	default void write(FileSink output, String filename) throws IOException {
 		output.writeAll(this, filename);
 	}
-
+	
 	/**
 	 * Utility method that creates a new graph viewer, and register the graph in
 	 * it. Notice that this method is a quick way to see a graph, and only this.
 	 * It can be used to prototype a program, but may be limited. This method
 	 * automatically launch a graph layout algorithm in its own thread to
 	 * compute best node positions.
-	 *
-	 * @return a graph viewer that allows to command the viewer (it often run in
-	 * another thread).
+	 * 
 	 * @see org.graphstream.ui.view.Viewer
-	 * @see #display(boolean)
+	 * @see #display(boolean )
+	 * @return a graph viewer that allows to command the viewer (it often run in
+	 *         another thread).
 	 */
-	default Viewer display() {
-		return display(true);
-	}
+	Viewer display();
 
 	/**
 	 * Utility method that creates a new graph viewer, and register the graph in
 	 * it. Notice that this method is a quick way to see a graph, and only this.
 	 * It can be used to prototype a program, but is very limited.
-	 *
-	 * @param autoLayout If true a layout algorithm is launched in its own thread to
-	 *                   compute best node positions.
-	 * @return a graph viewer that allows to command the viewer (it often run in
-	 * another thread).
+	 * 
+	 * @param autoLayout
+	 *            If true a layout algorithm is launched in its own thread to
+	 *            compute best node positions.
 	 * @see org.graphstream.ui.view.Viewer
 	 * @see #display()
+	 * @return a graph viewer that allows to command the viewer (it often run in
+	 *         another thread).
 	 */
 	Viewer display(boolean autoLayout);
 
@@ -935,4 +936,5 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * @return The removed node
 	 */
 	Node removeNode(Node node);
+
 }

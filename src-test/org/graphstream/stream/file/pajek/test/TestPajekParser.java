@@ -38,7 +38,6 @@ import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.stream.file.FileSourcePajek;
 import org.graphstream.ui.view.Viewer;
-import org.graphstream.ui.view.Viewer.CloseFramePolicy;
 import org.junit.Ignore;
 
 @Ignore
@@ -159,6 +158,7 @@ public class TestPajekParser {
 			new TestEntry("WRITE.NET", false, false, false) };
 
 	public static void main(String args[]) throws IOException {
+		System.setProperty("org.graphstream.ui", "org.graphstream.ui.swingViewer.util.SwingDisplay");
 		TestPajekParser test = new TestPajekParser();
 
 		for (int i = 0; i < entries.length; i++)
@@ -189,8 +189,9 @@ public class TestPajekParser {
 							entry.veryLarge ? 6 : 16, entry.veryLarge ? ""
 									: "stroke-mode: plain; stroke-color: #333;"));
 		
+		
 		Viewer v = graph.display(entry.autoLayout);
-		v.setCloseFramePolicy(CloseFramePolicy.CLOSE_VIEWER);
+		v.setCloseFramePolicy(Viewer.CloseFramePolicy.CLOSE_VIEWER);
 		
 		in.addSink(graph);
 		in.readAll(TestPajekParser.class

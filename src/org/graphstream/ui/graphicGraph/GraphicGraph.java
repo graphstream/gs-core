@@ -827,19 +827,17 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 
 		return node;
 	}
-
-	@Override
+	
 	public Viewer display() {
 		throw new RuntimeException(
 				"GraphicGraph is used by display() and cannot recursively define display()");
 	}
 
-	@Override
 	public Viewer display(boolean autoLayout) {
 		throw new RuntimeException(
 				"GraphicGraph is used by display() and cannot recursively define display()");
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -34,12 +34,10 @@ package org.graphstream.ui.view.util;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.view.View;
 
-import java.awt.event.KeyListener;
-
 /**
  * Utility to centralise the shortcuts and actions for all view instances.
  */
-public interface ShortcutManager extends KeyListener {
+public interface ShortcutManager  {
 	/**
 	 * Make the manager active on the given graph and view.
 	 * @param graph
