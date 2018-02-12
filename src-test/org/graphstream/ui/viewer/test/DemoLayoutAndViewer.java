@@ -41,7 +41,7 @@ import org.graphstream.stream.file.FileSource;
 import org.graphstream.stream.file.FileSourceDGS;
 import org.graphstream.stream.file.FileSourceGML;
 import org.graphstream.stream.thread.ThreadProxyPipe;
-import org.graphstream.ui.geom.Point3;
+import org.graphstream.util.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphPosLengthUtils;
 import org.graphstream.ui.layout.springbox.implementations.LinLog;
 import org.graphstream.ui.view.Viewer;

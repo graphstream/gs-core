@@ -31,7 +31,7 @@
  */
 package org.graphstream.ui.layout.springbox;
 
-import org.graphstream.ui.geom.Vector3;
+import org.graphstream.util.geom.Point3;
 
 /**
  * Edge representation.
@@ -65,7 +65,7 @@ public class EdgeSpring {
 	/**
 	 * The attraction force on this edge.
 	 */
-	public Vector3 spring = new Vector3();
+	public Point3 spring = new Point3();
 
 	/**
 	 * Make this edge ignored by the layout algorithm ?.

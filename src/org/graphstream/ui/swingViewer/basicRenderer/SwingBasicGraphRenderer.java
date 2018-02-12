@@ -32,7 +32,7 @@
 package org.graphstream.ui.swingViewer.basicRenderer;
 
 import org.graphstream.graph.Element;
-import org.graphstream.ui.geom.Point3;
+import org.graphstream.util.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.StyleGroup;
@@ -232,7 +232,7 @@ public class SwingBasicGraphRenderer extends SwingGraphRendererBase {
 			double px1 = metrics.px1;
 			Value stroke = style.getShadowWidth();
 
-			rect.setFrame(metrics.lo.x, metrics.lo.y + px1, metrics.size.data[0] - px1, metrics.size.data[1] - px1);
+			rect.setFrame(metrics.lo.x, metrics.lo.y + px1, metrics.size.x - px1, metrics.size.y - px1);
 			g.setStroke(new BasicStroke((float) metrics.lengthToGu(stroke)));
 			g.setColor(graph.getStyle().getStrokeColor(0));
 			g.draw(rect);
@@ -341,8 +341,8 @@ public class SwingBasicGraphRenderer extends SwingGraphRendererBase {
 			double y2 = selection.y2;
 			double t;
 
-			double w = camera.getMetrics().getSize().data[0];
-			double h = camera.getMetrics().getSize().data[1];
+			double w = camera.getMetrics().getSize().x;
+			double h = camera.getMetrics().getSize().y;
 
 			if (x1 > x2) {
 				t = x1;

@@ -31,7 +31,6 @@
  */
 package org.graphstream.ui.swingViewer.basicRenderer;
 
-import org.graphstream.ui.geom.Vector2;
 import org.graphstream.ui.graphicGraph.GraphicEdge;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicNode;
@@ -48,6 +47,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
+import org.graphstream.util.geom.Point2;
 
 public class EdgeRenderer extends ElementRenderer {
 	protected Line2D shape = new Line2D.Double();
@@ -124,28 +124,28 @@ public class EdgeRenderer extends ElementRenderer {
 				GraphicNode node0 = (GraphicNode) edge.getNode0();
 				GraphicNode node1 = (GraphicNode) edge.getNode1();
 				double off = evalEllipseRadius(edge, node0, node1, camera);
-				Vector2 theDirection = new Vector2(node1.getX() - node0.getX(),
+				Point2 theDirection = new Point2(node1.getX() - node0.getX(),
 						node1.getY() - node0.getY());
 
-				theDirection.normalize();
+				theDirection = theDirection.normalize();
 
-				double x = node1.x - (theDirection.data[0] * off);
-				double y = node1.y - (theDirection.data[1] * off);
-				Vector2 perp = new Vector2(theDirection.data[1],
-						-theDirection.data[0]);
+				double x = node1.x - (theDirection.x * off);
+				double y = node1.y - (theDirection.y * off);
+				Point2 perp = new Point2(theDirection.y,
+						-theDirection.x);
 
-				perp.normalize();
-				theDirection.scalarMult(arrowLength);
-				perp.scalarMult(arrowWidth);
+				perp = perp.normalize();
+				theDirection = theDirection.mul(arrowLength);
+				perp = perp.mul(arrowWidth);
 
 				// Create a polygon.
 
 				shape.reset();
 				shape.moveTo(x, y);
-				shape.lineTo(x - theDirection.data[0] + perp.data[0], y
-						- theDirection.data[1] + perp.data[1]);
-				shape.lineTo(x - theDirection.data[0] - perp.data[0], y
-						- theDirection.data[1] - perp.data[1]);
+				shape.lineTo(x - theDirection.x + perp.x, y
+						- theDirection.y + perp.y);
+				shape.lineTo(x - theDirection.x - perp.x, y
+						- theDirection.y - perp.y);
 				shape.closePath();
 
 				g.fill(shape);

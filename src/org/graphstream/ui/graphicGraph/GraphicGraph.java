@@ -46,7 +46,7 @@ import org.graphstream.stream.Sink;
 import org.graphstream.stream.SourceBase.ElementType;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSource;
-import org.graphstream.ui.geom.Point3;
+import org.graphstream.util.geom.Point3;
 import org.graphstream.ui.graphicGraph.stylesheet.Style;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
@@ -65,6 +65,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -353,8 +354,12 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		if (boundsChanged) {
 			final AtomicBoolean effectiveChange = new AtomicBoolean(false);
 
-			lo.x = lo.y = lo.z = Double.MAX_VALUE;
-			hi.x = hi.y = hi.z = -Double.MAX_VALUE;
+			AtomicReference<Double> lox = new AtomicReference<>(Double.MAX_VALUE),
+									loy = new AtomicReference<>(Double.MAX_VALUE),
+									loz = new AtomicReference<>(Double.MAX_VALUE);
+			AtomicReference<Double> hix = new AtomicReference<>(Double.MIN_VALUE),
+									hiy = new AtomicReference<>(Double.MIN_VALUE),
+									hiz = new AtomicReference<>(Double.MIN_VALUE);
 
 			nodes().forEach(n -> {
 				GraphicNode node = (GraphicNode) n;
@@ -362,18 +367,18 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 				if (!node.hidden && node.positionned) {
 					effectiveChange.set(true);
 
-					if (node.x < lo.x)
-						lo.x = node.x;
-					if (node.x > hi.x)
-						hi.x = node.x;
-					if (node.y < lo.y)
-						lo.y = node.y;
-					if (node.y > hi.y)
-						hi.y = node.y;
-					if (node.z < lo.z)
-						lo.z = node.z;
-					if (node.z > hi.z)
-						hi.z = node.z;
+					if (node.x < lox.get())
+						lox.set(node.x);
+					if (node.x > hix.get())
+						hix.set(node.x);
+					if (node.y < loy.get())
+						loy.set(node.y);
+					if (node.y > hiy.get())
+						hiy.set(node.y);
+					if (node.z < loz.get())
+						loz.set(node.z);
+					if (node.z > hiz.get())
+						hiz.set(node.z);
 				}
 			});
 
@@ -387,44 +392,47 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 					if (!sprite.hidden) {
 						effectiveChange.set(true);
 
-						if (x < lo.x)
-							lo.x = x;
-						if (x > hi.x)
-							hi.x = x;
-						if (y < lo.y)
-							lo.y = y;
-						if (y > hi.y)
-							hi.y = y;
-						if (z < lo.z)
-							lo.z = z;
-						if (z > hi.z)
-							hi.z = z;
+						if (x < lox.get())
+							lox.set(x);
+						if (x > hix.get())
+							hix.set(x);
+						if (y < loy.get())
+							loy.set(y);
+						if (y > hiy.get())
+							hiy.set(y);
+						if (z < loz.get())
+							loz.set(z);
+						if (z > hiz.get())
+							hiz.set(z);
 					}
 				}
 			});
 
-			if (hi.x - lo.x < 0.000001) {
-				hi.x = hi.x + 1;
-				lo.x = lo.x - 1;
+			if (hix.get() - lox.get() < 0.000001) {
+				hix.set(hix.get() + 1);
+				lox.set(lox.get() - 1);
 			}
-			if (hi.y - lo.y < 0.000001) {
-				hi.y = hi.y + 1;
-				lo.y = lo.y - 1;
+			if (hiy.get() - loy.get() < 0.000001) {
+				hiy.set(hiy.get() + 1);
+				loy.set(loy.get() - 1);
 			}
-			if (hi.z - lo.z < 0.000001) {
-				hi.z = hi.z + 1;
-				lo.z = lo.z - 1;
+			if (hiz.get() - loz.get() < 0.000001) {
+				hiz.set(hiz.get() + 1);
+				loz.set(loz.get() - 1);
 			}
 
 			//
 			// Prevent infinities that can be produced by Double.MAX_VALUE.
 			//
-			if (effectiveChange.get())
+			if (effectiveChange.get()) {
 				boundsChanged = false;
-			else {
-				lo.x = lo.y = lo.z = -1;
-				hi.x = hi.y = hi.z = 1;
+				lo = new Point3(lox.get(), loy.get(), loz.get());
+				hi = new Point3(hix.get(), hiy.get(), hiz.get());
+			} else {
+				lo = new Point3(-1, -1, -1);
+				hi = new Point3(1, 1, 1);
 			}
+
 		}
 	}
 

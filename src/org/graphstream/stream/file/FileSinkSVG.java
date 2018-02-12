@@ -36,7 +36,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.graphstream.ui.geom.Point3;
+import org.graphstream.util.geom.Point3;
 import org.graphstream.ui.graphicGraph.stylesheet.Rule;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleSheet;
 
@@ -197,20 +197,27 @@ public class FileSinkSVG extends FileSinkBase {
 	protected void setNodePos(String nodeId, String attribute, Object value) {
 		Point3 p = nodePos.get(nodeId);
 
+		double x,y,z;
 		if (p == null) {
-			p = new Point3((float) Math.random(), (float) Math.random(), 0f);
-			nodePos.put(nodeId, p);
+			x = Math.random();
+			y = Math.random();
+			z = 0;
+		} else {
+			x = p.x;
+			y = p.y;
+			z = p.z;
 		}
+			
 
 		if (attribute.equals("x")) {
 			if (value instanceof Number)
-				p.x = ((Number) value).floatValue();
+				x = ((Number) value).floatValue();
 		} else if (attribute.equals("y")) {
 			if (value instanceof Number)
-				p.y = ((Number) value).floatValue();
+				y = ((Number) value).floatValue();
 		} else if (attribute.equals("z")) {
 			if (value instanceof Number)
-				p.z = ((Number) value).floatValue();
+				z = ((Number) value).floatValue();
 		}
 
 		else if (attribute.equals("xy")) {
@@ -218,8 +225,8 @@ public class FileSinkSVG extends FileSinkBase {
 				Object xy[] = ((Object[]) value);
 
 				if (xy.length > 1) {
-					p.x = ((Number) xy[0]).floatValue();
-					p.y = ((Number) xy[1]).floatValue();
+					x = ((Number) xy[0]).floatValue();
+					y = ((Number) xy[1]).floatValue();
 				}
 			}
 		} else if (attribute.equals("xyz")) {
@@ -227,15 +234,16 @@ public class FileSinkSVG extends FileSinkBase {
 				Object xyz[] = ((Object[]) value);
 
 				if (xyz.length > 1) {
-					p.x = ((Number) xyz[0]).floatValue();
-					p.y = ((Number) xyz[1]).floatValue();
+					x = ((Number) xyz[0]).floatValue();
+					y = ((Number) xyz[1]).floatValue();
 				}
 
 				if (xyz.length > 2) {
-					p.z = ((Number) xyz[2]).floatValue();
+					z = ((Number) xyz[2]).floatValue();
 				}
 			}
 		}
+		nodePos.put(nodeId, new Point3(x, y, z));
 	}
 
 	protected void outputStyle(String styleSheet) {

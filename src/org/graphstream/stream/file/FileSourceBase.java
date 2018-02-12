@@ -45,7 +45,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import org.graphstream.stream.SourceBase;
-import org.graphstream.ui.geom.Point3;
+import org.graphstream.util.geom.Point3;
 
 /**
  * Base for various graph file input.

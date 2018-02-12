@@ -45,7 +45,7 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Element;
 import org.graphstream.graph.Node;
 import org.graphstream.stream.GraphReplay;
-import org.graphstream.ui.geom.Point3;
+import org.graphstream.util.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicEdge;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.GraphicNode;
