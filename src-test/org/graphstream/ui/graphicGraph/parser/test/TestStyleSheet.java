@@ -5,12 +5,12 @@
  *     Antoine Dutot    <antoine.dutot@graphstream-project.org>
  *     Yoann Pigné      <yoann.pigne@graphstream-project.org>
  *     Guilhelm Savin   <guilhelm.savin@graphstream-project.org>
- * 
+ *
  * This file is part of GraphStream <http://graphstream-project.org>.
- * 
+ *
  * GraphStream is a library whose purpose is to handle static or dynamic
  * graph, create them from scratch, file or any source and display them.
- * 
+ *
  * This program is free software distributed under the terms of two licenses, the
  * CeCILL-C license that fits European law, and the GNU Lesser General Public
  * License. You can  use, modify and/ or redistribute the software under the terms
@@ -18,14 +18,14 @@
  * URL <http://www.cecill.info> or under the terms of the GNU LGPL as published by
  * the Free Software Foundation, either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
@@ -52,7 +52,7 @@ import static org.junit.Assert.*;
 
 /**
  * Run several tests on the style sheet package.
- * 
+ *
  * @author Antoine Dutot
  */
 public class TestStyleSheet {
@@ -315,6 +315,20 @@ public class TestStyleSheet {
 		assertEquals(3, sC.getStrokeWidth().value, 0);
 		assertEquals(3, sD.getStrokeWidth().value, 0);
 
+		// Ensure that inherited styles are still correct
+		assertTrue(sA.getFillColor(0).getRed() == 255
+				   && sA.getFillColor(0).getGreen() == 0
+				   && sA.getFillColor(0).getBlue() == 255);
+		assertTrue(sB.getFillColor(0).getRed() == 255
+				   && sB.getFillColor(0).getGreen() == 165
+				   && sB.getFillColor(0).getBlue() == 0);
+		assertTrue(sC.getFillColor(0).getRed() == 255
+				   && sC.getFillColor(0).getGreen() == 165
+				   && sC.getFillColor(0).getBlue() == 0);
+		assertTrue(sD.getFillColor(0).getRed() == 190
+				   && sD.getFillColor(0).getGreen() == 190
+				   && sD.getFillColor(0).getBlue() == 190);
+
 		sgs.popEvent("clicked"); // This is normally done automatically by the
 									// GraphicElement
 
@@ -340,6 +354,20 @@ public class TestStyleSheet {
 		assertEquals(3, sB.getStrokeWidth().value, 0);
 		assertEquals(3, sC.getStrokeWidth().value, 0);
 		assertEquals(3, sD.getStrokeWidth().value, 0);
+
+		// Ensure that inherited styles are still correct
+		assertTrue(sA.getFillColor(0).getRed() == 255
+				   && sA.getFillColor(0).getGreen() == 0
+				   && sA.getFillColor(0).getBlue() == 255);
+		assertTrue(sB.getFillColor(0).getRed() == 255
+				   && sB.getFillColor(0).getGreen() == 165
+				   && sB.getFillColor(0).getBlue() == 0);
+		assertTrue(sC.getFillColor(0).getRed() == 255
+				   && sC.getFillColor(0).getGreen() == 165
+				   && sC.getFillColor(0).getBlue() == 0);
+		assertTrue(sD.getFillColor(0).getRed() == 190
+				   && sD.getFillColor(0).getGreen() == 190
+				   && sD.getFillColor(0).getBlue() == 190);
 
 		sgs.popEvent("clicked"); // This is normally done automatically by the
 									// GraphicElement
