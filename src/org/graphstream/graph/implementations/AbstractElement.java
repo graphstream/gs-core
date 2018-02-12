@@ -225,14 +225,13 @@ public abstract class AbstractElement implements Element {
 	public <T> T getFirstAttributeOf(Class<T> clazz, String... keys) {
 		Object o = null;
 
-		if (attributes == null)
-			return null;
+		if (attributes != null) {
+			for (String key : keys) {
+				o = attributes.get(key);
 
-		for (String key : keys) {
-			o = attributes.get(key);
-
-			if (o != null && clazz.isInstance(o))
-				return (T) o;
+				if (o != null && clazz.isInstance(o))
+					return (T) o;
+			}
 		}
 
 		if (nullAttributesAreErrors())
