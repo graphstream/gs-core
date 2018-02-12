@@ -34,7 +34,7 @@ package org.graphstream.ui.layout.springbox;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.SourceBase;
 import org.graphstream.stream.sync.SinkTime;
-import org.graphstream.util.geom.Point3;
+import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphPosLengthUtils;
 import org.graphstream.ui.layout.Layout;
 import org.miv.pherd.ParticleBox;

@@ -29,15 +29,16 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.ui.swingViewer.util;
-
-import org.graphstream.util.geom.Point3;
-import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
-import org.graphstream.ui.graphicGraph.stylesheet.Value;
-import org.graphstream.ui.graphicGraph.stylesheet.Values;
-import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
+package org.graphstream.ui.view.util;
 
 import java.util.logging.Logger;
+
+import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
+import org.graphstream.ui.graphicGraph.stylesheet.Value;
+import org.graphstream.ui.graphicGraph.stylesheet.Values;
+import org.graphstream.ui.geom.Point3;
+import org.miv.pherd.geom.Vector3;
 
 /**
  * p Various geometric informations on the graphic graph.
@@ -85,7 +86,7 @@ public class GraphMetrics {
 	/**
 	 * Graph dimension.
 	 */
-	public Point3 size = new Point3();
+	public Vector3 size = new Vector3();
 
 	/**
 	 * The graph diagonal.
@@ -121,9 +122,9 @@ public class GraphMetrics {
 	 * respectively.
 	 */
 	protected void setDefaults() {
-		lo = new Point3(-1, -1, -1);
-		hi = new Point3(1, 1, 1);
-		size = new Point3(2, 2, 2);
+		lo.set(-1, -1, -1);
+		hi.set(1, 1, 1);
+		size.set(2, 2, 2);
 
 		diagonal = 1;
 		ratioPx2Gu = 1;
@@ -146,7 +147,7 @@ public class GraphMetrics {
 	 * 
 	 * @return The size.
 	 */
-	public Point3 getSize() {
+	public Vector3 getSize() {
 		return size;
 	}
 
@@ -362,10 +363,17 @@ public class GraphMetrics {
 	 */
 	public void setBounds(double minx, double miny, double minz, double maxx,
 			double maxy, double maxz) {
-		lo = new Point3(minx, miny, minz);
-		hi = new Point3(maxx, maxy, maxz);
+		lo.x = minx;
+		lo.y = miny;
+		lo.z = minz;
+		hi.x = maxx;
+		hi.y = maxy;
+		hi.z = maxz;
 
-		size = new Point3(hi.x - lo.x, hi.y - lo.y, hi.z - lo.z);
-		diagonal = size.length();
+		size.data[0] = hi.x - lo.x;
+		size.data[1] = hi.y - lo.y;
+		size.data[2] = hi.z - lo.z;
+		diagonal = Math.sqrt(size.data[0] * size.data[0] + size.data[1]
+				* size.data[1] + size.data[2] * size.data[2]);
 	}
 }

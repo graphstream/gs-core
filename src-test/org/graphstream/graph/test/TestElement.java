@@ -38,9 +38,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.graphstream.graph.CompoundAttribute;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.NullAttributeException;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.junit.Test;
@@ -185,7 +183,7 @@ public class TestElement {
 
 		// Hashes 2.
 
-		MyAttribute attr = new MyAttribute();
+		HashMap<String, String> attr = new HashMap<>();
 
 		attr.put("A", "a");
 		attr.put("B", "b");
@@ -195,7 +193,7 @@ public class TestElement {
 
 		assertEquals(5, A.getAttributeCount());
 		assertTrue(A.hasAttribute("ca"));
-		assertTrue(A.hasAttribute("ca", MyAttribute.class));
+		assertTrue(A.hasAttribute("ca", HashMap.class));
 		assertFalse(A.hasLabel("ca"));
 		assertFalse(A.hasNumber("ca"));
 		assertFalse(A.hasVector("ca"));
@@ -313,18 +311,5 @@ public class TestElement {
 
 		assertFalse(graph.hasAttribute("foo"));
 		assertFalse(graph.hasAttribute("bar"));
-	}
-
-	protected static class MyAttribute extends HashMap<String, String>
-			implements CompoundAttribute {
-		private static final long serialVersionUID = 1L;
-
-		public String getKey() {
-			return "MyAttribute";
-		}
-
-		public HashMap<?, ?> toHashMap() {
-			return this;
-		}
 	}
 }

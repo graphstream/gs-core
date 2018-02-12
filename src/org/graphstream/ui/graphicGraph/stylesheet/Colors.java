@@ -31,7 +31,6 @@
  */
 package org.graphstream.ui.graphicGraph.stylesheet;
 
-import java.awt.Color;
 import java.util.ArrayList;
 
 /**

@@ -34,8 +34,8 @@ package org.graphstream.ui.graphicGraph;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
-import org.graphstream.util.geom.Point2;
-import org.graphstream.util.geom.Point3;
+import org.graphstream.ui.geom.Point2;
+import org.graphstream.ui.geom.Point3;
 
 import java.util.logging.Logger;
 

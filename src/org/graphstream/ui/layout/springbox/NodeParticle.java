@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
 
-import org.graphstream.util.geom.Point3;
+import org.graphstream.ui.geom.Vector3;
 import org.miv.pherd.Particle;
 
 /**
@@ -68,7 +68,7 @@ public abstract class NodeParticle extends Particle {
 	/**
 	 * Displacement vector.
 	 */
-	public Point3 disp;
+	public Vector3 disp;
 
 	/**
 	 * Last computed displacement vector length.
@@ -135,7 +135,7 @@ public abstract class NodeParticle extends Particle {
 			double z) {
 		super(id, x, y, box.is3D ? z : 0);
 		this.box = box;
-		disp = new Point3();
+		disp = new Vector3();
 		createDebug();
 	}
 
@@ -166,29 +166,29 @@ public abstract class NodeParticle extends Particle {
 	@Override
 	public void move(int time) {
 		if (!frozen) {
-			disp = new Point3();
+			disp.fill(0);
 
-			Point3 delta = new Point3();
+			Vector3 delta = new Vector3();
 
 			repE = 0;
 			attE = 0;
 
 			if (box.viewZone < 0)
-				delta = repulsionN2(delta);
+				repulsionN2(delta);
 			else
-				delta = repulsionNLogN(delta);
+				repulsionNLogN(delta);
 
-			delta = attraction(delta);
+			attraction(delta);
 			
 			if(box.gravity != 0)
-				delta = gravity(delta);
+				gravity(delta);
 
-			disp = disp.mul(box.force);
+			disp.scalarMult(box.force);
 
 			len = disp.length();
 
 			if (len > (box.area / 2)) {
-				disp = disp.mul((box.area / 2) / len);
+				disp.scalarMult((box.area / 2) / len);
 				len = box.area / 2;
 			}
 
@@ -202,11 +202,11 @@ public abstract class NodeParticle extends Particle {
 	@Override
 	public void nextStep(int time) {
 		if (!frozen) {
-			nextPos.x = pos.x + disp.x;
-			nextPos.y = pos.y + disp.y;
+			nextPos.x = pos.x + disp.data[0];
+			nextPos.y = pos.y + disp.data[1];
 
 			if (box.is3D)
-				nextPos.z = pos.z + disp.z;
+				nextPos.z = pos.z + disp.data[2];
 
 			box.nodeMoveCount++;
 			moved = true;
@@ -261,7 +261,7 @@ public abstract class NodeParticle extends Particle {
 	 * @param delta
 	 *            The computed displacement vector.
 	 */
-	protected abstract Point3 repulsionN2(Point3 delta);
+	protected abstract void repulsionN2(Vector3 delta);
 
 	/**
 	 * Compute the repulsion for each node in the viewing distance, and use the
@@ -272,14 +272,14 @@ public abstract class NodeParticle extends Particle {
 	 * @param delta
 	 *            The computed displacement vector.
 	 */
-	protected abstract Point3 repulsionNLogN(Point3 delta);
+	protected abstract void repulsionNLogN(Vector3 delta);
 
 	/**
 	 * Compute the global attraction toward each connected node.
 	 * @param delta
 	 * 			The computed displacement vector.
 	 */
-	protected abstract Point3 attraction(Point3 delta);
+	protected abstract void attraction(Vector3 delta);
 
 	/**
 	 * Compute the global attraction toward the layout center (if enabled).
@@ -287,7 +287,7 @@ public abstract class NodeParticle extends Particle {
 	 * 			The computed displacement vector.
 	 * @see BarnesHutLayout#useGravity
 	 */
-	protected abstract Point3 gravity(Point3 delta);
+	protected abstract void gravity(Vector3 delta);
 	
 	/**
 	 * The given edge is connected to this node.

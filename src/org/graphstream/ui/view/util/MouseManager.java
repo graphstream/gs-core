@@ -31,16 +31,15 @@
  */
 package org.graphstream.ui.view.util;
 
+import java.util.EnumSet;
+
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.view.View;
-
-import javax.swing.event.MouseInputListener;
-import java.util.EnumSet;
 
 /**
  * A global behavior for all mouse events on graphic elements.
  */
-public interface MouseManager extends MouseInputListener {
+public interface MouseManager  {
 	/**
 	 * Make the manager active on the given graph and view.
 	 * @param graph

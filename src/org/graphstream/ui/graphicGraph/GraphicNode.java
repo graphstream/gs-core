@@ -35,7 +35,7 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.stream.SourceBase.ElementType;
-import org.graphstream.util.geom.Point3;
+import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.stylesheet.Selector;
 
 import java.util.HashMap;

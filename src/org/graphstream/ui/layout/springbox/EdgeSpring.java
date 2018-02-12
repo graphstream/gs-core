@@ -31,7 +31,7 @@
  */
 package org.graphstream.ui.layout.springbox;
 
-import org.graphstream.util.geom.Point3;
+import org.graphstream.ui.geom.Point3;
 
 /**
  * Edge representation.

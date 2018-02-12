@@ -31,7 +31,6 @@
  */
 package org.graphstream.graph;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.Stream;
 

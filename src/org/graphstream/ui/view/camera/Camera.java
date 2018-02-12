@@ -29,16 +29,16 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.ui.view;
+package org.graphstream.ui.view.camera;
 
 import java.util.Collection;
 import java.util.EnumSet;
 
-import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.view.util.GraphMetrics;
 import org.graphstream.ui.view.util.InteractiveElement;
+import org.graphstream.ui.geom.Point3;
 
 public interface Camera {
 	/**

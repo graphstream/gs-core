@@ -31,6 +31,10 @@
  */
 package org.graphstream.graph.implementations;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.stream.Collectors;
+
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeFactory;
 import org.graphstream.graph.EdgeRejectedException;
@@ -44,15 +48,9 @@ import org.graphstream.stream.ElementSink;
 import org.graphstream.stream.Replayable;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.SourceBase;
-import org.graphstream.ui.layout.Layout;
-import org.graphstream.ui.layout.Layouts;
-import org.graphstream.ui.view.GraphRenderer;
 import org.graphstream.ui.view.Viewer;
+import org.graphstream.util.Display;
 import org.graphstream.util.GraphListeners;
-
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -204,8 +202,34 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 		this.step = time;
 	}
 
-	// adding and removing elements
+	// display, read, write
 
+	public Viewer display() {
+		return display(true);
+	}
+	
+	public Viewer display(boolean autoLayout) {
+		String launcherClassName = System.getProperty("org.graphstream.ui");
+		
+		if (launcherClassName == null) {
+			throw new RuntimeException("No UI package detected ! Please use System.setProperty() for the selected package.");
+		}
+		else {
+			try {
+				Class<?> c = Class.forName(launcherClassName);
+				Object object = c.newInstance();
+				
+				if (object instanceof Display) {
+					return ((Display)object).display(this, autoLayout);
+				} else {
+					throw new RuntimeException("Cannot launch viewer ! Please verify the name in System.setProperty()");
+				}
+			}
+			catch (Exception e) { 
+				throw new RuntimeException("Cannot launch viewer ! Please verify your package.");
+			}
+		}
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -227,7 +251,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	 * @see org.graphstream.graph.Graph#addNode(java.lang.String)
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public Node addNode(String id) {
 		AbstractNode node = (AbstractNode) getNode(id);
 
@@ -516,20 +539,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	public void stepBegins(String sourceId, long timeId, double step) {
 		listeners.stepBegins(sourceId, timeId, step);
 	}
-
-	@Override
-	public Viewer display(boolean autoLayout) {
-		Viewer viewer = new Viewer(this,
-				Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
-		GraphRenderer renderer = Viewer.newGraphRenderer();
-		viewer.addView(Viewer.DEFAULT_VIEW_ID, renderer);
-		if (autoLayout) {
-			Layout layout = Layouts.newLayoutAlgorithm();
-			viewer.enableAutoLayout(layout);
-		}
-		return viewer;
-	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 

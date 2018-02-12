@@ -31,6 +31,20 @@
  */
 package org.graphstream.graph.implementations;
 
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Spliterator;
+import java.util.Vector;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeFactory;
 import org.graphstream.graph.EdgeRejectedException;
@@ -48,14 +62,6 @@ import org.graphstream.stream.Sink;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSource;
 import org.graphstream.ui.view.Viewer;
-
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.*;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Graphs {
 
@@ -751,16 +757,6 @@ public class Graphs {
 		}
 
 		@Override
-		public Viewer display() {
-			return wrappedElement.display();
-		}
-
-		@Override
-		public Viewer display(boolean autoLayout) {
-			return wrappedElement.display(autoLayout);
-		}
-
-		@Override
 		public EdgeFactory<? extends Edge> edgeFactory() {
 			return wrappedElement.edgeFactory();
 		}
@@ -892,6 +888,14 @@ public class Graphs {
 		public boolean isAutoCreationEnabled() {
 			return wrappedElement.isAutoCreationEnabled();
 		}
+		
+		public Viewer display() {
+			return wrappedElement.display();
+		}
+
+		public Viewer display(boolean autoLayout) {
+			return wrappedElement.display(autoLayout);
+}
 
 		@Override
 		public boolean isStrict() {
@@ -1382,6 +1386,8 @@ public class Graphs {
 		public Iterator<Node> iterator() {
 			return nodes().iterator();
 		}
+
+		
 	}
 
 	static class SynchronizedNode extends SynchronizedElement<Node> implements Node {

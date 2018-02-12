@@ -31,9 +31,7 @@
  */
 package org.graphstream.graph.implementations;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
