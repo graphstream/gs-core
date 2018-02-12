@@ -29,31 +29,32 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.ui.graphicGraph.stylesheet;
+package org.graphstream.ui.swingViewer.util;
 
-import java.awt.Color;
-import java.util.ArrayList;
+import java.awt.Graphics2D;
+import java.io.IOException;
 
 /**
- * Ordered set of colours.
+ * A special interface for renderers that allows to replace the Graphics2D.
+ *
+ * <p>
+ * Several external libraries use to replace the {@link Graphics2D} of AWT in
+ * order to produce a file or on a printer in a given format. However it is not possible to
+ * link such libraries in the gs-core module of GraphStream. To avoid this
+ * problem, this interface defines a plug-in that must implement be able to
+ * yield a {@link Graphics2D} usable instead of the default one. 
+ * </p>
  */
-public class Colors extends ArrayList<Color> {
-	private static final long serialVersionUID = - 7218092114483593610L;
+public interface Graphics2DOutput {
+	/**
+	 * The graphics to use instead of the default {@link Graphics2D} of AWT.
+	 */
+	Graphics2D getGraphics();
 
 	/**
-	 * New empty colour set.
+	 * Output (if needed) the results of the last painting done with the {@link Graphics2D}.
+	 * @param outputName The name of the output to use, for some renderers it is a file,
+	 * for others it is an URL, a string description of the output, etc. 
 	 */
-	public Colors() {
-	}
-
-	/**
-	 * New copy of the other colour set.
-	 * 
-	 * @param others
-	 *            The other colour set to copy.
-	 */
-	public Colors(Colors others) {
-		for (Color color : others)
-			add(color);
-	}
+	void outputTo(String outputName) throws IOException;
 }

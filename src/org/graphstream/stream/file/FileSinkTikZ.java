@@ -31,7 +31,7 @@
  */
 package org.graphstream.stream.file;
 
-import org.graphstream.ui.graphicGraph.stylesheet.Color;
+import java.awt.Color;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Array;

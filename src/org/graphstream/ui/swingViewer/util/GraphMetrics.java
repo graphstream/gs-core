@@ -29,7 +29,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.ui.view.util;
+package org.graphstream.ui.swingViewer.util;
 
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.geom.Vector3;
