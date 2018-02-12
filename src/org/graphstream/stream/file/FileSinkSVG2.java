@@ -31,6 +31,7 @@
  */
 package org.graphstream.stream.file;
 
+import java.awt.Color;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -53,7 +54,6 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.ui.graphicGraph.StyleGroup;
 import org.graphstream.ui.graphicGraph.StyleGroupSet;
-import org.graphstream.ui.graphicGraph.stylesheet.Color;
 import org.graphstream.ui.graphicGraph.stylesheet.Colors;
 import org.graphstream.ui.graphicGraph.stylesheet.Selector;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;

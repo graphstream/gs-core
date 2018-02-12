@@ -29,31 +29,53 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.ui.graphicGraph.stylesheet;
+package org.graphstream.ui.swingViewer;
 
-import java.awt.Color;
-import java.util.ArrayList;
+import org.graphstream.ui.view.View;
+
+import javax.swing.JPanel;
 
 /**
- * Ordered set of colours.
+ * A view on a graphic graph.
+ * 
+ * Basically a view is a Swing panel where a
+ * {@link org.graphstream.ui.view.GraphRenderer} renders the graphic graph. If
+ * you are in the Swing thread, you can change the view on the graphic graph
+ * using methods to translate, zoom and rotate the view.
  */
-public class Colors extends ArrayList<Color> {
-	private static final long serialVersionUID = - 7218092114483593610L;
+public abstract class ViewPanel extends JPanel implements View {
+	private static final long serialVersionUID = 4372240131578395549L;
 
 	/**
-	 * New empty colour set.
+	 * The view identifier.
 	 */
-	public Colors() {
+	private final String id;
+
+	/**
+	 * New view.
+	 *
+	 * @param identifier
+	 *            The view unique identifier.
+	 */
+	public ViewPanel(final String identifier) {
+		if (null == identifier || identifier.isEmpty()) {
+			throw new IllegalArgumentException("View id cannot be null/empty.");
+		}
+		id = identifier;
+	}
+
+	public String getId() {
+		return id;
 	}
 
 	/**
-	 * New copy of the other colour set.
-	 * 
-	 * @param others
-	 *            The other colour set to copy.
+	 * Set the size of the view frame, if any. If this view has been open in a
+	 * frame, this changes the size of the frame containing it.
+	 *
+	 * @param width
+	 *            The new width.
+	 * @param height
+	 *            The new height.
 	 */
-	public Colors(Colors others) {
-		for (Color color : others)
-			add(color);
-	}
+	public abstract void resizeFrame(int width, int height);
 }

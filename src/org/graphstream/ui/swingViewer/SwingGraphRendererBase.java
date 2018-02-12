@@ -29,31 +29,42 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.ui.graphicGraph.stylesheet;
+package org.graphstream.ui.swingViewer;
 
 import java.awt.Color;
-import java.util.ArrayList;
+import java.awt.Container;
+import java.awt.Graphics2D;
 
-/**
- * Ordered set of colours.
- */
-public class Colors extends ArrayList<Color> {
-	private static final long serialVersionUID = - 7218092114483593610L;
+import org.graphstream.ui.view.GraphRendererBase;
+import org.graphstream.ui.view.View;
+import org.graphstream.ui.view.Viewer;
 
-	/**
-	 * New empty colour set.
-	 */
-	public Colors() {
+public abstract class SwingGraphRendererBase extends GraphRendererBase<Container, Graphics2D>
+		implements SwingGraphRenderer {
+
+	// Utilities
+
+	public View createDefaultView(Viewer viewer, String viewId) {
+		return new DefaultView(viewer, viewId, this);
 	}
 
-	/**
-	 * New copy of the other colour set.
-	 * 
-	 * @param others
-	 *            The other colour set to copy.
-	 */
-	public Colors(Colors others) {
-		for (Color color : others)
-			add(color);
+	protected void displayNothingToDo(Graphics2D g, int w, int h) {
+		String msg1 = "Graph width/height/depth is zero !!";
+		String msg2 = "Place components using the 'xyz' attribute.";
+
+		g.setColor(Color.RED);
+		g.drawLine(0, 0, w, h);
+		g.drawLine(0, h, w, 0);
+
+		double msg1length = g.getFontMetrics().stringWidth(msg1);
+		double msg2length = g.getFontMetrics().stringWidth(msg2);
+
+		double x = w / 2;
+		double y = h / 2;
+
+		g.setColor(Color.BLACK);
+		g.drawString(msg1, (float) (x - msg1length / 2), (float) (y - 20));
+		g.drawString(msg2, (float) (x - msg2length / 2), (float) (y + 20));
 	}
+
 }

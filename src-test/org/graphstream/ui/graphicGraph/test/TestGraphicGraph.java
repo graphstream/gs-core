@@ -31,7 +31,7 @@
  */
 package org.graphstream.ui.graphicGraph.test;
 
-import org.graphstream.ui.graphicGraph.stylesheet.Color;
+import java.awt.Color;
 import java.util.HashSet;
 
 import org.graphstream.graph.*;

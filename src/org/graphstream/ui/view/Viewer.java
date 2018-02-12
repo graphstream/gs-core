@@ -1,7 +1,35 @@
+/*
+ * Copyright 2006 - 2016
+ *     Stefan Balev     <stefan.balev@graphstream-project.org>
+ *     Julien Baudry    <julien.baudry@graphstream-project.org>
+ *     Antoine Dutot    <antoine.dutot@graphstream-project.org>
+ *     Yoann Pigné      <yoann.pigne@graphstream-project.org>
+ *     Guilhelm Savin   <guilhelm.savin@graphstream-project.org>
+ * 
+ * This file is part of GraphStream <http://graphstream-project.org>.
+ * 
+ * GraphStream is a library whose purpose is to handle static or dynamic
+ * graph, create them from scratch, file or any source and display them.
+ * 
+ * This program is free software distributed under the terms of two licenses, the
+ * CeCILL-C license that fits European law, and the GNU Lesser General Public
+ * License. You can  use, modify and/ or redistribute the software under the terms
+ * of the CeCILL-C license as circulated by CEA, CNRS and INRIA at the following
+ * URL <http://www.cecill.info> or under the terms of the GNU LGPL as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
+ */
 package org.graphstream.ui.view;
-
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
@@ -14,7 +42,18 @@ import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.layout.LayoutRunner;
 import org.graphstream.ui.layout.Layouts;
-import org.graphstream.ui.view.camera.Camera;
+import org.graphstream.ui.swingViewer.DefaultView;
+import org.graphstream.ui.swingViewer.ViewPanel;
+import org.graphstream.ui.swingViewer.basicRenderer.SwingBasicGraphRenderer;
+
+import javax.swing.Timer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.security.AccessControlException;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Set of views on a graphic graph.
@@ -39,7 +78,7 @@ import org.graphstream.ui.view.camera.Camera;
  * </p>
  * 
  * <p>
- * <u>Once created, the viewer runs in a loop inside the UI thread. You
+ * <u>Once created, the viewer runs in a loop inside the Swing thread. You
  * cannot call methods on it directly if you are not in this thread</u>. The
  * only operation that you can use in other threads is the constructor, the
  * {@link #addView(View)}, {@link #removeView(String)} and the {@link #close()}
@@ -50,7 +89,7 @@ import org.graphstream.ui.view.camera.Camera;
  * Some constructors allow a {@link ProxyPipe} as argument. If given, the
  * graphic graph is made listener of this pipe and the pipe is "pumped" during
  * the view loop. This allows to run algorithms on a graph in the main thread
- * (or any other thread) while letting the viewer run in the ui thread.
+ * (or any other thread) while letting the viewer run in the swing thread.
  * </p>
  * 
  * <p>
@@ -62,9 +101,26 @@ import org.graphstream.ui.view.camera.Camera;
  * the events that occured on the source before it is connected to it.
  * </p>
  */
-public abstract class Viewer {
-	
+public class Viewer implements ActionListener {
+
+	/**
+	 * class level logger
+	 */
+	private static final Logger logger = Logger.getLogger(Viewer.class.getName());
+
 	// Attributes
+
+	/**
+	 * Name of the default view.
+	 */
+	public static String DEFAULT_VIEW_ID = "defaultView";
+
+	/**
+	 * What to do when a view frame is closed.
+	 */
+	public static enum CloseFramePolicy {
+		CLOSE_VIEWER, HIDE_ONLY, EXIT
+	};
 
 	/**
 	 * How does the viewer synchronise its internal graphic graph with the graph
@@ -75,11 +131,6 @@ public abstract class Viewer {
 	public enum ThreadingModel {
 		GRAPH_IN_GUI_THREAD, GRAPH_IN_ANOTHER_THREAD, GRAPH_ON_NETWORK
 	};
-	
-	/**
-	 * Name of the default view.
-	 */
-	public abstract String getDefaultID() ;
 
 	// Attribute
 
@@ -106,6 +157,16 @@ public abstract class Viewer {
 	protected Source sourceInSameThread;
 
 	/**
+	 * Timer in the Swing thread.
+	 */
+	protected Timer timer;
+
+	/**
+	 * Delay in milliseconds between frames.
+	 */
+	protected int delay = 40;
+
+	/**
 	 * The set of views.
 	 */
 	protected final Map<String, View> views = new TreeMap<String, View>();
@@ -126,23 +187,78 @@ public abstract class Viewer {
 	 * If there is a layout in another thread, this is the pipe coming from it.
 	 */
 	protected ProxyPipe layoutPipeIn = null;
-	
+
+	// Construction
+
 	/**
-	 * What to do when a view frame is closed.
+	 * The graph or source of graph events is in another thread or on another
+	 * machine, but the pipe already exists. The graphic graph displayed by this
+	 * viewer is created.
+	 * 
+	 * @param source
+	 *            The source of graph events.
 	 */
-	public static enum CloseFramePolicy {
-		CLOSE_VIEWER, HIDE_ONLY, EXIT
-	};
-	
+	public Viewer(ProxyPipe source) {
+		graphInAnotherThread = true;
+		init(new GraphicGraph(newGGId()), source, (Source) null);
+	}
+
+	/**
+	 * We draw a pre-existing graphic graph. The graphic graph is maintained by
+	 * its creator.
+	 * 
+	 * @param graph
+	 *            THe graph to draw.
+	 */
+	public Viewer(GraphicGraph graph) {
+		graphInAnotherThread = false;
+		init(graph, (ProxyPipe) null, (Source) null);
+	}
+
+	/**
+	 * New viewer on an existing graph. The viewer always run in the Swing
+	 * thread, therefore, you must specify how it will take graph events from
+	 * the graph you give. If the graph you give will be accessed only from the
+	 * Swing thread use ThreadingModel.GRAPH_IN_GUI_THREAD. If the graph you use
+	 * is accessed in another thread use ThreadingModel.GRAPH_IN_ANOTHER_THREAD.
+	 * This last scheme is more powerful since it allows to run algorithms on
+	 * the graph in parallel with the viewer.
+	 * 
+	 * @param graph
+	 *            The graph to render.
+	 * @param threadingModel
+	 *            The threading model.
+	 */
+	public Viewer(Graph graph, ThreadingModel threadingModel) {
+		switch (threadingModel) {
+		case GRAPH_IN_GUI_THREAD:
+			graphInAnotherThread = false;
+			init(new GraphicGraph(newGGId()), (ProxyPipe) null, graph);
+			enableXYZfeedback(true);
+			break;
+		case GRAPH_IN_ANOTHER_THREAD:
+			graphInAnotherThread = true;
+
+			ThreadProxyPipe tpp = new ThreadProxyPipe();
+			tpp.init(graph, true);
+
+			init(new GraphicGraph(newGGId()), tpp, (Source) null);
+			enableXYZfeedback(false);
+			break;
+		case GRAPH_ON_NETWORK:
+			throw new RuntimeException("TO DO, sorry !:-)");
+		}
+	}
+
 	/**
 	 * Create a new unique identifier for a graph.
 	 * 
 	 * @return The new identifier.
 	 */
-	public String newGGId() {
+	protected String newGGId() {
 		return String.format("GraphicGraph_%d", (int) (Math.random() * 10000));
 	}
-	
+
 	/**
 	 * Initialise the viewer.
 	 * 
@@ -154,13 +270,94 @@ public abstract class Viewer {
 	 * @param source
 	 *            The source of events from this thread (null if ppipe != null).
 	 */
-	public abstract void init(GraphicGraph graph, ProxyPipe ppipe, Source source) ;
-	
+	protected void init(GraphicGraph graph, ProxyPipe ppipe, Source source) {
+		this.graph = graph;
+		this.pumpPipe = ppipe;
+		this.sourceInSameThread = source;
+		this.timer = new Timer(delay, this);
+
+		assert ((ppipe != null && source == null) || (ppipe == null && source != null));
+
+		if (pumpPipe != null)
+			pumpPipe.addSink(graph);
+		if (sourceInSameThread != null) {
+			if (source instanceof Graph)
+				replayGraph((Graph) source);
+			sourceInSameThread.addSink(graph);
+		}
+
+		timer.setCoalesce(true);
+		timer.setRepeats(true);
+		timer.start();
+	}
+
 	/**
 	 * Close definitively this viewer and all its views.
 	 */
-	public abstract void close() ;
+	public void close() {
+		synchronized (views) {
+			disableAutoLayout();
+
+			for (View view : views.values())
+				view.close(graph);
+
+			timer.stop();
+			timer.removeActionListener(this);
+
+			if (pumpPipe != null)
+				pumpPipe.removeSink(graph);
+			if (sourceInSameThread != null)
+				sourceInSameThread.removeSink(graph);
+
+			graph = null;
+			pumpPipe = null;
+			sourceInSameThread = null;
+			timer = null;
+		}
+	}
+
 	// Access
+
+	/**
+	 * Create a new instance of the default graph renderer. The default graph
+	 * renderer class is given by the "org.graphstream.ui.renderer" system
+	 * property. If the class indicated by this property is not usable (not in
+	 * the class path, not of the correct type, etc.) or if the property is not
+	 * present a SwingBasicGraphRenderer is returned.
+	 */
+	public static GraphRenderer<?, ?> newGraphRenderer() {
+		String rendererClassName;
+
+		try {
+			rendererClassName = System.getProperty("gs.ui.renderer");
+
+			if (rendererClassName != null) {
+				logger.warning("\"gs.ui.renderer\" is deprecated, use \"org.graphstream.ui.renderer\" instead.");
+			} else {
+				rendererClassName = System.getProperty("org.graphstream.ui.renderer");
+			}
+		} catch (AccessControlException e) {
+			rendererClassName = null;
+		}
+
+		if (rendererClassName == null)
+			return new SwingBasicGraphRenderer();
+
+		try {
+			Class<?> c = Class.forName(rendererClassName);
+			Object object = c.newInstance();
+
+			if (object instanceof GraphRenderer) {
+				return (GraphRenderer<?, ?>) object;
+			} else {
+				logger.warning(String.format("Class '%s' is not a 'GraphRenderer'.", object));
+			}
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "Cannot create graph renderer.", e);
+		}
+
+		return new SwingBasicGraphRenderer();
+	}
 
 	/**
 	 * What to do when a frame is closed.
@@ -168,7 +365,7 @@ public abstract class Viewer {
 	public CloseFramePolicy getCloseFramePolicy() {
 		return closeFramePolicy;
 	}
-	
+
 	/**
 	 * New proxy pipe on events coming from the viewer through a thread.
 	 * 
@@ -193,15 +390,15 @@ public abstract class Viewer {
 
 		return new ViewerPipe(String.format("viewer_%d", (int) (Math.random() * 10000)), tpp);
 	}
-	
+
 	/**
 	 * The underlying graphic graph. Caution : Use the returned graph only in
-	 * the UI thread !!
+	 * the Swing thread !!
 	 */
 	public GraphicGraph getGraphicGraph() {
 		return graph;
 	}
-	
+
 	/**
 	 * The view that correspond to the given identifier.
 	 * 
@@ -214,23 +411,19 @@ public abstract class Viewer {
 			return views.get(id);
 		}
 	}
-	
+
 	/**
 	 * The default view. This is a shortcut to a call to
 	 * {@link #getView(String)} with {@link #DEFAULT_VIEW_ID} as parameter.
 	 * 
 	 * @return The default view or null if no default view has been installed.
 	 */
-	public View getDefaultView() {
-		return getView(getDefaultID());
+	public ViewPanel getDefaultView() {
+		return (DefaultView) getView(DEFAULT_VIEW_ID);
 	}
-	
+
 	// Command
-	/**
-	 * Create a new instance of the default graph renderer.
-	 */
-	public abstract GraphRenderer<?, ?> newDefaultGraphRenderer() ; 
-	
+
 	/**
 	 * Build the default graph view and insert it. The view identifier is
 	 * {@link #DEFAULT_VIEW_ID}. You can request the view to be open in its own
@@ -242,18 +435,18 @@ public abstract class Viewer {
 	 */
 	public View addDefaultView(boolean openInAFrame) {
 		synchronized (views) {
-			GraphRenderer<?, ?> renderer = newDefaultGraphRenderer();
-			View view = renderer.createDefaultView(this, getDefaultID());
-			
+			GraphRenderer<?, ?> renderer = newGraphRenderer();
+			View view = renderer.createDefaultView(this, DEFAULT_VIEW_ID);
+
 			addView(view);
-			
+
 			if (openInAFrame)
 				view.openInAFrame(true);
 
 			return view;
 		}
 	}
-	
+
 	/**
 	 * Add a view using its identifier. If there was already a view with this
 	 * identifier, it is closed and returned (if different of the one added).
@@ -264,7 +457,7 @@ public abstract class Viewer {
 	 */
 	public View addView(View view) {
 		synchronized (views) {
-			View old = views.put(view.getIdView(), view);
+			View old = views.put(view.getId(), view);
 
 			if (old != null && old != view)
 				old.close(graph);
@@ -272,7 +465,7 @@ public abstract class Viewer {
 			return old;
 		}
 	}
-	
+
 	/**
 	 * Add a new default view with a specific renderer. If a view with the same
 	 * id exists, it is removed and closed. By default the view is open in a
@@ -324,7 +517,47 @@ public abstract class Viewer {
 			views.remove(id);
 		}
 	}
-	
+
+	/**
+	 * Called on a regular basis by the timer. Checks if some events occurred
+	 * from the graph pipe or from the layout pipe, and if the graph changed,
+	 * triggers a repaint. Never call this method, it is called by a Swing Timer
+	 * automatically.
+	 */
+	public void actionPerformed(ActionEvent e) {
+		synchronized (views) {
+			// long t1=System.currentTimeMillis();
+			// long gsize1=graph.getNodeCount();
+			if (pumpPipe != null)
+				pumpPipe.pump();
+			// long gsize2=graph.getNodeCount();
+			// long t2=System.currentTimeMillis();
+
+			if (layoutPipeIn != null)
+				layoutPipeIn.pump();
+			// long t3=System.currentTimeMillis();
+			// Prevent the timer from using a empty graph to display
+			if(graph != null){
+				boolean changed = graph.graphChangedFlag();
+
+				if (changed) {
+					computeGraphMetrics();
+					// long t4=System.currentTimeMillis();
+
+					for (View view : views.values())
+						view.display(graph, changed);
+				}
+				// long t5=System.currentTimeMillis();
+
+				graph.resetGraphChangedFlag();
+			}
+			// System.err.printf("display pump=%f layoutPump=%f metrics=%f
+			// display=%f (size delta=%d size1=%d size2=%d)%n",
+			// (t2-t1)/1000.0, (t3-t2)/1000.0, (t4-t3)/1000.0, (t5-t4)/1000.0,
+			// (gsize2-gsize1), gsize1, gsize2);
+		}
+	}
+
 	/**
 	 * Compute the overall bounds of the graphic graph according to the nodes
 	 * and sprites positions. We can only compute the graph bounds from the
@@ -332,7 +565,7 @@ public abstract class Viewer {
 	 * circumstances be computed according to the graph bounds. The bounds are
 	 * stored in the graph metrics.
 	 */
-	public void computeGraphMetrics() {
+	protected void computeGraphMetrics() {
 		graph.computeBounds();
 
 		synchronized (views) {
@@ -372,7 +605,7 @@ public abstract class Viewer {
 	 * runs in its own thread, and the main graph is in another thread, xyz
 	 * attribute change will be disabled until a listener is added.
 	 * 
-	 * When the viewer is created to be used only in the ui thread, this
+	 * When the viewer is created to be used only in the swing thread, this
 	 * feature is always on.
 	 */
 	public void enableXYZfeedback(boolean on) {
@@ -380,7 +613,7 @@ public abstract class Viewer {
 			graph.feedbackXYZ(on);
 		}
 	}
-	
+
 	/**
 	 * Launch an automatic layout process that will position nodes in the
 	 * background.
@@ -426,7 +659,7 @@ public abstract class Viewer {
 	}
 
 	/** Dirty replay of the graph. */
-	public void replayGraph(Graph graph) {
+	protected void replayGraph(Graph graph) {
 		// Replay all graph attributes.
 
 		graph.attributeKeys().forEach(key -> {
