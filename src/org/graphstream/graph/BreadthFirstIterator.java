@@ -86,8 +86,7 @@ public class BreadthFirstIterator implements Iterator<Node> {
 	}
 
 	public void remove() {
-		throw new UnsupportedOperationException(
-				"This iterator does not support remove");
+		throw new UnsupportedOperationException("This iterator does not support remove");
 	}
 
 	public int getDepthOf(Node node) {

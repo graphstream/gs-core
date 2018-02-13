@@ -146,15 +146,12 @@ public interface PajekParserConstants {
 	int DEFAULT = 0;
 
 	/** Literal token values. */
-	String[] tokenImage = { "<EOF>", "\" \"", "\"\\t\"", "<EOL>", "<DIGIT>",
-			"<HEXDIGIT>", "<INT>", "<REAL>", "<STRING>", "\"*network\"",
-			"\"*vertices\"", "\"*arcs\"", "\"*edges\"", "\"*edgeslist\"",
-			"\"*arcslist\"", "\"*matrix\"", "<COMMENT>", "\"ellipse\"",
-			"\"diamond\"", "\"cross\"", "\"box\"", "\"triangle\"", "\"empty\"",
-			"<SIZE>", "\"x_fact\"", "\"y_fact\"", "\"phi\"", "\"r\"", "\"q\"",
-			"\"ic\"", "\"bc\"", "\"bw\"", "\"lc\"", "\"la\"", "\"lr\"",
-			"\"lphi\"", "\"fos\"", "\"font\"", "\"c\"", "\"p\"", "\"w\"",
-			"\"s\"", "\"a\"", "\"ap\"", "\"l\"", "\"lp\"", "\"h1\"", "\"h2\"",
-			"\"k1\"", "\"k2\"", "\"a1\"", "\"a2\"", "\"b\"", "<KEY>", };
+	String[] tokenImage = { "<EOF>", "\" \"", "\"\\t\"", "<EOL>", "<DIGIT>", "<HEXDIGIT>", "<INT>", "<REAL>",
+			"<STRING>", "\"*network\"", "\"*vertices\"", "\"*arcs\"", "\"*edges\"", "\"*edgeslist\"", "\"*arcslist\"",
+			"\"*matrix\"", "<COMMENT>", "\"ellipse\"", "\"diamond\"", "\"cross\"", "\"box\"", "\"triangle\"",
+			"\"empty\"", "<SIZE>", "\"x_fact\"", "\"y_fact\"", "\"phi\"", "\"r\"", "\"q\"", "\"ic\"", "\"bc\"",
+			"\"bw\"", "\"lc\"", "\"la\"", "\"lr\"", "\"lphi\"", "\"fos\"", "\"font\"", "\"c\"", "\"p\"", "\"w\"",
+			"\"s\"", "\"a\"", "\"ap\"", "\"l\"", "\"lp\"", "\"h1\"", "\"h2\"", "\"k1\"", "\"k2\"", "\"a1\"", "\"a2\"",
+			"\"b\"", "<KEY>", };
 
 }

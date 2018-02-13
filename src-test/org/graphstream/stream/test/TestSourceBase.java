@@ -74,30 +74,27 @@ public class TestSourceBase {
 				args = new Object[] { getRandomString(10) };
 				break;
 			case CNA:
-				args = new Object[] { getRandomString(10), getRandomString(10),
-						getRandomString(10) };
+				args = new Object[] { getRandomString(10), getRandomString(10), getRandomString(10) };
 				break;
 			case CNC:
-				args = new Object[] { getRandomString(10), getRandomString(10),
-						getRandomString(10), getRandomString(10) };
+				args = new Object[] { getRandomString(10), getRandomString(10), getRandomString(10),
+						getRandomString(10) };
 				break;
 			case CNR:
 				args = new Object[] { getRandomString(10), getRandomString(10) };
 				break;
 			case AE:
-				args = new Object[] { getRandomString(10), getRandomString(10),
-						getRandomString(10), r.nextBoolean() };
+				args = new Object[] { getRandomString(10), getRandomString(10), getRandomString(10), r.nextBoolean() };
 				break;
 			case DE:
 				args = new Object[] { getRandomString(10) };
 				break;
 			case CEA:
-				args = new Object[] { getRandomString(10), getRandomString(10),
-						getRandomString(10) };
+				args = new Object[] { getRandomString(10), getRandomString(10), getRandomString(10) };
 				break;
 			case CEC:
-				args = new Object[] { getRandomString(10), getRandomString(10),
-						getRandomString(10), getRandomString(10) };
+				args = new Object[] { getRandomString(10), getRandomString(10), getRandomString(10),
+						getRandomString(10) };
 				break;
 			case CER:
 				args = new Object[] { getRandomString(10), getRandomString(10) };
@@ -106,8 +103,7 @@ public class TestSourceBase {
 				args = new Object[] { getRandomString(10), getRandomString(10) };
 				break;
 			case CGC:
-				args = new Object[] { getRandomString(10), getRandomString(10),
-						getRandomString(10) };
+				args = new Object[] { getRandomString(10), getRandomString(10), getRandomString(10) };
 				break;
 			case CGR:
 				args = new Object[] { getRandomString(10) };
@@ -154,51 +150,40 @@ public class TestSourceBase {
 			base.sendNodeRemoved(e.sourceId, e.timeId, (String) e.args[0]);
 			break;
 		case CNA:
-			base.sendNodeAttributeAdded(e.sourceId, e.timeId,
-					(String) e.args[0], (String) e.args[1], e.args[2]);
+			base.sendNodeAttributeAdded(e.sourceId, e.timeId, (String) e.args[0], (String) e.args[1], e.args[2]);
 			break;
 		case CNC:
-			base.sendNodeAttributeChanged(e.sourceId, e.timeId,
-					(String) e.args[0], (String) e.args[1], e.args[2],
+			base.sendNodeAttributeChanged(e.sourceId, e.timeId, (String) e.args[0], (String) e.args[1], e.args[2],
 					e.args[3]);
 			break;
 		case CNR:
-			base.sendNodeAttributeRemoved(e.sourceId, e.timeId,
-					(String) e.args[0], (String) e.args[1]);
+			base.sendNodeAttributeRemoved(e.sourceId, e.timeId, (String) e.args[0], (String) e.args[1]);
 			break;
 		case AE:
-			base
-					.sendEdgeAdded(e.sourceId, e.timeId, (String) e.args[0],
-							(String) e.args[1], (String) e.args[2],
-							(Boolean) e.args[3]);
+			base.sendEdgeAdded(e.sourceId, e.timeId, (String) e.args[0], (String) e.args[1], (String) e.args[2],
+					(Boolean) e.args[3]);
 			break;
 		case DE:
 			base.sendEdgeRemoved(e.sourceId, e.timeId, (String) e.args[0]);
 			break;
 		case CEA:
-			base.sendEdgeAttributeAdded(e.sourceId, e.timeId,
-					(String) e.args[0], (String) e.args[1], e.args[2]);
+			base.sendEdgeAttributeAdded(e.sourceId, e.timeId, (String) e.args[0], (String) e.args[1], e.args[2]);
 			break;
 		case CEC:
-			base.sendEdgeAttributeChanged(e.sourceId, e.timeId,
-					(String) e.args[0], (String) e.args[1], e.args[2],
+			base.sendEdgeAttributeChanged(e.sourceId, e.timeId, (String) e.args[0], (String) e.args[1], e.args[2],
 					e.args[3]);
 			break;
 		case CER:
-			base.sendEdgeAttributeRemoved(e.sourceId, e.timeId,
-					(String) e.args[0], (String) e.args[1]);
+			base.sendEdgeAttributeRemoved(e.sourceId, e.timeId, (String) e.args[0], (String) e.args[1]);
 			break;
 		case CGA:
-			base.sendGraphAttributeAdded(e.sourceId, e.timeId,
-					(String) e.args[0], e.args[1]);
+			base.sendGraphAttributeAdded(e.sourceId, e.timeId, (String) e.args[0], e.args[1]);
 			break;
 		case CGC:
-			base.sendGraphAttributeChanged(e.sourceId, e.timeId,
-					(String) e.args[0], e.args[1], e.args[2]);
+			base.sendGraphAttributeChanged(e.sourceId, e.timeId, (String) e.args[0], e.args[1], e.args[2]);
 			break;
 		case CGR:
-			base.sendGraphAttributeRemoved(e.sourceId, e.timeId,
-					(String) e.args[0]);
+			base.sendGraphAttributeRemoved(e.sourceId, e.timeId, (String) e.args[0]);
 			break;
 		case ST:
 			base.sendStepBegins(e.sourceId, e.timeId, (Double) e.args[0]);
@@ -241,74 +226,57 @@ public class TestSourceBase {
 	static class EventStack extends LinkedList<Event> implements Sink {
 		private static final long serialVersionUID = -4953996922753724259L;
 
-		public void edgeAttributeAdded(String sourceId, long timeId,
-				String edgeId, String attribute, Object value) {
-			Event e = new Event(EventType.CEA, sourceId, timeId, edgeId,
-					attribute, value);
+		public void edgeAttributeAdded(String sourceId, long timeId, String edgeId, String attribute, Object value) {
+			Event e = new Event(EventType.CEA, sourceId, timeId, edgeId, attribute, value);
 			addLast(e);
 		}
 
-		public void edgeAttributeChanged(String sourceId, long timeId,
-				String edgeId, String attribute, Object oldValue,
+		public void edgeAttributeChanged(String sourceId, long timeId, String edgeId, String attribute, Object oldValue,
 				Object newValue) {
-			Event e = new Event(EventType.CEC, sourceId, timeId, edgeId,
-					attribute, oldValue, newValue);
+			Event e = new Event(EventType.CEC, sourceId, timeId, edgeId, attribute, oldValue, newValue);
 			addLast(e);
 		}
 
-		public void edgeAttributeRemoved(String sourceId, long timeId,
-				String edgeId, String attribute) {
-			Event e = new Event(EventType.CER, sourceId, timeId, edgeId,
-					attribute);
+		public void edgeAttributeRemoved(String sourceId, long timeId, String edgeId, String attribute) {
+			Event e = new Event(EventType.CER, sourceId, timeId, edgeId, attribute);
 			addLast(e);
 		}
 
-		public void graphAttributeAdded(String sourceId, long timeId,
-				String attribute, Object value) {
-			Event e = new Event(EventType.CGA, sourceId, timeId, attribute,
-					value);
+		public void graphAttributeAdded(String sourceId, long timeId, String attribute, Object value) {
+			Event e = new Event(EventType.CGA, sourceId, timeId, attribute, value);
 			addLast(e);
 		}
 
-		public void graphAttributeChanged(String sourceId, long timeId,
-				String attribute, Object oldValue, Object newValue) {
-			Event e = new Event(EventType.CGC, sourceId, timeId, attribute,
-					oldValue, newValue);
+		public void graphAttributeChanged(String sourceId, long timeId, String attribute, Object oldValue,
+				Object newValue) {
+			Event e = new Event(EventType.CGC, sourceId, timeId, attribute, oldValue, newValue);
 			addLast(e);
 		}
 
-		public void graphAttributeRemoved(String sourceId, long timeId,
-				String attribute) {
+		public void graphAttributeRemoved(String sourceId, long timeId, String attribute) {
 			Event e = new Event(EventType.CGR, sourceId, timeId, attribute);
 			addLast(e);
 		}
 
-		public void nodeAttributeAdded(String sourceId, long timeId,
-				String nodeId, String attribute, Object value) {
-			Event e = new Event(EventType.CNA, sourceId, timeId, nodeId,
-					attribute, value);
+		public void nodeAttributeAdded(String sourceId, long timeId, String nodeId, String attribute, Object value) {
+			Event e = new Event(EventType.CNA, sourceId, timeId, nodeId, attribute, value);
 			addLast(e);
 		}
 
-		public void nodeAttributeChanged(String sourceId, long timeId,
-				String nodeId, String attribute, Object oldValue,
+		public void nodeAttributeChanged(String sourceId, long timeId, String nodeId, String attribute, Object oldValue,
 				Object newValue) {
-			Event e = new Event(EventType.CNC, sourceId, timeId, nodeId,
-					attribute, oldValue, newValue);
+			Event e = new Event(EventType.CNC, sourceId, timeId, nodeId, attribute, oldValue, newValue);
 			addLast(e);
 		}
 
-		public void nodeAttributeRemoved(String sourceId, long timeId,
-				String nodeId, String attribute) {
-			Event e = new Event(EventType.CNR, sourceId, timeId, nodeId,
-					attribute);
+		public void nodeAttributeRemoved(String sourceId, long timeId, String nodeId, String attribute) {
+			Event e = new Event(EventType.CNR, sourceId, timeId, nodeId, attribute);
 			addLast(e);
 		}
 
-		public void edgeAdded(String sourceId, long timeId, String edgeId,
-				String fromNodeId, String toNodeId, boolean directed) {
-			Event e = new Event(EventType.AE, sourceId, timeId, edgeId,
-					fromNodeId, toNodeId, directed);
+		public void edgeAdded(String sourceId, long timeId, String edgeId, String fromNodeId, String toNodeId,
+				boolean directed) {
+			Event e = new Event(EventType.AE, sourceId, timeId, edgeId, fromNodeId, toNodeId, directed);
 			addLast(e);
 		}
 

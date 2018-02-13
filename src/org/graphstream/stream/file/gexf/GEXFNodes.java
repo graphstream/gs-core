@@ -103,8 +103,8 @@ public class GEXFNodes extends SinkAdapter implements GEXFElement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.graphstream.stream.SinkAdapter#nodeRemoved(java.lang.String,
-	 * long, java.lang.String)
+	 * @see org.graphstream.stream.SinkAdapter#nodeRemoved(java.lang.String, long,
+	 * java.lang.String)
 	 */
 	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 		GEXFNode node = nodes.get(nodeId);
@@ -120,16 +120,13 @@ public class GEXFNodes extends SinkAdapter implements GEXFElement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.graphstream.stream.SinkAdapter#nodeAttributeAdded(java.lang.String,
+	 * @see org.graphstream.stream.SinkAdapter#nodeAttributeAdded(java.lang.String,
 	 * long, java.lang.String, java.lang.String, java.lang.Object)
 	 */
-	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-			String attribute, Object value) {
+	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId, String attribute, Object value) {
 		GEXFNode node = nodes.get(nodeId);
 
-		if (("ui.label".equals(attribute) || "label".equals(attribute))
-				&& value != null)
+		if (("ui.label".equals(attribute) || "label".equals(attribute)) && value != null)
 			node.label = value.toString();
 
 		if ("xyz".equals(attribute)) {
@@ -149,8 +146,7 @@ public class GEXFNodes extends SinkAdapter implements GEXFElement {
 			node.position = true;
 		}
 
-		node.attvalues
-				.attributeUpdated(root.getNodeAttribute(attribute), value);
+		node.attvalues.attributeUpdated(root.getNodeAttribute(attribute), value);
 	}
 
 	/*
@@ -158,11 +154,10 @@ public class GEXFNodes extends SinkAdapter implements GEXFElement {
 	 * 
 	 * @see
 	 * org.graphstream.stream.SinkAdapter#nodeAttributeChanged(java.lang.String,
-	 * long, java.lang.String, java.lang.String, java.lang.Object,
-	 * java.lang.Object)
+	 * long, java.lang.String, java.lang.String, java.lang.Object, java.lang.Object)
 	 */
-	public void nodeAttributeChanged(String sourceId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
+	public void nodeAttributeChanged(String sourceId, long timeId, String nodeId, String attribute, Object oldValue,
+			Object newValue) {
 		nodeAttributeAdded(sourceId, timeId, nodeId, attribute, newValue);
 	}
 
@@ -173,8 +168,7 @@ public class GEXFNodes extends SinkAdapter implements GEXFElement {
 	 * org.graphstream.stream.SinkAdapter#nodeAttributeRemoved(java.lang.String,
 	 * long, java.lang.String, java.lang.String)
 	 */
-	public void nodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute) {
+	public void nodeAttributeRemoved(String sourceId, long timeId, String nodeId, String attribute) {
 		GEXFNode node = nodes.get(nodeId);
 		node.attvalues.attributeUpdated(root.getNodeAttribute(attribute), null);
 	}
@@ -182,8 +176,7 @@ public class GEXFNodes extends SinkAdapter implements GEXFElement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.graphstream.stream.SinkAdapter#graphCleared(java.lang.String,
-	 * long)
+	 * @see org.graphstream.stream.SinkAdapter#graphCleared(java.lang.String, long)
 	 */
 	public void graphCleared(String sourceId, long timeId) {
 		for (GEXFNode node : nodes.values())

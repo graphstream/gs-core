@@ -50,8 +50,7 @@ public interface AttributeSink {
 	 * @param value
 	 *            The attribute new value.
 	 */
-	void graphAttributeAdded(String sourceId, long timeId, String attribute,
-			Object value);
+	void graphAttributeAdded(String sourceId, long timeId, String attribute, Object value);
 
 	/**
 	 * A graph attribute was changed.
@@ -65,8 +64,7 @@ public interface AttributeSink {
 	 * @param newValue
 	 *            The attribute new value.
 	 */
-	void graphAttributeChanged(String sourceId, long timeId, String attribute,
-			Object oldValue, Object newValue);
+	void graphAttributeChanged(String sourceId, long timeId, String attribute, Object oldValue, Object newValue);
 
 	/**
 	 * A graph attribute was removed.
@@ -90,8 +88,7 @@ public interface AttributeSink {
 	 * @param value
 	 *            The attribute new value.
 	 */
-	void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-			String attribute, Object value);
+	void nodeAttributeAdded(String sourceId, long timeId, String nodeId, String attribute, Object value);
 
 	/**
 	 * A node attribute was changed.
@@ -107,8 +104,8 @@ public interface AttributeSink {
 	 * @param newValue
 	 *            The attribute new value.
 	 */
-	void nodeAttributeChanged(String sourceId, long timeId, String nodeId,
-			String attribute, Object oldValue, Object newValue);
+	void nodeAttributeChanged(String sourceId, long timeId, String nodeId, String attribute, Object oldValue,
+			Object newValue);
 
 	/**
 	 * A node attribute was removed.
@@ -120,8 +117,7 @@ public interface AttributeSink {
 	 * @param attribute
 	 *            The removed attribute name.
 	 */
-	void nodeAttributeRemoved(String sourceId, long timeId, String nodeId,
-			String attribute);
+	void nodeAttributeRemoved(String sourceId, long timeId, String nodeId, String attribute);
 
 	/**
 	 * A edge attribute was added.
@@ -135,8 +131,7 @@ public interface AttributeSink {
 	 * @param value
 	 *            The attribute new value.
 	 */
-	void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
-			String attribute, Object value);
+	void edgeAttributeAdded(String sourceId, long timeId, String edgeId, String attribute, Object value);
 
 	/**
 	 * A edge attribute was changed.
@@ -152,8 +147,8 @@ public interface AttributeSink {
 	 * @param newValue
 	 *            The attribute new value.
 	 */
-	void edgeAttributeChanged(String sourceId, long timeId, String edgeId,
-			String attribute, Object oldValue, Object newValue);
+	void edgeAttributeChanged(String sourceId, long timeId, String edgeId, String attribute, Object oldValue,
+			Object newValue);
 
 	/**
 	 * A edge attribute was removed.
@@ -165,6 +160,5 @@ public interface AttributeSink {
 	 * @param attribute
 	 *            The removed attribute name.
 	 */
-	void edgeAttributeRemoved(String sourceId, long timeId, String edgeId,
-			String attribute);
+	void edgeAttributeRemoved(String sourceId, long timeId, String edgeId, String attribute);
 }

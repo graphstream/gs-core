@@ -31,6 +31,20 @@
  */
 package org.graphstream.graph.implementations;
 
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Spliterator;
+import java.util.Vector;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeFactory;
 import org.graphstream.graph.EdgeRejectedException;
@@ -49,14 +63,6 @@ import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSource;
 import org.graphstream.ui.view.Viewer;
 
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.*;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 public class Graphs {
 
 	private static final Logger logger = Logger.getLogger(Graphs.class.getSimpleName());
@@ -68,10 +74,11 @@ public class Graphs {
 	/**
 	 * Synchronizes a graph. The returned graph can be accessed and modified by
 	 * several threads. You lose genericity in methods returning edge or node
-	 * because each element (graph, nodes and edges) is wrapped into a
-	 * synchronized wrapper which breaks original elements class.
+	 * because each element (graph, nodes and edges) is wrapped into a synchronized
+	 * wrapper which breaks original elements class.
 	 *
-	 * @param g the graph to synchronize
+	 * @param g
+	 *            the graph to synchronize
 	 * @return a synchronized wrapper for g
 	 */
 	public static Graph synchronizedGraph(Graph g) {
@@ -79,12 +86,13 @@ public class Graphs {
 	}
 
 	/**
-	 * Merge several graphs in one. A new graph is created, that will contain
-	 * the result. The method will try to create a graph of the same class that
-	 * the first graph to merge (it needs to have a constructor with a String).
-	 * Else, a MultiGraph is used.
+	 * Merge several graphs in one. A new graph is created, that will contain the
+	 * result. The method will try to create a graph of the same class that the
+	 * first graph to merge (it needs to have a constructor with a String). Else, a
+	 * MultiGraph is used.
 	 *
-	 * @param graphs graphs to merge
+	 * @param graphs
+	 *            graphs to merge
 	 * @return merge result
 	 */
 	public static Graph merge(Graph... graphs) {
@@ -112,16 +120,17 @@ public class Graphs {
 	}
 
 	/**
-	 * Merge several graphs in one. The first parameter is the graph in which
-	 * the other graphs will be merged.
+	 * Merge several graphs in one. The first parameter is the graph in which the
+	 * other graphs will be merged.
 	 *
-	 * @param result destination graph.
-	 * @param graphs all graphs that will be merged in result.
+	 * @param result
+	 *            destination graph.
+	 * @param graphs
+	 *            all graphs that will be merged in result.
 	 */
 	public static void mergeIn(Graph result, Graph... graphs) {
 		boolean strict = result.isStrict();
-		GraphReplay replay = new GraphReplay(String.format("replay-%x",
-				System.nanoTime()));
+		GraphReplay replay = new GraphReplay(String.format("replay-%x", System.nanoTime()));
 
 		replay.addSink(result);
 		result.setStrict(false);
@@ -137,7 +146,8 @@ public class Graphs {
 	/**
 	 * Clone a given graph with same node/edge structure and same attributes.
 	 *
-	 * @param g the graph to clone
+	 * @param g
+	 *            the graph to clone
 	 * @return a copy of g
 	 */
 	public static Graph clone(Graph g) {
@@ -162,9 +172,8 @@ public class Graphs {
 
 		for (int i = 0; i < g.getEdgeCount(); i++) {
 			Edge source = g.getEdge(i);
-			Edge target = copy.addEdge(source.getId(), source.getSourceNode()
-					.getId(), source.getTargetNode().getId(), source
-					.isDirected());
+			Edge target = copy.addEdge(source.getId(), source.getSourceNode().getId(), source.getTargetNode().getId(),
+					source.isDirected());
 
 			copyAttributes(source, target);
 		}
@@ -185,15 +194,14 @@ public class Graphs {
 		});
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static Object checkedArrayOrCollectionCopy(Object o) {
 		if (o == null)
 			return null;
 
 		if (o.getClass().isArray()) {
 
-			Object c = Array.newInstance(o.getClass().getComponentType(),
-					Array.getLength(o));
+			Object c = Array.newInstance(o.getClass().getComponentType(), Array.getLength(o));
 
 			for (int i = 0; i < Array.getLength(o); i++) {
 				Object t = checkedArrayOrCollectionCopy(Array.get(o, i));
@@ -581,8 +589,7 @@ public class Graphs {
 
 		@Override
 		public Edge addEdge(String id, String node1, String node2)
-				throws IdAlreadyInUseException, ElementNotFoundException,
-				EdgeRejectedException {
+				throws IdAlreadyInUseException, ElementNotFoundException, EdgeRejectedException {
 			Edge e;
 			Edge se;
 
@@ -600,9 +607,8 @@ public class Graphs {
 		}
 
 		@Override
-		public Edge addEdge(String id, String from, String to,
-							boolean directed) throws IdAlreadyInUseException,
-				ElementNotFoundException {
+		public Edge addEdge(String id, String from, String to, boolean directed)
+				throws IdAlreadyInUseException, ElementNotFoundException {
 			Edge e;
 			Edge se;
 
@@ -638,8 +644,7 @@ public class Graphs {
 		}
 
 		@Override
-		public Edge addEdge(String id, int fromIndex,
-							int toIndex, boolean directed) {
+		public Edge addEdge(String id, int fromIndex, int toIndex, boolean directed) {
 			Edge e;
 			Edge se;
 
@@ -663,7 +668,6 @@ public class Graphs {
 			Edge se;
 			final Node unsyncNode1, unsyncNode2;
 
-
 			unsyncNode1 = ((SynchronizedElement<Node>) node1).wrappedElement;
 			unsyncNode2 = ((SynchronizedElement<Node>) node2).wrappedElement;
 
@@ -682,8 +686,7 @@ public class Graphs {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public Edge addEdge(String id, Node from, Node to,
-							boolean directed) {
+		public Edge addEdge(String id, Node from, Node to, boolean directed) {
 			Edge e;
 			Edge se;
 			final Node unsyncFrom, unsyncTo;
@@ -705,8 +708,7 @@ public class Graphs {
 		}
 
 		@Override
-		public Node addNode(String id)
-				throws IdAlreadyInUseException {
+		public Node addNode(String id) throws IdAlreadyInUseException {
 			Node n;
 			Node sn;
 
@@ -751,16 +753,6 @@ public class Graphs {
 		}
 
 		@Override
-		public Viewer display() {
-			return wrappedElement.display();
-		}
-
-		@Override
-		public Viewer display(boolean autoLayout) {
-			return wrappedElement.display(autoLayout);
-		}
-
-		@Override
 		public EdgeFactory<? extends Edge> edgeFactory() {
 			return wrappedElement.edgeFactory();
 		}
@@ -797,8 +789,7 @@ public class Graphs {
 		}
 
 		@Override
-		public Edge getEdge(int index)
-				throws IndexOutOfBoundsException {
+		public Edge getEdge(int index) throws IndexOutOfBoundsException {
 			Edge e;
 
 			elementLock.lock();
@@ -843,8 +834,7 @@ public class Graphs {
 		}
 
 		@Override
-		public Node getNode(int index)
-				throws IndexOutOfBoundsException {
+		public Node getNode(int index) throws IndexOutOfBoundsException {
 			Node n;
 
 			elementLock.lock();
@@ -893,6 +883,14 @@ public class Graphs {
 			return wrappedElement.isAutoCreationEnabled();
 		}
 
+		public Viewer display() {
+			return wrappedElement.display();
+		}
+
+		public Viewer display(boolean autoLayout) {
+			return wrappedElement.display(autoLayout);
+		}
+
 		@Override
 		public boolean isStrict() {
 			return wrappedElement.isStrict();
@@ -904,8 +902,7 @@ public class Graphs {
 		}
 
 		@Override
-		public void read(String filename) throws IOException,
-				GraphParseException, ElementNotFoundException {
+		public void read(String filename) throws IOException, GraphParseException, ElementNotFoundException {
 			elementLock.lock();
 
 			try {
@@ -916,8 +913,7 @@ public class Graphs {
 		}
 
 		@Override
-		public void read(FileSource input, String filename) throws IOException,
-				GraphParseException {
+		public void read(FileSource input, String filename) throws IOException, GraphParseException {
 			elementLock.lock();
 
 			try {
@@ -928,8 +924,7 @@ public class Graphs {
 		}
 
 		@Override
-		public Edge removeEdge(String from, String to)
-				throws ElementNotFoundException {
+		public Edge removeEdge(String from, String to) throws ElementNotFoundException {
 			Edge e;
 			Edge se;
 
@@ -946,8 +941,7 @@ public class Graphs {
 		}
 
 		@Override
-		public Edge removeEdge(String id)
-				throws ElementNotFoundException {
+		public Edge removeEdge(String id) throws ElementNotFoundException {
 			Edge e;
 			Edge se;
 
@@ -1041,8 +1035,7 @@ public class Graphs {
 		}
 
 		@Override
-		public Node removeNode(String id)
-				throws ElementNotFoundException {
+		public Node removeNode(String id) throws ElementNotFoundException {
 			Node n;
 			Node sn;
 
@@ -1123,17 +1116,6 @@ public class Graphs {
 
 			try {
 				wrappedElement.setNodeFactory(nf);
-			} finally {
-				elementLock.unlock();
-			}
-		}
-
-		@Override
-		public void setNullAttributesAreErrors(boolean on) {
-			elementLock.lock();
-
-			try {
-				wrappedElement.setNullAttributesAreErrors(on);
 			} finally {
 				elementLock.unlock();
 			}
@@ -1283,74 +1265,57 @@ public class Graphs {
 		}
 
 		@Override
-		public void edgeAttributeAdded(String sourceId, long timeId,
-									   String edgeId, String attribute, Object value) {
-			wrappedElement.edgeAttributeAdded(sourceId, timeId, edgeId,
-					attribute, value);
+		public void edgeAttributeAdded(String sourceId, long timeId, String edgeId, String attribute, Object value) {
+			wrappedElement.edgeAttributeAdded(sourceId, timeId, edgeId, attribute, value);
 		}
 
 		@Override
-		public void edgeAttributeChanged(String sourceId, long timeId,
-										 String edgeId, String attribute, Object oldValue,
-										 Object newValue) {
-			wrappedElement.edgeAttributeChanged(sourceId, timeId, edgeId,
-					attribute, oldValue, newValue);
+		public void edgeAttributeChanged(String sourceId, long timeId, String edgeId, String attribute, Object oldValue,
+				Object newValue) {
+			wrappedElement.edgeAttributeChanged(sourceId, timeId, edgeId, attribute, oldValue, newValue);
 		}
 
 		@Override
-		public void edgeAttributeRemoved(String sourceId, long timeId,
-										 String edgeId, String attribute) {
-			wrappedElement.edgeAttributeRemoved(sourceId, timeId, edgeId,
-					attribute);
+		public void edgeAttributeRemoved(String sourceId, long timeId, String edgeId, String attribute) {
+			wrappedElement.edgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
 		}
 
 		@Override
-		public void graphAttributeAdded(String sourceId, long timeId,
-										String attribute, Object value) {
-			wrappedElement.graphAttributeAdded(sourceId, timeId, attribute,
-					value);
+		public void graphAttributeAdded(String sourceId, long timeId, String attribute, Object value) {
+			wrappedElement.graphAttributeAdded(sourceId, timeId, attribute, value);
 		}
 
 		@Override
-		public void graphAttributeChanged(String sourceId, long timeId,
-										  String attribute, Object oldValue, Object newValue) {
-			wrappedElement.graphAttributeChanged(sourceId, timeId, attribute,
-					oldValue, newValue);
+		public void graphAttributeChanged(String sourceId, long timeId, String attribute, Object oldValue,
+				Object newValue) {
+			wrappedElement.graphAttributeChanged(sourceId, timeId, attribute, oldValue, newValue);
 		}
 
 		@Override
-		public void graphAttributeRemoved(String sourceId, long timeId,
-										  String attribute) {
+		public void graphAttributeRemoved(String sourceId, long timeId, String attribute) {
 			wrappedElement.graphAttributeRemoved(sourceId, timeId, attribute);
 		}
 
 		@Override
-		public void nodeAttributeAdded(String sourceId, long timeId,
-									   String nodeId, String attribute, Object value) {
-			wrappedElement.nodeAttributeAdded(sourceId, timeId, nodeId,
-					attribute, value);
+		public void nodeAttributeAdded(String sourceId, long timeId, String nodeId, String attribute, Object value) {
+			wrappedElement.nodeAttributeAdded(sourceId, timeId, nodeId, attribute, value);
 		}
 
 		@Override
-		public void nodeAttributeChanged(String sourceId, long timeId,
-										 String nodeId, String attribute, Object oldValue,
-										 Object newValue) {
-			wrappedElement.nodeAttributeChanged(sourceId, timeId, nodeId,
-					attribute, oldValue, newValue);
+		public void nodeAttributeChanged(String sourceId, long timeId, String nodeId, String attribute, Object oldValue,
+				Object newValue) {
+			wrappedElement.nodeAttributeChanged(sourceId, timeId, nodeId, attribute, oldValue, newValue);
 		}
 
 		@Override
-		public void nodeAttributeRemoved(String sourceId, long timeId,
-										 String nodeId, String attribute) {
-			wrappedElement.nodeAttributeRemoved(sourceId, timeId, nodeId,
-					attribute);
+		public void nodeAttributeRemoved(String sourceId, long timeId, String nodeId, String attribute) {
+			wrappedElement.nodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
 		}
 
 		@Override
-		public void edgeAdded(String sourceId, long timeId, String edgeId,
-							  String fromNodeId, String toNodeId, boolean directed) {
-			wrappedElement.edgeAdded(sourceId, timeId, edgeId, fromNodeId,
-					toNodeId, directed);
+		public void edgeAdded(String sourceId, long timeId, String edgeId, String fromNodeId, String toNodeId,
+				boolean directed) {
+			wrappedElement.edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId, directed);
 		}
 
 		@Override
@@ -1382,6 +1347,7 @@ public class Graphs {
 		public Iterator<Node> iterator() {
 			return nodes().iterator();
 		}
+
 	}
 
 	static class SynchronizedNode extends SynchronizedElement<Node> implements Node {

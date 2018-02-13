@@ -32,5 +32,5 @@ package org.graphstream.ui.view.util;
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
 public enum InteractiveElement {
-    NODE, EDGE, SPRITE
+	NODE, EDGE, SPRITE
 }

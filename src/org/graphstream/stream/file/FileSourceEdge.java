@@ -67,12 +67,14 @@ import java.util.HashSet;
  * issue "add node" events only when a node is encountered for the first time.
  * </p>
  * 
- * </p> This hash set consumes memory, but is the only way to ensure "add node"
+ * </p>
+ * This hash set consumes memory, but is the only way to ensure "add node"
  * events are correctly issued. If this input is directly connected to a graph,
  * as graphs can create non-existing nodes automatically, you can disable the
  * hash set of nodes using the constructor
  * {@link #FileSourceEdge(boolean, boolean)}, and giving "false" for the second
- * argument. </p>
+ * argument.
+ * </p>
  * 
  * The usual file name extension for this format is ".edge".
  */
@@ -200,8 +202,7 @@ public class FileSourceEdge extends FileSourceBase {
 		st.eolIsSignificant(true);
 		st.commentChar('#');
 
-		graphName = String.format("%s_%d", graphName,
-				System.currentTimeMillis() + ((long) Math.random() * 10));
+		graphName = String.format("%s_%d", graphName, System.currentTimeMillis() + ((long) Math.random() * 10));
 	}
 
 	public boolean nextStep() throws IOException {

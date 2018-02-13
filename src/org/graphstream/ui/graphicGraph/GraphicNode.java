@@ -35,7 +35,7 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.stream.SourceBase.ElementType;
-import org.graphstream.util.geom.Point3;
+import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.stylesheet.Selector;
 
 import java.util.HashMap;
@@ -71,8 +71,7 @@ public class GraphicNode extends GraphicElement implements Node {
 	 * @param attributes
 	 *            The node attribute set (can be null).
 	 */
-	public GraphicNode(GraphicGraph graph, String id,
-			HashMap<String, Object> attributes) {
+	public GraphicNode(GraphicGraph graph, String id, HashMap<String, Object> attributes) {
 		super(id, graph);
 
 		if (attributes != null)
@@ -125,13 +124,11 @@ public class GraphicNode extends GraphicElement implements Node {
 	}
 
 	@Override
-	protected void attributeChanged(AttributeChangeEvent event,
-			String attribute, Object oldValue, Object newValue) {
+	protected void attributeChanged(AttributeChangeEvent event, String attribute, Object oldValue, Object newValue) {
 		super.attributeChanged(event, attribute, oldValue, newValue);
 		char c = attribute.charAt(0);
 
-		if (attribute.length() > 2 && c == 'u' && attribute.charAt(1) == 'i'
-				&& attribute.startsWith("ui.sprite.")) {
+		if (attribute.length() > 2 && c == 'u' && attribute.charAt(1) == 'i' && attribute.startsWith("ui.sprite.")) {
 			mygraph.spriteAttribute(event, this, attribute, newValue);
 		} else if ((event == AttributeChangeEvent.ADD || event == AttributeChangeEvent.CHANGE)) {
 			if (attribute.length() == 1) {
@@ -148,19 +145,15 @@ public class GraphicNode extends GraphicElement implements Node {
 				default:
 					break;
 				}
-			} else if (c == 'x'
-					&& attribute.length() > 1
-					&& attribute.charAt(1) == 'y'
-					&& (attribute.length() == 2 || (attribute.length() == 3 && attribute
-							.charAt(2) == 'z'))) {
+			} else if (c == 'x' && attribute.length() > 1 && attribute.charAt(1) == 'y'
+					&& (attribute.length() == 2 || (attribute.length() == 3 && attribute.charAt(2) == 'z'))) {
 
 				double pos[] = nodePosition(this);
 				moveFromEvent(pos[0], pos[1], pos[2]);
 			}
 		}
 
-		mygraph.listeners.sendAttributeChangedEvent(getId(), ElementType.NODE,
-				attribute, event, oldValue, newValue);
+		mygraph.listeners.sendAttributeChangedEvent(getId(), ElementType.NODE, attribute, event, oldValue, newValue);
 	}
 
 	/**
@@ -229,7 +222,7 @@ public class GraphicNode extends GraphicElement implements Node {
 
 	@Override
 	public int getDegree() {
-        List<GraphicEdge> edges = mygraph.connectivity.get(this);
+		List<GraphicEdge> edges = mygraph.connectivity.get(this);
 
 		if (edges != null)
 			return edges.size();
@@ -239,7 +232,7 @@ public class GraphicNode extends GraphicElement implements Node {
 
 	@Override
 	public Edge getEdge(int i) {
-        List<GraphicEdge> edges = mygraph.connectivity.get(this);
+		List<GraphicEdge> edges = mygraph.connectivity.get(this);
 
 		if (edges != null && i >= 0 && i < edges.size())
 			return edges.get(i);
@@ -272,7 +265,7 @@ public class GraphicNode extends GraphicElement implements Node {
 
 	@Override
 	public Edge getEdgeToward(String id) {
-        List<? extends Edge> edges = mygraph.connectivity.get(this);
+		List<? extends Edge> edges = mygraph.connectivity.get(this);
 
 		for (Edge edge : edges) {
 			if (edge.getOpposite(this).getId().equals(id))

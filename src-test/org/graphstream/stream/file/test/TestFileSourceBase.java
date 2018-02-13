@@ -70,31 +70,30 @@ public abstract class TestFileSourceBase {
 	protected FileSource input;
 
 	/**
-	 * If false, edge identifiers are not tested (some format cannot specify
-	 * edge identifiers).
+	 * If false, edge identifiers are not tested (some format cannot specify edge
+	 * identifiers).
 	 */
 	protected boolean testEdgeIds = true;
 
 	// Access
 
 	/**
-	 * Return a string containing a file defining a simple triangle made of
-	 * three nodes named "A", "B" and "C", tied with three edges "AB", "BC" and
-	 * "CA".
+	 * Return a string containing a file defining a simple triangle made of three
+	 * nodes named "A", "B" and "C", tied with three edges "AB", "BC" and "CA".
 	 */
 	public abstract String anUndirectedTriangle();
 
 	/**
-	 * Return a string containing a file defining a simple triangle made of
-	 * three nodes named "A", "B" and "C", tied with three edges "AB", "BC" and
-	 * "CA", with direction "A" toward "B", undirected between "B" and "C" and
-	 * directed from "A" to "C".
+	 * Return a string containing a file defining a simple triangle made of three
+	 * nodes named "A", "B" and "C", tied with three edges "AB", "BC" and "CA", with
+	 * direction "A" toward "B", undirected between "B" and "C" and directed from
+	 * "A" to "C".
 	 */
 	public abstract String aDirectedTriangle();
 
 	/**
-	 * Return a string containing the triangle of
-	 * {@link #anUndirectedTriangle()}, but each element has attributes :
+	 * Return a string containing the triangle of {@link #anUndirectedTriangle()},
+	 * but each element has attributes :
 	 * <ul>
 	 * <li>node "A" as three attributes</li>
 	 * </ul>

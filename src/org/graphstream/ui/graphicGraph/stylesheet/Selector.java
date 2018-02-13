@@ -77,12 +77,12 @@ public class Selector {
 	}
 
 	/**
-	 * New selector for a given type of element. This constructor allows to
-	 * specify either an identifier or a class to restrict this selector. If the
-	 * identifier is given, the class will never be used (as identifiers are
-	 * finer than classes). If the identifier is null the class will be used.
-	 * The identifier allow to select only one element by its name. The class
-	 * allows to select several elements.
+	 * New selector for a given type of element. This constructor allows to specify
+	 * either an identifier or a class to restrict this selector. If the identifier
+	 * is given, the class will never be used (as identifiers are finer than
+	 * classes). If the identifier is null the class will be used. The identifier
+	 * allow to select only one element by its name. The class allows to select
+	 * several elements.
 	 * 
 	 * @param type
 	 *            The element type of this selector.
@@ -169,8 +169,8 @@ public class Selector {
 	}
 
 	/**
-	 * The identifier of the element this selector uniquely applies to. This can
-	 * be null if this selector is general.
+	 * The identifier of the element this selector uniquely applies to. This can be
+	 * null if this selector is general.
 	 * 
 	 * @return The identifier or null if the selector is general.
 	 */
@@ -199,8 +199,7 @@ public class Selector {
 
 	@Override
 	public String toString() {
-		return String.format("%s%s%s%s", type.toString(),
-				id != null ? String.format("#%s", id) : "",
+		return String.format("%s%s%s%s", type.toString(), id != null ? String.format("#%s", id) : "",
 				clazz != null ? String.format(".%s", clazz) : "",
 				pseudoClass != null ? String.format(":%s", pseudoClass) : "");
 	}

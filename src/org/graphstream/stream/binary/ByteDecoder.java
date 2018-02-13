@@ -36,25 +36,28 @@ import org.graphstream.stream.Source;
 import java.nio.ByteBuffer;
 
 /**
- * Decode an event that has been encoded into a binary buffer and dispatch this event to its sources.
- * This is a complementary features of the event encoding in {@link ByteEncoder}.
+ * Decode an event that has been encoded into a binary buffer and dispatch this
+ * event to its sources. This is a complementary features of the event encoding
+ * in {@link ByteEncoder}.
  *
  * @since 31/01/16.
  */
 public interface ByteDecoder extends Source {
-    /**
-     * Decode the buffer, and dispatch the corresponding event.
-     *
-     * @param buffer event as a binary buffer
-     */
-    void decode(ByteBuffer buffer);
+	/**
+	 * Decode the buffer, and dispatch the corresponding event.
+	 *
+	 * @param buffer
+	 *            event as a binary buffer
+	 */
+	void decode(ByteBuffer buffer);
 
-    /**
-     * Tells if the buffer contains an event that is ready to be dispatched.
-     * The bytes considered should be from 0 to the buffer's position. The position of the buffer SHOULD NOT be changed.
-     *
-     * @param buffer
-     * @return true if the buffer contains an event
-     */
-    boolean validate(ByteBuffer buffer);
+	/**
+	 * Tells if the buffer contains an event that is ready to be dispatched. The
+	 * bytes considered should be from 0 to the buffer's position. The position of
+	 * the buffer SHOULD NOT be changed.
+	 *
+	 * @param buffer
+	 * @return true if the buffer contains an event
+	 */
+	boolean validate(ByteBuffer buffer);
 }

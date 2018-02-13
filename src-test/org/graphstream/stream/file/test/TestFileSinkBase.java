@@ -54,8 +54,8 @@ import org.junit.Test;
  * This files does all the tests. To implement a test for a specific file
  * format, you have only to implement/override two methods :
  * <ul>
- * <li>Override the {@link #graphFileExtension()} method that will return
- * the name of a file with the correct extension for the file format.</li>
+ * <li>Override the {@link #graphFileExtension()} method that will return the
+ * name of a file with the correct extension for the file format.</li>
  * <li>Implement the {@link #setup()} method that initialise the {@link #input}
  * and {@link #output} fields. These fields contain an instance of the
  * {@link org.graphstream.stream.file.FileSink} you want to test and the
@@ -104,8 +104,8 @@ public abstract class TestFileSinkBase {
 	}
 
 	/**
-	 * Method to implement to create the {@link #input} and {@link #output}
-	 * fields. These fields contain the instance of the
+	 * Method to implement to create the {@link #input} and {@link #output} fields.
+	 * These fields contain the instance of the
 	 * {@link org.graphstream.stream.file.FileSource} and
 	 * {@link org.graphstream.stream.file.FileSink} to test.
 	 */
@@ -113,8 +113,8 @@ public abstract class TestFileSinkBase {
 	public abstract void setup();
 
 	/**
-	 * Return the name of a graph file in the current graph output format. The
-	 * name of the file must remain the same.
+	 * Return the name of a graph file in the current graph output format. The name
+	 * of the file must remain the same.
 	 */
 	protected abstract String graphFileExtension();
 
@@ -146,8 +146,7 @@ public abstract class TestFileSinkBase {
 		createUndirectedTriangle();
 
 		try {
-			output.writeAll(outGraph, new FileOutputStream(
-					theFile.getAbsolutePath()));
+			output.writeAll(outGraph, new FileOutputStream(theFile.getAbsolutePath()));
 			input.addSink(inGraph);
 			input.readAll(theFile.getAbsolutePath());
 			testUndirectedTriangle();
@@ -183,8 +182,7 @@ public abstract class TestFileSinkBase {
 		createDirectedTriangle();
 
 		try {
-			output.writeAll(outGraph, new FileOutputStream(
-					theFile.getAbsolutePath()));
+			output.writeAll(outGraph, new FileOutputStream(theFile.getAbsolutePath()));
 			input.addSink(inGraph);
 			input.readAll(theFile.getAbsolutePath());
 			testDirectedTriangle();
@@ -200,8 +198,7 @@ public abstract class TestFileSinkBase {
 			createAttributedTriangle();
 
 			try {
-				output.writeAll(outGraph, new FileOutputStream(
-						theFile.getAbsolutePath()));
+				output.writeAll(outGraph, new FileOutputStream(theFile.getAbsolutePath()));
 				input.addSink(inGraph);
 				input.readAll(theFile.getAbsolutePath());
 
@@ -366,8 +363,7 @@ public abstract class TestFileSinkBase {
 		assertNotNull(B);
 		assertNotNull(C);
 
-		assertEquals(1.0, ((Number) inGraph.getAttribute("a")).doubleValue(),
-				1E-12);
+		assertEquals(1.0, ((Number) inGraph.getAttribute("a")).doubleValue(), 1E-12);
 		assertEquals("foo", inGraph.getAttribute("b"));
 
 		assertEquals(1.0, ((Number) A.getAttribute("a")).doubleValue(), 1E-12);

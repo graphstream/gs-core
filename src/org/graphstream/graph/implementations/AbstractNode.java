@@ -31,11 +31,7 @@
  */
 package org.graphstream.graph.implementations;
 
-import java.util.AbstractCollection;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 import org.graphstream.graph.BreadthFirstIterator;
 import org.graphstream.graph.DepthFirstIterator;
@@ -89,10 +85,8 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	// *** Inherited from abstract element ***
 
 	@Override
-	protected void attributeChanged(AttributeChangeEvent event,
-			String attribute, Object oldValue, Object newValue) {
-		graph.listeners.sendAttributeChangedEvent(id,
-				SourceBase.ElementType.NODE, attribute, event, oldValue,
+	protected void attributeChanged(AttributeChangeEvent event, String attribute, Object oldValue, Object newValue) {
+		graph.listeners.sendAttributeChangedEvent(id, SourceBase.ElementType.NODE, attribute, event, oldValue,
 				newValue);
 	}
 
@@ -234,9 +228,8 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	protected abstract boolean addEdgeCallback(AbstractEdge edge);
 
 	/**
-	 * This method is called automatically before removing an edge incident to
-	 * this node. Subclasses use it to remove the edge from their data
-	 * structure.
+	 * This method is called automatically before removing an edge incident to this
+	 * node. Subclasses use it to remove the edge from their data structure.
 	 * 
 	 * @param edge
 	 *            an edge incident to this node that will be removed
@@ -244,9 +237,9 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	protected abstract void removeEdgeCallback(AbstractEdge edge);
 
 	/**
-	 * This method is called for each node when the graph is cleared. Subclasses
-	 * may use it to clear their data structures in order to facilitate the
-	 * garbage collection.
+	 * This method is called for each node when the graph is cleared. Subclasses may
+	 * use it to clear their data structures in order to facilitate the garbage
+	 * collection.
 	 */
 	protected abstract void clearCallback();
 
@@ -259,8 +252,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	 * @return {@code true} if {@code e} is entering edge for this node.
 	 */
 	public boolean isEnteringEdge(Edge e) {
-		return e.getTargetNode() == this
-				|| (!e.isDirected() && e.getSourceNode() == this);
+		return e.getTargetNode() == this || (!e.isDirected() && e.getSourceNode() == this);
 	}
 
 	/**
@@ -272,13 +264,12 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	 * @return {@code true} if {@code e} is leaving edge for this node.
 	 */
 	public boolean isLeavingEdge(Edge e) {
-		return e.getSourceNode() == this
-				|| (!e.isDirected() && e.getTargetNode() == this);
+		return e.getSourceNode() == this || (!e.isDirected() && e.getTargetNode() == this);
 	}
 
 	/**
-	 * Checks if an edge is incident to this node. Utility method that can be
-	 * useful in subclasses.
+	 * Checks if an edge is incident to this node. Utility method that can be useful
+	 * in subclasses.
 	 * 
 	 * @param e
 	 *            an edge

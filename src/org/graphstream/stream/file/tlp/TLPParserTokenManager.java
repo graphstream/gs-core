@@ -352,8 +352,7 @@ public class TLPParserTokenManager implements TLPParserConstants {
 		return jjStartNfa_0(6, active0);
 	}
 
-	static final long[] jjbitVec0 = { 0x0L, 0x0L, 0xffffffffffffffffL,
-			0xffffffffffffffffL };
+	static final long[] jjbitVec0 = { 0x0L, 0x0L, 0xffffffffffffffffL, 0xffffffffffffffffL };
 
 	private int jjMoveNfa_0(int startState, int curPos) {
 		int startsAt = 0;
@@ -691,14 +690,11 @@ public class TLPParserTokenManager implements TLPParserConstants {
 		}
 	}
 
-	static final int[] jjnextStates = { 54, 11, 12, 15, 17, 18, 1, 2, 5, 47,
-			52, 8, 9, 20, 21, };
+	static final int[] jjnextStates = { 54, 11, 12, 15, 17, 18, 1, 2, 5, 47, 52, 8, 9, 20, 21, };
 
 	/** Token literal values. */
-	public static final String[] jjstrLiteralImages = { "", null, null, null,
-			null, null, null, null, null, null, "\50", "\51", null, null, null,
-			null, null, null, null, null, null, null, null, null, null, null,
-			null, null, };
+	public static final String[] jjstrLiteralImages = { "", null, null, null, null, null, null, null, null, null, "\50",
+			"\51", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, };
 
 	/** Lexer state names. */
 	public static final String[] lexStateNames = { "DEFAULT", };
@@ -712,8 +708,7 @@ public class TLPParserTokenManager implements TLPParserConstants {
 	/** Constructor. */
 	public TLPParserTokenManager(SimpleCharStream stream) {
 		if (SimpleCharStream.staticFlag)
-			throw new Error(
-					"ERROR: Cannot use a static CharStream class with a non-static lexical analyzer.");
+			throw new Error("ERROR: Cannot use a static CharStream class with a non-static lexical analyzer.");
 		input_stream = stream;
 	}
 
@@ -747,8 +742,7 @@ public class TLPParserTokenManager implements TLPParserConstants {
 	/** Switch to specified lex state. */
 	public void SwitchTo(int lexState) {
 		if (lexState >= 1 || lexState < 0)
-			throw new TokenMgrError("Error: Ignoring invalid lexical state : "
-					+ lexState + ". State unchanged.",
+			throw new TokenMgrError("Error: Ignoring invalid lexical state : " + lexState + ". State unchanged.",
 					TokenMgrError.INVALID_LEXICAL_STATE);
 		else
 			curLexState = lexState;
@@ -838,8 +832,7 @@ public class TLPParserTokenManager implements TLPParserConstants {
 				input_stream.backup(1);
 				error_after = curPos <= 1 ? "" : input_stream.GetImage();
 			}
-			throw new TokenMgrError(EOFSeen, curLexState, error_line,
-					error_column, error_after, curChar,
+			throw new TokenMgrError(EOFSeen, curLexState, error_line, error_column, error_after, curChar,
 					TokenMgrError.LEXICAL_ERROR);
 		}
 	}

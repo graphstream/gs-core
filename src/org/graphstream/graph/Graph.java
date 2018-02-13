@@ -43,7 +43,6 @@ import org.graphstream.stream.file.FileSource;
 import org.graphstream.stream.file.FileSourceFactory;
 import org.graphstream.ui.view.Viewer;
 
-
 /**
  * An Interface that advises general purpose methods for handling graphs.
  * <p>
@@ -76,6 +75,7 @@ import org.graphstream.ui.view.Viewer;
  * access nodes or edges. The following is an example of an access without
  * genericity :
  * <p>
+ * 
  * <pre>
  * 	Graph g = ... ;
  * 	g.setNodeFactory( new MyNodeFactory() );
@@ -92,6 +92,7 @@ import org.graphstream.ui.view.Viewer;
  * <p>
  * With implicit genericity offers by Graph, this can be done easier:
  * <p>
+ * 
  * <pre>
  *  Graph g = ... ;
  * 	g.setNodeFactory( new MyNodeFactory() );
@@ -118,6 +119,7 @@ import org.graphstream.ui.view.Viewer;
  * change when the graph is modified, but they are always successive. A loop of
  * the form
  * <p>
+ * 
  * <pre>
  * for (int i = 0; i &lt; g.getNodeCount(); i++) {
  * 	Node node = g.getNode(i);
@@ -132,35 +134,39 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	// Access
 
 	/**
-	 * Get a node by its identifier. This method is implicitly generic and
-	 * returns something which extends Node. The return type is the one of the
-	 * left part of the assignment. For example, in the following call :
+	 * Get a node by its identifier. This method is implicitly generic and returns
+	 * something which extends Node. The return type is the one of the left part of
+	 * the assignment. For example, in the following call :
 	 * <p>
+	 * 
 	 * <pre>
 	 * ExtendedNode node = graph.getNode(&quot;...&quot;);
 	 * </pre>
 	 * <p>
-	 * the method will return an ExtendedNode node. If no left part exists,
-	 * method will just return a Node.
+	 * the method will return an ExtendedNode node. If no left part exists, method
+	 * will just return a Node.
 	 *
-	 * @param id Identifier of the node to find.
+	 * @param id
+	 *            Identifier of the node to find.
 	 * @return The searched node or null if not found.
 	 */
 	Node getNode(String id);
 
 	/**
-	 * Get an edge by its identifier. This method is implicitly generic and
-	 * returns something which extends Edge. The return type is the one of the
-	 * left part of the assignment. For example, in the following call :
+	 * Get an edge by its identifier. This method is implicitly generic and returns
+	 * something which extends Edge. The return type is the one of the left part of
+	 * the assignment. For example, in the following call :
 	 * <p>
+	 * 
 	 * <pre>
 	 * ExtendedEdge edge = graph.getEdge(&quot;...&quot;);
 	 * </pre>
 	 * <p>
-	 * the method will return an ExtendedEdge edge. If no left part exists,
-	 * method will just return an Edge.
+	 * the method will return an ExtendedEdge edge. If no left part exists, method
+	 * will just return an Edge.
 	 *
-	 * @param id Identifier of the edge to find.
+	 * @param id
+	 *            Identifier of the edge to find.
 	 * @return The searched edge or null if not found.
 	 */
 	Edge getEdge(String id);
@@ -184,21 +190,21 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	EdgeFactory<? extends Edge> edgeFactory();
 
 	/**
-	 * Is strict checking enabled? If strict checking is enabled the graph
-	 * checks for name space conflicts (e.g. insertion of two nodes with the
-	 * same name), removal of non-existing elements, use of non existing
-	 * elements (create an edge between two non existing nodes). Graph
-	 * implementations are free to respect strict checking or not.
+	 * Is strict checking enabled? If strict checking is enabled the graph checks
+	 * for name space conflicts (e.g. insertion of two nodes with the same name),
+	 * removal of non-existing elements, use of non existing elements (create an
+	 * edge between two non existing nodes). Graph implementations are free to
+	 * respect strict checking or not.
 	 *
 	 * @return True if enabled.
 	 */
 	boolean isStrict();
 
 	/**
-	 * Is the automatic creation of missing elements enabled?. If strict
-	 * checking is disabled and auto-creation is enabled, when an edge is
-	 * created and one or two of its nodes are not already present in the graph,
-	 * the nodes are automatically created.
+	 * Is the automatic creation of missing elements enabled?. If strict checking is
+	 * disabled and auto-creation is enabled, when an edge is created and one or two
+	 * of its nodes are not already present in the graph, the nodes are
+	 * automatically created.
 	 *
 	 * @return True if enabled.
 	 */
@@ -214,33 +220,26 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	// Command
 
 	/**
-	 * Should a {@link NullAttributeException} be thrown when one tries to
-	 * access a non existing attribute, or an attribute whose type is not the
-	 * expected one?.
-	 *
-	 * @param on if true, exceptions will be thrown when accessing a non
-	 *           existing attribute.
-	 */
-	void setNullAttributesAreErrors(boolean on);
-
-	/**
 	 * Set the node factory used to create nodes.
 	 *
-	 * @param nf the new NodeFactory
+	 * @param nf
+	 *            the new NodeFactory
 	 */
 	void setNodeFactory(NodeFactory<? extends Node> nf);
 
 	/**
 	 * Set the edge factory used to create edges.
 	 *
-	 * @param ef the new EdgeFactory
+	 * @param ef
+	 *            the new EdgeFactory
 	 */
 	void setEdgeFactory(EdgeFactory<? extends Edge> ef);
 
 	/**
 	 * Enable or disable strict checking.
 	 *
-	 * @param on True or false.
+	 * @param on
+	 *            True or false.
 	 * @see #isStrict()
 	 */
 	void setStrict(boolean on);
@@ -248,7 +247,8 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	/**
 	 * Enable or disable the automatic creation of missing elements.
 	 *
-	 * @param on True or false.
+	 * @param on
+	 *            True or false.
 	 * @see #isAutoCreationEnabled()
 	 */
 	void setAutoCreate(boolean on);
@@ -267,28 +267,31 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * Add a node in the graph.
 	 * <p>
 	 * This acts as a factory, creating the node instance automatically (and
-	 * eventually using the node factory provided). An event is generated toward
-	 * the listeners. If strict checking is enabled, and a node already exists
-	 * with this identifier, an
-	 * {@link org.graphstream.graph.IdAlreadyInUseException} is raised. Else the
-	 * error is silently ignored and the already existing node is returned.
+	 * eventually using the node factory provided). An event is generated toward the
+	 * listeners. If strict checking is enabled, and a node already exists with this
+	 * identifier, an {@link org.graphstream.graph.IdAlreadyInUseException} is
+	 * raised. Else the error is silently ignored and the already existing node is
+	 * returned.
 	 * </p>
 	 * <p>
-	 * This method is implicitly generic and returns something which extends
-	 * Node. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
+	 * This method is implicitly generic and returns something which extends Node.
+	 * The return type is the one of the left part of the assignment. For example,
+	 * in the following call :
 	 * <p>
+	 * 
 	 * <pre>
 	 * ExtendedNode n = graph.addNode(&quot;...&quot;);
 	 * </pre>
 	 * <p>
-	 * the method will return an ExtendedNode. If no left part exists, method
-	 * will just return a Node.
+	 * the method will return an ExtendedNode. If no left part exists, method will
+	 * just return a Node.
 	 * </p>
 	 *
-	 * @param id Arbitrary and unique string identifying the node.
+	 * @param id
+	 *            Arbitrary and unique string identifying the node.
 	 * @return The created node (or the already existing node).
-	 * @throws IdAlreadyInUseException If strict checking is enabled the identifier is already used.
+	 * @throws IdAlreadyInUseException
+	 *             If strict checking is enabled the identifier is already used.
 	 */
 	Node addNode(String id) throws IdAlreadyInUseException;
 
@@ -296,35 +299,35 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * Adds an undirected edge between nodes.
 	 * <p>
 	 * <p>
-	 * The behavior of this method depends on many conditions. It can be
-	 * summarized as follows.
+	 * The behavior of this method depends on many conditions. It can be summarized
+	 * as follows.
 	 * </p>
 	 * <p>
 	 * <p>
-	 * First of all, the method checks if the graph already contains an edge
-	 * with the same id. If this is the case and strict checking is enabled,
-	 * {@code IdAlreadyInUseException} is thrown. If the strict checking is
-	 * disabled the method returns a reference to the existing edge if it has
-	 * endpoints {@code node1} and {@code node2} (in the same order if the edge
-	 * is directed) or {@code null} otherwise.
+	 * First of all, the method checks if the graph already contains an edge with
+	 * the same id. If this is the case and strict checking is enabled,
+	 * {@code IdAlreadyInUseException} is thrown. If the strict checking is disabled
+	 * the method returns a reference to the existing edge if it has endpoints
+	 * {@code node1} and {@code node2} (in the same order if the edge is directed)
+	 * or {@code null} otherwise.
 	 * </p>
 	 * <p>
 	 * <p>
 	 * In the case when the graph does not contain an edge with the same id, the
 	 * method checks if {@code node1} and {@code node2} exist. If one or both of
 	 * them do not exist, and strict checking is enabled, {@code
-	 * ElementNotFoundException} is thrown. Otherwise if auto-creation is
-	 * disabled, the method returns {@code null}. If auto-creation is enabled,
-	 * the method creates the missing endpoints.
+	 * ElementNotFoundException} is thrown. Otherwise if auto-creation is disabled,
+	 * the method returns {@code null}. If auto-creation is enabled, the method
+	 * creates the missing endpoints.
 	 * <p>
 	 * <p>
 	 * When the edge id is not already in use and the both endpoints exist (or
-	 * created), the edge can still be rejected. It may happen for example when
-	 * it connects two already connected nodes in a single graph. If the edge is
-	 * rejected, the method throws {@code EdgeRejectedException} if strict
-	 * checking is enabled or returns {@code null} otherwise. Finally, if the
-	 * edge is accepted, it is created using the corresponding edge factory and
-	 * a reference to it is returned.
+	 * created), the edge can still be rejected. It may happen for example when it
+	 * connects two already connected nodes in a single graph. If the edge is
+	 * rejected, the method throws {@code EdgeRejectedException} if strict checking
+	 * is enabled or returns {@code null} otherwise. Finally, if the edge is
+	 * accepted, it is created using the corresponding edge factory and a reference
+	 * to it is returned.
 	 * <p>
 	 * <p>
 	 * An edge creation event is sent toward the listeners. If new nodes are
@@ -332,28 +335,35 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * </p>
 	 * <p>
 	 * <p>
-	 * This method is implicitly generic and return something which extends
-	 * Edge. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
+	 * This method is implicitly generic and return something which extends Edge.
+	 * The return type is the one of the left part of the assignment. For example,
+	 * in the following call :
 	 * <p>
+	 * 
 	 * <pre>
 	 * ExtendedEdge e = graph.addEdge(&quot;...&quot;, &quot;...&quot;, &quot;...&quot;);
 	 * </pre>
 	 * <p>
-	 * the method will return an ExtendedEdge. If no left part exists, method
-	 * will just return an Edge.
+	 * the method will return an ExtendedEdge. If no left part exists, method will
+	 * just return an Edge.
 	 * </p>
 	 *
-	 * @param id    Unique and arbitrary string identifying the edge.
-	 * @param node1 The first node identifier.
-	 * @param node2 The second node identifier.
+	 * @param id
+	 *            Unique and arbitrary string identifying the edge.
+	 * @param node1
+	 *            The first node identifier.
+	 * @param node2
+	 *            The second node identifier.
 	 * @return The newly created edge, an existing edge or {@code null} (see the
-	 * detailed description above)
-	 * @throws IdAlreadyInUseException  If an edge with the same id already exists and strict
-	 *                                  checking is enabled.
-	 * @throws ElementNotFoundException If strict checking is enabled, and 'node1' or 'node2' are not
-	 *                                  registered in the graph.
-	 * @throws EdgeRejectedException    If strict checking is enabled and the edge is not accepted.
+	 *         detailed description above)
+	 * @throws IdAlreadyInUseException
+	 *             If an edge with the same id already exists and strict checking is
+	 *             enabled.
+	 * @throws ElementNotFoundException
+	 *             If strict checking is enabled, and 'node1' or 'node2' are not
+	 *             registered in the graph.
+	 * @throws EdgeRejectedException
+	 *             If strict checking is enabled and the edge is not accepted.
 	 */
 	default Edge addEdge(String id, String node1, String node2)
 			throws IdAlreadyInUseException, ElementNotFoundException, EdgeRejectedException {
@@ -361,21 +371,28 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	}
 
 	/**
-	 * Like {@link #addEdge(String, String, String)}, but this edge can be
-	 * directed between the two given nodes. If directed, the edge goes in the
-	 * 'from' -&gt; 'to' direction. An event is sent toward the listeners.
+	 * Like {@link #addEdge(String, String, String)}, but this edge can be directed
+	 * between the two given nodes. If directed, the edge goes in the 'from' -&gt;
+	 * 'to' direction. An event is sent toward the listeners.
 	 *
-	 * @param id       Unique and arbitrary string identifying the edge.
-	 * @param from     The first node identifier.
-	 * @param to       The second node identifier.
-	 * @param directed Is the edge directed?
+	 * @param id
+	 *            Unique and arbitrary string identifying the edge.
+	 * @param from
+	 *            The first node identifier.
+	 * @param to
+	 *            The second node identifier.
+	 * @param directed
+	 *            Is the edge directed?
 	 * @return The newly created edge, an existing edge or {@code null} (see the
-	 * detailed description in {@link #addEdge(String, String, String)})
-	 * @throws IdAlreadyInUseException  If an edge with the same id already exists and strict
-	 *                                  checking is enabled.
-	 * @throws ElementNotFoundException If strict checking is enabled, and 'node1' or 'node2' are not
-	 *                                  registered in the graph.
-	 * @throws EdgeRejectedException    If strict checking is enabled and the edge is not accepted.
+	 *         detailed description in {@link #addEdge(String, String, String)})
+	 * @throws IdAlreadyInUseException
+	 *             If an edge with the same id already exists and strict checking is
+	 *             enabled.
+	 * @throws ElementNotFoundException
+	 *             If strict checking is enabled, and 'node1' or 'node2' are not
+	 *             registered in the graph.
+	 * @throws EdgeRejectedException
+	 *             If strict checking is enabled and the edge is not accepted.
 	 * @see #addEdge(String, String, String)
 	 */
 	default Edge addEdge(String id, String from, String to, boolean directed)
@@ -402,19 +419,20 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 
 	/**
 	 * <p>
-	 * Since dynamic graphs are based on discrete event modifications, the
-	 * notion of step is defined to simulate elapsed time between events. So a
-	 * step is a event that occurs in the graph, it does not modify it but it
-	 * gives a kind of timestamp that allows the tracking of the progress of the
-	 * graph over the time.
+	 * Since dynamic graphs are based on discrete event modifications, the notion of
+	 * step is defined to simulate elapsed time between events. So a step is a event
+	 * that occurs in the graph, it does not modify it but it gives a kind of
+	 * timestamp that allows the tracking of the progress of the graph over the
+	 * time.
 	 * </p>
 	 * <p>
 	 * This kind of event is useful for dynamic algorithms that listen to the
 	 * dynamic graph and need to measure the time in the graph's evolution.
 	 * </p>
 	 *
-	 * @param time A numerical value that may give a timestamp to track the
-	 *             evolution of the graph over the time.
+	 * @param time
+	 *            A numerical value that may give a timestamp to track the evolution
+	 *            of the graph over the time.
 	 */
 	void stepBegins(double time);
 
@@ -426,7 +444,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * graph.
 	 *
 	 * @return the set of {@link AttributeSink} under the form of an iterable
-	 * object.
+	 *         object.
 	 */
 	Iterable<AttributeSink> attributeSinks();
 
@@ -434,8 +452,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * Returns an "iterable" of {@link ElementSink} objects registered to this
 	 * graph.
 	 *
-	 * @return the list of {@link ElementSink} under the form of an iterable
-	 * object.
+	 * @return the list of {@link ElementSink} under the form of an iterable object.
 	 */
 	Iterable<ElementSink> elementSinks();
 
@@ -445,14 +462,17 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 
 	/**
 	 * Utility method to read a graph. This method tries to identify the graph
-	 * format by itself and instantiates the corresponding reader automatically.
-	 * If this process fails, a NotFoundException is raised.
+	 * format by itself and instantiates the corresponding reader automatically. If
+	 * this process fails, a NotFoundException is raised.
 	 *
-	 * @param filename The graph filename (or URL).
-	 * @throws ElementNotFoundException If the file cannot be found or if the format is not
-	 *                                  recognized.
-	 * @throws GraphParseException      If there is a parsing error while reading the file.
-	 * @throws IOException              If an input output error occurs during the graph reading.
+	 * @param filename
+	 *            The graph filename (or URL).
+	 * @throws ElementNotFoundException
+	 *             If the file cannot be found or if the format is not recognized.
+	 * @throws GraphParseException
+	 *             If there is a parsing error while reading the file.
+	 * @throws IOException
+	 *             If an input output error occurs during the graph reading.
 	 */
 	default void read(String filename) throws IOException, GraphParseException, ElementNotFoundException {
 		FileSource input = FileSourceFactory.sourceFor(filename);
@@ -469,12 +489,16 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	/**
 	 * Utility method to read a graph using the given reader.
 	 *
-	 * @param input    An appropriate reader for the filename.
-	 * @param filename The graph filename (or URL).
-	 * @throws ElementNotFoundException If the file cannot be found or if the format is not
-	 *                                  recognised.
-	 * @throws GraphParseException      If there is a parsing error while reading the file.
-	 * @throws IOException              If an input/output error occurs during the graph reading.
+	 * @param input
+	 *            An appropriate reader for the filename.
+	 * @param filename
+	 *            The graph filename (or URL).
+	 * @throws ElementNotFoundException
+	 *             If the file cannot be found or if the format is not recognised.
+	 * @throws GraphParseException
+	 *             If there is a parsing error while reading the file.
+	 * @throws IOException
+	 *             If an input/output error occurs during the graph reading.
 	 */
 	default void read(FileSource input, String filename) throws IOException, GraphParseException {
 		input.readAll(filename);
@@ -483,8 +507,10 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	/**
 	 * Utility method to write a graph in DGS format to a file.
 	 *
-	 * @param filename The file that will contain the saved graph (or URL).
-	 * @throws IOException If an input/output error occurs during the graph writing.
+	 * @param filename
+	 *            The file that will contain the saved graph (or URL).
+	 * @throws IOException
+	 *             If an input/output error occurs during the graph writing.
 	 */
 	default void write(String filename) throws IOException {
 		FileSink output = FileSinkFactory.sinkFor(filename);
@@ -499,41 +525,43 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	/**
 	 * Utility method to write a graph in the chosen format to a file.
 	 *
-	 * @param filename The file that will contain the saved graph (or URL).
-	 * @param output   The output format to use.
-	 * @throws IOException If an input/output error occurs during the graph writing.
+	 * @param filename
+	 *            The file that will contain the saved graph (or URL).
+	 * @param output
+	 *            The output format to use.
+	 * @throws IOException
+	 *             If an input/output error occurs during the graph writing.
 	 */
 	default void write(FileSink output, String filename) throws IOException {
 		output.writeAll(this, filename);
 	}
 
 	/**
-	 * Utility method that creates a new graph viewer, and register the graph in
-	 * it. Notice that this method is a quick way to see a graph, and only this.
-	 * It can be used to prototype a program, but may be limited. This method
-	 * automatically launch a graph layout algorithm in its own thread to
-	 * compute best node positions.
-	 *
-	 * @return a graph viewer that allows to command the viewer (it often run in
-	 * another thread).
+	 * Utility method that creates a new graph viewer, and register the graph in it.
+	 * Notice that this method is a quick way to see a graph, and only this. It can
+	 * be used to prototype a program, but may be limited. This method automatically
+	 * launch a graph layout algorithm in its own thread to compute best node
+	 * positions.
+	 * 
 	 * @see org.graphstream.ui.view.Viewer
-	 * @see #display(boolean)
+	 * @see #display(boolean )
+	 * @return a graph viewer that allows to command the viewer (it often run in
+	 *         another thread).
 	 */
-	default Viewer display() {
-		return display(true);
-	}
+	Viewer display();
 
 	/**
-	 * Utility method that creates a new graph viewer, and register the graph in
-	 * it. Notice that this method is a quick way to see a graph, and only this.
-	 * It can be used to prototype a program, but is very limited.
-	 *
-	 * @param autoLayout If true a layout algorithm is launched in its own thread to
-	 *                   compute best node positions.
-	 * @return a graph viewer that allows to command the viewer (it often run in
-	 * another thread).
+	 * Utility method that creates a new graph viewer, and register the graph in it.
+	 * Notice that this method is a quick way to see a graph, and only this. It can
+	 * be used to prototype a program, but is very limited.
+	 * 
+	 * @param autoLayout
+	 *            If true a layout algorithm is launched in its own thread to
+	 *            compute best node positions.
 	 * @see org.graphstream.ui.view.Viewer
 	 * @see #display()
+	 * @return a graph viewer that allows to command the viewer (it often run in
+	 *         another thread).
 	 */
 	Viewer display(boolean autoLayout);
 
@@ -541,55 +569,67 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 
 	/**
 	 * Get a node by its index. This method is implicitly generic and returns
-	 * something which extends Node. The return type is the one of the left part
-	 * of the assignment. For example, in the following call :
+	 * something which extends Node. The return type is the one of the left part of
+	 * the assignment. For example, in the following call :
 	 * <p>
+	 * 
 	 * <pre>
 	 * ExtendedNode node = graph.getNode(index);
 	 * </pre>
 	 * <p>
-	 * the method will return an ExtendedNode node. If no left part exists,
-	 * method will just return a Node.
+	 * the method will return an ExtendedNode node. If no left part exists, method
+	 * will just return a Node.
 	 *
-	 * @param index Index of the node to find.
+	 * @param index
+	 *            Index of the node to find.
 	 * @return The node with the given index
-	 * @throws IndexOutOfBoundsException If the index is negative or greater than {@code
+	 * @throws IndexOutOfBoundsException
+	 *             If the index is negative or greater than {@code
 	 *                                   getNodeCount() - 1}.
 	 */
 	Node getNode(int index) throws IndexOutOfBoundsException;
 
 	/**
 	 * Get an edge by its index. This method is implicitly generic and returns
-	 * something which extends Edge. The return type is the one of the left part
-	 * of the assignment. For example, in the following call :
+	 * something which extends Edge. The return type is the one of the left part of
+	 * the assignment. For example, in the following call :
 	 * <p>
+	 * 
 	 * <pre>
 	 * ExtendedEdge edge = graph.getEdge(index);
 	 * </pre>
 	 * <p>
-	 * the method will return an ExtendedEdge edge. If no left part exists,
-	 * method will just return an Edge.
+	 * the method will return an ExtendedEdge edge. If no left part exists, method
+	 * will just return an Edge.
 	 *
-	 * @param index The index of the edge to find.
+	 * @param index
+	 *            The index of the edge to find.
 	 * @return The edge with the given index
-	 * @throws IndexOutOfBoundsException if the index is less than 0 or greater than {@code
+	 * @throws IndexOutOfBoundsException
+	 *             if the index is less than 0 or greater than {@code
 	 *                                   getNodeCount() - 1}.
 	 */
 	Edge getEdge(int index) throws IndexOutOfBoundsException;
 
 	/**
-	 * Like {@link #addEdge(String, String, String)} but the nodes are
-	 * identified by their indices.
+	 * Like {@link #addEdge(String, String, String)} but the nodes are identified by
+	 * their indices.
 	 *
-	 * @param id     Unique and arbitrary string identifying the edge.
-	 * @param index1 The first node index
-	 * @param index2 The second node index
+	 * @param id
+	 *            Unique and arbitrary string identifying the edge.
+	 * @param index1
+	 *            The first node index
+	 * @param index2
+	 *            The second node index
 	 * @return The newly created edge, an existing edge or {@code null}
-	 * @throws IndexOutOfBoundsException If node indices are negative or greater than {@code
+	 * @throws IndexOutOfBoundsException
+	 *             If node indices are negative or greater than {@code
 	 *                                   getNodeCount() - 1}
-	 * @throws IdAlreadyInUseException   If an edge with the same id already exists and strict
-	 *                                   checking is enabled.
-	 * @throws EdgeRejectedException     If strict checking is enabled and the edge is not accepted.
+	 * @throws IdAlreadyInUseException
+	 *             If an edge with the same id already exists and strict checking is
+	 *             enabled.
+	 * @throws EdgeRejectedException
+	 *             If strict checking is enabled and the edge is not accepted.
 	 * @see #addEdge(String, String, String)
 	 */
 	default Edge addEdge(String id, int index1, int index2)
@@ -601,16 +641,23 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * Like {@link #addEdge(String, String, String, boolean)} but the nodes are
 	 * identified by their indices.
 	 *
-	 * @param id        Unique and arbitrary string identifying the edge.
-	 * @param toIndex   The first node index
-	 * @param fromIndex The second node index
-	 * @param directed  Is the edge directed?
+	 * @param id
+	 *            Unique and arbitrary string identifying the edge.
+	 * @param toIndex
+	 *            The first node index
+	 * @param fromIndex
+	 *            The second node index
+	 * @param directed
+	 *            Is the edge directed?
 	 * @return The newly created edge, an existing edge or {@code null}
-	 * @throws IndexOutOfBoundsException If node indices are negative or greater than {@code
+	 * @throws IndexOutOfBoundsException
+	 *             If node indices are negative or greater than {@code
 	 *                                   getNodeCount() - 1}
-	 * @throws IdAlreadyInUseException   If an edge with the same id already exists and strict
-	 *                                   checking is enabled.
-	 * @throws EdgeRejectedException     If strict checking is enabled and the edge is not accepted.
+	 * @throws IdAlreadyInUseException
+	 *             If an edge with the same id already exists and strict checking is
+	 *             enabled.
+	 * @throws EdgeRejectedException
+	 *             If strict checking is enabled and the edge is not accepted.
 	 * @see #addEdge(String, String, String)
 	 */
 	default Edge addEdge(String id, int fromIndex, int toIndex, boolean directed)
@@ -622,17 +669,21 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * Like {@link #addEdge(String, String, String)} but the node references are
 	 * given instead of node identifiers.
 	 *
-	 * @param id    Unique and arbitrary string identifying the edge.
-	 * @param node1 The first node
-	 * @param node2 The second node
+	 * @param id
+	 *            Unique and arbitrary string identifying the edge.
+	 * @param node1
+	 *            The first node
+	 * @param node2
+	 *            The second node
 	 * @return The newly created edge, an existing edge or {@code null}
-	 * @throws IdAlreadyInUseException If an edge with the same id already exists and strict
-	 *                                 checking is enabled.
-	 * @throws EdgeRejectedException   If strict checking is enabled and the edge is not accepted.
+	 * @throws IdAlreadyInUseException
+	 *             If an edge with the same id already exists and strict checking is
+	 *             enabled.
+	 * @throws EdgeRejectedException
+	 *             If strict checking is enabled and the edge is not accepted.
 	 * @see #addEdge(String, String, String)
 	 */
-	default Edge addEdge(String id, Node node1, Node node2)
-			throws IdAlreadyInUseException, EdgeRejectedException {
+	default Edge addEdge(String id, Node node1, Node node2) throws IdAlreadyInUseException, EdgeRejectedException {
 		return addEdge(id, node1, node2, false);
 	}
 
@@ -640,39 +691,46 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * Like {@link #addEdge(String, String, String, boolean)} but the node
 	 * references are given instead of node identifiers.
 	 *
-	 * @param id       Unique and arbitrary string identifying the edge.
-	 * @param from     The first node
-	 * @param to       The second node
-	 * @param directed Is the edge directed?
+	 * @param id
+	 *            Unique and arbitrary string identifying the edge.
+	 * @param from
+	 *            The first node
+	 * @param to
+	 *            The second node
+	 * @param directed
+	 *            Is the edge directed?
 	 * @return The newly created edge, an existing edge or {@code null}
-	 * @throws IdAlreadyInUseException If an edge with the same id already exists and strict
-	 *                                 checking is enabled.
-	 * @throws EdgeRejectedException   If strict checking is enabled and the edge is not accepted.
+	 * @throws IdAlreadyInUseException
+	 *             If an edge with the same id already exists and strict checking is
+	 *             enabled.
+	 * @throws EdgeRejectedException
+	 *             If strict checking is enabled and the edge is not accepted.
 	 * @see #addEdge(String, String, String)
 	 */
-	Edge addEdge(String id, Node from, Node to, boolean directed)
-			throws IdAlreadyInUseException, EdgeRejectedException;
+	Edge addEdge(String id, Node from, Node to, boolean directed) throws IdAlreadyInUseException, EdgeRejectedException;
 
 	/**
-	 * Removes an edge with a given index. An event is sent toward the
-	 * listeners.
+	 * Removes an edge with a given index. An event is sent toward the listeners.
 	 * <p>
 	 * <p>
-	 * This method is implicitly generic and returns something which extends
-	 * Edge. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
+	 * This method is implicitly generic and returns something which extends Edge.
+	 * The return type is the one of the left part of the assignment. For example,
+	 * in the following call :
 	 * <p>
+	 * 
 	 * <pre>
 	 * ExtendedEdge edge = graph.removeEdge(i);
 	 * </pre>
 	 * <p>
-	 * the method will return an ExtendedEdge edge. If no left part exists,
-	 * method will just return an Edge.
+	 * the method will return an ExtendedEdge edge. If no left part exists, method
+	 * will just return an Edge.
 	 * </p>
 	 *
-	 * @param index The index of the edge to be removed.
+	 * @param index
+	 *            The index of the edge to be removed.
 	 * @return The removed edge
-	 * @throws IndexOutOfBoundsException if the index is negative or greater than {@code
+	 * @throws IndexOutOfBoundsException
+	 *             if the index is negative or greater than {@code
 	 *                                   getEdgeCount() - 1}
 	 */
 	default Edge removeEdge(int index) throws IndexOutOfBoundsException {
@@ -689,17 +747,20 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	}
 
 	/**
-	 * Removes an edge between two nodes. Like
-	 * {@link #removeEdge(String, String)} but the nodes are identified by their
-	 * indices.
+	 * Removes an edge between two nodes. Like {@link #removeEdge(String, String)}
+	 * but the nodes are identified by their indices.
 	 *
-	 * @param fromIndex the index of the source node
-	 * @param toIndex   the index of the target node
+	 * @param fromIndex
+	 *            the index of the source node
+	 * @param toIndex
+	 *            the index of the target node
 	 * @return the removed edge or {@code null} if no edge is removed
-	 * @throws IndexOutOfBoundsException If one of the node indices is negative or greater than
-	 *                                   {@code getNodeCount() - 1}.
-	 * @throws ElementNotFoundException  if strict checking is enabled and there is no edge between
-	 *                                   the two nodes.
+	 * @throws IndexOutOfBoundsException
+	 *             If one of the node indices is negative or greater than
+	 *             {@code getNodeCount() - 1}.
+	 * @throws ElementNotFoundException
+	 *             if strict checking is enabled and there is no edge between the
+	 *             two nodes.
 	 * @see #removeEdge(String, String)
 	 */
 	default Edge removeEdge(int fromIndex, int toIndex) throws IndexOutOfBoundsException, ElementNotFoundException {
@@ -717,19 +778,20 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	}
 
 	/**
-	 * Removes an edge between two nodes. Like
-	 * {@link #removeEdge(String, String)} but node references are given instead
-	 * of node identifiers.
+	 * Removes an edge between two nodes. Like {@link #removeEdge(String, String)}
+	 * but node references are given instead of node identifiers.
 	 *
-	 * @param node1 the first node
-	 * @param node2 the second node
+	 * @param node1
+	 *            the first node
+	 * @param node2
+	 *            the second node
 	 * @return the removed edge or {@code null} if no edge is removed
-	 * @throws ElementNotFoundException if strict checking is enabled and there is no edge between
-	 *                                  the two nodes.
+	 * @throws ElementNotFoundException
+	 *             if strict checking is enabled and there is no edge between the
+	 *             two nodes.
 	 * @see #removeEdge(String, String)
 	 */
-	Edge removeEdge(Node node1, Node node2)
-			throws ElementNotFoundException;
+	Edge removeEdge(Node node1, Node node2) throws ElementNotFoundException;
 
 	/**
 	 * Remove an edge given the identifiers of its two endpoints.
@@ -737,31 +799,35 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * If the edge is directed it is removed only if its source and destination
 	 * nodes are identified by 'from' and 'to' respectively. If the graph is a
 	 * multi-graph and there are several edges between the two nodes, one of the
-	 * edges at random is removed. An event is sent toward the listeners. If
-	 * strict checking is enabled and at least one of the two given nodes does
-	 * not exist or if they are not connected, a not found exception is raised.
-	 * Else the error is silently ignored, and null is returned.
+	 * edges at random is removed. An event is sent toward the listeners. If strict
+	 * checking is enabled and at least one of the two given nodes does not exist or
+	 * if they are not connected, a not found exception is raised. Else the error is
+	 * silently ignored, and null is returned.
 	 * </p>
 	 * <p>
-	 * This method is implicitly generic and return something which extends
-	 * Edge. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
+	 * This method is implicitly generic and return something which extends Edge.
+	 * The return type is the one of the left part of the assignment. For example,
+	 * in the following call :
 	 * <p>
+	 * 
 	 * <pre>
 	 * ExtendedEdge e = graph.removeEdge(&quot;...&quot;, &quot;...&quot;);
 	 * </pre>
 	 * <p>
-	 * the method will return an ExtendedEdge. If no left part exists, method
-	 * will just return an Edge.
+	 * the method will return an ExtendedEdge. If no left part exists, method will
+	 * just return an Edge.
 	 * </p>
 	 *
-	 * @param from The origin node identifier to select the edge.
-	 * @param to   The destination node identifier to select the edge.
-	 * @return The removed edge, or null if strict checking is disabled and at
-	 * least one of the two given nodes does not exist or there is no
-	 * edge between them
-	 * @throws ElementNotFoundException If the 'from' or 'to' node is not registered in the graph or
-	 *                                  not connected and strict checking is enabled.
+	 * @param from
+	 *            The origin node identifier to select the edge.
+	 * @param to
+	 *            The destination node identifier to select the edge.
+	 * @return The removed edge, or null if strict checking is disabled and at least
+	 *         one of the two given nodes does not exist or there is no edge between
+	 *         them
+	 * @throws ElementNotFoundException
+	 *             If the 'from' or 'to' node is not registered in the graph or not
+	 *             connected and strict checking is enabled.
 	 */
 	default Edge removeEdge(String from, String to) throws ElementNotFoundException {
 		Node fromNode = getNode(from);
@@ -780,26 +846,28 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	/**
 	 * Removes an edge knowing its identifier. An event is sent toward the
 	 * listeners. If strict checking is enabled and the edge does not exist,
-	 * {@code ElementNotFoundException} is raised. Otherwise the error is
-	 * silently ignored and null is returned.
+	 * {@code ElementNotFoundException} is raised. Otherwise the error is silently
+	 * ignored and null is returned.
 	 * <p>
-	 * This method is implicitly generic and returns something which extends
-	 * Edge. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
+	 * This method is implicitly generic and returns something which extends Edge.
+	 * The return type is the one of the left part of the assignment. For example,
+	 * in the following call :
 	 * <p>
+	 * 
 	 * <pre>
 	 * ExtendedEdge e = graph.removeEdge(&quot;...&quot;);
 	 * </pre>
 	 * <p>
-	 * the method will return an ExtendedEdge. If no left part exists, method
-	 * will just return an Edge.
+	 * the method will return an ExtendedEdge. If no left part exists, method will
+	 * just return an Edge.
 	 * </p>
 	 *
-	 * @param id Identifier of the edge to remove.
-	 * @return The removed edge, or null if strict checking is disabled and the
-	 * edge does not exist.
-	 * @throws ElementNotFoundException If no edge matches the identifier and strict checking is
-	 *                                  enabled.
+	 * @param id
+	 *            Identifier of the edge to remove.
+	 * @return The removed edge, or null if strict checking is disabled and the edge
+	 *         does not exist.
+	 * @throws ElementNotFoundException
+	 *             If no edge matches the identifier and strict checking is enabled.
 	 */
 	default Edge removeEdge(String id) throws ElementNotFoundException {
 		Edge edge = getEdge(id);
@@ -817,19 +885,21 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	/**
 	 * Removes an edge. An event is sent toward the listeners.
 	 * <p>
-	 * This method is implicitly generic and returns something which extends
-	 * Edge. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
+	 * This method is implicitly generic and returns something which extends Edge.
+	 * The return type is the one of the left part of the assignment. For example,
+	 * in the following call :
 	 * <p>
+	 * 
 	 * <pre>
 	 * ExtendedEdge e = graph.removeEdge(...);
 	 * </pre>
 	 * <p>
-	 * the method will return an ExtendedEdge. If no left part exists, method
-	 * will just return an Edge.
+	 * the method will return an ExtendedEdge. If no left part exists, method will
+	 * just return an Edge.
 	 * </p>
 	 *
-	 * @param edge The edge to be removed
+	 * @param edge
+	 *            The edge to be removed
 	 * @return The removed edge
 	 */
 	Edge removeEdge(Edge edge);
@@ -838,25 +908,28 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * Removes a node with a given index.
 	 * <p>
 	 * An event is generated toward the listeners. Note that removing a node may
-	 * remove all edges it is connected to. In this case corresponding events
-	 * will also be generated toward the listeners.
+	 * remove all edges it is connected to. In this case corresponding events will
+	 * also be generated toward the listeners.
 	 * </p>
 	 * <p>
-	 * This method is implicitly generic and return something which extends
-	 * Node. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
+	 * This method is implicitly generic and return something which extends Node.
+	 * The return type is the one of the left part of the assignment. For example,
+	 * in the following call :
 	 * <p>
+	 * 
 	 * <pre>
 	 * ExtendedNode n = graph.removeNode(index);
 	 * </pre>
 	 * <p>
-	 * the method will return an ExtendedNode. If no left part exists, method
-	 * will just return a Node.
+	 * the method will return an ExtendedNode. If no left part exists, method will
+	 * just return a Node.
 	 * </p>
 	 *
-	 * @param index The index of the node to be removed
+	 * @param index
+	 *            The index of the node to be removed
 	 * @return The removed node
-	 * @throws IndexOutOfBoundsException if the index is negative or greater than {@code
+	 * @throws IndexOutOfBoundsException
+	 *             if the index is negative or greater than {@code
 	 *                                   getNodeCount() - 1}.
 	 */
 	default Node removeNode(int index) throws IndexOutOfBoundsException {
@@ -876,27 +949,30 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * Remove a node using its identifier.
 	 * <p>
 	 * An event is generated toward the listeners. Note that removing a node may
-	 * remove all edges it is connected to. In this case corresponding events
-	 * will also be generated toward the listeners.
+	 * remove all edges it is connected to. In this case corresponding events will
+	 * also be generated toward the listeners.
 	 * </p>
 	 * <p>
-	 * This method is implicitly generic and return something which extends
-	 * Node. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
+	 * This method is implicitly generic and return something which extends Node.
+	 * The return type is the one of the left part of the assignment. For example,
+	 * in the following call :
 	 * <p>
+	 * 
 	 * <pre>
 	 * ExtendedNode n = graph.removeNode(&quot;...&quot;);
 	 * </pre>
 	 * <p>
-	 * the method will return an ExtendedNode. If no left part exists, method
-	 * will just return a Node.
+	 * the method will return an ExtendedNode. If no left part exists, method will
+	 * just return a Node.
 	 * </p>
 	 *
-	 * @param id The unique identifier of the node to remove.
-	 * @return The removed node. If strict checking is disabled, it can return
-	 * null if the node to remove does not exist.
-	 * @throws ElementNotFoundException If no node matches the given identifier and strict checking
-	 *                                  is enabled.
+	 * @param id
+	 *            The unique identifier of the node to remove.
+	 * @return The removed node. If strict checking is disabled, it can return null
+	 *         if the node to remove does not exist.
+	 * @throws ElementNotFoundException
+	 *             If no node matches the given identifier and strict checking is
+	 *             enabled.
 	 */
 	default Node removeNode(String id) throws ElementNotFoundException {
 		Node node = getNode(id);
@@ -915,24 +991,27 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * Removes a node.
 	 * <p>
 	 * An event is generated toward the listeners. Note that removing a node may
-	 * remove all edges it is connected to. In this case corresponding events
-	 * will also be generated toward the listeners.
+	 * remove all edges it is connected to. In this case corresponding events will
+	 * also be generated toward the listeners.
 	 * </p>
 	 * <p>
-	 * This method is implicitly generic and return something which extends
-	 * Node. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
+	 * This method is implicitly generic and return something which extends Node.
+	 * The return type is the one of the left part of the assignment. For example,
+	 * in the following call :
 	 * <p>
+	 * 
 	 * <pre>
 	 * ExtendedNode n = graph.removeNode(...);
 	 * </pre>
 	 * <p>
-	 * the method will return an ExtendedNode. If no left part exists, method
-	 * will just return a Node.
+	 * the method will return an ExtendedNode. If no left part exists, method will
+	 * just return a Node.
 	 * </p>
 	 *
-	 * @param node The node to be removed
+	 * @param node
+	 *            The node to be removed
 	 * @return The removed node
 	 */
 	Node removeNode(Node node);
+
 }

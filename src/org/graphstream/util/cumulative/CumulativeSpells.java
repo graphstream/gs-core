@@ -45,8 +45,7 @@ public class CumulativeSpells {
 
 		private Object data;
 
-		public Spell(double start, boolean startOpen, double end,
-				boolean endOpen) {
+		public Spell(double start, boolean startOpen, double end, boolean endOpen) {
 			this.start = start;
 			this.startOpen = startOpen;
 			this.end = end;
@@ -188,8 +187,7 @@ public class CumulativeSpells {
 	}
 
 	public boolean isEternal() {
-		return spells.size() == 1 && !spells.get(0).isStarted()
-				&& !spells.get(0).isEnded();
+		return spells.size() == 1 && !spells.get(0).isStarted() && !spells.get(0).isEnded();
 	}
 
 	public String toString() {

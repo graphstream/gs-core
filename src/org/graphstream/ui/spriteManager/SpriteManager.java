@@ -70,10 +70,10 @@ import java.util.logging.Logger;
  */
 public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 
-    /**
-     * class level logger
-     */
-    private static final Logger logger = Logger.getLogger(SpriteManager.class.getName());
+	/**
+	 * class level logger
+	 */
+	private static final Logger logger = Logger.getLogger(SpriteManager.class.getName());
 
 	// Attribute
 
@@ -95,18 +95,18 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 	// Attributes
 
 	/**
-	 * this acts as a lock when we are adding a sprite since we are also
-	 * listener of the graph, and when we receive an "add" event, we
-	 * automatically create a sprite. We can want to avoid listening at ourself.
+	 * this acts as a lock when we are adding a sprite since we are also listener of
+	 * the graph, and when we receive an "add" event, we automatically create a
+	 * sprite. We can want to avoid listening at ourself.
 	 */
 	boolean attributeLock = false;
 
 	// Construction
 
 	/**
-	 * Create a new manager for sprite and bind it to the given graph. If the
-	 * graph already contains attributes describing sprites, the manager is
-	 * automatically filled with the existing sprites.
+	 * Create a new manager for sprite and bind it to the given graph. If the graph
+	 * already contains attributes describing sprites, the manager is automatically
+	 * filled with the existing sprites.
 	 * 
 	 * @param graph
 	 *            The graph to associate with this manager;
@@ -120,25 +120,23 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 
 	protected void lookForExistingSprites() throws InvalidSpriteIDException {
 		if (graph.getAttributeCount() > 0) {
-			graph.attributeKeys()
-				.filter(key -> key.startsWith("ui.sprite."))
-				.forEach(key -> {
-					String id = key.substring(10);
+			graph.attributeKeys().filter(key -> key.startsWith("ui.sprite.")).forEach(key -> {
+				String id = key.substring(10);
 
-					if (id.indexOf('.') < 0) {
-						addSprite(id);
-					} else {
-						String sattr = id.substring(id.indexOf('.') + 1);
-						id = id.substring(0, id.indexOf('.'));
+				if (id.indexOf('.') < 0) {
+					addSprite(id);
+				} else {
+					String sattr = id.substring(id.indexOf('.') + 1);
+					id = id.substring(0, id.indexOf('.'));
 
-						Sprite s = getSprite(id);
+					Sprite s = getSprite(id);
 
-						if (s == null)
-							s = addSprite(id);
+					if (s == null)
+						s = addSprite(id);
 
-						s.setAttribute(sattr, graph.getAttribute(key));
-					}
-				});
+					s.setAttribute(sattr, graph.getAttribute(key));
+				}
+			});
 		}
 	}
 
@@ -154,8 +152,7 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 	}
 
 	/**
-	 * True if the manager contains a sprite corresponding to the given
-	 * identifier.
+	 * True if the manager contains a sprite corresponding to the given identifier.
 	 * 
 	 * @param identifier
 	 *            The sprite identifier to search for.
@@ -214,10 +211,10 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 	// Command
 
 	/**
-	 * Detach this manager from its graph. This manager will no more be usable
-	 * to create or remove sprites. However sprites not yet removed are still
-	 * present as attributes in the graph and binding another sprite manager to
-	 * this graph will retrieve all sprites.
+	 * Detach this manager from its graph. This manager will no more be usable to
+	 * create or remove sprites. However sprites not yet removed are still present
+	 * as attributes in the graph and binding another sprite manager to this graph
+	 * will retrieve all sprites.
 	 */
 	public void detach() {
 		graph.removeAttributeSink(this);
@@ -227,8 +224,8 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 	}
 
 	/**
-	 * Specify the sprite factory to use. This allows to use specific sprite
-	 * classes (descendants of Sprite).
+	 * Specify the sprite factory to use. This allows to use specific sprite classes
+	 * (descendants of Sprite).
 	 * 
 	 * @param factory
 	 *            The new factory to use.
@@ -245,9 +242,9 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 	}
 
 	/**
-	 * Add a sprite with the given identifier. If the sprite already exists,
-	 * nothing is done. The sprite identifier cannot actually contain dots. This
-	 * character use is reserved by the sprite mechanism.
+	 * Add a sprite with the given identifier. If the sprite already exists, nothing
+	 * is done. The sprite identifier cannot actually contain dots. This character
+	 * use is reserved by the sprite mechanism.
 	 * 
 	 * @param identifier
 	 *            The identifier of the new sprite to add.
@@ -260,12 +257,12 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 	}
 
 	/**
-	 * Add a sprite with the given identifier and position. If the sprite
-	 * already exists, nothing is done, excepted if the position is not null in
-	 * which case it is repositioned. If the sprite does not exists, it is added
-	 * and if position is not null, it is used as the initial position of the
-	 * sprite. The sprite identifier cannot actually contain dots. This
-	 * character use is reserved by the sprite mechanism.
+	 * Add a sprite with the given identifier and position. If the sprite already
+	 * exists, nothing is done, excepted if the position is not null in which case
+	 * it is repositioned. If the sprite does not exists, it is added and if
+	 * position is not null, it is used as the initial position of the sprite. The
+	 * sprite identifier cannot actually contain dots. This character use is
+	 * reserved by the sprite mechanism.
 	 * 
 	 * @param identifier
 	 *            The sprite identifier.
@@ -275,11 +272,9 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 	 * @throws InvalidSpriteIDException
 	 *             If the given identifier contains a dot.
 	 */
-	protected Sprite addSprite(String identifier, Values position)
-			throws InvalidSpriteIDException {
+	protected Sprite addSprite(String identifier, Values position) throws InvalidSpriteIDException {
 		if (identifier.indexOf('.') >= 0)
-			throw new InvalidSpriteIDException(
-					"Sprite identifiers cannot contain dots.");
+			throw new InvalidSpriteIDException("Sprite identifiers cannot contain dots.");
 
 		Sprite sprite = sprites.get(identifier);
 
@@ -297,12 +292,12 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 	}
 
 	/**
-	 * Add a sprite of a given subclass of Sprite with the given identifier. If
-	 * the sprite already exists, nothing is done. This method allows to add a
-	 * sprite of a chosen subclass of Sprite, without using a
-	 * {@link SpriteFactory}. Most often you use a sprite factory when all
-	 * sprites will pertain to the same subclass. If some sprites pertain to
-	 * distinct subclasses, you can use this method.
+	 * Add a sprite of a given subclass of Sprite with the given identifier. If the
+	 * sprite already exists, nothing is done. This method allows to add a sprite of
+	 * a chosen subclass of Sprite, without using a {@link SpriteFactory}. Most
+	 * often you use a sprite factory when all sprites will pertain to the same
+	 * subclass. If some sprites pertain to distinct subclasses, you can use this
+	 * method.
 	 * 
 	 * @param identifier
 	 *            The identifier of the new sprite to add.
@@ -310,8 +305,7 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 	 *            The class of the new sprite to add.
 	 * @return The created sprite.
 	 */
-	public <T extends Sprite> T addSprite(String identifier,
-			Class<T> spriteClass) {
+	public <T extends Sprite> T addSprite(String identifier, Class<T> spriteClass) {
 		return addSprite(identifier, spriteClass, null);
 	}
 
@@ -327,21 +321,21 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 	 *            The sprite position, or null for position (0, 0, 0).
 	 * @return The created sprite.
 	 */
-	public <T extends Sprite> T addSprite(String identifier,
-			Class<T> spriteClass, Values position) {
+	public <T extends Sprite> T addSprite(String identifier, Class<T> spriteClass, Values position) {
 		try {
 			T sprite = spriteClass.newInstance();
 			sprite.init(identifier, this, position);
 			return sprite;
 		} catch (Exception e) {
-            logger.log(Level.WARNING, String.format("Error while trying to instantiate class %s.", spriteClass.getName()), e);
+			logger.log(Level.WARNING,
+					String.format("Error while trying to instantiate class %s.", spriteClass.getName()), e);
 		}
 		return null;
 	}
 
 	/**
-	 * Remove a sprite knowing its identifier. If no such sprite exists, this
-	 * fails silently.
+	 * Remove a sprite knowing its identifier. If no such sprite exists, this fails
+	 * silently.
 	 * 
 	 * @param identifier
 	 *            The identifier of the sprite to remove.
@@ -364,35 +358,29 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 			Object[] values = (Object[]) value;
 
 			if (values.length == 4) {
-				if (values[0] instanceof Number && values[1] instanceof Number
-						&& values[2] instanceof Number
+				if (values[0] instanceof Number && values[1] instanceof Number && values[2] instanceof Number
 						&& values[3] instanceof Style.Units) {
-					return new Values((Style.Units) values[3],
-							((Number) values[0]).floatValue(),
-							((Number) values[1]).floatValue(),
-							((Number) values[2]).floatValue());
+					return new Values((Style.Units) values[3], ((Number) values[0]).floatValue(),
+							((Number) values[1]).floatValue(), ((Number) values[2]).floatValue());
 				} else {
 					logger.warning("Cannot parse values[4] for sprite position.");
 				}
 			} else if (values.length == 3) {
-				if (values[0] instanceof Number && values[1] instanceof Number
-						&& values[2] instanceof Number) {
-					return new Values(Units.GU,
-							((Number) values[0]).floatValue(),
-							((Number) values[1]).floatValue(),
+				if (values[0] instanceof Number && values[1] instanceof Number && values[2] instanceof Number) {
+					return new Values(Units.GU, ((Number) values[0]).floatValue(), ((Number) values[1]).floatValue(),
 							((Number) values[2]).floatValue());
 				} else {
-                    logger.warning("Cannot parse values[3] for sprite position.");
+					logger.warning("Cannot parse values[3] for sprite position.");
 				}
 			} else if (values.length == 1) {
 				if (values[0] instanceof Number) {
-					return new Values(Units.GU,
-							((Number) values[0]).floatValue());
+					return new Values(Units.GU, ((Number) values[0]).floatValue());
 				} else {
 					logger.warning(String.format("Sprite position percent is not a number."));
 				}
 			} else {
-				logger.warning(String.format("Cannot transform value '%s' (length=%d) into a position.", Arrays.toString(values), values.length));
+				logger.warning(String.format("Cannot transform value '%s' (length=%d) into a position.",
+						Arrays.toString(values), values.length));
 			}
 		} else if (value instanceof Number) {
 			return new Values(Units.GU, ((Number) value).floatValue());
@@ -401,9 +389,8 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 		} else if (value instanceof Values) {
 			return new Values((Values) value);
 		} else {
-			System.err
-					.printf("GraphicGraph : cannot place sprite with posiiton '%s' (instance of %s)%n",
-							value, value.getClass().getName());
+			System.err.printf("GraphicGraph : cannot place sprite with posiiton '%s' (instance of %s)%n", value,
+					value.getClass().getName());
 		}
 
 		return null;
@@ -411,8 +398,7 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 
 	// GraphAttributesListener
 
-	public void graphAttributeAdded(String graphId, long time,
-			String attribute, Object value) {
+	public void graphAttributeAdded(String graphId, long time, String attribute, Object value) {
 		if (attributeLock)
 			return; // We want to avoid listening at ourselves.
 
@@ -441,8 +427,7 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 		}
 	}
 
-	public void graphAttributeChanged(String graphId, long time,
-			String attribute, Object oldValue, Object newValue) {
+	public void graphAttributeChanged(String graphId, long time, String attribute, Object oldValue, Object newValue) {
 		if (attributeLock)
 			return; // We want to avoid listening at ourselves.
 
@@ -460,7 +445,8 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 						Values position = getPositionValue(newValue);
 						s.setPosition(position);
 					} else {
-                        logger.warning(String.format("%s changed but newValue == null ! (old=%s).", spriteId, oldValue));
+						logger.warning(
+								String.format("%s changed but newValue == null ! (old=%s).", spriteId, oldValue));
 					}
 				} else {
 					throw new IllegalStateException("Sprite changed, but not added.");
@@ -469,8 +455,7 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 		}
 	}
 
-	public void graphAttributeRemoved(String graphId, long time,
-			String attribute) {
+	public void graphAttributeRemoved(String graphId, long time, String attribute) {
 		if (attributeLock)
 			return; // We want to avoid listening at ourselves.
 
@@ -490,27 +475,23 @@ public class SpriteManager implements Iterable<Sprite>, AttributeSink {
 
 	// Unused.
 
-	public void edgeAttributeAdded(String graphId, long time, String edgeId,
-			String attribute, Object value) {
+	public void edgeAttributeAdded(String graphId, long time, String edgeId, String attribute, Object value) {
 	}
 
-	public void edgeAttributeChanged(String graphId, long time, String edgeId,
-			String attribute, Object oldValue, Object newValue) {
+	public void edgeAttributeChanged(String graphId, long time, String edgeId, String attribute, Object oldValue,
+			Object newValue) {
 	}
 
-	public void edgeAttributeRemoved(String graphId, long time, String edgeId,
-			String attribute) {
+	public void edgeAttributeRemoved(String graphId, long time, String edgeId, String attribute) {
 	}
 
-	public void nodeAttributeAdded(String graphId, long time, String nodeId,
-			String attribute, Object value) {
+	public void nodeAttributeAdded(String graphId, long time, String nodeId, String attribute, Object value) {
 	}
 
-	public void nodeAttributeChanged(String graphId, long time, String nodeId,
-			String attribute, Object oldValue, Object newValue) {
+	public void nodeAttributeChanged(String graphId, long time, String nodeId, String attribute, Object oldValue,
+			Object newValue) {
 	}
 
-	public void nodeAttributeRemoved(String graphId, long time, String nodeId,
-			String attribute) {
+	public void nodeAttributeRemoved(String graphId, long time, String nodeId, String attribute) {
 	}
 }

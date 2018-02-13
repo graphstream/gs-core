@@ -38,39 +38,45 @@ import java.nio.ByteBuffer;
 /**
  * Define an encoder that transform received events into a binary buffer.
  * <p/>
- * A ByteEncoder is a sink that will produce a {@link ByteBuffer} from each received event. Then these buffer can be
- * sent to an end-point using a {@link ByteEncoder.Transport}.
+ * A ByteEncoder is a sink that will produce a {@link ByteBuffer} from each
+ * received event. Then these buffer can be sent to an end-point using a
+ * {@link ByteEncoder.Transport}.
  * <p/>
- * This is a generic way to define the encoding of events into bytes buffer. The main protocol used in GraphStream to
- * do such things is NetStream, with is dedicated encoder {@link org.graphstream.stream.netstream.NetStreamEncoder}.
+ * This is a generic way to define the encoding of events into bytes buffer. The
+ * main protocol used in GraphStream to do such things is NetStream, with is
+ * dedicated encoder {@link org.graphstream.stream.netstream.NetStreamEncoder}.
  *
  * @since 31/01/16.
  */
 public interface ByteEncoder extends Sink {
-    /**
-     * Add a new transport to this encoder.
-     *
-     * @param transport the new transport
-     */
-    void addTransport(Transport transport);
+	/**
+	 * Add a new transport to this encoder.
+	 *
+	 * @param transport
+	 *            the new transport
+	 */
+	void addTransport(Transport transport);
 
-    /**
-     * Remove an existing transport from this encoder.
-     *
-     * @param transport the transport to remove
-     */
-    void removeTransport(Transport transport);
+	/**
+	 * Remove an existing transport from this encoder.
+	 *
+	 * @param transport
+	 *            the transport to remove
+	 */
+	void removeTransport(Transport transport);
 
-    /**
-     * Define the object that will be called after an event has been transformed into a binary buffer.
-     */
-    interface Transport {
-        /**
-         * Called by the encoder once an event has been encoded.
-         * The buffer's position and limit should be correctly set so the Transport just has to read it.
-         *
-         * @param buffer buffer that has to be transported
-         */
-        void send(ByteBuffer buffer);
-    }
+	/**
+	 * Define the object that will be called after an event has been transformed
+	 * into a binary buffer.
+	 */
+	interface Transport {
+		/**
+		 * Called by the encoder once an event has been encoded. The buffer's position
+		 * and limit should be correctly set so the Transport just has to read it.
+		 *
+		 * @param buffer
+		 *            buffer that has to be transported
+		 */
+		void send(ByteBuffer buffer);
+	}
 }

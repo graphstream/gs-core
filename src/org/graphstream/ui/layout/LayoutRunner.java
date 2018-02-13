@@ -70,10 +70,10 @@ import java.util.logging.Logger;
  */
 public class LayoutRunner extends Thread {
 
-    /**
-     * class level logger
-     */
-    private static final Logger logger = Logger.getLogger(LayoutRunner.class.getSimpleName());
+	/**
+	 * class level logger
+	 */
+	private static final Logger logger = Logger.getLogger(LayoutRunner.class.getSimpleName());
 
 	/**
 	 * The layout algorithm.
@@ -91,20 +91,19 @@ public class LayoutRunner extends Thread {
 	protected boolean loop = true;
 
 	/**
-	 * The time to wait between each layout invocation, when the layout
-	 * stabilized.
+	 * The time to wait between each layout invocation, when the layout stabilized.
 	 */
 	protected long longNap = 80;
 
 	/**
-	 * The time to wait between each layout invocation, when the layout is not
-	 * yet stabilized.
+	 * The time to wait between each layout invocation, when the layout is not yet
+	 * stabilized.
 	 */
 	protected long shortNap = 10;
 
 	/**
-	 * New layout runner that listens at the given source and compute a layout
-	 * on its graph structure in a distinct thread.
+	 * New layout runner that listens at the given source and compute a layout on
+	 * its graph structure in a distinct thread.
 	 * 
 	 * @param source
 	 *            The source of graph events.
@@ -116,16 +115,16 @@ public class LayoutRunner extends Thread {
 	}
 
 	/**
-	 * New layout runner that listen at the given source and compute a layout on
-	 * its graph structure in a distinct thread.
+	 * New layout runner that listen at the given source and compute a layout on its
+	 * graph structure in a distinct thread.
 	 * 
 	 * @param source
 	 *            The source of graph events.
 	 * @param layout
 	 *            The layout algorithm to use.
 	 * @param start
-	 *            Start the layout thread immediately ? Else the start() method
-	 *            must be called later.
+	 *            Start the layout thread immediately ? Else the start() method must
+	 *            be called later.
 	 */
 	public LayoutRunner(Source source, Layout layout, boolean start) {
 		this.layout = layout;
@@ -139,23 +138,22 @@ public class LayoutRunner extends Thread {
 	}
 
 	/**
-	 * New layout runner that listen at the given graph and compute a layout on
-	 * its graph structure in a distinct thread. A pipe is still created to
-	 * listen at the graph. This means that the graph is never directly used.
+	 * New layout runner that listen at the given graph and compute a layout on its
+	 * graph structure in a distinct thread. A pipe is still created to listen at
+	 * the graph. This means that the graph is never directly used.
 	 * 
 	 * @param graph
 	 *            The source of graph events.
 	 * @param layout
 	 *            The layout algorithm to use.
 	 * @param start
-	 *            Start the layout thread immediately ? Else the start() method
-	 *            must be called later.
+	 *            Start the layout thread immediately ? Else the start() method must
+	 *            be called later.
 	 * @param replay
-	 *            If the graph already contains some data, replay events to
-	 *            create the data, this is mostly always needed.
+	 *            If the graph already contains some data, replay events to create
+	 *            the data, this is mostly always needed.
 	 */
-	public LayoutRunner(Graph graph, Layout layout, boolean start,
-			boolean replay) {
+	public LayoutRunner(Graph graph, Layout layout, boolean start, boolean replay) {
 		this.layout = layout;
 		this.pumpPipe = new ThreadProxyPipe();
 		this.pumpPipe.addSink(layout);
@@ -174,7 +172,7 @@ public class LayoutRunner extends Thread {
 	public ProxyPipe newLayoutPipe() {
 		ThreadProxyPipe tpp = new ThreadProxyPipe();
 		tpp.init(layout);
-		
+
 		return tpp;
 	}
 
@@ -198,7 +196,7 @@ public class LayoutRunner extends Thread {
 				nap(shortNap);
 			}
 		}
-        logger.info(String.format("Layout '%s' process stopped.", layoutName));
+		logger.info(String.format("Layout '%s' process stopped.", layoutName));
 	}
 
 	/**
@@ -215,7 +213,7 @@ public class LayoutRunner extends Thread {
 			try {
 				this.join();
 			} catch (Exception e) {
-                logger.log(Level.WARNING, "Unable to stop/release layout.", e);
+				logger.log(Level.WARNING, "Unable to stop/release layout.", e);
 			}
 		}
 
@@ -241,8 +239,8 @@ public class LayoutRunner extends Thread {
 	 * layout was stabilized, the short nap is used in the other case.
 	 * 
 	 * @param longNap
-	 *            The time to wait between stabilized layout invocations, by
-	 *            default 80.
+	 *            The time to wait between stabilized layout invocations, by default
+	 *            80.
 	 * @param shortNap
 	 *            The time to wait between non stabilized layout invocations, by
 	 *            default 10.

@@ -44,22 +44,22 @@ public class TestSinkGML {
 	public static void main(String args[]) {
 		try {
 			(new TestSinkGML()).test();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void test() throws IOException {
 		Graph graph = new MultiGraph("test GML");
 		FileSinkGML out1 = new FileSinkGML();
 		FileSinkDynamicGML out2 = new FileSinkDynamicGML();
-	
+
 		out1.begin("TestSinkGML.gml");
 		out2.begin("TestSinkGML.dgml");
-		
+
 		graph.addSink(out1);
 		graph.addSink(out2);
-		
+
 		graph.addNode("A");
 		graph.getNode("A").setAttribute("s", "foo bar");
 		graph.addNode("B");
@@ -75,7 +75,7 @@ public class TestSinkGML {
 		graph.removeAttribute("b");
 		graph.removeNode("A");
 		graph.removeNode("B");
-		
+
 		out1.end();
 		out2.end();
 	}

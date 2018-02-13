@@ -51,8 +51,8 @@ import java.util.zip.GZIPInputStream;
  * <p>
  * The DGS file format is especially designed for storing dynamic graph
  * definitions into a file. More information about the DGS file format will be
- * found on the GraphStream web site: <a
- * href="http://graphstream-project.org/">http://graphstream-project.org/</a>
+ * found on the GraphStream web site:
+ * <a href="http://graphstream-project.org/">http://graphstream-project.org/</a>
  * </p>
  * 
  * @see OldFileSourceDGS
@@ -270,8 +270,7 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 		} else if (key == "EOF") {
 			return false;
 		} else {
-			parseError("found an unknown key in file '" + key
-					+ "' (expecting an,ae,cn,ce,dn,de or st)");
+			parseError("found an unknown key in file '" + key + "' (expecting an,ae,cn,ce,dn,de or st)");
 		}
 
 		return true;
@@ -376,16 +375,14 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 			} else if (key == "EOF") {
 				return false;
 			} else {
-				parseError("found an unknown key in file '" + key
-						+ "' (expecting an,ae,cn,ce,dn,de or st)");
+				parseError("found an unknown key in file '" + key + "' (expecting an,ae,cn,ce,dn,de or st)");
 			}
 		}
 
 		return true;
 	}
 
-	protected void readAttributes(ArrayList<AttributeFormat> formats)
-			throws IOException {
+	protected void readAttributes(ArrayList<AttributeFormat> formats) throws IOException {
 		attributes.clear();
 
 		if (formats.size() > 0) {
@@ -508,8 +505,7 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 			graphName = "DGS_";
 		}
 
-		graphName = String.format("%s_%d", graphName,
-				System.currentTimeMillis() + ((long) Math.random() * 10));
+		graphName = String.format("%s_%d", graphName, System.currentTimeMillis() + ((long) Math.random() * 10));
 
 		readAttributeFormat();
 	}
@@ -529,8 +525,7 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 		}
 	}
 
-	protected void parseAttributeFormat(ArrayList<AttributeFormat> format)
-			throws IOException {
+	protected void parseAttributeFormat(ArrayList<AttributeFormat> format) throws IOException {
 		int tok = st.nextToken();
 
 		while (tok != StreamTokenizer.TT_EOL) {
@@ -545,26 +540,20 @@ public class FileSourceDGS1And2 extends FileSourceBase {
 					String type = st.sval.toLowerCase();
 
 					if (type.equals("number") || type.equals("n")) {
-						format.add(new AttributeFormat(name,
-								AttributeType.NUMBER));
+						format.add(new AttributeFormat(name, AttributeType.NUMBER));
 					} else if (type.equals("string") || type.equals("s")) {
-						format.add(new AttributeFormat(name,
-								AttributeType.STRING));
+						format.add(new AttributeFormat(name, AttributeType.STRING));
 					} else if (type.equals("vector") || type.equals("v")) {
-						format.add(new AttributeFormat(name,
-								AttributeType.VECTOR));
+						format.add(new AttributeFormat(name, AttributeType.VECTOR));
 					} else {
-						parseError("unknown attribute type `"
-								+ type
+						parseError("unknown attribute type `" + type
 								+ "' (only `number', `vector' and `string' are accepted)");
 					}
 				} else {
-					parseError("expecting an attribute type, got `"
-							+ gotWhat(tok) + "'");
+					parseError("expecting an attribute type, got `" + gotWhat(tok) + "'");
 				}
 			} else {
-				parseError("expecting an attribute name, got `" + gotWhat(tok)
-						+ "'");
+				parseError("expecting an attribute name, got `" + gotWhat(tok) + "'");
 			}
 
 			tok = st.nextToken();

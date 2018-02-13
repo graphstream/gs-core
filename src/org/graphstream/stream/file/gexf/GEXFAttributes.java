@@ -120,8 +120,7 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 	 * org.graphstream.stream.AttributeSink#nodeAttributeAdded(java.lang.String,
 	 * long, java.lang.String, java.lang.String, java.lang.Object)
 	 */
-	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-			String attribute, Object value) {
+	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId, String attribute, Object value) {
 		if (type == ClassType.NODE)
 			checkAttribute(attribute, value);
 	}
@@ -130,12 +129,11 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.graphstream.stream.AttributeSink#nodeAttributeChanged(java.lang.String
-	 * , long, java.lang.String, java.lang.String, java.lang.Object,
-	 * java.lang.Object)
+	 * org.graphstream.stream.AttributeSink#nodeAttributeChanged(java.lang.String ,
+	 * long, java.lang.String, java.lang.String, java.lang.Object, java.lang.Object)
 	 */
-	public void nodeAttributeChanged(String sourceId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
+	public void nodeAttributeChanged(String sourceId, long timeId, String nodeId, String attribute, Object oldValue,
+			Object newValue) {
 		if (type == ClassType.NODE)
 			checkAttribute(attribute, newValue);
 	}
@@ -147,8 +145,7 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 	 * org.graphstream.stream.AttributeSink#edgeAttributeAdded(java.lang.String,
 	 * long, java.lang.String, java.lang.String, java.lang.Object)
 	 */
-	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
-			String attribute, Object value) {
+	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId, String attribute, Object value) {
 		if (type == ClassType.EDGE)
 			checkAttribute(attribute, value);
 	}
@@ -157,12 +154,11 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.graphstream.stream.AttributeSink#edgeAttributeChanged(java.lang.String
-	 * , long, java.lang.String, java.lang.String, java.lang.Object,
-	 * java.lang.Object)
+	 * org.graphstream.stream.AttributeSink#edgeAttributeChanged(java.lang.String ,
+	 * long, java.lang.String, java.lang.String, java.lang.Object, java.lang.Object)
 	 */
-	public void edgeAttributeChanged(String sourceId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
+	public void edgeAttributeChanged(String sourceId, long timeId, String edgeId, String attribute, Object oldValue,
+			Object newValue) {
 		if (type == ClassType.EDGE)
 			checkAttribute(attribute, newValue);
 	}
@@ -171,54 +167,48 @@ public class GEXFAttributes implements GEXFElement, AttributeSink {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.graphstream.stream.AttributeSink#nodeAttributeRemoved(java.lang.String
-	 * , long, java.lang.String, java.lang.String)
+	 * org.graphstream.stream.AttributeSink#nodeAttributeRemoved(java.lang.String ,
+	 * long, java.lang.String, java.lang.String)
 	 */
-	public void nodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute) {
+	public void nodeAttributeRemoved(String sourceId, long timeId, String nodeId, String attribute) {
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.graphstream.stream.AttributeSink#graphAttributeAdded(java.lang.String
-	 * , long, java.lang.String, java.lang.Object)
+	 * org.graphstream.stream.AttributeSink#graphAttributeAdded(java.lang.String ,
+	 * long, java.lang.String, java.lang.Object)
 	 */
-	public void graphAttributeAdded(String sourceId, long timeId,
-			String attribute, Object value) {
+	public void graphAttributeAdded(String sourceId, long timeId, String attribute, Object value) {
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#graphAttributeChanged(java.lang.
+	 * @see org.graphstream.stream.AttributeSink#graphAttributeChanged(java.lang.
 	 * String, long, java.lang.String, java.lang.Object, java.lang.Object)
 	 */
-	public void graphAttributeChanged(String sourceId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
+	public void graphAttributeChanged(String sourceId, long timeId, String attribute, Object oldValue,
+			Object newValue) {
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#graphAttributeRemoved(java.lang.
+	 * @see org.graphstream.stream.AttributeSink#graphAttributeRemoved(java.lang.
 	 * String, long, java.lang.String)
 	 */
-	public void graphAttributeRemoved(String sourceId, long timeId,
-			String attribute) {
+	public void graphAttributeRemoved(String sourceId, long timeId, String attribute) {
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.graphstream.stream.AttributeSink#edgeAttributeRemoved(java.lang.String
-	 * , long, java.lang.String, java.lang.String)
+	 * org.graphstream.stream.AttributeSink#edgeAttributeRemoved(java.lang.String ,
+	 * long, java.lang.String, java.lang.String)
 	 */
-	public void edgeAttributeRemoved(String sourceId, long timeId,
-			String edgeId, String attribute) {
+	public void edgeAttributeRemoved(String sourceId, long timeId, String edgeId, String attribute) {
 	}
 }

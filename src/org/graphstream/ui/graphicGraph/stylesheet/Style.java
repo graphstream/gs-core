@@ -5,12 +5,12 @@
  *     Antoine Dutot    <antoine.dutot@graphstream-project.org>
  *     Yoann Pigné      <yoann.pigne@graphstream-project.org>
  *     Guilhelm Savin   <guilhelm.savin@graphstream-project.org>
- *
+ * 
  * This file is part of GraphStream <http://graphstream-project.org>.
- *
+ * 
  * GraphStream is a library whose purpose is to handle static or dynamic
  * graph, create them from scratch, file or any source and display them.
- *
+ * 
  * This program is free software distributed under the terms of two licenses, the
  * CeCILL-C license that fits European law, and the GNU Lesser General Public
  * License. You can  use, modify and/ or redistribute the software under the terms
@@ -18,27 +18,26 @@
  * URL <http://www.cecill.info> or under the terms of the GNU LGPL as published by
  * the Free Software Foundation, either version 3 of the License, or (at your
  * option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * 
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
 package org.graphstream.ui.graphicGraph.stylesheet;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
 /**
  * A style is a whole set of settings for a graphic element.
- *
+ * 
  * <p>
  * Styles inherit each others. By default a style is all set to invalid values
  * meaning "unset". This means that the value is to be taken from the parent.
@@ -78,7 +77,7 @@ public class Style extends StyleConstants {
 	/**
 	 * New style with all settings to a special value meaning "unset". In this
 	 * modeField, all the settings are inherited from the parent.
-	 *
+	 * 
 	 * @param parent
 	 *            The parent style.
 	 */
@@ -91,7 +90,7 @@ public class Style extends StyleConstants {
 
 	/**
 	 * The parent style.
-	 *
+	 * 
 	 * @return a style from which some settings are inherited.
 	 */
 	public Rule getParent() {
@@ -100,23 +99,23 @@ public class Style extends StyleConstants {
 
 	/**
 	 * Get the value of a given property.
-	 *
-	 * This code is the same for all "getX" methods so we explain it once here.
-	 * This is the implementation of style inheritance.
-	 *
+	 * 
+	 * This code is the same for all "getX" methods so we explain it once here. This
+	 * is the implementation of style inheritance.
+	 * 
 	 * First if some event is actually occurring, the alternative styles are
 	 * searched first. If these events have unset values for the property, their
 	 * parent are then searched.
-	 *
+	 * 
 	 * If the value for the property is not found in the alternative styles,
-	 * alternative styles parents, or if there is no event occurring actually,
-	 * this style is checked.
-	 *
+	 * alternative styles parents, or if there is no event occurring actually, this
+	 * style is checked.
+	 * 
 	 * If its value is unset, the parents of this style are checked.
-	 *
+	 * 
 	 * Classes are not checked here, they are processed in the
 	 * {@link org.graphstream.ui.graphicGraph.StyleGroup} class.
-	 *
+	 * 
 	 * @param property
 	 *            The style property the value is searched for.
 	 */
@@ -164,7 +163,7 @@ public class Style extends StyleConstants {
 
 	/**
 	 * True if the given field exists in this style only (not the parents).
-	 *
+	 * 
 	 * @param field
 	 *            The field to test.
 	 * @return True if this style has a value for the given field.
@@ -625,10 +624,10 @@ public class Style extends StyleConstants {
 	}
 
 	/**
-	 * Copy all the settings of the other style that are set, excepted the
-	 * parent. Only the settings that have a value (different from "unset") are
-	 * copied. The parent field is never copied.
-	 *
+	 * Copy all the settings of the other style that are set, excepted the parent.
+	 * Only the settings that have a value (different from "unset") are copied. The
+	 * parent field is never copied.
+	 * 
 	 * @param other
 	 *            Another style.
 	 */
@@ -703,7 +702,7 @@ public class Style extends StyleConstants {
 
 	/**
 	 * Set or change the parent of the style.
-	 *
+	 * 
 	 * @param parent
 	 *            The new parent.
 	 */
@@ -713,7 +712,7 @@ public class Style extends StyleConstants {
 
 	/**
 	 * Add an alternative style for specific events.
-	 *
+	 * 
 	 * @param event
 	 *            The event that triggers the alternate style.
 	 * @param alternateStyle
@@ -774,20 +773,18 @@ public class Style extends StyleConstants {
 				ArrayList<?> array = (ArrayList<?>) o;
 
 				if (array.size() > 0) {
-					builder.append(String.format("%s%s%s%s: ", prefix, sprefix,
-							sprefix, key));
+					builder.append(String.format("%s%s%s%s: ", prefix, sprefix, sprefix, key));
 
 					for (Object p : array)
 						builder.append(String.format("%s ", p.toString()));
 
 					builder.append(String.format("%n"));
 				} else {
-					builder.append(String.format("%s%s%s%s: <empty>%n", prefix,
-							sprefix, sprefix, key));
+					builder.append(String.format("%s%s%s%s: <empty>%n", prefix, sprefix, sprefix, key));
 				}
 			} else {
-				builder.append(String.format("%s%s%s%s: %s%n", prefix, sprefix,
-						sprefix, key, o != null ? o.toString() : "<null>"));
+				builder.append(String.format("%s%s%s%s: %s%n", prefix, sprefix, sprefix, key,
+						o != null ? o.toString() : "<null>"));
 			}
 		}
 
@@ -799,9 +796,9 @@ public class Style extends StyleConstants {
 		}
 
 		/*
-		 * if( level >= 0 ) { if( parent != null ) { String rec =
-		 * parent.style.toString( level + 1 );
-		 *
+		 * if( level >= 0 ) { if( parent != null ) { String rec = parent.style.toString(
+		 * level + 1 );
+		 * 
 		 * builder.append( rec ); } }
 		 */
 		String res = builder.toString();

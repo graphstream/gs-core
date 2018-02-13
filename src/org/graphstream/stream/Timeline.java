@@ -34,9 +34,7 @@ package org.graphstream.stream;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.graph.implementations.Graphs;
 import org.graphstream.util.GraphDiff;
@@ -235,8 +233,7 @@ public class Timeline implements Source, Replayable, Iterable<Graph> {
 		}
 	}
 
-	protected class TimelineReplayController extends PipeBase implements
-			Controller {
+	protected class TimelineReplayController extends PipeBase implements Controller {
 		public void replay() {
 			play(this);
 		}
@@ -302,8 +299,7 @@ public class Timeline implements Source, Replayable, Iterable<Graph> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.graphstream.stream.Source#removeSink(org.graphstream.stream.Sink)
+	 * @see org.graphstream.stream.Source#removeSink(org.graphstream.stream.Sink)
 	 */
 	public void removeSink(Sink sink) {
 		pipe.removeSink(sink);
@@ -312,8 +308,7 @@ public class Timeline implements Source, Replayable, Iterable<Graph> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.graphstream.stream.Source#addAttributeSink(org.graphstream.stream
+	 * @see org.graphstream.stream.Source#addAttributeSink(org.graphstream.stream
 	 * .AttributeSink)
 	 */
 	public void addAttributeSink(AttributeSink sink) {
@@ -323,8 +318,7 @@ public class Timeline implements Source, Replayable, Iterable<Graph> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.graphstream.stream.Source#removeAttributeSink(org.graphstream.stream
+	 * @see org.graphstream.stream.Source#removeAttributeSink(org.graphstream.stream
 	 * .AttributeSink)
 	 */
 	public void removeAttributeSink(AttributeSink sink) {
@@ -344,8 +338,7 @@ public class Timeline implements Source, Replayable, Iterable<Graph> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.graphstream.stream.Source#removeElementSink(org.graphstream.stream
+	 * @see org.graphstream.stream.Source#removeElementSink(org.graphstream.stream
 	 * .ElementSink)
 	 */
 	public void removeElementSink(ElementSink sink) {
@@ -418,8 +411,7 @@ public class Timeline implements Source, Replayable, Iterable<Graph> {
 		buffer.append("}, edges={");
 
 		g.edges().forEach(e -> {
-			buffer.append("\"").append(e.getId()).append("\":\"")
-					.append(e.getSourceNode().getId()).append("\"--\"")
+			buffer.append("\"").append(e.getId()).append("\":\"").append(e.getSourceNode().getId()).append("\"--\"")
 					.append(e.getTargetNode().getId()).append("\", ");
 		});
 

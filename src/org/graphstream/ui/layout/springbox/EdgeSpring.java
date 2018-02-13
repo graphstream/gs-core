@@ -31,7 +31,7 @@
  */
 package org.graphstream.ui.layout.springbox;
 
-import org.graphstream.util.geom.Point3;
+import org.graphstream.ui.geom.Point3;
 
 /**
  * Edge representation.
@@ -94,8 +94,8 @@ public class EdgeSpring {
 	}
 
 	/**
-	 * Considering the two nodes of the edge, return the one that was not given
-	 * as argument.
+	 * Considering the two nodes of the edge, return the one that was not given as
+	 * argument.
 	 * 
 	 * @param node
 	 *            One of the nodes of the edge.

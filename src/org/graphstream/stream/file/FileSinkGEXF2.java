@@ -106,8 +106,8 @@ public class FileSinkGEXF2 extends PipeBase implements FileSink {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph
-	 * , java.lang.String)
+	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph ,
+	 * java.lang.String)
 	 */
 	public void writeAll(Graph graph, String fileName) throws IOException {
 		Context ctx = createContext(fileName);
@@ -118,8 +118,8 @@ public class FileSinkGEXF2 extends PipeBase implements FileSink {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph
-	 * , java.io.OutputStream)
+	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph ,
+	 * java.io.OutputStream)
 	 */
 	public void writeAll(Graph graph, OutputStream stream) throws IOException {
 		Context ctx = createContext(stream);
@@ -130,8 +130,8 @@ public class FileSinkGEXF2 extends PipeBase implements FileSink {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph
-	 * , java.io.Writer)
+	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph ,
+	 * java.io.Writer)
 	 */
 	public void writeAll(Graph graph, Writer writer) throws IOException {
 		Context ctx = createContext(writer);
@@ -145,8 +145,7 @@ public class FileSinkGEXF2 extends PipeBase implements FileSink {
 	 */
 	public void begin(String fileName) throws IOException {
 		if (currentContext != null)
-			throw new IOException(
-					"cannot call begin() twice without calling end() before.");
+			throw new IOException("cannot call begin() twice without calling end() before.");
 
 		currentContext = createContext(fileName);
 		addSink(currentContext.gexf);
@@ -159,8 +158,7 @@ public class FileSinkGEXF2 extends PipeBase implements FileSink {
 	 */
 	public void begin(OutputStream stream) throws IOException {
 		if (currentContext != null)
-			throw new IOException(
-					"cannot call begin() twice without calling end() before.");
+			throw new IOException("cannot call begin() twice without calling end() before.");
 
 		currentContext = createContext(stream);
 		addSink(currentContext.gexf);
@@ -173,8 +171,7 @@ public class FileSinkGEXF2 extends PipeBase implements FileSink {
 	 */
 	public void begin(Writer writer) throws IOException {
 		if (currentContext != null)
-			throw new IOException(
-					"cannot call begin() twice without calling end() before.");
+			throw new IOException("cannot call begin() twice without calling end() before.");
 
 		currentContext = createContext(writer);
 		addSink(currentContext.gexf);

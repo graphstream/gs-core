@@ -47,194 +47,177 @@ import java.nio.charset.Charset;
  * @since 22/01/16.
  */
 public class TestNetStreamEncoder {
-    @Test
-    public void testEventNodeAdded() {
-        final String streamId = "stream-test";
-        final String sourceId = "test";
-        final String nodeId = "node-test";
-        final long timeId = 123;
+	@Test
+	public void testEventNodeAdded() {
+		final String streamId = "stream-test";
+		final String sourceId = "test";
+		final String nodeId = "node-test";
+		final long timeId = 123;
 
-        NetStreamEncoder enc = new NetStreamEncoder("stream-test", new ByteEncoder.Transport() {
-            @Override
-            public void send(ByteBuffer buffer) {
-                byte[] streamBytes = streamId.getBytes(Charset.forName("UTF-8"));
-                byte[] sourceBytes = sourceId.getBytes(Charset.forName("UTF-8"));
-                byte[] nodeBytes = nodeId.getBytes(Charset.forName("UTF-8"));
+		NetStreamEncoder enc = new NetStreamEncoder("stream-test", new ByteEncoder.Transport() {
+			@Override
+			public void send(ByteBuffer buffer) {
+				byte[] streamBytes = streamId.getBytes(Charset.forName("UTF-8"));
+				byte[] sourceBytes = sourceId.getBytes(Charset.forName("UTF-8"));
+				byte[] nodeBytes = nodeId.getBytes(Charset.forName("UTF-8"));
 
-                int expectedSize = 4
-                        + getVarintSize(streamBytes.length) + streamBytes.length
-                        + getVarintSize(sourceBytes.length) + sourceBytes.length
-                        + 1
-                        + getVarintSize(123)
-                        + getVarintSize(nodeBytes.length) + nodeBytes.length;
+				int expectedSize = 4 + getVarintSize(streamBytes.length) + streamBytes.length
+						+ getVarintSize(sourceBytes.length) + sourceBytes.length + 1 + getVarintSize(123)
+						+ getVarintSize(nodeBytes.length) + nodeBytes.length;
 
-                Assert.assertEquals(expectedSize, buffer.limit());
-                Assert.assertEquals(expectedSize, buffer.getInt());
+				Assert.assertEquals(expectedSize, buffer.limit());
+				Assert.assertEquals(expectedSize, buffer.getInt());
 
-                Assert.assertEquals(streamId, decodeString(buffer));
-                Assert.assertEquals(NetStreamConstants.EVENT_ADD_NODE, buffer.get());
-                Assert.assertEquals(sourceId, decodeString(buffer));
-                Assert.assertEquals(timeId, decodeUnsignedVarint(buffer));
-                Assert.assertEquals(nodeId, decodeString(buffer));
+				Assert.assertEquals(streamId, decodeString(buffer));
+				Assert.assertEquals(NetStreamConstants.EVENT_ADD_NODE, buffer.get());
+				Assert.assertEquals(sourceId, decodeString(buffer));
+				Assert.assertEquals(timeId, decodeUnsignedVarint(buffer));
+				Assert.assertEquals(nodeId, decodeString(buffer));
 
-                Assert.assertEquals(0, buffer.remaining());
-            }
-        });
+				Assert.assertEquals(0, buffer.remaining());
+			}
+		});
 
-        enc.nodeAdded(sourceId, timeId, nodeId);
-    }
+		enc.nodeAdded(sourceId, timeId, nodeId);
+	}
 
-    @Test
-    public void testEventNodeRemoved() {
-        final String streamId = "stream-test";
-        final String sourceId = "test";
-        final String nodeId = "node-test";
-        final long timeId = 123;
+	@Test
+	public void testEventNodeRemoved() {
+		final String streamId = "stream-test";
+		final String sourceId = "test";
+		final String nodeId = "node-test";
+		final long timeId = 123;
 
-        NetStreamEncoder enc = new NetStreamEncoder("stream-test", new ByteEncoder.Transport() {
-            @Override
-            public void send(ByteBuffer buffer) {
-                byte[] streamBytes = streamId.getBytes(Charset.forName("UTF-8"));
-                byte[] sourceBytes = sourceId.getBytes(Charset.forName("UTF-8"));
-                byte[] nodeBytes = nodeId.getBytes(Charset.forName("UTF-8"));
+		NetStreamEncoder enc = new NetStreamEncoder("stream-test", new ByteEncoder.Transport() {
+			@Override
+			public void send(ByteBuffer buffer) {
+				byte[] streamBytes = streamId.getBytes(Charset.forName("UTF-8"));
+				byte[] sourceBytes = sourceId.getBytes(Charset.forName("UTF-8"));
+				byte[] nodeBytes = nodeId.getBytes(Charset.forName("UTF-8"));
 
-                int expectedSize = 4
-                        + getVarintSize(streamBytes.length) + streamBytes.length
-                        + getVarintSize(sourceBytes.length) + sourceBytes.length
-                        + 1
-                        + getVarintSize(123)
-                        + getVarintSize(nodeBytes.length) + nodeBytes.length;
+				int expectedSize = 4 + getVarintSize(streamBytes.length) + streamBytes.length
+						+ getVarintSize(sourceBytes.length) + sourceBytes.length + 1 + getVarintSize(123)
+						+ getVarintSize(nodeBytes.length) + nodeBytes.length;
 
-                Assert.assertEquals(expectedSize, buffer.limit());
-                Assert.assertEquals(expectedSize, buffer.getInt());
+				Assert.assertEquals(expectedSize, buffer.limit());
+				Assert.assertEquals(expectedSize, buffer.getInt());
 
-                Assert.assertEquals(streamId, decodeString(buffer));
-                Assert.assertEquals(NetStreamConstants.EVENT_DEL_NODE, buffer.get());
-                Assert.assertEquals(sourceId, decodeString(buffer));
-                Assert.assertEquals(timeId, decodeUnsignedVarint(buffer));
-                Assert.assertEquals(nodeId, decodeString(buffer));
+				Assert.assertEquals(streamId, decodeString(buffer));
+				Assert.assertEquals(NetStreamConstants.EVENT_DEL_NODE, buffer.get());
+				Assert.assertEquals(sourceId, decodeString(buffer));
+				Assert.assertEquals(timeId, decodeUnsignedVarint(buffer));
+				Assert.assertEquals(nodeId, decodeString(buffer));
 
-                Assert.assertEquals(0, buffer.remaining());
-            }
-        });
+				Assert.assertEquals(0, buffer.remaining());
+			}
+		});
 
-        enc.nodeRemoved(sourceId, timeId, nodeId);
-    }
+		enc.nodeRemoved(sourceId, timeId, nodeId);
+	}
 
-    @Test
-    public void testEventEdgeAdded() {
-        final String streamId = "stream-test";
-        final String sourceId = "test";
-        final String edgeId = "edge-test";
-        final String nodeA = "node-a";
-        final String nodeB = "node-b";
-        final long timeId = 123;
+	@Test
+	public void testEventEdgeAdded() {
+		final String streamId = "stream-test";
+		final String sourceId = "test";
+		final String edgeId = "edge-test";
+		final String nodeA = "node-a";
+		final String nodeB = "node-b";
+		final long timeId = 123;
 
-        NetStreamEncoder enc = new NetStreamEncoder("stream-test", new ByteEncoder.Transport() {
-            @Override
-            public void send(ByteBuffer buffer) {
-                byte[] streamBytes = streamId.getBytes(Charset.forName("UTF-8"));
-                byte[] sourceBytes = sourceId.getBytes(Charset.forName("UTF-8"));
-                byte[] edgeBytes = edgeId.getBytes(Charset.forName("UTF-8"));
-                byte[] nodeABytes = nodeA.getBytes(Charset.forName("UTF-8"));
-                byte[] nodeBBytes = nodeB.getBytes(Charset.forName("UTF-8"));
+		NetStreamEncoder enc = new NetStreamEncoder("stream-test", new ByteEncoder.Transport() {
+			@Override
+			public void send(ByteBuffer buffer) {
+				byte[] streamBytes = streamId.getBytes(Charset.forName("UTF-8"));
+				byte[] sourceBytes = sourceId.getBytes(Charset.forName("UTF-8"));
+				byte[] edgeBytes = edgeId.getBytes(Charset.forName("UTF-8"));
+				byte[] nodeABytes = nodeA.getBytes(Charset.forName("UTF-8"));
+				byte[] nodeBBytes = nodeB.getBytes(Charset.forName("UTF-8"));
 
-                int expectedSize = 4
-                        + getVarintSize(streamBytes.length) + streamBytes.length
-                        + getVarintSize(sourceBytes.length) + sourceBytes.length
-                        + 1
-                        + getVarintSize(123)
-                        + getVarintSize(edgeBytes.length) + edgeBytes.length
-                        + getVarintSize(nodeABytes.length) + nodeABytes.length
-                        + getVarintSize(nodeBBytes.length) + nodeBBytes.length
-                        + 1;
+				int expectedSize = 4 + getVarintSize(streamBytes.length) + streamBytes.length
+						+ getVarintSize(sourceBytes.length) + sourceBytes.length + 1 + getVarintSize(123)
+						+ getVarintSize(edgeBytes.length) + edgeBytes.length + getVarintSize(nodeABytes.length)
+						+ nodeABytes.length + getVarintSize(nodeBBytes.length) + nodeBBytes.length + 1;
 
-                Assert.assertEquals(expectedSize, buffer.limit());
-                Assert.assertEquals(expectedSize, buffer.getInt());
+				Assert.assertEquals(expectedSize, buffer.limit());
+				Assert.assertEquals(expectedSize, buffer.getInt());
 
-                Assert.assertEquals(streamId, decodeString(buffer));
-                Assert.assertEquals(NetStreamConstants.EVENT_ADD_EDGE, buffer.get());
-                Assert.assertEquals(sourceId, decodeString(buffer));
-                Assert.assertEquals(timeId, decodeUnsignedVarint(buffer));
-                Assert.assertEquals(edgeId, decodeString(buffer));
-                Assert.assertEquals(nodeA, decodeString(buffer));
-                Assert.assertEquals(nodeB, decodeString(buffer));
-                Assert.assertEquals(1, buffer.get());
+				Assert.assertEquals(streamId, decodeString(buffer));
+				Assert.assertEquals(NetStreamConstants.EVENT_ADD_EDGE, buffer.get());
+				Assert.assertEquals(sourceId, decodeString(buffer));
+				Assert.assertEquals(timeId, decodeUnsignedVarint(buffer));
+				Assert.assertEquals(edgeId, decodeString(buffer));
+				Assert.assertEquals(nodeA, decodeString(buffer));
+				Assert.assertEquals(nodeB, decodeString(buffer));
+				Assert.assertEquals(1, buffer.get());
 
-                Assert.assertEquals(0, buffer.remaining());
-            }
-        });
+				Assert.assertEquals(0, buffer.remaining());
+			}
+		});
 
-        enc.edgeAdded(sourceId, timeId, edgeId, nodeA, nodeB, true);
-    }
+		enc.edgeAdded(sourceId, timeId, edgeId, nodeA, nodeB, true);
+	}
 
-    @Test
-    public void testEventEdgeRemoved() {
-        final String streamId = "stream-test";
-        final String sourceId = "test";
-        final String edgeId = "edge-test";
-        final long timeId = 123;
+	@Test
+	public void testEventEdgeRemoved() {
+		final String streamId = "stream-test";
+		final String sourceId = "test";
+		final String edgeId = "edge-test";
+		final long timeId = 123;
 
-        NetStreamEncoder enc = new NetStreamEncoder("stream-test", new ByteEncoder.Transport() {
-            @Override
-            public void send(ByteBuffer buffer) {
-                byte[] streamBytes = streamId.getBytes(Charset.forName("UTF-8"));
-                byte[] sourceBytes = sourceId.getBytes(Charset.forName("UTF-8"));
-                byte[] edgeBytes = edgeId.getBytes(Charset.forName("UTF-8"));
+		NetStreamEncoder enc = new NetStreamEncoder("stream-test", new ByteEncoder.Transport() {
+			@Override
+			public void send(ByteBuffer buffer) {
+				byte[] streamBytes = streamId.getBytes(Charset.forName("UTF-8"));
+				byte[] sourceBytes = sourceId.getBytes(Charset.forName("UTF-8"));
+				byte[] edgeBytes = edgeId.getBytes(Charset.forName("UTF-8"));
 
-                int expectedSize = 4
-                        + getVarintSize(streamBytes.length) + streamBytes.length
-                        + getVarintSize(sourceBytes.length) + sourceBytes.length
-                        + 1
-                        + getVarintSize(123)
-                        + getVarintSize(edgeBytes.length) + edgeBytes.length;
+				int expectedSize = 4 + getVarintSize(streamBytes.length) + streamBytes.length
+						+ getVarintSize(sourceBytes.length) + sourceBytes.length + 1 + getVarintSize(123)
+						+ getVarintSize(edgeBytes.length) + edgeBytes.length;
 
-                Assert.assertEquals(expectedSize, buffer.limit());
-                Assert.assertEquals(expectedSize, buffer.getInt());
+				Assert.assertEquals(expectedSize, buffer.limit());
+				Assert.assertEquals(expectedSize, buffer.getInt());
 
-                Assert.assertEquals(streamId, decodeString(buffer));
-                Assert.assertEquals(NetStreamConstants.EVENT_DEL_EDGE, buffer.get());
-                Assert.assertEquals(sourceId, decodeString(buffer));
-                Assert.assertEquals(timeId, decodeUnsignedVarint(buffer));
-                Assert.assertEquals(edgeId, decodeString(buffer));
+				Assert.assertEquals(streamId, decodeString(buffer));
+				Assert.assertEquals(NetStreamConstants.EVENT_DEL_EDGE, buffer.get());
+				Assert.assertEquals(sourceId, decodeString(buffer));
+				Assert.assertEquals(timeId, decodeUnsignedVarint(buffer));
+				Assert.assertEquals(edgeId, decodeString(buffer));
 
-                Assert.assertEquals(0, buffer.remaining());
-            }
-        });
+				Assert.assertEquals(0, buffer.remaining());
+			}
+		});
 
-        enc.edgeRemoved(sourceId, timeId, edgeId);
-    }
+		enc.edgeRemoved(sourceId, timeId, edgeId);
+	}
 
-    @Test
-    public void testEventGraphCleared() {
-        final String streamId = "stream-test";
-        final String sourceId = "test";
-        final long timeId = 123;
+	@Test
+	public void testEventGraphCleared() {
+		final String streamId = "stream-test";
+		final String sourceId = "test";
+		final long timeId = 123;
 
-        NetStreamEncoder enc = new NetStreamEncoder("stream-test", new ByteEncoder.Transport() {
-            @Override
-            public void send(ByteBuffer buffer) {
-                byte[] streamBytes = streamId.getBytes(Charset.forName("UTF-8"));
-                byte[] sourceBytes = sourceId.getBytes(Charset.forName("UTF-8"));
+		NetStreamEncoder enc = new NetStreamEncoder("stream-test", new ByteEncoder.Transport() {
+			@Override
+			public void send(ByteBuffer buffer) {
+				byte[] streamBytes = streamId.getBytes(Charset.forName("UTF-8"));
+				byte[] sourceBytes = sourceId.getBytes(Charset.forName("UTF-8"));
 
-                int expectedSize = 4
-                        + getVarintSize(streamBytes.length) + streamBytes.length
-                        + getVarintSize(sourceBytes.length) + sourceBytes.length
-                        + 1
-                        + getVarintSize(123);
+				int expectedSize = 4 + getVarintSize(streamBytes.length) + streamBytes.length
+						+ getVarintSize(sourceBytes.length) + sourceBytes.length + 1 + getVarintSize(123);
 
-                Assert.assertEquals(expectedSize, buffer.limit());
-                Assert.assertEquals(expectedSize, buffer.getInt());
+				Assert.assertEquals(expectedSize, buffer.limit());
+				Assert.assertEquals(expectedSize, buffer.getInt());
 
-                Assert.assertEquals(streamId, decodeString(buffer));
-                Assert.assertEquals(NetStreamConstants.EVENT_CLEARED, buffer.get());
-                Assert.assertEquals(sourceId, decodeString(buffer));
-                Assert.assertEquals(timeId, decodeUnsignedVarint(buffer));
+				Assert.assertEquals(streamId, decodeString(buffer));
+				Assert.assertEquals(NetStreamConstants.EVENT_CLEARED, buffer.get());
+				Assert.assertEquals(sourceId, decodeString(buffer));
+				Assert.assertEquals(timeId, decodeUnsignedVarint(buffer));
 
-                Assert.assertEquals(0, buffer.remaining());
-            }
-        });
+				Assert.assertEquals(0, buffer.remaining());
+			}
+		});
 
-        enc.graphCleared(sourceId, timeId);
-    }
+		enc.graphCleared(sourceId, timeId);
+	}
 }

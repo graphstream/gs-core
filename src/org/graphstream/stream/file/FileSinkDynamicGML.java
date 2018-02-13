@@ -57,8 +57,7 @@ public class FileSinkDynamicGML extends FileSinkGML {
 	// Attribute events
 
 	@Override
-	public void graphAttributeAdded(String sourceId, long timeId,
-			String attribute, Object value) {
+	public void graphAttributeAdded(String sourceId, long timeId, String attribute, Object value) {
 		ensureToFinish();
 
 		String val = valueToString(value);
@@ -69,39 +68,37 @@ public class FileSinkDynamicGML extends FileSinkGML {
 	}
 
 	@Override
-	public void graphAttributeChanged(String sourceId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
+	public void graphAttributeChanged(String sourceId, long timeId, String attribute, Object oldValue,
+			Object newValue) {
 		ensureToFinish();
 		graphAttributeAdded(sourceId, timeId, attribute, newValue);
 	}
 
 	@Override
-	public void graphAttributeRemoved(String sourceId, long timeId,
-			String attribute) {
+	public void graphAttributeRemoved(String sourceId, long timeId, String attribute) {
 		ensureToFinish();
 		out.printf("\t-%s%n", attribute);
 	}
 
 	@Override
-	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-			String attribute, Object value) {
+	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId, String attribute, Object value) {
 		nodeAttributeChanged(sourceId, timeId, nodeId, attribute, null, value);
 	}
 
 	@Override
-	public void nodeAttributeChanged(String sourceId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
+	public void nodeAttributeChanged(String sourceId, long timeId, String nodeId, String attribute, Object oldValue,
+			Object newValue) {
 
-		if(nodeToFinish == null || (!nodeToFinish.equals(nodeId))) {
+		if (nodeToFinish == null || (!nodeToFinish.equals(nodeId))) {
 			ensureToFinish();
 			out.printf("\t+node [%n");
 			out.printf("\t\tid \"%s\"%n", nodeId);
 			nodeToFinish = nodeId;
 		}
 
-		if(newValue != null) {
+		if (newValue != null) {
 			String val = valueToString(newValue);
-			
+
 			if (val != null) {
 				out.printf("\t\t%s %s%n", attribute, val);
 			}
@@ -111,31 +108,29 @@ public class FileSinkDynamicGML extends FileSinkGML {
 	}
 
 	@Override
-	public void nodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute) {
+	public void nodeAttributeRemoved(String sourceId, long timeId, String nodeId, String attribute) {
 		nodeAttributeChanged(sourceId, timeId, nodeId, attribute, null, null);
 	}
 
 	@Override
-	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
-			String attribute, Object value) {
+	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId, String attribute, Object value) {
 		edgeAttributeChanged(sourceId, timeId, edgeId, attribute, null, value);
 	}
 
 	@Override
-	public void edgeAttributeChanged(String sourceId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
+	public void edgeAttributeChanged(String sourceId, long timeId, String edgeId, String attribute, Object oldValue,
+			Object newValue) {
 
-		if(edgeToFinish == null || (!edgeToFinish.equals(edgeId))) {
+		if (edgeToFinish == null || (!edgeToFinish.equals(edgeId))) {
 			ensureToFinish();
 			out.printf("\t+edge [%n");
 			out.printf("\t\tid \"%s\"%n", edgeId);
 			edgeToFinish = edgeId;
 		}
 
-		if(newValue != null) {
+		if (newValue != null) {
 			String val = valueToString(newValue);
-			
+
 			if (val != null) {
 				out.printf("\t\t%s %s%n", attribute, val);
 			}
@@ -145,8 +140,7 @@ public class FileSinkDynamicGML extends FileSinkGML {
 	}
 
 	@Override
-	public void edgeAttributeRemoved(String sourceId, long timeId,
-			String edgeId, String attribute) {
+	public void edgeAttributeRemoved(String sourceId, long timeId, String edgeId, String attribute) {
 		edgeAttributeChanged(sourceId, timeId, edgeId, attribute, null, null);
 	}
 
@@ -167,8 +161,8 @@ public class FileSinkDynamicGML extends FileSinkGML {
 	}
 
 	@Override
-	public void edgeAdded(String sourceId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
+	public void edgeAdded(String sourceId, long timeId, String edgeId, String fromNodeId, String toNodeId,
+			boolean directed) {
 		ensureToFinish();
 		out.printf("\tedge [%n");
 		out.printf("\t\tid \"%s\"%n", edgeId);
@@ -192,8 +186,9 @@ public class FileSinkDynamicGML extends FileSinkGML {
 	@Override
 	public void stepBegins(String sourceId, long timeId, double step) {
 		ensureToFinish();
-		if((step-((int)step))==0) 
-		     out.printf("\tstep %d%n", (int)step);
-		else out.printf("\tstep %f%n", step);
+		if ((step - ((int) step)) == 0)
+			out.printf("\tstep %d%n", (int) step);
+		else
+			out.printf("\tstep %f%n", step);
 	}
 }

@@ -41,7 +41,7 @@ public class InvalidSpriteIDException extends RuntimeException {
 	public InvalidSpriteIDException(String message) {
 		super(message);
 	}
-	
+
 	public InvalidSpriteIDException() {
 		super();
 	}

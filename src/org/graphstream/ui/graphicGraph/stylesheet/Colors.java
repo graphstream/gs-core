@@ -31,14 +31,13 @@
  */
 package org.graphstream.ui.graphicGraph.stylesheet;
 
-import java.awt.Color;
 import java.util.ArrayList;
 
 /**
  * Ordered set of colours.
  */
 public class Colors extends ArrayList<Color> {
-	private static final long serialVersionUID = - 7218092114483593610L;
+	private static final long serialVersionUID = -7218092114483593610L;
 
 	/**
 	 * New empty colour set.

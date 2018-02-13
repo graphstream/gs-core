@@ -31,7 +31,6 @@
  */
 package org.graphstream.ui.graphicGraph.stylesheet;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
@@ -137,23 +136,20 @@ public class StyleConstants {
 	 * Possible shapes for elements.
 	 */
 	public static enum Shape {
-		CIRCLE(ShapeKind.ELLIPSOID), BOX(ShapeKind.RECTANGULAR), ROUNDED_BOX(
-				ShapeKind.RECTANGULAR), DIAMOND(ShapeKind.RECTANGULAR), POLYGON(
-				ShapeKind.RECTANGULAR), TRIANGLE(ShapeKind.RECTANGULAR), CROSS(
-				ShapeKind.RECTANGULAR), FREEPLANE(ShapeKind.RECTANGULAR), TEXT_BOX(
-				ShapeKind.RECTANGULAR), TEXT_ROUNDED_BOX(ShapeKind.RECTANGULAR), TEXT_PARAGRAPH(
-				ShapeKind.RECTANGULAR), TEXT_CIRCLE(ShapeKind.ELLIPSOID), TEXT_DIAMOND(
-				ShapeKind.RECTANGULAR), JCOMPONENT(ShapeKind.RECTANGULAR),
+		CIRCLE(ShapeKind.ELLIPSOID), BOX(ShapeKind.RECTANGULAR), ROUNDED_BOX(ShapeKind.RECTANGULAR), DIAMOND(
+				ShapeKind.RECTANGULAR), POLYGON(ShapeKind.RECTANGULAR), TRIANGLE(ShapeKind.RECTANGULAR), CROSS(
+						ShapeKind.RECTANGULAR), FREEPLANE(ShapeKind.RECTANGULAR), TEXT_BOX(
+								ShapeKind.RECTANGULAR), TEXT_ROUNDED_BOX(ShapeKind.RECTANGULAR), TEXT_PARAGRAPH(
+										ShapeKind.RECTANGULAR), TEXT_CIRCLE(ShapeKind.ELLIPSOID), TEXT_DIAMOND(
+												ShapeKind.RECTANGULAR), JCOMPONENT(ShapeKind.RECTANGULAR),
 
-		PIE_CHART(ShapeKind.ELLIPSOID), FLOW(ShapeKind.LINEAR), ARROW(
-				ShapeKind.RECTANGULAR), IMAGES(ShapeKind.RECTANGULAR),
+		PIE_CHART(ShapeKind.ELLIPSOID), FLOW(ShapeKind.LINEAR), ARROW(ShapeKind.RECTANGULAR), IMAGES(
+				ShapeKind.RECTANGULAR),
 
-		LINE(ShapeKind.LINEAR), ANGLE(ShapeKind.LINEAR), CUBIC_CURVE(
-				ShapeKind.CURVE), POLYLINE(ShapeKind.LINEAR),
-				POLYLINE_SCALED(ShapeKind.LINEAR),
-				SQUARELINE(ShapeKind.LINEAR), LSQUARELINE(ShapeKind.LINEAR),
-				HSQUARELINE(ShapeKind.LINEAR), VSQUARELINE(ShapeKind.LINEAR),
-				BLOB(ShapeKind.CURVE);
+		LINE(ShapeKind.LINEAR), ANGLE(ShapeKind.LINEAR), CUBIC_CURVE(ShapeKind.CURVE), POLYLINE(
+				ShapeKind.LINEAR), POLYLINE_SCALED(ShapeKind.LINEAR), SQUARELINE(ShapeKind.LINEAR), LSQUARELINE(
+						ShapeKind.LINEAR), HSQUARELINE(
+								ShapeKind.LINEAR), VSQUARELINE(ShapeKind.LINEAR), BLOB(ShapeKind.CURVE);
 
 		public ShapeKind kind;
 
@@ -198,8 +194,8 @@ public class StyleConstants {
 	protected static Pattern cssColorA;
 
 	/**
-	 * Pattern to ensure that java.awt.Color.toString() strings are recognised
-	 * as colour.
+	 * Pattern to ensure that java.awt.Color.toString() strings are recognised as
+	 * colour.
 	 */
 	protected static Pattern awtColor;
 
@@ -213,21 +209,17 @@ public class StyleConstants {
 		// Prepare some pattern matchers.
 
 		number = Pattern.compile("\\s*(\\p{Digit}+([.]\\p{Digit})?)\\s*");
-		numberUnit = Pattern
-				.compile("\\s*(\\p{Digit}+(?:[.]\\p{Digit}+)?)\\s*(gu|px|%)\\s*");
+		numberUnit = Pattern.compile("\\s*(\\p{Digit}+(?:[.]\\p{Digit}+)?)\\s*(gu|px|%)\\s*");
 
-		sharpColor1 = Pattern
-				.compile("#(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})((\\p{XDigit}\\p{XDigit})?)");
-		sharpColor2 = Pattern
-				.compile("#(\\p{XDigit})(\\p{XDigit})(\\p{XDigit})((\\p{XDigit})?)");
-		hexaColor = Pattern
-				.compile("0[xX](\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})((\\p{XDigit}\\p{XDigit})?)");
-		cssColor = Pattern
-				.compile("rgb\\s*\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)");
+		sharpColor1 = Pattern.compile(
+				"#(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})((\\p{XDigit}\\p{XDigit})?)");
+		sharpColor2 = Pattern.compile("#(\\p{XDigit})(\\p{XDigit})(\\p{XDigit})((\\p{XDigit})?)");
+		hexaColor = Pattern.compile(
+				"0[xX](\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})(\\p{XDigit}\\p{XDigit})((\\p{XDigit}\\p{XDigit})?)");
+		cssColor = Pattern.compile("rgb\\s*\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)");
 		cssColorA = Pattern
 				.compile("rgba\\s*\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)");
-		awtColor = Pattern
-				.compile("java.awt.Color\\[r=([0-9]+),g=([0-9]+),b=([0-9]+)\\]");
+		awtColor = Pattern.compile("java.awt.Color\\[r=([0-9]+),g=([0-9]+),b=([0-9]+)\\]");
 		colorMap = new HashMap<String, Color>();
 
 		// Load all the X11 predefined colour names and their RGB definition
@@ -260,10 +252,10 @@ public class StyleConstants {
 
 	/**
 	 * Try to convert the given string value to a colour. It understands the 600
-	 * colour names of the X11 RGB data base. It also understands colours given
-	 * in the "#FFFFFF" format and the hexadecimal "0xFFFFFF" format. Finally,
-	 * it understands colours given as a "rgb(1,10,100)", CSS-like format. If
-	 * the input value is null, the result is null.
+	 * colour names of the X11 RGB data base. It also understands colours given in
+	 * the "#FFFFFF" format and the hexadecimal "0xFFFFFF" format. Finally, it
+	 * understands colours given as a "rgb(1,10,100)", CSS-like format. If the input
+	 * value is null, the result is null.
 	 * 
 	 * @param anyValue
 	 *            The value to convert.
@@ -354,9 +346,7 @@ public class StyleConstants {
 						String b = m.group(3);
 						String a = m.group(4);
 
-						return new Color(Integer.parseInt(r, 16),
-								Integer.parseInt(g, 16),
-								Integer.parseInt(b, 16),
+						return new Color(Integer.parseInt(r, 16), Integer.parseInt(g, 16), Integer.parseInt(b, 16),
 								Integer.parseInt(a, 16));
 					}
 				}
@@ -382,9 +372,9 @@ public class StyleConstants {
 	/**
 	 * Check if the given value is an instance of CharSequence (String is) and
 	 * return it as a string. Else return null. If the input value is null, the
-	 * return value is null. If the value returned is larger than 128
-	 * characters, this method cuts it to 128 characters. TODO: allow to set the
-	 * max length of these strings.
+	 * return value is null. If the value returned is larger than 128 characters,
+	 * this method cuts it to 128 characters. TODO: allow to set the max length of
+	 * these strings.
 	 * 
 	 * @param value
 	 *            The value to convert.
@@ -408,11 +398,10 @@ public class StyleConstants {
 
 	/**
 	 * Try to convert an arbitrary value to a float. If it is a descendant of
-	 * Number, the float value is returned. If it is a string, a conversion is
-	 * tried to change it into a number and if successful, this number is
-	 * returned as a float. Else, the -1 value is returned as no width can be
-	 * negative to indicate the conversion failed. If the input is null, the
-	 * return value is -1.
+	 * Number, the float value is returned. If it is a string, a conversion is tried
+	 * to change it into a number and if successful, this number is returned as a
+	 * float. Else, the -1 value is returned as no width can be negative to indicate
+	 * the conversion failed. If the input is null, the return value is -1.
 	 * 
 	 * @param value
 	 *            The input to convert.
@@ -436,11 +425,11 @@ public class StyleConstants {
 	}
 
 	/**
-	 * Convert an object to a value with units. The object can be a number, in
-	 * which case the value returned contains this number in pixel units. The
-	 * object can be a string. In this case the strings understood by this
-	 * method are of the form (spaces, number, spaces, unit, spaces). For
-	 * example "3px", "45gu", "5.5%", " 25.3  gu ", "4", "   28.1  ".
+	 * Convert an object to a value with units. The object can be a number, in which
+	 * case the value returned contains this number in pixel units. The object can
+	 * be a string. In this case the strings understood by this method are of the
+	 * form (spaces, number, spaces, unit, spaces). For example "3px", "45gu",
+	 * "5.5%", " 25.3 gu ", "4", " 28.1 ".
 	 * 
 	 * @param value
 	 *            A Number or a CharSequence.
@@ -450,8 +439,8 @@ public class StyleConstants {
 		if (value instanceof CharSequence) {
 			CharSequence string = (CharSequence) value;
 
-//			if (string == null)
-//				throw new RuntimeException("null size string ...");
+			// if (string == null)
+			// throw new RuntimeException("null size string ...");
 
 			if (string.length() < 0)
 				throw new RuntimeException("empty size string ...");
@@ -459,16 +448,14 @@ public class StyleConstants {
 			Matcher m = numberUnit.matcher(string);
 
 			if (m.matches())
-				return new Value(convertUnit(m.group(2)), Float.parseFloat(m
-						.group(1)));
+				return new Value(convertUnit(m.group(2)), Float.parseFloat(m.group(1)));
 
 			m = number.matcher(string);
 
 			if (m.matches())
 				return new Value(Units.PX, Float.parseFloat(m.group(1)));
 
-			throw new RuntimeException(String.format(
-					"string is not convertible to a value (%s)", string));
+			throw new RuntimeException(String.format("string is not convertible to a value (%s)", string));
 		} else if (value instanceof Number) {
 			return new Value(Units.PX, ((Number) value).floatValue());
 		}
@@ -476,8 +463,7 @@ public class StyleConstants {
 		if (value == null)
 			throw new RuntimeException("cannot convert null value");
 
-		throw new RuntimeException(String.format("value is of class %s%n",
-				value.getClass().getName()));
+		throw new RuntimeException(String.format("value is of class %s%n", value.getClass().getName()));
 	}
 
 	/** Convert "gu", "px" and "%" to Units.GU, Units.PX, Units.PERCENTS. */
@@ -494,19 +480,18 @@ public class StyleConstants {
 
 	/*
 	 * Try to convert an arbitrary value to a EdgeStyle. If the value is a
-	 * descendant of CharSequence, it is used and parsed to see if it maps to
-	 * one of the possible values.
+	 * descendant of CharSequence, it is used and parsed to see if it maps to one of
+	 * the possible values.
 	 * 
 	 * @param value The value to convert.
 	 * 
-	 * @return The converted edge style or null if the value does not identifies
-	 * an edge style. public static EdgeStyle convertEdgeStyle( Object value ) {
-	 * if( value instanceof CharSequence ) { String s = ( (CharSequence) value
+	 * @return The converted edge style or null if the value does not identifies an
+	 * edge style. public static EdgeStyle convertEdgeStyle( Object value ) { if(
+	 * value instanceof CharSequence ) { String s = ( (CharSequence) value
 	 * ).toString().toLowerCase();
 	 * 
 	 * if( s.equals( "dots" ) ) { return EdgeStyle.DOTS; } else if( s.equals(
-	 * "dashes" ) ) { return EdgeStyle.DASHES; } else { return EdgeStyle.PLAIN;
-	 * } }
+	 * "dashes" ) ) { return EdgeStyle.DASHES; } else { return EdgeStyle.PLAIN; } }
 	 * 
 	 * return null; }
 	 */

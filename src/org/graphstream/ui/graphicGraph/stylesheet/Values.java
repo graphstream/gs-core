@@ -116,9 +116,9 @@ public class Values implements Iterable<Double> {
 	}
 
 	/**
-	 * The i-th value of this set. If the index is less than zero, the first
-	 * value is given, if the index if greater or equal to the number of values,
-	 * the last value is given.
+	 * The i-th value of this set. If the index is less than zero, the first value
+	 * is given, if the index if greater or equal to the number of values, the last
+	 * value is given.
 	 * 
 	 * @param i
 	 *            The value index.

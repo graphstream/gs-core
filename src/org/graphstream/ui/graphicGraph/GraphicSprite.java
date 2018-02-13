@@ -108,8 +108,7 @@ public class GraphicSprite extends GraphicElement {
 	}
 
 	/**
-	 * Return the graphic object this sprite is attached to or null if not
-	 * attached.
+	 * Return the graphic object this sprite is attached to or null if not attached.
 	 * 
 	 * @return A graphic object or null if no attachment.
 	 */
@@ -172,23 +171,23 @@ public class GraphicSprite extends GraphicElement {
 	@Override
 	public void move(double x, double y, double z) {
 
-		if (isAttachedToNode()){
+		if (isAttachedToNode()) {
 			GraphicNode n = getNodeAttachment();
 			x -= n.x;
 			y -= n.y;
 			z -= n.z;
 			setPosition(x, y, z, Style.Units.GU);
 
-		} else if (isAttachedToEdge()){
+		} else if (isAttachedToEdge()) {
 			GraphicEdge e = getEdgeAttachment();
 			double len = e.to.x - e.from.x;
 			double diff = x - e.from.x;
-			x = diff/len;
+			x = diff / len;
 			setPosition(x);
 
 		} else {
 			setPosition(x, y, z, Style.Units.GU);
-			
+
 		}
 	}
 
@@ -264,8 +263,7 @@ public class GraphicSprite extends GraphicElement {
 	 * @param z
 	 *            Third coordinate.
 	 * @param units
-	 *            The units to use for lengths and radii, null means
-	 *            "unchanged".
+	 *            The units to use for lengths and radii, null means "unchanged".
 	 */
 	public void setPosition(double x, double y, double z, Style.Units units) {
 		/*
@@ -333,19 +331,17 @@ public class GraphicSprite extends GraphicElement {
 	}
 
 	@Override
-	protected void attributeChanged(AttributeChangeEvent event,
-			String attribute, Object oldValue, Object newValue) {
+	protected void attributeChanged(AttributeChangeEvent event, String attribute, Object oldValue, Object newValue) {
 		super.attributeChanged(event, attribute, oldValue, newValue);
 
 		// if( attribute.equals( "ui.clicked" ) ) // Filter the clicks to avoid
 		// loops XXX BAD !!! XXX
 		// return;
 
-		String completeAttr = String.format("ui.sprite.%s.%s", getId(),
-				attribute);
+		String completeAttr = String.format("ui.sprite.%s.%s", getId(), attribute);
 
-		mygraph.listeners.sendAttributeChangedEvent(mygraph.getId(),
-				ElementType.GRAPH, completeAttr, event, oldValue, newValue);
+		mygraph.listeners.sendAttributeChangedEvent(mygraph.getId(), ElementType.GRAPH, completeAttr, event, oldValue,
+				newValue);
 	}
 
 	@Override

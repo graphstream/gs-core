@@ -59,7 +59,7 @@ public class StepCounter extends SinkAdapter {
 
 		return counter.getStepCount();
 	}
-	
+
 	protected int step;
 
 	/**
@@ -88,8 +88,8 @@ public class StepCounter extends SinkAdapter {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.graphstream.stream.SinkAdapter#stepBegins(java.lang.String,
-	 * long, double)
+	 * @see org.graphstream.stream.SinkAdapter#stepBegins(java.lang.String, long,
+	 * double)
 	 */
 	public void stepBegins(String sourceId, long timeId, double time) {
 		step++;

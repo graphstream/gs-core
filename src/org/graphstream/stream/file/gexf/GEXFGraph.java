@@ -75,8 +75,7 @@ public class GEXFGraph implements GEXFElement {
 		stream.stream.writeAttribute("defaultedgetype", defaultEdgeType.qname);
 
 		if (root.isExtensionEnable(Extension.DYNAMICS))
-			stream.stream.writeAttribute("timeformat",
-					root.getTimeFormat().qname);
+			stream.stream.writeAttribute("timeformat", root.getTimeFormat().qname);
 
 		nodesAttributes.export(stream);
 		edgesAttributes.export(stream);

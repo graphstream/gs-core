@@ -151,8 +151,8 @@ public class TestAbstractElement {
 		AbstractElement e = new LocalAbstractElement("test");
 
 		e.setAttribute("array1", 1, 2, 3);
-		e.setAttribute("array2", (Object) new Integer[]{1, 2, 3});
-		e.setAttribute("array3", (Object) new Integer[]{});
+		e.setAttribute("array2", (Object) new Integer[] { 1, 2, 3 });
+		e.setAttribute("array3", (Object) new Integer[] {});
 		e.setAttribute("attr1", new Object());
 
 		assertNotNull(e.getArray("array1"));
@@ -160,8 +160,8 @@ public class TestAbstractElement {
 		assertNotNull(e.getArray("array3"));
 		assertNull(e.getArray("attr1"));
 
-		assertArrayEquals(new Integer[] {1, 2, 3}, e.getArray("array1"));
-		assertArrayEquals(new Integer[] {1, 2, 3}, e.getArray("array2"));
+		assertArrayEquals(new Integer[] { 1, 2, 3 }, e.getArray("array1"));
+		assertArrayEquals(new Integer[] { 1, 2, 3 }, e.getArray("array2"));
 		assertArrayEquals(new Integer[] {}, e.getArray("array3"));
 	}
 
@@ -270,9 +270,9 @@ public class TestAbstractElement {
 		AbstractElement e = new LocalAbstractElement("test");
 
 		e.setAttribute("array1", 1, 2, 3);
-		e.setAttribute("array2", (Object) new Integer[]{1, 2, 3});
-		e.setAttribute("array3", (Object) new Integer[]{});
-		e.setAttribute("array4", (Object) new int[]{1, 2, 3});
+		e.setAttribute("array2", (Object) new Integer[] { 1, 2, 3 });
+		e.setAttribute("array3", (Object) new Integer[] {});
+		e.setAttribute("array4", (Object) new int[] { 1, 2, 3 });
 		e.setAttribute("attr1", new Object());
 
 		assertTrue(e.hasArray("array1"));
@@ -364,7 +364,7 @@ public class TestAbstractElement {
 
 		assertTrue(e.hasAttribute("D"));
 		assertTrue(e.hasArray("D"));
-		assertArrayEquals(new String[]{"T", "E", "S", "T"}, e.getArray("D"));
+		assertArrayEquals(new String[] { "T", "E", "S", "T" }, e.getArray("D"));
 	}
 
 	@Test
@@ -410,7 +410,8 @@ public class TestAbstractElement {
 		}
 
 		@Override
-		protected void attributeChanged(AttributeChangeEvent event, String attribute, Object oldValue, Object newValue) {
+		protected void attributeChanged(AttributeChangeEvent event, String attribute, Object oldValue,
+				Object newValue) {
 
 		}
 

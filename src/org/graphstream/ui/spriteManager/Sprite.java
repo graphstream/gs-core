@@ -136,8 +136,7 @@ public class Sprite implements Element {
 	/**
 	 * New sprite with a given identifier.
 	 * <p>
-	 * You cannot build sprites yourself, they are created by the sprite
-	 * manager.
+	 * You cannot build sprites yourself, they are created by the sprite manager.
 	 */
 	protected Sprite(String id, SpriteManager manager) {
 		this(id, manager, null);
@@ -146,8 +145,7 @@ public class Sprite implements Element {
 	/**
 	 * New sprite with a given identifier.
 	 * <p>
-	 * You cannot build sprites yourself, they are created by the sprite
-	 * manager.
+	 * You cannot build sprites yourself, they are created by the sprite manager.
 	 */
 	protected Sprite(String id, SpriteManager manager, Values position) {
 		init(id, manager, position);
@@ -156,11 +154,11 @@ public class Sprite implements Element {
 	/**
 	 * New sprite with a given identifier.
 	 * <p>
-	 * You cannot build sprites yourself, they are created by the sprite
-	 * managern. This method is used by the manager when creating instances of
-	 * sprites that inherit this class. If you derive the sprite class you can
-	 * override this method to initialise your sprite. It is always called when
-	 * creating the sprite.
+	 * You cannot build sprites yourself, they are created by the sprite managern.
+	 * This method is used by the manager when creating instances of sprites that
+	 * inherit this class. If you derive the sprite class you can override this
+	 * method to initialise your sprite. It is always called when creating the
+	 * sprite.
 	 */
 	protected void init(String id, SpriteManager manager, Values position) {
 		this.id = id;
@@ -180,8 +178,7 @@ public class Sprite implements Element {
 				manager.graph.setAttribute(completeId, position);
 				this.position = position;
 			} else {
-				this.position = SpriteManager.getPositionValue(manager.graph
-						.getAttribute(completeId));
+				this.position = SpriteManager.getPositionValue(manager.graph.getAttribute(completeId));
 			}
 		}
 	}
@@ -211,8 +208,7 @@ public class Sprite implements Element {
 	// Access
 
 	/**
-	 * The element the sprite is attached to or null if the sprite is not
-	 * attached.
+	 * The element the sprite is attached to or null if the sprite is not attached.
 	 *
 	 * @return An element the sprite is attached to or null.
 	 */
@@ -272,11 +268,12 @@ public class Sprite implements Element {
 	// Command
 
 	/**
-	 * Attach the sprite to a node with the given identifier. If needed the
-	 * sprite is first detached. If the given node identifier does not exist,
-	 * the sprite stays in detached state.
+	 * Attach the sprite to a node with the given identifier. If needed the sprite
+	 * is first detached. If the given node identifier does not exist, the sprite
+	 * stays in detached state.
 	 *
-	 * @param id Identifier of the node to attach to.
+	 * @param id
+	 *            Identifier of the node to attach to.
 	 */
 	public void attachToNode(String id) {
 		if (attachment != null)
@@ -289,11 +286,12 @@ public class Sprite implements Element {
 	}
 
 	/**
-	 * Attach the sprite to an edge with the given identifier. If needed the
-	 * sprite is first detached. If the given edge identifier does not exist,
-	 * the sprite stays in detached state.
+	 * Attach the sprite to an edge with the given identifier. If needed the sprite
+	 * is first detached. If the given edge identifier does not exist, the sprite
+	 * stays in detached state.
 	 *
-	 * @param id Identifier of the edge to attach to.
+	 * @param id
+	 *            Identifier of the edge to attach to.
 	 */
 	public void attachToEdge(String id) {
 		if (attachment != null)
@@ -352,8 +350,7 @@ public class Sprite implements Element {
 			int n = values.values.size();
 
 			if (n > 2) {
-				setPosition(values.units, values.get(0), values.get(1),
-						values.get(2));
+				setPosition(values.units, values.get(0), values.get(1), values.get(2));
 			} else if (n > 0) {
 				setPosition(values.get(0));
 			}
@@ -371,13 +368,11 @@ public class Sprite implements Element {
 	}
 
 	public Object getAttribute(String key) {
-		return manager.graph.getAttribute(String.format("%s.%s", completeId,
-				key));
+		return manager.graph.getAttribute(String.format("%s.%s", completeId, key));
 	}
 
 	public <T> T getAttribute(String key, Class<T> clazz) {
-		return manager.graph.getAttribute(
-				String.format("%s.%s", completeId, key), clazz);
+		return manager.graph.getAttribute(String.format("%s.%s", completeId, key), clazz);
 	}
 
 	/**
@@ -439,8 +434,7 @@ public class Sprite implements Element {
 	}
 
 	public boolean hasAttribute(String key) {
-		return manager.graph.hasAttribute(String.format("%s.%s", completeId,
-				key));
+		return manager.graph.hasAttribute(String.format("%s.%s", completeId, key));
 	}
 
 	public boolean hasArray(String key) {
@@ -448,8 +442,7 @@ public class Sprite implements Element {
 	}
 
 	public boolean hasAttribute(String key, Class<?> clazz) {
-		return manager.graph.hasAttribute(
-				String.format("%s.%s", completeId, key), clazz);
+		return manager.graph.hasAttribute(String.format("%s.%s", completeId, key), clazz);
 	}
 
 	public boolean hasMap(String key) {
@@ -471,28 +464,23 @@ public class Sprite implements Element {
 	// Commands (Element)
 
 	public void setAttribute(String attribute, Object... values) {
-		manager.graph.setAttribute(
-				String.format("%s.%s", completeId, attribute), values);
+		manager.graph.setAttribute(String.format("%s.%s", completeId, attribute), values);
 	}
 
 	public void setAttributes(Map<String, Object> attributes) {
 		for (String key : attributes.keySet())
-			manager.graph.setAttribute(String.format("%s.%s", completeId, key),
-					attributes.get(key));
+			manager.graph.setAttribute(String.format("%s.%s", completeId, key), attributes.get(key));
 	}
 
 	public void clearAttributes() {
 		String start = String.format("%s.", completeId);
 
-		manager.graph.attributeKeys()
-				.filter(key -> key.startsWith(start))
-				.collect(Collectors.toList())
+		manager.graph.attributeKeys().filter(key -> key.startsWith(start)).collect(Collectors.toList())
 				.forEach(key -> manager.graph.removeAttribute(key));
 	}
 
 	public void removeAttribute(String attribute) {
-		manager.graph.removeAttribute(String.format("%s.%s", completeId,
-				attribute));
+		manager.graph.removeAttribute(String.format("%s.%s", completeId, attribute));
 	}
 
 	// XXX -> UGLY FIX

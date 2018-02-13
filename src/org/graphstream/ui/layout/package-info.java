@@ -30,4 +30,3 @@
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
 package org.graphstream.ui.layout;
-

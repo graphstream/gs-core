@@ -46,8 +46,7 @@ public class SmartXMLWriter {
 	int depth;
 	LinkedList<Integer> childrenCount;
 
-	public SmartXMLWriter(Writer output, boolean smart)
-			throws XMLStreamException, FactoryConfigurationError {
+	public SmartXMLWriter(Writer output, boolean smart) throws XMLStreamException, FactoryConfigurationError {
 		stream = XMLOutputFactory.newFactory().createXMLStreamWriter(output);
 		stream.writeStartDocument("UTF-8", "1.0");
 
@@ -87,8 +86,7 @@ public class SmartXMLWriter {
 		stream.writeEndElement();
 	}
 
-	public void leafWithText(String name, String content)
-			throws XMLStreamException {
+	public void leafWithText(String name, String content) throws XMLStreamException {
 		startElement(name);
 		stream.writeCharacters(content);
 		endElement();

@@ -30,6 +30,7 @@
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
 package org.graphstream.graph;
+
 /**
  * This exception is thrown when on of the endpoints of an edge does not accept
  * the edge. This can happen for example when one tries to add an edge between

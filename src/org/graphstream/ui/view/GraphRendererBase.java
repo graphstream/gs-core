@@ -34,8 +34,7 @@ package org.graphstream.ui.view;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.StyleGroupListener;
 
-public abstract class GraphRendererBase<S, G> implements GraphRenderer<S, G>,
-		StyleGroupListener {
+public abstract class GraphRendererBase<S, G> implements GraphRenderer<S, G>, StyleGroupListener {
 	// Attribute
 
 	/**
@@ -57,8 +56,7 @@ public abstract class GraphRendererBase<S, G> implements GraphRenderer<S, G>,
 
 	public void open(GraphicGraph graph, S renderingSurface) {
 		if (this.graph != null)
-			throw new RuntimeException(
-					"renderer already open, cannot open twice");
+			throw new RuntimeException("renderer already open, cannot open twice");
 
 		this.graph = graph;
 		this.renderingSurface = renderingSurface;

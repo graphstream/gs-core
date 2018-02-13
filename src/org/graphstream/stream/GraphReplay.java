@@ -77,29 +77,28 @@ public class GraphReplay extends SourceBase implements Source {
 	/**
 	 * Echo each element and attribute of the graph to the registered sinks.
 	 *
-	 * @param graph The graph to export.
+	 * @param graph
+	 *            The graph to export.
 	 */
 	public void replay(Graph graph) {
-		graph.attributeKeys().forEach(key ->
-			sendGraphAttributeAdded(sourceId, key, graph.getAttribute(key)));
+		graph.attributeKeys().forEach(key -> sendGraphAttributeAdded(sourceId, key, graph.getAttribute(key)));
 
 		graph.nodes().forEach(node -> {
 			String nodeId = node.getId();
 			sendNodeAdded(sourceId, nodeId);
 
 			if (node.getAttributeCount() > 0)
-				node.attributeKeys().forEach(key ->
-					sendNodeAttributeAdded(sourceId, nodeId, key, node.getAttribute(key)));
+				node.attributeKeys()
+						.forEach(key -> sendNodeAttributeAdded(sourceId, nodeId, key, node.getAttribute(key)));
 		});
 
 		graph.edges().forEach(edge -> {
 			String edgeId = edge.getId();
-			sendEdgeAdded(sourceId, edgeId, edge.getNode0().getId(), edge
-					.getNode1().getId(), edge.isDirected());
+			sendEdgeAdded(sourceId, edgeId, edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected());
 
 			if (edge.getAttributeCount() > 0)
-				edge.attributeKeys().forEach(key ->
-					sendEdgeAttributeAdded(sourceId, edgeId, key, edge.getAttribute(key)));
+				edge.attributeKeys()
+						.forEach(key -> sendEdgeAttributeAdded(sourceId, edgeId, key, edge.getAttribute(key)));
 		});
 	}
 }

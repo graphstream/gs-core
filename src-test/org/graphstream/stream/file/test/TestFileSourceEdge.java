@@ -72,8 +72,7 @@ public class TestFileSourceEdge extends TestFileSourceBase {
 		return TEST2_DIRECTED_TRIANGLE;
 	}
 
-	protected static String TEST2_DIRECTED_TRIANGLE = "A B\n" + "B C\n"
-			+ "A C\n";
+	protected static String TEST2_DIRECTED_TRIANGLE = "A B\n" + "B C\n" + "A C\n";
 
 	@Override
 	public String basicAttributes() {

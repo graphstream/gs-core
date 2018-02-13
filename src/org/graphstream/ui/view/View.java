@@ -31,17 +31,15 @@
  */
 package org.graphstream.ui.view;
 
+import java.util.Collection;
+import java.util.EnumSet;
+
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
+import org.graphstream.ui.view.camera.Camera;
 import org.graphstream.ui.view.util.InteractiveElement;
 import org.graphstream.ui.view.util.MouseManager;
 import org.graphstream.ui.view.util.ShortcutManager;
-
-import java.awt.event.KeyListener;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.util.Collection;
-import java.util.EnumSet;
 
 /**
  * A view on a graphic graph.
@@ -52,7 +50,7 @@ public interface View {
 	 *
 	 * @return a view id
 	 */
-	String getId();
+	String getIdView();
 
 	/**
 	 * Get a camera object to provide control commands on the view.
@@ -62,17 +60,17 @@ public interface View {
 	Camera getCamera();
 
 	/**
-	 * Search for the first GraphicElement among the specified types (precedence: node, edge, sprite) that contains the
-	 * point at coordinates (x, y).
+	 * Search for the first GraphicElement among the specified types (precedence:
+	 * node, edge, sprite) that contains the point at coordinates (x, y).
 	 *
-     * @param types
-	 * 			  The types to check
+	 * @param types
+	 *            The types to check
 	 * @param x
 	 *            The point abscissa.
 	 * @param y
 	 *            The point ordinate.
-	 * @return The first GraphicElement among the specified types at the given coordinates or null if
-	 *         nothing found.
+	 * @return The first GraphicElement among the specified types at the given
+	 *         coordinates or null if nothing found.
 	 */
 	GraphicElement findGraphicElementAt(EnumSet<InteractiveElement> types, double x, double y);
 
@@ -81,7 +79,7 @@ public interface View {
 	 * (x1,y1)-(x2,y2).
 	 *
 	 * @param types
-	 * 			  The set of types to check
+	 *            The set of types to check
 	 * @param x1
 	 *            The rectangle lowest point abscissa.
 	 * @param y1
@@ -92,7 +90,8 @@ public interface View {
 	 *            The rectangle highest point ordinate.
 	 * @return The set of sprites, nodes, and edges in the given rectangle.
 	 */
-	Collection<GraphicElement> allGraphicElementsIn(EnumSet<InteractiveElement> types, double x1, double y1, double x2, double y2);
+	Collection<GraphicElement> allGraphicElementsIn(EnumSet<InteractiveElement> types, double x1, double y1, double x2,
+			double y2);
 
 	/**
 	 * Redisplay or update the view contents. Called by the Viewer.
@@ -105,13 +104,12 @@ public interface View {
 	void display(GraphicGraph graph, boolean graphChanged);
 
 	/**
-	 * Open this view in a frame. The argument allows to put the view in a new
-	 * frame or to remove it from the frame (if it already exists). Called by
-	 * the Viewer.
+	 * Open this view in a frame. The argument allows to put the view in a new frame
+	 * or to remove it from the frame (if it already exists). Called by the Viewer.
 	 *
 	 * @param on
-	 *            Add the view in its own frame or remove it if it already was
-	 *            in its own frame.
+	 *            Add the view in its own frame or remove it if it already was in
+	 *            its own frame.
 	 */
 	void openInAFrame(boolean on);
 
@@ -178,8 +176,8 @@ public interface View {
 	void moveElementAtPx(GraphicElement element, double x, double y);
 
 	/**
-	 * Change the manager for mouse events on this view. If the value for the
-	 * new manager is null, a default manager is installed. The
+	 * Change the manager for mouse events on this view. If the value for the new
+	 * manager is null, a default manager is installed. The
 	 * {@link org.graphstream.ui.view.util.MouseManager#init(org.graphstream.ui.graphicGraph.GraphicGraph, View)}
 	 * method must not yet have been called.
 	 *
@@ -190,8 +188,8 @@ public interface View {
 	void setMouseManager(MouseManager manager);
 
 	/**
-	 * Change the manager for key and shortcuts events on this view. If the
-	 * value for the new manager is null, a default manager is installed. The
+	 * Change the manager for key and shortcuts events on this view. If the value
+	 * for the new manager is null, a default manager is installed. The
 	 * {@link org.graphstream.ui.view.util.ShortcutManager#init(org.graphstream.ui.graphicGraph.GraphicGraph, View)}
 	 * method must not yet have been called.
 	 *
@@ -203,56 +201,28 @@ public interface View {
 
 	/**
 	 * Request ui focus.
+	 * 
+	 * @return optional object used to confirm the request
 	 */
-	void requestFocus();
+	Object requireFocus();
 
 	/**
-	 * Add key ui listener.
+	 * Generic method for add a new Listener.
 	 *
-	 * @param l
-	 *            the listener
+	 * @param T
+	 *            Describe the listener
+	 * @param U
+	 *            Listener
 	 */
-	void addKeyListener(KeyListener l);
+	<T, U> void addListener(T descriptor, U listener);
 
 	/**
-	 * Remove key ui listener.
+	 * Generic method for remove a Listener.
 	 *
-	 * @param l
-	 *            the listener
+	 * @param T
+	 *            Describe the listener
+	 * @param U
+	 *            Listener
 	 */
-	void removeKeyListener(KeyListener l);
-
-	/**
-	 * Add mouse ui listener.
-	 *
-	 * @param l
-	 *            the listener
-	 */
-	void addMouseListener(MouseListener l);
-
-	/**
-	 * Remove mouse ui listener.
-	 *
-	 * @param l
-	 *            the listener
-	 */
-	void removeMouseListener(MouseListener l);
-
-	/**
-	 * Add mouse motion ui listener.
-	 *
-	 * @param l
-	 *            the listener
-	 */
-	void addMouseMotionListener(MouseMotionListener l);
-
-	/**
-	 * Remove mouse motion ui listener.
-	 *
-	 * @param l
-	 *            the listener
-	 */
-	void removeMouseMotionListener(MouseMotionListener l);
-
-
+	<T, U> void removeListener(T descriptor, U listener);
 }

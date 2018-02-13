@@ -31,59 +31,48 @@
  */
 package org.graphstream.ui.view;
 
-public class Selection
-{
-    public double x1, y1, x2, y2;
+public class Selection {
+	public double x1, y1, x2, y2;
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
 
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass())
-        {
-            return false;
-        }
+		Selection selection = (Selection) o;
 
-        Selection selection = (Selection) o;
+		if (Double.compare(selection.x1, x1) != 0) {
+			return false;
+		}
+		if (Double.compare(selection.x2, x2) != 0) {
+			return false;
+		}
+		if (Double.compare(selection.y1, y1) != 0) {
+			return false;
+		}
+		if (Double.compare(selection.y2, y2) != 0) {
+			return false;
+		}
 
-        if (Double.compare(selection.x1, x1) != 0)
-        {
-            return false;
-        }
-        if (Double.compare(selection.x2, x2) != 0)
-        {
-            return false;
-        }
-        if (Double.compare(selection.y1, y1) != 0)
-        {
-            return false;
-        }
-        if (Double.compare(selection.y2, y2) != 0)
-        {
-            return false;
-        }
+		return true;
+	}
 
-        return true;
-    }
-
-
-    @Override
-    public int hashCode()
-    {
-        int result;
-        long temp;
-        temp = Double.doubleToLongBits(x1);
-        result = (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(y1);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(x2);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(y2);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		int result;
+		long temp;
+		temp = Double.doubleToLongBits(x1);
+		result = (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(y1);
+		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(x2);
+		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(y2);
+		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
 }

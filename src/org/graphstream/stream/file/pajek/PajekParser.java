@@ -362,8 +362,7 @@ public class PajekParser implements Parser, PajekParserConstants {
 						jj_consume_token(-1);
 						throw new ParseException();
 					}
-					System.err.printf("%d:%d: unparsed garbage in .net (%s)%n",
-							k.beginLine, k.beginColumn, k.image);
+					System.err.printf("%d:%d: unparsed garbage in .net (%s)%n", k.beginLine, k.beginColumn, k.image);
 				}
 			} else {
 				;
@@ -646,8 +645,7 @@ public class PajekParser implements Parser, PajekParserConstants {
 					jj_consume_token(-1);
 					throw new ParseException();
 				}
-				System.err.printf("%d:%d: unparsed garbage in .net (%s)%n",
-						k.beginLine, k.beginColumn, k.image);
+				System.err.printf("%d:%d: unparsed garbage in .net (%s)%n", k.beginLine, k.beginColumn, k.image);
 			}
 		} else {
 			;
@@ -708,8 +706,7 @@ public class PajekParser implements Parser, PajekParserConstants {
 		ctx.addEdges(mat);
 	}
 
-	final public ArrayList<String> matrixline(EdgeMatrix mat)
-			throws ParseException {
+	final public ArrayList<String> matrixline(EdgeMatrix mat) throws ParseException {
 		Token k;
 		ArrayList<String> line = new ArrayList<String>(nodeCount);
 		label_15: while (true) {
@@ -4960,8 +4957,7 @@ public class PajekParser implements Parser, PajekParserConstants {
 		if (jj_scanpos == jj_lastpos) {
 			jj_la--;
 			if (jj_scanpos.next == null) {
-				jj_lastpos = jj_scanpos = jj_scanpos.next = token_source
-						.getNextToken();
+				jj_lastpos = jj_scanpos = jj_scanpos.next = token_source.getNextToken();
 			} else {
 				jj_lastpos = jj_scanpos = jj_scanpos.next;
 			}
@@ -5031,8 +5027,7 @@ public class PajekParser implements Parser, PajekParserConstants {
 			for (int i = 0; i < jj_endpos; i++) {
 				jj_expentry[i] = jj_lasttokens[i];
 			}
-			jj_entries_loop: for (java.util.Iterator<?> it = jj_expentries
-					.iterator(); it.hasNext();) {
+			jj_entries_loop: for (java.util.Iterator<?> it = jj_expentries.iterator(); it.hasNext();) {
 				int[] oldentry = (int[]) (it.next());
 				if (oldentry.length == jj_expentry.length) {
 					for (int i = 0; i < jj_expentry.length; i++) {

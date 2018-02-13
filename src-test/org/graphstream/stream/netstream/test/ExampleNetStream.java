@@ -31,54 +31,56 @@
  */
 package org.graphstream.stream.netstream.test;
 
+import java.io.IOException;
+import java.net.InetAddress;
+
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.stream.binary.ByteProxy;
 import org.graphstream.stream.netstream.NetStreamUtils;
 
-import java.io.IOException;
-import java.net.InetAddress;
-
 /**
  * @since 01/02/16.
  */
 public class ExampleNetStream {
-    public static void main(String... args) throws IOException {
-        //
-        // Create a byte proxy server that will use NetStream as encoder/decoder protocol.
-        // Start it to listen to connection.
-        //
+	public static void main(String... args) throws IOException {
+		System.setProperty("org.graphstream.ui", "org.graphstream.ui.swingViewer.util.SwingDisplay");
+		//
+		// Create a byte proxy server that will use NetStream as encoder/decoder
+		// protocol.
+		// Start it to listen to connection.
+		//
 
-        ByteProxy server = new ByteProxy(NetStreamUtils.getDefaultNetStreamFactory(), 10000);
-        server.start();
+		ByteProxy server = new ByteProxy(NetStreamUtils.getDefaultNetStreamFactory(), 10000);
+		server.start();
 
-        DefaultGraph graphServer = new DefaultGraph("server");
-        graphServer.addSink(server);
+		DefaultGraph graphServer = new DefaultGraph("server");
+		graphServer.addSink(server);
 
-        server.setReplayable(graphServer);
+		server.setReplayable(graphServer);
 
-        //
-        // Create now a byte proxy client that will connect to the previous server.
-        //
+		//
+		// Create now a byte proxy client that will connect to the previous server.
+		//
 
-        ByteProxy client = new ByteProxy(NetStreamUtils.getDefaultNetStreamFactory(), ByteProxy.Mode.CLIENT, InetAddress.getLocalHost(), 10000);
-        client.start();
+		ByteProxy client = new ByteProxy(NetStreamUtils.getDefaultNetStreamFactory(), ByteProxy.Mode.CLIENT,
+				InetAddress.getLocalHost(), 10000);
+		client.start();
 
-        Graph graphClient = new DefaultGraph("client");
-        client.addSink(graphClient);
+		Graph graphClient = new DefaultGraph("client");
+		client.addSink(graphClient);
 
-        graphClient.display();
+		graphClient.display();
+		//
+		// Add some elements in the server graph. It should appear in the client graph.
+		//
 
-        //
-        // Add some elements in the server graph. It should appear in the client graph.
-        //
+		graphServer.addNode("A");
+		graphServer.addNode("B");
+		graphServer.addNode("C");
 
-        graphServer.addNode("A");
-        graphServer.addNode("B");
-        graphServer.addNode("C");
-
-        graphServer.addEdge("AB", "A", "B");
-        graphServer.addEdge("AC", "A", "C");
-        graphServer.addEdge("BC", "B", "C");
-    }
+		graphServer.addEdge("AB", "A", "B");
+		graphServer.addEdge("AC", "A", "C");
+		graphServer.addEdge("BC", "B", "C");
+	}
 }

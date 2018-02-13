@@ -75,15 +75,15 @@ import java.util.HashMap;
  */
 public abstract class AnnotatedSink implements Sink {
 	/**
-	 * Annotation used to bind an event to a method. This bind is composed of a
-	 * name (the attribute key) and an element type. For example, the annotation
+	 * Annotation used to bind an event to a method. This bind is composed of a name
+	 * (the attribute key) and an element type. For example, the annotation
 	 * 
 	 * <pre>
-	 * @Bind(value = &quot;test&quot;, type = ElementType.NODE)
+	 * &#64;Bind(value = &quot;test&quot;, type = ElementType.NODE)
 	 * </pre>
 	 * 
-	 * will be triggered the annotated method when receiving
-	 * 'nodeAttributeXXX()' methods.
+	 * will be triggered the annotated method when receiving 'nodeAttributeXXX()'
+	 * methods.
 	 */
 	@Documented
 	@Retention(RetentionPolicy.RUNTIME)
@@ -97,8 +97,7 @@ public abstract class AnnotatedSink implements Sink {
 		String value();
 
 		/**
-		 * Type of element that triggered the annotated method. Default is
-		 * GRAPH.
+		 * Type of element that triggered the annotated method. Default is GRAPH.
 		 * 
 		 * @return type of element in GRAPH, NODE or EDGE
 		 */
@@ -119,7 +118,7 @@ public abstract class AnnotatedSink implements Sink {
 			for (int i = 0; i < ms.length; i++) {
 				Method m = ms[i];
 				Bind b = m.getAnnotation(Bind.class);
-				
+
 				if (b != null)
 					methods.get(b.type()).put(b.value(), m);
 			}
@@ -140,10 +139,12 @@ public abstract class AnnotatedSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#edgeAttributeAdded(java.lang.String, long, java.lang.String, java.lang.String, java.lang.Object)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#edgeAttributeAdded(java.lang.String,
+	 * long, java.lang.String, java.lang.String, java.lang.Object)
 	 */
-	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
-			String attribute, Object value) {
+	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId, String attribute, Object value) {
 		Method m = methods.get(ElementType.EDGE).get(attribute);
 
 		if (m != null)
@@ -152,10 +153,13 @@ public abstract class AnnotatedSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#edgeAttributeChanged(java.lang.String, long, java.lang.String, java.lang.String, java.lang.Object, java.lang.Object)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#edgeAttributeChanged(java.lang.String,
+	 * long, java.lang.String, java.lang.String, java.lang.Object, java.lang.Object)
 	 */
-	public void edgeAttributeChanged(String sourceId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
+	public void edgeAttributeChanged(String sourceId, long timeId, String edgeId, String attribute, Object oldValue,
+			Object newValue) {
 		Method m = methods.get(ElementType.EDGE).get(attribute);
 
 		if (m != null)
@@ -164,10 +168,12 @@ public abstract class AnnotatedSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#edgeAttributeRemoved(java.lang.String, long, java.lang.String, java.lang.String)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#edgeAttributeRemoved(java.lang.String,
+	 * long, java.lang.String, java.lang.String)
 	 */
-	public void edgeAttributeRemoved(String sourceId, long timeId,
-			String edgeId, String attribute) {
+	public void edgeAttributeRemoved(String sourceId, long timeId, String edgeId, String attribute) {
 		Method m = methods.get(ElementType.EDGE).get(attribute);
 
 		if (m != null)
@@ -176,10 +182,12 @@ public abstract class AnnotatedSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#graphAttributeAdded(java.lang.String, long, java.lang.String, java.lang.Object)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#graphAttributeAdded(java.lang.String,
+	 * long, java.lang.String, java.lang.Object)
 	 */
-	public void graphAttributeAdded(String sourceId, long timeId,
-			String attribute, Object value) {
+	public void graphAttributeAdded(String sourceId, long timeId, String attribute, Object value) {
 		Method m = methods.get(ElementType.GRAPH).get(attribute);
 
 		if (m != null)
@@ -188,10 +196,13 @@ public abstract class AnnotatedSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#graphAttributeChanged(java.lang.String, long, java.lang.String, java.lang.Object, java.lang.Object)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#graphAttributeChanged(java.lang.String,
+	 * long, java.lang.String, java.lang.Object, java.lang.Object)
 	 */
-	public void graphAttributeChanged(String sourceId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
+	public void graphAttributeChanged(String sourceId, long timeId, String attribute, Object oldValue,
+			Object newValue) {
 		Method m = methods.get(ElementType.GRAPH).get(attribute);
 
 		if (m != null)
@@ -200,10 +211,12 @@ public abstract class AnnotatedSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#graphAttributeRemoved(java.lang.String, long, java.lang.String)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#graphAttributeRemoved(java.lang.String,
+	 * long, java.lang.String)
 	 */
-	public void graphAttributeRemoved(String sourceId, long timeId,
-			String attribute) {
+	public void graphAttributeRemoved(String sourceId, long timeId, String attribute) {
 		Method m = methods.get(ElementType.GRAPH).get(attribute);
 
 		if (m != null)
@@ -212,10 +225,12 @@ public abstract class AnnotatedSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#nodeAttributeAdded(java.lang.String, long, java.lang.String, java.lang.String, java.lang.Object)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#nodeAttributeAdded(java.lang.String,
+	 * long, java.lang.String, java.lang.String, java.lang.Object)
 	 */
-	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-			String attribute, Object value) {
+	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId, String attribute, Object value) {
 		Method m = methods.get(ElementType.NODE).get(attribute);
 
 		if (m != null)
@@ -224,10 +239,13 @@ public abstract class AnnotatedSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#nodeAttributeChanged(java.lang.String, long, java.lang.String, java.lang.String, java.lang.Object, java.lang.Object)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#nodeAttributeChanged(java.lang.String,
+	 * long, java.lang.String, java.lang.String, java.lang.Object, java.lang.Object)
 	 */
-	public void nodeAttributeChanged(String sourceId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
+	public void nodeAttributeChanged(String sourceId, long timeId, String nodeId, String attribute, Object oldValue,
+			Object newValue) {
 		Method m = methods.get(ElementType.NODE).get(attribute);
 
 		if (m != null)
@@ -236,10 +254,12 @@ public abstract class AnnotatedSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.AttributeSink#nodeAttributeRemoved(java.lang.String, long, java.lang.String, java.lang.String)
+	 * 
+	 * @see
+	 * org.graphstream.stream.AttributeSink#nodeAttributeRemoved(java.lang.String,
+	 * long, java.lang.String, java.lang.String)
 	 */
-	public void nodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute) {
+	public void nodeAttributeRemoved(String sourceId, long timeId, String nodeId, String attribute) {
 		Method m = methods.get(ElementType.NODE).get(attribute);
 
 		if (m != null)
@@ -248,21 +268,26 @@ public abstract class AnnotatedSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.ElementSink#edgeAdded(java.lang.String, long, java.lang.String, java.lang.String, java.lang.String, boolean)
+	 * 
+	 * @see org.graphstream.stream.ElementSink#edgeAdded(java.lang.String, long,
+	 * java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
-	public void edgeAdded(String sourceId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
+	public void edgeAdded(String sourceId, long timeId, String edgeId, String fromNodeId, String toNodeId,
+			boolean directed) {
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.ElementSink#edgeRemoved(java.lang.String, long, java.lang.String)
+	 * 
+	 * @see org.graphstream.stream.ElementSink#edgeRemoved(java.lang.String, long,
+	 * java.lang.String)
 	 */
 	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.graphstream.stream.ElementSink#graphCleared(java.lang.String, long)
 	 */
 	public void graphCleared(String sourceId, long timeId) {
@@ -270,21 +295,27 @@ public abstract class AnnotatedSink implements Sink {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.ElementSink#nodeAdded(java.lang.String, long, java.lang.String)
+	 * 
+	 * @see org.graphstream.stream.ElementSink#nodeAdded(java.lang.String, long,
+	 * java.lang.String)
 	 */
 	public void nodeAdded(String sourceId, long timeId, String nodeId) {
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.ElementSink#nodeRemoved(java.lang.String, long, java.lang.String)
+	 * 
+	 * @see org.graphstream.stream.ElementSink#nodeRemoved(java.lang.String, long,
+	 * java.lang.String)
 	 */
 	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.stream.ElementSink#stepBegins(java.lang.String, long, double)
+	 * 
+	 * @see org.graphstream.stream.ElementSink#stepBegins(java.lang.String, long,
+	 * double)
 	 */
 	public void stepBegins(String sourceId, long timeId, double step) {
 	}

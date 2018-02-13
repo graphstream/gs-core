@@ -82,17 +82,15 @@ package org.graphstream.stream;
  */
 public interface ProxyPipe extends Pipe {
 	/**
-	 * Check if some events are pending and dispatch them to the registered
-	 * outputs.
+	 * Check if some events are pending and dispatch them to the registered outputs.
 	 */
 	void pump();
 
 	/**
 	 * Same as {@link #pump()} but try to block until new events were available.
-	 * Note that this feature will not be available on all proxy pipe
-	 * implementation and may throws an
-	 * {@link java.lang.UnsupportedOperationException}. It can throw an
-	 * {@link java.lang.InterruptedException} if the current thread is
+	 * Note that this feature will not be available on all proxy pipe implementation
+	 * and may throws an {@link java.lang.UnsupportedOperationException}. It can
+	 * throw an {@link java.lang.InterruptedException} if the current thread is
 	 * interrupted while proxy is waiting for events.
 	 */
 	void blockingPump() throws InterruptedException;

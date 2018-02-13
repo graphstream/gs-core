@@ -65,8 +65,8 @@ public class FileSinkFactory {
 	}
 
 	/**
-	 * Looks at the file name given and its extension and propose a file output
-	 * for the format that match this extension.
+	 * Looks at the file name given and its extension and propose a file output for
+	 * the format that match this extension.
 	 * 
 	 * @param filename
 	 *            The file name where the graph will be written.

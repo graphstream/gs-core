@@ -56,8 +56,7 @@ public class SpriteFactory {
 	 *            The sprite initial position or null for (0,0,0,GU).
 	 * @return A new sprite.
 	 */
-	public Sprite newSprite(String identifier, SpriteManager manager,
-			Values position) {
+	public Sprite newSprite(String identifier, SpriteManager manager, Values position) {
 		if (position != null)
 			return new Sprite(identifier, manager, position);
 

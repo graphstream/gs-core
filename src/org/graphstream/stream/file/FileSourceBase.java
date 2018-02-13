@@ -45,7 +45,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import org.graphstream.stream.SourceBase;
-import org.graphstream.util.geom.Point3;
+import org.graphstream.ui.geom.Point3;
 
 /**
  * Base for various graph file input.
@@ -88,9 +88,9 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 
 	/**
 	 * Stack of tokenizers/filenames. Each tokenizer is open on a file. When an
-	 * include is found, the current tokenizer is pushed on the stack and a new
-	 * one for the included file is created. Once the included file is parsed,
-	 * the tokenizer is popped of the stack and the previous one is used.
+	 * include is found, the current tokenizer is pushed on the stack and a new one
+	 * for the included file is created. Once the included file is parsed, the
+	 * tokenizer is popped of the stack and the previous one is used.
 	 */
 	protected ArrayList<CurrentFile> tok_stack = new ArrayList<CurrentFile>();
 
@@ -205,18 +205,18 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 
 	/**
 	 * Declare that when <code>attribute</code> is found, the corresponding
-	 * <code>attribute_class</code> must be instantiated and inserted in the
-	 * current element being parsed. This is equivalent to the "map" keyword of
-	 * the GML file. An attribute appears in a GML file as a name followed by a
-	 * "[...]" block. The contents of this block defines sub-attributes that
-	 * must map to public fields of the attribute. Only attributes that are not
-	 * handled specifically by this parser can be added.
+	 * <code>attribute_class</code> must be instantiated and inserted in the current
+	 * element being parsed. This is equivalent to the "map" keyword of the GML
+	 * file. An attribute appears in a GML file as a name followed by a "[...]"
+	 * block. The contents of this block defines sub-attributes that must map to
+	 * public fields of the attribute. Only attributes that are not handled
+	 * specifically by this parser can be added.
 	 * 
 	 * @param attribute
 	 *            must name the attribute.
 	 * @param attribute_class
-	 *            must be the complete name of a Java class that will represent
-	 *            the attribute.
+	 *            must be the complete name of a Java class that will represent the
+	 *            attribute.
 	 */
 	public void addAttributeClass(String attribute, String attribute_class) {
 		attribute_classes.put(attribute, attribute_class);
@@ -225,10 +225,10 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	// Command -- Parsing -- Include mechanism
 
 	/**
-	 * Include the content of a <code>file</code>. This pushes a new tokenizer
-	 * on the input stack, calls the {@link #continueParsingInInclude()} method
-	 * (that must be implemented to read the include contents) and when finished
-	 * pops the tokenizer of the input stack.
+	 * Include the content of a <code>file</code>. This pushes a new tokenizer on
+	 * the input stack, calls the {@link #continueParsingInInclude()} method (that
+	 * must be implemented to read the include contents) and when finished pops the
+	 * tokenizer of the input stack.
 	 */
 	protected void include(String file) throws IOException {
 		pushTokenizer(file);
@@ -237,10 +237,9 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	}
 
 	/**
-	 * Must be implemented to read the content of an include. The current
-	 * tokenizer will be set to the included file. When this method returns, the
-	 * include file will be closed an parsing will continue where it was before
-	 * inclusion.
+	 * Must be implemented to read the content of an include. The current tokenizer
+	 * will be set to the included file. When this method returns, the include file
+	 * will be closed an parsing will continue where it was before inclusion.
 	 */
 	protected abstract void continueParsingInInclude() throws IOException;
 
@@ -258,12 +257,11 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 
 		try {
 			reader = createReaderFrom(file);
-			tok = createTokenizer(reader); 
-			
+			tok = createTokenizer(reader);
+
 			cur = new CurrentFile(file, tok, reader);
 		} catch (FileNotFoundException e) {
-			throw new IOException("cannot read file '" + file
-					+ "', not found: " + e.getMessage());
+			throw new IOException("cannot read file '" + file + "', not found: " + e.getMessage());
 		}
 
 		configureTokenizer(tok);
@@ -296,11 +294,9 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	protected Reader createReaderFrom(InputStream stream) {
 		return new BufferedReader(new InputStreamReader(stream));
 	}
-	
-	
+
 	/**
-	 * Push a tokenizer created from a stream on the file stack and make it
-	 * current.
+	 * Push a tokenizer created from a stream on the file stack and make it current.
 	 * 
 	 * @param url
 	 *            The URL used as source for the tokenizer.
@@ -310,8 +306,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	}
 
 	/**
-	 * Push a tokenizer created from a stream on the file stack and make it
-	 * current.
+	 * Push a tokenizer created from a stream on the file stack and make it current.
 	 * 
 	 * @param stream
 	 *            The stream used as source for the tokenizer.
@@ -321,22 +316,20 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	}
 
 	/**
-	 * Push a tokenizer created from a stream on the file stack and make it
-	 * current.
+	 * Push a tokenizer created from a stream on the file stack and make it current.
 	 * 
 	 * @param stream
 	 *            The stream used as source for the tokenizer.
 	 * @param name
 	 *            The name of the input stream.
 	 */
-	protected void pushTokenizer(InputStream stream, String name)
-			throws IOException {
+	protected void pushTokenizer(InputStream stream, String name) throws IOException {
 		StreamTokenizer tok;
 		CurrentFile cur;
 		Reader reader;
 
 		reader = createReaderFrom(stream);
-		tok = createTokenizer(reader); 
+		tok = createTokenizer(reader);
 		cur = new CurrentFile(name, tok, reader);
 
 		configureTokenizer(tok);
@@ -346,11 +339,8 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 		filename = name;
 	}
 
-
-
 	/**
-	 * Push a tokenizer created from a reader on the file stack and make it
-	 * current.
+	 * Push a tokenizer created from a reader on the file stack and make it current.
 	 * 
 	 * @param reader
 	 *            The reader used as source for the tokenizer.
@@ -358,9 +348,9 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	protected void pushTokenizer(Reader reader) throws IOException {
 		StreamTokenizer tok;
 		CurrentFile cur;
-		
+
 		tok = createTokenizer(reader);
-		cur = new CurrentFile("<?reader?>", tok,reader);
+		cur = new CurrentFile("<?reader?>", tok, reader);
 		configureTokenizer(tok);
 		tok_stack.add(cur);
 
@@ -378,16 +368,13 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	 * @throws IOException
 	 *             For any I/O error.
 	 */
-	private StreamTokenizer createTokenizer(Reader reader)
-			throws IOException {
+	private StreamTokenizer createTokenizer(Reader reader) throws IOException {
 		return new StreamTokenizer(new BufferedReader(reader));
 	}
 
-	
 	/**
-	 * Method to override to configure the tokenizer behaviour. It is called
-	 * each time a tokenizer is created (for the parsed file and all included
-	 * files).
+	 * Method to override to configure the tokenizer behaviour. It is called each
+	 * time a tokenizer is created (for the parsed file and all included files).
 	 */
 	protected void configureTokenizer(StreamTokenizer tok) throws IOException {
 		if (COMMENT_CHAR > 0)
@@ -399,8 +386,8 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	}
 
 	/**
-	 * Remove the current tokenizer from the stack and restore the previous one
-	 * (if any).
+	 * Remove the current tokenizer from the stack and restore the previous one (if
+	 * any).
 	 */
 	protected void popTokenizer() throws IOException {
 		int n = tok_stack.size();
@@ -410,9 +397,9 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 
 		n -= 1;
 
-		CurrentFile  cur = tok_stack.remove(n);
+		CurrentFile cur = tok_stack.remove(n);
 		cur.reader.close();
-		
+
 		if (n > 0) {
 			n -= 1;
 
@@ -426,9 +413,9 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	// Low level parsing
 
 	/**
-	 * Push back the last read thing, so that it can be read anew. This allows
-	 * to explore one token ahead, and if not corresponding to what is expected,
-	 * go back.
+	 * Push back the last read thing, so that it can be read anew. This allows to
+	 * explore one token ahead, and if not corresponding to what is expected, go
+	 * back.
 	 */
 	protected void pushBack() {
 		st.pushBack();
@@ -482,8 +469,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	}
 
 	/**
-	 * Read an expected word among the given word list or generate a parse
-	 * error.
+	 * Read an expected word among the given word list or generate a parse error.
 	 * 
 	 * @param words
 	 *            The expected words.
@@ -516,13 +502,11 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	 *            The alternative word to eat.
 	 * @return The word eaten.
 	 */
-	protected String eatOneOfTwoWords(String word1, String word2)
-			throws IOException {
+	protected String eatOneOfTwoWords(String word1, String word2) throws IOException {
 		int tok = st.nextToken();
 
 		if (tok != StreamTokenizer.TT_WORD)
-			parseError("expecting `" + word1 + "' or  `" + word2 + "', "
-					+ gotWhat(tok));
+			parseError("expecting `" + word1 + "' or  `" + word2 + "', " + gotWhat(tok));
 
 		if (st.sval.equals(word1))
 			return word1;
@@ -530,8 +514,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 		if (st.sval.equals(word2))
 			return word2;
 
-		parseError("expecting `" + word1 + "' or `" + word2 + "' got `"
-				+ st.sval + "'");
+		parseError("expecting `" + word1 + "' or `" + word2 + "' got `" + st.sval + "'");
 		return null;
 	}
 
@@ -562,15 +545,14 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 		}
 
 		if (!f)
-			parseError("expecting one of symbols `" + symbols + "', "
-					+ gotWhat(tok));
-		
+			parseError("expecting one of symbols `" + symbols + "', " + gotWhat(tok));
+
 		return tok;
 	}
 
 	/**
-	 * Eat the expected <code>word</code> or push back what was read so that it
-	 * can be read anew.
+	 * Eat the expected <code>word</code> or push back what was read so that it can
+	 * be read anew.
 	 */
 	protected void eatWordOrPushbak(String word) throws IOException {
 		int tok = st.nextToken();
@@ -583,8 +565,8 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	}
 
 	/**
-	 * Eat the expected <code>symbol</code> or push back what was read so that
-	 * it can be read anew.
+	 * Eat the expected <code>symbol</code> or push back what was read so that it
+	 * can be read anew.
 	 */
 	protected void eatSymbolOrPushback(char symbol) throws IOException {
 		int tok = st.nextToken();
@@ -594,8 +576,8 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	}
 
 	/**
-	 * Eat all until an EOL is found. The EOL is also eaten. This works only if
-	 * EOL is significant (else it does nothing).
+	 * Eat all until an EOL is found. The EOL is also eaten. This works only if EOL
+	 * is significant (else it does nothing).
 	 */
 	protected void eatAllUntilEol() throws IOException {
 		if (!eol_is_significant)
@@ -606,8 +588,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 		if (tok == StreamTokenizer.TT_EOF)
 			return;
 
-		while ((tok != StreamTokenizer.TT_EOL)
-				&& (tok != StreamTokenizer.TT_EOF)) {
+		while ((tok != StreamTokenizer.TT_EOL) && (tok != StreamTokenizer.TT_EOF)) {
 			tok = st.nextToken();
 		}
 	}
@@ -645,10 +626,8 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	protected char getSymbol() throws IOException {
 		int tok = st.nextToken();
 
-		if (tok > 0 && tok != StreamTokenizer.TT_WORD
-				&& tok != StreamTokenizer.TT_NUMBER
-				&& tok != StreamTokenizer.TT_EOL
-				&& tok != StreamTokenizer.TT_EOF && tok != QUOTE_CHAR
+		if (tok > 0 && tok != StreamTokenizer.TT_WORD && tok != StreamTokenizer.TT_NUMBER
+				&& tok != StreamTokenizer.TT_EOL && tok != StreamTokenizer.TT_EOF && tok != QUOTE_CHAR
 				&& tok != COMMENT_CHAR) {
 			return (char) tok;
 		}
@@ -658,16 +637,14 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	}
 
 	/**
-	 * Get a symbol or push back what was read so that it can be read anew. If
-	 * no symbol is found, 0 is returned.
+	 * Get a symbol or push back what was read so that it can be read anew. If no
+	 * symbol is found, 0 is returned.
 	 */
 	protected char getSymbolOrPushback() throws IOException {
 		int tok = st.nextToken();
 
-		if (tok > 0 && tok != StreamTokenizer.TT_WORD
-				&& tok != StreamTokenizer.TT_NUMBER
-				&& tok != StreamTokenizer.TT_EOL
-				&& tok != StreamTokenizer.TT_EOF && tok != QUOTE_CHAR
+		if (tok > 0 && tok != StreamTokenizer.TT_WORD && tok != StreamTokenizer.TT_NUMBER
+				&& tok != StreamTokenizer.TT_EOL && tok != StreamTokenizer.TT_EOF && tok != QUOTE_CHAR
 				&& tok != COMMENT_CHAR) {
 			return (char) tok;
 		}
@@ -678,8 +655,8 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	}
 
 	/**
-	 * Read a string constant (between quotes) or generate a parse error. Return
-	 * the content of the string without the quotes.
+	 * Read a string constant (between quotes) or generate a parse error. Return the
+	 * content of the string without the quotes.
 	 */
 	protected String getString() throws IOException {
 		int tok = st.nextToken();
@@ -715,15 +692,14 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	}
 
 	/**
-	 * Read a string or number or generate a parse error. If it is a number it
-	 * is converted to a string before being returned.
+	 * Read a string or number or generate a parse error. If it is a number it is
+	 * converted to a string before being returned.
 	 */
 	protected String getStringOrNumber() throws IOException {
 		int tok = st.nextToken();
 
 		if (tok != QUOTE_CHAR && tok != StreamTokenizer.TT_NUMBER)
-			parseError("expecting a string constant or a number, "
-					+ gotWhat(tok));
+			parseError("expecting a string constant or a number, " + gotWhat(tok));
 
 		if (tok == StreamTokenizer.TT_NUMBER) {
 			if ((st.nval - ((int) st.nval)) == 0)
@@ -736,8 +712,8 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	}
 
 	/**
-	 * Read a string or number or pushback and return null. If it is a number it
-	 * is converted to a string before being returned.
+	 * Read a string or number or pushback and return null. If it is a number it is
+	 * converted to a string before being returned.
 	 */
 	protected String getStringOrWordOrNumberOrPushback() throws IOException {
 		int tok = st.nextToken();
@@ -761,8 +737,8 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	}
 
 	/**
-	 * Read a string or number or generate a parse error. If it is a number it
-	 * is converted to a string before being returned.
+	 * Read a string or number or generate a parse error. If it is a number it is
+	 * converted to a string before being returned.
 	 */
 	protected String getStringOrWordOrNumber() throws IOException {
 		int tok = st.nextToken();
@@ -834,8 +810,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	protected String getWordOrSymbol() throws IOException {
 		int tok = st.nextToken();
 
-		if (tok == StreamTokenizer.TT_NUMBER || tok == QUOTE_CHAR
-				|| tok == StreamTokenizer.TT_EOF)
+		if (tok == StreamTokenizer.TT_NUMBER || tok == QUOTE_CHAR || tok == StreamTokenizer.TT_EOF)
 			parseError("expecting a word or symbol, " + gotWhat(tok));
 
 		if (tok == StreamTokenizer.TT_WORD)
@@ -851,8 +826,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	protected String getWordOrSymbolOrPushback() throws IOException {
 		int tok = st.nextToken();
 
-		if (tok == StreamTokenizer.TT_NUMBER || tok == QUOTE_CHAR
-				|| tok == StreamTokenizer.TT_EOF) {
+		if (tok == StreamTokenizer.TT_NUMBER || tok == QUOTE_CHAR || tok == StreamTokenizer.TT_EOF) {
 			pushBack();
 			return null;
 		}
@@ -907,8 +881,8 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	}
 
 	/**
-	 * Read a word, a symbol or EOF, or generate a parse error. If this is EOF,
-	 * the string "EOF" is returned.
+	 * Read a word, a symbol or EOF, or generate a parse error. If this is EOF, the
+	 * string "EOF" is returned.
 	 */
 	protected String getWordOrSymbolOrEof() throws IOException {
 		int tok = st.nextToken();
@@ -925,9 +899,9 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	}
 
 	/**
-	 * Read a word or symbol or string or EOL/EOF or generate a parse error. If
-	 * EOL is read the "EOL" string is returned. If EOF is read the "EOF" string
-	 * is returned.
+	 * Read a word or symbol or string or EOL/EOF or generate a parse error. If EOL
+	 * is read the "EOL" string is returned. If EOF is read the "EOF" string is
+	 * returned.
 	 * 
 	 * @return A string.
 	 */
@@ -953,12 +927,12 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	}
 
 	/**
-	 * Read a word or number or string or EOL/EOF or generate a parse error. If
-	 * EOL is read the "EOL" string is returned. If EOF is read the "EOF" string
-	 * is returned. If a number is returned, it is converted to a string as
-	 * follows: if it is an integer, only the integer part is converted to a
-	 * string without dot or comma and no leading zeros. If it is a float the
-	 * fractional part is also converted and the dot is used as separator.
+	 * Read a word or number or string or EOL/EOF or generate a parse error. If EOL
+	 * is read the "EOL" string is returned. If EOF is read the "EOF" string is
+	 * returned. If a number is returned, it is converted to a string as follows: if
+	 * it is an integer, only the integer part is converted to a string without dot
+	 * or comma and no leading zeros. If it is a float the fractional part is also
+	 * converted and the dot is used as separator.
 	 * 
 	 * @return A string.
 	 */
@@ -984,16 +958,14 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 		if (tok == StreamTokenizer.TT_EOL)
 			return "EOL";
 
-		parseError("expecting a word, a number, a string, EOL or EOF, "
-				+ gotWhat(tok));
+		parseError("expecting a word, a number, a string, EOL or EOF, " + gotWhat(tok));
 		return null; // Never happen, parseError throws unconditionally an
 						// exception.
 	}
 
 	/**
-	 * Read a word or string or EOL/EOF or generate a parse error. If EOL is
-	 * read the "EOL" string is returned. If EOF is read the "EOF" string is
-	 * returned.
+	 * Read a word or string or EOL/EOF or generate a parse error. If EOL is read
+	 * the "EOL" string is returned. If EOF is read the "EOF" string is returned.
 	 * 
 	 * @return A string.
 	 */
@@ -1020,17 +992,16 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	// Order: Word | String | Symbol | Number | Eol | Eof
 
 	/**
-	 * Read a word or number or string or EOL/EOF or generate a parse error. If
-	 * EOL is read the "EOL" string is returned. If EOF is read the "EOF" string
-	 * is returned. If a number is returned, it is converted to a string as
-	 * follows: if it is an integer, only the integer part is converted to a
-	 * string without dot or comma and no leading zeros. If it is a float the
-	 * fractional part is also converted and the dot is used as separator.
+	 * Read a word or number or string or EOL/EOF or generate a parse error. If EOL
+	 * is read the "EOL" string is returned. If EOF is read the "EOF" string is
+	 * returned. If a number is returned, it is converted to a string as follows: if
+	 * it is an integer, only the integer part is converted to a string without dot
+	 * or comma and no leading zeros. If it is a float the fractional part is also
+	 * converted and the dot is used as separator.
 	 * 
 	 * @return A string.
 	 */
-	protected String getWordOrSymbolOrNumberOrStringOrEolOrEof()
-			throws IOException {
+	protected String getWordOrSymbolOrNumberOrStringOrEolOrEof() throws IOException {
 		int tok = st.nextToken();
 
 		if (tok == StreamTokenizer.TT_NUMBER) {
@@ -1080,8 +1051,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 
 		tok = st.nextToken();
 
-		if (tok == StreamTokenizer.TT_WORD
-				&& (st.sval.startsWith("e-") || st.sval.startsWith("e+"))) {
+		if (tok == StreamTokenizer.TT_WORD && (st.sval.startsWith("e-") || st.sval.startsWith("e+"))) {
 			double exp = Double.parseDouble(st.sval.substring(2));
 			return Math.pow(nb, exp);
 		} else {
@@ -1107,8 +1077,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 			if (token == QUOTE_CHAR)
 				return "got string constant `" + st.sval + "'";
 			else
-				return "unknown symbol `" + token + "' (" + ((char) token)
-						+ ")";
+				return "unknown symbol `" + token + "' (" + ((char) token) + ")";
 		}
 	}
 
@@ -1116,15 +1085,14 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	 * Generate a parse error.
 	 */
 	protected void parseError(String message) throws IOException {
-		throw new IOException("parse error: " + filename + ": " + st.lineno()
-				+ ": " + message);
+		throw new IOException("parse error: " + filename + ": " + st.lineno() + ": " + message);
 	}
 
 	// Access
 
 	/**
-	 * True if the <code>string</code> represents a truth statement ("1",
-	 * "true", "yes", "on").
+	 * True if the <code>string</code> represents a truth statement ("1", "true",
+	 * "yes", "on").
 	 */
 	protected boolean isTrue(String string) {
 		string = string.toLowerCase();
@@ -1142,8 +1110,8 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	}
 
 	/**
-	 * True if the <code>string</code> represents a false statement ("0",
-	 * "false", "no", "off").
+	 * True if the <code>string</code> represents a false statement ("0", "false",
+	 * "no", "off").
 	 */
 	protected boolean isFalse(String string) {
 		string = string.toLowerCase();
@@ -1196,8 +1164,8 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	}
 
 	/**
-	 * Get a number triplet with numbers separated by comas and return a new
-	 * point for it. For example "0,1,2".
+	 * Get a number triplet with numbers separated by comas and return a new point
+	 * for it. For example "0,1,2".
 	 */
 	protected Point3 getPoint3(String value) throws NumberFormatException {
 		int p0 = value.indexOf(',');
@@ -1218,35 +1186,27 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 			return new Point3(v0, v1, v2);
 		}
 
-		throw new NumberFormatException("value '" + value
-				+ "' not in a valid point3 format");
+		throw new NumberFormatException("value '" + value + "' not in a valid point3 format");
 	}
 
 	/*
-	 * Get a number triplet with numbers separated by comas and return new
-	 * bounds for it. For example "0,1,2".
-	protected Bounds3 getBounds3(String value) throws NumberFormatException {
-		int p0 = value.indexOf(',');
-		int p1 = value.indexOf(',', p0 + 1);
-
-		if (p0 > 0 && p1 > 0) {
-			String n0, n1, n2;
-			float v0, v1, v2;
-
-			n0 = value.substring(0, p0);
-			n1 = value.substring(p0 + 1, p1);
-			n2 = value.substring(p1 + 1);
-
-			v0 = Float.parseFloat(n0);
-			v1 = Float.parseFloat(n1);
-			v2 = Float.parseFloat(n2);
-
-			return new Bounds3(v0, v1, v2);
-		}
-
-		throw new NumberFormatException("value '" + value
-				+ "' not in a valid point3 format");
-	}
+	 * Get a number triplet with numbers separated by comas and return new bounds
+	 * for it. For example "0,1,2". protected Bounds3 getBounds3(String value)
+	 * throws NumberFormatException { int p0 = value.indexOf(','); int p1 =
+	 * value.indexOf(',', p0 + 1);
+	 * 
+	 * if (p0 > 0 && p1 > 0) { String n0, n1, n2; float v0, v1, v2;
+	 * 
+	 * n0 = value.substring(0, p0); n1 = value.substring(p0 + 1, p1); n2 =
+	 * value.substring(p1 + 1);
+	 * 
+	 * v0 = Float.parseFloat(n0); v1 = Float.parseFloat(n1); v2 =
+	 * Float.parseFloat(n2);
+	 * 
+	 * return new Bounds3(v0, v1, v2); }
+	 * 
+	 * throw new NumberFormatException("value '" + value +
+	 * "' not in a valid point3 format"); }
 	 */
 
 	// Nested classes
@@ -1254,8 +1214,8 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	/**
 	 * Currently processed file.
 	 * <p>
-	 * The graph reader base can process includes in files, and handles a stack
-	 * of files.
+	 * The graph reader base can process includes in files, and handles a stack of
+	 * files.
 	 * </p>
 	 * 
 	 */
@@ -1269,13 +1229,13 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 		 * The stream tokenizer.
 		 */
 		public StreamTokenizer tok;
-		
+
 		public Reader reader;
 
 		public CurrentFile(String f, StreamTokenizer t, Reader reader) {
 			file = f;
 			tok = t;
-			this.reader=reader;
+			this.reader = reader;
 		}
 	}
 }

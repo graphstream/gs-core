@@ -59,10 +59,8 @@ public class GEXFSpell implements GEXFElement {
 	public void export(SmartXMLWriter stream) throws XMLStreamException {
 		stream.startElement("spell");
 
-		stream.stream.writeAttribute("start",
-				root.getTimeFormat().format.format(start));
-		stream.stream.writeAttribute("end",
-				root.getTimeFormat().format.format(closed ? end : root.step));
+		stream.stream.writeAttribute("start", root.getTimeFormat().format.format(start));
+		stream.stream.writeAttribute("end", root.getTimeFormat().format.format(closed ? end : root.step));
 
 		stream.endElement(); // SPELL
 

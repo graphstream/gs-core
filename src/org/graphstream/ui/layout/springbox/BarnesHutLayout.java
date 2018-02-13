@@ -34,7 +34,7 @@ package org.graphstream.ui.layout.springbox;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.SourceBase;
 import org.graphstream.stream.sync.SinkTime;
-import org.graphstream.util.geom.Point3;
+import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphPosLengthUtils;
 import org.graphstream.ui.layout.Layout;
 import org.miv.pherd.ParticleBox;
@@ -56,12 +56,12 @@ import java.util.logging.Logger;
  * interaction algorithm to be used for force-based layout algorithms.
  * 
  * <p>
- * This base class creates the space decomposition method and manages the
- * main loop of the simulation. The simulation is made of {@link NodeParticle}
- * and {@link EdgeSpring} elements that are created and linked for you in
- * response to graph events received via the {@link Sink} interface. However
- * you have to provide an implementation of the abstract {@link NodeParticle} class
- * (by overriding the abstract method {@link #newNodeParticle(String)}). 
+ * This base class creates the space decomposition method and manages the main
+ * loop of the simulation. The simulation is made of {@link NodeParticle} and
+ * {@link EdgeSpring} elements that are created and linked for you in response
+ * to graph events received via the {@link Sink} interface. However you have to
+ * provide an implementation of the abstract {@link NodeParticle} class (by
+ * overriding the abstract method {@link #newNodeParticle(String)}).
  * </p>
  * 
  * <p>
@@ -75,7 +75,8 @@ import java.util.logging.Logger;
  * <li>layout.force : a floating point number (default 0.5f), that allows to
  * define the importance of movement of each node at each computation step. The
  * larger the value the quicker nodes move to their position of lowest energy.
- * However too high values can generate non stable layouts and oscillations.</li>
+ * However too high values can generate non stable layouts and
+ * oscillations.</li>
  * <li>layout.quality : an integer between 0 and 4. With value 0 the layout is
  * faster but it also can be farther from equilibrium. With value 4 the
  * algorithm tries to be as close as possible from equilibrium (the n-tree and
@@ -104,16 +105,16 @@ import java.util.logging.Logger;
  */
 public abstract class BarnesHutLayout extends SourceBase implements Layout, ParticleBoxListener {
 
-    /**
-     * class level logger
-     */
-    private static final Logger logger = Logger.getLogger(BarnesHutLayout.class.getName());
+	/**
+	 * class level logger
+	 */
+	private static final Logger logger = Logger.getLogger(BarnesHutLayout.class.getName());
 
 	/**
 	 * The nodes representation and the n-tree. The particle-box is an
-	 * implementation of a recursive space decomposition method that is used
-	 * here to break the O(n^2) complexity into a Barnes-Hut algorithm that is
-	 * closer to O(n log n).
+	 * implementation of a recursive space decomposition method that is used here to
+	 * break the O(n^2) complexity into a Barnes-Hut algorithm that is closer to O(n
+	 * log n).
 	 */
 	protected ParticleBox nodes;
 
@@ -141,7 +142,7 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 	 * The highest node position.
 	 */
 	protected Point3 hi = new Point3(1, 1, 1);
-	
+
 	/**
 	 * The point in the middle of the layout.
 	 */
@@ -158,14 +159,14 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 	protected Energies energies = new Energies();
 
 	/**
-	 * Global force strength. This is a factor in [0..1] that is used to scale
-	 * all computed displacements.
+	 * Global force strength. This is a factor in [0..1] that is used to scale all
+	 * computed displacements.
 	 */
 	protected double force = 1f;
 
 	/**
-	 * The view distance at which the cells of the n-tree are explored
-	 * exhaustively, after this the poles are used. This is a multiple of k.
+	 * The view distance at which the cells of the n-tree are explored exhaustively,
+	 * after this the poles are used. This is a multiple of k.
 	 */
 	protected double viewZone = 5f;
 
@@ -232,7 +233,7 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 	 * The gravity factor. If set to 0 the gravity computation is disabled.
 	 */
 	protected double gravity = 0;
-	
+
 	/**
 	 * Send node informations?.
 	 */
@@ -245,8 +246,8 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 	protected boolean outputStats = false;
 
 	/**
-	 * If true a file is created for each node (!!!) and its movement statistics
-	 * are logged.
+	 * If true a file is created for each node (!!!) and its movement statistics are
+	 * logged.
 	 */
 	protected boolean outputNodeStats = false;
 
@@ -292,15 +293,12 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 		this.random = randomNumberGenerator;
 
 		if (is3D) {
-			space = new OctreeCellSpace(new Anchor(-1, -1, -1), new Anchor(1,
-					1, 1));
+			space = new OctreeCellSpace(new Anchor(-1, -1, -1), new Anchor(1, 1, 1));
 		} else {
-			space = new QuadtreeCellSpace(new Anchor(-1, -1, -0.01f),
-					new Anchor(1, 1, 0.01f));
+			space = new QuadtreeCellSpace(new Anchor(-1, -1, -0.01f), new Anchor(1, 1, 0.01f));
 		}
 
-		this.nodes = new ParticleBox(nodesPerCell, space,
-				new GraphCellData());
+		this.nodes = new ParticleBox(nodesPerCell, space, new GraphCellData());
 
 		nodes.addParticleBoxListener(this);
 		setQuality(quality);
@@ -322,46 +320,49 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 	}
 
 	public double randomXInsideBounds() {
-		org.miv.pherd.geom.Point3 c = ((GraphCellData)nodes.getNTree().getRootCell().getData()).center;
-		return c.x + (random.nextDouble()*2-1);
-		//org.miv.pherd.geom.Point3 lo = nodes.getNTree().getLowestPoint();
-		//org.miv.pherd.geom.Point3 hi = nodes.getNTree().getHighestPoint();
-		//return lo.x + ((hi.x - lo.x)*random.nextDouble());
+		org.miv.pherd.geom.Point3 c = ((GraphCellData) nodes.getNTree().getRootCell().getData()).center;
+		return c.x + (random.nextDouble() * 2 - 1);
+		// org.miv.pherd.geom.Point3 lo = nodes.getNTree().getLowestPoint();
+		// org.miv.pherd.geom.Point3 hi = nodes.getNTree().getHighestPoint();
+		// return lo.x + ((hi.x - lo.x)*random.nextDouble());
 	}
 
 	public double randomYInsideBounds() {
-		org.miv.pherd.geom.Point3 c = ((GraphCellData)nodes.getNTree().getRootCell().getData()).center;
-		return c.y + (random.nextDouble()*2-1);
-		//org.miv.pherd.geom.Point3 lo = nodes.getNTree().getLowestPoint();
-		//org.miv.pherd.geom.Point3 hi = nodes.getNTree().getHighestPoint();
-		//return lo.y + ((hi.y - lo.y)*random.nextDouble());
+		org.miv.pherd.geom.Point3 c = ((GraphCellData) nodes.getNTree().getRootCell().getData()).center;
+		return c.y + (random.nextDouble() * 2 - 1);
+		// org.miv.pherd.geom.Point3 lo = nodes.getNTree().getLowestPoint();
+		// org.miv.pherd.geom.Point3 hi = nodes.getNTree().getHighestPoint();
+		// return lo.y + ((hi.y - lo.y)*random.nextDouble());
 	}
 
 	public double randomZInsideBounds() {
-		org.miv.pherd.geom.Point3 c = ((GraphCellData)nodes.getNTree().getRootCell().getData()).center;
-		return c.z + (random.nextDouble()*2-1);
-		//org.miv.pherd.geom.Point3 lo = nodes.getNTree().getLowestPoint();
-		//org.miv.pherd.geom.Point3 hi = nodes.getNTree().getHighestPoint();
-		//return lo.z + ((hi.z - lo.z)*random.nextDouble());
+		org.miv.pherd.geom.Point3 c = ((GraphCellData) nodes.getNTree().getRootCell().getData()).center;
+		return c.z + (random.nextDouble() * 2 - 1);
+		// org.miv.pherd.geom.Point3 lo = nodes.getNTree().getLowestPoint();
+		// org.miv.pherd.geom.Point3 hi = nodes.getNTree().getHighestPoint();
+		// return lo.z + ((hi.z - lo.z)*random.nextDouble());
 	}
-	
+
 	public Point3 getCenterPoint() {
 		return center;
 	}
-	
+
 	/**
-	 * A gravity factor that attracts all nodes to the center of the layout to avoid flying components. If
-	 * set to zero, the gravity computation is disabled.
+	 * A gravity factor that attracts all nodes to the center of the layout to avoid
+	 * flying components. If set to zero, the gravity computation is disabled.
+	 * 
 	 * @return The gravity factor, usually between 0 and 1.
 	 */
 	public double getGravityFactor() {
 		return gravity;
 	}
-	
+
 	/**
-	 * Set the gravity factor that attracts all nodes to the center of the layout to avoid flying components. If
-	 * set to zero, the gravity computation is disabled.
-	 * @param value The new gravity factor, usually between 0 and 1.
+	 * Set the gravity factor that attracts all nodes to the center of the layout to
+	 * avoid flying components. If set to zero, the gravity computation is disabled.
+	 * 
+	 * @param value
+	 *            The new gravity factor, usually between 0 and 1.
 	 */
 	public void setGravityFactor(double value) {
 		gravity = value;
@@ -443,8 +444,8 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 	}
 
 	/**
-	 * Change the barnes-hut theta parameter allowing to know if we use a pole
-	 * or not.
+	 * Change the barnes-hut theta parameter allowing to know if we use a pole or
+	 * not.
 	 * 
 	 * @param theta
 	 *            The new value for theta (between 0 and 1).
@@ -499,8 +500,8 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 
 		getLowPoint();
 		getHiPoint();
-		center = new Point3(lo.x+(hi.x-lo.x)/2, lo.y+(hi.y-lo.y)/2, lo.z+(hi.z-lo.z)/2);
-		//center.set(0, 0, 0);
+		center = new Point3(lo.x + (hi.x - lo.x) / 2, lo.y + (hi.y - lo.y) / 2, lo.z + (hi.z - lo.z) / 2);
+		// center.set(0, 0, 0);
 		energies.storeEnergy();
 		printStats();
 		time++;
@@ -508,8 +509,8 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 	}
 
 	/**
-	 * Output some statistics on the layout process. This method is active only
-	 * if {@link #outputStats} is true.
+	 * Output some statistics on the layout process. This method is active only if
+	 * {@link #outputStats} is true.
 	 */
 	protected void printStats() {
 		if (outputStats) {
@@ -524,13 +525,10 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 			}
 
 			if (statsOut != null) {
-				double energyDiff = energies.getEnergy()
-						- energies.getPreviousEnergyValue(30);
+				double energyDiff = energies.getEnergy() - energies.getPreviousEnergyValue(30);
 
-				statsOut.printf(Locale.US, "%f %d %f %f %f %f%n",
-						getStabilization(), nodeMoveCount,
-						energies.getEnergy(), energyDiff, maxMoveLength,
-						avgLength, area);
+				statsOut.printf(Locale.US, "%f %d %f %f %f %f%n", getStabilization(), nodeMoveCount,
+						energies.getEnergy(), energyDiff, maxMoveLength, avgLength, area);
 				statsOut.flush();
 			}
 		}
@@ -580,12 +578,12 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 		if (node != null) {
 			node.removeNeighborEdges();
 		} else {
-            logger.warning(String.format("layout %s: cannot remove non existing node %s%n", getLayoutAlgorithmName(), id));
+			logger.warning(
+					String.format("layout %s: cannot remove non existing node %s%n", getLayoutAlgorithmName(), id));
 		}
 	}
 
-	protected void addEdge(String sourceId, String id, String from, String to,
-			boolean directed) {
+	protected void addEdge(String sourceId, String id, String from, String to, boolean directed) {
 		NodeParticle n0 = (NodeParticle) nodes.getParticle(from);
 		NodeParticle n1 = (NodeParticle) nodes.getParticle(to);
 
@@ -603,15 +601,17 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 			chooseNodePosition(n0, n1);
 		} else {
 			if (n0 == null)
-                logger.warning(String.format("layout %s: node '%s' does not exist, cannot create edge %s.", getLayoutAlgorithmName(), from, id));
+				logger.warning(String.format("layout %s: node '%s' does not exist, cannot create edge %s.",
+						getLayoutAlgorithmName(), from, id));
 			if (n1 == null)
-                logger.warning(String.format("layout %s: node '%s' does not exist, cannot create edge %s.", getLayoutAlgorithmName(), to, id));
+				logger.warning(String.format("layout %s: node '%s' does not exist, cannot create edge %s.",
+						getLayoutAlgorithmName(), to, id));
 		}
 	}
 
 	/**
-	 * Choose the best position for a node that was just connected by only one
-	 * edge to a cluster of nodes.
+	 * Choose the best position for a node that was just connected by only one edge
+	 * to a cluster of nodes.
 	 * 
 	 * @param n0
 	 *            source node of the edge.
@@ -646,14 +646,14 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 			e.node0.unregisterEdge(e);
 			e.node1.unregisterEdge(e);
 		} else {
-            logger.warning(String.format("layout %s: cannot remove non existing edge %s%n", getLayoutAlgorithmName(), id));
+			logger.warning(
+					String.format("layout %s: cannot remove non existing edge %s%n", getLayoutAlgorithmName(), id));
 		}
 	}
 
 	// Particle box listener
 
-	public void particleAdded(Object id, double x, double y, double z,
-			Object mark) {
+	public void particleAdded(Object id, double x, double y, double z, Object mark) {
 	}
 
 	public void particleAdded(Object id, double x, double y, double z) {
@@ -679,14 +679,13 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 	public void stepFinished(int time) {
 	}
 
-	public void particleAttributeChanged(Object id, String attribute,
-			Object newValue, boolean removed) {
+	public void particleAttributeChanged(Object id, String attribute, Object newValue, boolean removed) {
 	}
 
 	// SourceBase interface
 
-	public void edgeAdded(String graphId, long time, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
+	public void edgeAdded(String graphId, long time, String edgeId, String fromNodeId, String toNodeId,
+			boolean directed) {
 		if (sinkTime.isNewEvent(graphId, time)) {
 			addEdge(graphId, edgeId, fromNodeId, toNodeId, directed);
 			sendEdgeAdded(graphId, time, edgeId, fromNodeId, toNodeId, directed);
@@ -727,25 +726,21 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 		}
 	}
 
-	public void graphAttributeAdded(String graphId, long time,
-			String attribute, Object value) {
+	public void graphAttributeAdded(String graphId, long time, String attribute, Object value) {
 		if (sinkTime.isNewEvent(graphId, time)) {
 			graphAttributeChanged_(graphId, attribute, null, value);
 			sendGraphAttributeAdded(graphId, time, attribute, value);
 		}
 	}
 
-	public void graphAttributeChanged(String graphId, long time,
-			String attribute, Object oldValue, Object newValue) {
+	public void graphAttributeChanged(String graphId, long time, String attribute, Object oldValue, Object newValue) {
 		if (sinkTime.isNewEvent(graphId, time)) {
 			graphAttributeChanged_(graphId, attribute, oldValue, newValue);
-			sendGraphAttributeChanged(graphId, time, attribute, oldValue,
-					newValue);
+			sendGraphAttributeChanged(graphId, time, attribute, oldValue, newValue);
 		}
 	}
 
-	protected void graphAttributeChanged_(String graphId, String attribute,
-			Object oldValue, Object newValue) {
+	protected void graphAttributeChanged_(String graphId, String attribute, Object oldValue, Object newValue) {
 		if (attribute.equals("layout.force")) {
 			if (newValue instanceof Number)
 				setForce(((Number) newValue).doubleValue());
@@ -758,15 +753,15 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 				q = q < 0 ? 0 : q;
 
 				setQuality(q);
-                logger.fine(String.format("layout.%s.quality: %d.", getLayoutAlgorithmName(), q));
+				logger.fine(String.format("layout.%s.quality: %d.", getLayoutAlgorithmName(), q));
 			}
 
 			energies.clearEnergies();
-		} else if(attribute.equals("layout.gravity")) {
-			if(newValue instanceof Number) {
-				double value = ((Number)newValue).doubleValue();
+		} else if (attribute.equals("layout.gravity")) {
+			if (newValue instanceof Number) {
+				double value = ((Number) newValue).doubleValue();
 				setGravityFactor(value);
-                logger.fine(String.format("layout.%s.gravity: %f.", getLayoutAlgorithmName(), value));
+				logger.fine(String.format("layout.%s.gravity: %f.", getLayoutAlgorithmName(), value));
 			}
 		} else if (attribute.equals("layout.exact-zone")) {
 			if (newValue instanceof Number) {
@@ -776,7 +771,7 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 				factor = factor < 0 ? 0 : factor;
 
 				viewZone = factor;
-                logger.fine(String.format("layout.%s.exact-zone: %f of [0..1]%n", getLayoutAlgorithmName(), viewZone));
+				logger.fine(String.format("layout.%s.exact-zone: %f of [0..1]%n", getLayoutAlgorithmName(), viewZone));
 
 				energies.clearEnergies();
 			}
@@ -786,7 +781,7 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 			else
 				outputStats = true;
 
-            logger.fine(String.format("layout.%s.output-stats: %b%n", getLayoutAlgorithmName(), outputStats));
+			logger.fine(String.format("layout.%s.output-stats: %b%n", getLayoutAlgorithmName(), outputStats));
 		} else if (attribute.equals("layout.stabilization-limit")) {
 			if (newValue instanceof Number) {
 				stabilizationLimit = ((Number) newValue).doubleValue();
@@ -800,33 +795,29 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 		}
 	}
 
-	public void graphAttributeRemoved(String graphId, long time,
-			String attribute) {
+	public void graphAttributeRemoved(String graphId, long time, String attribute) {
 		if (sinkTime.isNewEvent(graphId, time)) {
 			sendGraphAttributeRemoved(graphId, time, attribute);
 		}
 	}
 
-	public void nodeAttributeAdded(String graphId, long time, String nodeId,
-			String attribute, Object value) {
+	public void nodeAttributeAdded(String graphId, long time, String nodeId, String attribute, Object value) {
 		if (sinkTime.isNewEvent(graphId, time)) {
 			nodeAttributeChanged_(graphId, nodeId, attribute, null, value);
 			sendNodeAttributeAdded(graphId, time, nodeId, attribute, value);
 		}
 	}
 
-	public void nodeAttributeChanged(String graphId, long time, String nodeId,
-			String attribute, Object oldValue, Object newValue) {
+	public void nodeAttributeChanged(String graphId, long time, String nodeId, String attribute, Object oldValue,
+			Object newValue) {
 		if (sinkTime.isNewEvent(graphId, time)) {
-			nodeAttributeChanged_(graphId, nodeId, attribute, oldValue,
-					newValue);
-			sendNodeAttributeChanged(graphId, time, nodeId, attribute,
-					oldValue, newValue);
+			nodeAttributeChanged_(graphId, nodeId, attribute, oldValue, newValue);
+			sendNodeAttributeChanged(graphId, time, nodeId, attribute, oldValue, newValue);
 		}
 	}
 
-	protected void nodeAttributeChanged_(String graphId, String nodeId,
-			String attribute, Object oldValue, Object newValue) {
+	protected void nodeAttributeChanged_(String graphId, String nodeId, String attribute, Object oldValue,
+			Object newValue) {
 		if (attribute.equals("layout.weight")) {
 			if (newValue instanceof Number)
 				setNodeWeight(nodeId, ((Number) newValue).doubleValue());
@@ -843,46 +834,40 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 		} else if (attribute.equals("x") && newValue instanceof Number) {
 			NodeParticle node = (NodeParticle) nodes.getParticle(nodeId);
 			if (node != null) {
-				moveNode(nodeId, ((Number) newValue).doubleValue(),
-						node.getPosition().y, node.getPosition().z);
+				moveNode(nodeId, ((Number) newValue).doubleValue(), node.getPosition().y, node.getPosition().z);
 			}
 		} else if (attribute.equals("y") && newValue instanceof Number) {
 			NodeParticle node = (NodeParticle) nodes.getParticle(nodeId);
 			if (node != null) {
-				moveNode(nodeId, node.getPosition().x,
-						((Number) newValue).doubleValue(), node.getPosition().z);
+				moveNode(nodeId, node.getPosition().x, ((Number) newValue).doubleValue(), node.getPosition().z);
 			}
 		}
 	}
 
-	public void nodeAttributeRemoved(String graphId, long time, String nodeId,
-			String attribute) {
+	public void nodeAttributeRemoved(String graphId, long time, String nodeId, String attribute) {
 		if (sinkTime.isNewEvent(graphId, time)) {
 			nodeAttributeChanged_(graphId, nodeId, attribute, null, null);
 			sendNodeAttributeRemoved(graphId, time, nodeId, attribute);
 		}
 	}
 
-	public void edgeAttributeAdded(String graphId, long time, String edgeId,
-			String attribute, Object value) {
+	public void edgeAttributeAdded(String graphId, long time, String edgeId, String attribute, Object value) {
 		if (sinkTime.isNewEvent(graphId, time)) {
 			edgeAttributeChanged_(graphId, edgeId, attribute, null, value);
 			sendEdgeAttributeAdded(graphId, time, edgeId, attribute, value);
 		}
 	}
 
-	public void edgeAttributeChanged(String graphId, long time, String edgeId,
-			String attribute, Object oldValue, Object newValue) {
+	public void edgeAttributeChanged(String graphId, long time, String edgeId, String attribute, Object oldValue,
+			Object newValue) {
 		if (sinkTime.isNewEvent(graphId, time)) {
-			edgeAttributeChanged_(graphId, edgeId, attribute, oldValue,
-					newValue);
-			sendEdgeAttributeChanged(graphId, time, edgeId, attribute,
-					oldValue, newValue);
+			edgeAttributeChanged_(graphId, edgeId, attribute, oldValue, newValue);
+			sendEdgeAttributeChanged(graphId, time, edgeId, attribute, oldValue, newValue);
 		}
 	}
 
-	protected void edgeAttributeChanged_(String graphId, String edgeId,
-			String attribute, Object oldValue, Object newValue) {
+	protected void edgeAttributeChanged_(String graphId, String edgeId, String attribute, Object oldValue,
+			Object newValue) {
 		if (attribute.equals("layout.weight")) {
 			if (newValue instanceof Number)
 				setEdgeWeight(edgeId, ((Number) newValue).doubleValue());
@@ -897,8 +882,7 @@ public abstract class BarnesHutLayout extends SourceBase implements Layout, Part
 		}
 	}
 
-	public void edgeAttributeRemoved(String graphId, long time, String edgeId,
-			String attribute) {
+	public void edgeAttributeRemoved(String graphId, long time, String edgeId, String attribute) {
 		if (sinkTime.isNewEvent(graphId, time)) {
 			edgeAttributeChanged_(graphId, edgeId, attribute, null, null);
 			sendEdgeAttributeRemoved(attribute, time, edgeId, attribute);

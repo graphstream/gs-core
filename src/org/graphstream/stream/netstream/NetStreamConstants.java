@@ -44,8 +44,8 @@ package org.graphstream.stream.netstream;
  * </p>
  * <p>
  * If you are looking for a Java-to-Java network link between GraphStream and
- * some other project, you may prefer GraphStream's <a
- * class="reference external" href=
+ * some other project, you may prefer GraphStream's
+ * <a class="reference external" href=
  * "http://graphstream-project.org/doc/Tutorials/Using-remote-source_1.0/"
  * >RMI</a> facilities.
  * </p>
@@ -54,7 +54,8 @@ package org.graphstream.stream.netstream;
  * Receiver's mechanisms. The second section describes the Sender. The last
  * section details the NetStream Protocol.
  * </p>
- * <div class="section" id="receiver"> <h1>Receiver</h1>
+ * <div class="section" id="receiver">
+ * <h1>Receiver</h1>
  * <p>
  * This one is responsible for receiving graph events from the network following
  * the &quot;NetStream&quot; protocol. Events are then dispatched to pipes
@@ -109,8 +110,8 @@ package org.graphstream.stream.netstream;
  * introduced by a sender will be created by the receiver.
  * </p>
  * 
- * <div class="section" id="example"> <h2>
- * Example</h2>
+ * <div class="section" id="example">
+ * <h2>Example</h2>
  * 
  * <pre class="code-java literal-block">
  * import java.io.IOException;
@@ -124,8 +125,7 @@ package org.graphstream.stream.netstream;
  * 
  * public class ReceiverExample {
  * 
- * 	public static void main(String[] args) throws UnknownHostException,
- * 			IOException, InterruptedException {
+ * 	public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException {
  * 		// ----- On the receiver side -----
  * 		//
  * 		// - a graph that will display the received events
@@ -146,7 +146,8 @@ package org.graphstream.stream.netstream;
  * }
  * </pre>
  * 
- * </div> </div> <div class="section" id="sender"> <h1>Sender</h1>
+ * </div> </div> <div class="section" id="sender">
+ * <h1>Sender</h1>
  * <p>
  * A sender, from the GraphStream API, is first of all a sink where one can plug
  * sources so that it can receive events. Receiving these events the sender will
@@ -154,7 +155,8 @@ package org.graphstream.stream.netstream;
  * those messages to a defined receiver through a given <strong>port</strong>,
  * <strong>host</strong> and <strong>stream ID</strong>.
  * </p>
- * <div class="section" id="id1"> <h2>Example</h2>
+ * <div class="section" id="id1">
+ * <h2>Example</h2>
  * 
  * <pre class="code-java literal-block">
  * import java.io.IOException;
@@ -198,8 +200,8 @@ package org.graphstream.stream.netstream;
  * }
  * </pre>
  * 
- * </div> </div> <div class="section" id="the-netstream-protocol"> <h1>The
- * NetStream Protocol</h1>
+ * </div> </div> <div class="section" id="the-netstream-protocol">
+ * <h1>The NetStream Protocol</h1>
  * <p>
  * Messages in the NetStream protocol are specified a the byte level. It is
  * different than an XML-based protocols like client/server REST approaches.
@@ -390,7 +392,8 @@ package org.graphstream.stream.netstream;
  * </p>
  * </li>
  * </ul>
- * </div> <div class="section" id="graph-events"> <h2>Graph Events</h2>
+ * </div> <div class="section" id="graph-events">
+ * <h2>Graph Events</h2>
  * <p>
  * the graph event, as created by a sender, is the third part of the whole sent
  * message. It is made of several parts that differ according the event. The
@@ -610,6 +613,7 @@ package org.graphstream.stream.netstream;
  * Copyright (c) 2010-2012 University of Luxembourg - University of Le Havre
  * 
  * NetStreamConstants.java
+ * 
  * @since Aug 3, 2011
  * 
  * @author Yoann Pigné
@@ -625,9 +629,9 @@ public class NetStreamConstants {
 	 * Not used.
 	 */
 	public static int EVENT_START = 0x01;
-	
+
 	/**
-	 * Constant indicating that the client has disconnected. 
+	 * Constant indicating that the client has disconnected.
 	 */
 	public static int EVENT_END = 0x02;
 
@@ -669,13 +673,13 @@ public class NetStreamConstants {
 	public static int EVENT_CLEARED = 0x15;
 
 	/**
-	 * Followed by - an attribute id (TYPE_STRING format) - the attribute TYPE -
-	 * the attribute value
+	 * Followed by - an attribute id (TYPE_STRING format) - the attribute TYPE - the
+	 * attribute value
 	 */
 	public static int EVENT_ADD_GRAPH_ATTR = 0x16;
 	/**
-	 * Followed by - an attribute id (TYPE_STRING format) - the attribute TYPE -
-	 * the attribute old value - the attribute new value
+	 * Followed by - an attribute id (TYPE_STRING format) - the attribute TYPE - the
+	 * attribute old value - the attribute new value
 	 */
 	public static int EVENT_CHG_GRAPH_ATTR = 0x17;
 	/**
@@ -684,13 +688,13 @@ public class NetStreamConstants {
 	public static int EVENT_DEL_GRAPH_ATTR = 0x18;
 
 	/**
-	 * Followed by - an attribute id (TYPE_STRING format) - the attribute TYPE -
-	 * the attribute value
+	 * Followed by - an attribute id (TYPE_STRING format) - the attribute TYPE - the
+	 * attribute value
 	 */
 	public static int EVENT_ADD_NODE_ATTR = 0x19;
 	/**
-	 * Followed by - an attribute id (TYPE_STRING format) - the attribute TYPE -
-	 * the attribute old value - the attribute new value
+	 * Followed by - an attribute id (TYPE_STRING format) - the attribute TYPE - the
+	 * attribute old value - the attribute new value
 	 */
 	public static int EVENT_CHG_NODE_ATTR = 0x1a;
 	/**
@@ -700,13 +704,13 @@ public class NetStreamConstants {
 	public static int EVENT_DEL_NODE_ATTR = 0x1b;
 
 	/**
-	 * Followed by - an attribute id (TYPE_STRING format) - the attribute TYPE -
-	 * the attribute value
+	 * Followed by - an attribute id (TYPE_STRING format) - the attribute TYPE - the
+	 * attribute value
 	 */
 	public static int EVENT_ADD_EDGE_ATTR = 0x1c;
 	/**
-	 * Followed by - an attribute id (TYPE_STRING format) - the attribute TYPE -
-	 * the attribute old value - the attribute new value
+	 * Followed by - an attribute id (TYPE_STRING format) - the attribute TYPE - the
+	 * attribute old value - the attribute new value
 	 */
 	public static int EVENT_CHG_EDGE_ATTR = 0x1d;
 	/**
@@ -718,14 +722,14 @@ public class NetStreamConstants {
 	// Values types
 
 	public static int TYPE_UNKNOWN = 0x00;
-	
+
 	/**
 	 * Followed by a byte who's value is 0 or 1
 	 */
 	public static int TYPE_BOOLEAN = 0x50;
 	/**
-	 * An array of booleans. Followed by first, a 16-bits integer for the number
-	 * of booleans and then, a list of bytes who's value is 0 or 1
+	 * An array of booleans. Followed by first, a 16-bits integer for the number of
+	 * booleans and then, a list of bytes who's value is 0 or 1
 	 */
 	public static int TYPE_BOOLEAN_ARRAY = 0x51;
 	/**
@@ -742,8 +746,8 @@ public class NetStreamConstants {
 	 */
 	public static int TYPE_SHORT = 0x54;
 	/**
-	 * An array of shorts. Followed by first, a 16-bits integer for the number
-	 * of integers and then, a list of 16-bit signed shorts
+	 * An array of shorts. Followed by first, a 16-bits integer for the number of
+	 * integers and then, a list of 16-bit signed shorts
 	 */
 	public static int TYPE_SHORT_ARRAY = 0x55;
 	/**
@@ -751,8 +755,8 @@ public class NetStreamConstants {
 	 */
 	public static int TYPE_INT = 0x56;
 	/**
-	 * An array of integers. Followed by first, a 16-bits integer for the number
-	 * of integers and then, a list of 32-bit signed integers
+	 * An array of integers. Followed by first, a 16-bits integer for the number of
+	 * integers and then, a list of 32-bit signed integers
 	 */
 	public static int TYPE_INT_ARRAY = 0x57;
 	/**
@@ -784,8 +788,7 @@ public class NetStreamConstants {
 	public static int TYPE_DOUBLE_ARRAY = 0x5d;
 	/**
 	 * Array of characters. Followed by first, a 16-bits integer for the size in
-	 * bytes (not in number of characters) of the string, then by the unicode
-	 * string
+	 * bytes (not in number of characters) of the string, then by the unicode string
 	 */
 	public static int TYPE_STRING = 0x5e;
 	/**
@@ -795,24 +798,22 @@ public class NetStreamConstants {
 	public static int TYPE_RAW = 0x5f;
 
 	/**
-	 * An type-unspecified array. Followed by first, a 16-bits integer
-	 * indicating the number of elements, and then, the elements themselves. The
-	 * elements themselves have to give their type.
+	 * An type-unspecified array. Followed by first, a 16-bits integer indicating
+	 * the number of elements, and then, the elements themselves. The elements
+	 * themselves have to give their type.
 	 */
 	public static byte TYPE_ARRAY = 0x60;
-	
+
 	public static int TYPE_NULL = 0x61;
-	
-	
-	
+
 	/**
-	 *  Constant that indicates that this message is a COMMAND, not and EVENT.
-	 *  
-	 *  For now it is followed by a string that has to be parssed at the application level.
-	 *  
-	 *  THIS IS EXPERIMENTAL AND MAY (WILL) CHANGE ! 
+	 * Constant that indicates that this message is a COMMAND, not and EVENT.
+	 * 
+	 * For now it is followed by a string that has to be parssed at the application
+	 * level.
+	 * 
+	 * THIS IS EXPERIMENTAL AND MAY (WILL) CHANGE !
 	 */
 	public static int COMMAND = 0x70;
-	
 
 }

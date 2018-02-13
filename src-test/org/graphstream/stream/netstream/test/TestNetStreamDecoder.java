@@ -45,250 +45,255 @@ import java.nio.ByteBuffer;
  */
 public class TestNetStreamDecoder {
 
-    @Test
-    public void testEventNodeAdded() {
-        final String streamId = "stream-test";
-        final String sourceId = "test";
-        final String nodeId = "node-test";
-        final long timeId = 123;
+	@Test
+	public void testEventNodeAdded() {
+		final String streamId = "stream-test";
+		final String sourceId = "test";
+		final String nodeId = "node-test";
+		final long timeId = 123;
 
-        final NetStreamDecoder dec = new NetStreamDecoder();
+		final NetStreamDecoder dec = new NetStreamDecoder();
 
-        NetStreamEncoder enc = new NetStreamEncoder("stream-test", new ByteEncoder.Transport() {
-            @Override
-            public void send(ByteBuffer buffer) {
-                dec.decode(buffer);
-            }
-        });
+		NetStreamEncoder enc = new NetStreamEncoder("stream-test", new ByteEncoder.Transport() {
+			@Override
+			public void send(ByteBuffer buffer) {
+				dec.decode(buffer);
+			}
+		});
 
-        FailSink sink = new FailSink() {
-            public void nodeAdded(String sourceIdDec, long timeIdDec, String nodeIdDec) {
-                triggered = true;
+		FailSink sink = new FailSink() {
+			public void nodeAdded(String sourceIdDec, long timeIdDec, String nodeIdDec) {
+				triggered = true;
 
-                Assert.assertEquals(sourceId, sourceIdDec);
-                Assert.assertEquals(timeId, timeIdDec);
-                Assert.assertEquals(nodeId, nodeIdDec);
-            }
-        };
+				Assert.assertEquals(sourceId, sourceIdDec);
+				Assert.assertEquals(timeId, timeIdDec);
+				Assert.assertEquals(nodeId, nodeIdDec);
+			}
+		};
 
-        dec.addSink(sink);
+		dec.addSink(sink);
 
-        enc.nodeAdded(sourceId, timeId, nodeId);
+		enc.nodeAdded(sourceId, timeId, nodeId);
 
-        Assert.assertTrue(sink.triggered);
-    }
+		Assert.assertTrue(sink.triggered);
+	}
 
-    @Test
-    public void testEventNodeRemoved() {
-        final String streamId = "stream-test";
-        final String sourceId = "test";
-        final String nodeId = "node-test";
-        final long timeId = 123;
+	@Test
+	public void testEventNodeRemoved() {
+		final String streamId = "stream-test";
+		final String sourceId = "test";
+		final String nodeId = "node-test";
+		final long timeId = 123;
 
-        final NetStreamDecoder dec = new NetStreamDecoder();
+		final NetStreamDecoder dec = new NetStreamDecoder();
 
-        NetStreamEncoder enc = new NetStreamEncoder("stream-test", new ByteEncoder.Transport() {
-            @Override
-            public void send(ByteBuffer buffer) {
-                dec.decode(buffer);
-            }
-        });
+		NetStreamEncoder enc = new NetStreamEncoder("stream-test", new ByteEncoder.Transport() {
+			@Override
+			public void send(ByteBuffer buffer) {
+				dec.decode(buffer);
+			}
+		});
 
-        FailSink sink = new FailSink() {
-            public void nodeRemoved(String sourceIdDec, long timeIdDec, String nodeIdDec) {
-                triggered = true;
+		FailSink sink = new FailSink() {
+			public void nodeRemoved(String sourceIdDec, long timeIdDec, String nodeIdDec) {
+				triggered = true;
 
-                Assert.assertEquals(sourceId, sourceIdDec);
-                Assert.assertEquals(timeId, timeIdDec);
-                Assert.assertEquals(nodeId, nodeIdDec);
-            }
-        };
+				Assert.assertEquals(sourceId, sourceIdDec);
+				Assert.assertEquals(timeId, timeIdDec);
+				Assert.assertEquals(nodeId, nodeIdDec);
+			}
+		};
 
-        dec.addSink(sink);
+		dec.addSink(sink);
 
-        enc.nodeRemoved(sourceId, timeId, nodeId);
+		enc.nodeRemoved(sourceId, timeId, nodeId);
 
-        Assert.assertTrue(sink.triggered);
-    }
+		Assert.assertTrue(sink.triggered);
+	}
 
-    @Test
-    public void testEventEdgeAdded() {
-        final String streamId = "stream-test";
-        final String sourceId = "test";
-        final String edgeId = "edge-test";
-        final String nodeA = "node-a";
-        final String nodeB = "node-b";
-        final long timeId = 123;
+	@Test
+	public void testEventEdgeAdded() {
+		final String streamId = "stream-test";
+		final String sourceId = "test";
+		final String edgeId = "edge-test";
+		final String nodeA = "node-a";
+		final String nodeB = "node-b";
+		final long timeId = 123;
 
-        final NetStreamDecoder dec = new NetStreamDecoder();
+		final NetStreamDecoder dec = new NetStreamDecoder();
 
-        NetStreamEncoder enc = new NetStreamEncoder("stream-test", new ByteEncoder.Transport() {
-            @Override
-            public void send(ByteBuffer buffer) {
-                dec.decode(buffer);
-            }
-        });
+		NetStreamEncoder enc = new NetStreamEncoder("stream-test", new ByteEncoder.Transport() {
+			@Override
+			public void send(ByteBuffer buffer) {
+				dec.decode(buffer);
+			}
+		});
 
-        FailSink sink = new FailSink() {
-            public void edgeAdded(String sourceIdDec, long timeIdDec, String edgeIdDec, String fromNodeId, String toNodeId, boolean directed) {
-                triggered = true;
+		FailSink sink = new FailSink() {
+			public void edgeAdded(String sourceIdDec, long timeIdDec, String edgeIdDec, String fromNodeId,
+					String toNodeId, boolean directed) {
+				triggered = true;
 
-                Assert.assertEquals(sourceId, sourceIdDec);
-                Assert.assertEquals(timeId, timeIdDec);
-                Assert.assertEquals(edgeId, edgeIdDec);
-                Assert.assertEquals(nodeA, fromNodeId);
-                Assert.assertEquals(nodeB, toNodeId);
-                Assert.assertEquals(true, directed);
-            }
-        };
+				Assert.assertEquals(sourceId, sourceIdDec);
+				Assert.assertEquals(timeId, timeIdDec);
+				Assert.assertEquals(edgeId, edgeIdDec);
+				Assert.assertEquals(nodeA, fromNodeId);
+				Assert.assertEquals(nodeB, toNodeId);
+				Assert.assertEquals(true, directed);
+			}
+		};
 
-        dec.addSink(sink);
+		dec.addSink(sink);
 
-        enc.edgeAdded(sourceId, timeId, edgeId, nodeA, nodeB, true);
+		enc.edgeAdded(sourceId, timeId, edgeId, nodeA, nodeB, true);
 
-        Assert.assertTrue(sink.triggered);
-    }
+		Assert.assertTrue(sink.triggered);
+	}
 
-    @Test
-    public void testEventEdgeRemoved() {
-        final String streamId = "stream-test";
-        final String sourceId = "test";
-        final String edgeId = "edge-test";
-        final long timeId = 123;
+	@Test
+	public void testEventEdgeRemoved() {
+		final String streamId = "stream-test";
+		final String sourceId = "test";
+		final String edgeId = "edge-test";
+		final long timeId = 123;
 
-        final NetStreamDecoder dec = new NetStreamDecoder();
+		final NetStreamDecoder dec = new NetStreamDecoder();
 
-        NetStreamEncoder enc = new NetStreamEncoder("stream-test", new ByteEncoder.Transport() {
-            @Override
-            public void send(ByteBuffer buffer) {
-                dec.decode(buffer);
-            }
-        });
+		NetStreamEncoder enc = new NetStreamEncoder("stream-test", new ByteEncoder.Transport() {
+			@Override
+			public void send(ByteBuffer buffer) {
+				dec.decode(buffer);
+			}
+		});
 
-        FailSink sink = new FailSink() {
-            public void edgeRemoved(String sourceIdDec, long timeIdDec, String edgeIdDec) {
-                triggered = true;
+		FailSink sink = new FailSink() {
+			public void edgeRemoved(String sourceIdDec, long timeIdDec, String edgeIdDec) {
+				triggered = true;
 
-                Assert.assertEquals(sourceId, sourceIdDec);
-                Assert.assertEquals(timeId, timeIdDec);
-                Assert.assertEquals(edgeId, edgeIdDec);
-            }
-        };
+				Assert.assertEquals(sourceId, sourceIdDec);
+				Assert.assertEquals(timeId, timeIdDec);
+				Assert.assertEquals(edgeId, edgeIdDec);
+			}
+		};
 
-        dec.addSink(sink);
+		dec.addSink(sink);
 
-        enc.edgeRemoved(sourceId, timeId, edgeId);
+		enc.edgeRemoved(sourceId, timeId, edgeId);
 
-        Assert.assertTrue(sink.triggered);
-    }
+		Assert.assertTrue(sink.triggered);
+	}
 
-    @Test
-    public void testEventGraphCleared() {
-        final String streamId = "stream-test";
-        final String sourceId = "test";
-        final long timeId = 123;
+	@Test
+	public void testEventGraphCleared() {
+		final String streamId = "stream-test";
+		final String sourceId = "test";
+		final long timeId = 123;
 
-        final NetStreamDecoder dec = new NetStreamDecoder();
+		final NetStreamDecoder dec = new NetStreamDecoder();
 
-        NetStreamEncoder enc = new NetStreamEncoder("stream-test", new ByteEncoder.Transport() {
-            @Override
-            public void send(ByteBuffer buffer) {
-                dec.decode(buffer);
-            }
-        });
+		NetStreamEncoder enc = new NetStreamEncoder("stream-test", new ByteEncoder.Transport() {
+			@Override
+			public void send(ByteBuffer buffer) {
+				dec.decode(buffer);
+			}
+		});
 
-        FailSink sink = new FailSink() {
-            public void graphCleared(String sourceIdDec, long timeIdDec) {
-                triggered = true;
+		FailSink sink = new FailSink() {
+			public void graphCleared(String sourceIdDec, long timeIdDec) {
+				triggered = true;
 
-                Assert.assertEquals(sourceId, sourceIdDec);
-                Assert.assertEquals(timeId, timeIdDec);
-            }
-        };
+				Assert.assertEquals(sourceId, sourceIdDec);
+				Assert.assertEquals(timeId, timeIdDec);
+			}
+		};
 
-        dec.addSink(sink);
+		dec.addSink(sink);
 
-        enc.graphCleared(sourceId, timeId);
+		enc.graphCleared(sourceId, timeId);
 
-        Assert.assertTrue(sink.triggered);
-    }
+		Assert.assertTrue(sink.triggered);
+	}
 
-    class FailSink implements Sink {
-        boolean triggered = false;
+	class FailSink implements Sink {
+		boolean triggered = false;
 
-        @Override
-        public void graphAttributeAdded(String sourceId, long timeId, String attribute, Object value) {
-            Assert.fail();
-        }
+		@Override
+		public void graphAttributeAdded(String sourceId, long timeId, String attribute, Object value) {
+			Assert.fail();
+		}
 
-        @Override
-        public void graphAttributeChanged(String sourceId, long timeId, String attribute, Object oldValue, Object newValue) {
-            Assert.fail();
-        }
+		@Override
+		public void graphAttributeChanged(String sourceId, long timeId, String attribute, Object oldValue,
+				Object newValue) {
+			Assert.fail();
+		}
 
-        @Override
-        public void graphAttributeRemoved(String sourceId, long timeId, String attribute) {
-            Assert.fail();
-        }
+		@Override
+		public void graphAttributeRemoved(String sourceId, long timeId, String attribute) {
+			Assert.fail();
+		}
 
-        @Override
-        public void nodeAttributeAdded(String sourceId, long timeId, String nodeId, String attribute, Object value) {
-            Assert.fail();
-        }
+		@Override
+		public void nodeAttributeAdded(String sourceId, long timeId, String nodeId, String attribute, Object value) {
+			Assert.fail();
+		}
 
-        @Override
-        public void nodeAttributeChanged(String sourceId, long timeId, String nodeId, String attribute, Object oldValue, Object newValue) {
-            Assert.fail();
-        }
+		@Override
+		public void nodeAttributeChanged(String sourceId, long timeId, String nodeId, String attribute, Object oldValue,
+				Object newValue) {
+			Assert.fail();
+		}
 
-        @Override
-        public void nodeAttributeRemoved(String sourceId, long timeId, String nodeId, String attribute) {
-            Assert.fail();
-        }
+		@Override
+		public void nodeAttributeRemoved(String sourceId, long timeId, String nodeId, String attribute) {
+			Assert.fail();
+		}
 
-        @Override
-        public void edgeAttributeAdded(String sourceId, long timeId, String edgeId, String attribute, Object value) {
-            Assert.fail();
-        }
+		@Override
+		public void edgeAttributeAdded(String sourceId, long timeId, String edgeId, String attribute, Object value) {
+			Assert.fail();
+		}
 
-        @Override
-        public void edgeAttributeChanged(String sourceId, long timeId, String edgeId, String attribute, Object oldValue, Object newValue) {
-            Assert.fail();
-        }
+		@Override
+		public void edgeAttributeChanged(String sourceId, long timeId, String edgeId, String attribute, Object oldValue,
+				Object newValue) {
+			Assert.fail();
+		}
 
-        @Override
-        public void edgeAttributeRemoved(String sourceId, long timeId, String edgeId, String attribute) {
-            Assert.fail();
-        }
+		@Override
+		public void edgeAttributeRemoved(String sourceId, long timeId, String edgeId, String attribute) {
+			Assert.fail();
+		}
 
-        @Override
-        public void nodeAdded(String sourceId, long timeId, String nodeId) {
-            Assert.fail();
-        }
+		@Override
+		public void nodeAdded(String sourceId, long timeId, String nodeId) {
+			Assert.fail();
+		}
 
-        @Override
-        public void nodeRemoved(String sourceId, long timeId, String nodeId) {
-            Assert.fail();
-        }
+		@Override
+		public void nodeRemoved(String sourceId, long timeId, String nodeId) {
+			Assert.fail();
+		}
 
-        @Override
-        public void edgeAdded(String sourceId, long timeId, String edgeId, String fromNodeId, String toNodeId, boolean directed) {
-            Assert.fail();
-        }
+		@Override
+		public void edgeAdded(String sourceId, long timeId, String edgeId, String fromNodeId, String toNodeId,
+				boolean directed) {
+			Assert.fail();
+		}
 
-        @Override
-        public void edgeRemoved(String sourceId, long timeId, String edgeId) {
-            Assert.fail();
-        }
+		@Override
+		public void edgeRemoved(String sourceId, long timeId, String edgeId) {
+			Assert.fail();
+		}
 
-        @Override
-        public void graphCleared(String sourceId, long timeId) {
-            Assert.fail();
-        }
+		@Override
+		public void graphCleared(String sourceId, long timeId) {
+			Assert.fail();
+		}
 
-        @Override
-        public void stepBegins(String sourceId, long timeId, double step) {
-            Assert.fail();
-        }
-    }
+		@Override
+		public void stepBegins(String sourceId, long timeId, double step) {
+			Assert.fail();
+		}
+	}
 }

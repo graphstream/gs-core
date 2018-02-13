@@ -109,11 +109,11 @@ public interface FileSource extends Source {
 	void readAll(Reader reader) throws IOException;
 
 	/**
-	 * Begin reading the file stopping as soon as possible. Next graph events
-	 * stored in the file will be sent by calling {@link #nextEvents()} or
+	 * Begin reading the file stopping as soon as possible. Next graph events stored
+	 * in the file will be sent by calling {@link #nextEvents()} or
 	 * {@link #nextStep()}. Once begin() has been called, you must finish the
-	 * reading process using {@link #end()}. You cannot call begin() twice
-	 * without having called {@link #end()} in between.
+	 * reading process using {@link #end()}. You cannot call begin() twice without
+	 * having called {@link #end()} in between.
 	 * 
 	 * @param fileName
 	 *            Name of the file to read.
@@ -123,11 +123,11 @@ public interface FileSource extends Source {
 	void begin(String fileName) throws IOException;
 
 	/**
-	 * Begin reading the file stopping as soon as possible. Next graph events
-	 * stored in the file will be sent by calling {@link #nextEvents()} or
+	 * Begin reading the file stopping as soon as possible. Next graph events stored
+	 * in the file will be sent by calling {@link #nextEvents()} or
 	 * {@link #nextStep()}. Once begin() has been called, you must finish the
-	 * reading process using {@link #end()}. You cannot call begin() twice
-	 * without having called {@link #end()} in between.
+	 * reading process using {@link #end()}. You cannot call begin() twice without
+	 * having called {@link #end()} in between.
 	 * 
 	 * @param url
 	 *            The URL of the file to read.
@@ -137,11 +137,11 @@ public interface FileSource extends Source {
 	void begin(URL url) throws IOException;
 
 	/**
-	 * Begin reading the file stopping as soon as possible. Next graph events
-	 * stored in the file will be sent by calling {@link #nextEvents()} or
+	 * Begin reading the file stopping as soon as possible. Next graph events stored
+	 * in the file will be sent by calling {@link #nextEvents()} or
 	 * {@link #nextStep()}. Once begin() has been called, you must finish the
-	 * reading process using {@link #end()}. You cannot call begin() twice
-	 * without having called {@link #end()} in between.
+	 * reading process using {@link #end()}. You cannot call begin() twice without
+	 * having called {@link #end()} in between.
 	 * 
 	 * @param stream
 	 *            The input stream to use for reading.
@@ -151,11 +151,11 @@ public interface FileSource extends Source {
 	void begin(InputStream stream) throws IOException;
 
 	/**
-	 * Begin reading the file stopping as soon as possible. Next graph events
-	 * stored in the file will be sent by calling {@link #nextEvents()} or
+	 * Begin reading the file stopping as soon as possible. Next graph events stored
+	 * in the file will be sent by calling {@link #nextEvents()} or
 	 * {@link #nextStep()}. Once begin() has been called, you must finish the
-	 * reading process using {@link #end()}. You cannot call begin() twice
-	 * without having called {@link #end()} in between.
+	 * reading process using {@link #end()}. You cannot call begin() twice without
+	 * having called {@link #end()} in between.
 	 * 
 	 * @param reader
 	 *            The file reader to use.
@@ -165,27 +165,27 @@ public interface FileSource extends Source {
 	void begin(Reader reader) throws IOException;
 
 	/**
-	 * Try to process one graph event, or as few as possible, if more must be
-	 * read at once. For this method to work, you must have called
+	 * Try to process one graph event, or as few as possible, if more must be read
+	 * at once. For this method to work, you must have called
 	 * {@link #begin(InputStream)} or {@link #begin(String)} before. This method
 	 * return true while there are still events to read.
 	 * 
-	 * @return true if there are still events to read, false as soon as the file
-	 *         is finished.
+	 * @return true if there are still events to read, false as soon as the file is
+	 *         finished.
 	 * @throws IOException
 	 *             If an I/O error occurs while reading.
 	 */
 	boolean nextEvents() throws IOException;
 
 	/**
-	 * Try to process all the events occurring during one time step. In
-	 * GraphStream, a time step is a group of events that are considered
-	 * occurring at the same time. Most file formats do not have this notion of
-	 * step. The DGS format designed for GraphStream handles steps. This method
-	 * return true while there are still events to read.
+	 * Try to process all the events occurring during one time step. In GraphStream,
+	 * a time step is a group of events that are considered occurring at the same
+	 * time. Most file formats do not have this notion of step. The DGS format
+	 * designed for GraphStream handles steps. This method return true while there
+	 * are still events to read.
 	 * 
-	 * @return true if there are still events to read, false as soon as the file
-	 *         is finished.
+	 * @return true if there are still events to read, false as soon as the file is
+	 *         finished.
 	 * @throws IOException
 	 *             If an I/O error occurs while reading.
 	 */
@@ -193,8 +193,8 @@ public interface FileSource extends Source {
 
 	/**
 	 * Finish the reading process (even if {@link #nextEvents()} or
-	 * {@link #nextStep()} did not returned false). You must call this method
-	 * after reading.
+	 * {@link #nextStep()} did not returned false). You must call this method after
+	 * reading.
 	 * 
 	 * @throws IOException
 	 *             If an I/O error occurs while closing the file.

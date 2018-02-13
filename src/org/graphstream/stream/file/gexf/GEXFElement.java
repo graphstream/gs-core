@@ -45,12 +45,10 @@ public interface GEXFElement {
 	}
 
 	public static enum TimeFormat {
-		INTEGER("integer", new DecimalFormat("#", new DecimalFormatSymbols(
-				Locale.ROOT))), DOUBLE("double",
-				new DecimalFormat("#.0###################",
-						new DecimalFormatSymbols(Locale.ROOT))), DATE("date",
-				new SimpleDateFormat("yyyy-MM-dd")), DATETIME("datetime",
-				new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ"));
+		INTEGER("integer", new DecimalFormat("#", new DecimalFormatSymbols(Locale.ROOT))), DOUBLE("double",
+				new DecimalFormat("#.0###################", new DecimalFormatSymbols(Locale.ROOT))), DATE("date",
+						new SimpleDateFormat("yyyy-MM-dd")), DATETIME("datetime",
+								new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ"));
 		String qname;
 		Format format;
 
@@ -101,9 +99,8 @@ public interface GEXFElement {
 	}
 
 	public static enum AttrType {
-		INTEGER("integer"), LONG("long"), DOUBLE("double"), FLOAT("float"), BOOLEAN(
-				"boolean"), LISTSTRING("liststring"), STRING("string"), ANYURI(
-				"anyURI");
+		INTEGER("integer"), LONG("long"), DOUBLE("double"), FLOAT("float"), BOOLEAN("boolean"), LISTSTRING(
+				"liststring"), STRING("string"), ANYURI("anyURI");
 
 		final String qname;
 

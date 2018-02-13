@@ -78,14 +78,14 @@ public abstract class SourceBase implements Source {
 	protected ArrayList<ElementSink> eltsSinks = new ArrayList<ElementSink>();
 
 	/**
-	 * A queue that allow the management of events (nodes/edge
-	 * add/delete/change) in the right order.
+	 * A queue that allow the management of events (nodes/edge add/delete/change) in
+	 * the right order.
 	 */
 	protected LinkedList<GraphEvent> eventQueue = new LinkedList<GraphEvent>();
 
 	/**
-	 * A boolean that indicates whether or not an Sink event is being sent
-	 * during another one.
+	 * A boolean that indicates whether or not an Sink event is being sent during
+	 * another one.
 	 */
 	protected boolean eventProcessing = false;
 
@@ -93,7 +93,7 @@ public abstract class SourceBase implements Source {
 	 * Id of this source.
 	 */
 	protected String sourceId;
-	
+
 	/**
 	 * Time of this source.
 	 */
@@ -102,9 +102,8 @@ public abstract class SourceBase implements Source {
 	// Construction
 
 	protected SourceBase() {
-		this(String.format("sourceOnThread#%d_%d", Thread.currentThread()
-				.getId(), System.currentTimeMillis()
-				+ ((int) (Math.random() * 1000))));
+		this(String.format("sourceOnThread#%d_%d", Thread.currentThread().getId(),
+				System.currentTimeMillis() + ((int) (Math.random() * 1000))));
 	}
 
 	protected SourceBase(String sourceId) {
@@ -205,8 +204,7 @@ public abstract class SourceBase implements Source {
 			manageEvents();
 			eventProcessing = false;
 		} else {
-			eventQueue.add(new RemoveFromListEvent<AttributeSink>(attrSinks,
-					sink));
+			eventQueue.add(new RemoveFromListEvent<AttributeSink>(attrSinks, sink));
 		}
 	}
 
@@ -220,8 +218,7 @@ public abstract class SourceBase implements Source {
 			manageEvents();
 			eventProcessing = false;
 		} else {
-			eventQueue
-					.add(new RemoveFromListEvent<ElementSink>(eltsSinks, sink));
+			eventQueue.add(new RemoveFromListEvent<ElementSink>(eltsSinks, sink));
 		}
 	}
 
@@ -379,10 +376,8 @@ public abstract class SourceBase implements Source {
 	 * @param directed
 	 *            Is the edge directed?.
 	 */
-	public void sendEdgeAdded(String sourceId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
-		sendEdgeAdded(sourceId, sourceTime.newEvent(), edgeId, fromNodeId,
-				toNodeId, directed);
+	public void sendEdgeAdded(String sourceId, String edgeId, String fromNodeId, String toNodeId, boolean directed) {
+		sendEdgeAdded(sourceId, sourceTime.newEvent(), edgeId, fromNodeId, toNodeId, directed);
 	}
 
 	/**
@@ -400,21 +395,19 @@ public abstract class SourceBase implements Source {
 	 * @param directed
 	 *            Is the edge directed?.
 	 */
-	public void sendEdgeAdded(String sourceId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
+	public void sendEdgeAdded(String sourceId, long timeId, String edgeId, String fromNodeId, String toNodeId,
+			boolean directed) {
 		if (!eventProcessing) {
 			eventProcessing = true;
 			manageEvents();
 
 			for (int i = 0; i < eltsSinks.size(); i++)
-				eltsSinks.get(i).edgeAdded(sourceId, timeId, edgeId,
-						fromNodeId, toNodeId, directed);
+				eltsSinks.get(i).edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId, directed);
 
 			manageEvents();
 			eventProcessing = false;
 		} else {
-			eventQueue.add(new AfterEdgeAddEvent(sourceId, timeId, edgeId,
-					fromNodeId, toNodeId, directed));
+			eventQueue.add(new AfterEdgeAddEvent(sourceId, timeId, edgeId, fromNodeId, toNodeId, directed));
 		}
 	}
 
@@ -466,10 +459,8 @@ public abstract class SourceBase implements Source {
 	 * @param value
 	 *            The attribute value.
 	 */
-	public void sendEdgeAttributeAdded(String sourceId, String edgeId,
-			String attribute, Object value) {
-		sendAttributeChangedEvent(sourceId, edgeId, ElementType.EDGE,
-				attribute, AttributeChangeEvent.ADD, null, value);
+	public void sendEdgeAttributeAdded(String sourceId, String edgeId, String attribute, Object value) {
+		sendAttributeChangedEvent(sourceId, edgeId, ElementType.EDGE, attribute, AttributeChangeEvent.ADD, null, value);
 	}
 
 	/**
@@ -485,10 +476,9 @@ public abstract class SourceBase implements Source {
 	 * @param value
 	 *            The attribute value.
 	 */
-	public void sendEdgeAttributeAdded(String sourceId, long timeId,
-			String edgeId, String attribute, Object value) {
-		sendAttributeChangedEvent(sourceId, timeId, edgeId, ElementType.EDGE,
-				attribute, AttributeChangeEvent.ADD, null, value);
+	public void sendEdgeAttributeAdded(String sourceId, long timeId, String edgeId, String attribute, Object value) {
+		sendAttributeChangedEvent(sourceId, timeId, edgeId, ElementType.EDGE, attribute, AttributeChangeEvent.ADD, null,
+				value);
 	}
 
 	/**
@@ -505,10 +495,10 @@ public abstract class SourceBase implements Source {
 	 * @param newValue
 	 *            The new attribute value.
 	 */
-	public void sendEdgeAttributeChanged(String sourceId, String edgeId,
-			String attribute, Object oldValue, Object newValue) {
-		sendAttributeChangedEvent(sourceId, edgeId, ElementType.EDGE,
-				attribute, AttributeChangeEvent.CHANGE, oldValue, newValue);
+	public void sendEdgeAttributeChanged(String sourceId, String edgeId, String attribute, Object oldValue,
+			Object newValue) {
+		sendAttributeChangedEvent(sourceId, edgeId, ElementType.EDGE, attribute, AttributeChangeEvent.CHANGE, oldValue,
+				newValue);
 	}
 
 	/**
@@ -526,10 +516,10 @@ public abstract class SourceBase implements Source {
 	 * @param newValue
 	 *            The new attribute value.
 	 */
-	public void sendEdgeAttributeChanged(String sourceId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
-		sendAttributeChangedEvent(sourceId, timeId, edgeId, ElementType.EDGE,
-				attribute, AttributeChangeEvent.CHANGE, oldValue, newValue);
+	public void sendEdgeAttributeChanged(String sourceId, long timeId, String edgeId, String attribute, Object oldValue,
+			Object newValue) {
+		sendAttributeChangedEvent(sourceId, timeId, edgeId, ElementType.EDGE, attribute, AttributeChangeEvent.CHANGE,
+				oldValue, newValue);
 	}
 
 	/**
@@ -542,10 +532,9 @@ public abstract class SourceBase implements Source {
 	 * @param attribute
 	 *            The attribute name.
 	 */
-	public void sendEdgeAttributeRemoved(String sourceId, String edgeId,
-			String attribute) {
-		sendAttributeChangedEvent(sourceId, edgeId, ElementType.EDGE,
-				attribute, AttributeChangeEvent.REMOVE, null, null);
+	public void sendEdgeAttributeRemoved(String sourceId, String edgeId, String attribute) {
+		sendAttributeChangedEvent(sourceId, edgeId, ElementType.EDGE, attribute, AttributeChangeEvent.REMOVE, null,
+				null);
 	}
 
 	/**
@@ -559,10 +548,9 @@ public abstract class SourceBase implements Source {
 	 * @param attribute
 	 *            The attribute name.
 	 */
-	public void sendEdgeAttributeRemoved(String sourceId, long timeId,
-			String edgeId, String attribute) {
-		sendAttributeChangedEvent(sourceId, timeId, edgeId, ElementType.EDGE,
-				attribute, AttributeChangeEvent.REMOVE, null, null);
+	public void sendEdgeAttributeRemoved(String sourceId, long timeId, String edgeId, String attribute) {
+		sendAttributeChangedEvent(sourceId, timeId, edgeId, ElementType.EDGE, attribute, AttributeChangeEvent.REMOVE,
+				null, null);
 	}
 
 	/**
@@ -575,10 +563,8 @@ public abstract class SourceBase implements Source {
 	 * @param value
 	 *            The attribute value.
 	 */
-	public void sendGraphAttributeAdded(String sourceId, String attribute,
-			Object value) {
-		sendAttributeChangedEvent(sourceId, null, ElementType.GRAPH, attribute,
-				AttributeChangeEvent.ADD, null, value);
+	public void sendGraphAttributeAdded(String sourceId, String attribute, Object value) {
+		sendAttributeChangedEvent(sourceId, null, ElementType.GRAPH, attribute, AttributeChangeEvent.ADD, null, value);
 	}
 
 	/**
@@ -592,10 +578,9 @@ public abstract class SourceBase implements Source {
 	 * @param value
 	 *            The attribute value.
 	 */
-	public void sendGraphAttributeAdded(String sourceId, long timeId,
-			String attribute, Object value) {
-		sendAttributeChangedEvent(sourceId, timeId, null, ElementType.GRAPH,
-				attribute, AttributeChangeEvent.ADD, null, value);
+	public void sendGraphAttributeAdded(String sourceId, long timeId, String attribute, Object value) {
+		sendAttributeChangedEvent(sourceId, timeId, null, ElementType.GRAPH, attribute, AttributeChangeEvent.ADD, null,
+				value);
 	}
 
 	/**
@@ -610,10 +595,9 @@ public abstract class SourceBase implements Source {
 	 * @param newValue
 	 *            The attribute new value.
 	 */
-	public void sendGraphAttributeChanged(String sourceId, String attribute,
-			Object oldValue, Object newValue) {
-		sendAttributeChangedEvent(sourceId, null, ElementType.GRAPH, attribute,
-				AttributeChangeEvent.CHANGE, oldValue, newValue);
+	public void sendGraphAttributeChanged(String sourceId, String attribute, Object oldValue, Object newValue) {
+		sendAttributeChangedEvent(sourceId, null, ElementType.GRAPH, attribute, AttributeChangeEvent.CHANGE, oldValue,
+				newValue);
 	}
 
 	/**
@@ -629,10 +613,10 @@ public abstract class SourceBase implements Source {
 	 * @param newValue
 	 *            The attribute new value.
 	 */
-	public void sendGraphAttributeChanged(String sourceId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
-		sendAttributeChangedEvent(sourceId, timeId, null, ElementType.GRAPH,
-				attribute, AttributeChangeEvent.CHANGE, oldValue, newValue);
+	public void sendGraphAttributeChanged(String sourceId, long timeId, String attribute, Object oldValue,
+			Object newValue) {
+		sendAttributeChangedEvent(sourceId, timeId, null, ElementType.GRAPH, attribute, AttributeChangeEvent.CHANGE,
+				oldValue, newValue);
 	}
 
 	/**
@@ -644,8 +628,8 @@ public abstract class SourceBase implements Source {
 	 *            The attribute name.
 	 */
 	public void sendGraphAttributeRemoved(String sourceId, String attribute) {
-		sendAttributeChangedEvent(sourceId, null, ElementType.GRAPH, attribute,
-				AttributeChangeEvent.REMOVE, null, null);
+		sendAttributeChangedEvent(sourceId, null, ElementType.GRAPH, attribute, AttributeChangeEvent.REMOVE, null,
+				null);
 	}
 
 	/**
@@ -657,10 +641,9 @@ public abstract class SourceBase implements Source {
 	 * @param attribute
 	 *            The attribute name.
 	 */
-	public void sendGraphAttributeRemoved(String sourceId, long timeId,
-			String attribute) {
-		sendAttributeChangedEvent(sourceId, timeId, null, ElementType.GRAPH,
-				attribute, AttributeChangeEvent.REMOVE, null, null);
+	public void sendGraphAttributeRemoved(String sourceId, long timeId, String attribute) {
+		sendAttributeChangedEvent(sourceId, timeId, null, ElementType.GRAPH, attribute, AttributeChangeEvent.REMOVE,
+				null, null);
 	}
 
 	/**
@@ -675,10 +658,8 @@ public abstract class SourceBase implements Source {
 	 * @param value
 	 *            The attribute value.
 	 */
-	public void sendNodeAttributeAdded(String sourceId, String nodeId,
-			String attribute, Object value) {
-		sendAttributeChangedEvent(sourceId, nodeId, ElementType.NODE,
-				attribute, AttributeChangeEvent.ADD, null, value);
+	public void sendNodeAttributeAdded(String sourceId, String nodeId, String attribute, Object value) {
+		sendAttributeChangedEvent(sourceId, nodeId, ElementType.NODE, attribute, AttributeChangeEvent.ADD, null, value);
 	}
 
 	/**
@@ -694,10 +675,9 @@ public abstract class SourceBase implements Source {
 	 * @param value
 	 *            The attribute value.
 	 */
-	public void sendNodeAttributeAdded(String sourceId, long timeId,
-			String nodeId, String attribute, Object value) {
-		sendAttributeChangedEvent(sourceId, timeId, nodeId, ElementType.NODE,
-				attribute, AttributeChangeEvent.ADD, null, value);
+	public void sendNodeAttributeAdded(String sourceId, long timeId, String nodeId, String attribute, Object value) {
+		sendAttributeChangedEvent(sourceId, timeId, nodeId, ElementType.NODE, attribute, AttributeChangeEvent.ADD, null,
+				value);
 	}
 
 	/**
@@ -714,10 +694,10 @@ public abstract class SourceBase implements Source {
 	 * @param newValue
 	 *            The attribute new value.
 	 */
-	public void sendNodeAttributeChanged(String sourceId, String nodeId,
-			String attribute, Object oldValue, Object newValue) {
-		sendAttributeChangedEvent(sourceId, nodeId, ElementType.NODE,
-				attribute, AttributeChangeEvent.CHANGE, oldValue, newValue);
+	public void sendNodeAttributeChanged(String sourceId, String nodeId, String attribute, Object oldValue,
+			Object newValue) {
+		sendAttributeChangedEvent(sourceId, nodeId, ElementType.NODE, attribute, AttributeChangeEvent.CHANGE, oldValue,
+				newValue);
 	}
 
 	/**
@@ -735,10 +715,10 @@ public abstract class SourceBase implements Source {
 	 * @param newValue
 	 *            The attribute new value.
 	 */
-	public void sendNodeAttributeChanged(String sourceId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
-		sendAttributeChangedEvent(sourceId, timeId, nodeId, ElementType.NODE,
-				attribute, AttributeChangeEvent.CHANGE, oldValue, newValue);
+	public void sendNodeAttributeChanged(String sourceId, long timeId, String nodeId, String attribute, Object oldValue,
+			Object newValue) {
+		sendAttributeChangedEvent(sourceId, timeId, nodeId, ElementType.NODE, attribute, AttributeChangeEvent.CHANGE,
+				oldValue, newValue);
 	}
 
 	/**
@@ -751,10 +731,9 @@ public abstract class SourceBase implements Source {
 	 * @param attribute
 	 *            The attribute name.
 	 */
-	public void sendNodeAttributeRemoved(String sourceId, String nodeId,
-			String attribute) {
-		sendAttributeChangedEvent(sourceId, nodeId, ElementType.NODE,
-				attribute, AttributeChangeEvent.REMOVE, null, null);
+	public void sendNodeAttributeRemoved(String sourceId, String nodeId, String attribute) {
+		sendAttributeChangedEvent(sourceId, nodeId, ElementType.NODE, attribute, AttributeChangeEvent.REMOVE, null,
+				null);
 	}
 
 	/**
@@ -768,10 +747,9 @@ public abstract class SourceBase implements Source {
 	 * @param attribute
 	 *            The attribute name.
 	 */
-	public void sendNodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute) {
-		sendAttributeChangedEvent(sourceId, timeId, nodeId, ElementType.NODE,
-				attribute, AttributeChangeEvent.REMOVE, null, null);
+	public void sendNodeAttributeRemoved(String sourceId, long timeId, String nodeId, String attribute) {
+		sendAttributeChangedEvent(sourceId, timeId, nodeId, ElementType.NODE, attribute, AttributeChangeEvent.REMOVE,
+				null, null);
 	}
 
 	/**
@@ -795,16 +773,14 @@ public abstract class SourceBase implements Source {
 	 * @param newValue
 	 *            The new attribute value (null if removed).
 	 */
-	public void sendAttributeChangedEvent(String sourceId, String eltId,
-			ElementType eltType, String attribute, AttributeChangeEvent event,
-			Object oldValue, Object newValue) {
-		sendAttributeChangedEvent(sourceId, sourceTime.newEvent(), eltId,
-				eltType, attribute, event, oldValue, newValue);
+	public void sendAttributeChangedEvent(String sourceId, String eltId, ElementType eltType, String attribute,
+			AttributeChangeEvent event, Object oldValue, Object newValue) {
+		sendAttributeChangedEvent(sourceId, sourceTime.newEvent(), eltId, eltType, attribute, event, oldValue,
+				newValue);
 	}
 
-	public void sendAttributeChangedEvent(String sourceId, long timeId,
-			String eltId, ElementType eltType, String attribute,
-			AttributeChangeEvent event, Object oldValue, Object newValue) {
+	public void sendAttributeChangedEvent(String sourceId, long timeId, String eltId, ElementType eltType,
+			String attribute, AttributeChangeEvent event, Object oldValue, Object newValue) {
 		if (!eventProcessing) {
 			eventProcessing = true;
 			manageEvents();
@@ -812,52 +788,43 @@ public abstract class SourceBase implements Source {
 			if (event == AttributeChangeEvent.ADD) {
 				if (eltType == ElementType.NODE) {
 					for (int i = 0; i < attrSinks.size(); i++)
-						attrSinks.get(i).nodeAttributeAdded(sourceId, timeId,
-								eltId, attribute, newValue);
+						attrSinks.get(i).nodeAttributeAdded(sourceId, timeId, eltId, attribute, newValue);
 				} else if (eltType == ElementType.EDGE) {
 					for (int i = 0; i < attrSinks.size(); i++)
-						attrSinks.get(i).edgeAttributeAdded(sourceId, timeId,
-								eltId, attribute, newValue);
+						attrSinks.get(i).edgeAttributeAdded(sourceId, timeId, eltId, attribute, newValue);
 				} else {
 					for (int i = 0; i < attrSinks.size(); i++)
-						attrSinks.get(i).graphAttributeAdded(sourceId, timeId,
-								attribute, newValue);
+						attrSinks.get(i).graphAttributeAdded(sourceId, timeId, attribute, newValue);
 				}
 			} else if (event == AttributeChangeEvent.REMOVE) {
 				if (eltType == ElementType.NODE) {
 					for (int i = 0; i < attrSinks.size(); i++)
-						attrSinks.get(i).nodeAttributeRemoved(sourceId, timeId,
-								eltId, attribute);
+						attrSinks.get(i).nodeAttributeRemoved(sourceId, timeId, eltId, attribute);
 				} else if (eltType == ElementType.EDGE) {
 					for (int i = 0; i < attrSinks.size(); i++)
-						attrSinks.get(i).edgeAttributeRemoved(sourceId, timeId,
-								eltId, attribute);
+						attrSinks.get(i).edgeAttributeRemoved(sourceId, timeId, eltId, attribute);
 				} else {
 					for (int i = 0; i < attrSinks.size(); i++)
-						attrSinks.get(i).graphAttributeRemoved(sourceId,
-								timeId, attribute);
+						attrSinks.get(i).graphAttributeRemoved(sourceId, timeId, attribute);
 				}
 			} else {
 				if (eltType == ElementType.NODE) {
 					for (int i = 0; i < attrSinks.size(); i++)
-						attrSinks.get(i).nodeAttributeChanged(sourceId, timeId,
-								eltId, attribute, oldValue, newValue);
+						attrSinks.get(i).nodeAttributeChanged(sourceId, timeId, eltId, attribute, oldValue, newValue);
 				} else if (eltType == ElementType.EDGE) {
 					for (int i = 0; i < attrSinks.size(); i++)
-						attrSinks.get(i).edgeAttributeChanged(sourceId, timeId,
-								eltId, attribute, oldValue, newValue);
+						attrSinks.get(i).edgeAttributeChanged(sourceId, timeId, eltId, attribute, oldValue, newValue);
 				} else {
 					for (int i = 0; i < attrSinks.size(); i++)
-						attrSinks.get(i).graphAttributeChanged(sourceId,
-								timeId, attribute, oldValue, newValue);
+						attrSinks.get(i).graphAttributeChanged(sourceId, timeId, attribute, oldValue, newValue);
 				}
 			}
 
 			manageEvents();
 			eventProcessing = false;
 		} else {
-			eventQueue.add(new AttributeChangedEvent(sourceId, timeId, eltId,
-					eltType, attribute, event, oldValue, newValue));
+			eventQueue.add(
+					new AttributeChangedEvent(sourceId, timeId, eltId, eltType, attribute, event, oldValue, newValue));
 		}
 	}
 
@@ -876,8 +843,8 @@ public abstract class SourceBase implements Source {
 	// Events Management
 
 	/**
-	 * Interface that provide general purpose classification for evens involved
-	 * in graph modifications
+	 * Interface that provide general purpose classification for evens involved in
+	 * graph modifications
 	 */
 	abstract class GraphEvent {
 		String sourceId;
@@ -897,8 +864,8 @@ public abstract class SourceBase implements Source {
 		String toNodeId;
 		boolean directed;
 
-		AfterEdgeAddEvent(String sourceId, long timeId, String edgeId,
-				String fromNodeId, String toNodeId, boolean directed) {
+		AfterEdgeAddEvent(String sourceId, long timeId, String edgeId, String fromNodeId, String toNodeId,
+				boolean directed) {
 			super(sourceId, timeId);
 			this.edgeId = edgeId;
 			this.fromNodeId = fromNodeId;
@@ -908,8 +875,7 @@ public abstract class SourceBase implements Source {
 
 		void trigger() {
 			for (int i = 0; i < eltsSinks.size(); i++)
-				eltsSinks.get(i).edgeAdded(sourceId, timeId, edgeId,
-						fromNodeId, toNodeId, directed);
+				eltsSinks.get(i).edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId, directed);
 		}
 	}
 
@@ -993,8 +959,7 @@ public abstract class SourceBase implements Source {
 
 		Object newValue;
 
-		AttributeChangedEvent(String sourceId, long timeId, String eltId,
-				ElementType eltType, String attribute,
+		AttributeChangedEvent(String sourceId, long timeId, String eltId, ElementType eltType, String attribute,
 				AttributeChangeEvent event, Object oldValue, Object newValue) {
 			super(sourceId, timeId);
 			this.eltType = eltType;
@@ -1011,54 +976,45 @@ public abstract class SourceBase implements Source {
 				switch (eltType) {
 				case NODE:
 					for (int i = 0; i < attrSinks.size(); i++)
-						attrSinks.get(i).nodeAttributeAdded(sourceId, timeId,
-								eltId, attribute, newValue);
+						attrSinks.get(i).nodeAttributeAdded(sourceId, timeId, eltId, attribute, newValue);
 					break;
 				case EDGE:
 					for (int i = 0; i < attrSinks.size(); i++)
-						attrSinks.get(i).edgeAttributeAdded(sourceId, timeId,
-								eltId, attribute, newValue);
+						attrSinks.get(i).edgeAttributeAdded(sourceId, timeId, eltId, attribute, newValue);
 					break;
 				default:
 					for (int i = 0; i < attrSinks.size(); i++)
-						attrSinks.get(i).graphAttributeAdded(sourceId, timeId,
-								attribute, newValue);
+						attrSinks.get(i).graphAttributeAdded(sourceId, timeId, attribute, newValue);
 				}
 				break;
 			case REMOVE:
 				switch (eltType) {
 				case NODE:
 					for (int i = 0; i < attrSinks.size(); i++)
-						attrSinks.get(i).nodeAttributeRemoved(sourceId, timeId,
-								eltId, attribute);
+						attrSinks.get(i).nodeAttributeRemoved(sourceId, timeId, eltId, attribute);
 					break;
 				case EDGE:
 					for (int i = 0; i < attrSinks.size(); i++)
-						attrSinks.get(i).edgeAttributeRemoved(sourceId, timeId,
-								eltId, attribute);
+						attrSinks.get(i).edgeAttributeRemoved(sourceId, timeId, eltId, attribute);
 					break;
 				default:
 					for (int i = 0; i < attrSinks.size(); i++)
-						attrSinks.get(i).graphAttributeRemoved(sourceId,
-								timeId, attribute);
+						attrSinks.get(i).graphAttributeRemoved(sourceId, timeId, attribute);
 				}
 				break;
 			default:
 				switch (eltType) {
 				case NODE:
 					for (int i = 0; i < attrSinks.size(); i++)
-						attrSinks.get(i).nodeAttributeChanged(sourceId, timeId,
-								eltId, attribute, oldValue, newValue);
+						attrSinks.get(i).nodeAttributeChanged(sourceId, timeId, eltId, attribute, oldValue, newValue);
 					break;
 				case EDGE:
 					for (int i = 0; i < attrSinks.size(); i++)
-						attrSinks.get(i).edgeAttributeChanged(sourceId, timeId,
-								eltId, attribute, oldValue, newValue);
+						attrSinks.get(i).edgeAttributeChanged(sourceId, timeId, eltId, attribute, oldValue, newValue);
 					break;
 				default:
 					for (int i = 0; i < attrSinks.size(); i++)
-						attrSinks.get(i).graphAttributeChanged(sourceId,
-								timeId, attribute, oldValue, newValue);
+						attrSinks.get(i).graphAttributeChanged(sourceId, timeId, attribute, oldValue, newValue);
 				}
 			}
 		}

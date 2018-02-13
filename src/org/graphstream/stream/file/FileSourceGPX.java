@@ -44,8 +44,8 @@ import javax.xml.stream.events.XMLEvent;
  * Source to read GPX (GPS eXchange Format) data an XML extension to exchange
  * gps coordinates, routes and tracks.
  * 
- * Read more about GPX at <a
- * href="https://en.wikipedia.org/wiki/GPS_eXchange_Format">Wikipedia</a>
+ * Read more about GPX at
+ * <a href="https://en.wikipedia.org/wiki/GPS_eXchange_Format">Wikipedia</a>
  * 
  */
 public class FileSourceGPX extends FileSourceXML {
@@ -55,10 +55,9 @@ public class FileSourceGPX extends FileSourceXML {
 	 */
 	protected GPXParser parser;
 
-
 	public FileSourceGPX() {
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -100,8 +99,7 @@ public class FileSourceGPX extends FileSourceXML {
 
 		void deploy() {
 			sendNodeAdded(sourceId, name);
-			sendNodeAttributeAdded(sourceId, name, "xyz", new double[] { lon,
-					lat, ele });
+			sendNodeAttributeAdded(sourceId, name, "xyz", new double[] { lon, lat, ele });
 
 			for (String key : attributes.keySet())
 				sendNodeAttributeAdded(sourceId, name, key, attributes.get(key));
@@ -121,16 +119,14 @@ public class FileSourceGPX extends FileSourceXML {
 		}
 
 		/**
-		 * Base for read points since points can be one of "wpt", "rtept",
-		 * "trkpt".
+		 * Base for read points since points can be one of "wpt", "rtept", "trkpt".
 		 * 
 		 * @param elementName
 		 * @return
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
-		private WayPoint waypoint(String elementName) throws IOException,
-				XMLStreamException {
+		private WayPoint waypoint(String elementName) throws IOException, XMLStreamException {
 			XMLEvent e;
 			WayPoint wp = new WayPoint();
 			EnumMap<WPTAttribute, String> attributes;
@@ -324,15 +320,13 @@ public class FileSourceGPX extends FileSourceXML {
 			if (!attributes.containsKey(GPXAttribute.VERSION)) {
 				newParseError(e, false, "attribute 'version' is required");
 			} else {
-				sendGraphAttributeAdded(sourceId, "gpx.version", attributes
-						.get(GPXAttribute.VERSION));
+				sendGraphAttributeAdded(sourceId, "gpx.version", attributes.get(GPXAttribute.VERSION));
 			}
 
 			if (!attributes.containsKey(GPXAttribute.CREATOR)) {
 				newParseError(e, false, "attribute 'creator' is required");
 			} else {
-				sendGraphAttributeAdded(sourceId, "gpx.creator", attributes
-						.get(GPXAttribute.CREATOR));
+				sendGraphAttributeAdded(sourceId, "gpx.creator", attributes.get(GPXAttribute.CREATOR));
 			}
 
 			e = getNextEvent();
@@ -409,16 +403,14 @@ public class FileSourceGPX extends FileSourceXML {
 
 			if (isEvent(e, XMLEvent.START_ELEMENT, "author")) {
 				pushback(e);
-				sendGraphAttributeAdded(sourceId, "gpx.metadata.author",
-						__author());
+				sendGraphAttributeAdded(sourceId, "gpx.metadata.author", __author());
 
 				e = getNextEvent();
 			}
 
 			if (isEvent(e, XMLEvent.START_ELEMENT, "copyright")) {
 				pushback(e);
-				sendGraphAttributeAdded(sourceId, "gpx.metadata.copyright",
-						__copyright());
+				sendGraphAttributeAdded(sourceId, "gpx.metadata.copyright", __copyright());
 
 				e = getNextEvent();
 			}
@@ -433,8 +425,7 @@ public class FileSourceGPX extends FileSourceXML {
 			}
 
 			if (links.size() > 0)
-				sendGraphAttributeAdded(sourceId, "gpx.metadata.links", links
-						.toArray(new String[links.size()]));
+				sendGraphAttributeAdded(sourceId, "gpx.metadata.links", links.toArray(new String[links.size()]));
 
 			if (isEvent(e, XMLEvent.START_ELEMENT, "time")) {
 				pushback(e);
@@ -445,8 +436,7 @@ public class FileSourceGPX extends FileSourceXML {
 
 			if (isEvent(e, XMLEvent.START_ELEMENT, "keywords")) {
 				pushback(e);
-				sendGraphAttributeAdded(sourceId, "gpx.metadata.keywords",
-						__keywords());
+				sendGraphAttributeAdded(sourceId, "gpx.metadata.keywords", __keywords());
 
 				e = getNextEvent();
 			}
@@ -589,16 +579,14 @@ public class FileSourceGPX extends FileSourceXML {
 			sendGraphAttributeAdded(sourceId, "routes." + name + ".src", src);
 			sendGraphAttributeAdded(sourceId, "routes." + name + ".type", type);
 			sendGraphAttributeAdded(sourceId, "routes." + name + ".time", time);
-			sendGraphAttributeAdded(sourceId, "routes." + name + ".number",
-					number);
+			sendGraphAttributeAdded(sourceId, "routes." + name + ".number", number);
 
 			for (int i = 0; i < points.size(); i++) {
 				points.get(i).deploy();
 
 				if (i > 0) {
 					String eid = String.format("seg#%08x", automaticEdgeId++);
-					sendEdgeAdded(sourceId, eid, points.get(i - 1).name, points
-							.get(i).name, true);
+					sendEdgeAdded(sourceId, eid, points.get(i - 1).name, points.get(i).name, true);
 					sendEdgeAttributeAdded(sourceId, eid, "route", name);
 				}
 			}
@@ -700,8 +688,7 @@ public class FileSourceGPX extends FileSourceXML {
 			sendGraphAttributeAdded(sourceId, "tracks." + name + ".src", src);
 			sendGraphAttributeAdded(sourceId, "tracks." + name + ".type", type);
 			sendGraphAttributeAdded(sourceId, "tracks." + name + ".time", time);
-			sendGraphAttributeAdded(sourceId, "tracks." + name + ".number",
-					number);
+			sendGraphAttributeAdded(sourceId, "tracks." + name + ".number", number);
 
 			while (isEvent(e, XMLEvent.START_ELEMENT, "trkseg")) {
 				pushback(e);
@@ -711,10 +698,8 @@ public class FileSourceGPX extends FileSourceXML {
 					wps.get(i).deploy();
 
 					if (i > 0) {
-						String eid = String.format("seg#%08x",
-								automaticEdgeId++);
-						sendEdgeAdded(sourceId, eid, wps.get(i - 1).name, wps
-								.get(i).name, true);
+						String eid = String.format("seg#%08x", automaticEdgeId++);
+						sendEdgeAdded(sourceId, eid, wps.get(i - 1).name, wps.get(i).name, true);
 						sendEdgeAttributeAdded(sourceId, eid, "route", name);
 					}
 				}
@@ -868,8 +853,7 @@ public class FileSourceGPX extends FileSourceXML {
 			e = getNextEvent();
 			checkValid(e, XMLEvent.START_ELEMENT, "copyright");
 
-			attributes = getAttributes(COPYRIGHTAttribute.class, e
-					.asStartElement());
+			attributes = getAttributes(COPYRIGHTAttribute.class, e.asStartElement());
 
 			if (!attributes.containsKey(COPYRIGHTAttribute.AUTHOR)) {
 				newParseError(e, false, "attribute 'author' is required");
@@ -1013,8 +997,7 @@ public class FileSourceGPX extends FileSourceXML {
 			e = getNextEvent();
 			checkValid(e, XMLEvent.START_ELEMENT, "bounds");
 
-			attributes = getAttributes(BOUNDSAttribute.class, e
-					.asStartElement());
+			attributes = getAttributes(BOUNDSAttribute.class, e.asStartElement());
 
 			if (!attributes.containsKey(BOUNDSAttribute.MINLAT)) {
 				newParseError(e, false, "attribute 'minlat' is required");
@@ -1037,8 +1020,7 @@ public class FileSourceGPX extends FileSourceXML {
 			minlon = Double.parseDouble(attributes.get(BOUNDSAttribute.MINLON));
 			maxlon = Double.parseDouble(attributes.get(BOUNDSAttribute.MAXLON));
 
-			sendGraphAttributeAdded(sourceId, "gpx.bounds", new double[] {
-					minlat, minlon, maxlat, maxlon });
+			sendGraphAttributeAdded(sourceId, "gpx.bounds", new double[] { minlat, minlon, maxlat, maxlon });
 
 			e = getNextEvent();
 			checkValid(e, XMLEvent.END_ELEMENT, "bounds");
@@ -1485,8 +1467,7 @@ public class FileSourceGPX extends FileSourceXML {
 		 * @throws IOException
 		 * @throws XMLStreamException
 		 */
-		private List<WayPoint> __trkseg() throws IOException,
-				XMLStreamException {
+		private List<WayPoint> __trkseg() throws IOException, XMLStreamException {
 			LinkedList<WayPoint> points = new LinkedList<WayPoint>();
 			XMLEvent e;
 

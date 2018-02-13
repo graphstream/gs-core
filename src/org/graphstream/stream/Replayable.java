@@ -36,6 +36,7 @@ package org.graphstream.stream;
  * a sink to a source but you need to get informations about the current state
  * of the dynamic graph.
  * <p>
+ * 
  * <pre>
  * Replayable source = ... ;
  * Replayable.Controller replay = source.getReplayController();
@@ -59,23 +60,23 @@ public interface Replayable {
 	Controller getReplayController();
 
 	/**
-	 * A controller used to replay a source. Controller should be used as a
-	 * source by adding sinks on it. When sinks are set, a call to
-	 * {@link #replay()} send events describing the current state of the
-	 * original source to sinks.
+	 * A controller used to replay a source. Controller should be used as a source
+	 * by adding sinks on it. When sinks are set, a call to {@link #replay()} send
+	 * events describing the current state of the original source to sinks.
 	 */
 	public static interface Controller extends Source {
 		/**
-		 * Replay events describing the current state of the object being built
-		 * by the source.
+		 * Replay events describing the current state of the object being built by the
+		 * source.
 		 */
 		void replay();
 
 		/**
-		 * Same as {@link #replay(Sink)} but you can set the id of the source
-		 * sent in events.
+		 * Same as {@link #replay(Sink)} but you can set the id of the source sent in
+		 * events.
 		 *
-		 * @param sourceId id of the event source
+		 * @param sourceId
+		 *            id of the event source
 		 */
 		void replay(String sourceId);
 	}
@@ -83,8 +84,10 @@ public interface Replayable {
 	/**
 	 * Util method to replay a replayable source into a sink.
 	 *
-	 * @param source a source implementing the Replayable interface
-	 * @param sink   sink which will receive the events produced by the replay
+	 * @param source
+	 *            a source implementing the Replayable interface
+	 * @param sink
+	 *            sink which will receive the events produced by the replay
 	 */
 	public static void replay(Replayable source, Sink sink) {
 		Controller controller = source.getReplayController();
@@ -95,10 +98,14 @@ public interface Replayable {
 	}
 
 	/**
-	 * Same as {@link #replay(Replayable, Sink)} but the first parameter is just a {@link org.graphstream.stream.Source} and it will be replayed only if the Replayable interface is implemented.
+	 * Same as {@link #replay(Replayable, Sink)} but the first parameter is just a
+	 * {@link org.graphstream.stream.Source} and it will be replayed only if the
+	 * Replayable interface is implemented.
 	 *
-	 * @param source a source
-	 * @param sink   sink which will receive the events produced by the replay
+	 * @param source
+	 *            a source
+	 * @param sink
+	 *            sink which will receive the events produced by the replay
 	 */
 	public static void tryReplay(Source source, Sink sink) {
 		if (source instanceof Replayable)

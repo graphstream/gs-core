@@ -53,22 +53,20 @@ public class ParseException extends Exception {
 	 * type with the fields "currentToken", "expectedTokenSequences", and
 	 * "tokenImage" set.
 	 */
-	public ParseException(Token currentTokenVal,
-			int[][] expectedTokenSequencesVal, String[] tokenImageVal) {
-		super(initialise(currentTokenVal, expectedTokenSequencesVal,
-				tokenImageVal));
+	public ParseException(Token currentTokenVal, int[][] expectedTokenSequencesVal, String[] tokenImageVal) {
+		super(initialise(currentTokenVal, expectedTokenSequencesVal, tokenImageVal));
 		currentToken = currentTokenVal;
 		expectedTokenSequences = expectedTokenSequencesVal;
 		tokenImage = tokenImageVal;
 	}
 
 	/**
-	 * The following constructors are for use by you for whatever purpose you
-	 * can think of. Constructing the exception in this manner makes the
-	 * exception behave in the normal way - i.e., as documented in the class
-	 * "Throwable". The fields "errorToken", "expectedTokenSequences", and
-	 * "tokenImage" do not contain relevant information. The JavaCC generated
-	 * code does not use these constructors.
+	 * The following constructors are for use by you for whatever purpose you can
+	 * think of. Constructing the exception in this manner makes the exception
+	 * behave in the normal way - i.e., as documented in the class "Throwable". The
+	 * fields "errorToken", "expectedTokenSequences", and "tokenImage" do not
+	 * contain relevant information. The JavaCC generated code does not use these
+	 * constructors.
 	 */
 
 	public ParseException() {
@@ -81,34 +79,33 @@ public class ParseException extends Exception {
 	}
 
 	/**
-	 * This is the last token that has been consumed successfully. If this
-	 * object has been created due to a parse error, the token followng this
-	 * token will (therefore) be the first error token.
+	 * This is the last token that has been consumed successfully. If this object
+	 * has been created due to a parse error, the token followng this token will
+	 * (therefore) be the first error token.
 	 */
 	public Token currentToken;
 
 	/**
 	 * Each entry in this array is an array of integers. Each array of integers
-	 * represents a sequence of tokens (by their ordinal values) that is
-	 * expected at this point of the parse.
+	 * represents a sequence of tokens (by their ordinal values) that is expected at
+	 * this point of the parse.
 	 */
 	public int[][] expectedTokenSequences;
 
 	/**
-	 * This is a reference to the "tokenImage" array of the generated parser
-	 * within which the parse error occurred. This array is defined in the
-	 * generated ...Constants interface.
+	 * This is a reference to the "tokenImage" array of the generated parser within
+	 * which the parse error occurred. This array is defined in the generated
+	 * ...Constants interface.
 	 */
 	public String[] tokenImage;
 
 	/**
-	 * It uses "currentToken" and "expectedTokenSequences" to generate a parse
-	 * error message and returns it. If this object has been created due to a
-	 * parse error, and you do not catch it (it gets thrown from the parser) the
-	 * correct error message gets displayed.
+	 * It uses "currentToken" and "expectedTokenSequences" to generate a parse error
+	 * message and returns it. If this object has been created due to a parse error,
+	 * and you do not catch it (it gets thrown from the parser) the correct error
+	 * message gets displayed.
 	 */
-	private static String initialise(Token currentToken,
-			int[][] expectedTokenSequences, String[] tokenImage) {
+	private static String initialise(Token currentToken, int[][] expectedTokenSequences, String[] tokenImage) {
 		String eol = System.getProperty("line.separator", "\n");
 		StringBuffer expected = new StringBuffer();
 		int maxSize = 0;
@@ -117,8 +114,7 @@ public class ParseException extends Exception {
 				maxSize = expectedTokenSequences[i].length;
 			}
 			for (int j = 0; j < expectedTokenSequences[i].length; j++) {
-				expected.append(tokenImage[expectedTokenSequences[i][j]])
-						.append(' ');
+				expected.append(tokenImage[expectedTokenSequences[i][j]]).append(' ');
 			}
 			if (expectedTokenSequences[i][expectedTokenSequences[i].length - 1] != 0) {
 				expected.append("...");
@@ -140,8 +136,7 @@ public class ParseException extends Exception {
 			retval += " \"";
 			tok = tok.next;
 		}
-		retval += "\" at line " + currentToken.next.beginLine + ", column "
-				+ currentToken.next.beginColumn;
+		retval += "\" at line " + currentToken.next.beginLine + ", column " + currentToken.next.beginColumn;
 		retval += "." + eol;
 		if (expectedTokenSequences.length == 1) {
 			retval += "Was expecting:" + eol + "    ";
@@ -195,8 +190,7 @@ public class ParseException extends Exception {
 			default:
 				if ((ch = str.charAt(i)) < 0x20 || ch > 0x7e) {
 					String s = "0000" + Integer.toString(ch, 16);
-					retval.append("\\u"
-							+ s.substring(s.length() - 4, s.length()));
+					retval.append("\\u" + s.substring(s.length() - 4, s.length()));
 				} else {
 					retval.append(ch);
 				}

@@ -38,9 +38,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.graphstream.graph.CompoundAttribute;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.NullAttributeException;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.junit.Test;
@@ -136,9 +134,9 @@ public class TestElement {
 		assertEquals(3.1415, A.getAttribute("pi"));
 
 		A.setAttribute("pi", "3.1415");
-		
+
 		assertEquals(3.1415, A.getNumber("pi"), 0);
-		
+
 		// Vector of numbers.
 
 		ArrayList<Number> numbers = new ArrayList<>();
@@ -185,7 +183,7 @@ public class TestElement {
 
 		// Hashes 2.
 
-		MyAttribute attr = new MyAttribute();
+		HashMap<String, String> attr = new HashMap<>();
 
 		attr.put("A", "a");
 		attr.put("B", "b");
@@ -195,7 +193,7 @@ public class TestElement {
 
 		assertEquals(5, A.getAttributeCount());
 		assertTrue(A.hasAttribute("ca"));
-		assertTrue(A.hasAttribute("ca", MyAttribute.class));
+		assertTrue(A.hasAttribute("ca", HashMap.class));
 		assertFalse(A.hasLabel("ca"));
 		assertFalse(A.hasNumber("ca"));
 		assertFalse(A.hasVector("ca"));
@@ -255,7 +253,7 @@ public class TestElement {
 		A.setAttribute("I", "i");
 		A.setAttribute("Z", "z");
 
-		String s = A.getFirstAttributeOf(String.class,"A", "B", "C", "I", "Z");
+		String s = A.getFirstAttributeOf(String.class, "A", "B", "C", "I", "Z");
 
 		assertNotNull(s);
 		assertEquals("c", s);
@@ -265,8 +263,7 @@ public class TestElement {
 		A.setAttribute("J", 1);
 		A.setAttribute("X", 2);
 
-		Number n = A.getFirstAttributeOf(Number.class, "A", "B", "C", "I", "J",
-				"X", "Z");
+		Number n = A.getFirstAttributeOf(Number.class, "A", "B", "C", "I", "J", "X", "Z");
 
 		assertNotNull(n);
 		assertEquals(1, n);
@@ -313,18 +310,5 @@ public class TestElement {
 
 		assertFalse(graph.hasAttribute("foo"));
 		assertFalse(graph.hasAttribute("bar"));
-	}
-
-	protected static class MyAttribute extends HashMap<String, String>
-			implements CompoundAttribute {
-		private static final long serialVersionUID = 1L;
-
-		public String getKey() {
-			return "MyAttribute";
-		}
-
-		public HashMap<?, ?> toHashMap() {
-			return this;
-		}
 	}
 }

@@ -44,154 +44,154 @@ import java.nio.ByteBuffer;
  * @since 23/01/16.
  */
 public class TestNetStreamUtils {
-    String randomChars = "abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-*+_";
+	String randomChars = "abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-*+_";
 
-    protected String getRandomString(int size) {
-        String s = "";
+	protected String getRandomString(int size) {
+		String s = "";
 
-        for (int i = 0; i < size; i++) {
-            int ind = (int) ((randomChars.length() - 1) * Math.random());
-            s += randomChars.substring(ind, ind + 1);
-        }
+		for (int i = 0; i < size; i++) {
+			int ind = (int) ((randomChars.length() - 1) * Math.random());
+			s += randomChars.substring(ind, ind + 1);
+		}
 
-        return s;
-    }
+		return s;
+	}
 
-    @Test
-    public void testVarintSize() {
-        int p = 7;
+	@Test
+	public void testVarintSize() {
+		int p = 7;
 
-        for (int i = 1; i < 9; i++) {
-            long l = (1L << p) - 1;
+		for (int i = 1; i < 9; i++) {
+			long l = (1L << p) - 1;
 
-            Assert.assertEquals(i, NetStreamUtils.getVarintSize(l));
-            Assert.assertEquals(i + 1, NetStreamUtils.getVarintSize(l + 1));
+			Assert.assertEquals(i, NetStreamUtils.getVarintSize(l));
+			Assert.assertEquals(i + 1, NetStreamUtils.getVarintSize(l + 1));
 
-            p += 7;
-        }
-    }
+			p += 7;
+		}
+	}
 
-    @Test
-    public void testEncodeDecodeString() {
-        for (int i = 0; i < 100; i++) {
-            String s = getRandomString(64);
-            ByteBuffer bb = NetStreamUtils.encodeString(s);
-            String r = NetStreamUtils.decodeString(bb);
+	@Test
+	public void testEncodeDecodeString() {
+		for (int i = 0; i < 100; i++) {
+			String s = getRandomString(64);
+			ByteBuffer bb = NetStreamUtils.encodeString(s);
+			String r = NetStreamUtils.decodeString(bb);
 
-            Assert.assertEquals(s, r);
-        }
-    }
+			Assert.assertEquals(s, r);
+		}
+	}
 
-    @Test
-    public void testGetValueType() {
-        Assert.assertEquals(NetStreamConstants.TYPE_ARRAY, getType(new Object[]{}));
-        Assert.assertEquals(NetStreamConstants.TYPE_BOOLEAN, getType(true));
-        Assert.assertEquals(NetStreamConstants.TYPE_BOOLEAN_ARRAY, getType(new boolean[]{true, false}));
-        Assert.assertEquals(NetStreamConstants.TYPE_BOOLEAN_ARRAY, getType(new Boolean[]{true, false}));
-        Assert.assertEquals(NetStreamConstants.TYPE_BYTE, getType((byte) 0x0A));
-        Assert.assertEquals(NetStreamConstants.TYPE_BYTE_ARRAY, getType(new byte[]{0x0B}));
-        Assert.assertEquals(NetStreamConstants.TYPE_BYTE_ARRAY, getType(new Byte[]{0x0B}));
-        Assert.assertEquals(NetStreamConstants.TYPE_DOUBLE, getType(3.14));
-        Assert.assertEquals(NetStreamConstants.TYPE_DOUBLE_ARRAY, getType(new double[]{3.14}));
-        Assert.assertEquals(NetStreamConstants.TYPE_DOUBLE_ARRAY, getType(new Double[]{3.14}));
-        Assert.assertEquals(NetStreamConstants.TYPE_FLOAT, getType(3.14f));
-        Assert.assertEquals(NetStreamConstants.TYPE_FLOAT_ARRAY, getType(new float[]{3.14f}));
-        Assert.assertEquals(NetStreamConstants.TYPE_FLOAT_ARRAY, getType(new Float[]{3.14f}));
-        Assert.assertEquals(NetStreamConstants.TYPE_INT, getType(314));
-        Assert.assertEquals(NetStreamConstants.TYPE_INT_ARRAY, getType(new int[]{314}));
-        Assert.assertEquals(NetStreamConstants.TYPE_INT_ARRAY, getType(new Integer[]{314}));
-        Assert.assertEquals(NetStreamConstants.TYPE_LONG, getType(314L));
-        Assert.assertEquals(NetStreamConstants.TYPE_LONG_ARRAY, getType(new long[]{314L}));
-        Assert.assertEquals(NetStreamConstants.TYPE_LONG_ARRAY, getType(new Long[]{314L}));
-        Assert.assertEquals(NetStreamConstants.TYPE_NULL, getType(null));
-        Assert.assertEquals(NetStreamConstants.TYPE_SHORT, getType((short) 314));
-        Assert.assertEquals(NetStreamConstants.TYPE_SHORT_ARRAY, getType(new short[]{314}));
-        Assert.assertEquals(NetStreamConstants.TYPE_SHORT_ARRAY, getType(new Short[]{314}));
-        Assert.assertEquals(NetStreamConstants.TYPE_STRING, getType(getRandomString(16)));
-        Assert.assertEquals(NetStreamConstants.TYPE_UNKNOWN, getType(this));
-    }
+	@Test
+	public void testGetValueType() {
+		Assert.assertEquals(NetStreamConstants.TYPE_ARRAY, getType(new Object[] {}));
+		Assert.assertEquals(NetStreamConstants.TYPE_BOOLEAN, getType(true));
+		Assert.assertEquals(NetStreamConstants.TYPE_BOOLEAN_ARRAY, getType(new boolean[] { true, false }));
+		Assert.assertEquals(NetStreamConstants.TYPE_BOOLEAN_ARRAY, getType(new Boolean[] { true, false }));
+		Assert.assertEquals(NetStreamConstants.TYPE_BYTE, getType((byte) 0x0A));
+		Assert.assertEquals(NetStreamConstants.TYPE_BYTE_ARRAY, getType(new byte[] { 0x0B }));
+		Assert.assertEquals(NetStreamConstants.TYPE_BYTE_ARRAY, getType(new Byte[] { 0x0B }));
+		Assert.assertEquals(NetStreamConstants.TYPE_DOUBLE, getType(3.14));
+		Assert.assertEquals(NetStreamConstants.TYPE_DOUBLE_ARRAY, getType(new double[] { 3.14 }));
+		Assert.assertEquals(NetStreamConstants.TYPE_DOUBLE_ARRAY, getType(new Double[] { 3.14 }));
+		Assert.assertEquals(NetStreamConstants.TYPE_FLOAT, getType(3.14f));
+		Assert.assertEquals(NetStreamConstants.TYPE_FLOAT_ARRAY, getType(new float[] { 3.14f }));
+		Assert.assertEquals(NetStreamConstants.TYPE_FLOAT_ARRAY, getType(new Float[] { 3.14f }));
+		Assert.assertEquals(NetStreamConstants.TYPE_INT, getType(314));
+		Assert.assertEquals(NetStreamConstants.TYPE_INT_ARRAY, getType(new int[] { 314 }));
+		Assert.assertEquals(NetStreamConstants.TYPE_INT_ARRAY, getType(new Integer[] { 314 }));
+		Assert.assertEquals(NetStreamConstants.TYPE_LONG, getType(314L));
+		Assert.assertEquals(NetStreamConstants.TYPE_LONG_ARRAY, getType(new long[] { 314L }));
+		Assert.assertEquals(NetStreamConstants.TYPE_LONG_ARRAY, getType(new Long[] { 314L }));
+		Assert.assertEquals(NetStreamConstants.TYPE_NULL, getType(null));
+		Assert.assertEquals(NetStreamConstants.TYPE_SHORT, getType((short) 314));
+		Assert.assertEquals(NetStreamConstants.TYPE_SHORT_ARRAY, getType(new short[] { 314 }));
+		Assert.assertEquals(NetStreamConstants.TYPE_SHORT_ARRAY, getType(new Short[] { 314 }));
+		Assert.assertEquals(NetStreamConstants.TYPE_STRING, getType(getRandomString(16)));
+		Assert.assertEquals(NetStreamConstants.TYPE_UNKNOWN, getType(this));
+	}
 
-    @Test
-    public void testEncodeFloat() {
-        float f = 3.14f;
+	@Test
+	public void testEncodeFloat() {
+		float f = 3.14f;
 
-        ByteBuffer buffer = encodeFloat(f);
-        buffer.rewind();
+		ByteBuffer buffer = encodeFloat(f);
+		buffer.rewind();
 
-        float r = decodeFloat(buffer);
+		float r = decodeFloat(buffer);
 
-        Assert.assertEquals(f, r, 0);
-    }
+		Assert.assertEquals(f, r, 0);
+	}
 
-    @Test
-    public void testEncodeDouble() {
-        double d = 3.14;
+	@Test
+	public void testEncodeDouble() {
+		double d = 3.14;
 
-        ByteBuffer buffer = encodeDouble(d);
-        buffer.rewind();
+		ByteBuffer buffer = encodeDouble(d);
+		buffer.rewind();
 
-        double r = decodeDouble(buffer);
+		double r = decodeDouble(buffer);
 
-        Assert.assertEquals(d, r, 0);
-    }
+		Assert.assertEquals(d, r, 0);
+	}
 
-    @Test
-    public void testEncodeInt() {
-        int i = 314;
+	@Test
+	public void testEncodeInt() {
+		int i = 314;
 
-        ByteBuffer buffer = encodeInt(i);
-        buffer.rewind();
+		ByteBuffer buffer = encodeInt(i);
+		buffer.rewind();
 
-        int r = decodeInt(buffer);
+		int r = decodeInt(buffer);
 
-        Assert.assertEquals(i, r);
-    }
+		Assert.assertEquals(i, r);
+	}
 
-    @Test
-    public void testEncodeLong() {
-        long i = 314L;
+	@Test
+	public void testEncodeLong() {
+		long i = 314L;
 
-        ByteBuffer buffer = encodeLong(i);
-        buffer.rewind();
+		ByteBuffer buffer = encodeLong(i);
+		buffer.rewind();
 
-        long r = decodeLong(buffer);
+		long r = decodeLong(buffer);
 
-        Assert.assertEquals(i, r);
-    }
+		Assert.assertEquals(i, r);
+	}
 
-    @Test
-    public void testEncodeShort() {
-        short i = 314;
+	@Test
+	public void testEncodeShort() {
+		short i = 314;
 
-        ByteBuffer buffer = encodeShort(i);
-        buffer.rewind();
+		ByteBuffer buffer = encodeShort(i);
+		buffer.rewind();
 
-        short r = decodeShort(buffer);
+		short r = decodeShort(buffer);
 
-        Assert.assertEquals(i, r);
-    }
+		Assert.assertEquals(i, r);
+	}
 
-    @Test
-    public void testEncodeByte() {
-        byte i = (byte) 0x0A;
+	@Test
+	public void testEncodeByte() {
+		byte i = (byte) 0x0A;
 
-        ByteBuffer buffer = encodeByte(i);
-        buffer.rewind();
+		ByteBuffer buffer = encodeByte(i);
+		buffer.rewind();
 
-        byte r = decodeByte(buffer);
+		byte r = decodeByte(buffer);
 
-        Assert.assertEquals(i, r);
-    }
+		Assert.assertEquals(i, r);
+	}
 
-    @Test
-    public void testEncodeBoolean() {
-        boolean i = true;
+	@Test
+	public void testEncodeBoolean() {
+		boolean i = true;
 
-        ByteBuffer buffer = encodeBoolean(i);
-        buffer.rewind();
+		ByteBuffer buffer = encodeBoolean(i);
+		buffer.rewind();
 
-        boolean r = decodeBoolean(buffer);
+		boolean r = decodeBoolean(buffer);
 
-        Assert.assertEquals(i, r);
-    }
+		Assert.assertEquals(i, r);
+	}
 }

@@ -33,11 +33,11 @@ package org.graphstream.ui.layout.springbox.implementations;
 
 import java.util.Iterator;
 
+import org.graphstream.ui.geom.Vector3;
 import org.graphstream.ui.layout.springbox.EdgeSpring;
 import org.graphstream.ui.layout.springbox.Energies;
 import org.graphstream.ui.layout.springbox.GraphCellData;
 import org.graphstream.ui.layout.springbox.NodeParticle;
-import org.graphstream.util.geom.Point3;
 import org.miv.pherd.Particle;
 import org.miv.pherd.ParticleBox;
 import org.miv.pherd.ntree.Cell;
@@ -54,14 +54,13 @@ public class LinLogNodeParticle extends NodeParticle {
 	 *            The node identifier.
 	 */
 	public LinLogNodeParticle(LinLog box, String id) {
-		this(box, id, (box.getRandom().nextDouble() * 2 * box.k) - box.k, (box
-				.getRandom().nextDouble() * 2 * box.k) - box.k,
-				box.is3D() ? (box.getRandom().nextDouble() * 2 * box.k) - box.k
-						: 0);
+		this(box, id, (box.getRandom().nextDouble() * 2 * box.k) - box.k,
+				(box.getRandom().nextDouble() * 2 * box.k) - box.k,
+				box.is3D() ? (box.getRandom().nextDouble() * 2 * box.k) - box.k : 0);
 
 		this.box = box;
 	}
-	
+
 	/**
 	 * New node at a given position.
 	 * 
@@ -76,13 +75,12 @@ public class LinLogNodeParticle extends NodeParticle {
 	 * @param z
 	 *            The depth.
 	 */
-	public LinLogNodeParticle(LinLog box, String id, double x, double y,
-			double z) {
+	public LinLogNodeParticle(LinLog box, String id, double x, double y, double z) {
 		super(box, id, x, y, z);
 	}
 
 	@Override
-	protected Point3 repulsionN2(Point3 delta) {
+	protected void repulsionN2(Vector3 delta) {
 		LinLog box = (LinLog) this.box;
 		boolean is3D = box.is3D();
 		ParticleBox nodes = box.getSpatialIndex();
@@ -91,45 +89,44 @@ public class LinLogNodeParticle extends NodeParticle {
 		int deg = neighbours.size();
 
 		while (i.hasNext()) {
-			LinLogNodeParticle node = (LinLogNodeParticle) nodes
-					.getParticle(i.next());
+			LinLogNodeParticle node = (LinLogNodeParticle) nodes.getParticle(i.next());
 
 			if (node != this) {
-				delta = new Point3(node.pos.x - pos.x, node.pos.y - pos.y,
-						is3D ? node.pos.z - pos.z : 0);
+				delta.set(node.pos.x - pos.x, node.pos.y - pos.y, is3D ? node.pos.z - pos.z : 0);
 
-//				double len = delta.normalize();
+				// double len = delta.normalize();
 				double len = delta.length();
 
-				if(len > 0) {
+				if (len > 0) {
 					double degFactor = box.edgeBased ? deg * node.neighbours.size() : 1;
 					double factor = 1;
 					double r = box.r;
 
-					factor = -degFactor * (Math.pow(len, r-2)) * node.weight * weight * box.rFactor;
+					factor = -degFactor * (Math.pow(len, r - 2)) * node.weight * weight * box.rFactor;
 
-					if(factor < -box.maxR) { factor = -box.maxR; }
-					
+					if (factor < -box.maxR) {
+						factor = -box.maxR;
+					}
+
 					energies.accumulateEnergy(factor); // TODO check this
-					delta = delta.mul(factor);
-					disp = disp.add(delta);
+					delta.scalarMult(factor);
+					disp.add(delta);
 					repE += factor;
 				}
 			}
 		}
-		return delta;
 	}
-	
+
 	@Override
-	protected Point3 repulsionNLogN(Point3 delta) {
+	protected void repulsionNLogN(Vector3 delta) {
 		// Explore the n-tree from the root cell and consider the contents
 		// of one cell only if it does intersect an area around the current
 		// node. Else take its (weighted) barycenter into account.
 
-		return recurseRepulsion(box.getSpatialIndex().getNTree().getRootCell(), delta);
+		recurseRepulsion(box.getSpatialIndex().getNTree().getRootCell(), delta);
 	}
 
-	protected Point3 recurseRepulsion(Cell cell, Point3 delta) {
+	protected void recurseRepulsion(Cell cell, Vector3 delta) {
 		LinLog box = (LinLog) this.box;
 		boolean is3D = box.is3D();
 		Energies energies = box.getEnergies();
@@ -143,24 +140,25 @@ public class LinLogNodeParticle extends NodeParticle {
 					LinLogNodeParticle node = (LinLogNodeParticle) i.next();
 
 					if (node != this) {
-						delta = new Point3(node.pos.x - pos.x, node.pos.y - pos.y, is3D ? node.pos.z
-								- pos.z : 0);
+						delta.set(node.pos.x - pos.x, node.pos.y - pos.y, is3D ? node.pos.z - pos.z : 0);
 
-						//double len = delta.normalize();
+						// double len = delta.normalize();
 						double len = delta.length();
 
 						if (len > 0) {
 							double degFactor = box.edgeBased ? deg * node.neighbours.size() : 1;
 							double factor = 1;
 							double r = box.r;
-							
-							factor = -degFactor * (Math.pow(len, r-2)) * node.weight * weight * box.rFactor;
-							
-							if(factor < -box.maxR) { factor = -box.maxR; }
 
-							energies.accumulateEnergy(factor);	// TODO check this
-							delta = delta.mul(factor);
-							disp = disp.add(delta);
+							factor = -degFactor * (Math.pow(len, r - 2)) * node.weight * weight * box.rFactor;
+
+							if (factor < -box.maxR) {
+								factor = -box.maxR;
+							}
+
+							energies.accumulateEnergy(factor); // TODO check this
+							delta.scalarMult(factor);
+							disp.add(delta);
 							repE += factor;
 						}
 					}
@@ -169,7 +167,7 @@ public class LinLogNodeParticle extends NodeParticle {
 				int div = cell.getSpace().getDivisions();
 
 				for (int i = 0; i < div; i++)
-					delta = recurseRepulsion(cell.getSub(i), delta);
+					recurseRepulsion(cell.getSub(i), delta);
 			}
 		} else {
 			if (cell != this.cell) {
@@ -177,43 +175,42 @@ public class LinLogNodeParticle extends NodeParticle {
 				double dist = bary.distanceFrom(pos);
 				double size = cell.getSpace().getSize();
 
-				if ((!cell.isLeaf())
-						&& ((size / dist) > box.getBarnesHutTheta())) {
+				if ((!cell.isLeaf()) && ((size / dist) > box.getBarnesHutTheta())) {
 					int div = cell.getSpace().getDivisions();
 
 					for (int i = 0; i < div; i++)
-						delta = recurseRepulsion(cell.getSub(i), delta);
+						recurseRepulsion(cell.getSub(i), delta);
 				} else {
 					if (bary.weight != 0) {
-						delta = new Point3(bary.center.x - pos.x, bary.center.y - pos.y,
-								is3D ? bary.center.z - pos.z : 0);
+						delta.set(bary.center.x - pos.x, bary.center.y - pos.y, is3D ? bary.center.z - pos.z : 0);
 
-						//double len = delta.normalize();
+						// double len = delta.normalize();
 						double len = delta.length();
 
 						if (len > 0) {
 							double degFactor = box.edgeBased ? deg * bary.degree : 1;
 							double factor = 1;
 							double r = box.r;
-							
-							factor = -degFactor * (Math.pow(len, r-2)) * bary.weight * weight * box.rFactor;
 
-							if(factor < -box.maxR) { factor = -box.maxR; }
-							
-							energies.accumulateEnergy(factor);	// TODO check this
-							delta = delta.mul(factor);
-							disp = disp.add(delta);
+							factor = -degFactor * (Math.pow(len, r - 2)) * bary.weight * weight * box.rFactor;
+
+							if (factor < -box.maxR) {
+								factor = -box.maxR;
+							}
+
+							energies.accumulateEnergy(factor); // TODO check this
+							delta.scalarMult(factor);
+							disp.add(delta);
 							repE += factor;
 						}
 					}
 				}
 			}
 		}
-		return delta;
 	}
 
 	@Override
-	protected Point3 attraction(Point3 delta) {
+	protected void attraction(Vector3 delta) {
 		LinLog box = (LinLog) this.box;
 		boolean is3D = box.is3D();
 		Energies energies = box.getEnergies();
@@ -222,32 +219,30 @@ public class LinLogNodeParticle extends NodeParticle {
 			if (!edge.ignored) {
 				LinLogNodeParticle other = (LinLogNodeParticle) edge.getOpposite(this);
 
-				delta = new Point3(other.pos.x - pos.x, other.pos.y - pos.y, is3D ? other.pos.z - pos.z : 0);
+				delta.set(other.pos.x - pos.x, other.pos.y - pos.y, is3D ? other.pos.z - pos.z : 0);
 
-//				double len = delta.normalize();
+				// double len = delta.normalize();
 				double len = delta.length();
 
-				if(len > 0) {
+				if (len > 0) {
 					double factor = 1;
 					double a = box.a;
 
-					factor = (Math.pow(len, a-2)) * edge.weight * box.aFactor;
+					factor = (Math.pow(len, a - 2)) * edge.weight * box.aFactor;
 
 					energies.accumulateEnergy(factor);
-					delta = delta.mul(factor);
-					disp = disp.add(delta);
+					delta.scalarMult(factor);
+					disp.add(delta);
 					attE += factor;
 				}
 			}
 		}
-		return delta;
 	}
-	
+
 	@Override
-	protected Point3 gravity(Point3 delta) {
-		return delta;
+	protected void gravity(Vector3 delta) {
 	}
-	
+
 	protected boolean intersection(Cell cell) {
 		LinLog box = (LinLog) this.box;
 

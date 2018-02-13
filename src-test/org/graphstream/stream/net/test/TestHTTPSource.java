@@ -38,12 +38,9 @@ public class TestHTTPSource {
 		source.addSink(graph);
 	}
 
-	
-
 	@Test
 	public void testAddAndDeleteNode() throws IOException {
-		
-		
+
 		HttpUriRequest request = new HttpPost(ROOT_URL + NODE_1);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		assertThat(httpResponse.getStatusLine().getStatusCode(), is(200));
@@ -52,7 +49,7 @@ public class TestHTTPSource {
 		httpResponse = HttpClientBuilder.create().build().execute(request);
 		assertThat(httpResponse.getStatusLine().getStatusCode(), is(200));
 		assertThat(graph.getNodeCount(), is(0));
-		
+
 	}
 
 	@Test
@@ -72,7 +69,7 @@ public class TestHTTPSource {
 		httpResponse = HttpClientBuilder.create().build().execute(request);
 		assertThat(httpResponse.getStatusLine().getStatusCode(), is(200));
 	}
-	
+
 	@Test
 	public void testStep() throws ClientProtocolException, IOException {
 		HttpUriRequest request = new HttpPost(ROOT_URL + "/step/1");
@@ -82,13 +79,12 @@ public class TestHTTPSource {
 		httpResponse = HttpClientBuilder.create().build().execute(request);
 		assertThat(httpResponse.getStatusLine().getStatusCode(), is(400));
 	}
-	
-	
+
 	@After
-	public void cleanGraph(){
+	public void cleanGraph() {
 		graph.clear();
 	}
-	
+
 	/*
 	 * Stop server
 	 */

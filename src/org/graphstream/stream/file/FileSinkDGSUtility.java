@@ -36,8 +36,6 @@ import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Locale;
 
-import org.graphstream.graph.CompoundAttribute;
-
 public class FileSinkDGSUtility {
 	protected static String formatStringForQuoting(String str) {
 		return str.replaceAll("(^|[^\\\\])\"", "$1\\\\\"");
@@ -68,8 +66,7 @@ public class FileSinkDGSUtility {
 				sb.append(arrayString(Array.get(value, 0)));
 
 			for (int i = 1; i < Array.getLength(value); ++i)
-				sb.append(String
-						.format(",%s", arrayString(Array.get(value, i))));
+				sb.append(String.format(",%s", arrayString(Array.get(value, i))));
 
 			sb.append("}");
 			return sb.toString();
@@ -84,15 +81,13 @@ public class FileSinkDGSUtility {
 
 		if (value instanceof CharSequence) {
 			if (value instanceof String)
-				return String.format("\"%s\"",
-						formatStringForQuoting((String) value));
+				return String.format("\"%s\"", formatStringForQuoting((String) value));
 			else
 				return String.format("\"%s\"", (CharSequence) value);
 		} else if (value instanceof Number) {
 			Number nval = (Number) value;
 
-			if (value instanceof Integer || value instanceof Short
-					|| value instanceof Byte || value instanceof Long)
+			if (value instanceof Integer || value instanceof Short || value instanceof Byte || value instanceof Long)
 				return String.format(Locale.US, "%d", nval.longValue());
 			else
 				return String.format(Locale.US, "%f", nval.doubleValue());
@@ -114,20 +109,13 @@ public class FileSinkDGSUtility {
 			}
 
 			return sb.toString();
-		} else if (value instanceof HashMap<?, ?>
-				|| value instanceof CompoundAttribute) {
-			HashMap<?, ?> hash;
-
-			if (value instanceof CompoundAttribute)
-				hash = ((CompoundAttribute) value).toHashMap();
-			else
-				hash = (HashMap<?, ?>) value;
+		} else if (value instanceof HashMap<?, ?>) {
+			HashMap<?, ?> hash = (HashMap<?, ?>) value;
 
 			return hashToString(hash);
 		} else if (value instanceof Color) {
 			Color c = (Color) value;
-			return String.format("#%02X%02X%02X%02X", c.getRed(), c.getGreen(),
-					c.getBlue(), c.getAlpha());
+			return String.format("#%02X%02X%02X%02X", c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
 		} else {
 			return String.format("\"%s\"", value.toString());
 		}

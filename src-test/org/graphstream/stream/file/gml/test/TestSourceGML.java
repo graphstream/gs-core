@@ -39,44 +39,47 @@ import org.junit.Ignore;
 @Ignore
 public class TestSourceGML {
 	public static void main(String args[]) {
-		//System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
+		// System.setProperty("gs.ui.renderer",
+		// "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
+		System.setProperty("org.graphstream.ui", "org.graphstream.ui.swingViewer.util.SwingDisplay");
 		new TestSourceGML();
 	}
-	
+
 	public TestSourceGML() {
 		testBigFile();
 		testDynFile();
 		testSmallFile();
 	}
-	
+
 	public void testDynFile() {
 		try {
 			Graph graph = new MultiGraph("Dynamic !");
 			FileSourceGML source = new FileSourceGML();
-			
+
 			graph.setAttribute("ui.quality");
 			graph.setAttribute("ui.antialias");
 			graph.display();
 			source.addSink(graph);
 			source.begin(TestSourceGML.class.getResourceAsStream("dynamic.gml"));
 			int step = 0;
-			while(source.nextStep()) {
+			while (source.nextStep()) {
 				System.err.printf("Step %d%n", step);
 				step++;
 				sleep(1000);
 			}
 			source.end();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	protected void sleep(long time) {
 		try {
 			Thread.sleep(time);
-		} catch(Exception e) {}
+		} catch (Exception e) {
+		}
 	}
-	
+
 	public void testBigFile() {
 		try {
 			Graph graph = new MultiGraph("foo");
@@ -84,17 +87,19 @@ public class TestSourceGML {
 
 			graph.setAttribute("ui.quality");
 			graph.setAttribute("ui.antialias");
-			graph.setAttribute("ui.stylesheet", "node { text-size:8; text-color: #0008; text-alignment: at-right; } edge { text-size:8; text-color: #0008; }");
+			graph.setAttribute("ui.stylesheet",
+					"node { text-size:8; text-color: #0008; text-alignment: at-right; } edge { text-size:8; text-color: #0008; }");
 			graph.display(false);
 			source.addSink(graph);
 			source.begin(TestSourceGML.class.getResourceAsStream("example2.sif.gml"));
-			while(source.nextEvents()) {}
+			while (source.nextEvents()) {
+			}
 			source.end();
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+
 	public void testSmallFile() {
 		try {
 			Graph graph = new MultiGraph("foo");
@@ -102,14 +107,15 @@ public class TestSourceGML {
 
 			graph.setAttribute("ui.quality");
 			graph.setAttribute("ui.antialias");
-			//graph.setAttribute("ui.stylesheet", "node { text-size:8; text-color: #0008; text-alignment: at-right; } edge { text-size:8; text-color: #0008; }");
+			// graph.setAttribute("ui.stylesheet", "node { text-size:8; text-color: #0008;
+			// text-alignment: at-right; } edge { text-size:8; text-color: #0008; }");
 			graph.display();
 			source.addSink(graph);
 			source.begin(TestSourceGML.class.getResourceAsStream("SmallTest.gml"));
-			while(source.nextEvents()) {}
+			while (source.nextEvents()) {
+			}
 			source.end();
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

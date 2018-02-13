@@ -125,9 +125,7 @@ public class TLPParser implements Parser, TLPParserConstants {
 	}
 
 	private void addNode(String id) throws ParseException {
-		if (stack.size() > 1
-				&& (!root.nodes.contains(id) || !stack.get(stack.size() - 2).nodes
-						.contains(id)))
+		if (stack.size() > 1 && (!root.nodes.contains(id) || !stack.get(stack.size() - 2).nodes.contains(id)))
 			throw new ParseException("parent cluster do not contain the node");
 
 		if (stack.size() == 1)
@@ -136,14 +134,9 @@ public class TLPParser implements Parser, TLPParserConstants {
 		stack.peek().nodes.add(id);
 	}
 
-	private void addEdge(String id, String source, String target)
-			throws ParseException {
-		if (stack.size() > 1
-				&& (!root.edges.contains(id) || !stack.get(stack.size() - 2).edges
-						.contains(id)))
-			throw new ParseException("parent cluster "
-					+ stack.get(stack.size() - 2).name
-					+ " do not contain the edge");
+	private void addEdge(String id, String source, String target) throws ParseException {
+		if (stack.size() > 1 && (!root.edges.contains(id) || !stack.get(stack.size() - 2).edges.contains(id)))
+			throw new ParseException("parent cluster " + stack.get(stack.size() - 2).name + " do not contain the edge");
 
 		if (stack.size() == 1)
 			tlp.sendEdgeAdded(sourceId, id, source, target, false);
@@ -152,19 +145,15 @@ public class TLPParser implements Parser, TLPParserConstants {
 	}
 
 	private void includeEdge(String id) throws ParseException {
-		if (stack.size() > 1
-				&& (!root.edges.contains(id) || !stack.get(stack.size() - 2).edges
-						.contains(id)))
-			throw new ParseException("parent cluster "
-					+ stack.get(stack.size() - 2).name
-					+ " do not contain the edge");
+		if (stack.size() > 1 && (!root.edges.contains(id) || !stack.get(stack.size() - 2).edges.contains(id)))
+			throw new ParseException("parent cluster " + stack.get(stack.size() - 2).name + " do not contain the edge");
 
 		stack.peek().edges.add(id);
 	}
 
 	private void graphAttribute(String key, Object value) {
-		tlp.sendAttributeChangedEvent(sourceId, sourceId, ElementType.GRAPH,
-				key, AttributeChangeEvent.ADD, null, value);
+		tlp.sendAttributeChangedEvent(sourceId, sourceId, ElementType.GRAPH, key, AttributeChangeEvent.ADD, null,
+				value);
 	}
 
 	private void pushCluster(int i, String name) {
@@ -178,8 +167,7 @@ public class TLPParser implements Parser, TLPParserConstants {
 			stack.pop();
 	}
 
-	private void newProperty(Integer cluster, String name, PropertyType type,
-			String nodeDefault, String edgeDefault,
+	private void newProperty(Integer cluster, String name, PropertyType type, String nodeDefault, String edgeDefault,
 			HashMap<String, String> nodes, HashMap<String, String> edges) {
 		Object nodeDefaultValue = convert(type, nodeDefault);
 		Object edgeDefaultValue = convert(type, edgeDefault);
@@ -191,8 +179,7 @@ public class TLPParser implements Parser, TLPParserConstants {
 			if (nodes.containsKey(id))
 				value = convert(type, nodes.get(id));
 
-			tlp.sendAttributeChangedEvent(sourceId, id, ElementType.NODE, name,
-					AttributeChangeEvent.ADD, null, value);
+			tlp.sendAttributeChangedEvent(sourceId, id, ElementType.NODE, name, AttributeChangeEvent.ADD, null, value);
 		}
 
 		for (String id : c.edges) {
@@ -201,8 +188,7 @@ public class TLPParser implements Parser, TLPParserConstants {
 			if (edges.containsKey(id))
 				value = convert(type, edges.get(id));
 
-			tlp.sendAttributeChangedEvent(sourceId, id, ElementType.EDGE, name,
-					AttributeChangeEvent.ADD, null, value);
+			tlp.sendAttributeChangedEvent(sourceId, id, ElementType.EDGE, name, AttributeChangeEvent.ADD, null, value);
 		}
 	}
 
@@ -643,8 +629,7 @@ public class TLPParser implements Parser, TLPParserConstants {
 	}
 
 	private static void jj_la1_init_0() {
-		jj_la1_0 = new int[] { 0x400, 0x401, 0x380000, 0x1000000, 0x1000000,
-				0x400, 0x400, 0x14000, };
+		jj_la1_0 = new int[] { 0x400, 0x401, 0x380000, 0x1000000, 0x1000000, 0x400, 0x400, 0x14000, };
 	}
 
 	final private JJCalls[] jj_2_rtns = new JJCalls[5];
@@ -782,8 +767,7 @@ public class TLPParser implements Parser, TLPParserConstants {
 		if (jj_scanpos == jj_lastpos) {
 			jj_la--;
 			if (jj_scanpos.next == null) {
-				jj_lastpos = jj_scanpos = jj_scanpos.next = token_source
-						.getNextToken();
+				jj_lastpos = jj_scanpos = jj_scanpos.next = token_source.getNextToken();
 			} else {
 				jj_lastpos = jj_scanpos = jj_scanpos.next;
 			}
@@ -853,8 +837,7 @@ public class TLPParser implements Parser, TLPParserConstants {
 			for (int i = 0; i < jj_endpos; i++) {
 				jj_expentry[i] = jj_lasttokens[i];
 			}
-			jj_entries_loop: for (java.util.Iterator<?> it = jj_expentries
-					.iterator(); it.hasNext();) {
+			jj_entries_loop: for (java.util.Iterator<?> it = jj_expentries.iterator(); it.hasNext();) {
 				int[] oldentry = (int[]) (it.next());
 				if (oldentry.length == jj_expentry.length) {
 					for (int i = 0; i < jj_expentry.length; i++) {
