@@ -205,11 +205,6 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 	// protected SinkTime sinkTime = new SinkTime();
 
 	/**
-	 * Are null attributes access an error ?
-	 */
-	protected boolean nullAttrError = false;
-
-	/**
 	 * Report back the XYZ events on nodes and sprites? If enabled, each change
 	 * in the position of nodes and sprites will be sent to potential listeners
 	 * of the graph. By default this is disabled as long there are no listeners.
@@ -894,12 +889,7 @@ public class GraphicGraph extends AbstractElement implements Graph, StyleGroupLi
 		throw new RuntimeException(
 				"GraphicGraph does not support strict checking");
 	}
-
-	@Override
-	public void setNullAttributesAreErrors(boolean on) {
-		nullAttrError = on;
-	}
-
+	
 	@Override
 	public void setEdgeFactory(EdgeFactory<? extends Edge> ef) {
 		throw new RuntimeException(

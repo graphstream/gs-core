@@ -1133,17 +1133,6 @@ public class Graphs {
 		}
 
 		@Override
-		public void setNullAttributesAreErrors(boolean on) {
-			elementLock.lock();
-
-			try {
-				wrappedElement.setNullAttributesAreErrors(on);
-			} finally {
-				elementLock.unlock();
-			}
-		}
-
-		@Override
 		public void setStrict(boolean on) {
 			elementLock.lock();
 

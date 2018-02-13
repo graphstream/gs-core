@@ -87,8 +87,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 
 	private double step = 0;
 
-	private boolean nullAttributesAreErrors;
-
 	private long replayId = 0;
 
 	// *** Constructors ***
@@ -185,12 +183,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph,
 	public double getStep() {
 		return step;
 	}
-
-	@Override
-	public void setNullAttributesAreErrors(boolean on) {
-		nullAttributesAreErrors = on;
-	}
-
+	
 	@Override
 	public void setAutoCreate(boolean on) {
 		autoCreate = on;

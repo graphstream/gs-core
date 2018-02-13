@@ -216,16 +216,6 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	// Command
 
 	/**
-	 * Should a {@link NullAttributeException} be thrown when one tries to
-	 * access a non existing attribute, or an attribute whose type is not the
-	 * expected one?.
-	 *
-	 * @param on if true, exceptions will be thrown when accessing a non
-	 *           existing attribute.
-	 */
-	void setNullAttributesAreErrors(boolean on);
-
-	/**
 	 * Set the node factory used to create nodes.
 	 *
 	 * @param nf the new NodeFactory
