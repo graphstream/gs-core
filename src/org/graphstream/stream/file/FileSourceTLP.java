@@ -74,6 +74,7 @@ import org.graphstream.util.parser.ParserFactory;
  * source node and the target nodes.
  * 
  * Clusters can be created with an index and a name:
+ * 
  * <pre>
  * 	(tlp "2.0"
  * 		(nodes 1 2 3)
@@ -90,6 +91,7 @@ import org.graphstream.util.parser.ParserFactory;
  * Cluster 0 is the root graph.
  * 
  * Properties can be applied to cluster:
+ * 
  * <pre>
  * 	(tlp "2.0"
  * 		(nodes 1 2 3)
@@ -118,6 +120,7 @@ import org.graphstream.util.parser.ParserFactory;
 public class FileSourceTLP extends FileSourceParser {
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.graphstream.stream.file.FileSourceParser#getNewFactory()
 	 */
 	public ParserFactory getNewParserFactory() {

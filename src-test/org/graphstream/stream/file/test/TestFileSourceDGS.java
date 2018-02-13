@@ -54,17 +54,15 @@ public class TestFileSourceDGS extends TestFileSourceBase {
 		return TEST1_TRIANGLE;
 	}
 
-	protected static String TEST1_TRIANGLE = "DGS004\n" + "\"test1\" 0 0\n"
-			+ "an A\n" + "an B\n" + "an C\n" + "ae AB A B\n" + "ae BC B C\n"
-			+ "ae CA C A\n";
+	protected static String TEST1_TRIANGLE = "DGS004\n" + "\"test1\" 0 0\n" + "an A\n" + "an B\n" + "an C\n"
+			+ "ae AB A B\n" + "ae BC B C\n" + "ae CA C A\n";
 
 	@Override
 	public String aDirectedTriangle() {
 		return TEST2_DIRECTED_TRIANGLE;
 	}
 
-	protected static String TEST2_DIRECTED_TRIANGLE = "DGS004\n"
-			+ "\"test2\" 0 0\n" + "an A\n" + "an B\n" + "an C\n"
+	protected static String TEST2_DIRECTED_TRIANGLE = "DGS004\n" + "\"test2\" 0 0\n" + "an A\n" + "an B\n" + "an C\n"
 			+ "ae AB A > B\n" + "ae BC B C\n" + "ae CA C < A\n";
 
 	@Override
@@ -72,10 +70,8 @@ public class TestFileSourceDGS extends TestFileSourceBase {
 		return TEST3_ATTRIBUTES;
 	}
 
-	protected static String TEST3_ATTRIBUTES = "DGS004\n" + "\"test3\" 0 0\n"
-			+ "an A a:1 b:\"truc\" c:\"true\"\n"
-			+ "an B aa:1,2,3,4 bb:foo cc:bar\n" + "an C aaa=1.234\n"
-			+ "ae AB A B\n" + "ae BC B C\n" + "ae CA C A\n";
+	protected static String TEST3_ATTRIBUTES = "DGS004\n" + "\"test3\" 0 0\n" + "an A a:1 b:\"truc\" c:\"true\"\n"
+			+ "an B aa:1,2,3,4 bb:foo cc:bar\n" + "an C aaa=1.234\n" + "ae AB A B\n" + "ae BC B C\n" + "ae CA C A\n";
 
 	@Override
 	public String anUndirectedTriangleFileName() {

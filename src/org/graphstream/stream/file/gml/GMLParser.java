@@ -162,8 +162,8 @@ public class GMLParser implements Parser, GMLParserConstants {
 	 * The top-level method to be called by the file source. Returns a set of
 	 * top-level key values or null if the end of the file was reached.
 	 * 
-	 * Top-level key values are nodes and edges as well as all key-values
-	 * defined before and after the graph.
+	 * Top-level key values are nodes and edges as well as all key-values defined
+	 * before and after the graph.
 	 */
 	final public KeyValues nextEvents() throws ParseException {
 		KeyValues values = new KeyValues();
@@ -234,10 +234,10 @@ public class GMLParser implements Parser, GMLParserConstants {
 	}
 
 	/**
-	 * A set of key and value, the value can recursively be a list of
-	 * key-values. Only the key-value list "graph [ ... ]" is not parsed by this
-	 * rule, and parsed by another rules, so that the nextEvent() rule can be
-	 * called repeatedly.
+	 * A set of key and value, the value can recursively be a list of key-values.
+	 * Only the key-value list "graph [ ... ]" is not parsed by this rule, and
+	 * parsed by another rules, so that the nextEvent() rule can be called
+	 * repeatedly.
 	 */
 	final public String keyValue(KeyValues values) throws ParseException {
 		Token k;
@@ -340,8 +340,7 @@ public class GMLParser implements Parser, GMLParserConstants {
 	}
 
 	private static void jj_la1_init_0() {
-		jj_la1_0 = new int[] { 0x3000, 0xc800, 0xfa01, 0xc800, 0x8000, 0x4800,
-				0x4d00, };
+		jj_la1_0 = new int[] { 0x3000, 0xc800, 0xfa01, 0xc800, 0x8000, 0x4800, 0x4d00, };
 	}
 
 	/** Constructor with InputStream. */

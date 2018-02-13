@@ -190,24 +190,21 @@ public class AdjacencyListNode extends AbstractNode {
 	@Override
 	public Edge getEdge(int i) {
 		if (i < 0 || i >= degree)
-			throw new IndexOutOfBoundsException("Node \"" + this + "\""
-					+ " has no edge " + i);
+			throw new IndexOutOfBoundsException("Node \"" + this + "\"" + " has no edge " + i);
 		return edges[i];
 	}
 
 	@Override
 	public Edge getEnteringEdge(int i) {
 		if (i < 0 || i >= getInDegree())
-			throw new IndexOutOfBoundsException("Node \"" + this + "\""
-					+ " has no entering edge " + i);
+			throw new IndexOutOfBoundsException("Node \"" + this + "\"" + " has no entering edge " + i);
 		return edges[i];
 	}
 
 	@Override
 	public Edge getLeavingEdge(int i) {
 		if (i < 0 || i >= getOutDegree())
-			throw new IndexOutOfBoundsException("Node \"" + this + "\""
-					+ " has no edge " + i);
+			throw new IndexOutOfBoundsException("Node \"" + this + "\"" + " has no edge " + i);
 		return edges[ioStart + i];
 	}
 
@@ -273,8 +270,7 @@ public class AdjacencyListNode extends AbstractNode {
 				throw new IllegalStateException();
 			AbstractEdge e = edges[iPrev];
 			// do not call the callback because we already know the index
-			graph.removeEdge(e, true, e.source != AdjacencyListNode.this,
-					e.target != AdjacencyListNode.this);
+			graph.removeEdge(e, true, e.source != AdjacencyListNode.this, e.target != AdjacencyListNode.this);
 			removeEdge(iPrev);
 			iNext = iPrev;
 			iPrev = -1;

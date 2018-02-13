@@ -50,8 +50,8 @@ import org.graphstream.util.parser.ParserFactory;
  * <p>
  * The DGS file format is especially designed for storing dynamic graph
  * definitions into a file. More information about the DGS file format will be
- * found on the GraphStream web site: <a
- * href="http://graphstream-project.org/">http://graphstream-project.org/</a>
+ * found on the GraphStream web site:
+ * <a href="http://graphstream-project.org/">http://graphstream-project.org/</a>
  * </p>
  * 
  * The usual file name extension used for this format is ".dgs".
@@ -116,7 +116,7 @@ public class FileSourceDGS extends FileSourceParser {
 					//
 					e2.printStackTrace();
 				}
-				
+
 				is = new FileInputStream(filename);
 			}
 		}

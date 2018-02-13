@@ -50,15 +50,15 @@ public class LinLog extends BarnesHutLayout {
 	protected double rFactor = 1f;
 
 	protected boolean edgeBased = true;
-	
+
 	protected double maxR = 0.5;
-	
+
 	protected double a = 0;
-	
+
 	protected double r = -1.2;
-	
-	//protected
-	
+
+	// protected
+
 	/**
 	 * New "LinLog" 2D Barnes-Hut simulation.
 	 */
@@ -89,7 +89,7 @@ public class LinLog extends BarnesHutLayout {
 		setQuality(1);
 		force = 3;
 	}
-	
+
 	public void configure(double a, double r, boolean edgeBased, double force) {
 		this.a = a;
 		this.r = r;
@@ -112,24 +112,24 @@ public class LinLog extends BarnesHutLayout {
 			viewZone = k;
 		}
 	}
-	
+
 	@Override
 	public void compute() {
-		if(viewZone > 0)
-			viewZone = area/1.5;
+		if (viewZone > 0)
+			viewZone = area / 1.5;
 		super.compute();
 	}
 
 	@Override
 	protected void chooseNodePosition(NodeParticle n0, NodeParticle n1) {
-//		double delta = k * 0.1;
-//		if (n0.getEdges().size() == 1 && n1.getEdges().size() > 1) {
-//			org.miv.pherd.geom.Point3 pos = n1.getPosition();
-//			n0.moveTo(pos.x + delta, pos.y + delta, pos.z + delta);
-//		} else if (n1.getEdges().size() == 1 && n0.getEdges().size() > 1) {
-//			org.miv.pherd.geom.Point3 pos = n0.getPosition();
-//			n1.moveTo(pos.x + delta, pos.y + delta, pos.z + delta);
-//		}
+		// double delta = k * 0.1;
+		// if (n0.getEdges().size() == 1 && n1.getEdges().size() > 1) {
+		// org.miv.pherd.geom.Point3 pos = n1.getPosition();
+		// n0.moveTo(pos.x + delta, pos.y + delta, pos.z + delta);
+		// } else if (n1.getEdges().size() == 1 && n0.getEdges().size() > 1) {
+		// org.miv.pherd.geom.Point3 pos = n0.getPosition();
+		// n1.moveTo(pos.x + delta, pos.y + delta, pos.z + delta);
+		// }
 	}
 
 	@Override

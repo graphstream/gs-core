@@ -84,10 +84,10 @@ import java.util.logging.Logger;
  */
 public class ThreadProxyPipe extends SourceBase implements ProxyPipe {
 
-    /**
-     * class level logger
-     */
-    private static final Logger logger = Logger.getLogger(ThreadProxyPipe.class.getSimpleName());
+	/**
+	 * class level logger
+	 */
+	private static final Logger logger = Logger.getLogger(ThreadProxyPipe.class.getSimpleName());
 
 	/**
 	 * Proxy id.
@@ -194,8 +194,8 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe {
 	 *            source of the events
 	 * @param replay
 	 *            true if the source should be replayed. You need a
-	 *            {@link org.graphstream.stream.Replayable} source to enable
-	 *            replay, else nothing happens.
+	 *            {@link org.graphstream.stream.Replayable} source to enable replay,
+	 *            else nothing happens.
 	 */
 	public void init(Source source, boolean replay) {
 		lock.lock();
@@ -239,9 +239,8 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe {
 	}
 
 	/**
-	 * Ask the proxy to unregister from the event input source (stop receive
-	 * events) as soon as possible (when the next event will occur in the
-	 * graph).
+	 * Ask the proxy to unregister from the event input source (stop receive events)
+	 * as soon as possible (when the next event will occur in the graph).
 	 */
 	public void unregisterFromSource() {
 		unregisterWhenPossible = true;
@@ -355,90 +354,77 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe {
 		}
 	}
 
-	public void edgeAttributeAdded(String graphId, long timeId, String edgeId,
-			String attribute, Object value) {
+	public void edgeAttributeAdded(String graphId, long timeId, String edgeId, String attribute, Object value) {
 		if (maybeUnregister())
 			return;
 
-		post(GraphEvents.ADD_EDGE_ATTR, graphId, timeId, edgeId, attribute,
-				value);
+		post(GraphEvents.ADD_EDGE_ATTR, graphId, timeId, edgeId, attribute, value);
 	}
 
-	public void edgeAttributeChanged(String graphId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
+	public void edgeAttributeChanged(String graphId, long timeId, String edgeId, String attribute, Object oldValue,
+			Object newValue) {
 		if (maybeUnregister())
 			return;
 
-		post(GraphEvents.CHG_EDGE_ATTR, graphId, timeId, edgeId, attribute,
-				oldValue, newValue);
+		post(GraphEvents.CHG_EDGE_ATTR, graphId, timeId, edgeId, attribute, oldValue, newValue);
 	}
 
-	public void edgeAttributeRemoved(String graphId, long timeId,
-			String edgeId, String attribute) {
+	public void edgeAttributeRemoved(String graphId, long timeId, String edgeId, String attribute) {
 		if (maybeUnregister())
 			return;
 
 		post(GraphEvents.DEL_EDGE_ATTR, graphId, timeId, edgeId, attribute);
 	}
 
-	public void graphAttributeAdded(String graphId, long timeId,
-			String attribute, Object value) {
+	public void graphAttributeAdded(String graphId, long timeId, String attribute, Object value) {
 		if (maybeUnregister())
 			return;
 
 		post(GraphEvents.ADD_GRAPH_ATTR, graphId, timeId, attribute, value);
 	}
 
-	public void graphAttributeChanged(String graphId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
+	public void graphAttributeChanged(String graphId, long timeId, String attribute, Object oldValue, Object newValue) {
 		if (maybeUnregister())
 			return;
 
-		post(GraphEvents.CHG_GRAPH_ATTR, graphId, timeId, attribute, oldValue,
-				newValue);
+		post(GraphEvents.CHG_GRAPH_ATTR, graphId, timeId, attribute, oldValue, newValue);
 	}
 
-	public void graphAttributeRemoved(String graphId, long timeId,
-			String attribute) {
+	public void graphAttributeRemoved(String graphId, long timeId, String attribute) {
 		if (maybeUnregister())
 			return;
 
 		post(GraphEvents.DEL_GRAPH_ATTR, graphId, timeId, attribute);
 	}
 
-	public void nodeAttributeAdded(String graphId, long timeId, String nodeId,
-			String attribute, Object value) {
+	public void nodeAttributeAdded(String graphId, long timeId, String nodeId, String attribute, Object value) {
 		if (maybeUnregister())
 			return;
 
-		post(GraphEvents.ADD_NODE_ATTR, graphId, timeId, nodeId, attribute,
-				value);
+		post(GraphEvents.ADD_NODE_ATTR, graphId, timeId, nodeId, attribute, value);
 	}
 
-	public void nodeAttributeChanged(String graphId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
+	public void nodeAttributeChanged(String graphId, long timeId, String nodeId, String attribute, Object oldValue,
+			Object newValue) {
 		if (maybeUnregister())
 			return;
 
-		post(GraphEvents.CHG_NODE_ATTR, graphId, timeId, nodeId, attribute,
-				oldValue, newValue);
+		post(GraphEvents.CHG_NODE_ATTR, graphId, timeId, nodeId, attribute, oldValue, newValue);
 	}
 
-	public void nodeAttributeRemoved(String graphId, long timeId,
-			String nodeId, String attribute) {
+	public void nodeAttributeRemoved(String graphId, long timeId, String nodeId, String attribute) {
 		if (maybeUnregister())
 			return;
 
 		post(GraphEvents.DEL_NODE_ATTR, graphId, timeId, nodeId, attribute);
 	}
 
-	public void edgeAdded(String graphId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
+	public void edgeAdded(String graphId, long timeId, String edgeId, String fromNodeId, String toNodeId,
+			boolean directed) {
 		if (maybeUnregister())
 			return;
 
-		post(GraphEvents.ADD_EDGE, graphId, timeId, edgeId, fromNodeId,
-				toNodeId, directed);
+		post(GraphEvents.ADD_EDGE, graphId, timeId, edgeId, fromNodeId, toNodeId, directed);
 	}
 
 	public void edgeRemoved(String graphId, long timeId, String edgeId) {
@@ -539,8 +525,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe {
 			oldValue = data[3];
 			newValue = data[4];
 
-			sendGraphAttributeChanged(graphId, timeId, attribute, oldValue,
-					newValue);
+			sendGraphAttributeChanged(graphId, timeId, attribute, oldValue, newValue);
 			break;
 		case DEL_GRAPH_ATTR:
 			graphId = (String) data[0];
@@ -556,8 +541,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe {
 			attribute = (String) data[3];
 			newValue = data[4];
 
-			sendEdgeAttributeAdded(graphId, timeId, elementId, attribute,
-					newValue);
+			sendEdgeAttributeAdded(graphId, timeId, elementId, attribute, newValue);
 			break;
 		case CHG_EDGE_ATTR:
 			graphId = (String) data[0];
@@ -567,8 +551,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe {
 			oldValue = data[4];
 			newValue = data[5];
 
-			sendEdgeAttributeChanged(graphId, timeId, elementId, attribute,
-					oldValue, newValue);
+			sendEdgeAttributeChanged(graphId, timeId, elementId, attribute, oldValue, newValue);
 			break;
 		case DEL_EDGE_ATTR:
 			graphId = (String) data[0];
@@ -585,8 +568,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe {
 			attribute = (String) data[3];
 			newValue = data[4];
 
-			sendNodeAttributeAdded(graphId, timeId, elementId, attribute,
-					newValue);
+			sendNodeAttributeAdded(graphId, timeId, elementId, attribute, newValue);
 			break;
 		case CHG_NODE_ATTR:
 			graphId = (String) data[0];
@@ -596,8 +578,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe {
 			oldValue = data[4];
 			newValue = data[5];
 
-			sendNodeAttributeChanged(graphId, timeId, elementId, attribute,
-					oldValue, newValue);
+			sendNodeAttributeChanged(graphId, timeId, elementId, attribute, oldValue, newValue);
 			break;
 		case DEL_NODE_ATTR:
 			graphId = (String) data[0];
@@ -614,7 +595,7 @@ public class ThreadProxyPipe extends SourceBase implements ProxyPipe {
 			sendGraphCleared(graphId, timeId);
 			break;
 		default:
-            logger.warning(String.format("Unknown message %s.", e));
+			logger.warning(String.format("Unknown message %s.", e));
 			break;
 		}
 	}

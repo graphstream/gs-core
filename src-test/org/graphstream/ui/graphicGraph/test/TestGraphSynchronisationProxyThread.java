@@ -72,7 +72,7 @@ public class TestGraphSynchronisationProxyThread {
 		Graph main = new MultiGraph("main");
 		ThreadProxyPipe toGraphic = new ThreadProxyPipe();
 		toGraphic.init(main);
-		
+
 		InTheSwingThread viewerThread = new InTheSwingThread(toGraphic);
 		ThreadProxyPipe toMain = viewerThread.getProxy();
 
@@ -170,27 +170,24 @@ public class TestGraphSynchronisationProxyThread {
 		Object xyz2[] = { 2, 1, 0 };
 		Object xyz3[] = { 3, 2, 1 };
 
-		assertArrayEquals(xyz1, (Object[]) main.getNode("A")
-				.getAttribute("xyz"));
-		assertArrayEquals(xyz2, (Object[]) main.getNode("B")
-				.getAttribute("xyz"));
-		assertArrayEquals(xyz3, (Object[]) main.getNode("C")
-				.getAttribute("xyz"));
+		assertArrayEquals(xyz1, (Object[]) main.getNode("A").getAttribute("xyz"));
+		assertArrayEquals(xyz2, (Object[]) main.getNode("B").getAttribute("xyz"));
+		assertArrayEquals(xyz3, (Object[]) main.getNode("C").getAttribute("xyz"));
 
 		assertEquals("foobar", S2.getAttribute("ui.foobar"));
 
 		GraphicSprite gs3 = graphic.getSprite("S3");
 
-		assertEquals(0.5f, S1.getX(),0);
-		assertEquals(0, S1.getY(),0);
-		assertEquals(0, S1.getZ(),0);
-		assertEquals(1, S2.getX(),0);
-		assertEquals(2, S2.getY(),0);
-		assertEquals(3, S2.getZ(),0);
+		assertEquals(0.5f, S1.getX(), 0);
+		assertEquals(0, S1.getY(), 0);
+		assertEquals(0, S1.getZ(), 0);
+		assertEquals(1, S2.getX(), 0);
+		assertEquals(2, S2.getY(), 0);
+		assertEquals(3, S2.getZ(), 0);
 
-		assertEquals(3, gs3.getX(),0);
-		assertEquals(2, gs3.getY(),0);
-		assertEquals(1, gs3.getZ(),0);
+		assertEquals(3, gs3.getX(), 0);
+		assertEquals(2, gs3.getY(), 0);
+		assertEquals(1, gs3.getZ(), 0);
 	}
 
 	protected void sleep(int millis) {

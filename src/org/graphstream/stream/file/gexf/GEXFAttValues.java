@@ -60,8 +60,7 @@ public class GEXFAttValues implements GEXFElement {
 					attr.getLast().end = root.step;
 			}
 
-			GEXFAttValue av = new GEXFAttValue(root, Integer.toString(decl.id),
-					formatValue(value));
+			GEXFAttValue av = new GEXFAttValue(root, Integer.toString(decl.id), formatValue(value));
 			attr.add(av);
 		} else {
 			if (attr.size() > 0)

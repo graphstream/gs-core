@@ -87,8 +87,7 @@ public class TestFileSourceGEXF {
 
 		String[] nodeLabels = { "Gephi", "Webatlas", "RTGI", "BarabasiLab" };
 		String[] edges = { "0", "1", "0", "2", "1", "0", "2", "1", "0", "3" };
-		String[] urlValues = { "http://gephi.org", "http://webatlas.fr",
-				"http://rtgi.fr", "http://barabasilab.com" };
+		String[] urlValues = { "http://gephi.org", "http://webatlas.fr", "http://rtgi.fr", "http://barabasilab.com" };
 		Float[] indegreeValues = { 1.0f, 2.0f, 1.0f, 1.0f };
 		Boolean[] frogValues = { true, true, true, false };
 
@@ -104,8 +103,7 @@ public class TestFileSourceGEXF {
 			assertEquals(g.getNode(nid).getLabel("label"), nodeLabels[i]);
 
 			assertEquals(g.getNode(nid).getAttribute("url"), urlValues[i]);
-			assertEquals(g.getNode(nid).getAttribute("indegree"),
-					indegreeValues[i]);
+			assertEquals(g.getNode(nid).getAttribute("indegree"), indegreeValues[i]);
 			assertEquals(g.getNode(nid).getAttribute("frog"), frogValues[i]);
 		}
 
@@ -116,8 +114,7 @@ public class TestFileSourceGEXF {
 			assertTrue(g.getEdge(eid).isDirected());
 
 			assertEquals(g.getEdge(eid).getSourceNode().getId(), edges[2 * i]);
-			assertEquals(g.getEdge(eid).getTargetNode().getId(),
-					edges[2 * i + 1]);
+			assertEquals(g.getEdge(eid).getTargetNode().getId(), edges[2 * i + 1]);
 		}
 	}
 }

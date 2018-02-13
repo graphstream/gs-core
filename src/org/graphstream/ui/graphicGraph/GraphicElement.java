@@ -71,10 +71,10 @@ import java.util.regex.Pattern;
  */
 public abstract class GraphicElement extends AbstractElement {
 
-    /**
-     * class level logger
-     */
-    private static final Logger logger = Logger.getLogger(GraphicElement.class.getSimpleName());
+	/**
+	 * class level logger
+	 */
+	private static final Logger logger = Logger.getLogger(GraphicElement.class.getSimpleName());
 
 	/**
 	 * Interface for renderers registered in each style group.
@@ -141,20 +141,20 @@ public abstract class GraphicElement extends AbstractElement {
 	}
 
 	/**
-	 * Abscissa of the element, always in GU (graph units). For edges this is
-	 * the X of the "from" node.
+	 * Abscissa of the element, always in GU (graph units). For edges this is the X
+	 * of the "from" node.
 	 */
 	public abstract double getX();
 
 	/**
-	 * Ordinate of the element, always in GU (graph units). For edges this is
-	 * the Y of the "from" node.
+	 * Ordinate of the element, always in GU (graph units). For edges this is the Y
+	 * of the "from" node.
 	 */
 	public abstract double getY();
 
 	/**
-	 * Depth of the element, always in GU (graph units). For edges this is the Z
-	 * of the "from" node.
+	 * Depth of the element, always in GU (graph units). For edges this is the Z of
+	 * the "from" node.
 	 */
 	public abstract double getZ();
 
@@ -175,8 +175,8 @@ public abstract class GraphicElement extends AbstractElement {
 	protected abstract void removed();
 
 	/**
-	 * Try to force the element to move at the give location in graph units
-	 * (GU). For edges, this may move the two attached nodes.
+	 * Try to force the element to move at the give location in graph units (GU).
+	 * For edges, this may move the two attached nodes.
 	 * 
 	 * @param x
 	 *            The new X.
@@ -201,10 +201,8 @@ public abstract class GraphicElement extends AbstractElement {
 	 * Handle the "ui.class", "label", "ui.style", etc. attributes.
 	 */
 	@Override
-	protected void attributeChanged(AttributeChangeEvent event,
-			String attribute, Object oldValue, Object newValue) {
-		if (event == AttributeChangeEvent.ADD
-				|| event == AttributeChangeEvent.CHANGE) {
+	protected void attributeChanged(AttributeChangeEvent event, String attribute, Object oldValue, Object newValue) {
+		if (event == AttributeChangeEvent.ADD || event == AttributeChangeEvent.CHANGE) {
 			if (attribute.charAt(0) == 'u' && attribute.charAt(1) == 'i') {
 				if (attribute.equals("ui.class")) {
 					mygraph.styleGroups.checkElementStyleGroup(this);
@@ -219,11 +217,11 @@ public abstract class GraphicElement extends AbstractElement {
 
 					if (newValue instanceof String) {
 						try {
-							mygraph.styleSheet.parseStyleFromString(
-									new Selector(getSelectorType(), getId(),
-											null), (String) newValue);
+							mygraph.styleSheet.parseStyleFromString(new Selector(getSelectorType(), getId(), null),
+									(String) newValue);
 						} catch (Exception e) {
-                            logger.log(Level.WARNING, String.format("Error while parsing style for %S '%s' :", getSelectorType(), getId()), e);
+							logger.log(Level.WARNING, String.format("Error while parsing style for %S '%s' :",
+									getSelectorType(), getId()), e);
 						}
 						mygraph.graphChanged = true;
 					} else {
@@ -299,8 +297,7 @@ public abstract class GraphicElement extends AbstractElement {
 	protected static Pattern acceptedAttribute;
 
 	static {
-		acceptedAttribute = Pattern
-				.compile("(ui[.].*)|(layout[.].*)|x|y|z|xy|xyz|label|stylesheet");
+		acceptedAttribute = Pattern.compile("(ui[.].*)|(layout[.].*)|x|y|z|xy|xyz|label|stylesheet");
 	}
 
 	@Override

@@ -47,8 +47,7 @@ public class GEXFEdge implements GEXFElement {
 	GEXFAttValues attvalues;
 	GEXFSpells spells;
 
-	public GEXFEdge(GEXF root, String id, String source, String target,
-			boolean directed) {
+	public GEXFEdge(GEXF root, String id, String source, String target, boolean directed) {
 		this.root = root;
 
 		this.id = id;
@@ -75,8 +74,7 @@ public class GEXFEdge implements GEXFElement {
 		stream.stream.writeAttribute("label", label);
 		stream.stream.writeAttribute("source", source);
 		stream.stream.writeAttribute("target", target);
-		stream.stream.writeAttribute("type", directed ? "directed"
-				: "undirected");
+		stream.stream.writeAttribute("type", directed ? "directed" : "undirected");
 
 		if (!Double.isNaN(weight))
 			stream.stream.writeAttribute("weight", Double.toString(weight));

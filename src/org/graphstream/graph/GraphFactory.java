@@ -42,7 +42,7 @@ import java.util.logging.Logger;
  */
 public class GraphFactory {
 
-    private static final Logger logger = Logger.getLogger(GraphFactory.class.getSimpleName());
+	private static final Logger logger = Logger.getLogger(GraphFactory.class.getSimpleName());
 
 	/**
 	 * Create a new instance of graph.
@@ -59,8 +59,7 @@ public class GraphFactory {
 		try {
 			String completeGraphClass;
 			if (graphClass.split("[.]").length < 2) {
-				completeGraphClass = "org.graphstream.graph.implementations."
-						+ graphClass;
+				completeGraphClass = "org.graphstream.graph.implementations." + graphClass;
 			} else {
 				completeGraphClass = graphClass;
 			}
@@ -68,12 +67,11 @@ public class GraphFactory {
 			// ).newInstance();
 			// res.setId( id );
 			Class<?> clazz = Class.forName(completeGraphClass);
-			Graph res = (Graph) clazz.getConstructor(String.class).newInstance(
-					id);
+			Graph res = (Graph) clazz.getConstructor(String.class).newInstance(id);
 			return res;
-		}  catch (final Exception e) {
-            logger.log(Level.SEVERE, "Error executing GraphFactory#newInstance.", e);
-        }
+		} catch (final Exception e) {
+			logger.log(Level.SEVERE, "Error executing GraphFactory#newInstance.", e);
+		}
 		return null;
 	}
 }

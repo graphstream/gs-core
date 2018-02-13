@@ -67,10 +67,8 @@ public class GEXFAttValue implements GEXFElement {
 			end = root.step;
 
 		if (root.isExtensionEnable(Extension.DYNAMICS)) {
-			stream.stream.writeAttribute("start",
-					root.getTimeFormat().format.format(start));
-			stream.stream.writeAttribute("end",
-					root.getTimeFormat().format.format(end));
+			stream.stream.writeAttribute("start", root.getTimeFormat().format.format(start));
+			stream.stream.writeAttribute("end", root.getTimeFormat().format.format(end));
 		}
 
 		stream.endElement(); // ATTVALUE

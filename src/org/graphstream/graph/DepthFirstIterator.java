@@ -67,8 +67,7 @@ public class DepthFirstIterator implements Iterator<Node> {
 				int j = neighbor.getIndex();
 				if (iterator[j] == null) {
 					parent[j] = next;
-					iterator[j] = directed ? neighbor.leavingEdges().iterator()
-							: neighbor.enteringEdges().iterator();
+					iterator[j] = directed ? neighbor.leavingEdges().iterator() : neighbor.enteringEdges().iterator();
 					depth[j] = depth[i] + 1;
 					if (depth[j] > maxDepth)
 						maxDepth = depth[j];
@@ -91,16 +90,14 @@ public class DepthFirstIterator implements Iterator<Node> {
 	public Node next() {
 		if (next == null)
 			throw new NoSuchElementException();
-		iterator[next.getIndex()] = directed ? next.leavingEdges().iterator()
-				: next.enteringEdges().iterator();
+		iterator[next.getIndex()] = directed ? next.leavingEdges().iterator() : next.enteringEdges().iterator();
 		Node previous = next;
 		gotoNext();
 		return previous;
 	}
 
 	public void remove() {
-		throw new UnsupportedOperationException(
-				"This iterator does not support remove");
+		throw new UnsupportedOperationException("This iterator does not support remove");
 	}
 
 	public int getDepthOf(Node node) {

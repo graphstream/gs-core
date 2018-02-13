@@ -54,10 +54,7 @@ public class BenchPerformance {
 	long start, end;
 
 	static enum Measures {
-		MEMORY, NODE_BY_ID, EDGE_BY_ID, GRAPH_NODE_IT, GRAPH_EDGE_IT,
-		NODE_EDGE_IT, NODE_ENTERING_EDGE_IT, NODE_LEAVING_EDGE_IT, NODE_NEIGHBOR_IT, NODE_GET_EDGE,
-		BFS_IT, DFS_IT, EDGE_BETWEEN, EDGE_FROM, EDGE_TOWARD, TRIANGLE,
-		ADD_NODE, ADD_EDGE, REMOVE_NODE, REMOVE_EDGE
+		MEMORY, NODE_BY_ID, EDGE_BY_ID, GRAPH_NODE_IT, GRAPH_EDGE_IT, NODE_EDGE_IT, NODE_ENTERING_EDGE_IT, NODE_LEAVING_EDGE_IT, NODE_NEIGHBOR_IT, NODE_GET_EDGE, BFS_IT, DFS_IT, EDGE_BETWEEN, EDGE_FROM, EDGE_TOWARD, TRIANGLE, ADD_NODE, ADD_EDGE, REMOVE_NODE, REMOVE_EDGE
 	}
 
 	EnumMap<Measures, Long> measureValues;
@@ -85,8 +82,7 @@ public class BenchPerformance {
 			e.printStackTrace();
 			System.exit(0);
 		}
-		System.out.println("Graph read: " + g.getNodeCount() + " nodes and "
-				+ g.getEdgeCount() + " edges");
+		System.out.println("Graph read: " + g.getNodeCount() + " nodes and " + g.getEdgeCount() + " edges");
 
 		g.nodes().forEach(Node::clearAttributes);
 		g.edges().forEach(Edge::clearAttributes);
@@ -143,10 +139,10 @@ public class BenchPerformance {
 		//
 		// Iterator<Node> nodeIt = g.getNodeIterator();
 		// while (nodeIt.hasNext()) {
-		//	Node n = nodeIt.next();
-		//	if (n.hasAttribute("foo"))
-		//		foo++;
-		//}
+		// Node n = nodeIt.next();
+		// if (n.hasAttribute("foo"))
+		// foo++;
+		// }
 		//
 
 		end = System.currentTimeMillis();
@@ -160,9 +156,9 @@ public class BenchPerformance {
 		//
 		// Iterator<Edge> edgeIt = g.getEdgeIterator();
 		// while (edgeIt.hasNext()) {
-		// 	Edge e = edgeIt.next();
-		// 	if (e.hasAttribute("foo"))
-		// 		foo++;
+		// Edge e = edgeIt.next();
+		// if (e.hasAttribute("foo"))
+		// foo++;
 		// }
 		//
 
@@ -182,13 +178,13 @@ public class BenchPerformance {
 
 		// Iterator<Node> nodeIt = g.getNodeIterator();
 		// while (nodeIt.hasNext()) {
-		// 	Node n = nodeIt.next();
-		// 	Iterator<Edge> edgeIt = n.getEdgeIterator();
-		// 	while (edgeIt.hasNext()) {
-		// 		Edge e = edgeIt.next();
-		// 		if (e.hasAttribute("foo"))
-		// 			foo++;
-		// 	}
+		// Node n = nodeIt.next();
+		// Iterator<Edge> edgeIt = n.getEdgeIterator();
+		// while (edgeIt.hasNext()) {
+		// Edge e = edgeIt.next();
+		// if (e.hasAttribute("foo"))
+		// foo++;
+		// }
 		// }
 		end = System.currentTimeMillis();
 		measureValues.put(Measures.NODE_EDGE_IT, end - start);
@@ -200,13 +196,13 @@ public class BenchPerformance {
 
 		// nodeIt = g.getNodeIterator();
 		// while (nodeIt.hasNext()) {
-		// 	Node n = nodeIt.next();
-		// 	Iterator<Edge> edgeIt = n.getEnteringEdgeIterator();
-		// 	while (edgeIt.hasNext()) {
-		// 		Edge e = edgeIt.next();
-		// 		if (e.hasAttribute("foo"))
-		// 			foo++;
-		// 	}
+		// Node n = nodeIt.next();
+		// Iterator<Edge> edgeIt = n.getEnteringEdgeIterator();
+		// while (edgeIt.hasNext()) {
+		// Edge e = edgeIt.next();
+		// if (e.hasAttribute("foo"))
+		// foo++;
+		// }
 		// }
 		end = System.currentTimeMillis();
 		measureValues.put(Measures.NODE_ENTERING_EDGE_IT, end - start);
@@ -218,13 +214,13 @@ public class BenchPerformance {
 
 		// nodeIt = g.getNodeIterator();
 		// while (nodeIt.hasNext()) {
-		// 	Node n = nodeIt.next();
-		// 	Iterator<Edge> edgeIt = n.getLeavingEdgeIterator();
-		// 	while (edgeIt.hasNext()) {
-		// 		Edge e = edgeIt.next();
-		// 		if (e.hasAttribute("foo"))
-		// 			foo++;
-		// 	}
+		// Node n = nodeIt.next();
+		// Iterator<Edge> edgeIt = n.getLeavingEdgeIterator();
+		// while (edgeIt.hasNext()) {
+		// Edge e = edgeIt.next();
+		// if (e.hasAttribute("foo"))
+		// foo++;
+		// }
 		// }
 		end = System.currentTimeMillis();
 		measureValues.put(Measures.NODE_LEAVING_EDGE_IT, end - start);
@@ -236,13 +232,13 @@ public class BenchPerformance {
 
 		// nodeIt = g.getNodeIterator();
 		// while (nodeIt.hasNext()) {
-		// 	Node n = nodeIt.next();
-		// 	Iterator<Node> neighborIt = n.getNeighborNodeIterator();
-		// 	while (neighborIt.hasNext()) {
-		// 		Node neighbor = neighborIt.next();
-		// 		if (neighbor.hasAttribute("foo"))
-		// 			foo++;
-		// 	}
+		// Node n = nodeIt.next();
+		// Iterator<Node> neighborIt = n.getNeighborNodeIterator();
+		// while (neighborIt.hasNext()) {
+		// Node neighbor = neighborIt.next();
+		// if (neighbor.hasAttribute("foo"))
+		// foo++;
+		// }
 		// }
 		end = System.currentTimeMillis();
 		measureValues.put(Measures.NODE_NEIGHBOR_IT, end - start);
@@ -264,12 +260,12 @@ public class BenchPerformance {
 
 		// nodeIt = g.getNodeIterator();
 		// while (nodeIt.hasNext()) {
-		// 	Node n = nodeIt.next();
-		// 	for (int i = 0; i < n.getDegree(); i++) {
-		// 		Edge e = n.getEdge(i);
-		// 		if (e.hasAttribute("foo"))
-		// 			foo++;
-		// 	}
+		// Node n = nodeIt.next();
+		// for (int i = 0; i < n.getDegree(); i++) {
+		// Edge e = n.getEdge(i);
+		// if (e.hasAttribute("foo"))
+		// foo++;
+		// }
 		// }
 		end = System.currentTimeMillis();
 		measureValues.put(Measures.NODE_GET_EDGE, end - start);
@@ -283,8 +279,7 @@ public class BenchPerformance {
 		// BFS from 1000 nodes
 		start = System.currentTimeMillis();
 		for (int i = 0; i < 1000; i++) {
-			Iterator<Node> bfsIt = g.getNode(nodeIds.get(i))
-					.getBreadthFirstIterator();
+			Iterator<Node> bfsIt = g.getNode(nodeIds.get(i)).getBreadthFirstIterator();
 			while (bfsIt.hasNext()) {
 				Node node = bfsIt.next();
 				if (node.hasAttribute("foo"))
@@ -299,8 +294,7 @@ public class BenchPerformance {
 		start = System.currentTimeMillis();
 		if (g instanceof org.graphstream.graph.implementations.AbstractGraph) {
 			for (int i = 0; i < 1000; i++) {
-				Iterator<Node> dfsIt = g.getNode(nodeIds.get(i))
-						.getDepthFirstIterator();
+				Iterator<Node> dfsIt = g.getNode(nodeIds.get(i)).getDepthFirstIterator();
 				while (dfsIt.hasNext()) {
 					Node node = dfsIt.next();
 					if (node.hasAttribute("foo"))
@@ -440,7 +434,6 @@ public class BenchPerformance {
 		measureValues.put(Measures.REMOVE_EDGE, end - start);
 	}
 
-
 	public static void latexOutput(BenchPerformance[] tests, PrintStream ps) {
 		String header = "\\begin{tabular}{|l|";
 		for (int i = 0; i < tests.length; i++)
@@ -476,8 +469,8 @@ public class BenchPerformance {
 
 	public static void main(String[] args) {
 		String fileName = args[0];
-//		String fileName = "/home/stefan/tmp/imdb/imdb-full.dgs";
-//		String fileName = "/home/stefan/tmp/yoann/test_cleaned.dgs";
+		// String fileName = "/home/stefan/tmp/imdb/imdb-full.dgs";
+		// String fileName = "/home/stefan/tmp/yoann/test_cleaned.dgs";
 		int gCount = 2;
 		Graph[] graphs = new Graph[gCount];
 		graphs[0] = new SingleGraph("Single");

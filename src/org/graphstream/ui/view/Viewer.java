@@ -39,9 +39,9 @@ import org.graphstream.ui.view.camera.Camera;
  * </p>
  * 
  * <p>
- * <u>Once created, the viewer runs in a loop inside the UI thread. You
- * cannot call methods on it directly if you are not in this thread</u>. The
- * only operation that you can use in other threads is the constructor, the
+ * <u>Once created, the viewer runs in a loop inside the UI thread. You cannot
+ * call methods on it directly if you are not in this thread</u>. The only
+ * operation that you can use in other threads is the constructor, the
  * {@link #addView(View)}, {@link #removeView(String)} and the {@link #close()}
  * methods. Other methods are not protected from concurrent accesses.
  * </p>
@@ -63,30 +63,29 @@ import org.graphstream.ui.view.camera.Camera;
  * </p>
  */
 public abstract class Viewer {
-	
+
 	// Attributes
 
 	/**
 	 * How does the viewer synchronise its internal graphic graph with the graph
-	 * displayed. The graph we display can be in the Swing thread (as will be
-	 * the viewer, therefore in the same thread as the viewer), in another
-	 * thread, or on a distant machine.
+	 * displayed. The graph we display can be in the Swing thread (as will be the
+	 * viewer, therefore in the same thread as the viewer), in another thread, or on
+	 * a distant machine.
 	 */
 	public enum ThreadingModel {
 		GRAPH_IN_GUI_THREAD, GRAPH_IN_ANOTHER_THREAD, GRAPH_ON_NETWORK
 	};
-	
+
 	/**
 	 * Name of the default view.
 	 */
-	public abstract String getDefaultID() ;
+	public abstract String getDefaultID();
 
 	// Attribute
 
 	/**
 	 * If true the graph we display is in another thread, the synchronisation
-	 * between the graph and the graphic graph must therefore use thread
-	 * proxies.
+	 * between the graph and the graphic graph must therefore use thread proxies.
 	 */
 	protected boolean graphInAnotherThread = true;
 
@@ -126,14 +125,14 @@ public abstract class Viewer {
 	 * If there is a layout in another thread, this is the pipe coming from it.
 	 */
 	protected ProxyPipe layoutPipeIn = null;
-	
+
 	/**
 	 * What to do when a view frame is closed.
 	 */
 	public static enum CloseFramePolicy {
 		CLOSE_VIEWER, HIDE_ONLY, EXIT
 	};
-	
+
 	/**
 	 * Create a new unique identifier for a graph.
 	 * 
@@ -142,7 +141,7 @@ public abstract class Viewer {
 	public String newGGId() {
 		return String.format("GraphicGraph_%d", (int) (Math.random() * 10000));
 	}
-	
+
 	/**
 	 * Initialise the viewer.
 	 * 
@@ -154,12 +153,12 @@ public abstract class Viewer {
 	 * @param source
 	 *            The source of events from this thread (null if ppipe != null).
 	 */
-	public abstract void init(GraphicGraph graph, ProxyPipe ppipe, Source source) ;
-	
+	public abstract void init(GraphicGraph graph, ProxyPipe ppipe, Source source);
+
 	/**
 	 * Close definitively this viewer and all its views.
 	 */
-	public abstract void close() ;
+	public abstract void close();
 	// Access
 
 	/**
@@ -168,7 +167,7 @@ public abstract class Viewer {
 	public CloseFramePolicy getCloseFramePolicy() {
 		return closeFramePolicy;
 	}
-	
+
 	/**
 	 * New proxy pipe on events coming from the viewer through a thread.
 	 * 
@@ -193,15 +192,15 @@ public abstract class Viewer {
 
 		return new ViewerPipe(String.format("viewer_%d", (int) (Math.random() * 10000)), tpp);
 	}
-	
+
 	/**
-	 * The underlying graphic graph. Caution : Use the returned graph only in
-	 * the UI thread !!
+	 * The underlying graphic graph. Caution : Use the returned graph only in the UI
+	 * thread !!
 	 */
 	public GraphicGraph getGraphicGraph() {
 		return graph;
 	}
-	
+
 	/**
 	 * The view that correspond to the given identifier.
 	 * 
@@ -214,23 +213,23 @@ public abstract class Viewer {
 			return views.get(id);
 		}
 	}
-	
+
 	/**
-	 * The default view. This is a shortcut to a call to
-	 * {@link #getView(String)} with {@link #DEFAULT_VIEW_ID} as parameter.
+	 * The default view. This is a shortcut to a call to {@link #getView(String)}
+	 * with {@link #DEFAULT_VIEW_ID} as parameter.
 	 * 
 	 * @return The default view or null if no default view has been installed.
 	 */
 	public View getDefaultView() {
 		return getView(getDefaultID());
 	}
-	
+
 	// Command
 	/**
 	 * Create a new instance of the default graph renderer.
 	 */
-	public abstract GraphRenderer<?, ?> newDefaultGraphRenderer() ; 
-	
+	public abstract GraphRenderer<?, ?> newDefaultGraphRenderer();
+
 	/**
 	 * Build the default graph view and insert it. The view identifier is
 	 * {@link #DEFAULT_VIEW_ID}. You can request the view to be open in its own
@@ -244,16 +243,16 @@ public abstract class Viewer {
 		synchronized (views) {
 			GraphRenderer<?, ?> renderer = newDefaultGraphRenderer();
 			View view = renderer.createDefaultView(this, getDefaultID());
-			
+
 			addView(view);
-			
+
 			if (openInAFrame)
 				view.openInAFrame(true);
 
 			return view;
 		}
 	}
-	
+
 	/**
 	 * Add a view using its identifier. If there was already a view with this
 	 * identifier, it is closed and returned (if different of the one added).
@@ -272,11 +271,10 @@ public abstract class Viewer {
 			return old;
 		}
 	}
-	
+
 	/**
-	 * Add a new default view with a specific renderer. If a view with the same
-	 * id exists, it is removed and closed. By default the view is open in a
-	 * frame.
+	 * Add a new default view with a specific renderer. If a view with the same id
+	 * exists, it is removed and closed. By default the view is open in a frame.
 	 * 
 	 * @param id
 	 *            The new view identifier.
@@ -289,16 +287,16 @@ public abstract class Viewer {
 	}
 
 	/**
-	 * Same as {@link #addView(String, GraphRenderer)} but allows to specify
-	 * that the view uses a frame or not.
+	 * Same as {@link #addView(String, GraphRenderer)} but allows to specify that
+	 * the view uses a frame or not.
 	 * 
 	 * @param id
 	 *            The new view identifier.
 	 * @param renderer
 	 *            The renderer to use.
 	 * @param openInAFrame
-	 *            If true the view is open in a frame, else the returned view is
-	 *            a JPanel that can be inserted in a GUI.
+	 *            If true the view is open in a frame, else the returned view is a
+	 *            JPanel that can be inserted in a GUI.
 	 * @return The created view.
 	 */
 	public View addView(String id, GraphRenderer<?, ?> renderer, boolean openInAFrame) {
@@ -324,13 +322,13 @@ public abstract class Viewer {
 			views.remove(id);
 		}
 	}
-	
+
 	/**
-	 * Compute the overall bounds of the graphic graph according to the nodes
-	 * and sprites positions. We can only compute the graph bounds from the
-	 * nodes and sprites centres since the node and graph bounds may in certain
-	 * circumstances be computed according to the graph bounds. The bounds are
-	 * stored in the graph metrics.
+	 * Compute the overall bounds of the graphic graph according to the nodes and
+	 * sprites positions. We can only compute the graph bounds from the nodes and
+	 * sprites centres since the node and graph bounds may in certain circumstances
+	 * be computed according to the graph bounds. The bounds are stored in the graph
+	 * metrics.
 	 */
 	public void computeGraphMetrics() {
 		graph.computeBounds();
@@ -367,20 +365,20 @@ public abstract class Viewer {
 	 * 
 	 * By default, each time a node of the graphic graph is moved, its "xyz"
 	 * attribute is reset to follow the node position. This is useful only if
-	 * someone listen at the graphic graph or use the graphic graph directly.
-	 * But this operation is quite costly. Therefore by default if this viewer
-	 * runs in its own thread, and the main graph is in another thread, xyz
-	 * attribute change will be disabled until a listener is added.
+	 * someone listen at the graphic graph or use the graphic graph directly. But
+	 * this operation is quite costly. Therefore by default if this viewer runs in
+	 * its own thread, and the main graph is in another thread, xyz attribute change
+	 * will be disabled until a listener is added.
 	 * 
-	 * When the viewer is created to be used only in the ui thread, this
-	 * feature is always on.
+	 * When the viewer is created to be used only in the ui thread, this feature is
+	 * always on.
 	 */
 	public void enableXYZfeedback(boolean on) {
 		synchronized (views) {
 			graph.feedbackXYZ(on);
 		}
 	}
-	
+
 	/**
 	 * Launch an automatic layout process that will position nodes in the
 	 * background.

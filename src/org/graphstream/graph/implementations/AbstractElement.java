@@ -83,7 +83,8 @@ public abstract class AbstractElement implements Element {
 	/**
 	 * New element.
 	 *
-	 * @param id The unique identifier of this element.
+	 * @param id
+	 *            The unique identifier of this element.
 	 */
 	public AbstractElement(String id) {
 		assert id != null : "Graph elements cannot have a null identifier";
@@ -103,7 +104,8 @@ public abstract class AbstractElement implements Element {
 	/**
 	 * Used by subclasses to change the index of an element
 	 *
-	 * @param index the new index
+	 * @param index
+	 *            the new index
 	 */
 	protected void setIndex(int index) {
 		this.index = index;
@@ -124,23 +126,24 @@ public abstract class AbstractElement implements Element {
 	// protected abstract long newEvent(); // XXX
 
 	/**
-	 * Called for each change in the attribute set. This method must be
-	 * implemented by sub-elements in order to send events to the graph
-	 * listeners.
+	 * Called for each change in the attribute set. This method must be implemented
+	 * by sub-elements in order to send events to the graph listeners.
 	 *
-	 * @param attribute The attribute name that changed.
-	 * @param event     The type of event among ADD, CHANGE and REMOVE.
-	 * @param oldValue  The old value of the attribute, null if the attribute was
-	 *                  added.
-	 * @param newValue  The new value of the attribute, null if the attribute is about
-	 *                  to be removed.
+	 * @param attribute
+	 *            The attribute name that changed.
+	 * @param event
+	 *            The type of event among ADD, CHANGE and REMOVE.
+	 * @param oldValue
+	 *            The old value of the attribute, null if the attribute was added.
+	 * @param newValue
+	 *            The new value of the attribute, null if the attribute is about to
+	 *            be removed.
 	 */
-	protected abstract void attributeChanged(AttributeChangeEvent event,
-											 String attribute, Object oldValue, Object newValue);
+	protected abstract void attributeChanged(AttributeChangeEvent event, String attribute, Object oldValue,
+			Object newValue);
 
 	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this
-	 * element.
+	 * @complexity O(log(n)) with n being the number of attributes of this element.
 	 */
 	@Override
 	public Object getAttribute(String key) {
@@ -155,8 +158,8 @@ public abstract class AbstractElement implements Element {
 	}
 
 	/**
-	 * @complexity O(log(n*m)) with n being the number of attributes of this
-	 * element and m the number of keys given.
+	 * @complexity O(log(n*m)) with n being the number of attributes of this element
+	 *             and m the number of keys given.
 	 */
 	@Override
 	public Object getFirstAttributeOf(String... keys) {
@@ -175,8 +178,7 @@ public abstract class AbstractElement implements Element {
 	}
 
 	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this
-	 * element.
+	 * @complexity O(log(n)) with n being the number of attributes of this element.
 	 */
 	@Override
 	public <T> T getAttribute(String key, Class<T> clazz) {
@@ -191,8 +193,8 @@ public abstract class AbstractElement implements Element {
 	}
 
 	/**
-	 * @complexity O(log(n*m)) with n being the number of attributes of this
-	 * element and m the number of keys given.
+	 * @complexity O(log(n*m)) with n being the number of attributes of this element
+	 *             and m the number of keys given.
 	 */
 	@Override
 	public <T> T getFirstAttributeOf(Class<T> clazz, String... keys) {
@@ -212,8 +214,7 @@ public abstract class AbstractElement implements Element {
 	}
 
 	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this
-	 * element.
+	 * @complexity O(log(n)) with n being the number of attributes of this element.
 	 */
 	@Override
 	public boolean hasAttribute(String key) {
@@ -221,8 +222,7 @@ public abstract class AbstractElement implements Element {
 	}
 
 	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this
-	 * element.
+	 * @complexity O(log(n)) with n being the number of attributes of this element.
 	 */
 	@Override
 	public boolean hasAttribute(String key, Class<?> clazz) {
@@ -266,8 +266,7 @@ public abstract class AbstractElement implements Element {
 	public void clearAttributes() {
 		if (attributes != null) {
 			for (Map.Entry<String, Object> entry : attributes.entrySet())
-				attributeChanged(AttributeChangeEvent.REMOVE, entry.getKey(),
-						entry.getValue(), null);
+				attributeChanged(AttributeChangeEvent.REMOVE, entry.getKey(), entry.getValue(), null);
 
 			attributes.clear();
 		}
@@ -279,8 +278,7 @@ public abstract class AbstractElement implements Element {
 	}
 
 	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this
-	 * element.
+	 * @complexity O(log(n)) with n being the number of attributes of this element.
 	 */
 	@Override
 	public void setAttribute(String attribute, Object... values) {
@@ -309,8 +307,7 @@ public abstract class AbstractElement implements Element {
 	}
 
 	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this
-	 * element.
+	 * @complexity O(log(n)) with n being the number of attributes of this element.
 	 */
 	@Override
 	public void removeAttribute(String attribute) {
@@ -324,15 +321,12 @@ public abstract class AbstractElement implements Element {
 			//
 			// Avoid recursive calls when synchronizing graphs.
 			//
-			if (attributes.containsKey(attribute)
-					&& !attributesBeingRemoved.contains(attribute)) {
+			if (attributes.containsKey(attribute) && !attributesBeingRemoved.contains(attribute)) {
 				attributesBeingRemoved.add(attribute);
 
-				attributeChanged(AttributeChangeEvent.REMOVE, attribute,
-						attributes.get(attribute), null);
+				attributeChanged(AttributeChangeEvent.REMOVE, attribute, attributes.get(attribute), null);
 
-				attributesBeingRemoved
-						.remove(attributesBeingRemoved.size() - 1);
+				attributesBeingRemoved.remove(attributesBeingRemoved.size() - 1);
 				attributes.remove(attribute);
 			}
 		}

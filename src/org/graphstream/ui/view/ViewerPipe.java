@@ -44,8 +44,8 @@ import java.util.HashSet;
  * This pipe is a probe that you can place in the event loop between the viewer
  * and the graph. It will transmit all events coming from the viewer to the
  * graph (or any sink you connect to it). But in addition it will monitor
- * standard attribute changes to redistribute them to specify
- * "viewer listeners".
+ * standard attribute changes to redistribute them to specify "viewer
+ * listeners".
  * </p>
  * 
  * <p>
@@ -131,8 +131,7 @@ public class ViewerPipe extends SourceBase implements ProxyPipe {
 	 * org.graphstream.stream.AttributeSink#edgeAttributeAdded(java.lang.String,
 	 * long, java.lang.String, java.lang.String, java.lang.Object)
 	 */
-	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
-			String attribute, Object value) {
+	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId, String attribute, Object value) {
 		sendEdgeAttributeAdded(sourceId, timeId, edgeId, attribute, value);
 	}
 
@@ -140,25 +139,22 @@ public class ViewerPipe extends SourceBase implements ProxyPipe {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.graphstream.stream.AttributeSink#edgeAttributeChanged(java.lang.String
-	 * , long, java.lang.String, java.lang.String, java.lang.Object,
-	 * java.lang.Object)
+	 * org.graphstream.stream.AttributeSink#edgeAttributeChanged(java.lang.String ,
+	 * long, java.lang.String, java.lang.String, java.lang.Object, java.lang.Object)
 	 */
-	public void edgeAttributeChanged(String sourceId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
-		sendEdgeAttributeChanged(sourceId, timeId, edgeId, attribute, oldValue,
-				newValue);
+	public void edgeAttributeChanged(String sourceId, long timeId, String edgeId, String attribute, Object oldValue,
+			Object newValue) {
+		sendEdgeAttributeChanged(sourceId, timeId, edgeId, attribute, oldValue, newValue);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.graphstream.stream.AttributeSink#edgeAttributeRemoved(java.lang.String
-	 * , long, java.lang.String, java.lang.String)
+	 * org.graphstream.stream.AttributeSink#edgeAttributeRemoved(java.lang.String ,
+	 * long, java.lang.String, java.lang.String)
 	 */
-	public void edgeAttributeRemoved(String sourceId, long timeId,
-			String edgeId, String attribute) {
+	public void edgeAttributeRemoved(String sourceId, long timeId, String edgeId, String attribute) {
 		sendEdgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
 	}
 
@@ -166,11 +162,10 @@ public class ViewerPipe extends SourceBase implements ProxyPipe {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.graphstream.stream.AttributeSink#graphAttributeAdded(java.lang.String
-	 * , long, java.lang.String, java.lang.Object)
+	 * org.graphstream.stream.AttributeSink#graphAttributeAdded(java.lang.String ,
+	 * long, java.lang.String, java.lang.Object)
 	 */
-	public void graphAttributeAdded(String sourceId, long timeId,
-			String attribute, Object value) {
+	public void graphAttributeAdded(String sourceId, long timeId, String attribute, Object value) {
 		sendGraphAttributeAdded(sourceId, timeId, attribute, value);
 
 		if (attribute.equals("ui.viewClosed") && value instanceof String) {
@@ -189,25 +184,21 @@ public class ViewerPipe extends SourceBase implements ProxyPipe {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#graphAttributeChanged(java.lang.
+	 * @see org.graphstream.stream.AttributeSink#graphAttributeChanged(java.lang.
 	 * String, long, java.lang.String, java.lang.Object, java.lang.Object)
 	 */
-	public void graphAttributeChanged(String sourceId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
-		sendGraphAttributeChanged(sourceId, timeId, attribute, oldValue,
-				newValue);
+	public void graphAttributeChanged(String sourceId, long timeId, String attribute, Object oldValue,
+			Object newValue) {
+		sendGraphAttributeChanged(sourceId, timeId, attribute, oldValue, newValue);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.graphstream.stream.AttributeSink#graphAttributeRemoved(java.lang.
+	 * @see org.graphstream.stream.AttributeSink#graphAttributeRemoved(java.lang.
 	 * String, long, java.lang.String)
 	 */
-	public void graphAttributeRemoved(String sourceId, long timeId,
-			String attribute) {
+	public void graphAttributeRemoved(String sourceId, long timeId, String attribute) {
 		sendGraphAttributeRemoved(sourceId, timeId, attribute);
 	}
 
@@ -218,8 +209,7 @@ public class ViewerPipe extends SourceBase implements ProxyPipe {
 	 * org.graphstream.stream.AttributeSink#nodeAttributeAdded(java.lang.String,
 	 * long, java.lang.String, java.lang.String, java.lang.Object)
 	 */
-	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-			String attribute, Object value) {
+	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId, String attribute, Object value) {
 		sendNodeAttributeAdded(sourceId, timeId, nodeId, attribute, value);
 
 		if (attribute.equals("ui.clicked")) {
@@ -237,25 +227,22 @@ public class ViewerPipe extends SourceBase implements ProxyPipe {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.graphstream.stream.AttributeSink#nodeAttributeChanged(java.lang.String
-	 * , long, java.lang.String, java.lang.String, java.lang.Object,
-	 * java.lang.Object)
+	 * org.graphstream.stream.AttributeSink#nodeAttributeChanged(java.lang.String ,
+	 * long, java.lang.String, java.lang.String, java.lang.Object, java.lang.Object)
 	 */
-	public void nodeAttributeChanged(String sourceId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
-		sendNodeAttributeChanged(sourceId, timeId, nodeId, attribute, oldValue,
-				newValue);
+	public void nodeAttributeChanged(String sourceId, long timeId, String nodeId, String attribute, Object oldValue,
+			Object newValue) {
+		sendNodeAttributeChanged(sourceId, timeId, nodeId, attribute, oldValue, newValue);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.graphstream.stream.AttributeSink#nodeAttributeRemoved(java.lang.String
-	 * , long, java.lang.String, java.lang.String)
+	 * org.graphstream.stream.AttributeSink#nodeAttributeRemoved(java.lang.String ,
+	 * long, java.lang.String, java.lang.String)
 	 */
-	public void nodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute) {
+	public void nodeAttributeRemoved(String sourceId, long timeId, String nodeId, String attribute) {
 		sendNodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
 
 		if (attribute.equals("ui.clicked")) {
@@ -264,7 +251,7 @@ public class ViewerPipe extends SourceBase implements ProxyPipe {
 		}
 
 		if (attribute.equals("ui.mouseOver")) {
-			for(ViewerListener listener: viewerListeners)
+			for (ViewerListener listener : viewerListeners)
 				listener.mouseLeft(nodeId);
 		}
 	}
@@ -275,16 +262,16 @@ public class ViewerPipe extends SourceBase implements ProxyPipe {
 	 * @see org.graphstream.stream.ElementSink#edgeAdded(java.lang.String, long,
 	 * java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
-	public void edgeAdded(String sourceId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
+	public void edgeAdded(String sourceId, long timeId, String edgeId, String fromNodeId, String toNodeId,
+			boolean directed) {
 		sendEdgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId, directed);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.graphstream.stream.ElementSink#edgeRemoved(java.lang.String,
-	 * long, java.lang.String)
+	 * @see org.graphstream.stream.ElementSink#edgeRemoved(java.lang.String, long,
+	 * java.lang.String)
 	 */
 	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 		sendEdgeRemoved(sourceId, timeId, edgeId);
@@ -293,8 +280,7 @@ public class ViewerPipe extends SourceBase implements ProxyPipe {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.graphstream.stream.ElementSink#graphCleared(java.lang.String,
-	 * long)
+	 * @see org.graphstream.stream.ElementSink#graphCleared(java.lang.String, long)
 	 */
 	public void graphCleared(String sourceId, long timeId) {
 		sendGraphCleared(sourceId, timeId);
@@ -313,8 +299,8 @@ public class ViewerPipe extends SourceBase implements ProxyPipe {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.graphstream.stream.ElementSink#nodeRemoved(java.lang.String,
-	 * long, java.lang.String)
+	 * @see org.graphstream.stream.ElementSink#nodeRemoved(java.lang.String, long,
+	 * java.lang.String)
 	 */
 	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 		sendNodeRemoved(sourceId, timeId, nodeId);
@@ -323,8 +309,8 @@ public class ViewerPipe extends SourceBase implements ProxyPipe {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.graphstream.stream.ElementSink#stepBegins(java.lang.String,
-	 * long, double)
+	 * @see org.graphstream.stream.ElementSink#stepBegins(java.lang.String, long,
+	 * double)
 	 */
 	public void stepBegins(String sourceId, long timeId, double step) {
 		sendStepBegins(sourceId, timeId, step);

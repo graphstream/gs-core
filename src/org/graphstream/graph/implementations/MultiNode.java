@@ -51,8 +51,7 @@ public class MultiNode extends AdjacencyListNode {
 
 	public MultiNode(AbstractGraph graph, String id) {
 		super(graph, id);
-		neighborMap = new HashMap<AbstractNode, List<AbstractEdge>>(
-				4 * INITIAL_EDGE_CAPACITY / 3 + 1);
+		neighborMap = new HashMap<AbstractNode, List<AbstractEdge>>(4 * INITIAL_EDGE_CAPACITY / 3 + 1);
 	}
 
 	// *** Helpers ***
@@ -66,8 +65,7 @@ public class MultiNode extends AdjacencyListNode {
 
 		for (AbstractEdge e : l) {
 			char etype = edgeType(e);
-			if ((type != I_EDGE || etype != O_EDGE)
-					&& (type != O_EDGE || etype != I_EDGE))
+			if ((type != I_EDGE || etype != O_EDGE) && (type != O_EDGE || etype != I_EDGE))
 				return (T) e;
 		}
 		return null;

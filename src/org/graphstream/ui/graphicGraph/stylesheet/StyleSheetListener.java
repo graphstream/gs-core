@@ -36,11 +36,10 @@ package org.graphstream.ui.graphicGraph.stylesheet;
  */
 public interface StyleSheetListener {
 	/**
-	 * A style was changed or added. To differentiate the addition of a new
-	 * style from a change (augmentation) of an existing style, two values are
-	 * passed, the old style if augmented and the new style. The first is set to
-	 * null if the style is added. The old style is set to a value if is was
-	 * augmented.
+	 * A style was changed or added. To differentiate the addition of a new style
+	 * from a change (augmentation) of an existing style, two values are passed, the
+	 * old style if augmented and the new style. The first is set to null if the
+	 * style is added. The old style is set to a value if is was augmented.
 	 * 
 	 * @param oldRule
 	 *            The style that changed.

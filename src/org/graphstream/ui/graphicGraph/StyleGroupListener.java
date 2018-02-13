@@ -49,6 +49,5 @@ public interface StyleGroupListener {
 	 * @param style
 	 *            The changed style or the new style of the element.
 	 */
-	void elementStyleChanged(Element element, StyleGroup oldStyle,
-			StyleGroup style);
+	void elementStyleChanged(Element element, StyleGroup oldStyle, StyleGroup style);
 }

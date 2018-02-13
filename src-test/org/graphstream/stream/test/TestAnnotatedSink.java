@@ -42,11 +42,11 @@ public class TestAnnotatedSink {
 	public final static String GRAPH_BINDING_ATTR = "test.object.eventA";
 	public final static String NODE_BINDING_ATTR = "test.object.eventB";
 	public final static String EDGE_BINDING_ATTR = "test.object.eventC";
-	
+
 	public final static Object GRAPH_BINDING_VALUE = "stringValue";
 	public final static Object NODE_BINDING_VALUE = Double.valueOf(100.0);
 	public final static Object EDGE_BINDING_VALUE = Integer.valueOf(200);
-	
+
 	public final static String NODE_ID = "nodeB";
 	public final static String EDGE_ID = "edgeC";
 
@@ -56,27 +56,27 @@ public class TestAnnotatedSink {
 			assertEquals(GRAPH_BINDING_ATTR, attribute);
 			assertEquals(GRAPH_BINDING_VALUE, value);
 		}
-		
-		@Bind(value=NODE_BINDING_ATTR, type=ElementType.NODE)
+
+		@Bind(value = NODE_BINDING_ATTR, type = ElementType.NODE)
 		public void nodeBinding(String nodeId, String attribute, Object value) {
 			assertEquals(NODE_BINDING_ATTR, attribute);
 			assertEquals(NODE_ID, nodeId);
 			assertEquals(NODE_BINDING_VALUE, value);
 		}
 
-		@Bind(value=EDGE_BINDING_ATTR, type=ElementType.EDGE)
+		@Bind(value = EDGE_BINDING_ATTR, type = ElementType.EDGE)
 		public void edgeBinding(String edgeId, String attribute, Object value) {
 			assertEquals(EDGE_BINDING_ATTR, attribute);
 			assertEquals(EDGE_ID, edgeId);
 			assertEquals(EDGE_BINDING_VALUE, value);
 		}
 	}
-	
+
 	@Test
 	public void check() {
 		AdjacencyListGraph g = new AdjacencyListGraph("test");
 		g.addSink(new TestObject());
-		
+
 		g.setAttribute(GRAPH_BINDING_ATTR, GRAPH_BINDING_VALUE);
 		g.addNode(NODE_ID).setAttribute(NODE_BINDING_ATTR, NODE_BINDING_VALUE);
 		g.addNode("otherNode");

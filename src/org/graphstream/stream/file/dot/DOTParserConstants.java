@@ -84,12 +84,10 @@ public interface DOTParserConstants {
 	int DEFAULT = 0;
 
 	/** Literal token values. */
-	String[] tokenImage = { "<EOF>", "\" \"", "\"\\r\"", "\"\\t\"", "\"\\n\"",
-			"<token of kind 5>", "<token of kind 6>", "<EOL>", "<DIGIT>",
-			"<HEXDIGIT>", "\"[\"", "\"]\"", "\"{\"", "\"}\"", "\":\"", "\",\"",
-			"\"=\"", "\"graph\"", "\"digraph\"", "\"subgraph\"", "\"node\"",
-			"\"edge\"", "\"strict\"", "<EDGE_OP>", "<REAL>", "<STRING>",
-			"<WORD>", "\";\"", "\"n\"", "\"ne\"", "\"e\"", "\"se\"", "\"s\"",
-			"\"sw\"", "\"w\"", "\"nw\"", "\"c\"", "\"_\"", };
+	String[] tokenImage = { "<EOF>", "\" \"", "\"\\r\"", "\"\\t\"", "\"\\n\"", "<token of kind 5>", "<token of kind 6>",
+			"<EOL>", "<DIGIT>", "<HEXDIGIT>", "\"[\"", "\"]\"", "\"{\"", "\"}\"", "\":\"", "\",\"", "\"=\"",
+			"\"graph\"", "\"digraph\"", "\"subgraph\"", "\"node\"", "\"edge\"", "\"strict\"", "<EDGE_OP>", "<REAL>",
+			"<STRING>", "<WORD>", "\";\"", "\"n\"", "\"ne\"", "\"e\"", "\"se\"", "\"s\"", "\"sw\"", "\"w\"", "\"nw\"",
+			"\"c\"", "\"_\"", };
 
 }

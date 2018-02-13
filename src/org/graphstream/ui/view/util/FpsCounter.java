@@ -86,9 +86,9 @@ public class FpsCounter {
 	}
 
 	/**
-	 * The number of frames times used to compute the average frame-per-second
-	 * and frame time. This number augments with the measures until a maximum,
-	 * where it is reset to 0.
+	 * The number of frames times used to compute the average frame-per-second and
+	 * frame time. This number augments with the measures until a maximum, where it
+	 * is reset to 0.
 	 * 
 	 * @return The number of frames measure.
 	 */

@@ -129,13 +129,10 @@ public class TestDGSParser {
 
 		Object[][] aoa = { { 1, 2 }, { 3 }, { 4, 5 } };
 
-		Attribute[] attributes = {
-				new Attribute("int", Integer.class, Integer.valueOf(123)),
+		Attribute[] attributes = { new Attribute("int", Integer.class, Integer.valueOf(123)),
 				new Attribute("double", Double.class, Double.valueOf(123.321)),
-				new Attribute("string", String.class, "a string"),
-				new Attribute("word", String.class, "aWord"),
-				new Attribute("color", Color.class, Color.RED),
-				new Attribute("map", Map.class, map),
+				new Attribute("string", String.class, "a string"), new Attribute("word", String.class, "aWord"),
+				new Attribute("color", Color.class, Color.RED), new Attribute("map", Map.class, map),
 				new Attribute("array", Integer.class, new Object[] { 1, 2, 3 }),
 				new Attribute("aoa", Object[].class, aoa),
 				new Attribute("big_sci", Double.class, Double.valueOf("1.27E+07")),
@@ -257,12 +254,12 @@ public class TestDGSParser {
 		source.addSink(g);
 		g.addSink(new TestAttributeRemoved("A", g));
 		g.addSink(new VerboseSink());
-		
+
 		source.begin(getClass().getResourceAsStream("data/removeAttribute.dgs"));
-		
+
 		while (source.nextStep())
 			;
-		
+
 		source.end();
 	}
 
@@ -281,8 +278,7 @@ public class TestDGSParser {
 			this.g = g;
 		}
 
-		public void nodeAttributeAdded(String sourceId, long timeId,
-				String nodeId, String attributeId, Object value) {
+		public void nodeAttributeAdded(String sourceId, long timeId, String nodeId, String attributeId, Object value) {
 			if (this.nodeId.equals(nodeId)) {
 				assertFalse(added);
 				assertFalse(changed);
@@ -293,9 +289,8 @@ public class TestDGSParser {
 			}
 		}
 
-		public void nodeAttributeChanged(String sourceId, long timeId,
-				String nodeId, String attributeId, Object oldValue,
-				Object newValue) {
+		public void nodeAttributeChanged(String sourceId, long timeId, String nodeId, String attributeId,
+				Object oldValue, Object newValue) {
 			if (this.nodeId.equals(nodeId)) {
 				assertTrue(added);
 				assertFalse(changed);
@@ -307,14 +302,13 @@ public class TestDGSParser {
 			}
 		}
 
-		public void nodeAttributeRemoved(String sourceId, long timeId,
-				String nodeId, String attributeId) {
+		public void nodeAttributeRemoved(String sourceId, long timeId, String nodeId, String attributeId) {
 			if (this.nodeId.equals(nodeId)) {
 				assertTrue(added);
 				assertTrue(changed);
 				assertFalse(removed);
 				assertEquals(value, g.getNode(nodeId).getAttribute(attributeId));
-				
+
 				removed = true;
 				value = null;
 			}

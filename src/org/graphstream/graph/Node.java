@@ -84,22 +84,22 @@ public interface Node extends Element, Iterable<Edge> {
 	 * (this also selects undirected edges).
 	 * </p>
 	 * <p>
-	 * This method is implicitly generic and return something which extends
-	 * Edge. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
+	 * This method is implicitly generic and return something which extends Edge.
+	 * The return type is the one of the left part of the assignment. For example,
+	 * in the following call :
 	 * 
 	 * <pre>
 	 * ExtendedEdge e = node.getEdgeToward(&quot;...&quot;);
 	 * </pre>
 	 * 
-	 * the method will return an ExtendedEdge. If no left part exists, method
-	 * will just return an Edge.
+	 * the method will return an ExtendedEdge. If no left part exists, method will
+	 * just return an Edge.
 	 * </p>
 	 * 
 	 * @param id
 	 *            Identifier of the target node.
-	 * @return Directed edge going from this node to 'id', or undirected edge if
-	 *         it exists, else null.
+	 * @return Directed edge going from this node to 'id', or undirected edge if it
+	 *         exists, else null.
 	 */
 	Edge getEdgeToward(String id);
 
@@ -110,43 +110,43 @@ public interface Node extends Element, Iterable<Edge> {
 	 * (this also selects undirected edges).
 	 * </p>
 	 * <p>
-	 * This method is implicitly generic and return something which extends
-	 * Edge. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
+	 * This method is implicitly generic and return something which extends Edge.
+	 * The return type is the one of the left part of the assignment. For example,
+	 * in the following call :
 	 * 
 	 * <pre>
 	 * ExtendedEdge e = node.getEdgeFrom(&quot;...&quot;);
 	 * </pre>
 	 * 
-	 * the method will return an ExtendedEdge. If no left part exists, method
-	 * will just return an Edge.
+	 * the method will return an ExtendedEdge. If no left part exists, method will
+	 * just return an Edge.
 	 * </p>
 	 * 
 	 * @param id
 	 *            Identifier of the source node.
-	 * @return Directed edge going from node 'id' to this node, or undirected
-	 *         edge if it exists, else null.
+	 * @return Directed edge going from node 'id' to this node, or undirected edge
+	 *         if it exists, else null.
 	 */
 	Edge getEdgeFrom(String id);
 
 	/**
 	 * Retrieve an edge between this node and the node 'id', if it exits.
 	 * <p>
-	 * This method selects directed or undirected edges. If the edge is
-	 * directed, its direction is not important and leaving or entering edges
-	 * will be selected.
+	 * This method selects directed or undirected edges. If the edge is directed,
+	 * its direction is not important and leaving or entering edges will be
+	 * selected.
 	 * </p>
 	 * <p>
-	 * This method is implicitly generic and return something which extends
-	 * Edge. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
+	 * This method is implicitly generic and return something which extends Edge.
+	 * The return type is the one of the left part of the assignment. For example,
+	 * in the following call :
 	 * 
 	 * <pre>
 	 * ExtendedEdge e = node.getEdgeBetween(&quot;...&quot;);
 	 * </pre>
 	 * 
-	 * the method will return an ExtendedEdge. If no left part exists, method
-	 * will just return an Edge.
+	 * the method will return an ExtendedEdge. If no left part exists, method will
+	 * just return an Edge.
 	 * </p>
 	 * 
 	 * @param id
@@ -156,35 +156,37 @@ public interface Node extends Element, Iterable<Edge> {
 	Edge getEdgeBetween(String id);
 
 	/**
-	 * Stream over neighbor nodes connected to this node via one or
-	 * more edges. This iterator iterates across any leaving, entering and non
-	 * directed edges (nodes are neighbors even if they only have a directed
-	 * edge from them toward this node). If there are multiple edges connecting
-	 * the same node, it might be iterated several times.
+	 * Stream over neighbor nodes connected to this node via one or more edges. This
+	 * iterator iterates across any leaving, entering and non directed edges (nodes
+	 * are neighbors even if they only have a directed edge from them toward this
+	 * node). If there are multiple edges connecting the same node, it might be
+	 * iterated several times.
 	 * 
 	 * @return The stream, neighbors are streamed in arbitrary order.
 	 */
 	default Stream<Node> neighborNodes() {
-		return edges().map(edge -> { return edge.getOpposite(Node.this); });
+		return edges().map(edge -> {
+			return edge.getOpposite(Node.this);
+		});
 	}
 
 	/**
 	 * I-th edge. Edges are stored in no given order.
 	 * <p>
-	 * However this method allows to iterate very quickly on all edges, or to
-	 * choose a given edge with direct access.
+	 * However this method allows to iterate very quickly on all edges, or to choose
+	 * a given edge with direct access.
 	 * </p>
 	 * <p>
-	 * This method is implicitly generic and return something which extends
-	 * Edge. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
+	 * This method is implicitly generic and return something which extends Edge.
+	 * The return type is the one of the left part of the assignment. For example,
+	 * in the following call :
 	 * 
 	 * <pre>
 	 * ExtendedEdge e = node.getEdge(i);
 	 * </pre>
 	 * 
-	 * the method will return an ExtendedEdge. If no left part exists, method
-	 * will just return an Edge.
+	 * the method will return an ExtendedEdge. If no left part exists, method will
+	 * just return an Edge.
 	 * </p>
 	 * 
 	 * @param i
@@ -199,20 +201,20 @@ public interface Node extends Element, Iterable<Edge> {
 	/**
 	 * I-th entering edge. Edges are stored in no given order.
 	 * <p>
-	 * However this method allows to iterate very quickly on all entering edges,
-	 * or to choose a given entering edge with direct access.
+	 * However this method allows to iterate very quickly on all entering edges, or
+	 * to choose a given entering edge with direct access.
 	 * </p>
 	 * <p>
-	 * This method is implicitly generic and return something which extends
-	 * Edge. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
+	 * This method is implicitly generic and return something which extends Edge.
+	 * The return type is the one of the left part of the assignment. For example,
+	 * in the following call :
 	 * 
 	 * <pre>
 	 * ExtendedEdge e = node.getEnteringEdge(i);
 	 * </pre>
 	 * 
-	 * the method will return an ExtendedEdge. If no left part exists, method
-	 * will just return an Edge.
+	 * the method will return an ExtendedEdge. If no left part exists, method will
+	 * just return an Edge.
 	 * </p>
 	 * 
 	 * @param i
@@ -227,20 +229,20 @@ public interface Node extends Element, Iterable<Edge> {
 	/**
 	 * I-th leaving edge. Edges are stored in no given order.
 	 * <p>
-	 * However this method allows to iterate very quickly on all leaving edges,
-	 * or to choose a given leaving edge with direct access.
+	 * However this method allows to iterate very quickly on all leaving edges, or
+	 * to choose a given leaving edge with direct access.
 	 * </p>
 	 * <p>
-	 * This method is implicitly generic and return something which extends
-	 * Edge. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
+	 * This method is implicitly generic and return something which extends Edge.
+	 * The return type is the one of the left part of the assignment. For example,
+	 * in the following call :
 	 * 
 	 * <pre>
 	 * ExtendedEdge e = node.getLeavingEdge(i);
 	 * </pre>
 	 * 
-	 * the method will return an ExtendedEdge. If no left part exists, method
-	 * will just return an Edge.
+	 * the method will return an ExtendedEdge. If no left part exists, method will
+	 * just return an Edge.
 	 * </p>
 	 * 
 	 * @param i
@@ -253,16 +255,15 @@ public interface Node extends Element, Iterable<Edge> {
 	Edge getLeavingEdge(int i);
 
 	/**
-	 * Iterator for breadth first exploration of the graph, starting at this
-	 * node.
+	 * Iterator for breadth first exploration of the graph, starting at this node.
 	 * <p>
 	 * If the graph is not connected, only a part of it will be explored. By
 	 * default, this iterator will respect edge orientation.
 	 * </p>
 	 * <p>
-	 * This method is implicitly generic and return an Iterator over something
-	 * which extends Node. The return type is the one of the left part of the
-	 * assignment. For example, in the following call :
+	 * This method is implicitly generic and return an Iterator over something which
+	 * extends Node. The return type is the one of the left part of the assignment.
+	 * For example, in the following call :
 	 * 
 	 * <pre>
 	 * Iterator&lt;ExtendedNode&gt; ite = node.getBreadthFirstIterator();
@@ -272,21 +273,20 @@ public interface Node extends Element, Iterable<Edge> {
 	 * exists, method will just return an Iterator&lt;Node&gt;.
 	 * </p>
 	 * 
-	 * @return An iterator able to explore the graph in a breadth first way
-	 *         starting at this node.
+	 * @return An iterator able to explore the graph in a breadth first way starting
+	 *         at this node.
 	 */
-	 Iterator<Node> getBreadthFirstIterator();
+	Iterator<Node> getBreadthFirstIterator();
 
 	/**
-	 * Iterator for breadth first exploration of the graph, starting at this
-	 * node.
+	 * Iterator for breadth first exploration of the graph, starting at this node.
 	 * <p>
 	 * If the graph is not connected, only a part of it will be explored.
 	 * </p>
 	 * <p>
-	 * This method is implicitly generic and return an Iterator over something
-	 * which extends Node. The return type is the one of the left part of the
-	 * assignment. For example, in the following call :
+	 * This method is implicitly generic and return an Iterator over something which
+	 * extends Node. The return type is the one of the left part of the assignment.
+	 * For example, in the following call :
 	 * 
 	 * <pre>
 	 * Iterator&lt;ExtendedNode&gt; ite = node.getBreadthFirstIterator(true);
@@ -297,10 +297,10 @@ public interface Node extends Element, Iterable<Edge> {
 	 * </p>
 	 * 
 	 * @param directed
-	 *            If false, the iterator will ignore edge orientation (the
-	 *            default is "True").
-	 * @return An iterator able to explore the graph in a breadth first way
-	 *         starting at this node.
+	 *            If false, the iterator will ignore edge orientation (the default
+	 *            is "True").
+	 * @return An iterator able to explore the graph in a breadth first way starting
+	 *         at this node.
 	 */
 	Iterator<Node> getBreadthFirstIterator(boolean directed);
 
@@ -311,9 +311,9 @@ public interface Node extends Element, Iterable<Edge> {
 	 * default, this iterator will respect edge orientation.
 	 * </p>
 	 * <p>
-	 * This method is implicitly generic and return an Iterator over something
-	 * which extends Node. The return type is the one of the left part of the
-	 * assignment. For example, in the following call :
+	 * This method is implicitly generic and return an Iterator over something which
+	 * extends Node. The return type is the one of the left part of the assignment.
+	 * For example, in the following call :
 	 * 
 	 * <pre>
 	 * Iterator&lt;ExtendedNode&gt; ite = node.getDepthFirstIterator();
@@ -323,10 +323,10 @@ public interface Node extends Element, Iterable<Edge> {
 	 * exists, method will just return an Iterator&lt;Node&gt;.
 	 * </p>
 	 * 
-	 * @return An iterator able to explore the graph in a depth first way
-	 *         starting at this node.
-	 * @complexity of the depth first iterator O(n+m) with n the number of nodes
-	 *             and m the number of edges.
+	 * @return An iterator able to explore the graph in a depth first way starting
+	 *         at this node.
+	 * @complexity of the depth first iterator O(n+m) with n the number of nodes and
+	 *             m the number of edges.
 	 */
 	Iterator<Node> getDepthFirstIterator();
 
@@ -336,9 +336,9 @@ public interface Node extends Element, Iterable<Edge> {
 	 * If the graph is not connected, only a part of it will be explored.
 	 * </p>
 	 * <p>
-	 * This method is implicitly generic and return an Iterator over something
-	 * which extends Node. The return type is the one of the left part of the
-	 * assignment. For example, in the following call :
+	 * This method is implicitly generic and return an Iterator over something which
+	 * extends Node. The return type is the one of the left part of the assignment.
+	 * For example, in the following call :
 	 * 
 	 * <pre>
 	 * Iterator&lt;ExtendedNode&gt; ite = node.getDepthFirstIterator(true);
@@ -349,39 +349,38 @@ public interface Node extends Element, Iterable<Edge> {
 	 * </p>
 	 * 
 	 * @param directed
-	 *            If false, the iterator will ignore edge orientation (the
-	 *            default is "True").
-	 * @return An iterator able to explore the graph in a depth first way
-	 *         starting at this node.
+	 *            If false, the iterator will ignore edge orientation (the default
+	 *            is "True").
+	 * @return An iterator able to explore the graph in a depth first way starting
+	 *         at this node.
 	 */
 	Iterator<Node> getDepthFirstIterator(boolean directed);
 
 	/**
 	 * Stream over all entering and leaving edges.
 	 * 
-	 * @return A stream over all directed and undirected edges,
-	 *         leaving or entering.
+	 * @return A stream over all directed and undirected edges, leaving or entering.
 	 */
 	Stream<Edge> edges();
 
 	/**
 	 * Stream over all leaving edges.
 	 * 
-	 * @return A stream over only edges that leave this node plus all
-	 *         undirected edges.
+	 * @return A stream over only edges that leave this node plus all undirected
+	 *         edges.
 	 */
 	default Stream<Edge> leavingEdges() {
-		return edges().filter(e -> ( e.getSourceNode() == this ));
+		return edges().filter(e -> (e.getSourceNode() == this));
 	}
 
 	/**
 	 * Stream over all entering edges.
 	 *
-	 * @return A stream over only edges that enter this node plus all
-	 *         undirected edges.
+	 * @return A stream over only edges that enter this node plus all undirected
+	 *         edges.
 	 */
 	default Stream<Edge> enteringEdges() {
-		return edges().filter(e -> ( e.getTargetNode() == this ));
+		return edges().filter(e -> (e.getTargetNode() == this));
 	}
 
 	@Override
@@ -413,8 +412,8 @@ public interface Node extends Element, Iterable<Edge> {
 	 * 
 	 * @param node
 	 *            The target node.
-	 * @return True if a directed edge goes from this node to the other node or
-	 *         if an undirected edge exists.
+	 * @return True if a directed edge goes from this node to the other node or if
+	 *         an undirected edge exists.
 	 */
 	default boolean hasEdgeToward(Node node) {
 		return getEdgeToward(node) != null;
@@ -425,8 +424,8 @@ public interface Node extends Element, Iterable<Edge> {
 	 * 
 	 * @param index
 	 *            Index of the target node.
-	 * @return True if a directed edge goes from this node to the other node or
-	 *         if an undirected edge exists.
+	 * @return True if a directed edge goes from this node to the other node or if
+	 *         an undirected edge exists.
 	 * @throws IndexOutOfBoundsException
 	 *             if the index is negative or greater than {@code
 	 *             getNodeCount() - 1}.
@@ -452,8 +451,8 @@ public interface Node extends Element, Iterable<Edge> {
 	 * 
 	 * @param node
 	 *            The source node.
-	 * @return True if a directed edge goes from the other node to this node or
-	 *         if an undirected edge exists.
+	 * @return True if a directed edge goes from the other node to this node or if
+	 *         an undirected edge exists.
 	 */
 	default boolean hasEdgeFrom(Node node) {
 		return getEdgeFrom(node) != null;
@@ -464,8 +463,8 @@ public interface Node extends Element, Iterable<Edge> {
 	 * 
 	 * @param index
 	 *            Index of the source node.
-	 * @return True if a directed edge goes from the other node to this node or
-	 *         if an undirected edge exists.
+	 * @return True if a directed edge goes from the other node to this node or if
+	 *         an undirected edge exists.
 	 * @throws IndexOutOfBoundsException
 	 *             if the index is negative or greater than {@code
 	 *             getNodeCount() - 1}.
@@ -513,20 +512,20 @@ public interface Node extends Element, Iterable<Edge> {
 	/**
 	 * Retrieves an edge that leaves this node toward another node.
 	 * <p>
-	 * This method selects only edges leaving this node an pointing at the
-	 * parameter node (this also selects undirected edges).
+	 * This method selects only edges leaving this node an pointing at the parameter
+	 * node (this also selects undirected edges).
 	 * </p>
 	 * <p>
-	 * This method is implicitly generic and returns something which extends
-	 * Edge. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
+	 * This method is implicitly generic and returns something which extends Edge.
+	 * The return type is the one of the left part of the assignment. For example,
+	 * in the following call :
 	 * 
 	 * <pre>
 	 * ExtendedEdge e = node.getEdgeToward(...);
 	 * </pre>
 	 * 
-	 * the method will return an ExtendedEdge. If no left part exists, method
-	 * will just return an Edge.
+	 * the method will return an ExtendedEdge. If no left part exists, method will
+	 * just return an Edge.
 	 * </p>
 	 * 
 	 * @param node
@@ -539,20 +538,20 @@ public interface Node extends Element, Iterable<Edge> {
 	/**
 	 * Retrieves an edge that leaves this node toward the node with given index.
 	 * <p>
-	 * This method selects only edges leaving this node an pointing at the
-	 * parameter node (this also selects undirected edges).
+	 * This method selects only edges leaving this node an pointing at the parameter
+	 * node (this also selects undirected edges).
 	 * </p>
 	 * <p>
-	 * This method is implicitly generic and returns something which extends
-	 * Edge. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
+	 * This method is implicitly generic and returns something which extends Edge.
+	 * The return type is the one of the left part of the assignment. For example,
+	 * in the following call :
 	 * 
 	 * <pre>
 	 * ExtendedEdge e = node.getEdgeToward(...);
 	 * </pre>
 	 * 
-	 * the method will return an ExtendedEdge. If no left part exists, method
-	 * will just return an Edge.
+	 * the method will return an ExtendedEdge. If no left part exists, method will
+	 * just return an Edge.
 	 * </p>
 	 * 
 	 * @param index
@@ -563,8 +562,7 @@ public interface Node extends Element, Iterable<Edge> {
 	 *             if the index is negative or greater than {@code
 	 *             getNodeCount() - 1}.
 	 */
-	Edge getEdgeToward(int index)
-			throws IndexOutOfBoundsException;
+	Edge getEdgeToward(int index) throws IndexOutOfBoundsException;
 
 	/**
 	 * Retrieves an edge that leaves given node toward this node.
@@ -573,16 +571,16 @@ public interface Node extends Element, Iterable<Edge> {
 	 * node (this also selects undirected edges).
 	 * </p>
 	 * <p>
-	 * This method is implicitly generic and returns something which extends
-	 * Edge. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
+	 * This method is implicitly generic and returns something which extends Edge.
+	 * The return type is the one of the left part of the assignment. For example,
+	 * in the following call :
 	 * 
 	 * <pre>
 	 * ExtendedEdge e = node.getEdgeFrom(...);
 	 * </pre>
 	 * 
-	 * the method will return an ExtendedEdge. If no left part exists, method
-	 * will just return an Edge.
+	 * the method will return an ExtendedEdge. If no left part exists, method will
+	 * just return an Edge.
 	 * </p>
 	 * 
 	 * @param node
@@ -599,16 +597,16 @@ public interface Node extends Element, Iterable<Edge> {
 	 * node (this also selects undirected edges).
 	 * </p>
 	 * <p>
-	 * This method is implicitly generic and returns something which extends
-	 * Edge. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
+	 * This method is implicitly generic and returns something which extends Edge.
+	 * The return type is the one of the left part of the assignment. For example,
+	 * in the following call :
 	 * 
 	 * <pre>
 	 * ExtendedEdge e = node.getEdgeFrom(&quot;...&quot;);
 	 * </pre>
 	 * 
-	 * the method will return an ExtendedEdge. If no left part exists, method
-	 * will just return an Edge.
+	 * the method will return an ExtendedEdge. If no left part exists, method will
+	 * just return an Edge.
 	 * </p>
 	 * 
 	 * @param index
@@ -624,21 +622,21 @@ public interface Node extends Element, Iterable<Edge> {
 	/**
 	 * Retrieves an edge between this node and and another node if one exists.
 	 * <p>
-	 * This method selects directed or undirected edges. If the edge is
-	 * directed, its direction is not important and leaving or entering edges
-	 * will be selected.
+	 * This method selects directed or undirected edges. If the edge is directed,
+	 * its direction is not important and leaving or entering edges will be
+	 * selected.
 	 * </p>
 	 * <p>
-	 * This method is implicitly generic and return something which extends
-	 * Edge. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
+	 * This method is implicitly generic and return something which extends Edge.
+	 * The return type is the one of the left part of the assignment. For example,
+	 * in the following call :
 	 * 
 	 * <pre>
 	 * ExtendedEdge e = node.getEdgeBetween(...);
 	 * </pre>
 	 * 
-	 * the method will return an ExtendedEdge. If no left part exists, method
-	 * will just return an Edge.
+	 * the method will return an ExtendedEdge. If no left part exists, method will
+	 * just return an Edge.
 	 * </p>
 	 * 
 	 * @param node
@@ -649,35 +647,32 @@ public interface Node extends Element, Iterable<Edge> {
 	Edge getEdgeBetween(Node node);
 
 	/**
-	 * Retrieves an edge between this node and the node with index i if one
-	 * exists.
+	 * Retrieves an edge between this node and the node with index i if one exists.
 	 * <p>
-	 * This method selects directed or undirected edges. If the edge is
-	 * directed, its direction is not important and leaving or entering edges
-	 * will be selected.
+	 * This method selects directed or undirected edges. If the edge is directed,
+	 * its direction is not important and leaving or entering edges will be
+	 * selected.
 	 * </p>
 	 * <p>
-	 * This method is implicitly generic and return something which extends
-	 * Edge. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
+	 * This method is implicitly generic and return something which extends Edge.
+	 * The return type is the one of the left part of the assignment. For example,
+	 * in the following call :
 	 * 
 	 * <pre>
 	 * ExtendedEdge e = node.getEdgeBetween(...);
 	 * </pre>
 	 * 
-	 * the method will return an ExtendedEdge. If no left part exists, method
-	 * will just return an Edge.
+	 * the method will return an ExtendedEdge. If no left part exists, method will
+	 * just return an Edge.
 	 * </p>
 	 * 
 	 * @param index
 	 *            The index of the opposite node.
-	 * @return Edge between node with index i and this node if it exists, else
-	 *         null.
+	 * @return Edge between node with index i and this node if it exists, else null.
 	 * @throws IndexOutOfBoundsException
 	 *             if the index is negative or greater than {@code
 	 *             getNodeCount() - 1}.
 	 */
-	Edge getEdgeBetween(int index)
-			throws IndexOutOfBoundsException;
+	Edge getEdgeBetween(int index) throws IndexOutOfBoundsException;
 
 }

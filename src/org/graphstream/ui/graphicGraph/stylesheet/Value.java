@@ -83,7 +83,7 @@ public class Value extends Number {
 
 	@Override
 	public float floatValue() {
-		return (float)value;
+		return (float) value;
 	}
 
 	@Override
@@ -93,7 +93,7 @@ public class Value extends Number {
 
 	@Override
 	public int intValue() {
-		return (int)Math.round(value);
+		return (int) Math.round(value);
 	}
 
 	@Override

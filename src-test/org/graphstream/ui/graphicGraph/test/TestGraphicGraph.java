@@ -125,9 +125,8 @@ public class TestGraphicGraph {
 		assertEquals(0, outGraph.getSpriteCount());
 	}
 
-	protected static String styleSheet1 = "graph  { fill-color: black; }"
-			+ "node   { fill-color: white; }" + "edge   { fill-color: white; }"
-			+ "node#A { fill-color: red;   }" + "node#B { fill-color: blue;  }";
+	protected static String styleSheet1 = "graph  { fill-color: black; }" + "node   { fill-color: white; }"
+			+ "edge   { fill-color: white; }" + "node#A { fill-color: red;   }" + "node#B { fill-color: blue;  }";
 
 	@Test
 	public void testStyleSheetLoading() {
@@ -204,8 +203,7 @@ public class TestGraphicGraph {
 	}
 
 	protected void testStyle(Style style, Color colorBase) {
-		assertTrue(style.getFillColors() != null
-				&& style.getFillColors().size() == 1);
+		assertTrue(style.getFillColors() != null && style.getFillColors().size() == 1);
 		Color color = style.getFillColor(0);
 		assertEquals(StyleConstants.FillMode.PLAIN, style.getFillMode());
 		assertEquals(StyleConstants.StrokeMode.NONE, style.getStrokeMode());
@@ -310,7 +308,8 @@ public class TestGraphicGraph {
 		spriteIds.add("S1");
 		spriteIds.add("S2");
 
-		outGraph.sprites().filter(sprite -> spriteIds.contains(sprite.getId())).forEach(sprite -> spriteIds.remove(sprite.getId()));
+		outGraph.sprites().filter(sprite -> spriteIds.contains(sprite.getId()))
+				.forEach(sprite -> spriteIds.remove(sprite.getId()));
 
 		assertTrue(spriteIds.isEmpty());
 

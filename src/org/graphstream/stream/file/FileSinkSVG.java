@@ -101,8 +101,8 @@ public class FileSinkSVG extends FileSinkBase {
 		out = (PrintWriter) output;
 
 		out.printf("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>%n");
-		out.printf("<svg" + " xmlns:svg=\"http://www.w3.org/2000/svg\""
-				+ " width=\"100%%\"" + " height=\"100%%\"" + ">%n");
+		out.printf("<svg" + " xmlns:svg=\"http://www.w3.org/2000/svg\"" + " width=\"100%%\"" + " height=\"100%%\""
+				+ ">%n");
 
 		// TODO
 		// outputStyle( styleSheet );
@@ -114,60 +114,52 @@ public class FileSinkSVG extends FileSinkBase {
 		out.printf("</svg>%n");
 	}
 
-	public void edgeAttributeAdded(String graphId, long timeId, String edgeId,
-			String attribute, Object value) {
+	public void edgeAttributeAdded(String graphId, long timeId, String edgeId, String attribute, Object value) {
 		// NOP
 	}
 
-	public void edgeAttributeChanged(String graphId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
+	public void edgeAttributeChanged(String graphId, long timeId, String edgeId, String attribute, Object oldValue,
+			Object newValue) {
 		// NOP
 	}
 
-	public void edgeAttributeRemoved(String graphId, long timeId,
-			String edgeId, String attribute) {
+	public void edgeAttributeRemoved(String graphId, long timeId, String edgeId, String attribute) {
 		// NOP
 	}
 
-	public void graphAttributeAdded(String graphId, long timeId,
-			String attribute, Object value) {
+	public void graphAttributeAdded(String graphId, long timeId, String attribute, Object value) {
 		// NOP
 	}
 
-	public void graphAttributeChanged(String graphId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
+	public void graphAttributeChanged(String graphId, long timeId, String attribute, Object oldValue, Object newValue) {
 		// NOP
 	}
 
-	public void graphAttributeRemoved(String graphId, long timeId,
-			String attribute) {
+	public void graphAttributeRemoved(String graphId, long timeId, String attribute) {
 		// NOP
 	}
 
-	public void nodeAttributeAdded(String graphId, long timeId, String nodeId,
-			String attribute, Object value) {
+	public void nodeAttributeAdded(String graphId, long timeId, String nodeId, String attribute, Object value) {
 		setNodePos(nodeId, attribute, value);
 	}
 
-	public void nodeAttributeChanged(String graphId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
+	public void nodeAttributeChanged(String graphId, long timeId, String nodeId, String attribute, Object oldValue,
+			Object newValue) {
 		setNodePos(nodeId, attribute, newValue);
 	}
 
-	public void nodeAttributeRemoved(String graphId, long timeId,
-			String nodeId, String attribute) {
+	public void nodeAttributeRemoved(String graphId, long timeId, String nodeId, String attribute) {
 		// NOP
 	}
 
-	public void edgeAdded(String graphId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
+	public void edgeAdded(String graphId, long timeId, String edgeId, String fromNodeId, String toNodeId,
+			boolean directed) {
 		Point3 p0 = nodePos.get(fromNodeId);
 		Point3 p1 = nodePos.get(toNodeId);
 
 		if (p0 != null && p1 != null) {
 			out.printf("  <g id=\"%s\">%n", edgeId);
-			out.printf("    <line x1=\"%f\" y1=\"%f\" x2=\"%f\" y2=\"%f\"/>%n",
-					p0.x, p0.y, p1.x, p1.y);
+			out.printf("    <line x1=\"%f\" y1=\"%f\" x2=\"%f\" y2=\"%f\"/>%n", p0.x, p0.y, p1.x, p1.y);
 			out.printf("  </g>%n");
 		}
 	}
@@ -197,7 +189,7 @@ public class FileSinkSVG extends FileSinkBase {
 	protected void setNodePos(String nodeId, String attribute, Object value) {
 		Point3 p = nodePos.get(nodeId);
 
-		double x,y,z;
+		double x, y, z;
 		if (p == null) {
 			x = Math.random();
 			y = Math.random();
@@ -207,7 +199,6 @@ public class FileSinkSVG extends FileSinkBase {
 			y = p.y;
 			z = p.z;
 		}
-			
 
 		if (attribute.equals("x")) {
 			if (value instanceof Number)
@@ -288,8 +279,7 @@ public class FileSinkSVG extends FileSinkBase {
 			Point3 pos = nodePos.get(key);
 
 			out.printf("  <g id=\"%s\">%n", key);
-			out.printf("    <circle cx=\"%f\" cy=\"%f\" r=\"4\"/>%n", pos.x,
-					pos.y);
+			out.printf("    <circle cx=\"%f\" cy=\"%f\" r=\"4\"/>%n", pos.x, pos.y);
 			out.printf("  </g>%n");
 		}
 	}

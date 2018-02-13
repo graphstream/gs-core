@@ -58,30 +58,26 @@ public class TestFileSourceDOT extends TestFileSourceBase {
 		return TEST1_TRIANGLE;
 	}
 
-	protected static String TEST1_TRIANGLE = "graph test1 {\n"
-			+ "    graph [ id=\"test1\" ];\n" + "    A -- B [ id=AB ];\n"
-			+ "    B -- C [ id=BC ];\n" + "    C -- A [ id=CA ];\n" + "}\n";
+	protected static String TEST1_TRIANGLE = "graph test1 {\n" + "    graph [ id=\"test1\" ];\n"
+			+ "    A -- B [ id=AB ];\n" + "    B -- C [ id=BC ];\n" + "    C -- A [ id=CA ];\n" + "}\n";
 
 	@Override
 	public String aDirectedTriangle() {
 		return TEST2_DIRECTED_TRIANGLE;
 	}
 
-	protected static String TEST2_DIRECTED_TRIANGLE = "graph test2 {\n"
-			+ "    graph [ id=\"test2\" ];\n" + "    A -> B [ id=AB ];\n"
-			+ "    B -- C [ id=BC ];\n" + "    A -> C [ id=CA ];\n" + "}\n";
+	protected static String TEST2_DIRECTED_TRIANGLE = "graph test2 {\n" + "    graph [ id=\"test2\" ];\n"
+			+ "    A -> B [ id=AB ];\n" + "    B -- C [ id=BC ];\n" + "    A -> C [ id=CA ];\n" + "}\n";
 
 	@Override
 	public String basicAttributes() {
 		return TEST3_ATTRIBUTES;
 	}
 
-	protected static String TEST3_ATTRIBUTES = "graph test3 {\n"
-			+ "    graph [ id=\"test3\" ];\n"
-			+ "    A [ a=1, b=truc, c=true ];\n"
-			+ "    B [ aa=\"1,2,3,4\", bb=\"foo\", cc=bar ];\n"
-			+ "    C [ aaa=1.234 ];\n" + "" + "    A -- B [ id=AB ];\n"
-			+ "    B -- C [ id=BC ];\n" + "    C -- A [ id=CA ];\n" + "}\n";
+	protected static String TEST3_ATTRIBUTES = "graph test3 {\n" + "    graph [ id=\"test3\" ];\n"
+			+ "    A [ a=1, b=truc, c=true ];\n" + "    B [ aa=\"1,2,3,4\", bb=\"foo\", cc=bar ];\n"
+			+ "    C [ aaa=1.234 ];\n" + "" + "    A -- B [ id=AB ];\n" + "    B -- C [ id=BC ];\n"
+			+ "    C -- A [ id=CA ];\n" + "}\n";
 
 	@Override
 	public String anUndirectedTriangleFileName() {

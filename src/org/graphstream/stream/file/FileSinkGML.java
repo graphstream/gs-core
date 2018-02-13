@@ -85,8 +85,7 @@ public class FileSinkGML extends FileSinkBase {
 
 	// Attribute events
 
-	public void graphAttributeAdded(String sourceId, long timeId,
-			String attribute, Object value) {
+	public void graphAttributeAdded(String sourceId, long timeId, String attribute, Object value) {
 		ensureToFinish();
 
 		String val = valueToString(value);
@@ -97,20 +96,18 @@ public class FileSinkGML extends FileSinkBase {
 		}
 	}
 
-	public void graphAttributeChanged(String sourceId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
+	public void graphAttributeChanged(String sourceId, long timeId, String attribute, Object oldValue,
+			Object newValue) {
 		ensureToFinish();
 		// GML is not a dynamic file format ?
 	}
 
-	public void graphAttributeRemoved(String sourceId, long timeId,
-			String attribute) {
+	public void graphAttributeRemoved(String sourceId, long timeId, String attribute) {
 		ensureToFinish();
 		// GML is not a dynamic file format ?
 	}
 
-	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-			String attribute, Object value) {
+	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId, String attribute, Object value) {
 		if (nodeToFinish != null && nodeToFinish.equals(nodeId)) {
 			String val = valueToString(value);
 			attribute = keyToString(attribute);
@@ -123,22 +120,20 @@ public class FileSinkGML extends FileSinkBase {
 		}
 	}
 
-	public void nodeAttributeChanged(String sourceId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
+	public void nodeAttributeChanged(String sourceId, long timeId, String nodeId, String attribute, Object oldValue,
+			Object newValue) {
 		if (edgeToFinish != null)
 			ensureToFinish();
 		// GML is not a dynamic file format ?
 	}
 
-	public void nodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute) {
+	public void nodeAttributeRemoved(String sourceId, long timeId, String nodeId, String attribute) {
 		if (edgeToFinish != null)
 			ensureToFinish();
 		// GML is not a dynamic file format ?
 	}
 
-	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
-			String attribute, Object value) {
+	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId, String attribute, Object value) {
 		if (edgeToFinish != null && edgeToFinish.equals(edgeId)) {
 			String val = valueToString(value);
 			attribute = keyToString(attribute);
@@ -151,15 +146,14 @@ public class FileSinkGML extends FileSinkBase {
 		}
 	}
 
-	public void edgeAttributeChanged(String sourceId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
+	public void edgeAttributeChanged(String sourceId, long timeId, String edgeId, String attribute, Object oldValue,
+			Object newValue) {
 		if (nodeToFinish != null)
 			ensureToFinish();
 		// GML is not a dynamic file format ?
 	}
 
-	public void edgeAttributeRemoved(String sourceId, long timeId,
-			String edgeId, String attribute) {
+	public void edgeAttributeRemoved(String sourceId, long timeId, String edgeId, String attribute) {
 		if (nodeToFinish != null)
 			ensureToFinish();
 		// GML is not a dynamic file format ?
@@ -178,8 +172,8 @@ public class FileSinkGML extends FileSinkBase {
 		ensureToFinish();
 	}
 
-	public void edgeAdded(String sourceId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
+	public void edgeAdded(String sourceId, long timeId, String edgeId, String fromNodeId, String toNodeId,
+			boolean directed) {
 		ensureToFinish();
 		out.printf("\tedge [%n");
 		out.printf("\t\tid \"%s\"%n", edgeId);
@@ -227,8 +221,8 @@ public class FileSinkGML extends FileSinkBase {
 	}
 
 	protected void ensureToFinish() {
-		assert ((nodeToFinish != null && edgeToFinish == null)
-				|| (nodeToFinish == null && edgeToFinish != null) || (nodeToFinish == null && edgeToFinish == null));
+		assert ((nodeToFinish != null && edgeToFinish == null) || (nodeToFinish == null && edgeToFinish != null)
+				|| (nodeToFinish == null && edgeToFinish == null));
 
 		if (nodeToFinish != null || edgeToFinish != null) {
 			out.printf("\t]%n");

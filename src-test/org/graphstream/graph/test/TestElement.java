@@ -134,9 +134,9 @@ public class TestElement {
 		assertEquals(3.1415, A.getAttribute("pi"));
 
 		A.setAttribute("pi", "3.1415");
-		
+
 		assertEquals(3.1415, A.getNumber("pi"), 0);
-		
+
 		// Vector of numbers.
 
 		ArrayList<Number> numbers = new ArrayList<>();
@@ -253,7 +253,7 @@ public class TestElement {
 		A.setAttribute("I", "i");
 		A.setAttribute("Z", "z");
 
-		String s = A.getFirstAttributeOf(String.class,"A", "B", "C", "I", "Z");
+		String s = A.getFirstAttributeOf(String.class, "A", "B", "C", "I", "Z");
 
 		assertNotNull(s);
 		assertEquals("c", s);
@@ -263,8 +263,7 @@ public class TestElement {
 		A.setAttribute("J", 1);
 		A.setAttribute("X", 2);
 
-		Number n = A.getFirstAttributeOf(Number.class, "A", "B", "C", "I", "J",
-				"X", "Z");
+		Number n = A.getFirstAttributeOf(Number.class, "A", "B", "C", "I", "J", "X", "Z");
 
 		assertNotNull(n);
 		assertEquals(1, n);

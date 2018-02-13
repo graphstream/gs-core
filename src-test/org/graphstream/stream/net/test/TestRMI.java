@@ -91,8 +91,7 @@ public class TestRMI {
 		B.setAttribute("string", "test");
 		C.setAttribute("double", 2.0);
 
-		AB.setAttribute("points",
-				(Object) (new double[][] { { 1, 1 }, { 2, 2 } }));
+		AB.setAttribute("points", (Object) (new double[][] { { 1, 1 }, { 2, 2 } }));
 		LinkedList<Integer> list = new LinkedList<Integer>();
 		list.add(1);
 		list.add(2);
@@ -125,11 +124,11 @@ public class TestRMI {
 		assertEquals("C", AC.getNode1().getId());
 		assertEquals("B", BC.getNode0().getId());
 		assertEquals("C", BC.getNode1().getId());
-		
+
 		assertTrue(!AB.isDirected());
 		assertTrue(AC.isDirected());
 		assertTrue(!BC.isDirected());
-		
+
 		assertEquals(A.getAttribute("int"), Integer.valueOf(1));
 		assertEquals(B.getAttribute("string"), "test");
 		assertEquals(C.getNumber("double"), 2.0, 0);

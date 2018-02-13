@@ -86,11 +86,9 @@ public interface TLPParserConstants {
 	int DEFAULT = 0;
 
 	/** Literal token values. */
-	String[] tokenImage = { "<EOF>", "\" \"", "\"\\r\"", "\"\\t\"", "\"\\n\"",
-			"<token of kind 5>", "<token of kind 6>", "<EOL>", "<DIGIT>",
-			"<HEXDIGIT>", "\"(\"", "\")\"", "\"tlp\"", "\"graph\"", "\"node\"",
-			"\"nodes\"", "\"edge\"", "\"edges\"", "\"cluster\"", "\"author\"",
-			"\"date\"", "\"comments\"", "\"property\"", "\"default\"",
-			"<INTEGER>", "<REAL>", "<STRING>", "<PTYPE>", };
+	String[] tokenImage = { "<EOF>", "\" \"", "\"\\r\"", "\"\\t\"", "\"\\n\"", "<token of kind 5>", "<token of kind 6>",
+			"<EOL>", "<DIGIT>", "<HEXDIGIT>", "\"(\"", "\")\"", "\"tlp\"", "\"graph\"", "\"node\"", "\"nodes\"",
+			"\"edge\"", "\"edges\"", "\"cluster\"", "\"author\"", "\"date\"", "\"comments\"", "\"property\"",
+			"\"default\"", "<INTEGER>", "<REAL>", "<STRING>", "<PTYPE>", };
 
 }

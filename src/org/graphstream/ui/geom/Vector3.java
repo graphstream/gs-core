@@ -142,10 +142,9 @@ public class Vector3 extends Vector2 {
 	 */
 	@Override
 	public double length() {
-		return Math.sqrt((data[0] * data[0]) + (data[1] * data[1])
-				+ (data[2] * data[2]));
+		return Math.sqrt((data[0] * data[0]) + (data[1] * data[1]) + (data[2] * data[2]));
 	}
-	
+
 	public double z() {
 		return data[2];
 	}

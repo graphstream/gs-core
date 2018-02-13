@@ -54,14 +54,13 @@ public class LinLogNodeParticle extends NodeParticle {
 	 *            The node identifier.
 	 */
 	public LinLogNodeParticle(LinLog box, String id) {
-		this(box, id, (box.getRandom().nextDouble() * 2 * box.k) - box.k, (box
-				.getRandom().nextDouble() * 2 * box.k) - box.k,
-				box.is3D() ? (box.getRandom().nextDouble() * 2 * box.k) - box.k
-						: 0);
+		this(box, id, (box.getRandom().nextDouble() * 2 * box.k) - box.k,
+				(box.getRandom().nextDouble() * 2 * box.k) - box.k,
+				box.is3D() ? (box.getRandom().nextDouble() * 2 * box.k) - box.k : 0);
 
 		this.box = box;
 	}
-	
+
 	/**
 	 * New node at a given position.
 	 * 
@@ -76,8 +75,7 @@ public class LinLogNodeParticle extends NodeParticle {
 	 * @param z
 	 *            The depth.
 	 */
-	public LinLogNodeParticle(LinLog box, String id, double x, double y,
-			double z) {
+	public LinLogNodeParticle(LinLog box, String id, double x, double y, double z) {
 		super(box, id, x, y, z);
 	}
 
@@ -91,25 +89,25 @@ public class LinLogNodeParticle extends NodeParticle {
 		int deg = neighbours.size();
 
 		while (i.hasNext()) {
-			LinLogNodeParticle node = (LinLogNodeParticle) nodes
-					.getParticle(i.next());
+			LinLogNodeParticle node = (LinLogNodeParticle) nodes.getParticle(i.next());
 
 			if (node != this) {
-				delta.set(node.pos.x - pos.x, node.pos.y - pos.y,
-						is3D ? node.pos.z - pos.z : 0);
+				delta.set(node.pos.x - pos.x, node.pos.y - pos.y, is3D ? node.pos.z - pos.z : 0);
 
-//				double len = delta.normalize();
+				// double len = delta.normalize();
 				double len = delta.length();
 
-				if(len > 0) {
+				if (len > 0) {
 					double degFactor = box.edgeBased ? deg * node.neighbours.size() : 1;
 					double factor = 1;
 					double r = box.r;
 
-					factor = -degFactor * (Math.pow(len, r-2)) * node.weight * weight * box.rFactor;
+					factor = -degFactor * (Math.pow(len, r - 2)) * node.weight * weight * box.rFactor;
 
-					if(factor < -box.maxR) { factor = -box.maxR; }
-					
+					if (factor < -box.maxR) {
+						factor = -box.maxR;
+					}
+
 					energies.accumulateEnergy(factor); // TODO check this
 					delta.scalarMult(factor);
 					disp.add(delta);
@@ -118,7 +116,7 @@ public class LinLogNodeParticle extends NodeParticle {
 			}
 		}
 	}
-	
+
 	@Override
 	protected void repulsionNLogN(Vector3 delta) {
 		// Explore the n-tree from the root cell and consider the contents
@@ -142,22 +140,23 @@ public class LinLogNodeParticle extends NodeParticle {
 					LinLogNodeParticle node = (LinLogNodeParticle) i.next();
 
 					if (node != this) {
-						delta.set(node.pos.x - pos.x, node.pos.y - pos.y, is3D ? node.pos.z
-								- pos.z : 0);
+						delta.set(node.pos.x - pos.x, node.pos.y - pos.y, is3D ? node.pos.z - pos.z : 0);
 
-						//double len = delta.normalize();
+						// double len = delta.normalize();
 						double len = delta.length();
 
 						if (len > 0) {
 							double degFactor = box.edgeBased ? deg * node.neighbours.size() : 1;
 							double factor = 1;
 							double r = box.r;
-							
-							factor = -degFactor * (Math.pow(len, r-2)) * node.weight * weight * box.rFactor;
-							
-							if(factor < -box.maxR) { factor = -box.maxR; }
 
-							energies.accumulateEnergy(factor);	// TODO check this
+							factor = -degFactor * (Math.pow(len, r - 2)) * node.weight * weight * box.rFactor;
+
+							if (factor < -box.maxR) {
+								factor = -box.maxR;
+							}
+
+							energies.accumulateEnergy(factor); // TODO check this
 							delta.scalarMult(factor);
 							disp.add(delta);
 							repE += factor;
@@ -176,30 +175,30 @@ public class LinLogNodeParticle extends NodeParticle {
 				double dist = bary.distanceFrom(pos);
 				double size = cell.getSpace().getSize();
 
-				if ((!cell.isLeaf())
-						&& ((size / dist) > box.getBarnesHutTheta())) {
+				if ((!cell.isLeaf()) && ((size / dist) > box.getBarnesHutTheta())) {
 					int div = cell.getSpace().getDivisions();
 
 					for (int i = 0; i < div; i++)
 						recurseRepulsion(cell.getSub(i), delta);
 				} else {
 					if (bary.weight != 0) {
-						delta.set(bary.center.x - pos.x, bary.center.y - pos.y,
-								is3D ? bary.center.z - pos.z : 0);
+						delta.set(bary.center.x - pos.x, bary.center.y - pos.y, is3D ? bary.center.z - pos.z : 0);
 
-						//double len = delta.normalize();
+						// double len = delta.normalize();
 						double len = delta.length();
 
 						if (len > 0) {
 							double degFactor = box.edgeBased ? deg * bary.degree : 1;
 							double factor = 1;
 							double r = box.r;
-							
-							factor = -degFactor * (Math.pow(len, r-2)) * bary.weight * weight * box.rFactor;
 
-							if(factor < -box.maxR) { factor = -box.maxR; }
-							
-							energies.accumulateEnergy(factor);	// TODO check this
+							factor = -degFactor * (Math.pow(len, r - 2)) * bary.weight * weight * box.rFactor;
+
+							if (factor < -box.maxR) {
+								factor = -box.maxR;
+							}
+
+							energies.accumulateEnergy(factor); // TODO check this
 							delta.scalarMult(factor);
 							disp.add(delta);
 							repE += factor;
@@ -222,14 +221,14 @@ public class LinLogNodeParticle extends NodeParticle {
 
 				delta.set(other.pos.x - pos.x, other.pos.y - pos.y, is3D ? other.pos.z - pos.z : 0);
 
-//				double len = delta.normalize();
+				// double len = delta.normalize();
 				double len = delta.length();
 
-				if(len > 0) {
+				if (len > 0) {
 					double factor = 1;
 					double a = box.a;
 
-					factor = (Math.pow(len, a-2)) * edge.weight * box.aFactor;
+					factor = (Math.pow(len, a - 2)) * edge.weight * box.aFactor;
 
 					energies.accumulateEnergy(factor);
 					delta.scalarMult(factor);
@@ -239,11 +238,11 @@ public class LinLogNodeParticle extends NodeParticle {
 			}
 		}
 	}
-	
+
 	@Override
 	protected void gravity(Vector3 delta) {
 	}
-	
+
 	protected boolean intersection(Cell cell) {
 		LinLog box = (LinLog) this.box;
 

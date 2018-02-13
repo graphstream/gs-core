@@ -78,7 +78,7 @@ public class Vector2 implements java.io.Serializable {
 		data = new double[2];
 		copy(point);
 	}
-	
+
 	public Vector2(Point2 from, Point2 to) {
 		data = new double[2];
 		data[0] = to.x - from.x;
@@ -127,11 +127,11 @@ public class Vector2 implements java.io.Serializable {
 	public double at(int i) {
 		return data[i];
 	}
-	
+
 	public double x() {
 		return data[0];
 	}
-	
+
 	public double y() {
 		return data[1];
 	}
@@ -289,10 +289,8 @@ public class Vector2 implements java.io.Serializable {
 		return sb.toString();
 	}
 
-
-    @Override
-    public int hashCode()
-    {
-        return data != null ? Arrays.hashCode(data) : 0;
-    }
+	@Override
+	public int hashCode() {
+		return data != null ? Arrays.hashCode(data) : 0;
+	}
 }

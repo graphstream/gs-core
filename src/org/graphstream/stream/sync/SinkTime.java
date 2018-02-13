@@ -87,8 +87,8 @@ public class SinkTime {
 	}
 
 	/**
-	 * Allow to know if event is new for this source. This updates the timeId
-	 * mapped to the source.
+	 * Allow to know if event is new for this source. This updates the timeId mapped
+	 * to the source.
 	 * 
 	 * @param sourceId
 	 * @param timeId

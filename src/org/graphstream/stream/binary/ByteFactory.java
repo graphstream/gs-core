@@ -35,17 +35,17 @@ package org.graphstream.stream.binary;
  * @since 01/02/16.
  */
 public interface ByteFactory {
-    /**
-     * Create a new binary encoder.
-     *
-     * @return the new created encoder
-     */
-    ByteEncoder createByteEncoder();
+	/**
+	 * Create a new binary encoder.
+	 *
+	 * @return the new created encoder
+	 */
+	ByteEncoder createByteEncoder();
 
-    /**
-     * Create a new binary decoder.
-     *
-     * @return the new created decoder
-     */
-    ByteDecoder createByteDecoder();
+	/**
+	 * Create a new binary decoder.
+	 *
+	 * @return the new created decoder
+	 */
+	ByteDecoder createByteDecoder();
 }

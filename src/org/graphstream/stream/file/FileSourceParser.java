@@ -92,8 +92,7 @@ public abstract class FileSourceParser extends SourceBase implements FileSource 
 	 * @see org.graphstream.stream.file.FileSource#readAll(java.net.URL)
 	 */
 	public void readAll(URL url) throws IOException {
-		Parser parser = factory.newParser(new InputStreamReader(url
-				.openStream()));
+		Parser parser = factory.newParser(new InputStreamReader(url.openStream()));
 
 		try {
 			parser.all();

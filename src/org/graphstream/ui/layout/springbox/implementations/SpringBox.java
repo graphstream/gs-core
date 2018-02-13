@@ -41,17 +41,17 @@ import org.graphstream.ui.layout.springbox.NodeParticle;
  * The GraphStream Spring-Box layout.
  * 
  * <p>
- * This layout is the default GraphStream layout that handles dynamic graphs.
- * It can constantly evolve according to the changes in the graph. And works
- * well with the {@link LayoutRunner} class so that the computations stops
- * when the layout is stable enougth. 
+ * This layout is the default GraphStream layout that handles dynamic graphs. It
+ * can constantly evolve according to the changes in the graph. And works well
+ * with the {@link LayoutRunner} class so that the computations stops when the
+ * layout is stable enougth.
  * </p>
  * 
  * <p>
  * This algorithm is based on the Frutcherman-Reingold force layout algorithm
  * modified on the attraction (the degree of nodes is taken into account to
- * stabilize the layout as we are not only interested in the result, but also
- * in the steps in between).
+ * stabilize the layout as we are not only interested in the result, but also in
+ * the steps in between).
  * </p>
  */
 public class SpringBox extends BarnesHutLayout {
@@ -120,10 +120,10 @@ public class SpringBox extends BarnesHutLayout {
 
 	@Override
 	protected void chooseNodePosition(NodeParticle n0, NodeParticle n1) {
-		if(n0.frozen || n1.frozen)
+		if (n0.frozen || n1.frozen)
 			return;
-		
-		double delta = random.nextDouble(); //k * 0.1;
+
+		double delta = random.nextDouble(); // k * 0.1;
 		if (n0.getEdges().size() == 1 && n1.getEdges().size() > 1) {
 			org.miv.pherd.geom.Point3 pos = n1.getPosition();
 			n0.moveTo(pos.x + delta, pos.y + delta, pos.z + delta);

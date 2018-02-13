@@ -41,16 +41,16 @@ import org.graphstream.ui.geom.Vector3;
 import org.miv.pherd.Particle;
 
 /**
- * Base implementation of a node particle to be used in the {@link BarnesHutLayout}
- * to represent nodes and choose their positions.
+ * Base implementation of a node particle to be used in the
+ * {@link BarnesHutLayout} to represent nodes and choose their positions.
  * 
  * <p>
  * Several abstract methods have to be overrided to provide a computation of the
- * layout (all the attraction/repulsion computation is done in this class):  
+ * layout (all the attraction/repulsion computation is done in this class):
  * <ul>
- * 		<li>{@link #attraction(Vector3)}</li>
- * 		<li>{@link #repulsionN2(Vector3)}</li>
- * 		<li>{@link #repulsionNLogN(Vector3)}</li>
+ * <li>{@link #attraction(Vector3)}</li>
+ * <li>{@link #repulsionN2(Vector3)}</li>
+ * <li>{@link #repulsionNLogN(Vector3)}</li>
  * </ul>
  * </p>
  */
@@ -108,11 +108,12 @@ public abstract class NodeParticle extends Particle {
 	 *            The node identifier.
 	 */
 	public NodeParticle(BarnesHutLayout box, String id) {
-//		this(box, id, box.getCenterPoint().x, box.getCenterPoint().y, box.is3D() ? box.getCenterPoint().z : 0);
-		this(box, id,  box.randomXInsideBounds(), box.randomYInsideBounds(), box.is3D ? box.randomZInsideBounds() : 0);	
-//		this(box, id, (box.random.nextDouble() * 2) - 1, (box.random
-//				.nextDouble() * 2) - 1,
-//				box.is3D ? (box.random.nextDouble() * 2) - 1 : 0);
+		// this(box, id, box.getCenterPoint().x, box.getCenterPoint().y, box.is3D() ?
+		// box.getCenterPoint().z : 0);
+		this(box, id, box.randomXInsideBounds(), box.randomYInsideBounds(), box.is3D ? box.randomZInsideBounds() : 0);
+		// this(box, id, (box.random.nextDouble() * 2) - 1, (box.random
+		// .nextDouble() * 2) - 1,
+		// box.is3D ? (box.random.nextDouble() * 2) - 1 : 0);
 
 		this.box = box;
 	}
@@ -131,8 +132,7 @@ public abstract class NodeParticle extends Particle {
 	 * @param z
 	 *            The depth.
 	 */
-	public NodeParticle(BarnesHutLayout box, String id, double x, double y,
-			double z) {
+	public NodeParticle(BarnesHutLayout box, String id, double x, double y, double z) {
 		super(id, x, y, box.is3D ? z : 0);
 		this.box = box;
 		disp = new Vector3();
@@ -145,8 +145,7 @@ public abstract class NodeParticle extends Particle {
 	protected void createDebug() {
 		if (box.outputNodeStats) {
 			try {
-				out = new PrintStream(new FileOutputStream("out" + getId()
-						+ ".data"));
+				out = new PrintStream(new FileOutputStream("out" + getId() + ".data"));
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.exit(1);
@@ -179,8 +178,8 @@ public abstract class NodeParticle extends Particle {
 				repulsionNLogN(delta);
 
 			attraction(delta);
-			
-			if(box.gravity != 0)
+
+			if (box.gravity != 0)
 				gravity(delta);
 
 			disp.scalarMult(box.force);
@@ -255,8 +254,8 @@ public abstract class NodeParticle extends Particle {
 	}
 
 	/**
-	 * Compute the repulsion for each other node. This is the most precise way,
-	 * but the algorithm is a time hog : complexity is O(n^2).
+	 * Compute the repulsion for each other node. This is the most precise way, but
+	 * the algorithm is a time hog : complexity is O(n^2).
 	 * 
 	 * @param delta
 	 *            The computed displacement vector.
@@ -265,9 +264,9 @@ public abstract class NodeParticle extends Particle {
 
 	/**
 	 * Compute the repulsion for each node in the viewing distance, and use the
-	 * n-tree to find them. For a certain distance the node repulsion is
-	 * computed one by one. At a larger distance the repulsion is computed using
-	 * nodes barycenters.
+	 * n-tree to find them. For a certain distance the node repulsion is computed
+	 * one by one. At a larger distance the repulsion is computed using nodes
+	 * barycenters.
 	 * 
 	 * @param delta
 	 *            The computed displacement vector.
@@ -276,19 +275,21 @@ public abstract class NodeParticle extends Particle {
 
 	/**
 	 * Compute the global attraction toward each connected node.
+	 * 
 	 * @param delta
-	 * 			The computed displacement vector.
+	 *            The computed displacement vector.
 	 */
 	protected abstract void attraction(Vector3 delta);
 
 	/**
 	 * Compute the global attraction toward the layout center (if enabled).
+	 * 
 	 * @param delta
-	 * 			The computed displacement vector.
+	 *            The computed displacement vector.
 	 * @see BarnesHutLayout#useGravity
 	 */
 	protected abstract void gravity(Vector3 delta);
-	
+
 	/**
 	 * The given edge is connected to this node.
 	 * 

@@ -101,14 +101,13 @@ public class FileSinkImages implements FileSink {
 	 * Common resolutions.
 	 */
 	public static enum Resolutions implements Resolution {
-		QVGA(320, 240), CGA(320, 200), VGA(640, 480), NTSC(720, 480), PAL(768,
-				576), WVGA_5by3(800, 480), SVGA(800, 600), WVGA_16by9(854, 480), WSVGA(
-				1024, 600), XGA(1024, 768), HD720(1280, 720), WXGA_5by3(1280,
-				768), WXGA_8by5(1280, 800), SXGA(1280, 1024), FWXGA(1366, 768), SXGAp(
-				1400, 1050), WSXGAp(1680, 1050), UXGA(1600, 1200), HD1080(1920,
-				1080), WUXGA(1920, 1200), TwoK(2048, 1080), QXGA(2048, 1536), WQXGA(
-				2560, 1600), QSXGA(2560, 2048), UHD_4K(3840, 2160), UHD_8K_16by9(
-				7680, 4320), UHD_8K_17by8(8192, 4320), UHD_8K_1by1(8192, 8192)
+		QVGA(320, 240), CGA(320, 200), VGA(640, 480), NTSC(720, 480), PAL(768, 576), WVGA_5by3(800, 480), SVGA(800,
+				600), WVGA_16by9(854, 480), WSVGA(1024, 600), XGA(1024, 768), HD720(1280, 720), WXGA_5by3(1280,
+						768), WXGA_8by5(1280, 800), SXGA(1280, 1024), FWXGA(1366, 768), SXGAp(1400, 1050), WSXGAp(1680,
+								1050), UXGA(1600, 1200), HD1080(1920, 1080), WUXGA(1920, 1200), TwoK(2048,
+										1080), QXGA(2048, 1536), WQXGA(2560, 1600), QSXGA(2560, 2048), UHD_4K(3840,
+												2160), UHD_8K_16by9(7680,
+														4320), UHD_8K_17by8(8192, 4320), UHD_8K_1by1(8192, 8192)
 
 		;
 
@@ -162,10 +161,8 @@ public class FileSinkImages implements FileSink {
 	 * Output image type.
 	 */
 	public static enum OutputType {
-		PNG(BufferedImage.TYPE_INT_ARGB, "png"), JPG(
-				BufferedImage.TYPE_INT_RGB, "jpg"), png(
-				BufferedImage.TYPE_INT_ARGB, "png"), jpg(
-				BufferedImage.TYPE_INT_RGB, "jpg")
+		PNG(BufferedImage.TYPE_INT_ARGB, "png"), JPG(BufferedImage.TYPE_INT_RGB,
+				"jpg"), png(BufferedImage.TYPE_INT_ARGB, "png"), jpg(BufferedImage.TYPE_INT_RGB, "jpg")
 
 		;
 
@@ -179,22 +176,22 @@ public class FileSinkImages implements FileSink {
 	}
 
 	/**
-	 * Output policy. Specify when an image is written. This is an important
-	 * choice. Best choice is to divide the graph in steps and choose the
-	 * *ByStepOutput*. Remember that if your graph has x nodes and
-	 * *ByEventOutput* or *ByNodeEventOutput* is chosen, this will produce x
-	 * images just for nodes creation.
+	 * Output policy. Specify when an image is written. This is an important choice.
+	 * Best choice is to divide the graph in steps and choose the *ByStepOutput*.
+	 * Remember that if your graph has x nodes and *ByEventOutput* or
+	 * *ByNodeEventOutput* is chosen, this will produce x images just for nodes
+	 * creation.
 	 */
 	public static enum OutputPolicy {
 		BY_EVENT, BY_ELEMENT_EVENT, BY_ATTRIBUTE_EVENT, BY_NODE_EVENT, BY_EDGE_EVENT, BY_GRAPH_EVENT, BY_STEP, BY_NODE_ADDED_REMOVED, BY_EDGE_ADDED_REMOVED, BY_NODE_ATTRIBUTE, BY_EDGE_ATTRIBUTE, BY_GRAPH_ATTRIBUTE, BY_LAYOUT_STEP, BY_NODE_MOVED, ON_RUNNER, NONE
 	}
 
 	/**
-	 * Layout policy. Specify how layout is computed. It can be computed in its
-	 * own thread with a LayoutRunner but if image rendering takes too much
-	 * time, node positions will be very different between two images. To have a
-	 * better result, we can choose to compute layout when a new image is
-	 * rendered. This will smooth the move of nodes in the movie.
+	 * Layout policy. Specify how layout is computed. It can be computed in its own
+	 * thread with a LayoutRunner but if image rendering takes too much time, node
+	 * positions will be very different between two images. To have a better result,
+	 * we can choose to compute layout when a new image is rendered. This will
+	 * smooth the move of nodes in the movie.
 	 */
 	public static enum LayoutPolicy {
 		NO_LAYOUT, COMPUTED_IN_LAYOUT_RUNNER, COMPUTED_ONCE_AT_NEW_IMAGE, COMPUTED_FULLY_AT_NEW_IMAGE
@@ -220,15 +217,13 @@ public class FileSinkImages implements FileSink {
 		 */
 		int x, y;
 
-		public AddLogoRenderer(String logoFile, int x, int y)
-				throws IOException {
+		public AddLogoRenderer(String logoFile, int x, int y) throws IOException {
 			File f = new File(logoFile);
 
 			if (f.exists())
 				this.logo = ImageIO.read(f);
 			else
-				this.logo = ImageIO.read(ClassLoader
-						.getSystemResource(logoFile));
+				this.logo = ImageIO.read(ClassLoader.getSystemResource(logoFile));
 
 			this.x = x;
 			this.y = y;
@@ -243,8 +238,7 @@ public class FileSinkImages implements FileSink {
 	 * Experimental. Allows to choose which renderer will be used.
 	 */
 	public static enum RendererType {
-		BASIC(
-				"org.graphstream.ui.swingViewer.basicRenderer.SwingBasicGraphRenderer"), SCALA(
+		BASIC("org.graphstream.ui.swingViewer.basicRenderer.SwingBasicGraphRenderer"), SCALA(
 				"org.graphstream.ui.j2dviewer.J2DGraphRenderer")
 
 		;
@@ -260,8 +254,7 @@ public class FileSinkImages implements FileSink {
 		LOW, MEDIUM, HIGH
 	}
 
-	private static final Logger LOGGER = Logger.getLogger(FileSinkImages.class
-			.getName());
+	private static final Logger LOGGER = Logger.getLogger(FileSinkImages.class.getName());
 
 	protected Resolution resolution;
 	protected OutputType outputType;
@@ -299,8 +292,7 @@ public class FileSinkImages implements FileSink {
 		this("frame_", type, resolution, OutputPolicy.NONE);
 	}
 
-	public FileSinkImages(String prefix, OutputType type,
-			Resolution resolution, OutputPolicy outputPolicy) {
+	public FileSinkImages(String prefix, OutputType type, Resolution resolution, OutputPolicy outputPolicy) {
 		this.resolution = resolution;
 		this.outputType = type;
 		this.filePrefix = prefix;
@@ -379,8 +371,7 @@ public class FileSinkImages implements FileSink {
 	 * @param height
 	 */
 	public void setResolution(int width, int height) {
-		if (resolution == null || resolution.getWidth() != width
-				|| resolution.getHeight() != height) {
+		if (resolution == null || resolution.getWidth() != width || resolution.getHeight() != height) {
 			resolution = new CustomResolution(width, height);
 			initImage();
 		}
@@ -407,8 +398,7 @@ public class FileSinkImages implements FileSink {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (ClassCastException e) {
-			LOGGER.warning(String.format("not a renderer \"%s\"%n",
-					rendererType.classname));
+			LOGGER.warning(String.format("not a renderer \"%s\"%n", rendererType.classname));
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
@@ -497,8 +487,8 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * Set the stabilization limit of the layout used to compute coordinates of
 	 * nodes. See
-	 * {@link org.graphstream.ui.layout.Layout#setStabilizationLimit(double)}
-	 * for more informations about this limit.
+	 * {@link org.graphstream.ui.layout.Layout#setStabilizationLimit(double)} for
+	 * more informations about this limit.
 	 * 
 	 * @param limit
 	 */
@@ -589,8 +579,7 @@ public class FileSinkImages implements FileSink {
 		renderer.getCamera().setViewPercent(zoom);
 	}
 
-	public void setGraphViewport(double minx, double miny, double maxx,
-			double maxy) {
+	public void setGraphViewport(double minx, double miny, double maxx, double maxy) {
 		renderer.getCamera().setGraphViewport(minx, miny, maxx, maxy);
 	}
 
@@ -603,8 +592,7 @@ public class FileSinkImages implements FileSink {
 	}
 
 	protected void initImage() {
-		image = new BufferedImage(resolution.getWidth(),
-				resolution.getHeight(), outputType.imageType);
+		image = new BufferedImage(resolution.getWidth(), resolution.getHeight(), outputType.imageType);
 
 		g2d = image.createGraphics();
 	}
@@ -623,8 +611,7 @@ public class FileSinkImages implements FileSink {
 	 * Produce a new image.
 	 */
 	public void outputNewImage() {
-		outputNewImage(String.format("%s%06d.%s", filePrefix, counter++,
-				outputType.ext));
+		outputNewImage(String.format("%s%06d.%s", filePrefix, counter++, outputType.ext));
 	}
 
 	public synchronized void outputNewImage(String filename) {
@@ -643,8 +630,7 @@ public class FileSinkImages implements FileSink {
 			break;
 		}
 
-		if (resolution.getWidth() != image.getWidth()
-				|| resolution.getHeight() != image.getHeight())
+		if (resolution.getWidth() != image.getWidth() || resolution.getHeight() != image.getHeight())
 			initImage();
 
 		if (clearImageBeforeOutput) {
@@ -660,12 +646,10 @@ public class FileSinkImages implements FileSink {
 				Point3 lo = gg.getMinPos();
 				Point3 hi = gg.getMaxPos();
 
-				renderer.getCamera().setBounds(lo.x, lo.y, lo.z, hi.x, hi.y,
-						hi.z);
+				renderer.getCamera().setBounds(lo.x, lo.y, lo.z, hi.x, hi.y, hi.z);
 			}
 
-			renderer.render(g2d, 0, 0, resolution.getWidth(),
-					resolution.getHeight());
+			renderer.render(g2d, 0, 0, resolution.getWidth(), resolution.getHeight());
 		}
 
 		for (PostRenderer action : postRenderers)
@@ -688,8 +672,7 @@ public class FileSinkImages implements FileSink {
 	}
 
 	protected void printProgress() {
-		LOGGER.info(String.format("\033[s\033[K%d images written\033[u",
-				counter));
+		LOGGER.info(String.format("\033[s\033[K%d images written\033[u", counter));
 	}
 
 	/*
@@ -743,8 +726,8 @@ public class FileSinkImages implements FileSink {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph
-	 * , java.io.OutputStream)
+	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph ,
+	 * java.io.OutputStream)
 	 */
 	public void writeAll(Graph g, OutputStream stream) throws IOException {
 		throw new IOException("not implemented");
@@ -754,8 +737,8 @@ public class FileSinkImages implements FileSink {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph
-	 * , java.io.Writer)
+	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph ,
+	 * java.io.Writer)
 	 */
 	public void writeAll(Graph g, Writer writer) throws IOException {
 		throw new IOException("not implemented");
@@ -765,15 +748,13 @@ public class FileSinkImages implements FileSink {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph
-	 * , java.lang.String)
+	 * org.graphstream.stream.file.FileSink#writeAll(org.graphstream.graph.Graph ,
+	 * java.lang.String)
 	 */
-	public synchronized void writeAll(Graph g, String filename)
-			throws IOException {
+	public synchronized void writeAll(Graph g, String filename) throws IOException {
 		clearGG();
 
-		GraphReplay replay = new GraphReplay(String.format(
-				"file_sink_image-write_all-replay-%x", System.nanoTime()));
+		GraphReplay replay = new GraphReplay(String.format("file_sink_image-write_all-replay-%x", System.nanoTime()));
 
 		replay.addSink(gg);
 		replay.replay(g);
@@ -787,8 +768,7 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
-	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
-			String attribute, Object value) {
+	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId, String attribute, Object value) {
 		sink.edgeAttributeAdded(sourceId, timeId, edgeId, attribute, value);
 
 		switch (outputPolicy) {
@@ -807,10 +787,9 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
-	public void edgeAttributeChanged(String sourceId, long timeId,
-			String edgeId, String attribute, Object oldValue, Object newValue) {
-		sink.edgeAttributeChanged(sourceId, timeId, edgeId, attribute,
-				oldValue, newValue);
+	public void edgeAttributeChanged(String sourceId, long timeId, String edgeId, String attribute, Object oldValue,
+			Object newValue) {
+		sink.edgeAttributeChanged(sourceId, timeId, edgeId, attribute, oldValue, newValue);
 
 		switch (outputPolicy) {
 		case BY_EVENT:
@@ -828,8 +807,7 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
-	public void edgeAttributeRemoved(String sourceId, long timeId,
-			String edgeId, String attribute) {
+	public void edgeAttributeRemoved(String sourceId, long timeId, String edgeId, String attribute) {
 		sink.edgeAttributeRemoved(sourceId, timeId, edgeId, attribute);
 
 		switch (outputPolicy) {
@@ -848,8 +826,7 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
-	public void graphAttributeAdded(String sourceId, long timeId,
-			String attribute, Object value) {
+	public void graphAttributeAdded(String sourceId, long timeId, String attribute, Object value) {
 		sink.graphAttributeAdded(sourceId, timeId, attribute, value);
 
 		switch (outputPolicy) {
@@ -868,10 +845,9 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
-	public void graphAttributeChanged(String sourceId, long timeId,
-			String attribute, Object oldValue, Object newValue) {
-		sink.graphAttributeChanged(sourceId, timeId, attribute, oldValue,
-				newValue);
+	public void graphAttributeChanged(String sourceId, long timeId, String attribute, Object oldValue,
+			Object newValue) {
+		sink.graphAttributeChanged(sourceId, timeId, attribute, oldValue, newValue);
 
 		switch (outputPolicy) {
 		case BY_EVENT:
@@ -889,8 +865,7 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
-	public void graphAttributeRemoved(String sourceId, long timeId,
-			String attribute) {
+	public void graphAttributeRemoved(String sourceId, long timeId, String attribute) {
 		sink.graphAttributeRemoved(sourceId, timeId, attribute);
 
 		switch (outputPolicy) {
@@ -909,8 +884,7 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
-	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-			String attribute, Object value) {
+	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId, String attribute, Object value) {
 		sink.nodeAttributeAdded(sourceId, timeId, nodeId, attribute, value);
 
 		switch (outputPolicy) {
@@ -929,10 +903,9 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
-	public void nodeAttributeChanged(String sourceId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue) {
-		sink.nodeAttributeChanged(sourceId, timeId, nodeId, attribute,
-				oldValue, newValue);
+	public void nodeAttributeChanged(String sourceId, long timeId, String nodeId, String attribute, Object oldValue,
+			Object newValue) {
+		sink.nodeAttributeChanged(sourceId, timeId, nodeId, attribute, oldValue, newValue);
 
 		switch (outputPolicy) {
 		case BY_EVENT:
@@ -950,8 +923,7 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
-	public void nodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute) {
+	public void nodeAttributeRemoved(String sourceId, long timeId, String nodeId, String attribute) {
 		sink.nodeAttributeRemoved(sourceId, timeId, nodeId, attribute);
 
 		switch (outputPolicy) {
@@ -970,8 +942,8 @@ public class FileSinkImages implements FileSink {
 	/**
 	 * @see org.graphstream.stream.Sink
 	 */
-	public void edgeAdded(String sourceId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed) {
+	public void edgeAdded(String sourceId, long timeId, String edgeId, String fromNodeId, String toNodeId,
+			boolean directed) {
 		sink.edgeAdded(sourceId, timeId, edgeId, fromNodeId, toNodeId, directed);
 
 		switch (outputPolicy) {
@@ -1124,21 +1096,20 @@ public class FileSinkImages implements FileSink {
 	// }
 
 	public static enum Option {
-		IMAGE_PREFIX("image-prefix", 'p', "prefix of outputted images", true,
-				true, "image_"), IMAGE_TYPE("image-type", 't',
-				"image type. one of " + Arrays.toString(OutputType.values()),
-				true, true, "PNG"), IMAGE_RESOLUTION("image-resolution", 'r',
-				"defines images resolution. \"width x height\" or one of "
-						+ Arrays.toString(Resolutions.values()), true, true,
-				"HD720"), OUTPUT_POLICY("output-policy", 'e',
-				"defines when images are outputted. one of "
-						+ Arrays.toString(OutputPolicy.values()), true, true,
-				"ByStepOutput"), LOGO("logo", 'l', "add a logo to images",
-				true, true, null), STYLESHEET("stylesheet", 's',
-				"defines stylesheet of graph. can be a file or a string.",
-				true, true, null), QUALITY("quality", 'q',
-				"defines quality of rendering. one of "
-						+ Arrays.toString(Quality.values()), true, true, "HIGH");
+		IMAGE_PREFIX("image-prefix", 'p', "prefix of outputted images", true, true, "image_"), IMAGE_TYPE("image-type",
+				't', "image type. one of " + Arrays.toString(OutputType.values()), true, true,
+				"PNG"), IMAGE_RESOLUTION("image-resolution", 'r',
+						"defines images resolution. \"width x height\" or one of "
+								+ Arrays.toString(Resolutions.values()),
+						true, true, "HD720"), OUTPUT_POLICY("output-policy", 'e',
+								"defines when images are outputted. one of " + Arrays.toString(OutputPolicy.values()),
+								true, true, "ByStepOutput"), LOGO("logo", 'l', "add a logo to images", true, true,
+										null), STYLESHEET("stylesheet", 's',
+												"defines stylesheet of graph. can be a file or a string.", true, true,
+												null), QUALITY("quality", 'q',
+														"defines quality of rendering. one of "
+																+ Arrays.toString(Quality.values()),
+														true, true, "HIGH");
 		String fullopts;
 		char shortopts;
 		String description;
@@ -1146,8 +1117,8 @@ public class FileSinkImages implements FileSink {
 		boolean valuable;
 		String defaultValue;
 
-		Option(String fullopts, char shortopts, String description,
-				boolean optional, boolean valuable, String defaultValue) {
+		Option(String fullopts, char shortopts, String description, boolean optional, boolean valuable,
+				String defaultValue) {
 			this.fullopts = fullopts;
 			this.shortopts = shortopts;
 			this.description = description;
@@ -1160,12 +1131,10 @@ public class FileSinkImages implements FileSink {
 	protected class InnerLayoutRunner extends LayoutRunner {
 
 		public InnerLayoutRunner() {
-			super(FileSinkImages.this.gg, FileSinkImages.this.layout, true,
-					true);
+			super(FileSinkImages.this.gg, FileSinkImages.this.layout, true, true);
 
 			FileSinkImages.this.layoutPipeIn = newLayoutPipe();
-			FileSinkImages.this.layoutPipeIn
-					.addAttributeSink(FileSinkImages.this.gg);
+			FileSinkImages.this.layoutPipeIn.addAttributeSink(FileSinkImages.this.gg);
 		}
 
 		public void run() {
@@ -1210,14 +1179,11 @@ public class FileSinkImages implements FileSink {
 	}
 
 	public static void usage() {
-		LOGGER.info(String.format("usage: java %s [options] fichier.dgs%n",
-				FileSinkImages.class.getName()));
+		LOGGER.info(String.format("usage: java %s [options] fichier.dgs%n", FileSinkImages.class.getName()));
 		LOGGER.info(String.format("where options in:%n"));
 		for (Option option : Option.values()) {
-			LOGGER.info(String.format("%n --%s%s , -%s %s%n%s%n",
-					option.fullopts, option.valuable ? "=..." : "",
-					option.shortopts, option.valuable ? "..." : "",
-					option.description));
+			LOGGER.info(String.format("%n --%s%s , -%s %s%n%s%n", option.fullopts, option.valuable ? "=..." : "",
+					option.shortopts, option.valuable ? "..." : "", option.description));
 		}
 	}
 
@@ -1231,23 +1197,18 @@ public class FileSinkImages implements FileSink {
 				options.put(option, option.defaultValue);
 
 		if (args != null && args.length > 0) {
-			Pattern valueGetter = Pattern
-					.compile("^--\\w[\\w-]*\\w?(?:=(?:\"([^\"]*)\"|([^\\s]*)))$");
+			Pattern valueGetter = Pattern.compile("^--\\w[\\w-]*\\w?(?:=(?:\"([^\"]*)\"|([^\\s]*)))$");
 
 			for (int i = 0; i < args.length; i++) {
 
-				if (args[i]
-						.matches("^--\\w[\\w-]*\\w?(=(\"[^\"]*\"|[^\\s]*))?$")) {
+				if (args[i].matches("^--\\w[\\w-]*\\w?(=(\"[^\"]*\"|[^\\s]*))?$")) {
 					boolean found = false;
 					for (Option option : Option.values()) {
 						if (args[i].startsWith("--" + option.fullopts + "=")) {
 							Matcher m = valueGetter.matcher(args[i]);
 
 							if (m.matches()) {
-								options.put(
-										option,
-										m.group(1) == null ? m.group(2) : m
-												.group(1));
+								options.put(option, m.group(1) == null ? m.group(2) : m.group(1));
 							}
 
 							found = true;
@@ -1256,8 +1217,8 @@ public class FileSinkImages implements FileSink {
 					}
 
 					if (!found) {
-						LOGGER.severe(String.format("unknown option: %s%n",
-								args[i].substring(0, args[i].indexOf('='))));
+						LOGGER.severe(
+								String.format("unknown option: %s%n", args[i].substring(0, args[i].indexOf('='))));
 						System.exit(1);
 					}
 				} else if (args[i].matches("^-\\w$")) {
@@ -1271,8 +1232,7 @@ public class FileSinkImages implements FileSink {
 					}
 
 					if (!found) {
-						LOGGER.severe(String.format("unknown option: %s%n",
-								args[i]));
+						LOGGER.severe(String.format("unknown option: %s%n", args[i]));
 						System.exit(1);
 					}
 				} else {
@@ -1307,11 +1267,9 @@ public class FileSinkImages implements FileSink {
 		}
 
 		try {
-			outputPolicy = OutputPolicy.valueOf(options
-					.get(Option.OUTPUT_POLICY));
+			outputPolicy = OutputPolicy.valueOf(options.get(Option.OUTPUT_POLICY));
 		} catch (IllegalArgumentException e) {
-			errors.add("bad output policy: "
-					+ options.get(Option.OUTPUT_POLICY));
+			errors.add("bad output policy: " + options.get(Option.OUTPUT_POLICY));
 		}
 
 		try {
@@ -1324,18 +1282,15 @@ public class FileSinkImages implements FileSink {
 		stylesheet = options.get(Option.STYLESHEET);
 
 		try {
-			resolution = Resolutions.valueOf(options
-					.get(Option.IMAGE_RESOLUTION));
+			resolution = Resolutions.valueOf(options.get(Option.IMAGE_RESOLUTION));
 		} catch (IllegalArgumentException e) {
 			Pattern p = Pattern.compile("^\\s*(\\d+)\\s*x\\s*(\\d+)\\s*$");
 			Matcher m = p.matcher(options.get(Option.IMAGE_RESOLUTION));
 
 			if (m.matches()) {
-				resolution = new CustomResolution(Integer.parseInt(m.group(1)),
-						Integer.parseInt(m.group(2)));
+				resolution = new CustomResolution(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
 			} else {
-				errors.add("bad resolution: "
-						+ options.get(Option.IMAGE_RESOLUTION));
+				errors.add("bad resolution: " + options.get(Option.IMAGE_RESOLUTION));
 			}
 		}
 
@@ -1360,8 +1315,7 @@ public class FileSinkImages implements FileSink {
 		{
 			File test = new File(others.peek());
 			if (!test.exists())
-				errors.add(String.format("file \"%s\" does not exist",
-						others.peek()));
+				errors.add(String.format("file \"%s\" does not exist", others.peek()));
 		}
 
 		if (errors.size() > 0) {
@@ -1374,8 +1328,7 @@ public class FileSinkImages implements FileSink {
 		}
 
 		FileSourceDGS dgs = new FileSourceDGS();
-		FileSinkImages fsi = new FileSinkImages(imagePrefix, outputType,
-				resolution, outputPolicy);
+		FileSinkImages fsi = new FileSinkImages(imagePrefix, outputType, resolution, outputPolicy);
 
 		dgs.addSink(fsi);
 

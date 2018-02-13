@@ -56,9 +56,12 @@ public class SpringBoxNodeParticle extends NodeParticle {
 	 *            The node identifier.
 	 */
 	public SpringBoxNodeParticle(SpringBox box, String id) {
-		//this(box, id, box.getCenterPoint().x, box.getCenterPoint().y, box.is3D() ? box.getCenterPoint().z : 0);
-		this(box, id,  box.randomXInsideBounds(), box.randomYInsideBounds(), box.is3D() ? box.randomZInsideBounds() : 0);	
-		//this(box, id, (box.getRandom().nextDouble() * 2 * box.k) - box.k, (box.getRandom().nextDouble() * 2 * box.k) - box.k, box.is3D() ? (box.getRandom().nextDouble() * 2 * box.k) - box.k : 0);
+		// this(box, id, box.getCenterPoint().x, box.getCenterPoint().y, box.is3D() ?
+		// box.getCenterPoint().z : 0);
+		this(box, id, box.randomXInsideBounds(), box.randomYInsideBounds(), box.is3D() ? box.randomZInsideBounds() : 0);
+		// this(box, id, (box.getRandom().nextDouble() * 2 * box.k) - box.k,
+		// (box.getRandom().nextDouble() * 2 * box.k) - box.k, box.is3D() ?
+		// (box.getRandom().nextDouble() * 2 * box.k) - box.k : 0);
 
 		this.box = box;
 	}
@@ -77,8 +80,7 @@ public class SpringBoxNodeParticle extends NodeParticle {
 	 * @param z
 	 *            The depth.
 	 */
-	public SpringBoxNodeParticle(SpringBox box, String id, double x, double y,
-			double z) {
+	public SpringBoxNodeParticle(SpringBox box, String id, double x, double y, double z) {
 		super(box, id, x, y, z);
 	}
 
@@ -91,20 +93,18 @@ public class SpringBoxNodeParticle extends NodeParticle {
 		Iterator<Object> i = nodes.getParticleIdIterator();
 
 		while (i.hasNext()) {
-			SpringBoxNodeParticle node = (SpringBoxNodeParticle) nodes
-					.getParticle(i.next());
+			SpringBoxNodeParticle node = (SpringBoxNodeParticle) nodes.getParticle(i.next());
 
 			if (node != this) {
-				delta.set(node.pos.x - pos.x, node.pos.y - pos.y,
-						is3D ? node.pos.z - pos.z : 0);
+				delta.set(node.pos.x - pos.x, node.pos.y - pos.y, is3D ? node.pos.z - pos.z : 0);
 
 				double len = delta.normalize();
 
-				if(len > 0) {
+				if (len > 0) {
 					if (len < box.k)
 						len = box.k; // XXX NEW To prevent infinite
-									// repulsion.
-				
+										// repulsion.
+
 					double factor = ((box.K2 / (len * len)) * node.weight);
 
 					energies.accumulateEnergy(factor); // TODO check this
@@ -137,8 +137,7 @@ public class SpringBoxNodeParticle extends NodeParticle {
 					SpringBoxNodeParticle node = (SpringBoxNodeParticle) i.next();
 
 					if (node != this) {
-						delta.set(node.pos.x - pos.x, node.pos.y - pos.y, is3D ? node.pos.z
-								- pos.z : 0);
+						delta.set(node.pos.x - pos.x, node.pos.y - pos.y, is3D ? node.pos.z - pos.z : 0);
 
 						double len = delta.normalize();
 
@@ -147,8 +146,7 @@ public class SpringBoxNodeParticle extends NodeParticle {
 							if (len < box.k)
 								len = box.k; // XXX NEW To prevent infinite
 												// repulsion.
-							double factor = ((box.K2 / (len * len)) * node
-									.weight);
+							double factor = ((box.K2 / (len * len)) * node.weight);
 							energies.accumulateEnergy(factor); // TODO check
 																// this
 							repE += factor;
@@ -170,16 +168,14 @@ public class SpringBoxNodeParticle extends NodeParticle {
 				double dist = bary.distanceFrom(pos);
 				double size = cell.getSpace().getSize();
 
-				if ((!cell.isLeaf())
-						&& ((size / dist) > box.getBarnesHutTheta())) {
+				if ((!cell.isLeaf()) && ((size / dist) > box.getBarnesHutTheta())) {
 					int div = cell.getSpace().getDivisions();
 
 					for (int i = 0; i < div; i++)
 						recurseRepulsion(cell.getSub(i), delta);
 				} else {
 					if (bary.weight != 0) {
-						delta.set(bary.center.x - pos.x, bary.center.y - pos.y,
-								is3D ? bary.center.z - pos.z : 0);
+						delta.set(bary.center.x - pos.x, bary.center.y - pos.y, is3D ? bary.center.z - pos.z : 0);
 
 						double len = delta.normalize();
 
@@ -212,8 +208,7 @@ public class SpringBoxNodeParticle extends NodeParticle {
 				NodeParticle other = edge.getOpposite(this);
 				Point3 opos = other.getPosition();
 
-				delta.set(opos.x - pos.x, opos.y - pos.y, is3D ? opos.z - pos.z
-						: 0);
+				delta.set(opos.x - pos.x, opos.y - pos.y, is3D ? opos.z - pos.z : 0);
 
 				double len = delta.normalize();
 				double k = box.k * edge.weight;
@@ -232,12 +227,12 @@ public class SpringBoxNodeParticle extends NodeParticle {
 			}
 		}
 	}
-	
+
 	protected void gravity(Vector3 delta) {
 		SpringBox box = (SpringBox) this.box;
 		boolean is3D = box.is3D();
-		//org.graphstream.ui.geom.Point3 center = box.getCenterPoint();
-		//delta.set(center.x - pos.x, center.y - pos.y, is3D ? center.z - pos.z : 0);
+		// org.graphstream.ui.geom.Point3 center = box.getCenterPoint();
+		// delta.set(center.x - pos.x, center.y - pos.y, is3D ? center.z - pos.z : 0);
 		delta.set(-pos.x, -pos.y, is3D ? -pos.z : 0);// Use (0,0,0) instead of the layout center.
 		delta.normalize();
 		delta.scalarMult(box.getGravityFactor());
@@ -249,7 +244,7 @@ public class SpringBoxNodeParticle extends NodeParticle {
 
 		double k = box.k;
 		double vz = box.getViewZone();
-		
+
 		Anchor lo = cell.getSpace().getLoAnchor();
 		Anchor hi = cell.getSpace().getHiAnchor();
 

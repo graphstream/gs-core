@@ -44,9 +44,9 @@ package org.graphstream.stream;
  */
 public interface Source {
 	/**
-	 * Add a sink for all graph events (attributes and graph elements) coming
-	 * from this source. This is similar to registering a sink for attributes an
-	 * another for elements.
+	 * Add a sink for all graph events (attributes and graph elements) coming from
+	 * this source. This is similar to registering a sink for attributes an another
+	 * for elements.
 	 * 
 	 * @param sink
 	 *            The sink to register.
@@ -81,8 +81,8 @@ public interface Source {
 	void removeAttributeSink(AttributeSink sink);
 
 	/**
-	 * Add a sink for elements events only. Elements events include, addition
-	 * and removal of nodes and edges, as well as step events.
+	 * Add a sink for elements events only. Elements events include, addition and
+	 * removal of nodes and edges, as well as step events.
 	 * 
 	 * @param sink
 	 *            The sink to register.

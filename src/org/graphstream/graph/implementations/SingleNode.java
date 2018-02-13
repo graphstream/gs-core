@@ -45,15 +45,14 @@ public class SingleNode extends AdjacencyListNode {
 	protected static class TwoEdges {
 		protected AbstractEdge in, out;
 	}
-	
+
 	protected HashMap<AbstractNode, TwoEdges> neighborMap;
 
 	// *** Constructor ***
 
 	protected SingleNode(AbstractGraph graph, String id) {
 		super(graph, id);
-		neighborMap = new HashMap<AbstractNode, TwoEdges>(
-				4 * INITIAL_EDGE_CAPACITY / 3 + 1);
+		neighborMap = new HashMap<AbstractNode, TwoEdges>(4 * INITIAL_EDGE_CAPACITY / 3 + 1);
 	}
 
 	// *** Helpers ***
@@ -67,9 +66,9 @@ public class SingleNode extends AdjacencyListNode {
 			return null;
 
 		if (type == IO_EDGE)
-			return (T)(ee.in == null ? ee.out : ee.in);
+			return (T) (ee.in == null ? ee.out : ee.in);
 
-		return (T)(type == I_EDGE ? ee.in : ee.out);
+		return (T) (type == I_EDGE ? ee.in : ee.out);
 	}
 
 	@Override

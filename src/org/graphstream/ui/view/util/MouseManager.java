@@ -39,9 +39,10 @@ import org.graphstream.ui.view.View;
 /**
  * A global behavior for all mouse events on graphic elements.
  */
-public interface MouseManager  {
+public interface MouseManager {
 	/**
 	 * Make the manager active on the given graph and view.
+	 * 
 	 * @param graph
 	 *            The graph to control.
 	 * @param view

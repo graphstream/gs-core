@@ -60,9 +60,9 @@ import java.util.HashMap;
 public interface CompoundAttribute {
 	/**
 	 * Transforms this object to a hash map where each field is stored as a pair
-	 * (key,value) where the key is the field name. As we cannot enforce the
-	 * types of the key and value, the key are considered strings (or
-	 * Object.toString()). The value is an arbitrary object.
+	 * (key,value) where the key is the field name. As we cannot enforce the types
+	 * of the key and value, the key are considered strings (or Object.toString()).
+	 * The value is an arbitrary object.
 	 * 
 	 * @return The conversion of this attribute to a hash.
 	 */

@@ -64,8 +64,7 @@ public class GEXFMeta implements GEXFElement {
 	public void export(SmartXMLWriter stream) throws XMLStreamException {
 		Calendar cal = Calendar.getInstance();
 		Date date = cal.getTime();
-		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT,
-				DateFormat.SHORT);
+		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
 
 		stream.startElement("meta");
 		stream.stream.writeAttribute("lastmodifieddate", df.format(date));

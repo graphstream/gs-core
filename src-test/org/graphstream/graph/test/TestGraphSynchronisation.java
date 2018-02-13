@@ -57,10 +57,9 @@ public class TestGraphSynchronisation {
 
 		testGraphSyncBase(new MultiGraph("g1"), new MultiGraph("g2"));
 		testGraphSyncBase(new SingleGraph("g1"), new SingleGraph("g2"));
-		testGraphSyncBase(new AdjacencyListGraph("g1"), new AdjacencyListGraph(
-				"g2"));
+		testGraphSyncBase(new AdjacencyListGraph("g1"), new AdjacencyListGraph("g2"));
 		testGraphSyncBase(new MultiGraph("g1"), new AdjacencyListGraph("g2"));
-		
+
 	}
 
 	protected void testGraphSyncBase(Graph g1, Graph g2) {
@@ -175,14 +174,11 @@ public class TestGraphSynchronisation {
 		// | |
 		// g1 <--------------------/
 
-		testGraphSyncCycleSimple(new MultiGraph("g1"), new MultiGraph("g2"),
-				new MultiGraph("g3"));
-		testGraphSyncCycleSimple(new SingleGraph("g1"), new SingleGraph("g2"),
-				new SingleGraph("g3"));
-		testGraphSyncCycleSimple(new AdjacencyListGraph("g1"),
-				new AdjacencyListGraph("g2"), new AdjacencyListGraph("g3"));
-		testGraphSyncCycleSimple(new MultiGraph("g1"), new SingleGraph("g2"),
+		testGraphSyncCycleSimple(new MultiGraph("g1"), new MultiGraph("g2"), new MultiGraph("g3"));
+		testGraphSyncCycleSimple(new SingleGraph("g1"), new SingleGraph("g2"), new SingleGraph("g3"));
+		testGraphSyncCycleSimple(new AdjacencyListGraph("g1"), new AdjacencyListGraph("g2"),
 				new AdjacencyListGraph("g3"));
+		testGraphSyncCycleSimple(new MultiGraph("g1"), new SingleGraph("g2"), new AdjacencyListGraph("g3"));
 	}
 
 	protected void testGraphSyncCycleSimple(Graph g1, Graph g2, Graph g3) {
@@ -202,14 +198,11 @@ public class TestGraphSynchronisation {
 		// | |
 		// g1 <--------------------/
 
-		testGraphSyncCycleProblem(new MultiGraph("g1"), new MultiGraph("g2"),
-				new MultiGraph("g3"));
-		testGraphSyncCycleProblem(new SingleGraph("g1"), new SingleGraph("g2"),
-				new SingleGraph("g3"));
-		testGraphSyncCycleProblem(new AdjacencyListGraph("g1"),
-				new AdjacencyListGraph("g2"), new AdjacencyListGraph("g3"));
-		testGraphSyncCycleProblem(new MultiGraph("g1"), new SingleGraph("g2"),
+		testGraphSyncCycleProblem(new MultiGraph("g1"), new MultiGraph("g2"), new MultiGraph("g3"));
+		testGraphSyncCycleProblem(new SingleGraph("g1"), new SingleGraph("g2"), new SingleGraph("g3"));
+		testGraphSyncCycleProblem(new AdjacencyListGraph("g1"), new AdjacencyListGraph("g2"),
 				new AdjacencyListGraph("g3"));
+		testGraphSyncCycleProblem(new MultiGraph("g1"), new SingleGraph("g2"), new AdjacencyListGraph("g3"));
 	}
 
 	protected void testGraphSyncCycleProblem(Graph g1, Graph g2, Graph g3) {

@@ -66,8 +66,7 @@ public interface GMLParserConstants {
 	int DEFAULT = 0;
 
 	/** Literal token values. */
-	String[] tokenImage = { "<EOF>", "\" \"", "\"\\r\"", "\"\\t\"", "\"\\n\"",
-			"<EOL>", "<DIGIT>", "<HEXDIGIT>", "\"[\"", "\"]\"", "<REAL>",
-			"<STRING>", "\"graph\"", "\"digraph\"", "<KEY>", "<COMMENT>", };
+	String[] tokenImage = { "<EOF>", "\" \"", "\"\\r\"", "\"\\t\"", "\"\\n\"", "<EOL>", "<DIGIT>", "<HEXDIGIT>",
+			"\"[\"", "\"]\"", "<REAL>", "<STRING>", "\"graph\"", "\"digraph\"", "<KEY>", "<COMMENT>", };
 
 }

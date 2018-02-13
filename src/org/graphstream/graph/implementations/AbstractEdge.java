@@ -88,8 +88,7 @@ public class AbstractEdge extends AbstractElement implements Edge {
 	 * @param directed
 	 *            Indicates if the edge is directed.
 	 */
-	protected AbstractEdge(String id, AbstractNode source, AbstractNode target,
-			boolean directed) {
+	protected AbstractEdge(String id, AbstractNode source, AbstractNode target, boolean directed) {
 		super(id);
 		assert source != null && target != null : "An edge cannot have null endpoints";
 		this.source = source;
@@ -101,16 +100,13 @@ public class AbstractEdge extends AbstractElement implements Edge {
 	// *** Inherited from AbstractElement ***
 
 	@Override
-	protected void attributeChanged(AttributeChangeEvent event,
-			String attribute, Object oldValue, Object newValue) {
-		graph.listeners.sendAttributeChangedEvent(id, ElementType.EDGE,
-				attribute, event, oldValue, newValue);
+	protected void attributeChanged(AttributeChangeEvent event, String attribute, Object oldValue, Object newValue) {
+		graph.listeners.sendAttributeChangedEvent(id, ElementType.EDGE, attribute, event, oldValue, newValue);
 	}
 
 	@Override
 	public String toString() {
-		return String.format("%s[%s-%s%s]", getId(), source, directed ? ">"
-				: "-", target);
+		return String.format("%s[%s-%s%s]", getId(), source, directed ? ">" : "-", target);
 	}
 
 	// *** Inherited from Edge ***

@@ -195,9 +195,8 @@ public abstract class OneAttributeElement implements Element {
 	};
 
 	/**
-	 * Called for each change in the attribute set. This method must be
-	 * implemented by sub-elements in order to send events to the graph
-	 * listeners.
+	 * Called for each change in the attribute set. This method must be implemented
+	 * by sub-elements in order to send events to the graph listeners.
 	 * 
 	 * @param sourceId
 	 *            The source of the change.
@@ -208,13 +207,11 @@ public abstract class OneAttributeElement implements Element {
 	 * @param event
 	 *            The type of event among ADD, CHANGE and REMOVE.
 	 * @param oldValue
-	 *            The old value of the attribute, null if the attribute was
-	 *            added.
+	 *            The old value of the attribute, null if the attribute was added.
 	 * @param newValue
-	 *            The new value of the attribute, null if the attribute is about
-	 *            to be removed.
+	 *            The new value of the attribute, null if the attribute is about to
+	 *            be removed.
 	 */
-	protected abstract void attributeChanged(String sourceId, long timeId,
-			String attribute, AttributeChangeEvent event, Object oldValue,
-			Object newValue);
+	protected abstract void attributeChanged(String sourceId, long timeId, String attribute, AttributeChangeEvent event,
+			Object oldValue, Object newValue);
 }

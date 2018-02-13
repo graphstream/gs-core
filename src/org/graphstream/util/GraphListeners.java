@@ -356,8 +356,8 @@ public class GraphListeners extends SourceBase implements Pipe {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.graphstream.stream.ElementSink#edgeRemoved(java.lang.String,
-	 * long, java.lang.String)
+	 * @see org.graphstream.stream.ElementSink#edgeRemoved(java.lang.String, long,
+	 * java.lang.String)
 	 */
 	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
@@ -375,8 +375,7 @@ public class GraphListeners extends SourceBase implements Pipe {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.graphstream.stream.ElementSink#graphCleared(java.lang.String,
-	 * long)
+	 * @see org.graphstream.stream.ElementSink#graphCleared(java.lang.String, long)
 	 */
 	public void graphCleared(String sourceId, long timeId) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
@@ -414,8 +413,8 @@ public class GraphListeners extends SourceBase implements Pipe {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.graphstream.stream.ElementSink#nodeRemoved(java.lang.String,
-	 * long, java.lang.String)
+	 * @see org.graphstream.stream.ElementSink#nodeRemoved(java.lang.String, long,
+	 * java.lang.String)
 	 */
 	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
@@ -435,8 +434,8 @@ public class GraphListeners extends SourceBase implements Pipe {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.graphstream.stream.ElementSink#stepBegins(java.lang.String,
-	 * long, double)
+	 * @see org.graphstream.stream.ElementSink#stepBegins(java.lang.String, long,
+	 * double)
 	 */
 	public void stepBegins(String sourceId, long timeId, double step) {
 		if (sinkTime.isNewEvent(sourceId, timeId)) {

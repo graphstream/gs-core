@@ -75,8 +75,7 @@ public interface ElementSink {
 	 * @param directed
 	 *            If true, the edge is directed.
 	 */
-	void edgeAdded(String sourceId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed);
+	void edgeAdded(String sourceId, long timeId, String edgeId, String fromNodeId, String toNodeId, boolean directed);
 
 	/**
 	 * An edge of graph was removed.The nodes the edge connects may already have
@@ -90,8 +89,8 @@ public interface ElementSink {
 	void edgeRemoved(String sourceId, long timeId, String edgeId);
 
 	/**
-	 * The whole graph was cleared. All the nodes, edges and attributes of the
-	 * graph are removed.
+	 * The whole graph was cleared. All the nodes, edges and attributes of the graph
+	 * are removed.
 	 * 
 	 * @param sourceId
 	 *            The graph cleared.
@@ -100,11 +99,10 @@ public interface ElementSink {
 
 	/**
 	 * <p>
-	 * Since dynamic graphs are based on discrete event modifications, the
-	 * notion of step is defined to simulate elapsed time between events. So a
-	 * step is a event that occurs in the graph, it does not modify it but it
-	 * gives a kind of timestamp that allow the tracking of the progress of the
-	 * graph over the time.
+	 * Since dynamic graphs are based on discrete event modifications, the notion of
+	 * step is defined to simulate elapsed time between events. So a step is a event
+	 * that occurs in the graph, it does not modify it but it gives a kind of
+	 * timestamp that allow the tracking of the progress of the graph over the time.
 	 * </p>
 	 * 
 	 * <p>
@@ -115,8 +113,8 @@ public interface ElementSink {
 	 * @param sourceId
 	 *            Identifier of the graph where the step starts.
 	 * @param timeId
-	 *            A numerical value that may give a timestamp to track the
-	 *            evolution of the graph over the time.
+	 *            A numerical value that may give a timestamp to track the evolution
+	 *            of the graph over the time.
 	 */
 	void stepBegins(String sourceId, long timeId, double step);
 }

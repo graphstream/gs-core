@@ -56,17 +56,13 @@ public interface LayerRenderer<G> {
 	 * @param heightPx
 	 *            The height in pixels of the view port.
 	 * @param minXGu
-	 *            The minimum visible point abscissa of the graph in graph
-	 *            units.
+	 *            The minimum visible point abscissa of the graph in graph units.
 	 * @param minYGu
-	 *            The minimum visible point ordinate of the graph in graph
-	 *            units.
+	 *            The minimum visible point ordinate of the graph in graph units.
 	 * @param maxXGu
-	 *            The maximum visible point abscissa of the graph in graph
-	 *            units.
+	 *            The maximum visible point abscissa of the graph in graph units.
 	 * @param maxYGu
-	 *            The maximum visible point ordinate of the graph in graph
-	 *            units.
+	 *            The maximum visible point ordinate of the graph in graph units.
 	 */
 	void render(G graphics, GraphicGraph graph, double px2Gu, int widthPx, int heightPx, double minXGu, double minYGu,
 			double maxXGu, double maxYGu);
