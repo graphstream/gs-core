@@ -55,65 +55,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-	<!-- The GraphStream Team. Members are sorted in alphabetically. -->
-	<developers>
-		<developer>
-			<id>sbalev</id>
-			<name>Stefan Balev</name>
-			<email>stefan.balev@graphstream-project.org</email>
-			<organization>LITIS</organization>
-			<organizationUrl>http://www.litislab.eu</organizationUrl>
-		</developer>
-
-		<developer>
-			<id>jbaudry</id>
-			<name>Julien Baudry</name>
-			<email>julien.baudry@graphstream-project.org</email>
-			<organization>LITIS</organization>
-			<organizationUrl>http://www.litislab.eu</organizationUrl>
-		</developer>
-
-		<developer>
-			<id>adutot</id>
-			<name>Antoine Dutot</name>
-			<email>antoine.dutot@graphstream-project.org</email>
-			<organization>LITIS</organization>
-			<organizationUrl>http://www.litislab.eu</organizationUrl>
-		</developer>
-
-		<developer>
-			<id>ypigne</id>
-			<name>Yoann Pigné</name>
-			<email>yoann.pigne@graphstream-project.org</email>
-			<organization>University of Luxembourg</organization>
-			<organizationUrl>http://www.uni.lu</organizationUrl>
-		</developer>
-
-		<developer>
-			<id>gsavin</id>
-			<name>Guilhelm Savin</name>
-			<email>guilhelm.savin@graphstream-project.org</email>
-			<organization>LITIS</organization>
-			<organizationUrl>http://www.litislab.eu</organizationUrl>
-		</developer>
-	</developers>
-
-	<contributors>
-		<contributor>
-			<name>Frédéric Guinand</name>
-			<email>frederic.guinand@univ-lehavre.fr</email>
-			<organization>LITIS</organization>
-			<organizationUrl>http://www.litislab.eu</organizationUrl>
-		</contributor>
-
-		<contributor>
-			<name>Richard O. Legendi</name>
-			<email>richard.legendi@univ-lehavre.fr</email>
-			<organization>Eötvös Loránd University, Faculty of Informatics</organization>
-			<organizationUrl>http://people.inf.elte.hu/legendi/</organizationUrl>
-		</contributor>
-	</contributors>
-
 	<licenses>
 		<license>
 			<name>LGPL3</name>
