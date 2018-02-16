@@ -283,24 +283,6 @@
 			<version>1.0</version>
 			<optional>false</optional>
 		</dependency>
-		<dependency>
-			<groupId>com.sparkjava</groupId>
-			<artifactId>spark-core</artifactId>
-			<version>2.5.5</version>
-			<optional>false</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.5</version>
-			<optional>false</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.5.3</version>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 </project>
 
