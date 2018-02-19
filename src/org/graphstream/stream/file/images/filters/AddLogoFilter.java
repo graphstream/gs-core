@@ -22,24 +22,50 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.stream.file.images;
+package org.graphstream.stream.file.images.filters;
 
-import org.graphstream.stream.file.FileSinkImages;
-import org.graphstream.ui.view.GraphRenderer;
+import org.graphstream.stream.file.images.Filter;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 /**
- * Object used to apply the graph into an image. It should be provided by rendering modules
+ * This filter adds a logo-picture on each outputted image.
  */
-public interface ImageRenderer {
-	void clear(int color);
+public class AddLogoFilter implements Filter {
+	/**
+	 * The logo.
+	 */
+	private BufferedImage logo;
+	/**
+	 * Logo position on images.
+	 */
+	private int x, y;
 
-	GraphRenderer<?, ?> getGraphRenderer();
+	/**
+	 * Create a new filter to add a logo on top of images.
+	 *
+	 * @param logoFile path to the logo picture-file
+	 * @param x        x position of the logo (top-left corner is (0;0))
+	 * @param y        y position of the logo
+	 */
+	public AddLogoFilter(String logoFile, int x, int y) throws IOException {
+		File f = new File(logoFile);
 
-	BufferedImage getRenderedImage();
+		if (f.exists())
+			this.logo = ImageIO.read(f);
+		else
+			this.logo = ImageIO.read(ClassLoader.getSystemResource(logoFile));
 
-	void init(Resolution resolution, FileSinkImages.OutputType outputType);
+		this.x = x;
+		this.y = y;
+	}
 
-	void render(int x, int y, int width, int height);
+	public void apply(BufferedImage image) {
+		Graphics2D g = image.createGraphics();
+		g.drawImage(logo, x, y, null);
+	}
 }

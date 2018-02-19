@@ -33,7 +33,6 @@
  */
 package org.graphstream.stream.file;
 
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
@@ -54,10 +53,8 @@ import org.graphstream.graph.Graph;
 import org.graphstream.stream.GraphReplay;
 import org.graphstream.stream.ProxyPipe;
 import org.graphstream.stream.Sink;
-import org.graphstream.stream.file.images.CustomResolution;
-import org.graphstream.stream.file.images.ImageRenderer;
-import org.graphstream.stream.file.images.Resolution;
-import org.graphstream.stream.file.images.Resolutions;
+import org.graphstream.stream.file.images.*;
+import org.graphstream.stream.file.images.filters.AddLogoFilter;
 import org.graphstream.stream.thread.ThreadProxyPipe;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
@@ -133,44 +130,6 @@ public class FileSinkImages implements FileSink {
 		NO_LAYOUT, COMPUTED_IN_LAYOUT_RUNNER, COMPUTED_ONCE_AT_NEW_IMAGE, COMPUTED_FULLY_AT_NEW_IMAGE
 	}
 
-	/**
-	 * Defines post rendering action on images.
-	 */
-	public static interface PostRenderer {
-		void render(BufferedImage image);
-	}
-
-	/**
-	 * Post rendering action allowing to add a logo-picture on images.
-	 */
-	protected static class AddLogoRenderer implements PostRenderer {
-		/**
-		 * The logo.
-		 */
-		BufferedImage logo;
-		/**
-		 * Logo position on images.
-		 */
-		int x, y;
-
-		public AddLogoRenderer(String logoFile, int x, int y) throws IOException {
-			File f = new File(logoFile);
-
-			if (f.exists())
-				this.logo = ImageIO.read(f);
-			else
-				this.logo = ImageIO.read(ClassLoader.getSystemResource(logoFile));
-
-			this.x = x;
-			this.y = y;
-		}
-
-		public void render(BufferedImage image) {
-			Graphics2D g = image.createGraphics();
-			g.drawImage(logo, x, y, null);
-		}
-	}
-
 	public static String DEFAULT_RENDERER_TYPE = "org.graphstream.stream.file.images.SwingImageRenderer";
 
 	public static enum Quality {
@@ -187,7 +146,7 @@ public class FileSinkImages implements FileSink {
 	protected Sink sink;
 	protected int counter;
 	protected OutputPolicy outputPolicy;
-	protected LinkedList<PostRenderer> postRenderers;
+	protected LinkedList<Filter> filters;
 	protected LayoutPolicy layoutPolicy;
 	protected LayoutRunner optLayout;
 	protected ProxyPipe layoutPipeIn;
@@ -224,7 +183,7 @@ public class FileSinkImages implements FileSink {
 		this.filePrefix = prefix;
 		this.counter = 0;
 		this.gg = new GraphicGraph(prefix);
-		this.postRenderers = new LinkedList<PostRenderer>();
+		this.filters = new LinkedList<Filter>();
 		this.layoutPolicy = LayoutPolicy.NO_LAYOUT;
 		this.layout = null;
 		this.optLayout = null;
@@ -417,21 +376,21 @@ public class FileSinkImages implements FileSink {
 	}
 
 	/**
-	 * Add a logo on images.
+	 * Add a filter.
 	 *
-	 * @param logoFile path to the logo picture-file
-	 * @param x        x position of the logo (top-left corner is (0;0))
-	 * @param y        y position of the logo
+	 * @param filter the filter to add
 	 */
-	public void addLogo(String logoFile, int x, int y) {
-		PostRenderer pr;
+	public void addFilter(Filter filter) {
+		filters.add(filter);
+	}
 
-		try {
-			pr = new AddLogoRenderer(logoFile, x, y);
-			postRenderers.add(pr);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	/**
+	 * Remove a filter.
+	 *
+	 * @param filter the filter to remove
+	 */
+	public void removeFilter(Filter filter) {
+		filters.remove(filter);
 	}
 
 	public synchronized void setOutputRunnerEnabled(boolean on) {
@@ -561,8 +520,8 @@ public class FileSinkImages implements FileSink {
 
 		BufferedImage image = imageRenderer.getRenderedImage();
 
-		for (PostRenderer action : postRenderers)
-			action.render(image);
+		for (Filter action : filters)
+			action.apply(image);
 
 		image.flush();
 

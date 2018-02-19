@@ -24,22 +24,11 @@
  */
 package org.graphstream.stream.file.images;
 
-import org.graphstream.stream.file.FileSinkImages;
-import org.graphstream.ui.view.GraphRenderer;
-
 import java.awt.image.BufferedImage;
 
 /**
- * Object used to apply the graph into an image. It should be provided by rendering modules
+ * Defines filter that will be applied on images before writing.
  */
-public interface ImageRenderer {
-	void clear(int color);
-
-	GraphRenderer<?, ?> getGraphRenderer();
-
-	BufferedImage getRenderedImage();
-
-	void init(Resolution resolution, FileSinkImages.OutputType outputType);
-
-	void render(int x, int y, int width, int height);
+public interface Filter {
+	void apply(BufferedImage image);
 }
