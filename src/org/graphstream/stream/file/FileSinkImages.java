@@ -130,6 +130,21 @@ public class FileSinkImages implements FileSink {
 		NO_LAYOUT, COMPUTED_IN_LAYOUT_RUNNER, COMPUTED_ONCE_AT_NEW_IMAGE, COMPUTED_FULLY_AT_NEW_IMAGE
 	}
 
+	/**
+	 * Enumeration of known image renderers.
+	 * Be sure to include the corresponding module into your classpath.
+	 */
+	public static enum RendererType {
+		SWING("org.graphstream.stream.file.images.SwingImageRenderer"), FX(
+				"org.graphstream.stream.file.images.FxImageRenderer");
+
+		final String classname;
+
+		RendererType(String classname) {
+			this.classname = classname;
+		}
+	}
+
 	public static String DEFAULT_RENDERER_TYPE = "org.graphstream.stream.file.images.SwingImageRenderer";
 
 	public static enum Quality {
@@ -173,11 +188,6 @@ public class FileSinkImages implements FileSink {
 	}
 
 	public FileSinkImages(String prefix, OutputType type, Resolution resolution, OutputPolicy outputPolicy) {
-		this(prefix, type, resolution, outputPolicy, DEFAULT_RENDERER_TYPE);
-	}
-
-	public FileSinkImages(String prefix, OutputType type, Resolution resolution, OutputPolicy outputPolicy,
-			String rendererType) {
 		this.resolution = resolution;
 		this.outputType = type;
 		this.filePrefix = prefix;
@@ -191,9 +201,6 @@ public class FileSinkImages implements FileSink {
 		this.sink = gg;
 
 		setOutputPolicy(outputPolicy);
-		setRenderer(rendererType);
-
-		initImage();
 	}
 
 	/**
@@ -260,9 +267,19 @@ public class FileSinkImages implements FileSink {
 	}
 
 	/**
-	 * Set the renderer type. This is experimental.
+	 * Set the image renderer from its known type.
 	 *
-	 * @param rendererType
+	 * @param rendererType a known renderer type.
+	 */
+	public void setRenderer(RendererType rendererType) {
+		setRenderer(rendererType.classname);
+	}
+
+	/**
+	 * Set the image renderer from its classname.
+	 * Exception will be thrown if renderer cannot be found or if the object is not a renderer.
+	 *
+	 * @param rendererClass class of the image renderer that should be used.
 	 */
 	@SuppressWarnings("unchecked") public void setRenderer(String rendererType) {
 		try {
@@ -275,6 +292,8 @@ public class FileSinkImages implements FileSink {
 
 			this.imageRenderer = obj;
 			this.imageRenderer.getGraphRenderer().open(gg, null);
+
+			initImage();
 		} catch (ClassNotFoundException e) {
 			LOGGER.warning(String.format(
 					"Cannot find \"%s\" image renderer. Did you include the correct \"gs-ui-*\" module in your classpath?",
@@ -486,6 +505,13 @@ public class FileSinkImages implements FileSink {
 	}
 
 	public synchronized void outputNewImage(String filename) {
+		if (imageRenderer == null) {
+			LOGGER.severe("No image renderer has been set. "
+					+ "Use setRenderer() method in order to be able to output images.");
+
+			throw new NoRendererException();
+		}
+
 		switch (layoutPolicy) {
 		case COMPUTED_IN_LAYOUT_RUNNER:
 			layoutPipeIn.pump();
@@ -1199,7 +1225,7 @@ public class FileSinkImages implements FileSink {
 		dgs.addSink(fsi);
 
 		if (logo != null)
-			fsi.addLogo(logo, 0, 0);
+			fsi.addFilter(new AddLogoFilter(logo, 0, 0));
 
 		fsi.setQuality(quality);
 		if (stylesheet != null)
