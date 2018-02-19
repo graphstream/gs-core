@@ -79,14 +79,12 @@ import org.graphstream.ui.layout.Layouts;
  * #!/bin/bash
  *
  * EXT=png
- * CODEC=msmpeg4v2
- * BITRATE=6000
- * OPT="vcodec=mpeg4:vqscale=2:vhq:v4mv:trell:autoaspect"
+ * BITRATE=2M
  * FPS=15
  * PREFIX=$1
  * OUTPUT=$2
  *
- * mencoder "mf://$PREFIX*.$EXT" -mf fps=$FPS:type=$EXT -ovc lavc -lavcopts $OPTS -o $OUTPUT -nosound -vf scale
+ * ffmpeg -framerate $FPS -i "$PREFIX%06d.$EXT" -b:v $BITRATE -r $FPS -an $OUTPUT
  *
  * </pre>
  */
@@ -156,7 +154,7 @@ public class FileSinkImages implements FileSink {
 	protected Resolution resolution;
 	protected OutputType outputType;
 	protected String filePrefix;
-	protected ImageRenderer imageRenderer;
+	protected ImageRenderer imageRenderer = null;
 	protected final GraphicGraph gg;
 	protected Sink sink;
 	protected int counter;
