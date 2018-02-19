@@ -143,8 +143,6 @@ public class FileSinkImages implements FileSink {
 		}
 	}
 
-	public static String DEFAULT_RENDERER_TYPE = "org.graphstream.stream.file.images.SwingImageRenderer";
-
 	public static enum Quality {
 		LOW, MEDIUM, HIGH
 	}
