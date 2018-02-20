@@ -63,6 +63,7 @@ import org.graphstream.ui.layout.LayoutRunner;
 import org.graphstream.ui.layout.Layouts;
 import org.graphstream.ui.view.camera.Camera;
 import org.graphstream.util.Display;
+import org.graphstream.util.MissingDisplayException;
 
 /**
  * Output graph in image files.
@@ -93,36 +94,21 @@ import org.graphstream.util.Display;
 public abstract class FileSinkImages implements FileSink {
 	/**
 	 * Create a FileSinkImages object according to the UI module specified in "org.graphstream.ui" property.
-	 * If no such module has been set, or if something wrong occurred, null will be returned.
+	 * If no valid module has been set null will be returned.
 	 *
 	 * @return an implementation of FileSinkImages using the current UI module
 	 */
 	public static FileSinkImages createDefault() {
-		String displayClassName = System.getProperty("org.graphstream.ui");
+		try {
+			Display display = Display.getDefault();
 
-		if (displayClassName == null) {
-			LOGGER.severe("No UI package detected! Please use System.setProperty(\"org.graphstream.ui\") "
-					+ "for the selected package.");
-		} else {
-			try {
-				Class<?> c = Class.forName(displayClassName);
-				Object object = c.newInstance();
-
-				if (object instanceof Display) {
-					Display display = (Display) object;
-
-					if (display instanceof FileSinkImagesFactory) {
-						return ((FileSinkImagesFactory) display).createFileSinkImages();
-					} else {
-						LOGGER.warning("This UI module does not provide a FileSinkImages implementation");
-					}
-				} else {
-					LOGGER.severe("Invalid Display object! Please verify the name in "
-							+ "System.setProperty(\"org.graphstream.ui\")");
-				}
-			} catch (Exception e) {
-				LOGGER.log(Level.SEVERE, "Failed to create Display", e);
+			if (display instanceof FileSinkImagesFactory) {
+				return ((FileSinkImagesFactory) display).createFileSinkImages();
+			} else {
+				LOGGER.warning("Default UI module does not provide a FileSinkImages implementation");
 			}
+		} catch (MissingDisplayException e) {
+			LOGGER.warning("No valid UI module specified in \"org.graphstream.ui\" system property");
 		}
 
 		return null;
