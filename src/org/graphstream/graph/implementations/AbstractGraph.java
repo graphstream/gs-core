@@ -1,9 +1,9 @@
 /*
  * This file is part of GraphStream <http://graphstream-project.org>.
- * 
+ *
  * GraphStream is a library whose purpose is to handle static or dynamic
  * graph, create them from scratch, file or any source and display them.
- * 
+ *
  * This program is free software distributed under the terms of two licenses, the
  * CeCILL-C license that fits European law, and the GNU Lesser General Public
  * License. You can  use, modify and/ or redistribute the software under the terms
@@ -11,21 +11,19 @@
  * URL <http://www.cecill.info> or under the terms of the GNU LGPL as published by
  * the Free Software Foundation, either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
 
 /**
- * @since 2011-07-22
- * 
  * @author Stefan Balev <stefan.balev@graphstream-project.org>
  * @author Richard O. Legendi <richard.legendi@gmail.com>
  * @author Guilhelm Savin <guilhelm.savin@graphstream-project.org>
@@ -33,6 +31,7 @@
  * @author Antoine Dutot <antoine.dutot@graphstream-project.org>
  * @author Alex Bowen <bowen.a@gmail.com>
  * @author Hicham Brahimi <hicham.brahimi@graphstream-project.org>
+ * @since 2011-07-22
  */
 package org.graphstream.graph.implementations;
 
@@ -56,6 +55,7 @@ import org.graphstream.stream.SourceBase;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.util.Display;
 import org.graphstream.util.GraphListeners;
+import org.graphstream.util.MissingDisplayException;
 
 /**
  * <p>
@@ -99,7 +99,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 	 * The same as {@code AbstractGraph(id, true, false)}
 	 *
 	 * @param id
-	 *            Identifier of the graph
+	 * 		Identifier of the graph
 	 * @see #AbstractGraph(String, boolean, boolean)
 	 */
 	public AbstractGraph(String id) {
@@ -205,30 +205,17 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 	}
 
 	public Viewer display(boolean autoLayout) {
-		String launcherClassName = System.getProperty("org.graphstream.ui");
-
-		if (launcherClassName == null) {
-			throw new RuntimeException(
-					"No UI package detected ! Please use System.setProperty() for the selected package.");
-		} else {
-			try {
-				Class<?> c = Class.forName(launcherClassName);
-				Object object = c.newInstance();
-
-				if (object instanceof Display) {
-					return ((Display) object).display(this, autoLayout);
-				} else {
-					throw new RuntimeException("Cannot launch viewer ! Please verify the name in System.setProperty()");
-				}
-			} catch (Exception e) {
-				throw new RuntimeException("Cannot launch viewer ! Please verify your package.");
-			}
+		try {
+			Display display = Display.getDefault();
+			return display.display(this, autoLayout);
+		} catch (MissingDisplayException e) {
+			throw new RuntimeException("Cannot launch viewer.", e);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.graphstream.graph.Graph#clear()
 	 */
 	@Override
@@ -243,7 +230,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.graphstream.graph.Graph#addNode(java.lang.String)
 	 */
 	@Override
@@ -266,7 +253,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.graphstream.graph.Graph#addEdge(java.lang.String,
 	 * org.graphstream.graph.Node, org.graphstream.graph.Node, boolean)
 	 */
@@ -277,7 +264,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.graphstream.graph.Graph#removeNode(org.graphstream.graph.Node)
 	 */
 	@Override
@@ -291,7 +278,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.graphstream.graph.Graph#removeEdge(org.graphstream.graph.Edge)
 	 */
 	@Override
@@ -305,7 +292,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.graphstream.graph.Graph#removeEdge(org.graphstream.graph.Node,
 	 * org.graphstream.graph.Node)
 	 */
@@ -327,7 +314,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.graphstream.graph.Graph#attributeSinks()
 	 */
 	@Override
@@ -337,7 +324,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
 	/*
 	 * *(non-Javadoc)
-	 * 
+	 *
 	 * @see org.graphstream.graph.Graph#elementSinks()
 	 */
 	@Override
@@ -347,7 +334,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
 	/*
 	 * *(non-Javadoc)
-	 * 
+	 *
 	 * @see org.graphstream.stream.Source#addAttributeSink(org.graphstream.stream
 	 * .AttributeSink)
 	 */
@@ -358,7 +345,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.graphstream.stream.Source#addElementSink(org.graphstream.stream.
 	 * ElementSink)
 	 */
@@ -369,7 +356,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.graphstream.stream.Source#addSink(org.graphstream.stream.Sink)
 	 */
 	@Override
@@ -379,7 +366,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.graphstream.stream.Source#clearAttributeSinks()
 	 */
 	@Override
@@ -389,7 +376,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
 	/*
 	 * *(non-Javadoc)
-	 * 
+	 *
 	 * @see org.graphstream.stream.Source#clearElementSinks()
 	 */
 	@Override
@@ -399,7 +386,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
 	/*
 	 * *(non-Javadoc)
-	 * 
+	 *
 	 * @see org.graphstream.stream.Source#clearSinks()
 	 */
 	@Override
@@ -409,7 +396,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.graphstream.stream.Source#removeAttributeSink(org.graphstream.stream
 	 * .AttributeSink)
 	 */
@@ -420,7 +407,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.graphstream.stream.Source#removeElementSink(org.graphstream.stream
 	 * .ElementSink)
 	 */
@@ -431,7 +418,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.graphstream.stream.Source#removeSink(org.graphstream.stream.Sink)
 	 */
 	@Override
@@ -520,7 +507,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.graphstream.stream.Replayable#getReplayController()
 	 */
 	@Override
@@ -535,7 +522,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 	 * must add the new node to their data structure and to set its index correctly.
 	 *
 	 * @param node
-	 *            the node to be added
+	 * 		the node to be added
 	 */
 	protected abstract void addNodeCallback(AbstractNode node);
 
@@ -544,7 +531,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 	 * must add the new edge to their data structure and to set its index correctly.
 	 *
 	 * @param edge
-	 *            the edge to be added
+	 * 		the edge to be added
 	 */
 	protected abstract void addEdgeCallback(AbstractEdge edge);
 
@@ -554,7 +541,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 	 * that node indices remain coherent.
 	 *
 	 * @param node
-	 *            the node to be removed
+	 * 		the node to be removed
 	 */
 	protected abstract void removeNodeCallback(AbstractNode node);
 
@@ -564,7 +551,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 	 * edge indices remain coherent.
 	 *
 	 * @param edge
-	 *            the edge to be removed
+	 * 		the edge to be removed
 	 */
 	protected abstract void removeEdgeCallback(AbstractEdge edge);
 
@@ -587,8 +574,8 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 		if (edge != null) {
 			if (strictChecking)
 				throw new IdAlreadyInUseException("id \"" + edgeId + "\" already in use. Cannot create an edge.");
-			if ((edge.getSourceNode() == src && edge.getTargetNode() == dst)
-					|| (!directed && edge.getTargetNode() == src && edge.getSourceNode() == dst))
+			if ((edge.getSourceNode() == src && edge.getTargetNode() == dst) || (!directed
+					&& edge.getTargetNode() == src && edge.getSourceNode() == dst))
 				return edge;
 			return null;
 		}
@@ -647,9 +634,9 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 	 * the data structures by their owns.
 	 *
 	 * @param node
-	 *            the node to be removed
+	 * 		the node to be removed
 	 * @param graphCallback
-	 *            if {@code false}, {@code removeNodeCallback(node)} is not called
+	 * 		if {@code false}, {@code removeNodeCallback(node)} is not called
 	 */
 	protected void removeNode(AbstractNode node, boolean graphCallback) {
 		if (node == null)
@@ -669,18 +656,18 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 	 * their owns.
 	 *
 	 * @param edge
-	 *            the edge to be removed
+	 * 		the edge to be removed
 	 * @param graphCallback
-	 *            if {@code false}, {@link #removeEdgeCallback(AbstractEdge)} of the
-	 *            graph is not called
+	 * 		if {@code false}, {@link #removeEdgeCallback(AbstractEdge)} of the
+	 * 		graph is not called
 	 * @param sourceCallback
-	 *            if {@code false},
-	 *            {@link AbstractNode#removeEdgeCallback(AbstractEdge)} is not
-	 *            called for the source node of the edge
+	 * 		if {@code false},
+	 * 		{@link AbstractNode#removeEdgeCallback(AbstractEdge)} is not
+	 * 		called for the source node of the edge
 	 * @param targetCallback
-	 *            if {@code false},
-	 *            {@link AbstractNode#removeEdgeCallback(AbstractEdge)} is not
-	 *            called for the target node of the edge
+	 * 		if {@code false},
+	 * 		{@link AbstractNode#removeEdgeCallback(AbstractEdge)} is not
+	 * 		called for the target node of the edge
 	 */
 	protected void removeEdge(AbstractEdge edge, boolean graphCallback, boolean sourceCallback,
 			boolean targetCallback) {
@@ -709,7 +696,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.graphstream.stream.Replayable.Controller#replay()
 		 */
 		@Override
@@ -720,7 +707,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.graphstream.stream.Replayable.Controller#replay(java.lang.String)
 		 */
 		@Override
