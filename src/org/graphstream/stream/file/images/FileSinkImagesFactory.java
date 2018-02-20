@@ -24,8 +24,11 @@
  */
 package org.graphstream.stream.file.images;
 
-public class NoRendererException extends RuntimeException {
-	public NoRendererException() {
-		super("No image renderer selected");
-	}
+import org.graphstream.stream.file.FileSinkImages;
+
+/**
+ * Define a provider for FileSinkImages.
+ */
+public interface FileSinkImagesFactory {
+	FileSinkImages createFileSinkImages();
 }

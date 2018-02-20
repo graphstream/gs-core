@@ -61,6 +61,8 @@ import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.layout.LayoutRunner;
 import org.graphstream.ui.layout.Layouts;
+import org.graphstream.ui.view.camera.Camera;
+import org.graphstream.util.Display;
 
 /**
  * Output graph in image files.
@@ -88,7 +90,43 @@ import org.graphstream.ui.layout.Layouts;
  *
  * </pre>
  */
-public class FileSinkImages implements FileSink {
+public abstract class FileSinkImages implements FileSink {
+	/**
+	 * Create a FileSinkImages object according to the UI module specified in "org.graphstream.ui" property.
+	 * If no such module has been set, or if something wrong occurred, null will be returned.
+	 *
+	 * @return an implementation of FileSinkImages using the current UI module
+	 */
+	public static FileSinkImages createDefault() {
+		String displayClassName = System.getProperty("org.graphstream.ui");
+
+		if (displayClassName == null) {
+			LOGGER.severe("No UI package detected! Please use System.setProperty(\"org.graphstream.ui\") "
+					+ "for the selected package.");
+		} else {
+			try {
+				Class<?> c = Class.forName(displayClassName);
+				Object object = c.newInstance();
+
+				if (object instanceof Display) {
+					Display display = (Display) object;
+
+					if (display instanceof FileSinkImagesFactory) {
+						return ((FileSinkImagesFactory) display).createFileSinkImages();
+					} else {
+						LOGGER.warning("This UI module does not provide a FileSinkImages implementation");
+					}
+				} else {
+					LOGGER.severe("Invalid Display object! Please verify the name in "
+							+ "System.setProperty(\"org.graphstream.ui\")");
+				}
+			} catch (Exception e) {
+				LOGGER.log(Level.SEVERE, "Failed to create Display", e);
+			}
+		}
+
+		return null;
+	}
 
 	/**
 	 * Output image type.
@@ -129,20 +167,11 @@ public class FileSinkImages implements FileSink {
 	}
 
 	/**
-	 * Enumeration of known image renderers.
-	 * Be sure to include the corresponding module into your classpath.
+	 * Defines the quality of the rendering.
+	 * It uses "ui.quality" and "ui.antialias" graph attributes. If quality is set to low,
+	 * both attributes will be disabled. On medium quality, only "ui.quality" is enable,
+	 * and on high quality, both attributes are enabled.
 	 */
-	public static enum RendererType {
-		SWING("org.graphstream.stream.file.images.SwingImageRenderer"), FX(
-				"org.graphstream.stream.file.images.FxImageRenderer");
-
-		final String classname;
-
-		RendererType(String classname) {
-			this.classname = classname;
-		}
-	}
-
 	public static enum Quality {
 		LOW, MEDIUM, HIGH
 	}
@@ -152,7 +181,6 @@ public class FileSinkImages implements FileSink {
 	protected Resolution resolution;
 	protected OutputType outputType;
 	protected String filePrefix;
-	protected ImageRenderer imageRenderer = null;
 	protected final GraphicGraph gg;
 	protected Sink sink;
 	protected int counter;
@@ -171,24 +199,24 @@ public class FileSinkImages implements FileSink {
 	protected OutputRunner outputRunner;
 	protected ThreadProxyPipe outputRunnerProxy;
 	protected boolean clearImageBeforeOutput = false;
-	protected boolean hasBegan = false;
+	protected boolean hasBegun = false;
 	protected boolean autofit = true;
 	protected String styleSheet = null;
 
-	public FileSinkImages() {
+	protected FileSinkImages() {
 		this(OutputType.PNG, Resolutions.HD720);
 	}
 
-	public FileSinkImages(OutputType type, Resolution resolution) {
-		this("frame_", type, resolution, OutputPolicy.NONE);
+	protected FileSinkImages(OutputType type, Resolution resolution) {
+		this(type, resolution, OutputPolicy.NONE);
 	}
 
-	public FileSinkImages(String prefix, OutputType type, Resolution resolution, OutputPolicy outputPolicy) {
+	protected FileSinkImages(OutputType type, Resolution resolution, OutputPolicy outputPolicy) {
 		this.resolution = resolution;
 		this.outputType = type;
-		this.filePrefix = prefix;
+		this.filePrefix = "frame_";
 		this.counter = 0;
-		this.gg = new GraphicGraph(prefix);
+		this.gg = new GraphicGraph(String.format("images-%x", System.currentTimeMillis()));
 		this.filters = new LinkedList<Filter>();
 		this.layoutPolicy = LayoutPolicy.NO_LAYOUT;
 		this.layout = null;
@@ -198,6 +226,38 @@ public class FileSinkImages implements FileSink {
 
 		setOutputPolicy(outputPolicy);
 	}
+
+	/**
+	 * Get the camera that controls view position and boundaries.
+	 *
+	 * @return a camera object, associated with the {@link org.graphstream.ui.view.GraphRenderer} use for rendering.
+	 */
+	protected abstract Camera getCamera();
+
+	/**
+	 * Render the graph.
+	 */
+	protected abstract void render();
+
+	/**
+	 * Get the image in which graph has been rendered.
+	 *
+	 * @return an image of the graph
+	 */
+	protected abstract BufferedImage getRenderedImage();
+
+	/**
+	 * Initialize the image data. This method is called at sink creation and each time there is a change
+	 * in image specifications (resolution, type).
+	 */
+	protected abstract void initImage();
+
+	/**
+	 * Clear the image. This will fill the image with the specified color.
+	 *
+	 * @param color color to fill the image with
+	 */
+	protected abstract void clearImage(int color);
 
 	/**
 	 * Enable high-quality rendering and anti-aliasing.
@@ -263,51 +323,24 @@ public class FileSinkImages implements FileSink {
 	}
 
 	/**
-	 * Set the image renderer from its known type.
-	 *
-	 * @param rendererType a known renderer type.
-	 */
-	public void setRenderer(RendererType rendererType) {
-		setRenderer(rendererType.classname);
-	}
-
-	/**
-	 * Set the image renderer from its classname.
-	 * Exception will be thrown if renderer cannot be found or if the object is not a renderer.
-	 *
-	 * @param rendererClass class of the image renderer that should be used.
-	 */
-	@SuppressWarnings("unchecked") public void setRenderer(String rendererType) {
-		try {
-			Class<? extends ImageRenderer> clazz = (Class<? extends ImageRenderer>) Class.forName(rendererType);
-
-			ImageRenderer obj = clazz.newInstance();
-
-			if (this.imageRenderer != null)
-				this.imageRenderer.getGraphRenderer().close();
-
-			this.imageRenderer = obj;
-			this.imageRenderer.getGraphRenderer().open(gg, null);
-
-			initImage();
-		} catch (ClassNotFoundException e) {
-			LOGGER.warning(String.format(
-					"Cannot find \"%s\" image renderer. Did you include the correct \"gs-ui-*\" module in your classpath?",
-					rendererType));
-		} catch (ClassCastException e) {
-			LOGGER.warning(String.format("Class \"%s\" is not an image renderer.%n", rendererType));
-		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Cannot create image renderer", e);
-		}
-	}
-
-	/**
 	 * Set the output policy.
 	 *
 	 * @param policy policy defining when images are produced
 	 */
 	public void setOutputPolicy(OutputPolicy policy) {
 		this.outputPolicy = policy;
+	}
+
+	/**
+	 * Set the output type.
+	 *
+	 * @param outputType type of outputted images
+	 */
+	public void setOutputType(OutputType outputType) {
+		if (outputType != this.outputType) {
+			this.outputType = outputType;
+			initImage();
+		}
 	}
 
 	/**
@@ -452,23 +485,23 @@ public class FileSinkImages implements FileSink {
 	}
 
 	public Point3 getViewCenter() {
-		return imageRenderer.getGraphRenderer().getCamera().getViewCenter();
+		return getCamera().getViewCenter();
 	}
 
 	public void setViewCenter(double x, double y) {
-		imageRenderer.getGraphRenderer().getCamera().setViewCenter(x, y, 0);
+		getCamera().setViewCenter(x, y, 0);
 	}
 
 	public double getViewPercent() {
-		return imageRenderer.getGraphRenderer().getCamera().getViewPercent();
+		return getCamera().getViewPercent();
 	}
 
 	public void setViewPercent(double zoom) {
-		imageRenderer.getGraphRenderer().getCamera().setViewPercent(zoom);
+		getCamera().setViewPercent(zoom);
 	}
 
 	public void setGraphViewport(double minx, double miny, double maxx, double maxy) {
-		imageRenderer.getGraphRenderer().getCamera().setGraphViewport(minx, miny, maxx, maxy);
+		getCamera().setGraphViewport(minx, miny, maxx, maxy);
 	}
 
 	public void setClearImageBeforeOutputEnabled(boolean on) {
@@ -477,10 +510,6 @@ public class FileSinkImages implements FileSink {
 
 	public void setAutofit(boolean on) {
 		autofit = on;
-	}
-
-	protected void initImage() {
-		imageRenderer.init(resolution, outputType);
 	}
 
 	protected void clearGG() {
@@ -501,13 +530,6 @@ public class FileSinkImages implements FileSink {
 	}
 
 	public synchronized void outputNewImage(String filename) {
-		if (imageRenderer == null) {
-			LOGGER.severe("No image renderer has been set. "
-					+ "Use setRenderer() method in order to be able to output images.");
-
-			throw new NoRendererException();
-		}
-
 		switch (layoutPolicy) {
 		case COMPUTED_IN_LAYOUT_RUNNER:
 			layoutPipeIn.pump();
@@ -524,7 +546,7 @@ public class FileSinkImages implements FileSink {
 		}
 
 		if (clearImageBeforeOutput || gg.getNodeCount() == 0) {
-			imageRenderer.clear(0x00000000);
+			clearImage(0x00000000);
 		}
 
 		if (gg.getNodeCount() > 0) {
@@ -534,13 +556,13 @@ public class FileSinkImages implements FileSink {
 				Point3 lo = gg.getMinPos();
 				Point3 hi = gg.getMaxPos();
 
-				imageRenderer.getGraphRenderer().getCamera().setBounds(lo.x, lo.y, lo.z, hi.x, hi.y, hi.z);
+				getCamera().setBounds(lo.x, lo.y, lo.z, hi.x, hi.y, hi.z);
 			}
 
-			imageRenderer.render(0, 0, resolution.getWidth(), resolution.getHeight());
+			render();
 		}
 
-		BufferedImage image = imageRenderer.getRenderedImage();
+		BufferedImage image = getRenderedImage();
 
 		for (Filter action : filters)
 			action.apply(image);
@@ -592,8 +614,10 @@ public class FileSinkImages implements FileSink {
 	 * @see org.graphstream.stream.file.FileSink#begin(java.lang.String)
 	 */
 	public void begin(String prefix) throws IOException {
+		initImage();
+
 		this.filePrefix = prefix;
-		this.hasBegan = true;
+		this.hasBegun = true;
 	}
 
 	/*
@@ -612,7 +636,7 @@ public class FileSinkImages implements FileSink {
 	 */
 	public void end() throws IOException {
 		flush();
-		this.hasBegan = false;
+		this.hasBegun = false;
 	}
 
 	/*
@@ -653,6 +677,7 @@ public class FileSinkImages implements FileSink {
 		replay.replay(g);
 		replay.removeSink(gg);
 
+		initImage();
 		outputNewImage(filename);
 
 		clearGG();
@@ -669,7 +694,7 @@ public class FileSinkImages implements FileSink {
 		case BY_EDGE_EVENT:
 		case BY_EDGE_ATTRIBUTE:
 		case BY_ATTRIBUTE_EVENT:
-			if (hasBegan)
+			if (hasBegun)
 				outputNewImage();
 			break;
 		default:
@@ -689,7 +714,7 @@ public class FileSinkImages implements FileSink {
 		case BY_EDGE_EVENT:
 		case BY_EDGE_ATTRIBUTE:
 		case BY_ATTRIBUTE_EVENT:
-			if (hasBegan)
+			if (hasBegun)
 				outputNewImage();
 			break;
 		default:
@@ -708,7 +733,7 @@ public class FileSinkImages implements FileSink {
 		case BY_EDGE_EVENT:
 		case BY_EDGE_ATTRIBUTE:
 		case BY_ATTRIBUTE_EVENT:
-			if (hasBegan)
+			if (hasBegun)
 				outputNewImage();
 			break;
 		default:
@@ -727,7 +752,7 @@ public class FileSinkImages implements FileSink {
 		case BY_GRAPH_EVENT:
 		case BY_GRAPH_ATTRIBUTE:
 		case BY_ATTRIBUTE_EVENT:
-			if (hasBegan)
+			if (hasBegun)
 				outputNewImage();
 			break;
 		default:
@@ -747,7 +772,7 @@ public class FileSinkImages implements FileSink {
 		case BY_GRAPH_EVENT:
 		case BY_GRAPH_ATTRIBUTE:
 		case BY_ATTRIBUTE_EVENT:
-			if (hasBegan)
+			if (hasBegun)
 				outputNewImage();
 			break;
 		default:
@@ -766,7 +791,7 @@ public class FileSinkImages implements FileSink {
 		case BY_GRAPH_EVENT:
 		case BY_GRAPH_ATTRIBUTE:
 		case BY_ATTRIBUTE_EVENT:
-			if (hasBegan)
+			if (hasBegun)
 				outputNewImage();
 			break;
 		default:
@@ -785,7 +810,7 @@ public class FileSinkImages implements FileSink {
 		case BY_NODE_EVENT:
 		case BY_NODE_ATTRIBUTE:
 		case BY_ATTRIBUTE_EVENT:
-			if (hasBegan)
+			if (hasBegun)
 				outputNewImage();
 			break;
 		default:
@@ -805,7 +830,7 @@ public class FileSinkImages implements FileSink {
 		case BY_NODE_EVENT:
 		case BY_NODE_ATTRIBUTE:
 		case BY_ATTRIBUTE_EVENT:
-			if (hasBegan)
+			if (hasBegun)
 				outputNewImage();
 			break;
 		default:
@@ -824,7 +849,7 @@ public class FileSinkImages implements FileSink {
 		case BY_NODE_EVENT:
 		case BY_NODE_ATTRIBUTE:
 		case BY_ATTRIBUTE_EVENT:
-			if (hasBegan)
+			if (hasBegun)
 				outputNewImage();
 			break;
 		default:
@@ -844,7 +869,7 @@ public class FileSinkImages implements FileSink {
 		case BY_EDGE_EVENT:
 		case BY_EDGE_ADDED_REMOVED:
 		case BY_ELEMENT_EVENT:
-			if (hasBegan)
+			if (hasBegun)
 				outputNewImage();
 			break;
 		default:
@@ -863,7 +888,7 @@ public class FileSinkImages implements FileSink {
 		case BY_EDGE_EVENT:
 		case BY_EDGE_ADDED_REMOVED:
 		case BY_ELEMENT_EVENT:
-			if (hasBegan)
+			if (hasBegun)
 				outputNewImage();
 			break;
 		default:
@@ -883,7 +908,7 @@ public class FileSinkImages implements FileSink {
 		case BY_NODE_ADDED_REMOVED:
 		case BY_EDGE_ADDED_REMOVED:
 		case BY_ELEMENT_EVENT:
-			if (hasBegan)
+			if (hasBegun)
 				outputNewImage();
 			break;
 		default:
@@ -902,7 +927,7 @@ public class FileSinkImages implements FileSink {
 		case BY_NODE_EVENT:
 		case BY_NODE_ADDED_REMOVED:
 		case BY_ELEMENT_EVENT:
-			if (hasBegan)
+			if (hasBegun)
 				outputNewImage();
 			break;
 		default:
@@ -921,7 +946,7 @@ public class FileSinkImages implements FileSink {
 		case BY_NODE_EVENT:
 		case BY_NODE_ADDED_REMOVED:
 		case BY_ELEMENT_EVENT:
-			if (hasBegan)
+			if (hasBegun)
 				outputNewImage();
 			break;
 		default:
@@ -938,7 +963,7 @@ public class FileSinkImages implements FileSink {
 		switch (outputPolicy) {
 		case BY_EVENT:
 		case BY_STEP:
-			if (hasBegan)
+			if (hasBegun)
 				outputNewImage();
 			break;
 		default:
@@ -949,7 +974,7 @@ public class FileSinkImages implements FileSink {
 	// public void nodeMoved(String id, double x, double y, double z) {
 	// switch (outputPolicy) {
 	// case BY_NODE_MOVED:
-	// if (hasBegan)
+	// if (hasBegun)
 	// outputNewImage();
 	// break;
 	// }
@@ -964,7 +989,7 @@ public class FileSinkImages implements FileSink {
 	// public void nodesMoved(Map<String, double[]> nodes) {
 	// switch (outputPolicy) {
 	// case BY_NODE_MOVED:
-	// if (hasBegan)
+	// if (hasBegun)
 	// outputNewImage();
 	// break;
 	// }
@@ -979,7 +1004,7 @@ public class FileSinkImages implements FileSink {
 	// layoutStepWithoutFrame++;
 	//
 	// if (layoutStepWithoutFrame >= layoutStepPerFrame) {
-	// if (hasBegan)
+	// if (hasBegun)
 	// outputNewImage();
 	// layoutStepWithoutFrame = 0;
 	// }
@@ -1054,7 +1079,7 @@ public class FileSinkImages implements FileSink {
 		public void run() {
 			while (outputRunnerAlive && outputPolicy == OutputPolicy.ON_RUNNER) {
 				outputRunnerProxy.pump();
-				if (hasBegan)
+				if (hasBegun)
 					outputNewImage();
 
 				try {
@@ -1216,7 +1241,11 @@ public class FileSinkImages implements FileSink {
 		}
 
 		FileSourceDGS dgs = new FileSourceDGS();
-		FileSinkImages fsi = new FileSinkImages(imagePrefix, outputType, resolution, outputPolicy);
+		FileSinkImages fsi = FileSinkImages.createDefault();
+
+		fsi.setOutputPolicy(outputPolicy);
+		fsi.setResolution(resolution);
+		fsi.setOutputType(outputType);
 
 		dgs.addSink(fsi);
 
