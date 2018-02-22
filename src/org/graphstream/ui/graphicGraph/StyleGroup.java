@@ -480,17 +480,20 @@ public class StyleGroup extends Style implements Iterable<Element> {
 	 */
 	protected void popEventFor(Element element, String event) {
 		if (elements.containsKey(element.getId())) {
-			ElementEvents evs = eventsFor.get(element);
+			if ( eventsFor != null ) {
+				ElementEvents evs = eventsFor.get(element);
+				
+				if (evs != null) {
+					evs.popEvent(event);
 
-			if (evs != null) {
-				evs.popEvent(event);
+					if (evs.eventCount() == 0)
+						eventsFor.remove(element);
+				}
 
-				if (evs.eventCount() == 0)
-					eventsFor.remove(element);
+				if (eventsFor.isEmpty())
+					eventsFor = null;
+	
 			}
-
-			if (eventsFor.isEmpty())
-				eventsFor = null;
 		}
 	}
 
