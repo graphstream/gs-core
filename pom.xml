@@ -64,28 +64,6 @@
 
 	<profiles>
 		<profile>
-			<!-- This profile includes classes of mbox2 and pherd project to create 
-				a fully usable jar. You need to have a valid gs-deps folder at the same hierarchic 
-				level that the one of your project with mbox2 and pherd compiled (mvn compile). -->
-			<id>nodeps</id>
-			<build>
-				<resources>
-					<resource>
-						<directory>../gs-deps/mbox2/target/classes</directory>
-						<includes>
-							<include>org/**/*.class</include>
-						</includes>
-					</resource>
-					<resource>
-						<directory>../gs-deps/pherd/target/classes</directory>
-						<includes>
-							<include>org/**/*.class</include>
-						</includes>
-					</resource>
-				</resources>
-			</build>
-		</profile>
-		<profile>
 			<!-- This profile has to be enabled when releasing the package. It will 
 				enable the sign phase. -->
 			<id>release</id>
@@ -235,6 +213,28 @@
 								<!-- TODO : Add rules to force code quality (e.g. % of coverage) -->
 							</rules>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<archive>
+					<manifest>
+						<mainClass>org.graphstream.util.GraphDiff</mainClass>
+					</manifest>
+					</archive>
+					<descriptorRefs>
+					<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+				<executions>
+					<execution>
+					<id>make-assembly</id> <!-- this is used for inheritance merges -->
+					<phase>prepare-package</phase> <!-- bind to the prepare-packaging phase so that it can be signed -->
+					<goals>
+						<goal>single</goal>
+					</goals>
 					</execution>
 				</executions>
 			</plugin>
