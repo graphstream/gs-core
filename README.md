@@ -3,7 +3,7 @@
 
 [![Build Status](https://travis-ci.org/graphstream/gs-core.svg?branch=dev)](https://travis-ci.org/graphstream/gs-core)
 
-The GraphStream project is java library that provides a API to model,
+The GraphStream project is a java library that provides an API to model,
 analyze and visualize graphs and dynamic graphs.
 
 Check out the Website <http://www.graphstream-project.org/> for more information.
