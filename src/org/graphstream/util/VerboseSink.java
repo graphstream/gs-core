@@ -386,7 +386,7 @@ public class VerboseSink implements Sink {
 			return "<null>";
 
 		if (o instanceof String)
-			return "\"" + ((String) o).replace("\"", "\\\"");
+			return "\"" + ((String) o).replace("\"", "\\\"") + "\"";
 		else if (o.getClass().isArray()) {
 			StringBuilder buffer = new StringBuilder();
 			buffer.append("{");
