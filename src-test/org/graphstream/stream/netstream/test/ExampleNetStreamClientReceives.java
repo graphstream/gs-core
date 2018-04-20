@@ -39,11 +39,12 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.stream.binary.ByteProxy;
 import org.graphstream.stream.netstream.NetStreamUtils;
+import org.graphstream.util.VerboseSink;
 
 /**
  * @since 01/02/16.
  */
-public class ExampleNetStream {
+public class ExampleNetStreamClientReceives {
 	public static void main(String... args) throws IOException {
 		System.setProperty("org.graphstream.ui", "org.graphstream.ui.swingViewer.util.SwingDisplay");
 		//
@@ -71,8 +72,11 @@ public class ExampleNetStream {
 		Graph graphClient = new DefaultGraph("client");
 		client.addSink(graphClient);
 
-		graphClient.display();
-		//
+		VerboseSink graphClientSink = new VerboseSink();
+		graphClientSink.setPrefix("client");
+		graphClient.addSink(graphClientSink);
+
+
 		// Add some elements in the server graph. It should appear in the client graph.
 		//
 

@@ -298,8 +298,8 @@ public class ByteProxy extends SourceBase implements Pipe, Runnable {
 			socketChannel.configureBlocking(false);
 
 			mainChannel = socketChannel;
-			mainChannel.register(selector, SelectionKey.OP_READ);
-
+			mainChannel.register(selector, SelectionKey.OP_READ + SelectionKey.OP_WRITE);
+			writableChannels.add(socketChannel);
 			break;
 		}
 	}
@@ -393,7 +393,7 @@ public class ByteProxy extends SourceBase implements Pipe, Runnable {
 				//
 
 				readDataChunk(key);
-			} else if (key.isWritable()) {
+			} else if (key.isWritable() && key.attachment() != null) {
 				ByteBuffer buffer = (ByteBuffer) key.attachment();
 				WritableByteChannel out = (WritableByteChannel) key.channel();
 
