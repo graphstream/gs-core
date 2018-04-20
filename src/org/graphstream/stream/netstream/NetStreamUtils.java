@@ -121,7 +121,7 @@ public class NetStreamUtils {
 			}
 		} else if (valueClass.equals(String.class)) {
 			if (isArray) {
-				valueType = NetStreamConstants.TYPE_ARRAY;
+				valueType = NetStreamConstants.TYPE_STRING_ARRAY;
 			} else {
 				valueType = NetStreamConstants.TYPE_STRING;
 			}
@@ -220,6 +220,8 @@ public class NetStreamUtils {
 			return encodeDoubleArray(in);
 		} else if (NetStreamConstants.TYPE_STRING == valueType) {
 			return encodeString(in);
+		} else if (NetStreamConstants.TYPE_STRING_ARRAY == valueType) {
+			return encodeStringArray(in);
 		} else if (NetStreamConstants.TYPE_ARRAY == valueType) {
 			return encodeArray(in);
 		} else if (NetStreamConstants.TYPE_NULL == valueType) {
@@ -289,6 +291,37 @@ public class NetStreamUtils {
 		}
 		b.rewind();
 		return b;
+	}
+
+	public static ByteBuffer encodeStringArray(Object in) {
+		Object[] data = (Object[]) in;
+
+		int ssize = getVarintSize(data.length);
+
+		byte[][] dataArray = new byte[data.length][];
+		ByteBuffer[] lenBuffArray = new ByteBuffer[data.length];
+		int bufferSize = 0;
+		for(int i = 0; i < data.length; i++){
+			byte[] bs = ((String)data[i]).getBytes(Charset.forName("UTF-8"));
+			dataArray[i] = bs;
+
+			ByteBuffer lenBuff = encodeUnsignedVarint(bs.length);
+			lenBuffArray[i] = lenBuff;
+
+			bufferSize += lenBuff.capacity() +bs.length;
+		}
+
+
+		ByteBuffer bb = ByteBuffer.allocate(ssize + bufferSize);
+
+		putVarint(bb, data.length, ssize);
+
+		for(int i = 0; i < data.length; i++) {
+			bb.put(lenBuffArray[i]).put(dataArray[i]);
+		}
+		bb.rewind();
+
+		return bb;
 	}
 
 	/**
@@ -531,6 +564,8 @@ public class NetStreamUtils {
 			return decodeDoubleArray(bb);
 		} else if (NetStreamConstants.TYPE_STRING == valueType) {
 			return decodeString(bb);
+		} else if (NetStreamConstants.TYPE_STRING_ARRAY == valueType) {
+			return decodeStringArray(bb);
 		} else if (NetStreamConstants.TYPE_ARRAY == valueType) {
 			return decodeArray(bb);
 		}
@@ -567,6 +602,15 @@ public class NetStreamUtils {
 		}
 
 		return null;
+	}
+
+	public static String[] decodeStringArray(ByteBuffer bb) {
+		int len = (int) decodeUnsignedVarint(bb);
+		String[] array = new String[len];
+		for (int i = 0; i < len; i++) {
+			array[i] = decodeString(bb);
+		}
+		return array;
 	}
 
 	public static Boolean decodeBoolean(ByteBuffer bb) {

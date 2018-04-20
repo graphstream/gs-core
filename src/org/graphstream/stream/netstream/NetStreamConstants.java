@@ -792,6 +792,10 @@ public class NetStreamConstants {
 	 * bytes (not in number of characters) of the string, then by the unicode string
 	 */
 	public static int TYPE_STRING = 0x5e;
+    /**
+     * Array of Array of characters.
+     */
+    public static int TYPE_STRING_ARRAY = 0x62;
 	/**
 	 * Raw data, good for serialization. Followed by first, a 16-bits integer
 	 * indicating the length in bytes of the dataset, and then the data itself.

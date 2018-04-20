@@ -83,6 +83,16 @@ public class TestNetStreamUtils {
 	}
 
 	@Test
+	public void testEncodeStringArray() {
+		String[] strings = {"OK", "notOK"};
+		ByteBuffer buffer = encodeStringArray(strings);
+		String[] decodedStrings = decodeStringArray(buffer);
+		for (int i = 0 ; i < strings.length ; i++) {
+			Assert.assertEquals(strings[i], decodedStrings[i]);
+		}
+	}
+
+	@Test
 	public void testGetValueType() {
 		Assert.assertEquals(NetStreamConstants.TYPE_ARRAY, getType(new Object[] {}));
 		Assert.assertEquals(NetStreamConstants.TYPE_BOOLEAN, getType(true));
@@ -108,6 +118,7 @@ public class TestNetStreamUtils {
 		Assert.assertEquals(NetStreamConstants.TYPE_SHORT_ARRAY, getType(new short[] { 314 }));
 		Assert.assertEquals(NetStreamConstants.TYPE_SHORT_ARRAY, getType(new Short[] { 314 }));
 		Assert.assertEquals(NetStreamConstants.TYPE_STRING, getType(getRandomString(16)));
+		Assert.assertEquals(NetStreamConstants.TYPE_STRING_ARRAY, getType(new String[] {getRandomString(16),getRandomString(11)}));
 		Assert.assertEquals(NetStreamConstants.TYPE_UNKNOWN, getType(this));
 	}
 
