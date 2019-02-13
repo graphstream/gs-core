@@ -201,7 +201,13 @@ public interface View {
 	 * @see org.graphstream.ui.view.util.ShortcutManager
 	 */
 	void setShortcutManager(ShortcutManager manager);
-
+	
+	/**
+	 * This is a shortcut to a call setShortcutManager with a MouseOverMouseManager instance and with
+	 * (InteractiveElement.EDGE, InteractiveElement.NODE, InteractiveElement.SPRITE).
+	 */
+	void enableMouseOptions();
+	
 	/**
 	 * Request ui focus.
 	 * 
