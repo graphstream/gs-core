@@ -462,7 +462,7 @@ public abstract class Viewer {
 		// Replay all graph attributes.
 
 		graph.attributeKeys().forEach(key -> {
-			graph.setAttribute(key, graph.getAttribute(key));
+			this.graph.setAttribute(key, graph.getAttribute(key));
 		});
 
 		// Replay all nodes and their attributes.
@@ -478,7 +478,7 @@ public abstract class Viewer {
 		// Replay all edges and their attributes.
 
 		graph.edges().forEach(edge -> {
-			Edge e = graph.addEdge(edge.getId(), edge.getSourceNode().getId(), edge.getTargetNode().getId(),
+			Edge e = this.graph.addEdge(edge.getId(), edge.getSourceNode().getId(), edge.getTargetNode().getId(),
 					edge.isDirected());
 
 			edge.attributeKeys().forEach(key -> {
