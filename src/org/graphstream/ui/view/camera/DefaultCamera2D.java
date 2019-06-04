@@ -1019,19 +1019,25 @@ public class DefaultCamera2D implements Camera {
 		if (types.contains(InteractiveElement.NODE)) {
 			Optional<Node> node = graph.nodes().filter(n -> nodeContains((GraphicElement) n, xT, yT)).findFirst();
 			if (node.isPresent()) {
-				return (GraphicElement) node.get();
+				if (isVisible((GraphicElement) node.get())) {
+					return (GraphicElement) node.get();
+				}
 			}
 		}
 		if (types.contains(InteractiveElement.EDGE)) {
 			Optional<Edge> edge = graph.edges().filter(e -> edgeContains((GraphicElement) e, xT, yT)).findFirst();
 			if (edge.isPresent()) {
-				return (GraphicElement) edge.get();
+				if (isVisible((GraphicElement) edge.get())) {
+					return (GraphicElement) edge.get();
+				}
 			}
 		}
 		if (types.contains(InteractiveElement.SPRITE)) {
 			Optional<GraphicSprite> sprite = graph.sprites().filter(s -> spriteContains(s, xT, yT)).findFirst();
 			if (sprite.isPresent()) {
-				return (GraphicElement) sprite.get();
+				if (isVisible((GraphicElement) sprite.get())) {
+					return (GraphicElement) sprite.get();
+				}
 			}
 		}
 		return null;
