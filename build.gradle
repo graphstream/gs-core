@@ -16,6 +16,9 @@ sourceSets {
         java {
             srcDirs = ["src"]
         }
+        resources {
+            srcDirs = ["resources"]
+        }
     }
     test {
         java {
