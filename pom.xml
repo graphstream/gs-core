@@ -183,12 +183,12 @@
 						<exclude>**/*$*</exclude>
 					</excludes>
 				</configuration>
-				<version>2.20</version>
-			</plugin>
+          		<version>3.0.0-M3</version>
+		  	</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.9</version>
+				<version>0.8.5</version>
 				<executions>
 					<execution>
 						<id>default-prepare-agent</id>
