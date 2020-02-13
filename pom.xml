@@ -185,7 +185,19 @@
 					<version>true</version>
 					<windowtitle>The GraphStream ${project.version} API</windowtitle>
 				</configuration>
-				<version>3.0.0-M1</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<doclint>none</doclint>
+						</configuration>
+					</execution>
+				</executions>
+				<version>3.1.1</version>
+
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
