@@ -10,7 +10,7 @@ import org.graphstream.graph.implementations.Graphs;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.junit.Test;
 
-public class TestElementConcurrency  {
+public class TestElementAttributeConcurrency  {
 	private ArrayList<TestRunnable> threads = new ArrayList<TestRunnable>();
 	
 	@Test

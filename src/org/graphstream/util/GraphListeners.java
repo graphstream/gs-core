@@ -31,8 +31,6 @@
  */
 package org.graphstream.util;
 
-import java.util.concurrent.locks.ReentrantLock;
-
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -53,8 +51,6 @@ public class GraphListeners extends SourceBase implements Pipe {
 	long dnTimeId;
 
 	Graph g;
-	final ReentrantLock attributeLock;
-
 
 	public GraphListeners(Graph g) {
 		super(g.getId());
@@ -66,7 +62,6 @@ public class GraphListeners extends SourceBase implements Pipe {
 		this.dnSourceId = null;
 		this.dnTimeId = Long.MIN_VALUE;
 		this.g = g;
-		this.attributeLock = new ReentrantLock();
 	}
 
 	public long newEvent() {
@@ -80,14 +75,8 @@ public class GraphListeners extends SourceBase implements Pipe {
 		//
 		if (passYourWay || attribute.charAt(0) == '.')
 			return;
-		
-		attributeLock.lock(); // Fix issue #293
-		
-		try {
-			sendAttributeChangedEvent(sourceId, newEvent(), eltId, eltType, attribute, event, oldValue, newValue);
-		} finally {
-			attributeLock.unlock();
-		}
+
+		sendAttributeChangedEvent(sourceId, newEvent(), eltId, eltType, attribute, event, oldValue, newValue);
 	}
 
 	public void sendNodeAdded(String nodeId) {

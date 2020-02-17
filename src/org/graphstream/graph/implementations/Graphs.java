@@ -232,12 +232,11 @@ public class Graphs {
 
 	static class SynchronizedElement<U extends Element> implements Element {
 
-		private final ReentrantLock attributeLock;
+		private static final ReentrantLock attributeLock = new ReentrantLock();  // Static to lock the attributes from different sources (graph/node/edge). Fix issue #293
 		protected final U wrappedElement;
 
 		SynchronizedElement(U e) {
 			this.wrappedElement = e;
-			this.attributeLock = new ReentrantLock();
 		}
 
 		public void setAttribute(String attribute, Object... values) {
