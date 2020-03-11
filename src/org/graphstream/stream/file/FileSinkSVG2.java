@@ -41,7 +41,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.function.Consumer;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
@@ -338,7 +337,6 @@ public class FileSinkSVG2 implements FileSink {
 			String id = "";
 			SVGStyle style = null;
 			String transform = null;
-
 			if (e instanceof Edge) {
 				id = String.format("egde-%s", e.getId());
 				style = svgStyles.get(groups.getStyleFor((Edge) e));
@@ -518,21 +516,111 @@ public class FileSinkSVG2 implements FileSink {
 				concat(buffer, " L ", d(viewBox.x1), " ", d(viewBox.y2));
 				concat(buffer, " Z");
 			} else if (e instanceof Edge) {
+				//---------- Size arrow
+				double sx, sy;
+				Values sizeArrow = style.group.getArrowSize();
+
+				sx = getValue(sizeArrow.get(0), sizeArrow.units, true);
+
+				if (sizeArrow.getValueCount() > 1)
+					sy = getValue(sizeArrow.get(1), sizeArrow.units, false);
+				else
+					sy = getValue(sizeArrow.get(0), sizeArrow.units, false);
+				
+				// -------------- Draw edge
+				Edge edge = (Edge) e;
 				Node src, trg;
 
 				double x1, y1;
 				double x2, y2;
+				double slope, slopePerpen;
 
-				src = ((Edge) e).getSourceNode();
-				trg = ((Edge) e).getTargetNode();
+				src = edge.getSourceNode();
+				trg = edge.getTargetNode();
 
 				x1 = viewBox.convertX(src);
 				y1 = viewBox.convertY(src);
 				x2 = viewBox.convertX(trg);
 				y2 = viewBox.convertY(trg);
 
+				
+				/*System.out.println(style.group.getShape());
+				System.out.println(style.group.getArrowShape());
+				System.out.println(style.group.getArrowSize());*/
+				System.out.println("sx= "+sx+" sy="+sy);
 				concat(buffer, " M ", d(x1), " ", d(y1));
 				concat(buffer, " L ", d(x2), " ", d(y2));
+				
+				//-------------------- draw arrow
+				if(edge.isDirected()) {
+					switch (style.group.getArrowShape()) {
+						default:
+							System.out.println("oui");
+						case ARROW:
+							double nodeSize = svgStyles.get(groups.getStyleFor(trg)).group.getSize().get(0);
+							if (svgStyles.get(groups.getStyleFor(trg)).group.getSize().getValueCount() > 1) {
+								nodeSize = Math.min(nodeSize,svgStyles.get(groups.getStyleFor(trg)).group.getSize().get(1));
+							}
+							
+							/**
+							 * **************************************
+							 * CONTINUER AVEC LA COULEUR
+							 * **************************************
+							 */
+							double distance = Math.sqrt(((x2-x1)*(x2-x1))+((y2-y1)*(y2-y1)));
+							double ratioPoint = nodeSize/distance;
+							double ratioLine = sx/distance;
+							
+							double x2Root = (((1-ratioLine)*x1)+(ratioLine*x2));
+							double y2Root = (((1-ratioLine)*y1)+(ratioLine*y2));
+							
+							double x2Point = (((1-ratioPoint)*x1)+(ratioPoint*x2));
+							double y2Point = (((1-ratioPoint)*y1)+(ratioPoint*y2));
+							
+							slope = (y2Root-y1)/(x2Root-x1);
+							
+							double x1Prim, x2Prim, y1Prim, y2Prim ;
+							if(Double.isInfinite(slope)) {								
+								x1Prim = x2Root-(sy/2);
+								y1Prim = y2Root;
+								
+								x2Prim = x2Root+(sy/2);
+								y2Prim = y2Root;
+							}
+							else if (slope == 0) {								
+								x1Prim = x2Root;
+								y1Prim = y2Root-(sy/2);
+								
+								x2Prim = x2Root;
+								y2Prim = y2Root+(sy/2);
+							}
+							else {
+								slopePerpen = (-1/slope);
+								System.out.println("SLOPE = "+slope+" "+slopePerpen);
+								
+								//concat(buffer, " m ", d(x2), " ", d(y2));
+								double deltaX = 1/(Math.sqrt((slopePerpen*slopePerpen)+1));
+								double deltaY = slopePerpen/(Math.sqrt((slopePerpen*slopePerpen)+1));
+								System.out.println("DELTA = "+deltaX+" "+deltaY);
+								
+								x1Prim = x2Root-((sy/2)*deltaX);
+								y1Prim = y2Root-((sy/2)*deltaY);
+								
+								x2Prim = x2Root+((sy/2)*deltaX);
+								y2Prim = y2Root+((sy/2)*deltaY);
+							}
+							concat(buffer, " M ", d(x1Prim), " ", d(y1Prim));
+							concat(buffer, " L ", d(x2Prim), " ", d(y2Prim));
+							concat(buffer, " L ", d(x2Point), " ", d(y2Point));
+							concat(buffer, " Z");
+
+							System.out.println("EDGE = "+x1+" "+y1+" "+x2+" "+y2);
+							System.out.println("EDGE2 = ("+x1Prim+", "+y1Prim+" )"+" ("+x2Prim+", "+y2Prim+")");
+
+							break;
+
+					}
+				}
 			}
 
 			return buffer.toString();
