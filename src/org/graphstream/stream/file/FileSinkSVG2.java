@@ -60,7 +60,9 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.graphicGraph.stylesheet.Value;
 import org.graphstream.ui.graphicGraph.stylesheet.Values;
 import org.graphstream.ui.graphicGraph.stylesheet.Selector.Type;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Shape;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.StrokeMode;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleSheet;
 
 public class FileSinkSVG2 implements FileSink {
@@ -223,6 +225,8 @@ public class FileSinkSVG2 implements FileSink {
 
 	private static String getSize(Values v, int index) {
 		String u = v.units.name().toLowerCase();
+		if (Units.PERCENTS.equals(v.units))
+			u = "%";
 		return String.format(Locale.ROOT, "%f%s", v.get(index), u);
 	}
 
@@ -516,7 +520,10 @@ public class FileSinkSVG2 implements FileSink {
 				concat(buffer, " L ", d(viewBox.x1), " ", d(viewBox.y2));
 				concat(buffer, " Z");
 			} else if (e instanceof Edge) {
-				//---------- Size arrow
+				//---------- Size Edge
+				double sizeEdge = getValue(style.group.getSize().get(0), style.group.getSize().units, true);
+
+				//---------- Size Arrow
 				double sx, sy;
 				Values sizeArrow = style.group.getArrowSize();
 
@@ -526,14 +533,13 @@ public class FileSinkSVG2 implements FileSink {
 					sy = getValue(sizeArrow.get(1), sizeArrow.units, false);
 				else
 					sy = getValue(sizeArrow.get(0), sizeArrow.units, false);
-				
-				// -------------- Draw edge
+
+				//-------------- Draw Edge
 				Edge edge = (Edge) e;
 				Node src, trg;
 
 				double x1, y1;
 				double x2, y2;
-				double slope, slopePerpen;
 
 				src = edge.getSourceNode();
 				trg = edge.getTargetNode();
@@ -547,85 +553,113 @@ public class FileSinkSVG2 implements FileSink {
 				/*System.out.println(style.group.getShape());
 				System.out.println(style.group.getArrowShape());
 				System.out.println(style.group.getArrowSize());*/
-				System.out.println("sx= "+sx+" sy="+sy);
-				concat(buffer, " M ", d(x1), " ", d(y1));
-				concat(buffer, " L ", d(x2), " ", d(y2));
+
+				switch(style.group.getShape()) {
+					case ANGLE:
+						concat(buffer, " M ", d(x1), " ", d(y1));
+						concat(buffer, " L ", d(x2), " ", d(y2));
+						
+						double[] perpen = getPerpendicular(x1, y1, x2, y2, sizeEdge);
+						double x1Prim = perpen[0];
+						double y1Prim = perpen[1];
+						double x2Prim = perpen[2];
+						double y2Prim = perpen[3];
+						
+						concat(buffer, " M ", d(x1), " ", d(y1));
+						concat(buffer, " L ", d(x1Prim), " ", d(y1Prim));
+						concat(buffer, " L ", d(x2Prim), " ", d(y2Prim));
+						concat(buffer, " Z");
+
+						break;
+					default:
+					case LINE:
+						concat(buffer, " M ", d(x1), " ", d(y1));
+						concat(buffer, " L ", d(x2), " ", d(y2));
+						
+						break;
+				}
 				
 				//-------------------- draw arrow
+				
 				if(edge.isDirected()) {
 					switch (style.group.getArrowShape()) {
 						default:
-							System.out.println("oui");
 						case ARROW:
 							double nodeSize = svgStyles.get(groups.getStyleFor(trg)).group.getSize().get(0);
 							if (svgStyles.get(groups.getStyleFor(trg)).group.getSize().getValueCount() > 1) {
 								nodeSize = Math.min(nodeSize,svgStyles.get(groups.getStyleFor(trg)).group.getSize().get(1));
 							}
 							
-							/**
-							 * **************************************
-							 * CONTINUER AVEC LA COULEUR
-							 * **************************************
-							 */
 							double distance = Math.sqrt(((x2-x1)*(x2-x1))+((y2-y1)*(y2-y1)));
 							double ratioPoint = nodeSize/distance;
-							double ratioLine = sx/distance;
+							double ratioLine = (sx+nodeSize)/distance;
 							
 							double x2Root = (((1-ratioLine)*x1)+(ratioLine*x2));
 							double y2Root = (((1-ratioLine)*y1)+(ratioLine*y2));
 							
 							double x2Point = (((1-ratioPoint)*x1)+(ratioPoint*x2));
 							double y2Point = (((1-ratioPoint)*y1)+(ratioPoint*y2));
+														
+							double[] perpen = getPerpendicular(x1, y1, x2Root, y2Root, sy);
+							double x1Prim = perpen[0];
+							double y1Prim = perpen[1];
+							double x2Prim = perpen[2];
+							double y2Prim = perpen[3];
 							
-							slope = (y2Root-y1)/(x2Root-x1);
-							
-							double x1Prim, x2Prim, y1Prim, y2Prim ;
-							if(Double.isInfinite(slope)) {								
-								x1Prim = x2Root-(sy/2);
-								y1Prim = y2Root;
-								
-								x2Prim = x2Root+(sy/2);
-								y2Prim = y2Root;
-							}
-							else if (slope == 0) {								
-								x1Prim = x2Root;
-								y1Prim = y2Root-(sy/2);
-								
-								x2Prim = x2Root;
-								y2Prim = y2Root+(sy/2);
-							}
-							else {
-								slopePerpen = (-1/slope);
-								System.out.println("SLOPE = "+slope+" "+slopePerpen);
-								
-								//concat(buffer, " m ", d(x2), " ", d(y2));
-								double deltaX = 1/(Math.sqrt((slopePerpen*slopePerpen)+1));
-								double deltaY = slopePerpen/(Math.sqrt((slopePerpen*slopePerpen)+1));
-								System.out.println("DELTA = "+deltaX+" "+deltaY);
-								
-								x1Prim = x2Root-((sy/2)*deltaX);
-								y1Prim = y2Root-((sy/2)*deltaY);
-								
-								x2Prim = x2Root+((sy/2)*deltaX);
-								y2Prim = y2Root+((sy/2)*deltaY);
-							}
 							concat(buffer, " M ", d(x1Prim), " ", d(y1Prim));
 							concat(buffer, " L ", d(x2Prim), " ", d(y2Prim));
 							concat(buffer, " L ", d(x2Point), " ", d(y2Point));
 							concat(buffer, " Z");
 
-							System.out.println("EDGE = "+x1+" "+y1+" "+x2+" "+y2);
-							System.out.println("EDGE2 = ("+x1Prim+", "+y1Prim+" )"+" ("+x2Prim+", "+y2Prim+")");
+							System.out.println("Arrow = ("+x1Prim+", "+y1Prim+") ("+x1Prim+", "+y2Prim+") ("+x2Point+", "+y2Point+")");
 
 							break;
 
 					}
+					
 				}
 			}
 
 			return buffer.toString();
 		}
+		
+		public double[] getPerpendicular(double x1, double y1, double x2, double y2, double size) {
+			double slope, slopePerpen;
 
+			slope = (y2-y1)/(x2-x1);
+
+			double x1Prim, x2Prim, y1Prim, y2Prim ;
+			if(Double.isInfinite(slope)) {								
+				x1Prim = x2-(size/2);
+				y1Prim = y2;
+				
+				x2Prim = x2+(size/2);
+				y2Prim = y2;
+			}
+			else if (slope == 0) {								
+				x1Prim = x2;
+				y1Prim = y2-(size/2);
+				
+				x2Prim = x2;
+				y2Prim = y2+(size/2);
+			}
+			else {
+				slopePerpen = (-1/slope);
+				
+				//concat(buffer, " m ", d(x2), " ", d(y2));
+				double deltaX = 1/(Math.sqrt((slopePerpen*slopePerpen)+1));
+				double deltaY = slopePerpen/(Math.sqrt((slopePerpen*slopePerpen)+1));
+				
+				x1Prim = x2-((size/2)*deltaX);
+				y1Prim = y2-((size/2)*deltaY);
+				
+				x2Prim = x2+((size/2)*deltaX);
+				y2Prim = y2+((size/2)*deltaY);
+			}
+			
+			return new double[] {x1Prim, y1Prim, x2Prim, y2Prim}; 
+		}
+		
 		public double getValue(Value v, boolean horizontal) {
 			return getValue(v.value, v.units, horizontal);
 		}
@@ -786,6 +820,10 @@ public class FileSinkSVG2 implements FileSink {
 				this.gradient = true;
 				break;
 			case PLAIN:
+				concat(styleSB, "fill:", toHexColor(group.getFillColor(0)), ";");
+				concat(styleSB, "fill-opacity:", d(group.getFillColor(0).getAlpha() / 255.0), ";");
+				concat(styleSB, "stroke:", toHexColor(group.getFillColor(0)), ";");
+				break;
 			case DYN_PLAIN:
 				concat(styleSB, "stroke:", toHexColor(group.getFillColor(0)), ";");
 				break;
@@ -796,8 +834,10 @@ public class FileSinkSVG2 implements FileSink {
 			case NONE:
 				break;
 			}
-
-			concat(styleSB, "stroke-width:", getSize(group.getSize(), 0), ";");
+			
+			if (! group.getShape().equals(Shape.ANGLE)) {
+				concat(styleSB, "stroke-width:", getSize(group.getSize(), 0), ";");
+			}
 
 			style = styleSB.toString();
 		}
