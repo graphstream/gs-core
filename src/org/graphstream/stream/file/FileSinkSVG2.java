@@ -51,6 +51,7 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Element;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
+import org.graphstream.ui.geom.Vector2;
 import org.graphstream.ui.graphicGraph.StyleGroup;
 import org.graphstream.ui.graphicGraph.StyleGroupSet;
 import org.graphstream.ui.graphicGraph.stylesheet.Color;
@@ -556,20 +557,60 @@ public class FileSinkSVG2 implements FileSink {
 
 				switch(style.group.getShape()) {
 					case ANGLE:
-						concat(buffer, " M ", d(x1), " ", d(y1));
-						concat(buffer, " L ", d(x2), " ", d(y2));
-						
-						double[] perpen = getPerpendicular(x1, y1, x2, y2, sizeEdge);
-						double x1Prim = perpen[0];
-						double y1Prim = perpen[1];
-						double x2Prim = perpen[2];
-						double y2Prim = perpen[3];
+						double[] perpendicular = getPerpendicular(x1, y1, x2, y2, sizeEdge);
+						double x1Prim = perpendicular[0];
+						double y1Prim = perpendicular[1];
+						double x2Prim = perpendicular[2];
+						double y2Prim = perpendicular[3];
 						
 						concat(buffer, " M ", d(x1), " ", d(y1));
 						concat(buffer, " L ", d(x1Prim), " ", d(y1Prim));
 						concat(buffer, " L ", d(x2Prim), " ", d(y2Prim));
 						concat(buffer, " Z");
 
+						break;
+					case CUBIC_CURVE:
+						double nodeSize = svgStyles.get(groups.getStyleFor(trg)).group.getSize().get(0);
+						if (svgStyles.get(groups.getStyleFor(trg)).group.getSize().getValueCount() > 1) {
+							nodeSize = Math.max(nodeSize,svgStyles.get(groups.getStyleFor(trg)).group.getSize().get(1));
+						}
+						
+						// First part of the curve
+						double xCenter = (x1+x2)/2 ;
+						double yCenter = (y1+y2)/2 ;
+						
+						double[] perpen = getPerpendicular(x1, y1, xCenter, yCenter, Math.sqrt(Math.pow(Math.abs(x1-xCenter), 2)+Math.pow(Math.abs(y1-yCenter), 2))*2);
+						
+						double x45degrees = (x1+perpen[2])/2;
+						double y45degrees = (y1+perpen[3])/2;
+						
+						double xCenterCenter = (x1+xCenter)/2 ;
+						double yCenterCenter = (y1+yCenter)/2 ;
+						
+						double x20degrees = (xCenterCenter+x45degrees)/2;
+						double y20degrees = (yCenterCenter+y45degrees)/2;
+						
+						concat(buffer, " M ", d(x1), " ", d(y1));
+						concat(buffer, " C ", d(x20degrees), " ", d(y20degrees), " ", d(x20degrees), " ", d(y20degrees), " ", d(xCenter), " ", d(yCenter));
+						
+						/// Second part of the curve
+						double x45degrees2nd = (x2+perpen[0])/2;
+						double y45degrees2nd = (y2+perpen[1])/2;
+						
+						double xCenterCenter2nd = (x2+xCenter)/2;
+						double yCenterCenter2nd = (y2+yCenter)/2;
+						
+						double x20degrees2nd = (xCenterCenter2nd+x45degrees2nd)/2;
+						double y20degrees2nd = (yCenterCenter2nd+y45degrees2nd)/2;
+						
+						concat(buffer, " S ", d(x20degrees2nd), " ", d(y20degrees2nd), " ", d(x2), " ", d(y2));
+						concat(buffer, " C ", d(x20degrees2nd), " ", d(y20degrees2nd), " ", d(x20degrees2nd), " ", d(y20degrees2nd), " ", d(xCenter), " ", d(yCenter));
+						concat(buffer, " S ", d(x20degrees), " ", d(y20degrees), " ", d(x1), " ", d(y1));
+						concat(buffer, " Z");
+
+						
+						System.out.println("("+x1+" "+y1+") ("+perpen[2]+" "+perpen[3]+") ("+perpen[2]+" "+perpen[3]+") ("+xCenter+" "+yCenter+") ");
+						//concat(buffer, " C ", "20", " ", "20", " ", "40", " ", "20", " ", "50", " ", "10");
 						break;
 					default:
 					case LINE:
@@ -588,6 +629,10 @@ public class FileSinkSVG2 implements FileSink {
 							double nodeSize = svgStyles.get(groups.getStyleFor(trg)).group.getSize().get(0);
 							if (svgStyles.get(groups.getStyleFor(trg)).group.getSize().getValueCount() > 1) {
 								nodeSize = Math.min(nodeSize,svgStyles.get(groups.getStyleFor(trg)).group.getSize().get(1));
+							
+								if(svgStyles.get(groups.getStyleFor(trg)).group.getShape().equals(Shape.CIRCLE)) {
+									nodeSize = nodeSize/2;
+								}
 							}
 							
 							double distance = Math.sqrt(((x2-x1)*(x2-x1))+((y2-y1)*(y2-y1)));
@@ -599,6 +644,7 @@ public class FileSinkSVG2 implements FileSink {
 							
 							double x2Point = (((1-ratioPoint)*x1)+(ratioPoint*x2));
 							double y2Point = (((1-ratioPoint)*y1)+(ratioPoint*y2));
+							
 														
 							double[] perpen = getPerpendicular(x1, y1, x2Root, y2Root, sy);
 							double x1Prim = perpen[0];
@@ -606,10 +652,31 @@ public class FileSinkSVG2 implements FileSink {
 							double x2Prim = perpen[2];
 							double y2Prim = perpen[3];
 							
+							if (style.group.getShape().equals(Shape.CUBIC_CURVE)) {
+								double rotation = 25 ;
+								
+								System.out.println(y2Point-y2);
+								if (y2Point-y2 <= 1)
+									rotation = -rotation ;
+								
+								Vector2 v = rotatePoint(x1, y1, rotation, x2Point, y2Point);
+								x2Point = v.x();
+								y2Point = v.y();
+								
+								v = rotatePoint(x1, y1, rotation, x1Prim, y1Prim);
+								x1Prim = v.x();
+								y1Prim = v.y();
+								
+								v = rotatePoint(x1, y1, rotation, x2Prim, y2Prim);
+								x2Prim = v.x();
+								y2Prim = v.y();
+							}
+							
 							concat(buffer, " M ", d(x1Prim), " ", d(y1Prim));
 							concat(buffer, " L ", d(x2Prim), " ", d(y2Prim));
 							concat(buffer, " L ", d(x2Point), " ", d(y2Point));
 							concat(buffer, " Z");
+							
 
 							System.out.println("Arrow = ("+x1Prim+", "+y1Prim+") ("+x1Prim+", "+y2Prim+") ("+x2Point+", "+y2Point+")");
 
@@ -621,6 +688,42 @@ public class FileSinkSVG2 implements FileSink {
 			}
 
 			return buffer.toString();
+		}
+		
+		/**
+		 * rotates the point around a center and returns the new point
+		 * @param cx x coordinate of the center
+		 * @param cy y coordinate of the center
+		 * @param angle in degrees (sign determines the direction + is counter-clockwise - is clockwise)
+		 * @param px x coordinate of point to rotate 
+		 * @param py y coordinate of point to rotate 
+		 * */
+
+		public static Vector2 rotatePoint(double cx,double cy,double angle,double px,double py){
+			double absangl = Math.abs(angle);
+			double s = Math.sin(Math.toRadians(absangl));
+			double c = Math.cos(Math.toRadians(absangl));
+
+		    // translate point back to origin:
+		    px -= cx;
+		    py -= cy;
+
+		    // rotate point
+		    double xnew;
+		    double ynew;
+		    if (angle > 0) {
+		        xnew = px * c - py * s;
+		        ynew = px * s + py * c;
+		    }
+		    else {
+		        xnew = px * c + py * s;
+		        ynew = -px * s + py * c;
+		    }
+
+		    // translate point back:
+		    px = xnew + cx;
+		    py = ynew + cy;
+		    return new Vector2(px, py);
 		}
 		
 		public double[] getPerpendicular(double x1, double y1, double x2, double y2, double size) {
