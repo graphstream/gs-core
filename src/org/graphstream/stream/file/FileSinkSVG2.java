@@ -636,8 +636,9 @@ public class FileSinkSVG2 implements FileSink {
 							}
 							
 							double distance = Math.sqrt(((x2-x1)*(x2-x1))+((y2-y1)*(y2-y1)));
-							double ratioPoint = nodeSize/distance;
-							double ratioLine = (sx+nodeSize)/distance;
+							double ratioPoint = 1-(nodeSize/distance);
+							double ratioLine = 1-((sx+nodeSize)/distance);
+							System.out.println(nodeSize+" "+ratioPoint);
 							
 							double x2Root = (((1-ratioLine)*x1)+(ratioLine*x2));
 							double y2Root = (((1-ratioLine)*y1)+(ratioLine*y2));
@@ -646,7 +647,7 @@ public class FileSinkSVG2 implements FileSink {
 							double y2Point = (((1-ratioPoint)*y1)+(ratioPoint*y2));
 							
 														
-							double[] perpen = getPerpendicular(x1, y1, x2Root, y2Root, sy);
+							double[] perpen = getPerpendicular(x2, y2, x2Root, y2Root, sy);
 							double x1Prim = perpen[0];
 							double y1Prim = perpen[1];
 							double x2Prim = perpen[2];
@@ -659,15 +660,15 @@ public class FileSinkSVG2 implements FileSink {
 								if (y2Point-y2 <= 1)
 									rotation = -rotation ;
 								
-								Vector2 v = rotatePoint(x1, y1, rotation, x2Point, y2Point);
+								Vector2 v = rotatePoint(x2, y2, rotation, x2Point, y2Point);
 								x2Point = v.x();
 								y2Point = v.y();
 								
-								v = rotatePoint(x1, y1, rotation, x1Prim, y1Prim);
+								v = rotatePoint(x2, y2, rotation, x1Prim, y1Prim);
 								x1Prim = v.x();
 								y1Prim = v.y();
 								
-								v = rotatePoint(x1, y1, rotation, x2Prim, y2Prim);
+								v = rotatePoint(x2, y2, rotation, x2Prim, y2Prim);
 								x2Prim = v.x();
 								y2Prim = v.y();
 							}
@@ -699,7 +700,7 @@ public class FileSinkSVG2 implements FileSink {
 		 * @param py y coordinate of point to rotate 
 		 * */
 
-		public static Vector2 rotatePoint(double cx,double cy,double angle,double px,double py){
+		public static Vector2 rotatePoint(double cx, double cy, double angle, double px, double py){
 			double absangl = Math.abs(angle);
 			double s = Math.sin(Math.toRadians(absangl));
 			double c = Math.cos(Math.toRadians(absangl));
