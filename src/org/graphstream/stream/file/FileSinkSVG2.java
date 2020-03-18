@@ -549,12 +549,9 @@ public class FileSinkSVG2 implements FileSink {
 				y1 = viewBox.convertY(src);
 				x2 = viewBox.convertX(trg);
 				y2 = viewBox.convertY(trg);
-
 				
-				/*System.out.println(style.group.getShape());
-				System.out.println(style.group.getArrowShape());
-				System.out.println(style.group.getArrowSize());*/
-
+				double nodeSize, xCenter, yCenter, xCenterCenter, yCenterCenter ;
+				double[] perpen;
 				switch(style.group.getShape()) {
 					case ANGLE:
 						double[] perpendicular = getPerpendicular(x1, y1, x2, y2, sizeEdge);
@@ -570,22 +567,22 @@ public class FileSinkSVG2 implements FileSink {
 
 						break;
 					case CUBIC_CURVE:
-						double nodeSize = svgStyles.get(groups.getStyleFor(trg)).group.getSize().get(0);
+						nodeSize = svgStyles.get(groups.getStyleFor(trg)).group.getSize().get(0);
 						if (svgStyles.get(groups.getStyleFor(trg)).group.getSize().getValueCount() > 1) {
 							nodeSize = Math.max(nodeSize,svgStyles.get(groups.getStyleFor(trg)).group.getSize().get(1));
 						}
 						
 						// First part of the curve
-						double xCenter = (x1+x2)/2 ;
-						double yCenter = (y1+y2)/2 ;
+						xCenter = (x1+x2)/2 ;
+						yCenter = (y1+y2)/2 ;
 						
-						double[] perpen = getPerpendicular(x1, y1, xCenter, yCenter, Math.sqrt(Math.pow(Math.abs(x1-xCenter), 2)+Math.pow(Math.abs(y1-yCenter), 2))*2);
+						perpen = getPerpendicular(x1, y1, xCenter, yCenter, Math.sqrt(Math.pow(Math.abs(x1-xCenter), 2)+Math.pow(Math.abs(y1-yCenter), 2))*2);
 						
 						double x45degrees = (x1+perpen[2])/2;
 						double y45degrees = (y1+perpen[3])/2;
 						
-						double xCenterCenter = (x1+xCenter)/2 ;
-						double yCenterCenter = (y1+yCenter)/2 ;
+						xCenterCenter = (x1+xCenter)/2 ;
+						yCenterCenter = (y1+yCenter)/2 ;
 						
 						double x20degrees = (xCenterCenter+x45degrees)/2;
 						double y20degrees = (yCenterCenter+y45degrees)/2;
@@ -608,9 +605,54 @@ public class FileSinkSVG2 implements FileSink {
 						concat(buffer, " S ", d(x20degrees), " ", d(y20degrees), " ", d(x1), " ", d(y1));
 						concat(buffer, " Z");
 
+						break;
+					case BLOB:
+						nodeSize = svgStyles.get(groups.getStyleFor(trg)).group.getSize().get(0);
+						if (svgStyles.get(groups.getStyleFor(trg)).group.getSize().getValueCount() > 1) {
+							nodeSize = Math.max(nodeSize,svgStyles.get(groups.getStyleFor(trg)).group.getSize().get(1));
+						}
 						
-						System.out.println("("+x1+" "+y1+") ("+perpen[2]+" "+perpen[3]+") ("+perpen[2]+" "+perpen[3]+") ("+xCenter+" "+yCenter+") ");
-						//concat(buffer, " C ", "20", " ", "20", " ", "40", " ", "20", " ", "50", " ", "10");
+						xCenter = (x1+x2)/2 ;
+						yCenter = (y1+y2)/2 ;
+						
+						xCenterCenter = (x1+xCenter)/2 ;
+						yCenterCenter = (y1+yCenter)/2 ;
+						
+						double[] perpenCenter = getPerpendicular(x1, y1, xCenter, yCenter, sizeEdge);
+						
+						double[] perpenX1 = getPerpendicular(xCenter, yCenter, x1, y1, nodeSize);
+						
+						double[] perpenXCenter1 = getPerpendicular(x1, y1, xCenterCenter, yCenterCenter, sizeEdge);
+						
+						concat(buffer, " M ", d(perpenX1[0]), " ", d(perpenX1[1]));
+						concat(buffer, " Q ", d(perpenXCenter1[0]), " ", d(perpenXCenter1[1]), " ", d(perpenCenter[0]), " ", d(perpenCenter[1]));
+						concat(buffer, " L ", d(x2), " ", d(y2));
+						concat(buffer, " L ", d(perpenCenter[2]), " ", d(perpenCenter[3]));
+						concat(buffer, " Q ", d(perpenXCenter1[2]), " ", d(perpenXCenter1[3]), " ", d(perpenX1[2]), " ", d(perpenX1[3]));
+						concat(buffer, " Z");
+						
+						if(! edge.isDirected()) {
+							double[] perpenX2 = getPerpendicular(xCenter, yCenter, x2, y2, nodeSize);
+							
+							xCenterCenter2nd = (x2+xCenter)/2;
+							yCenterCenter2nd = (y2+yCenter)/2;
+							
+							double[] perpenXCenter2 = getPerpendicular(x2, y2, xCenterCenter2nd, yCenterCenter2nd, sizeEdge);
+
+							concat(buffer, " M ", d(perpenX2[0]), " ", d(perpenX2[1]));
+							concat(buffer, " Q ", d(perpenXCenter2[0]), " ", d(perpenXCenter2[1]), " ", d(perpenCenter[0]), " ", d(perpenCenter[1]));
+							concat(buffer, " L ", d(x1), " ", d(y1));
+							concat(buffer, " L ", d(perpenCenter[2]), " ", d(perpenCenter[3]));
+							concat(buffer, " Q ", d(perpenXCenter2[2]), " ", d(perpenXCenter2[3]), " ", d(perpenX2[2]), " ", d(perpenX2[3]));
+							concat(buffer, " Z");
+						}
+						
+						/*
+						concat(buffer, " L ", d(perpenX2[2]), " ", d(perpenX2[3]));
+						concat(buffer, " Q ", d(perpenCenter[2]), " ", d(perpenCenter[3]), " ", d(perpenX1[2]), " ", d(perpenX1[3]));
+						*/
+
+						
 						break;
 					default:
 					case LINE:
@@ -623,18 +665,30 @@ public class FileSinkSVG2 implements FileSink {
 				//-------------------- draw arrow
 				
 				if(edge.isDirected()) {
+					//----------------- Size node 
+					nodeSize = svgStyles.get(groups.getStyleFor(trg)).group.getSize().get(0);
+					double diag = -1;
+					if (svgStyles.get(groups.getStyleFor(trg)).group.getSize().getValueCount() > 1) {
+						diag = Math.sqrt(Math.pow(nodeSize, 2)+Math.pow(svgStyles.get(groups.getStyleFor(trg)).group.getSize().get(1), 2));
+						nodeSize = Math.min(nodeSize,svgStyles.get(groups.getStyleFor(trg)).group.getSize().get(1));
+					} else {
+						diag = Math.sqrt(Math.pow(nodeSize, 2)+Math.pow(nodeSize, 2));
+					}
+					
+					System.out.println(svgStyles.get(groups.getStyleFor(trg)).group.getShape());
+					
+					if(svgStyles.get(groups.getStyleFor(trg)).group.getShape().equals(Shape.CIRCLE)) {
+						nodeSize = nodeSize/2;
+					} else if (svgStyles.get(groups.getStyleFor(trg)).group.getShape().equals(Shape.BOX) ||
+							svgStyles.get(groups.getStyleFor(trg)).group.getShape().equals(Shape.ROUNDED_BOX) ||
+							svgStyles.get(groups.getStyleFor(trg)).group.getShape().equals(Shape.DIAMOND) ||
+							svgStyles.get(groups.getStyleFor(trg)).group.getShape().equals(Shape.TRIANGLE)) {
+						nodeSize = diag/2 ;
+					}
+					
 					switch (style.group.getArrowShape()) {
 						default:
 						case ARROW:
-							double nodeSize = svgStyles.get(groups.getStyleFor(trg)).group.getSize().get(0);
-							if (svgStyles.get(groups.getStyleFor(trg)).group.getSize().getValueCount() > 1) {
-								nodeSize = Math.min(nodeSize,svgStyles.get(groups.getStyleFor(trg)).group.getSize().get(1));
-							
-								if(svgStyles.get(groups.getStyleFor(trg)).group.getShape().equals(Shape.CIRCLE)) {
-									nodeSize = nodeSize/2;
-								}
-							}
-							
 							double distance = Math.sqrt(((x2-x1)*(x2-x1))+((y2-y1)*(y2-y1)));
 							double ratioPoint = 1-(nodeSize/distance);
 							double ratioLine = 1-((sx+nodeSize)/distance);
@@ -647,7 +701,7 @@ public class FileSinkSVG2 implements FileSink {
 							double y2Point = (((1-ratioPoint)*y1)+(ratioPoint*y2));
 							
 														
-							double[] perpen = getPerpendicular(x2, y2, x2Root, y2Root, sy);
+							perpen = getPerpendicular(x2, y2, x2Root, y2Root, sy);
 							double x1Prim = perpen[0];
 							double y1Prim = perpen[1];
 							double x2Prim = perpen[2];
@@ -939,7 +993,7 @@ public class FileSinkSVG2 implements FileSink {
 				break;
 			}
 			
-			if (! group.getShape().equals(Shape.ANGLE)) {
+			if (! group.getShape().equals(Shape.ANGLE) && ! group.getShape().equals(Shape.BLOB)) { // Size used in the path creation
 				concat(styleSB, "stroke-width:", getSize(group.getSize(), 0), ";");
 			}
 
