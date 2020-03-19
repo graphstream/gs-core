@@ -647,12 +647,6 @@ public class FileSinkSVG2 implements FileSink {
 							concat(buffer, " Z");
 						}
 						
-						/*
-						concat(buffer, " L ", d(perpenX2[2]), " ", d(perpenX2[3]));
-						concat(buffer, " Q ", d(perpenCenter[2]), " ", d(perpenCenter[3]), " ", d(perpenX1[2]), " ", d(perpenX1[3]));
-						*/
-
-						
 						break;
 					default:
 					case LINE:
@@ -665,7 +659,7 @@ public class FileSinkSVG2 implements FileSink {
 				//-------------------- draw arrow
 				
 				if(edge.isDirected()) {
-					//----------------- Size node 
+					//--------------------- Size node ---------------------------------------
 					nodeSize = svgStyles.get(groups.getStyleFor(trg)).group.getSize().get(0);
 					double diag = -1;
 					if (svgStyles.get(groups.getStyleFor(trg)).group.getSize().getValueCount() > 1) {
@@ -674,9 +668,7 @@ public class FileSinkSVG2 implements FileSink {
 					} else {
 						diag = Math.sqrt(Math.pow(nodeSize, 2)+Math.pow(nodeSize, 2));
 					}
-					
-					System.out.println(svgStyles.get(groups.getStyleFor(trg)).group.getShape());
-					
+										
 					if(svgStyles.get(groups.getStyleFor(trg)).group.getShape().equals(Shape.CIRCLE)) {
 						nodeSize = nodeSize/2;
 					} else if (svgStyles.get(groups.getStyleFor(trg)).group.getShape().equals(Shape.BOX) ||
@@ -685,27 +677,87 @@ public class FileSinkSVG2 implements FileSink {
 							svgStyles.get(groups.getStyleFor(trg)).group.getShape().equals(Shape.TRIANGLE)) {
 						nodeSize = diag/2 ;
 					}
+					//----------------------------------------------------------------------
 					
+					double distance = Math.sqrt(((x2-x1)*(x2-x1))+((y2-y1)*(y2-y1)));
+					
+					double ratioPoint, ratioLine ;
+					double x2Root, y2Root ;
+					double x2Point, y2Point ;
+					
+					double x1Prim, y1Prim, x2Prim, y2Prim ;
 					switch (style.group.getArrowShape()) {
-						default:
-						case ARROW:
-							double distance = Math.sqrt(((x2-x1)*(x2-x1))+((y2-y1)*(y2-y1)));
-							double ratioPoint = 1-(nodeSize/distance);
-							double ratioLine = 1-((sx+nodeSize)/distance);
-							System.out.println(nodeSize+" "+ratioPoint);
+						case CIRCLE:
+							ratioPoint = 1-(nodeSize/distance);
+							ratioLine = 1-(((sx/2)+nodeSize)/distance);
 							
-							double x2Root = (((1-ratioLine)*x1)+(ratioLine*x2));
-							double y2Root = (((1-ratioLine)*y1)+(ratioLine*y2));
+							x2Root = (((1-ratioLine)*x1)+(ratioLine*x2));
+							y2Root = (((1-ratioLine)*y1)+(ratioLine*y2));
 							
-							double x2Point = (((1-ratioPoint)*x1)+(ratioPoint*x2));
-							double y2Point = (((1-ratioPoint)*y1)+(ratioPoint*y2));
+							x2Point = (((1-ratioPoint)*x1)+(ratioPoint*x2));
+							y2Point = (((1-ratioPoint)*y1)+(ratioPoint*y2));
+							
+							perpen = getPerpendicular(x2, y2, x2Root, y2Root, sy);
+							x1Prim = perpen[0];
+							y1Prim = perpen[1];
+							x2Prim = perpen[2];
+							y2Prim = perpen[3];
+							
+							concat(buffer, " M ", d(x1Prim), " ", d(y1Prim));
+							concat(buffer, " A ", d(sx / 4), " ", d(sy / 4), " 0 1 0 ", d(x2Prim), " ", d(y2Prim));
+							concat(buffer, " ", d(sx / 4), " ", d(sy / 4), " 0 1 0 ", d(x1Prim), " ", d(y1Prim));
+							concat(buffer, " Z");
+							break;
+
+						case DIAMOND:
+							ratioPoint = 1-(nodeSize/distance);
+							ratioLine = 1-(((sx/2)+nodeSize)/distance);
+							
+							x2Root = (((1-ratioLine)*x1)+(ratioLine*x2));
+							y2Root = (((1-ratioLine)*y1)+(ratioLine*y2));
+							
+							x2Point = (((1-ratioPoint)*x1)+(ratioPoint*x2));
+							y2Point = (((1-ratioPoint)*y1)+(ratioPoint*y2));
+							
+							System.out.println(nodeSize+" "+sx);
+							double ratioEnd = 1-((sx+nodeSize)/distance);
+							double x2End = (((1-ratioEnd)*x1)+(ratioEnd*x2));
+							double y2End = (((1-ratioEnd)*y1)+(ratioEnd*y2));
 							
 														
 							perpen = getPerpendicular(x2, y2, x2Root, y2Root, sy);
-							double x1Prim = perpen[0];
-							double y1Prim = perpen[1];
-							double x2Prim = perpen[2];
-							double y2Prim = perpen[3];
+							x1Prim = perpen[0];
+							y1Prim = perpen[1];
+							x2Prim = perpen[2];
+							y2Prim = perpen[3];
+							
+							concat(buffer, " M ", d(x2Point), " ", d(y2Point));
+							concat(buffer, " L ", d(x1Prim), " ", d(y1Prim));
+							concat(buffer, " L ", d(x2End), " ", d(y2End));
+							concat(buffer, " L ", d(x2Prim), " ", d(y2Prim));
+
+							//concat(buffer, " L ", d(x2Point), " ", d(y2Point));
+							concat(buffer, " Z");
+
+
+							
+							break;
+						default:
+						case ARROW:
+							ratioPoint = 1-(nodeSize/distance);
+							ratioLine = 1-((sx+nodeSize)/distance);
+							
+							x2Root = (((1-ratioLine)*x1)+(ratioLine*x2));
+							y2Root = (((1-ratioLine)*y1)+(ratioLine*y2));
+							
+							x2Point = (((1-ratioPoint)*x1)+(ratioPoint*x2));
+							y2Point = (((1-ratioPoint)*y1)+(ratioPoint*y2));
+														
+							perpen = getPerpendicular(x2, y2, x2Root, y2Root, sy);
+							x1Prim = perpen[0];
+							y1Prim = perpen[1];
+							x2Prim = perpen[2];
+							y2Prim = perpen[3];
 							
 							if (style.group.getShape().equals(Shape.CUBIC_CURVE)) {
 								double rotation = 25 ;
