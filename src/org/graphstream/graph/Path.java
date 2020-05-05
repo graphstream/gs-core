@@ -102,8 +102,6 @@ public class Path implements Structure {
 		nodePath = new Stack<Node>();
 	}
 
-	// -------------- ACCESSORS --------------
-
 	/**
 	 * Get the root (the first node) of the path.
 	 * 
@@ -200,17 +198,16 @@ public class Path implements Structure {
 		return nodePath;
 	}
 
-	// -------------- MODIFIERS -------------
 
 	/**
-	 * Method that adds a node (and an edge) to the path. Parameters are the start
-	 * node : the one who already belong to the path or the first one if the path is
-	 * empty. The other parameter is the the new edge to add.
-	 * 
+	 * Adds a node and an edge to the path. If root is not set, the node will be
+	 * set as root. Otherwise from node must be the same as the head node of the
+	 * path.
+	 *
 	 * @param from
-	 *            The start node.
+	 * 		The start node.
 	 * @param edge
-	 *            The edge used.
+	 * 		The edge used.
 	 */
 	public void add(Node from, Edge edge) {
 		if (root == null) {
@@ -225,21 +222,23 @@ public class Path implements Structure {
 			from = nodePath.peek();
 		}
 
-		if (nodePath.size() == 1 || ((nodePath.peek() == from)
-				&& (from == edgePath.peek().getSourceNode() || from == edgePath.peek().getTargetNode()))) {
-
-			nodePath.push(edge.getOpposite(from));
-			edgePath.push(edge);
-		} else {
-			logger.warning("Cannot add the specified edge, it cannot be part of the path! %n");
+		if (!nodePath.peek().equals(from)) {
+			throw new IllegalArgumentException("From node must be at the head of the path");
 		}
+
+		if (!edge.getSourceNode().equals(from) && !edge.getTargetNode().equals(from)) {
+			throw new IllegalArgumentException("From node must be part of the edge");
+		}
+
+		nodePath.push(edge.getOpposite(from));
+		edgePath.push(edge);
 	}
 
 	/**
-	 * Method that adds an edge an a node to the path. The new edge to add is given.
-	 * 
+	 * Adds an edge to the path.
+	 *
 	 * @param edge
-	 *            The edge to add to the path.
+	 * 		The edge to add to the path.
 	 */
 	public void add(Edge edge) {
 		if (nodePath.isEmpty()) {
