@@ -5,17 +5,6 @@ import org.junit.Test;
 
 public class PathTest {
 
-	@Test(expected = IllegalStateException.class)
-	public void setRoot_rootNodeMustBeNull() {
-		Graph graph = createSimpleGraph();
-		Path path = new Path();
-
-		path.setRoot(graph.getNode("a"));
-
-		// this has to fail, as root is already set
-		path.setRoot(graph.getNode("b"));
-	}
-
 	@Test(expected = IllegalArgumentException.class)
 	public void add_nodeHeadMustBeInEdge() {
 		Graph graph = createSimpleGraph();
