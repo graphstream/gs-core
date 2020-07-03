@@ -1,5 +1,7 @@
-package org.graphstream.graph;
+package org.graphstream.graph.test;
 
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Path;
 import org.graphstream.graph.implementations.DefaultGraph;
 import org.junit.Test;
 
