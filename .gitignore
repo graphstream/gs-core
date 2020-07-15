@@ -1,0 +1,9 @@
+.settings
+.classpath
+.project
+bin/
+target/
+*.jar
+*.jardesc
+.idea
+gs-core.iml
