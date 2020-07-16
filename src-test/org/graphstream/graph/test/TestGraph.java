@@ -44,6 +44,7 @@ import java.util.HashSet;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Element;
+import org.graphstream.graph.ElementNotFoundException;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.AbstractGraph;
@@ -543,9 +544,6 @@ public class TestGraph {
 
 	@Test
 	public void testRemoval() {
-		testRemoval(new SingleGraph("sg"));
-		testRemoval(new MultiGraph("mg"));
-		// testRemoval( new AdjacencyListGraph( "alg" ) );
 		testRemoval(new AdjacencyListGraph("AL")); // XXX
 		testRemoval(new SingleGraph("S")); // XXX
 		testRemoval(new MultiGraph("M")); // XXX
@@ -647,6 +645,108 @@ public class TestGraph {
 
 		assertEquals(0, graph.getNodeCount());
 		assertEquals(0, graph.getEdgeCount());
+	}
+	 
+	@Test
+	public void testForeignEdgeRemoval(){
+		try{
+			foreignEdgeRemoval(new SingleGraph("sg"), new SingleGraph("sg"));
+			fail();
+		} catch (ElementNotFoundException e){ /* ALL GOOD */}
+		try {
+			foreignEdgeRemoval(new MultiGraph("mg"), new MultiGraph("mg"));
+			fail();
+		} catch (ElementNotFoundException e){ /* ALL GOOD */}
+		try {
+			foreignEdgeRemoval(new AdjacencyListGraph("AL"), new AdjacencyListGraph("AL")); // XXX
+			fail();
+		} catch (ElementNotFoundException e){ /* ALL GOOD */}
+		try {
+			foreignEdgeRemoval(new SingleGraph("S"), new MultiGraph("M")); // XXX
+			fail();
+		} catch (ElementNotFoundException e){ /* ALL GOOD */}
+		try {
+			foreignEdgeRemoval(new AdjacencyListGraph("AL"), new MultiGraph("M")); // XXX
+			fail();
+		} catch (ElementNotFoundException e){ /* ALL GOOD */}
+
+	}
+	public void foreignEdgeRemoval(Graph g1, Graph g2){
+
+			g1.addNode("A");
+			g1.addNode("B");
+			g1.addNode("C");
+			g1.addEdge("AB", "A", "B");
+			Edge BC1 = g1.addEdge("BC", "B", "C");
+			g1.addEdge("CA", "C", "A");
+	
+			g2.addNode("A");
+			g2.addNode("B");
+			g2.addNode("C");
+			g2.addEdge("AB", "A", "B");
+			g2.addEdge("BC", "B", "C");
+			g2.addEdge("CA", "C", "A");
+	
+			g2.removeEdge(BC1);
+	
+	}
+	
+
+	@Test(expected = ElementNotFoundException.class)
+	public void testForeignNodeRemoval(){
+		Graph g1 = new AdjacencyListGraph("1");
+		Graph g2 = new AdjacencyListGraph("2");
+
+		g1.addNode("A");
+		g1.addNode("B");
+		Node ng1 = g1.addNode("C");
+		g1.addEdge("AB", "A", "B");
+		g1.addEdge("BC", "B", "C");
+		g1.addEdge("CA", "C", "A");
+
+		g2.addNode("A");
+		g2.addNode("B");
+		g2.addNode("C");
+		g2.addEdge("AB", "A", "B");
+		g2.addEdge("BC", "B", "C");
+		g2.addEdge("CA", "C", "A");
+
+		g2.removeNode(ng1);
+
+	}
+
+	@Test
+	public void TestAddEdgeWithForeignNode(){
+		Graph g1 = new AdjacencyListGraph("1");
+		Graph g2 = new AdjacencyListGraph("2");
+
+		g1.addNode("A");
+		Node b1 = g1.addNode("B");
+		Node c1 = g1.addNode("C");
+		g1.addEdge("AB", "A", "B");
+		g1.addEdge("BC", "B", "C");
+		g1.addEdge("CA", "C", "A");
+
+		
+		g2.addNode("A");
+		Node b2 = g2.addNode("B");
+		Node c2 = g2.addNode("C");
+		
+		try{
+			g2.addEdge("BC", b1, c1);
+			fail();
+		} catch (ElementNotFoundException e){ /* ALL GOOD */}
+		try{
+			g2.addEdge("BC", b1, c2);
+			fail();
+		} catch (ElementNotFoundException e){ /* ALL GOOD */}
+		try{
+			g2.addEdge("BC", b2, c1);
+			fail();
+		} catch (ElementNotFoundException e){ /* ALL GOOD */}
+
+		
+		
 	}
 
 	@Test

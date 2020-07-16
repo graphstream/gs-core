@@ -594,6 +594,10 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 				dst = (AbstractNode) addNode(dstId);
 		}
 		// at this point edgeId is not in use and both src and dst are not null
+
+		if(src.getGraph() != this || dst.getGraph() != this) {
+			throw new ElementNotFoundException("At least one of two nodes does not belong to the graph.");
+		}
 		edge = edgeFactory.newInstance(edgeId, src, dst, directed);
 		// see if the endpoints accept the edge
 		if (!src.addEdgeCallback(edge)) {
@@ -639,8 +643,13 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 	 * 		if {@code false}, {@code removeNodeCallback(node)} is not called
 	 */
 	protected void removeNode(AbstractNode node, boolean graphCallback) {
-		if (node == null)
-			return;
+		if (node == null) {
+			throw new NullPointerException("node reference is null");
+		}
+		if (node.getGraph() != this){
+			throw new ElementNotFoundException( "Node \""+node.getId()+"\" does not belong to this graph");
+		}
+		
 
 		removeAllEdges(node);
 		listeners.sendNodeRemoved(node.getId());
@@ -671,11 +680,16 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 	 */
 	protected void removeEdge(AbstractEdge edge, boolean graphCallback, boolean sourceCallback,
 			boolean targetCallback) {
-		if (edge == null)
-			return;
+		if (edge == null) {
+			throw new NullPointerException("edge reference is null");
+		}
 
 		AbstractNode src = (AbstractNode) edge.getSourceNode();
 		AbstractNode dst = (AbstractNode) edge.getTargetNode();
+		
+		if (src.getGraph() != this || dst.getGraph() != this){
+			throw new ElementNotFoundException( "Edge \""+edge.getId()+"\" does not belong to this graph");
+		}
 
 		listeners.sendEdgeRemoved(edge.getId());
 

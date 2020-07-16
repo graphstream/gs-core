@@ -182,22 +182,22 @@ public class AdjacencyListGraph extends AbstractGraph {
 
 	@Override
 	protected void removeEdgeCallback(AbstractEdge edge) {
-		if (edgeMap.remove(edge.getId()) != null) {
-			int i = edge.getIndex();
-			edgeArray[i] = edgeArray[--edgeCount];
-			edgeArray[i].setIndex(i);
-			edgeArray[edgeCount] = null;
-		}
+		edgeMap.remove(edge.getId());
+		int i = edge.getIndex();
+		edgeArray[i] = edgeArray[--edgeCount];
+		edgeArray[i].setIndex(i);
+		edgeArray[edgeCount] = null;
+	
 	}
 
 	@Override
 	protected void removeNodeCallback(AbstractNode node) {
-		if (nodeMap.remove(node.getId()) != null) {
-			int i = node.getIndex();
-			nodeArray[i] = nodeArray[--nodeCount];
-	    		nodeArray[i].setIndex(i);
-			nodeArray[nodeCount] = null;
-		}
+		nodeMap.remove(node.getId());
+		int i = node.getIndex();
+		nodeArray[i] = nodeArray[--nodeCount];
+		nodeArray[i].setIndex(i);
+		nodeArray[nodeCount] = null;
+	
 	}
 
 	@Override
