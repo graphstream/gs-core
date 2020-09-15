@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.HttpURLConnection;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
@@ -159,8 +160,40 @@ public abstract class TestFileSourceBase {
 		try {
 			URL url = new URL(anUndirectedTriangleHttpURL());
 
-			URLConnection c = url.openConnection();
+			HttpURLConnection c = (HttpURLConnection)url.openConnection();
 			c.setDefaultUseCaches(false);
+			c.setReadTimeout(5000);
+			c.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
+			c.addRequestProperty("User-Agent", "Mozilla");
+			c.addRequestProperty("Referer", "google.com");
+			boolean redirect = false;
+			int status = c.getResponseCode();
+			if (status != HttpURLConnection.HTTP_OK) {
+				if (status == HttpURLConnection.HTTP_MOVED_TEMP
+					|| status == HttpURLConnection.HTTP_MOVED_PERM
+					|| status == HttpURLConnection.HTTP_SEE_OTHER)
+			redirect = true;
+			if (redirect) {
+
+				// get redirect url from "location" header field
+				String newUrl = c.getHeaderField("Location");
+	
+				// get the cookie if need, for login
+				String cookies = c.getHeaderField("Set-Cookie");
+		
+				// open the new connection again
+				url = new URL(newUrl);
+				c = (HttpURLConnection) url.openConnection();
+				c.setRequestProperty("Cookie", cookies);
+				c.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
+				c.addRequestProperty("User-Agent", "Mozilla");
+				c.addRequestProperty("Referer", "google.com");
+		
+				System.out.println("Redirect to URL : " + newUrl);
+		
+			}
+	
+		}
 
 			input.addSink(graph);
 			input.readAll(url);
