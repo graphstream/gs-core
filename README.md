@@ -1,36 +1,32 @@
 # GraphStream
 
-[![Build Status](https://travis-ci.org/graphstream/gs-core.svg?branch=dev)](https://travis-ci.org/graphstream/gs-core) [![](https://jitpack.io/v/graphstream/gs-core.svg)](https://jitpack.io/#graphstream/gs-core)
+
+[![Build Status](https://travis-ci.org/graphstream/gs-core.svg?branch=dev)](https://travis-ci.org/graphstream/gs-core)
 
 The GraphStream project is a java library that provides an API to model,
 analyze and visualize graphs and dynamic graphs.
 
 Check out the Website <http://www.graphstream-project.org/> for more information.
 
-## Install GraphStream
+## Installing GraphStream
 
-### Install Major releases
+The release comes with a pre-packaged jar file named gs-core.jar that contains the GraphStream classes. To start using GraphStream, simply put it in your class path. You can download GraphStream on the [github releases pages](https://github.com/graphstream/gs-core/releases), or on the website <http://www.graphstream-project.org/>.
 
-You can download GraphStream on the [github releases pages](https://github.com/graphstream/gs-core/releases/), or on the website <http://www.graphstream-project.org/download>.
-
-But the preferred way to install GraphStream is through a build tool such as [Maven](https://maven.apache.org/) or [Gradle](https://gradle.org/).
-
-GraphStream major releases are distributed on the Central repository so you only need to specify the dependency through its group and artifact ids. 
+Maven users may include major releases of `gs-core` as a dependency:
 
 ```xml
-<!-- https://mvnrepository.com/artifact/org.graphstream/gs-core -->
-<dependency>
-    <groupId>org.graphstream</groupId>
-    <artifactId>gs-core</artifactId>
-    <version>2.0</version>
-</dependency>
+<dependencies>
+    <dependency>
+        <groupId>org.graphstream</groupId>
+        <artifactId>gs-core</artifactId>
+        <version>2.0</version>
+    </dependency>
+</dependencies>
 ```
 
-### Install nightly builds / development branches
+### Development Versions
 
-For specific needs, development version can be used through the build tools using [JitPack](https://jitpack.io/#graphstream/gs-core)
-
-In order to use JitPack one need to specify the repository:
+Using <https://jitpack.io> one can also use any development version. Simply add the `jitpack` repository to the `pom.xml` of the project:
 
 ```xml
 <repositories>
@@ -41,14 +37,14 @@ In order to use JitPack one need to specify the repository:
 </repositories>
 ```
 
-and the dependency:
+then, add the `gs-core` to your dependencies:
 
 ```xml
 <dependencies>
     <dependency>
         <groupId>com.github.graphstream</groupId>
         <artifactId>gs-core</artifactId>
-        <version>Tag</version>
+        <version>dev-SNAPSHOT</version>
     </dependency>
 </dependencies>
 ```
