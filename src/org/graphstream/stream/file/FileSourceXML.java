@@ -460,7 +460,7 @@ public abstract class FileSourceXML extends SourceBase implements FileSource, XM
 			e = getNextEvent();
 
 			while (e.getEventType() == XMLEvent.CHARACTERS) {
-				buffer.append(e.asCharacters());
+				buffer.append(e.asCharacters().getData());
 				e = getNextEvent();
 			}
 
