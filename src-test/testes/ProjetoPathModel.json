@@ -1,0 +1,144 @@
+{
+  "models" : [ {
+    "name" : "ProjetoPathModel",
+    "id" : "cbca8c67-6d0c-40b4-8afb-032b069a4bc1",
+    "generator" : "random(edge_coverage(100))",
+    "actions" : [ "caminho = false", "tamanho = 0", "raiz = false", "nofontenodest = false" ],
+    "vertices" : [ {
+      "id" : "d9c15804-24de-47ca-9430-9cb93202d9ff",
+      "name" : "v_Inicio",
+      "actions" : [ "" ],
+      "requirements" : [ ],
+      "properties" : {
+        "x" : 727.7620185686112,
+        "y" : 9.33775292911084
+      }
+    }, {
+      "id" : "fd4435f7-6a42-4a8b-a522-49c6b91a85e1",
+      "name" : "v_CaminhoVazio",
+      "actions" : [ ],
+      "requirements" : [ ],
+      "properties" : {
+        "x" : 471.54129604687625,
+        "y" : 240.46064486488672
+      },
+      "guard" : "caminho == true && raiz == false && tamanho == 0"
+    }, {
+      "id" : "3dbb2cf6-1ac9-4858-9fd8-bc6b874c1daf",
+      "name" : "v_CaminhoComRaiz",
+      "actions" : [ ],
+      "requirements" : [ ],
+      "properties" : {
+        "x" : 737.3512071311063,
+        "y" : 374.9257989802161
+      },
+      "guard" : "caminho == true && raiz == true && tamanho == 0"
+    }, {
+      "id" : "73594d40-1a8c-11ee-a0f0-4562b068a378",
+      "name" : "v_ExcecaoIllegalArgument",
+      "properties" : {
+        "x" : 1355.9148137626707,
+        "y" : 339.06808185823473
+      },
+      "guard" : "nofontenodest == false || raiz == false"
+    }, {
+      "id" : "4688f600-1a9e-11ee-90a7-c1619ebd0c53",
+      "name" : "v_CaminhoComArestas",
+      "properties" : {
+        "x" : 760.7764674311109,
+        "y" : 681.2392683833868
+      },
+      "guard" : "caminho == true && raiz == true && tamanho != 0 &&"
+    } ],
+    "edges" : [ {
+      "id" : "9a6b8be2-3e0c-4e8d-bb38-21107b66a4d3",
+      "name" : "e_CriaCaminho",
+      "actions" : [ "caminho = true" ],
+      "requirements" : [ ],
+      "properties" : [ ],
+      "sourceVertexId" : "d9c15804-24de-47ca-9430-9cb93202d9ff",
+      "targetVertexId" : "fd4435f7-6a42-4a8b-a522-49c6b91a85e1"
+    }, {
+      "id" : "d6d49ec0-1a6d-11ee-a0f0-4562b068a378",
+      "name" : "e_DefineRaiz",
+      "sourceVertexId" : "fd4435f7-6a42-4a8b-a522-49c6b91a85e1",
+      "targetVertexId" : "3dbb2cf6-1ac9-4858-9fd8-bc6b874c1daf",
+      "actions" : [ "raiz = true" ]
+    }, {
+      "id" : "caeb5cb0-1a8c-11ee-a0f0-4562b068a378",
+      "name" : "e_AdicionaArestaAntesDaRaiz",
+      "sourceVertexId" : "fd4435f7-6a42-4a8b-a522-49c6b91a85e1",
+      "targetVertexId" : "73594d40-1a8c-11ee-a0f0-4562b068a378",
+      "guard" : "",
+      "actions" : [ "raiz = false" ]
+    }, {
+      "id" : "056610b0-1a8d-11ee-a0f0-4562b068a378",
+      "name" : "e_Reinicia",
+      "sourceVertexId" : "73594d40-1a8c-11ee-a0f0-4562b068a378",
+      "targetVertexId" : "d9c15804-24de-47ca-9430-9cb93202d9ff",
+      "actions" : [ "caminho = false", "tamanho = 0", "raiz = false", "nofontenodest = false" ]
+    }, {
+      "id" : "01182870-1a8f-11ee-a0f0-4562b068a378",
+      "name" : "e_AdicionaNoFonteDiferenteUltimoNoDestino",
+      "sourceVertexId" : "3dbb2cf6-1ac9-4858-9fd8-bc6b874c1daf",
+      "targetVertexId" : "73594d40-1a8c-11ee-a0f0-4562b068a378",
+      "actions" : [ "nofontenodest = false" ]
+    }, {
+      "id" : "54d3b6a0-1a9e-11ee-90a7-c1619ebd0c53",
+      "name" : "e_AdicionaAresta",
+      "sourceVertexId" : "3dbb2cf6-1ac9-4858-9fd8-bc6b874c1daf",
+      "targetVertexId" : "4688f600-1a9e-11ee-90a7-c1619ebd0c53",
+      "actions" : [ "tamanho += 1", "nofontenodest = true" ]
+    }, {
+      "id" : "64376150-1a9e-11ee-90a7-c1619ebd0c53",
+      "name" : "e_RemoveAresta",
+      "sourceVertexId" : "4688f600-1a9e-11ee-90a7-c1619ebd0c53",
+      "targetVertexId" : "3dbb2cf6-1ac9-4858-9fd8-bc6b874c1daf",
+      "guard" : "tamanho - 1 == 0",
+      "actions" : [ "tamanho -= 1" ]
+    }, {
+      "id" : "78059210-1a9e-11ee-90a7-c1619ebd0c53",
+      "name" : "e_RemoveNo",
+      "sourceVertexId" : "4688f600-1a9e-11ee-90a7-c1619ebd0c53",
+      "targetVertexId" : "3dbb2cf6-1ac9-4858-9fd8-bc6b874c1daf",
+      "guard" : "tamanho - 1 == 0",
+      "actions" : [ "tamanho -= 1" ]
+    }, {
+      "id" : "88c8ccc0-1a9e-11ee-90a7-c1619ebd0c53",
+      "name" : "e_AdicionaNoFonteDiferenteUltimoNoDestino",
+      "sourceVertexId" : "4688f600-1a9e-11ee-90a7-c1619ebd0c53",
+      "targetVertexId" : "73594d40-1a8c-11ee-a0f0-4562b068a378",
+      "actions" : [ "nofontenodest = false" ]
+    }, {
+      "id" : "92493410-1a9e-11ee-90a7-c1619ebd0c53",
+      "name" : "e_AdicionaAresta",
+      "sourceVertexId" : "4688f600-1a9e-11ee-90a7-c1619ebd0c53",
+      "targetVertexId" : "4688f600-1a9e-11ee-90a7-c1619ebd0c53",
+      "guard" : "tamanho != 0",
+      "actions" : [ "tamanho += 1", "nofontenodest = true" ]
+    }, {
+      "id" : "aadb5580-1a9e-11ee-90a7-c1619ebd0c53",
+      "name" : "e_RemoveAresta",
+      "sourceVertexId" : "4688f600-1a9e-11ee-90a7-c1619ebd0c53",
+      "targetVertexId" : "4688f600-1a9e-11ee-90a7-c1619ebd0c53",
+      "guard" : "tamanho - 1 > 0",
+      "actions" : [ "tamanho -= 1" ]
+    }, {
+      "id" : "b7fbee00-1a9e-11ee-90a7-c1619ebd0c53",
+      "name" : "e_RemoveNo",
+      "sourceVertexId" : "4688f600-1a9e-11ee-90a7-c1619ebd0c53",
+      "targetVertexId" : "4688f600-1a9e-11ee-90a7-c1619ebd0c53",
+      "guard" : "tamanho - 1 > 0",
+      "actions" : [ "tamanho -= 1" ]
+    }, {
+      "id" : "cec81c80-1a9e-11ee-90a7-c1619ebd0c53",
+      "name" : "e_AdicionaNoEArestaAntesDaRaiz",
+      "sourceVertexId" : "fd4435f7-6a42-4a8b-a522-49c6b91a85e1",
+      "targetVertexId" : "4688f600-1a9e-11ee-90a7-c1619ebd0c53",
+      "actions" : [ "raiz = true", "tamanho += 1", "nofontenodest = true" ]
+    } ],
+    "startElementId" : "d9c15804-24de-47ca-9430-9cb93202d9ff"
+  } ],
+  "selectedModelIndex" : 0,
+  "selectedElementId" : null
+}
